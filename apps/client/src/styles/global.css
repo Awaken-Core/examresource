@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html, body { @apply h-full overflow-hidden; }
+  body { @apply bg-[#fff7f4] text-[#102332]; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+}
