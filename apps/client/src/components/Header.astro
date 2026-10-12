@@ -1,0 +1,119 @@
+---
+---
+
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-xs">
+  {/* Top quick banner / breaking updates ticker */}
+  <div class="bg-blue-900 text-white text-xs py-1.5 px-4 hidden md:block">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <span class="bg-amber-400 text-blue-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">
+          Latest Update
+        </span>
+        <span class="truncate max-w-2xl text-blue-100">
+          Bihar DECE LE 2026 Round 1 Allotment Letter Out • Direct Download Link Activated
+        </span>
+      </div>
+      <div class="flex items-center gap-4 text-blue-200">
+        <a href="#important-links" class="hover:text-white transition">Direct Links</a>
+        <span>•</span>
+        <a href="#important-dates" class="hover:text-white transition">Schedule</a>
+        <span>•</span>
+        <a href="#faqs" class="hover:text-white transition">FAQs</a>
+      </div>
+    </div>
+  </div>
+
+  {/* Main Navbar */}
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      {/* Brand Logo & Name */}
+      <div class="flex items-center gap-3">
+        <a href="/" class="flex items-center gap-2.5 group">
+          <div class="w-10 h-10 rounded-lg bg-blue-700 flex items-center justify-center text-white font-bold text-xl shadow-sm group-hover:bg-blue-800 transition">
+            EP
+          </div>
+          <div>
+            <span class="text-xl font-bold tracking-tight text-slate-900 block leading-tight">
+              Exam<span class="text-blue-700">Portal</span>
+            </span>
+            <span class="text-[10px] text-slate-500 font-medium tracking-wide uppercase">
+              Govt Jobs & Results Hub
+            </span>
+          </div>
+        </a>
+      </div>
+
+      {/* Desktop Search Bar */}
+      <div class="hidden md:flex flex-1 max-w-md mx-8">
+        <div class="relative w-full">
+          <input 
+            type="text" 
+            placeholder="Search exam results, admit cards, notifications..." 
+            class="w-full bg-slate-50 border border-slate-300 rounded-full py-1.5 pl-10 pr-4 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-600 focus:bg-white text-slate-900 placeholder:text-slate-400"
+          />
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Nav Links */}
+      <nav class="hidden lg:flex items-center gap-1 font-medium text-sm text-slate-700">
+        <a href="/" class="px-3 py-2 rounded-md hover:text-blue-700 hover:bg-slate-50 transition">Home</a>
+        <a href="#state-filter-widget" class="px-3 py-2 rounded-md hover:text-blue-700 hover:bg-slate-50 transition">State Updates</a>
+        <a href="#" class="px-3 py-2 rounded-md text-blue-700 bg-blue-50/70 font-semibold transition">Admission</a>
+        <a href="#" class="px-3 py-2 rounded-md hover:text-blue-700 hover:bg-slate-50 transition">Latest Jobs</a>
+        <a href="#" class="px-3 py-2 rounded-md hover:text-blue-700 hover:bg-slate-50 transition">Results</a>
+        <a href="/admin" class="px-3 py-2 rounded-md text-blue-700 hover:bg-blue-50 font-semibold transition border border-blue-200">Admin Panel</a>
+        <a href="/editor" class="px-3 py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition">Editor</a>
+      </nav>
+
+      {/* Mobile Menu Button */}
+      <div class="flex items-center lg:hidden">
+        <button 
+          id="mobile-menu-btn"
+          aria-label="Toggle navigation menu"
+          class="p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 focus:outline-hidden"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {/* Mobile Dropdown Menu */}
+  <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 bg-white px-4 pt-2 pb-4 space-y-2">
+    <div class="pt-2 pb-2">
+      <input 
+        type="text" 
+        placeholder="Search exams..." 
+        class="w-full bg-slate-50 border border-slate-300 rounded-lg py-2 px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-blue-600"
+      />
+    </div>
+    <div class="flex flex-col space-y-1 font-medium text-sm">
+      <a href="/" class="px-3 py-2 rounded-md text-slate-800 hover:bg-slate-50">Home</a>
+      <a href="#state-filter-widget" class="px-3 py-2 rounded-md text-slate-800 hover:bg-slate-50">State Updates</a>
+      <a href="#" class="px-3 py-2 rounded-md text-blue-700 bg-blue-50 font-semibold">Admission & Counselling</a>
+      <a href="#" class="px-3 py-2 rounded-md text-slate-800 hover:bg-slate-50">Latest Jobs</a>
+      <a href="#" class="px-3 py-2 rounded-md text-slate-800 hover:bg-slate-50">Results</a>
+      <div class="pt-2 border-t border-slate-100 flex gap-2">
+        <a href="/admin" class="flex-1 text-center py-2 rounded-md border border-blue-200 text-blue-700 font-semibold hover:bg-blue-50">Admin Panel</a>
+        <a href="/editor" class="flex-1 text-center py-2 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700">Article Editor</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  const mobileBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (mobileBtn && mobileMenu) {
+    mobileBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+</script>
