@@ -1,0 +1,168 @@
+import {
+  BadRequestException,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import type { z } from 'zod';
+import { env } from '../../core/config/env.js';
+import { AuthService } from '../auth/auth.service.js';
+import { BlogService } from './blog.service.js';
+import {
+  createBlockSchema,
+  createBlogSchema,
+  reorderBlocksSchema,
+  updateBlockSchema,
+  updateBlogSchema,
+} from './dto/blog.dto.js';
+
+type SessionRequest = Request & { cookies?: Record<string, string> };
+
+@Controller('api/v1')
+export class BlogController {
+  constructor(
+    private readonly blogs: BlogService,
+    private readonly auth: AuthService,
+  ) {}
+
+  @Get('blogs')
+  listPublished() {
+    return this.blogs.listPublished();
+  }
+
+  @Get('blogs/:slug')
+  getPublished(@Param('slug') slug: string) {
+    return this.blogs.getPublished(slug);
+  }
+
+  @Get('me/blogs')
+  async listManageable(@Req() req: SessionRequest) {
+    return this.blogs.listManageable(await this.currentUser(req));
+  }
+
+  @Get('me/blogs/:id')
+  async getManageable(@Param('id') id: string, @Req() req: SessionRequest) {
+    return this.blogs.getManageable(id, await this.currentUser(req));
+  }
+
+  @Post('blogs')
+  async create(@Req() req: SessionRequest) {
+    this.assertSafeMutation(req);
+    const currentUser = await this.currentUser(req);
+    return this.blogs.create(
+      this.parse(createBlogSchema, req.body),
+      currentUser,
+    );
+  }
+
+  @Patch('blogs/:id')
+  async update(@Param('id') id: string, @Req() req: SessionRequest) {
+    this.assertSafeMutation(req);
+    const currentUser = await this.currentUser(req);
+    return this.blogs.update(
+      id,
+      this.parse(updateBlogSchema, req.body),
+      currentUser,
+    );
+  }
+
+  @Post('blogs/:blogId/blocks')
+  async createBlock(
+    @Param('blogId') blogId: string,
+    @Req() req: SessionRequest,
+  ) {
+    this.assertSafeMutation(req);
+    return this.blogs.createBlock(
+      blogId,
+      this.parse(createBlockSchema, req.body),
+      await this.currentUser(req),
+    );
+  }
+
+  @Patch('blogs/:blogId/blocks/reorder')
+  async reorderBlocks(
+    @Param('blogId') blogId: string,
+    @Req() req: SessionRequest,
+  ) {
+    this.assertSafeMutation(req);
+    const input = this.parse(reorderBlocksSchema, req.body);
+    return this.blogs.reorderBlocks(
+      blogId,
+      input.blockIds,
+      await this.currentUser(req),
+    );
+  }
+
+  @Patch('blogs/:blogId/blocks/:blockId')
+  async updateBlock(
+    @Param('blogId') blogId: string,
+    @Param('blockId') blockId: string,
+    @Req() req: SessionRequest,
+  ) {
+    this.assertSafeMutation(req);
+    return this.blogs.updateBlock(
+      blogId,
+      blockId,
+      this.parse(updateBlockSchema, req.body),
+      await this.currentUser(req),
+    );
+  }
+
+  @Delete('blogs/:blogId/blocks/:blockId')
+  @HttpCode(204)
+  async removeBlock(
+    @Param('blogId') blogId: string,
+    @Param('blockId') blockId: string,
+    @Req() req: SessionRequest,
+  ) {
+    this.assertSafeMutation(req);
+    await this.blogs.removeBlock(blogId, blockId, await this.currentUser(req));
+  }
+
+  @Delete('blogs/:id')
+  @HttpCode(204)
+  async remove(@Param('id') id: string, @Req() req: SessionRequest) {
+    this.assertSafeMutation(req);
+    await this.blogs.remove(id, await this.currentUser(req));
+  }
+
+  private parse<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {
+    const parsed = schema.safeParse(value);
+    if (!parsed.success) {
+      throw new BadRequestException({
+        message: 'Request body is invalid.',
+        errors: parsed.error.flatten().fieldErrors,
+      });
+    }
+    return parsed.data;
+  }
+
+  private async currentUser(req: SessionRequest) {
+    const token = req.cookies?.[this.cookieName()];
+    const current = await this.auth.getSession(token);
+    if (!current) {
+      throw new UnauthorizedException('Authentication is required.');
+    }
+    return current.user;
+  }
+
+  private cookieName() {
+    return env.NODE_ENV === 'production' ? '__Host-sid' : 'sid';
+  }
+
+  private assertSafeMutation(req: SessionRequest) {
+    if (req.header('origin') !== env.CLIENT_URL) {
+      throw new BadRequestException('Origin is not allowed.');
+    }
+    if (req.header('x-csrf-protection') !== '1') {
+      throw new BadRequestException('Missing CSRF protection header.');
+    }
+  }
+}
