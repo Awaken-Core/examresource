@@ -12,6 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^11.1.7",
+    "@clerk/astro": "^4.1.12",
     "astro": "^7.3.8",
     "zustand": "^5.0.15"
   },

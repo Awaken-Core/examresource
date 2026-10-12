@@ -13,11 +13,12 @@ export const users = pgTable(
   'users',
   {
     id: text('id').primaryKey(),
+    clerkUserId: text('clerk_user_id'),
     name: text('name').notNull(),
     email: text('email').notNull(),
     phone: text('phone'),
     googleSubject: text('google_subject'),
-    passwordHash: text('password_hash').notNull(),
+    passwordHash: text('password_hash'),
     emailVerifiedAt: timestamp('email_verified_at', { withTimezone: true }),
     role: userRole('role').notNull().default('student'),
     status: userStatus('status').notNull().default('active'),
@@ -30,6 +31,7 @@ export const users = pgTable(
   },
   (table) => [
     uniqueIndex('users_email_unique').on(table.email),
+    uniqueIndex('users_clerk_user_id_unique').on(table.clerkUserId),
     uniqueIndex('users_google_subject_unique').on(table.googleSubject),
   ],
 );

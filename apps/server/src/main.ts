@@ -5,7 +5,7 @@ import { AppModule } from './app.module.js';
 import { env } from './core/config/env.js';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   app.use(cookieParser());
   app.enableCors({
     origin: env.CLIENT_URL,

@@ -1,12 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { STATES_LIST, CATEGORIES_LIST } from '../data/portalMockData';
+const { userId, redirectToSignIn } = Astro.locals.auth();
+if (!userId) return redirectToSignIn();
 ---
 
 <Layout
   title="Article Editor - ExamPortal"
   description="Create and edit government exam articles, notifications, admit cards, and results."
 >
+  <script>
+    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+    const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
+    const token = await clerk?.session?.getToken();
+    const response = await fetch(`${apiUrl}/me`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    const user = response.ok ? await response.json() : null;
+    if (!user || !['editor', 'admin'].includes(user.role)) window.location.replace('/home');
+  </script>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     
     {/* Editor Header Bar with Actions */}
