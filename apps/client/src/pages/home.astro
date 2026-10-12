@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+---
+
+<Layout>
+	<main data-api-url={apiUrl} class="flex h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,_#ffe5dc,_#fff8f5_47%,_#f7fbff)] p-4">
+		<section class="w-full max-w-2xl rounded-[2rem] bg-white p-8 text-center shadow-[0_22px_70px_rgba(176,83,95,0.16)] sm:p-12">
+			<div class="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-[#ffe4e5] text-3xl">🎓</div>
+			<p class="mt-7 text-sm font-extrabold uppercase tracking-[.18em] text-[#db2f72]">ExamResource</p>
+			<h1 class="mt-3 text-4xl font-extrabold text-[#102332]">Welcome, <span id="user-name">there</span>!</h1>
+			<p id="user-email" class="mt-4 text-slate-500">Loading your account…</p>
+			<button id="logout" class="mt-9 rounded-xl border border-slate-200 px-5 py-3 font-bold text-[#102332] transition hover:border-[#db2f72] hover:text-[#db2f72]">Log out</button>
+		</section>
+	</main>
+
+	<script>
+		import { authStore } from '../stores/auth';
+
+		type SessionUser = {
+			id: string;
+			name: string;
+			email: string;
+		};
+		function initializeHomePage() {
+		const root = document.querySelector<HTMLElement>('[data-api-url]');
+		if (!root || root.dataset.initialized) return;
+		root.dataset.initialized = 'true';
+		const apiUrl = root.dataset.apiUrl;
+		if (!apiUrl) return;
+		const name = document.querySelector<HTMLElement>('#user-name');
+		const email = document.querySelector<HTMLElement>('#user-email');
+		const logoutButton = document.querySelector<HTMLButtonElement>('#logout');
+		if (!name || !email || !logoutButton) return;
+		async function loadUser() {
+			const response = await fetch(`${apiUrl}/me`, { credentials: 'include' });
+			if (!response.ok) { window.location.assign('/login'); return; }
+			const user = (await response.json()) as SessionUser;
+			authStore.getState().setUser(user);
+			name.textContent = user.name;
+			email.textContent = user.email;
+		}
+		logoutButton.addEventListener('click', async () => {
+			await fetch(`${apiUrl}/auth/logout`, { method: 'POST', credentials: 'include', headers: { 'x-csrf-protection': '1' } });
+			authStore.getState().setUser(null);
+			window.location.assign('/login');
+		});
+		loadUser();
+		}
+		document.addEventListener('astro:page-load', initializeHomePage);
+		initializeHomePage();
+	</script>
+</Layout>

@@ -29,10 +29,16 @@ export class AuthController {
   constructor(private readonly auth: AuthService) {}
 
   @Post('auth/register')
-  async register(@Req() req: SessionRequest) {
+  async register(
+    @Req() req: SessionRequest,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     this.assertSafeMutation(req);
     const input = this.parse(registerSchema, req.body);
-    return this.auth.register(input);
+    await this.auth.register(input);
+    const result = await this.auth.login(input.email, input.password);
+    this.setSessionCookie(res, result.token);
+    return { user: result.user };
   }
 
   @Post('auth/login')
@@ -80,7 +86,7 @@ export class AuthController {
     });
     const result = await this.auth.loginWithGoogle(code, state);
     this.setSessionCookie(res, result.token);
-    return res.redirect(new URL('/?login=success', env.CLIENT_URL).toString());
+    return res.redirect(new URL('/home', env.CLIENT_URL).toString());
   }
 
   @Post('auth/logout')
