@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module.js';
+import { ClerkAuthModule } from '../clerk-auth/clerk-auth.module.js';
 import { BlogController } from './blog.controller.js';
 import { BlogService } from './blog.service.js';
 
 @Module({
-  imports: [AuthModule],
+  imports: [ClerkAuthModule],
   controllers: [BlogController],
   providers: [BlogService],
 })

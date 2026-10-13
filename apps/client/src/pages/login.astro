@@ -2,9 +2,8 @@
 import AuthPage from "../components/AuthPage.astro";
 import Layout from "../layouts/Layout.astro";
 
-const apiUrl = import.meta.env.PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
 ---
 
 <Layout>
-  <AuthPage apiUrl={apiUrl} mode="login" />
+  <AuthPage mode="login" />
 </Layout>
