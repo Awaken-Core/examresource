@@ -361,12 +361,22 @@ const {
           if (label) label.textContent = lang.toUpperCase();
           const checkEn = document.querySelector('.lang-check-en');
           const checkHi = document.querySelector('.lang-check-hi');
+          const btnEn = document.querySelector('[data-lang-option="en"]');
+          const btnHi = document.querySelector('[data-lang-option="hi"]');
           if (lang === 'hi') {
             checkEn?.classList.add('hidden');
             checkHi?.classList.remove('hidden');
+            btnHi?.classList.remove('text-muted');
+            btnHi?.classList.add('text-white');
+            btnEn?.classList.remove('text-white');
+            btnEn?.classList.add('text-muted');
           } else {
             checkEn?.classList.remove('hidden');
             checkHi?.classList.add('hidden');
+            btnEn?.classList.remove('text-muted');
+            btnEn?.classList.add('text-white');
+            btnHi?.classList.remove('text-white');
+            btnHi?.classList.add('text-muted');
           }
         }
 
