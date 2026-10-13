@@ -37,15 +37,15 @@ const structuredData = {
       },
       "publisher": {
         "@type": "Organization",
-        "name": "ExamPortal",
+        "name": "govtpariksha.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://example.com/logo.png"
+          "url": "https://govtpariksha.com/logo.png"
         }
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://example.com/${examArticleData.slug}`
+        "@id": `https://govtpariksha.com/${examArticleData.slug}`
       }
     },
     {
@@ -64,9 +64,9 @@ const structuredData = {
 ---
 
 <Layout 
-  title={`${examArticleData.title} - ExamPortal`}
+  title={`${examArticleData.title} - govtpariksha.com`}
   description={examArticleData.summary}
-  canonicalUrl={`https://example.com/${examArticleData.slug}`}
+  canonicalUrl={`https://govtpariksha.com/${examArticleData.slug}`}
   jsonLd={structuredData}
 >
   {/* Breadcrumbs Navigation */}

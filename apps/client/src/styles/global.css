@@ -34,31 +34,21 @@
      Usage: bg-canvas, text-primary, border-border, etc.
      ──────────────────────────────────────────────────────── */
 
-  /* Core Palette */
-  --color-canvas: #131316;
+  /* Core Palette (Default Light Theme Across Website) */
+  --color-canvas: #F8F9FA;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #F1F3F5;
+  --color-white: #111827;
+  --color-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-subtle: #F3F4F6;
   --color-primary: #292418;
   --color-accent: #327CF6;
-  --color-white: #FFFFFF;
   --color-black: #000000;
 
   /* Semantic Status */
-  --color-error: #4C5973;
-  --color-success: #9CB2DD;
-
-  /* Dark Theme Surfaces */
-  --color-surface: #1C1B1F;
-  --color-surface-raised: #252528;
-  --color-border: #2A2925;
-  --color-muted: #A0A0A3;
-  --color-subtle: #1D1A12;
-
-  /* Light Theme (use with .theme-light or media query) */
-  --color-light-bg: #FBFBFB;
-  --color-light-surface: #F1F1F1;
-  --color-light-raised: #E9E9E9;
-  --color-light-text: #121211;
-  --color-light-muted: #747473;
-  --color-light-border: #D8D8D8;
+  --color-error: #EF4444;
+  --color-success: #10B981;
 
   /* ── Font Sizes with Line Height ────────────────────────────
      Usage: text-display-xxl, text-display-lg, text-heading-md, 
@@ -159,11 +149,13 @@
      Usage: z-base, z-sticky, z-dropdown, z-modal
      ──────────────────────────────────────────────────────── */
   --z-base: 1;
-  --z-raised: 2;
-  --z-sticky: 3;
-  --z-dropdown: 10;
-  --z-dropdown-high: 20;
-  --z-modal: 50;
+  --z-raised: 10;
+  --z-sticky: 50;
+  --z-dropdown: 100;
+  --z-dropdown-high: 150;
+  --z-modal: 200;
+  --z-popover: 300;
+  --z-toast: 400;
 
   /* ── Custom Spacing ─────────────────────────────────────────
      Extends Tailwind's default spacing scale.
@@ -207,9 +199,29 @@
 
 
 /* ============================================================
-   @layer components — Reusable component classes.
-   Use @apply to compose Tailwind utilities into named classes.
+   @utility — Explicit utilities for z-index stacking
    ============================================================ */
+@utility z-base {
+  z-index: 1;
+}
+@utility z-raised {
+  z-index: 10;
+}
+@utility z-sticky {
+  z-index: 50;
+}
+@utility z-dropdown {
+  z-index: 100;
+}
+@utility z-popover {
+  z-index: 200;
+}
+@utility z-modal {
+  z-index: 500;
+}
+@utility z-toast {
+  z-index: 999;
+}
 
 @layer components {
   /* ── Buttons ── */
@@ -381,16 +393,80 @@
 
 
 /* ============================================================
-   Light Theme Override
-   Apply class="theme-light" on <html> or a container
+   Root & Light Theme (Default across entire website)
    ============================================================ */
 
+:root,
 .theme-light {
-  --color-canvas: #FBFBFB;
-  --color-surface: #F1F1F1;
-  --color-surface-raised: #E9E9E9;
-  --color-white: #121211;
-  --color-muted: #747473;
-  --color-border: #D8D8D8;
-  --color-subtle: #E0DDD8;
+  --color-canvas: #F8F9FA;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #F1F3F5;
+  --color-white: #111827;
+  --color-muted: #6B7280;
+  --color-border: #E5E7EB;
+  --color-subtle: #F3F4F6;
+  --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.08), 0px 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
+  color-scheme: light;
 }
+
+/* ============================================================
+   Dark Theme (Active when .theme-dark is present on <html>)
+   ============================================================ */
+
+.theme-dark {
+  --color-canvas: #131316;
+  --color-surface: #1C1B1F;
+  --color-surface-raised: #252528;
+  --color-white: #FFFFFF;
+  --color-muted: #A0A0A3;
+  --color-border: #2A2925;
+  --color-subtle: #1D1A12;
+  --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+
+/* ── Desktop Sidebar Collapse (Smooth slide matching screenshot) ── */
+#desktop-sidebar-wrapper {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, transform 0.25s ease;
+  width: 16rem;
+  overflow: visible;
+}
+
+#desktop-sidebar-wrapper.collapsed {
+  display: none !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  transform: translateX(-1rem);
+}
+
+/* ── Sidebar Hover-Peek (Temporarily floats over layout on hover without settling until clicked) ── */
+#desktop-sidebar-wrapper.collapsed.hover-peek {
+  display: block !important;
+  width: 16rem !important;
+  opacity: 1 !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+  transform: translateX(0) !important;
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  height: 100vh !important;
+  z-index: 999 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-border) !important;
+  transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* ── Auth Toggle Display Guarantees ── */
+.header-auth-logged-out.hidden,
+.header-auth-logged-in.hidden,
+.sidebar-auth-logged-out.hidden,
+.sidebar-auth-logged-in.hidden {
+  display: none !important;
+}
+
+

@@ -1,6 +1,8 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import LeftSidebar from '../components/LeftSidebar.astro';
+import SearchModal from '../components/SearchModal.astro';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 
@@ -16,9 +18,9 @@ interface Props {
 }
 
 const {
-  title = "Exam Resource - Govt Jobs, Admissions & Results",
-  description = "Get verified government examination notices, admit cards, answer keys and counselling results.",
-  canonicalUrl = "https://example.com/bihar-dece-le-seat-allotment-2026",
+  title = "govtpariksha.com - Govt Jobs, Admissions & Results",
+  description = "Get verified government examination notices, admit cards, answer keys and counselling results on govtpariksha.com.",
+  canonicalUrl = "https://govtpariksha.com/bihar-dece-le-seat-allotment-2026",
   ogImage = "/images/bihar-dece-le-allotment-2026.webp",
   publishedTime = "2026-10-12T09:00:00+05:30",
   modifiedTime = "2026-10-12T14:45:00+05:30",
@@ -28,7 +30,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="theme-light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -65,12 +67,710 @@ const {
     {jsonLd && (
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
+
+    {/* Inline script to set default theme to WHITE / LIGHT across the website */}
+    <script is:inline>
+      (function() {
+        const userChoice = localStorage.getItem('theme_preference');
+        if (userChoice === 'dark') {
+          document.documentElement.classList.add('theme-dark');
+          document.documentElement.classList.remove('theme-light');
+        } else {
+          document.documentElement.classList.remove('theme-dark');
+          document.documentElement.classList.add('theme-light');
+          localStorage.setItem('theme', 'light');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white">
-    {!hideHeaderFooter && <Header />}
-    <main class="flex-grow">
-      <slot />
-    </main>
-    {!hideHeaderFooter && <Footer />}
+  <body class="bg-canvas min-h-screen flex font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+    {/* Desktop Left Navigation Sidebar */}
+    {!hideHeaderFooter && (
+      <div id="desktop-sidebar-wrapper" class="hidden lg:block shrink-0 relative z-40">
+        <LeftSidebar prefix="desktop" />
+      </div>
+    )}
+
+    {/* Mobile Left Sidebar Drawer Overlay */}
+    <div 
+      id="mobile-sidebar-backdrop" 
+      class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden lg:hidden transition-opacity"
+    >
+      <div 
+        id="mobile-sidebar-container" 
+        class="w-64 h-full bg-canvas shadow-elevated transform -translate-x-full transition-transform duration-200"
+      >
+        <LeftSidebar prefix="mobile" isMobileDrawer={true} />
+      </div>
+    </div>
+
+    {/* Main Content Area */}
+    <div class="flex-1 min-w-0 flex flex-col min-h-screen">
+      {!hideHeaderFooter && <Header />}
+      <main class="flex-grow">
+        <slot />
+      </main>
+      {!hideHeaderFooter && <Footer />}
+    </div>
+
+    {/* Global Search Modal (Matching Image 1) */}
+    <SearchModal />
+
+    {/* Global Robust Interactive Script */}
+    <script>
+      (function initApp() {
+        if ((window as any).__APP_INTERACTIVITY_INITIALIZED__) return;
+        (window as any).__APP_INTERACTIVITY_INITIALIZED__ = true;
+
+        // --- Theme Management ---
+        function updateAllThemeToggles(isLight: boolean) {
+          const knobs = document.querySelectorAll('.theme-toggle-knob');
+          const darkIcons = document.querySelectorAll('.dark-icon');
+          const lightIcons = document.querySelectorAll('.light-icon');
+
+          knobs.forEach((knob) => {
+            if (isLight) {
+              knob.classList.remove('translate-x-6');
+              knob.classList.add('translate-x-0.5');
+            } else {
+              knob.classList.remove('translate-x-0.5');
+              knob.classList.add('translate-x-6');
+            }
+          });
+
+          darkIcons.forEach((icon) => {
+            if (isLight) icon.classList.add('hidden');
+            else icon.classList.remove('hidden');
+          });
+
+          lightIcons.forEach((icon) => {
+            if (isLight) icon.classList.remove('hidden');
+            else icon.classList.add('hidden');
+          });
+        }
+
+        function toggleTheme() {
+          const isCurrentlyDark = document.documentElement.classList.contains('theme-dark');
+          const nextLight = isCurrentlyDark; // If currently dark, toggle to light; otherwise toggle to dark
+
+          if (nextLight) {
+            document.documentElement.classList.remove('theme-dark');
+            document.documentElement.classList.add('theme-light');
+            localStorage.setItem('theme', 'light');
+            localStorage.setItem('theme_preference', 'light');
+          } else {
+            document.documentElement.classList.add('theme-dark');
+            document.documentElement.classList.remove('theme-light');
+            localStorage.setItem('theme', 'dark');
+            localStorage.setItem('theme_preference', 'dark');
+          }
+
+          updateAllThemeToggles(nextLight);
+        }
+
+        // --- Robust Dropdown Management (Safe from Timeout Clashes) ---
+        function closeDropdown(menu: HTMLElement) {
+          menu.classList.remove('scale-100', 'opacity-100');
+          menu.classList.add('scale-95', 'opacity-0');
+
+          const prevTimer = menu.getAttribute('data-close-timer');
+          if (prevTimer) clearTimeout(Number(prevTimer));
+
+          const timer = window.setTimeout(() => {
+            menu.classList.add('hidden');
+            menu.removeAttribute('data-close-timer');
+          }, 150);
+          menu.setAttribute('data-close-timer', String(timer));
+        }
+
+        function openDropdown(menu: HTMLElement, trigger: HTMLElement) {
+          const prevTimer = menu.getAttribute('data-close-timer');
+          if (prevTimer) {
+            clearTimeout(Number(prevTimer));
+            menu.removeAttribute('data-close-timer');
+          }
+
+          menu.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            menu.classList.remove('scale-95', 'opacity-0');
+            menu.classList.add('scale-100', 'opacity-100');
+          });
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeAllDropdowns(exceptMenu?: HTMLElement | null) {
+          document.querySelectorAll<HTMLElement>('[role="menu"]').forEach((menu) => {
+            if (menu !== exceptMenu) {
+              closeDropdown(menu);
+            }
+          });
+          document.querySelectorAll('[data-profile-trigger]').forEach((trigger) => {
+            if (!exceptMenu || trigger.getAttribute('data-profile-trigger') !== exceptMenu.id) {
+              trigger.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+
+        // --- Mobile Drawer Management ---
+        function openMobileDrawer() {
+          const backdrop = document.getElementById('mobile-sidebar-backdrop');
+          const container = document.getElementById('mobile-sidebar-container');
+          if (!backdrop || !container) return;
+
+          backdrop.classList.remove('hidden');
+          requestAnimationFrame(() => {
+            container.classList.remove('-translate-x-full');
+            container.classList.add('translate-x-0');
+          });
+        }
+
+        function closeMobileDrawer() {
+          const backdrop = document.getElementById('mobile-sidebar-backdrop');
+          const container = document.getElementById('mobile-sidebar-container');
+          if (!backdrop || !container) return;
+
+          container.classList.remove('translate-x-0');
+          container.classList.add('-translate-x-full');
+          setTimeout(() => {
+            backdrop.classList.add('hidden');
+          }, 200);
+        }
+
+        // --- Desktop Sidebar Collapse Management (Matches Image 1) ---
+        let hoverPeekTimer: number | null = null;
+
+        function setSidebarCollapsed(isCollapsed: boolean) {
+          const wrapper = document.getElementById('desktop-sidebar-wrapper');
+          const pill = document.getElementById('collapsed-sidebar-reopen-pill');
+          if (wrapper) {
+            wrapper.classList.remove('hover-peek');
+            if (isCollapsed) {
+              wrapper.classList.add('collapsed');
+              if (pill) {
+                pill.classList.remove('hidden');
+                pill.classList.add('flex');
+              }
+            } else {
+              wrapper.classList.remove('collapsed');
+              if (pill) {
+                pill.classList.add('hidden');
+                pill.classList.remove('flex');
+              }
+            }
+            localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
+          }
+        }
+
+        function toggleDesktopSidebar() {
+          if (window.innerWidth < 1024) {
+            openMobileDrawer();
+          } else {
+            const wrapper = document.getElementById('desktop-sidebar-wrapper');
+            wrapper?.classList.remove('hover-peek');
+            const isCurrentlyCollapsed = wrapper?.classList.contains('collapsed') ?? false;
+            setSidebarCollapsed(!isCurrentlyCollapsed);
+          }
+        }
+
+        // --- Hover-Peek: On hover of collapse icon/pill, open temporarily (not settled) until clicked ---
+        function startHoverPeek() {
+          const wrapper = document.getElementById('desktop-sidebar-wrapper');
+          if (!wrapper || !wrapper.classList.contains('collapsed')) return;
+          if (hoverPeekTimer) {
+            clearTimeout(hoverPeekTimer);
+            hoverPeekTimer = null;
+          }
+          wrapper.classList.add('hover-peek');
+        }
+
+        function endHoverPeek() {
+          const wrapper = document.getElementById('desktop-sidebar-wrapper');
+          if (!wrapper) return;
+          if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
+          hoverPeekTimer = window.setTimeout(() => {
+            wrapper.classList.remove('hover-peek');
+            hoverPeekTimer = null;
+          }, 220);
+        }
+
+        function cancelHoverPeekTimer() {
+          if (hoverPeekTimer) {
+            clearTimeout(hoverPeekTimer);
+            hoverPeekTimer = null;
+          }
+        }
+
+        // Setup hover-peek triggers
+        const reopenPill = document.getElementById('collapsed-sidebar-reopen-pill');
+        const desktopWrapper = document.getElementById('desktop-sidebar-wrapper');
+
+        if (reopenPill) {
+          reopenPill.addEventListener('mouseenter', startHoverPeek);
+          reopenPill.addEventListener('mouseleave', endHoverPeek);
+        }
+
+        if (desktopWrapper) {
+          desktopWrapper.addEventListener('mouseenter', cancelHoverPeekTimer);
+          desktopWrapper.addEventListener('mouseleave', () => {
+            if (desktopWrapper.classList.contains('hover-peek')) {
+              endHoverPeek();
+            }
+          });
+        }
+
+        // Restore Collapsed State on Start
+        const savedCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+        setSidebarCollapsed(savedCollapsed);
+
+        // Sync theme UI toggle knobs on start (Default is LIGHT)
+        const initialIsLight = !document.documentElement.classList.contains('theme-dark');
+        updateAllThemeToggles(initialIsLight);
+
+        // --- Global Spotlight Search Modal Management (Matching Image 1) ---
+        const SEARCH_ITEMS = [
+          { title: "Bihar DECE LE 2026 1st Round Seat Allotment Letter", category: "results", href: "#important-links", tag: "Seat Allotment", icon: "🏆" },
+          { title: "BCECEB DECE LE Document Verification Schedule & Reporting Dates", category: "exams", href: "#important-dates", tag: "Schedule", icon: "📅" },
+          { title: "Bihar DECE LE Merit Rank Card 2026 Download", category: "results", href: "#important-links", tag: "Result", icon: "⚡" },
+          { title: "Bihar Lateral Entry Required Verification Documents Checklist", category: "admissions", href: "#required-documents", tag: "Documents", icon: "📑" },
+          { title: "DECE LE Selection Process & Counselling Guidelines", category: "exams", href: "#selection-process", tag: "Process", icon: "📋" },
+          { title: "BCECEB Helpdesk, Helpline & Frequently Asked Questions (FAQs)", category: "all", href: "#faqs", tag: "Help", icon: "❓" },
+          { title: "BCECEB Official Portal (bceceboard.bihar.gov.in)", category: "admissions", href: "https://bceceboard.bihar.gov.in", tag: "Portal", icon: "🔗" },
+          { title: "Bihar State Polytechnic / Lateral Entry Seat Matrix", category: "state", href: "#state-filter-widget", tag: "State Updates", icon: "🏛️" },
+          { title: "Bihar DECE LE 2026 Admit Card Archive", category: "admit-cards", href: "#important-dates", tag: "Admit Card", icon: "🎫" },
+        ];
+
+        let currentSearchCategory = 'all';
+        let activeResultIndex = -1;
+
+        function openSearchModal() {
+          const modal = document.getElementById('global-search-modal');
+          const container = document.getElementById('global-search-container');
+          const input = document.getElementById('global-search-input') as HTMLInputElement | null;
+          if (!modal || !container) return;
+
+          closeAllDropdowns();
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+          requestAnimationFrame(() => {
+            modal.classList.remove('opacity-0');
+            modal.classList.add('opacity-100');
+            container.classList.remove('scale-95');
+            container.classList.add('scale-100');
+          });
+          if (input) {
+            setTimeout(() => {
+              input.focus();
+              input.select();
+            }, 60);
+          }
+        }
+
+        function closeSearchModal() {
+          const modal = document.getElementById('global-search-modal');
+          const container = document.getElementById('global-search-container');
+          if (!modal || !container) return;
+
+          modal.classList.remove('opacity-100');
+          modal.classList.add('opacity-0');
+          container.classList.remove('scale-100');
+          container.classList.add('scale-95');
+          setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+          }, 180);
+        }
+
+        function renderSearchResults(query: string) {
+          const emptyState = document.getElementById('search-empty-state');
+          const resultsList = document.getElementById('search-results-list');
+          if (!emptyState || !resultsList) return;
+
+          const trimmed = query.trim().toLowerCase();
+          if (trimmed.length < 2) {
+            emptyState.classList.remove('hidden');
+            resultsList.classList.add('hidden');
+            resultsList.innerHTML = '';
+            activeResultIndex = -1;
+            return;
+          }
+
+          const filtered = SEARCH_ITEMS.filter((item) => {
+            const matchesCategory = currentSearchCategory === 'all' || item.category === currentSearchCategory || item.category === 'all';
+            const matchesQuery = item.title.toLowerCase().includes(trimmed) || item.tag.toLowerCase().includes(trimmed);
+            return matchesCategory && matchesQuery;
+          });
+
+          emptyState.classList.add('hidden');
+          resultsList.classList.remove('hidden');
+
+          if (filtered.length === 0) {
+            resultsList.innerHTML = `
+              <div class="py-8 text-center text-muted text-body-sm">
+                <p>No results found for "${query}"</p>
+                <p class="text-caption-xs mt-1 text-muted/70">Try searching for "Seat Allotment", "Schedule", or "Verification"</p>
+              </div>
+            `;
+            activeResultIndex = -1;
+            return;
+          }
+
+          resultsList.innerHTML = filtered.map((item, idx) => `
+            <a 
+              href="${item.href}" 
+              data-result-index="${idx}"
+              class="search-result-row flex items-center justify-between p-3 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/40 hover:border-accent/40 transition group cursor-pointer"
+            >
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-lg shrink-0">${item.icon}</span>
+                <div class="truncate">
+                  <p class="text-body-sm font-semibold text-white group-hover:text-accent transition truncate">${item.title}</p>
+                  <p class="text-[11px] text-muted truncate">${item.tag} • govtpariksha.com</p>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-muted group-hover:text-accent shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          `).join('');
+
+          activeResultIndex = 0;
+          highlightActiveResult();
+        }
+
+        function highlightActiveResult() {
+          const rows = document.querySelectorAll<HTMLElement>('.search-result-row');
+          rows.forEach((row, i) => {
+            if (i === activeResultIndex) {
+              row.classList.add('bg-surface-raised', 'border-accent/60', 'ring-1', 'ring-accent/40');
+              row.scrollIntoView({ block: 'nearest' });
+            } else {
+              row.classList.remove('bg-surface-raised', 'border-accent/60', 'ring-1', 'ring-accent/40');
+            }
+          });
+        }
+
+        // Search Input & Tab Listeners
+        const globalSearchInput = document.getElementById('global-search-input') as HTMLInputElement | null;
+        if (globalSearchInput) {
+          globalSearchInput.addEventListener('input', (e) => {
+            renderSearchResults((e.target as HTMLInputElement).value);
+          });
+        }
+
+        document.querySelectorAll<HTMLElement>('.search-tab').forEach((tab) => {
+          tab.addEventListener('click', () => {
+            document.querySelectorAll('.search-tab').forEach(t => {
+              t.classList.remove('bg-surface-raised', 'text-accent', 'border', 'border-border', 'font-semibold');
+              t.classList.add('text-muted');
+            });
+            tab.classList.remove('text-muted');
+            tab.classList.add('bg-surface-raised', 'text-accent', 'border', 'border-border', 'font-semibold');
+            currentSearchCategory = tab.getAttribute('data-category') || 'all';
+            if (globalSearchInput) {
+              renderSearchResults(globalSearchInput.value);
+            }
+          });
+        });
+
+        // --- Central Event Delegation on Document (Guarantees No Auto-Close or Duplicates) ---
+        document.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+
+          // 1. Profile Trigger Clicked
+          const trigger = target.closest('[data-profile-trigger]') as HTMLElement | null;
+          if (trigger) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const dropdownId = trigger.getAttribute('data-profile-trigger');
+            if (!dropdownId) return;
+
+            const dropdown = document.getElementById(dropdownId);
+            if (!dropdown) return;
+
+            const isAlreadyOpen = !dropdown.classList.contains('hidden') && dropdown.classList.contains('opacity-100');
+
+            if (isAlreadyOpen) {
+              closeDropdown(dropdown);
+              trigger.setAttribute('aria-expanded', 'false');
+            } else {
+              closeAllDropdowns(dropdown);
+              openDropdown(dropdown, trigger);
+            }
+            return;
+          }
+
+          // 2. Clicked Inside Profile Dropdown
+          const dropdownMenu = target.closest('[role="menu"]');
+          if (dropdownMenu) {
+            // Theme toggle clicked
+            if (target.closest('.theme-toggle-btn')) {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleTheme();
+              return;
+            }
+
+            // Logout action clicked
+            if (target.closest('[data-auth-action="logout"]')) {
+              e.preventDefault();
+              e.stopPropagation();
+              const clerk = (window as any).Clerk;
+              if (clerk && typeof clerk.signOut === 'function') {
+                clerk.signOut().then(() => {
+                  window.location.assign('/login');
+                });
+              } else {
+                window.location.assign('/login');
+              }
+              return;
+            }
+
+            // Other links inside dropdown
+            if (target.closest('a')) {
+              closeAllDropdowns();
+            }
+            return;
+          }
+
+          // 3. Desktop or Toolbar Sidebar Collapse / Reopen Clicked
+          const sidebarToggleBtn = target.closest('[data-sidebar-toggle], [data-sidebar-collapse], #collapsed-sidebar-reopen-pill');
+          if (sidebarToggleBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleDesktopSidebar();
+            return;
+          }
+
+          // 4. Open Global Search Modal Trigger
+          const searchTrigger = target.closest('[data-open-search]');
+          if (searchTrigger) {
+            e.preventDefault();
+            e.stopPropagation();
+            openSearchModal();
+            return;
+          }
+
+          // 5. Search Modal Close Button or Backdrop Clicked
+          const searchModal = document.getElementById('global-search-modal');
+          const searchCloseBtn = target.closest('#global-search-close-btn');
+          if (searchCloseBtn || target === searchModal) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeSearchModal();
+            return;
+          }
+
+          // Click on search result or quick access link
+          if (target.closest('.search-result-row, .quick-access-chip')) {
+            closeSearchModal();
+          }
+
+          // 6. Mobile Drawer Close Clicked
+          const mobileCloseBtn = target.closest('[data-mobile-sidebar-close]');
+          if (mobileCloseBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMobileDrawer();
+            return;
+          }
+
+          // 7. Mobile Drawer Backdrop Clicked
+          const backdrop = document.getElementById('mobile-sidebar-backdrop');
+          if (target === backdrop) {
+            closeMobileDrawer();
+            return;
+          }
+
+          // 8. Clicked Outside Everything: Close Dropdowns
+          closeAllDropdowns();
+        });
+
+      // Keyboard Shortcuts
+      document.addEventListener('keydown', (e) => {
+        const activeEl = document.activeElement;
+        const isSearchModalOpen = !document.getElementById('global-search-modal')?.classList.contains('hidden');
+
+        // Search modal specific keys (Arrow Navigation & Enter)
+        if (isSearchModalOpen) {
+          const rows = document.querySelectorAll<HTMLElement>('.search-result-row');
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (rows.length > 0) {
+              activeResultIndex = (activeResultIndex + 1) % rows.length;
+              highlightActiveResult();
+            }
+            return;
+          }
+          if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (rows.length > 0) {
+              activeResultIndex = (activeResultIndex - 1 + rows.length) % rows.length;
+              highlightActiveResult();
+            }
+            return;
+          }
+          if (e.key === 'Enter') {
+            if (activeResultIndex >= 0 && rows[activeResultIndex]) {
+              e.preventDefault();
+              rows[activeResultIndex].click();
+            }
+            return;
+          }
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeSearchModal();
+            return;
+          }
+        }
+
+        const isInput = activeEl && (
+          activeEl.tagName === 'INPUT' || 
+          activeEl.tagName === 'TEXTAREA' || 
+          activeEl.getAttribute('contenteditable') === 'true'
+        );
+
+        // Alt+B / Ctrl+B / Cmd+B to toggle sidebar (Matches takeUforward)
+        if ((e.altKey || e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+          e.preventDefault();
+          toggleDesktopSidebar();
+          return;
+        }
+
+        if (!isInput && e.key === '[') {
+          e.preventDefault();
+          toggleDesktopSidebar();
+          return;
+        }
+
+        // Ctrl+K / Cmd+K to open search modal (Matches takeUforward)
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          openSearchModal();
+          return;
+        }
+
+        if (e.key === 'Escape') {
+          closeSearchModal();
+          closeAllDropdowns();
+          closeMobileDrawer();
+          const wrapper = document.getElementById('desktop-sidebar-wrapper');
+          wrapper?.classList.remove('hover-peek');
+        }
+      });
+
+        // --- Clerk User State Integration ---
+        async function syncClerkProfile() {
+          const clerk = (window as any).Clerk;
+          if (!clerk) return;
+
+          if (!clerk.loaded && typeof clerk.load === 'function') {
+            try {
+              await clerk.load();
+            } catch (_) {}
+          }
+
+          if (typeof clerk.addListener === 'function' && !(window as any).__clerkListenerAttached) {
+            (window as any).__clerkListenerAttached = true;
+            clerk.addListener(() => syncClerkProfile());
+          }
+
+          const user = clerk.user || clerk.session?.user;
+          const token = await clerk.session?.getToken?.().catch(() => null);
+
+          // Ping backend /api/v1/me if token exists
+          if (token) {
+            fetch('http://localhost:5000/api/v1/me', {
+              headers: { Authorization: `Bearer ${token}` },
+            }).catch(() => null);
+          }
+
+          const nameEls = document.querySelectorAll('.user-display-name');
+          const emailEls = document.querySelectorAll('.user-display-email');
+          const initialEls = document.querySelectorAll('.user-avatar-initials');
+          const imgEls = document.querySelectorAll<HTMLImageElement>('.user-avatar-img');
+          const logoutBtns = document.querySelectorAll<HTMLElement>('.auth-logout-btn');
+          const loginLinks = document.querySelectorAll<HTMLElement>('.auth-login-link');
+
+          if (user) {
+            const fullName = user.fullName || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'User';
+            const email = user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress || 'Account';
+            const initials = ((user.firstName?.[0] || fullName[0] || 'U') + (user.lastName?.[0] || '')).toUpperCase();
+
+            nameEls.forEach(el => el.textContent = fullName);
+            emailEls.forEach(el => el.textContent = email);
+            initialEls.forEach(el => el.textContent = initials);
+
+            if (user.imageUrl) {
+              imgEls.forEach(img => {
+                img.src = user.imageUrl;
+                img.classList.remove('hidden');
+              });
+              initialEls.forEach(el => el.classList.add('hidden'));
+            }
+
+            logoutBtns.forEach(b => b.classList.remove('hidden'));
+            loginLinks.forEach(l => l.classList.add('hidden'));
+
+            // Show Logged In Profile UI in Sidebar & Header, HIDE Logged Out CTA (Get Started button)
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-out').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-in').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-out').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+          } else {
+            nameEls.forEach(el => el.textContent = 'Guest User');
+            emailEls.forEach(el => el.textContent = 'Sign in to access your profile');
+            initialEls.forEach(el => el.textContent = 'GP');
+            imgEls.forEach(img => img.classList.add('hidden'));
+            initialEls.forEach(el => el.classList.remove('hidden'));
+            logoutBtns.forEach(b => b.classList.add('hidden'));
+            loginLinks.forEach(l => l.classList.remove('hidden'));
+
+            // Show Logged Out UI in Sidebar & Header, HIDE Profile Card & Profile Icon
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-out').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-in').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-out').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+          }
+        }
+
+        syncClerkProfile();
+        window.addEventListener('load', syncClerkProfile);
+        document.addEventListener('astro:page-load', syncClerkProfile);
+
+        let clerkPollCount = 0;
+        const clerkInterval = setInterval(() => {
+          clerkPollCount++;
+          if ((window as any).Clerk?.loaded || clerkPollCount > 15) {
+            clearInterval(clerkInterval);
+            syncClerkProfile();
+          }
+        }, 200);
+      })();
+    </script>
   </body>
 </html>
