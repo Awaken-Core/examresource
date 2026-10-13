@@ -18,44 +18,44 @@ const liveUpdates = [
 
 <aside class="space-y-6">
   {/* Sticky CTA Card for quick download */}
-  <div class="bg-gradient-to-br from-blue-700 to-blue-900 rounded-xl p-5 text-white shadow-md">
+  <div class="card p-5 bg-gradient-to-b from-surface-raised to-surface border border-border shadow-elevated">
     <div class="flex items-center gap-2 mb-2">
-      <span class="inline-block w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
-      <span class="text-xs uppercase font-bold tracking-wider text-blue-200">Official Link Active</span>
+      <span class="inline-block w-2 h-2 bg-success rounded-full animate-pulse"></span>
+      <span class="text-caption-xs uppercase font-bold tracking-wider text-muted">Official Link Active</span>
     </div>
-    <h3 class="font-bold text-lg leading-tight mb-2">Round 1 Allotment Order 2026</h3>
-    <p class="text-xs text-blue-100 mb-4 leading-relaxed">
+    <h3 class="text-heading-sm font-bold text-white leading-tight mb-2">Round 1 Allotment Order 2026</h3>
+    <p class="text-body-xs text-muted mb-4 leading-relaxed">
       Download your provisional seat allotment letter and check verification reporting center.
     </p>
     <a 
       href="#important-links" 
-      class="block w-full text-center bg-amber-400 hover:bg-amber-300 text-blue-950 font-bold py-2.5 px-4 rounded-lg text-sm shadow-sm transition transform active:scale-95"
+      class="btn-primary w-full text-center block text-button-sm"
     >
       Download Allotment Letter
     </a>
   </div>
 
   {/* Ad Unit 1: Top Sidebar Ad (300x250) */}
-  <div class="bg-white rounded-xl border border-slate-200 p-3 shadow-xs">
+  <div class="card-flat p-3">
     <AdPlaceholder slotId="sidebar-top-300x250" type="sidebar" label="Top Sidebar Ad Placement" />
   </div>
 
   {/* Trending Updates Widget */}
-  <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
-    <div class="flex items-center gap-2 pb-3 mb-3 border-b border-slate-100">
-      <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="card-flat p-4">
+    <div class="flex items-center gap-2 pb-3 mb-3 border-b border-border">
+      <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
-      <h3 class="font-bold text-slate-900 text-sm">Trending Exam Updates</h3>
+      <h3 class="font-bold text-white text-body-md">Trending Exam Updates</h3>
     </div>
-    <ul class="space-y-3 text-xs">
+    <ul class="space-y-3 text-body-xs">
       {liveUpdates.map((item) => (
-        <li class="flex items-start justify-between gap-2 border-b border-slate-50 pb-2 last:border-0 last:pb-0">
-          <a href="#" class="text-slate-700 hover:text-blue-700 transition font-medium line-clamp-2">
+        <li class="flex items-start justify-between gap-2 border-b border-border/50 pb-2 last:border-0 last:pb-0">
+          <a href="#" class="text-muted hover:text-white transition font-medium line-clamp-2">
             {item.text}
           </a>
           <span class={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
-            item.isHot ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'
+            item.isHot ? 'badge-accent' : 'badge-outline'
           }`}>
             {item.tag}
           </span>
@@ -65,28 +65,28 @@ const liveUpdates = [
   </div>
 
   {/* Telegram / Social community box */}
-  <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4">
+  <div class="card-flat p-4 bg-surface-raised/40">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white shrink-0 font-bold">
+      <div class="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-white shrink-0 font-bold">
         📢
       </div>
       <div>
-        <h4 class="text-sm font-bold text-slate-900">Join Exam Alerts Group</h4>
-        <p class="text-xs text-slate-600 mt-0.5">Get direct PDF & link alerts on your mobile</p>
+        <h4 class="text-body-md font-bold text-white">Join Exam Alerts Group</h4>
+        <p class="text-caption-sm text-muted mt-0.5">Get direct PDF & link alerts on your mobile</p>
       </div>
     </div>
     <div class="mt-3 flex gap-2">
-      <a href="#" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition">
-        Telegram Channel
+      <a href="#" class="btn-primary flex-1 text-center text-button-xs h-8">
+        Telegram
       </a>
-      <a href="#" class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white font-semibold text-xs py-2 px-3 rounded-lg transition">
-        WhatsApp Group
+      <a href="#" class="btn-secondary flex-1 text-center text-button-xs h-8">
+        WhatsApp
       </a>
     </div>
   </div>
 
   {/* Ad Unit 2: Sticky / Lower Sidebar Ad (300x600) */}
-  <div class="sticky top-20 bg-white rounded-xl border border-slate-200 p-3 shadow-xs">
+  <div class="sticky top-20 card-flat p-3">
     <AdPlaceholder slotId="sidebar-sticky-300x600" type="sidebar" label="Sticky Sidebar Ad Placement" />
   </div>
 </aside>
