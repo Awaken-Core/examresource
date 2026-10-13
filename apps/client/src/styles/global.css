@@ -454,9 +454,9 @@
   transform: translateX(0) !important;
   position: fixed !important;
   left: 0 !important;
-  top: 0 !important;
-  height: 100vh !important;
-  z-index: 999 !important;
+  top: 2.25rem !important;
+  height: calc(100vh - 2.25rem) !important;
+  z-index: 1050 !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-border) !important;
   transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }

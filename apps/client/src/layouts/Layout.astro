@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
+import TrendingBanner from '../components/TrendingBanner.astro';
 import SearchModal from '../components/SearchModal.astro';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
@@ -83,13 +84,28 @@ const {
       })();
     </script>
   </head>
-  <body class="bg-canvas min-h-screen flex font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
-    {/* Desktop Left Navigation Sidebar */}
-    {!hideHeaderFooter && (
-      <div id="desktop-sidebar-wrapper" class="hidden lg:block shrink-0 relative z-40">
-        <LeftSidebar prefix="desktop" />
+  <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+    {/* Full-Width Trending / Latest Updates Banner across very top (Always 100% width, never shrinks!) */}
+    {!hideHeaderFooter && <TrendingBanner />}
+
+    {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right */}
+    <div class="flex-1 flex min-h-[calc(100vh-2.25rem)] relative">
+      {/* Desktop Left Navigation Sidebar (Full height on left) */}
+      {!hideHeaderFooter && (
+        <div id="desktop-sidebar-wrapper" class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300">
+          <LeftSidebar prefix="desktop" />
+        </div>
+      )}
+
+      {/* Main Area: Header (Header width decreases when sidebar is open!) + Content + Footer */}
+      <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
+        {!hideHeaderFooter && <Header />}
+        <main class="flex-grow">
+          <slot />
+        </main>
+        {!hideHeaderFooter && <Footer />}
       </div>
-    )}
+    </div>
 
     {/* Mobile Left Sidebar Drawer Overlay */}
     <div 
@@ -102,15 +118,6 @@ const {
       >
         <LeftSidebar prefix="mobile" isMobileDrawer={true} />
       </div>
-    </div>
-
-    {/* Main Content Area */}
-    <div class="flex-1 min-w-0 flex flex-col min-h-screen">
-      {!hideHeaderFooter && <Header />}
-      <main class="flex-grow">
-        <slot />
-      </main>
-      {!hideHeaderFooter && <Footer />}
     </div>
 
     {/* Global Search Modal (Matching Image 1) */}
@@ -241,21 +248,24 @@ const {
 
         function setSidebarCollapsed(isCollapsed: boolean) {
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
-          const pill = document.getElementById('collapsed-sidebar-reopen-pill');
+          const headerBrand = document.getElementById('header-brand-collapsed');
+          const tooltipText = document.getElementById('sidebar-toggle-tooltip-text');
           if (wrapper) {
             wrapper.classList.remove('hover-peek');
             if (isCollapsed) {
               wrapper.classList.add('collapsed');
-              if (pill) {
-                pill.classList.remove('hidden');
-                pill.classList.add('flex');
+              if (headerBrand) {
+                headerBrand.classList.remove('hidden');
+                headerBrand.classList.add('flex');
               }
+              if (tooltipText) tooltipText.textContent = 'Expand sidebar';
             } else {
               wrapper.classList.remove('collapsed');
-              if (pill) {
-                pill.classList.add('hidden');
-                pill.classList.remove('flex');
+              if (headerBrand) {
+                headerBrand.classList.add('hidden');
+                headerBrand.classList.remove('flex');
               }
+              if (tooltipText) tooltipText.textContent = 'Collapse sidebar';
             }
             localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
           }
@@ -272,7 +282,7 @@ const {
           }
         }
 
-        // --- Hover-Peek: On hover of collapse icon/pill, open temporarily (not settled) until clicked ---
+        // --- Hover-Peek: On hover of collapse icon/pill in header, open temporarily until clicked ---
         function startHoverPeek() {
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
           if (!wrapper || !wrapper.classList.contains('collapsed')) return;
@@ -300,13 +310,13 @@ const {
           }
         }
 
-        // Setup hover-peek triggers
-        const reopenPill = document.getElementById('collapsed-sidebar-reopen-pill');
+        // Setup hover-peek triggers (Header button + Floating Sidebar)
+        const headerToggleWrapper = document.getElementById('header-sidebar-toggle-wrapper');
         const desktopWrapper = document.getElementById('desktop-sidebar-wrapper');
 
-        if (reopenPill) {
-          reopenPill.addEventListener('mouseenter', startHoverPeek);
-          reopenPill.addEventListener('mouseleave', endHoverPeek);
+        if (headerToggleWrapper) {
+          headerToggleWrapper.addEventListener('mouseenter', startHoverPeek);
+          headerToggleWrapper.addEventListener('mouseleave', endHoverPeek);
         }
 
         if (desktopWrapper) {
