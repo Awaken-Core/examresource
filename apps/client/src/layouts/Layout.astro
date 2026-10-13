@@ -216,6 +216,24 @@ const {
               trigger.setAttribute('aria-expanded', 'false');
             }
           });
+          // Close notifications popup
+          const notifPopup = document.querySelector<HTMLElement>('[data-notification-popup]');
+          if (notifPopup && notifPopup !== exceptMenu) {
+            notifPopup.classList.add('hidden', 'scale-95', 'opacity-0');
+            notifPopup.classList.remove('scale-100', 'opacity-100');
+          }
+          // Close language dropdown
+          const langDropdown = document.getElementById('header-language-dropdown');
+          if (langDropdown && langDropdown !== exceptMenu) {
+            langDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+            langDropdown.classList.remove('scale-100', 'opacity-100');
+          }
+          // Close favorites dropdown
+          const favDropdown = document.getElementById('header-favorites-dropdown');
+          if (favDropdown && favDropdown !== exceptMenu) {
+            favDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+            favDropdown.classList.remove('scale-100', 'opacity-100');
+          }
         }
 
         // --- Mobile Drawer Management ---
@@ -335,6 +353,25 @@ const {
         // Sync theme UI toggle knobs on start (Default is LIGHT)
         const initialIsLight = !document.documentElement.classList.contains('theme-dark');
         updateAllThemeToggles(initialIsLight);
+
+        // --- Language Switcher Integration ---
+        function setLanguage(lang: string) {
+          localStorage.setItem('site_language', lang);
+          const label = document.getElementById('current-language-label');
+          if (label) label.textContent = lang.toUpperCase();
+          const checkEn = document.querySelector('.lang-check-en');
+          const checkHi = document.querySelector('.lang-check-hi');
+          if (lang === 'hi') {
+            checkEn?.classList.add('hidden');
+            checkHi?.classList.remove('hidden');
+          } else {
+            checkEn?.classList.remove('hidden');
+            checkHi?.classList.add('hidden');
+          }
+        }
+
+        const savedLang = localStorage.getItem('site_language') || 'en';
+        setLanguage(savedLang);
 
         // --- Global Spotlight Search Modal Management (Matching Image 1) ---
         const SEARCH_ITEMS = [
@@ -552,7 +589,121 @@ const {
             return;
           }
 
-          // 4. Open Global Search Modal Trigger
+          // 4. Notifications Popup Toggle / Interactions
+          const notifTrigger = target.closest('[data-notification-trigger]');
+          if (notifTrigger) {
+            e.preventDefault();
+            e.stopPropagation();
+            const targetId = notifTrigger.getAttribute('data-notification-trigger');
+            const notifPopup = targetId ? document.getElementById(targetId) : null;
+            if (notifPopup) {
+              const isOpen = !notifPopup.classList.contains('hidden');
+              closeAllDropdowns();
+              if (!isOpen) {
+                notifPopup.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                  notifPopup.classList.remove('scale-95', 'opacity-0');
+                  notifPopup.classList.add('scale-100', 'opacity-100');
+                });
+              }
+            }
+            return;
+          }
+
+          const closeNotifBtn = target.closest('[data-close-notifications]');
+          if (closeNotifBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeAllDropdowns();
+            return;
+          }
+
+          const markAllReadBtn = target.closest('[data-mark-all-read]');
+          if (markAllReadBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.querySelectorAll('.notification-badge-count, .notification-pill-badge').forEach((el) => {
+              el.textContent = '0';
+              el.classList.add('opacity-50');
+            });
+            document.querySelectorAll('.notification-dot-indicator').forEach((el) => {
+              el.classList.add('hidden');
+            });
+            document.querySelectorAll('.notification-pill-text').forEach((el) => {
+              el.textContent = 'All caught up (0 new)';
+            });
+            document.querySelectorAll('.notification-unread-dot').forEach((el) => {
+              el.classList.add('hidden');
+            });
+            const notifItem = document.getElementById('notification-item-welcome');
+            if (notifItem) {
+              notifItem.classList.remove('border-l-accent');
+              notifItem.classList.add('border-l-border', 'opacity-70');
+            }
+            return;
+          }
+
+          // If clicked inside notifications popup, don't close
+          if (target.closest('[data-notification-popup]')) {
+            return;
+          }
+
+          // 5. Language Switcher Trigger & Selection
+          const langBtn = target.closest('#header-language-btn');
+          if (langBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropdown = document.getElementById('header-language-dropdown');
+            if (dropdown) {
+              const isOpen = !dropdown.classList.contains('hidden');
+              closeAllDropdowns();
+              if (!isOpen) {
+                dropdown.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                  dropdown.classList.remove('scale-95', 'opacity-0');
+                  dropdown.classList.add('scale-100', 'opacity-100');
+                });
+              }
+            }
+            return;
+          }
+
+          const langOption = target.closest('[data-lang-option]');
+          if (langOption) {
+            e.preventDefault();
+            e.stopPropagation();
+            const chosenLang = langOption.getAttribute('data-lang-option') || 'en';
+            setLanguage(chosenLang);
+            closeAllDropdowns();
+            return;
+          }
+
+          // 6. Favorites Button Trigger
+          const favBtn = target.closest('#header-favorites-btn');
+          if (favBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropdown = document.getElementById('header-favorites-dropdown');
+            if (dropdown) {
+              const isOpen = !dropdown.classList.contains('hidden');
+              closeAllDropdowns();
+              if (!isOpen) {
+                dropdown.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                  dropdown.classList.remove('scale-95', 'opacity-0');
+                  dropdown.classList.add('scale-100', 'opacity-100');
+                });
+              }
+            }
+            return;
+          }
+
+          // If clicked inside language or favorites dropdown, don't close
+          if (target.closest('#header-language-dropdown, #header-favorites-dropdown')) {
+            return;
+          }
+
+          // 7. Open Global Search Modal Trigger
           const searchTrigger = target.closest('[data-open-search]');
           if (searchTrigger) {
             e.preventDefault();
@@ -561,7 +712,7 @@ const {
             return;
           }
 
-          // 5. Search Modal Close Button or Backdrop Clicked
+          // 8. Search Modal Close Button or Backdrop Clicked
           const searchModal = document.getElementById('global-search-modal');
           const searchCloseBtn = target.closest('#global-search-close-btn');
           if (searchCloseBtn || target === searchModal) {
@@ -576,7 +727,7 @@ const {
             closeSearchModal();
           }
 
-          // 6. Mobile Drawer Close Clicked
+          // 9. Mobile Drawer Close Clicked
           const mobileCloseBtn = target.closest('[data-mobile-sidebar-close]');
           if (mobileCloseBtn) {
             e.preventDefault();
@@ -585,14 +736,14 @@ const {
             return;
           }
 
-          // 7. Mobile Drawer Backdrop Clicked
+          // 10. Mobile Drawer Backdrop Clicked
           const backdrop = document.getElementById('mobile-sidebar-backdrop');
           if (target === backdrop) {
             closeMobileDrawer();
             return;
           }
 
-          // 8. Clicked Outside Everything: Close Dropdowns
+          // 11. Clicked Outside Everything: Close Dropdowns
           closeAllDropdowns();
         });
 

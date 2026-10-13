@@ -1,0 +1,84 @@
+---
+// NotificationPopup.astro - Interactive notifications popover matching screenshot
+interface Props {
+  id?: string;
+  prefix?: string;
+}
+
+const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
+---
+
+<div 
+  id={id} 
+  data-notification-popup
+  class="hidden absolute left-[calc(100%+14px)] bottom-0 w-84 sm:w-90 bg-surface border border-border rounded-2xl shadow-elevated p-4 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none"
+  role="dialog"
+  aria-label="Notifications"
+>
+  {/* Header: Title + Close Icon */}
+  <div class="flex items-center justify-between pb-3 border-b border-border/50">
+    <h3 class="text-sm font-semibold text-white tracking-tight">Notifications</h3>
+    <button 
+      type="button" 
+      data-close-notifications
+      class="text-muted hover:text-white p-1 rounded-lg hover:bg-surface-raised transition cursor-pointer"
+      title="Close notifications"
+      aria-label="Close notifications"
+    >
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+
+  {/* Subheader: New Count + Mark all as read */}
+  <div class="flex items-center justify-between py-2.5 text-xs">
+    <div class="flex items-center gap-1.5 font-medium text-muted">
+      <span>New</span>
+      <span class="notification-badge-count px-1.5 py-0.5 rounded-full bg-surface-raised text-[10px] font-bold text-white border border-border/60 leading-none">
+        1
+      </span>
+    </div>
+    <button 
+      type="button" 
+      data-mark-all-read
+      class="text-caption-xs text-muted hover:text-white hover:underline transition cursor-pointer font-medium"
+    >
+      Mark all as read
+    </button>
+  </div>
+
+  {/* Active / Unread Notification Item */}
+  <div class="space-y-2 mt-1">
+    <div 
+      id="notification-item-welcome" 
+      class="notification-item border-l-3 border-l-accent bg-surface-raised/50 hover:bg-surface-raised border border-border/40 rounded-xl p-3 transition"
+    >
+      <div class="flex items-start gap-2.5">
+        <span class="text-base shrink-0 leading-none mt-0.5">📢</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-xs text-white/90 leading-relaxed font-normal">
+            Hi <span class="notification-user-name font-semibold text-white">Devil Wagh</span>, your account is ready. Start preparing on govtpariksha.com.
+          </p>
+          <div class="flex items-center justify-end gap-1 mt-1.5 text-[11px] text-accent font-medium">
+            <span class="notification-unread-dot w-1.5 h-1.5 rounded-full bg-accent"></span>
+            <span>1h</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Section: Earlier */}
+  <div class="mt-4 pt-3 border-t border-border/40">
+    <h4 class="text-xs font-semibold text-muted mb-2.5">Earlier</h4>
+    <div class="flex items-center justify-center gap-2 py-3 px-3 rounded-xl bg-surface-raised/30 border border-border/30 text-muted text-xs">
+      <div class="w-4 h-4 rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shrink-0">
+        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      <span class="font-medium text-muted">You're all caught up!</span>
+    </div>
+  </div>
+</div>
