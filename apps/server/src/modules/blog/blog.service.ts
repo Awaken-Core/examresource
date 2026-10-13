@@ -271,6 +271,25 @@ export class BlogService {
     });
   }
 
+  async replaceBlocks(
+    blogId: string,
+    blocks: CreateBlockInput[],
+    currentUser: CurrentUser,
+  ) {
+    await this.findManageable(blogId, currentUser);
+
+    return db.transaction(async (tx) => {
+      await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, blogId));
+
+      await tx
+        .update(blogs)
+        .set({ updatedAt: new Date() })
+        .where(eq(blogs.id, blogId));
+
+      return this.insertBlocks(tx, blogId, blocks);
+    });
+  }
+
   async remove(id: string, currentUser: CurrentUser) {
     const existing = await this.findManageable(id, currentUser);
     await db.delete(blogs).where(eq(blogs.id, existing.id));

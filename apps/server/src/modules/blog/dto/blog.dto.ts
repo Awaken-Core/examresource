@@ -30,6 +30,10 @@ export const updateBlockSchema = createBlockSchema
     message: 'At least one field is required.',
   });
 
+export const replaceBlocksSchema = z.object({
+  blocks: z.array(createBlockSchema).max(1_000),
+});
+
 export const reorderBlocksSchema = z.object({
   blockIds: z
     .array(z.uuid())
@@ -65,3 +69,4 @@ export type CreateBlogInput = z.infer<typeof createBlogSchema>;
 export type UpdateBlogInput = z.infer<typeof updateBlogSchema>;
 export type CreateBlockInput = z.infer<typeof createBlockSchema>;
 export type UpdateBlockInput = z.infer<typeof updateBlockSchema>;
+export type ReplaceBlocksInput = z.infer<typeof replaceBlocksSchema>;

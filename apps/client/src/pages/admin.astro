@@ -1,12 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { INITIAL_MOCK_POSTS, STATES_LIST, CATEGORIES_LIST } from '../data/portalMockData';
-let auth: any = null;
-try {
-  auth = typeof Astro.locals.auth === 'function' ? Astro.locals.auth() : null;
-} catch (_) {}
-const userId = auth?.userId;
-if (!userId && auth?.redirectToSignIn) return auth.redirectToSignIn();
+// Auth is enforced on the client below (Clerk's SSR session isn't reliably
+// resolved on the first dev-mode request due to its handshake flow).
 
 // Calculate initial metrics
 const totalArticles = INITIAL_MOCK_POSTS.length;
@@ -16,90 +12,78 @@ const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
 ---
 
 <Layout
-  title="Admin Dashboard - ExamPortal"
+  title="Admin Dashboard - govtpariksha.com"
   description="Manage government exam articles, publication status, categories, and site settings."
+  hideHeaderFooter={true}
+  disableTransitions={true}
 >
   <script>
+    import { waitForClerkToken, fetchCurrentUser } from '../lib/clerk-session';
+
     const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
-    const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
-    const token = await clerk?.session?.getToken();
-    const response = await fetch(`${apiUrl}/me`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-    const user = response.ok ? await response.json() : null;
-    if (user?.role !== 'admin') window.location.replace('/');
+    const token = await waitForClerkToken();
+    if (!token) {
+      window.location.replace('/login?redirect_url=/admin');
+    } else {
+      const { user } = await fetchCurrentUser(apiUrl, token);
+      if (!user) window.location.replace('/login?redirect_url=/admin');
+      else if (!['editor', 'admin'].includes(user.role)) window.location.replace('/');
+    }
   </script>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    
-    {/* Admin Header with Breadcrumbs & Actions */}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-6">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="flex flex-col gap-4 pb-6 border-b border-border sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-          <a href="/" class="hover:text-blue-700">ExamPortal</a>
+        <div class="flex items-center gap-2 text-caption-sm text-muted">
+          <a href="/" class="hover:text-accent">govtpariksha.com</a>
           <span>/</span>
-          <span class="text-slate-800 font-semibold">Admin Dashboard</span>
+          <span class="text-white font-medium">Admin</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Exam Portal Administration
+        <h1 class="text-heading-md font-bold text-white mt-2">
+          Exam portal administration
         </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">
-          Frontend prototype for managing exam publications, drafts, categories, and article states.
+        <p class="text-body-sm text-muted mt-1">
+          Manage publications, drafts, categories, and article status.
         </p>
       </div>
 
-      <div class="flex items-center gap-2.5">
-        <a 
-          href="/editor" 
-          class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition"
-        >
+      <div class="flex items-center gap-2">
+        <a href="/admin/dashboard" class="btn-primary inline-flex items-center gap-1.5">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          <span>Write New Article</span>
+          <span>Open blog studio</span>
         </a>
-        <a 
-          href="/" 
-          class="inline-flex items-center gap-1 px-3 py-2.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm rounded-lg transition"
-        >
-          <span>View Site ↗</span>
+        <a href="/" class="btn-outline inline-flex items-center">
+          View site
         </a>
       </div>
     </div>
 
-    {/* Metric Overview Cards */}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Articles</span>
-          <span class="p-2 bg-blue-50 text-blue-700 rounded-lg text-lg">📄</span>
-        </div>
-        <div id="stat-total" class="text-2xl font-bold text-slate-900 mt-2">{totalArticles}</div>
-        <span class="text-[11px] text-emerald-600 font-semibold">Live catalog</span>
+      <div class="card-flat p-4 sm:p-5">
+        <span class="text-caption-sm font-medium text-muted">Total articles</span>
+        <div id="stat-total" class="text-heading-md font-bold text-white mt-2">{totalArticles}</div>
+        <span class="text-caption-xs text-success">Live catalog</span>
       </div>
 
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Published</span>
-          <span class="p-2 bg-emerald-50 text-emerald-700 rounded-lg text-lg">✅</span>
-        </div>
-        <div id="stat-published" class="text-2xl font-bold text-slate-900 mt-2">{publishedCount}</div>
-        <span class="text-[11px] text-slate-500">Live on public portal</span>
+      <div class="card-flat p-4 sm:p-5">
+        <span class="text-caption-sm font-medium text-muted">Published</span>
+        <div id="stat-published" class="text-heading-md font-bold text-white mt-2">{publishedCount}</div>
+        <span class="text-caption-xs text-muted">Live on the public site</span>
       </div>
 
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Drafts</span>
-          <span class="p-2 bg-amber-50 text-amber-700 rounded-lg text-lg">📝</span>
-        </div>
-        <div id="stat-drafts" class="text-2xl font-bold text-slate-900 mt-2">{draftsCount}</div>
-        <span class="text-[11px] text-amber-600 font-semibold">Pending editorial review</span>
+      <div class="card-flat p-4 sm:p-5">
+        <span class="text-caption-sm font-medium text-muted">Drafts</span>
+        <div id="stat-drafts" class="text-heading-md font-bold text-white mt-2">{draftsCount}</div>
+        <span class="text-caption-xs text-muted">Waiting for review</span>
       </div>
 
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Impressions</span>
-          <span class="p-2 bg-purple-50 text-purple-700 rounded-lg text-lg">📈</span>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 mt-2">{totalViews.toLocaleString()}</div>
-        <span class="text-[11px] text-slate-500">Candidate article views</span>
+      <div class="card-flat p-4 sm:p-5">
+        <span class="text-caption-sm font-medium text-muted">Impressions</span>
+        <div class="text-heading-md font-bold text-white mt-2">{totalViews.toLocaleString()}</div>
+        <span class="text-caption-xs text-muted">Article views</span>
       </div>
     </div>
 
@@ -108,81 +92,73 @@ const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
       
       {/* Article Listing & Table (8 cols on lg) */}
       <div class="lg:col-span-8 space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <span>📚</span>
-              <span>Article Repository</span>
-            </h2>
+        <div class="card-flat p-4 sm:p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
+            <h2 class="text-heading-sm font-semibold text-white">Articles</h2>
 
-            {/* Table Filters: Search, Status, Category */}
             <div class="flex flex-wrap items-center gap-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 id="admin-search-input"
-                placeholder="Search articles..."
-                class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-600"
+                placeholder="Search articles"
+                class="input w-auto py-1.5 text-body-sm"
               />
-              <select 
+              <select
                 id="admin-status-filter"
-                class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-blue-600"
+                class="input w-auto py-1.5 text-body-sm"
               >
-                <option value="ALL">All Statuses</option>
+                <option value="ALL">All statuses</option>
                 <option value="Published">Published</option>
                 <option value="Draft">Draft</option>
               </select>
             </div>
           </div>
 
-          {/* Action Notification Banner */}
-          <div id="admin-toast" class="hidden my-3 p-3 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-between">
+          <div id="admin-toast" class="hidden my-3 p-3 rounded-xl text-body-sm font-medium bg-surface text-success border border-success/40 flex items-center justify-between">
             <span id="admin-toast-text">Action performed successfully.</span>
-            <button id="admin-toast-close" class="text-emerald-700 hover:text-emerald-900 font-bold ml-2">✕</button>
+            <button id="admin-toast-close" class="text-muted hover:text-white font-bold ml-2">✕</button>
           </div>
 
-          {/* Table Container */}
           <div class="overflow-x-auto mt-3">
-            <table class="min-w-full text-xs text-left">
-              <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-[11px]">
+            <table class="min-w-full text-body-xs text-left">
+              <thead class="text-muted font-medium border-b border-border text-caption-sm">
                 <tr>
-                  <th class="py-3 px-3">Title & Summary</th>
-                  <th class="py-3 px-2">State</th>
-                  <th class="py-3 px-2">Category</th>
-                  <th class="py-3 px-2">Status</th>
-                  <th class="py-3 px-3 text-right">Actions</th>
+                  <th class="py-3 px-3 font-medium">Title</th>
+                  <th class="py-3 px-2 font-medium">State</th>
+                  <th class="py-3 px-2 font-medium">Category</th>
+                  <th class="py-3 px-2 font-medium">Status</th>
+                  <th class="py-3 px-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody id="admin-articles-tbody" class="divide-y divide-slate-100">
+              <tbody id="admin-articles-tbody" class="divide-y divide-border">
                 {INITIAL_MOCK_POSTS.map((post) => (
-                  <tr class="admin-row hover:bg-slate-50/80 transition" data-id={post.id} data-status={post.status} data-title={post.title.toLowerCase()}>
+                  <tr class="admin-row hover:bg-surface-raised transition" data-id={post.id} data-status={post.status} data-title={post.title.toLowerCase()}>
                     <td class="py-3 px-3 max-w-xs">
-                      <div class="font-bold text-slate-900 leading-snug line-clamp-1">{post.title}</div>
-                      <div class="text-[10px] text-slate-400 mt-0.5">Updated: {post.updatedDate} • {post.views} views</div>
+                      <div class="font-semibold text-white leading-snug line-clamp-1">{post.title}</div>
+                      <div class="text-caption-xs text-muted mt-0.5">Updated {post.updatedDate} · {post.views} views</div>
                     </td>
-                    <td class="py-3 px-2 whitespace-nowrap text-slate-600 font-medium">{post.state}</td>
-                    <td class="py-3 px-2 whitespace-nowrap text-slate-600">{post.category}</td>
+                    <td class="py-3 px-2 whitespace-nowrap text-muted font-medium">{post.state}</td>
+                    <td class="py-3 px-2 whitespace-nowrap text-muted">{post.category}</td>
                     <td class="py-3 px-2 whitespace-nowrap">
-                      <span class={`status-badge px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        post.status === 'Published' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                      }`}>
+                      <span class={post.status === 'Published' ? 'status-badge badge-accent' : 'status-badge badge-outline'}>
                         {post.status}
                       </span>
                     </td>
                     <td class="py-3 px-3 text-right whitespace-nowrap space-x-1">
-                      <button 
-                        class="toggle-status-btn px-2 py-1 rounded border border-slate-200 hover:bg-slate-100 text-slate-700 transition text-[11px]"
+                      <button
+                        class="toggle-status-btn btn-ghost text-button-xs h-7"
                         data-id={post.id}
                       >
                         {post.status === 'Published' ? 'Unpublish' : 'Publish'}
                       </button>
-                      <a 
-                        href={`/editor?edit=${post.id}`} 
-                        class="inline-block px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold transition text-[11px]"
+                      <a
+                        href={`/editor?edit=${post.id}`}
+                        class="btn-outline inline-flex items-center text-button-xs h-7"
                       >
                         Edit
                       </a>
-                      <button 
-                        class="delete-btn px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition text-[11px]"
+                      <button
+                        class="delete-btn btn-ghost text-button-xs h-7 text-error"
                         data-id={post.id}
                       >
                         Delete
@@ -198,60 +174,50 @@ const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
 
       {/* Category Management Side Widget (4 cols on lg) */}
       <div class="lg:col-span-4 space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs">
-          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <span>🏷️</span>
-              <span>Category Management</span>
-            </h2>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">UI Prototype</span>
+        <div class="card-flat p-4 sm:p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-border">
+            <h2 class="text-heading-sm font-semibold text-white">Categories</h2>
+            <span class="badge-outline">Preview</span>
           </div>
 
           <div class="mt-3.5 space-y-2">
             {CATEGORIES_LIST.filter(c => c.id !== 'all').map((cat) => (
-              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-xs">
-                <div class="font-medium text-slate-800">{cat.name}</div>
+              <div class="flex items-center justify-between p-2.5 rounded-xl bg-canvas border border-border text-body-sm">
+                <div class="font-medium text-white">{cat.name}</div>
                 <div class="flex items-center gap-2">
-                  <span class="text-[10px] bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-full">{cat.count} Posts</span>
-                  <button class="text-slate-400 hover:text-slate-600 text-xs font-bold" title="Edit Category">✎</button>
+                  <span class="badge-outline">{cat.count}</span>
+                  <button class="btn-icon text-muted" title="Edit category">✎</button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Add Category Form Mockup */}
-          <div class="mt-4 pt-3 border-t border-slate-100">
-            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Add New Category</label>
+          <div class="mt-4 pt-3 border-t border-border">
+            <label class="block text-label font-medium text-white mb-1.5">Add a category</label>
             <div class="flex gap-2">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 id="new-category-input"
-                placeholder="Category name..." 
-                class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
+                placeholder="Category name"
+                class="input flex-1 py-1.5 text-body-sm"
               />
-              <button 
-                id="add-category-btn"
-                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition"
-              >
+              <button id="add-category-btn" class="btn-primary">
                 Add
               </button>
             </div>
           </div>
         </div>
 
-        {/* Quick Quicklinks Help Card */}
-        <div class="bg-blue-50/60 rounded-xl border border-blue-200 p-4 text-xs text-blue-900">
-          <h3 class="font-bold flex items-center gap-1.5 mb-1.5">
-            <span>ℹ️</span>
-            <span>Editorial Workflow Rules</span>
-          </h3>
-          <p class="leading-relaxed text-blue-800 text-[11px]">
-            Articles marked as <strong>Published</strong> immediately appear in search feeds and state filters. Draft posts remain visible in the editor preview mode only.
+        <div class="card-flat p-4">
+          <h3 class="text-heading-sm font-semibold text-white mb-1.5">Editorial workflow</h3>
+          <p class="text-body-sm text-muted leading-relaxed">
+            Published articles appear in search and state filters. Drafts stay in the editor until you publish them.
           </p>
         </div>
       </div>
 
     </div>
+  </div>
   </div>
 </Layout>
 
@@ -314,7 +280,7 @@ const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
         target.textContent = 'Publish';
         if (badge) {
           badge.textContent = 'Draft';
-          badge.className = 'status-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800';
+          badge.className = 'status-badge badge-outline';
         }
         showToast('Article status updated to Draft.');
       } else {
@@ -322,7 +288,7 @@ const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
         target.textContent = 'Unpublish';
         if (badge) {
           badge.textContent = 'Published';
-          badge.className = 'status-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800';
+          badge.className = 'status-badge badge-accent';
         }
         showToast('Article published to public portal.');
       }

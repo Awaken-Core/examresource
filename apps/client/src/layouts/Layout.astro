@@ -16,6 +16,7 @@ interface Props {
   modifiedTime?: string;
   jsonLd?: object;
   hideHeaderFooter?: boolean;
+  disableTransitions?: boolean;
 }
 
 const {
@@ -27,6 +28,7 @@ const {
   modifiedTime = "2026-10-12T14:45:00+05:30",
   jsonLd,
   hideHeaderFooter = false,
+  disableTransitions = false,
 } = Astro.props;
 ---
 
@@ -61,8 +63,9 @@ const {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    {/* ClientRouter for page transitions */}
-    <ClientRouter />
+    {/* ClientRouter for page transitions. Auth/admin pages opt out so Clerk
+        is not torn down mid-handshake by a view-transition swap. */}
+    {!disableTransitions && <ClientRouter />}
 
     {/* Structured Data (JSON-LD) */}
     {jsonLd && (
@@ -88,16 +91,15 @@ const {
     {/* Full-Width Trending / Latest Updates Banner across very top (Always 100% width, never shrinks!) */}
     {!hideHeaderFooter && <TrendingBanner />}
 
-    {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right */}
-    <div class="flex-1 flex min-h-[calc(100vh-2.25rem)] relative">
-      {/* Desktop Left Navigation Sidebar (Full height on left) */}
+    {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right.
+        Admin and auth pages opt out of the public header, sidebar, and search. */}
+    <div class:list={["flex-1 flex relative", hideHeaderFooter ? "min-h-screen" : "min-h-[calc(100vh-2.25rem)]"]}>
       {!hideHeaderFooter && (
         <div id="desktop-sidebar-wrapper" class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300">
           <LeftSidebar prefix="desktop" />
         </div>
       )}
 
-      {/* Main Area: Header (Header width decreases when sidebar is open!) + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
         {!hideHeaderFooter && <Header />}
         <main class="flex-grow">
@@ -107,21 +109,21 @@ const {
       </div>
     </div>
 
-    {/* Mobile Left Sidebar Drawer Overlay */}
-    <div 
-      id="mobile-sidebar-backdrop" 
-      class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden lg:hidden transition-opacity"
-    >
-      <div 
-        id="mobile-sidebar-container" 
-        class="w-64 h-full bg-canvas shadow-elevated transform -translate-x-full transition-transform duration-200"
+    {!hideHeaderFooter && (
+      <div
+        id="mobile-sidebar-backdrop"
+        class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden lg:hidden transition-opacity"
       >
-        <LeftSidebar prefix="mobile" isMobileDrawer={true} />
+        <div
+          id="mobile-sidebar-container"
+          class="w-64 h-full bg-canvas shadow-elevated transform -translate-x-full transition-transform duration-200"
+        >
+          <LeftSidebar prefix="mobile" isMobileDrawer={true} />
+        </div>
       </div>
-    </div>
+    )}
 
-    {/* Global Search Modal (Matching Image 1) */}
-    <SearchModal />
+    {!hideHeaderFooter && <SearchModal />}
 
     {/* Global Robust Interactive Script */}
     <script>
@@ -849,9 +851,11 @@ const {
           const user = clerk.user || clerk.session?.user;
           const token = await clerk.session?.getToken?.().catch(() => null);
 
-          // Ping backend /api/v1/me if token exists
+          // Sync Clerk → database on every page so admin role/email linking happens
+          // even if the user lands on the homepage first.
           if (token) {
-            fetch('http://localhost:5000/api/v1/me', {
+            const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+            fetch(`${apiUrl}/me`, {
               headers: { Authorization: `Bearer ${token}` },
             }).catch(() => null);
           }

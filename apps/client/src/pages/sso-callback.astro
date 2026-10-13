@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Authenticating... - govtpariksha.com" hideHeaderFooter={true}>
+<Layout title="Authenticating... - govtpariksha.com" hideHeaderFooter={true} disableTransitions={true}>
   <main class="min-h-screen w-full flex flex-col items-center justify-center bg-[#0d0e11] text-[#ffffff] px-4">
     <div class="flex flex-col items-center gap-4 text-center max-w-sm">
       <div class="w-10 h-10 border-3 border-accent border-t-transparent rounded-full animate-spin"></div>
@@ -12,46 +12,43 @@ import Layout from '../layouts/Layout.astro';
   </main>
 
   <script>
-    async function handleAuthCallback() {
-      const clerk = (window as any).Clerk;
-      if (!clerk) return;
+    import { getReadyClerk } from '../lib/clerk-session';
 
-      if (!clerk.loaded && typeof clerk.load === 'function') {
-        try {
-          await clerk.load();
-        } catch (_) {}
-      }
-
+    function safeRedirect(url: string | null | undefined) {
+      if (url && url.startsWith('/') && !url.startsWith('//')) return url;
       try {
-        if (typeof clerk.handleRedirectCallback === 'function') {
-          await clerk.handleRedirectCallback({
-            afterSignInUrl: '/',
-            afterSignUpUrl: '/',
-          });
-        } else {
-          window.location.assign('/');
+        const parsed = url ? new URL(url, window.location.origin) : null;
+        if (parsed && parsed.origin === window.location.origin) {
+          return `${parsed.pathname}${parsed.search}`;
         }
-      } catch (err: any) {
-        console.error('Error in SSO redirect callback:', err);
-        // If already signed in, navigate to /
-        if (clerk.user) {
-          window.location.assign('/');
-        } else {
-          window.location.assign('/login?error=' + encodeURIComponent(err?.message || 'sso_failed'));
-        }
+      } catch {
+        /* ignore */
       }
+      return '/';
     }
 
-    window.addEventListener('load', handleAuthCallback);
-    document.addEventListener('astro:page-load', handleAuthCallback);
+    const clerk = await getReadyClerk();
+    const fallback = safeRedirect(
+      new URLSearchParams(window.location.search).get('redirect_url'),
+    );
 
-    let checkCount = 0;
-    const interval = setInterval(() => {
-      checkCount++;
-      if ((window as any).Clerk?.loaded || checkCount > 20) {
-        clearInterval(interval);
-        handleAuthCallback();
+    try {
+      if (typeof clerk?.handleRedirectCallback === 'function') {
+        await clerk.handleRedirectCallback({});
+      } else if (clerk?.user) {
+        window.location.replace(fallback);
+      } else {
+        window.location.replace(fallback);
       }
-    }, 150);
+    } catch (err: any) {
+      const already =
+        err?.errors?.[0]?.code === 'identifier_already_signed_in' ||
+        /already signed in/i.test(String(err?.message || err?.errors?.[0]?.message || ''));
+      if (already || clerk?.user) {
+        window.location.replace(fallback === '/' ? '/admin/dashboard' : fallback);
+      } else {
+        window.location.assign('/login?error=' + encodeURIComponent(err?.message || 'sso_failed'));
+      }
+    }
   </script>
 </Layout>

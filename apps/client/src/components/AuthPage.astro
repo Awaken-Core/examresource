@@ -125,6 +125,8 @@ const isSignup = mode === 'signup';
 </main>
 
 <script>
+  import { getReadyClerk, waitForClerkToken, fetchCurrentUser } from '../lib/clerk-session';
+
   function setupAuthInteractivity() {
     const isSignupMode = window.location.pathname.includes('signup');
     const googleBtn = document.getElementById('google-continue-btn');
@@ -151,6 +153,31 @@ const isSignup = mode === 'signup';
     let currentSignIn: any = null;
     let pendingEmail = '';
 
+    // Return the user to where they came from (same-origin paths only).
+    function getRedirectTarget() {
+      const raw = new URLSearchParams(window.location.search).get('redirect_url');
+      if (raw && raw.startsWith('/') && !raw.startsWith('//')) return raw;
+      return '/';
+    }
+    const redirectTarget = getRedirectTarget();
+    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+
+    async function continueIfSignedIn() {
+      const token = await waitForClerkToken();
+      if (!token) return false;
+      const { user, message } = await fetchCurrentUser(apiUrl, token);
+      if (!user) {
+        showStatus(message || 'Signed in with Google, but the account could not be synced. Is the API server running?', 'error');
+        return true;
+      }
+      window.location.replace(redirectTarget);
+      return true;
+    }
+
+    // If already signed in, sync with the DB then continue — don't start a new
+    // Google/OTP flow (that is what produced the "already signed in" error).
+    continueIfSignedIn();
+
     function showStatus(message: string, type: 'error' | 'success' | 'info') {
       if (!statusBanner) return;
       statusBanner.classList.remove('hidden', 'bg-red-500/15', 'text-red-400', 'border-red-500/30', 'bg-blue-500/15', 'text-blue-300', 'border-blue-500/30', 'bg-green-500/15', 'text-green-300', 'border-green-500/30');
@@ -173,17 +200,6 @@ const isSignup = mode === 'signup';
       }
     }
 
-    async function getReadyClerk() {
-      const clerk = (window as any).Clerk;
-      if (!clerk) return null;
-      if (!clerk.loaded && typeof clerk.load === 'function') {
-        try {
-          await clerk.load();
-        } catch (_) {}
-      }
-      return clerk;
-    }
-
     // --- 1. Custom Google OAuth Flow ---
     if (googleBtn) {
       googleBtn.addEventListener('click', async () => {
@@ -199,39 +215,47 @@ const isSignup = mode === 'signup';
           return;
         }
 
+        if (clerk.user || clerk.session) {
+          await continueIfSignedIn();
+          googleBtnText?.classList.remove('opacity-50');
+          googleSpinner?.classList.add('hidden');
+          return;
+        }
+
         const callbackUrl = `${window.location.origin}/sso-callback`;
-        const completeUrl = `${window.location.origin}/`;
+        const completeUrl = `${window.location.origin}${redirectTarget}`;
+        const redirectArgs = {
+          strategy: 'oauth_google' as const,
+          redirectUrl: callbackUrl,
+          redirectUrlComplete: completeUrl,
+        };
 
         try {
-          // If in sign up mode, use signUp.authenticateWithRedirect
-          if (isSignupMode && clerk.client?.signUp?.authenticateWithRedirect) {
-            await clerk.client.signUp.authenticateWithRedirect({
-              strategy: 'oauth_google',
-              redirectUrl: callbackUrl,
-              redirectUrlComplete: completeUrl,
-            });
+          if (typeof clerk.authenticateWithRedirect === 'function') {
+            await clerk.authenticateWithRedirect(redirectArgs);
             return;
           }
-
-          // In sign in mode (or default)
+          if (isSignupMode && clerk.client?.signUp?.authenticateWithRedirect) {
+            await clerk.client.signUp.authenticateWithRedirect(redirectArgs);
+            return;
+          }
           if (clerk.client?.signIn?.authenticateWithRedirect) {
-            await clerk.client.signIn.authenticateWithRedirect({
-              strategy: 'oauth_google',
-              redirectUrl: callbackUrl,
-              redirectUrlComplete: completeUrl,
-            });
+            await clerk.client.signIn.authenticateWithRedirect(redirectArgs);
             return;
           }
         } catch (err: any) {
-          console.warn('Google sign-in attempt warning:', err);
-          // If signIn fails (e.g. account doesn't exist yet), seamlessly try signUp
+          const already =
+            err?.errors?.[0]?.code === 'identifier_already_signed_in' ||
+            /already signed in/i.test(String(err?.message || err?.errors?.[0]?.message || ''));
+          if (already || clerk.user) {
+            await continueIfSignedIn();
+            googleBtnText?.classList.remove('opacity-50');
+            googleSpinner?.classList.add('hidden');
+            return;
+          }
           try {
             if (clerk.client?.signUp?.authenticateWithRedirect) {
-              await clerk.client.signUp.authenticateWithRedirect({
-                strategy: 'oauth_google',
-                redirectUrl: callbackUrl,
-                redirectUrlComplete: completeUrl,
-              });
+              await clerk.client.signUp.authenticateWithRedirect(redirectArgs);
               return;
             }
           } catch (signUpErr: any) {
@@ -260,6 +284,13 @@ const isSignup = mode === 'signup';
         const clerk = await getReadyClerk();
         if (!clerk) {
           showStatus('Clerk is loading, please try again in a moment.', 'info');
+          btnText?.classList.remove('opacity-50');
+          btnSpinner?.classList.add('hidden');
+          return;
+        }
+
+        if (clerk.user || clerk.session) {
+          await continueIfSignedIn();
           btnText?.classList.remove('opacity-50');
           btnSpinner?.classList.add('hidden');
           return;
@@ -314,7 +345,7 @@ const isSignup = mode === 'signup';
               otpInput?.focus();
             } else if (signInAttempt.status === 'complete') {
               await clerk.setActive({ session: signInAttempt.createdSessionId });
-              window.location.assign('/');
+              window.location.assign(redirectTarget);
             } else {
               showStatus('Please sign in using Google or check your email settings.', 'info');
             }
@@ -349,7 +380,7 @@ const isSignup = mode === 'signup';
             const completeSignUp = await clerk.client.signUp.attemptEmailAddressVerification({ code });
             if (completeSignUp.status === 'complete') {
               await clerk.setActive({ session: completeSignUp.createdSessionId });
-              window.location.assign('/');
+              window.location.assign(redirectTarget);
               return;
             }
           }
@@ -361,7 +392,7 @@ const isSignup = mode === 'signup';
             });
             if (completeSignIn.status === 'complete') {
               await clerk.setActive({ session: completeSignIn.createdSessionId });
-              window.location.assign('/');
+              window.location.assign(redirectTarget);
               return;
             }
           }

@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogDashboard from '../../components/admin/BlogDashboard.tsx';
+
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+const siteUrl = Astro.url.origin;
+---
+
+<Layout
+  title="Blog Studio - Admin"
+  description="Compose, optimize and publish SEO-friendly government exam & job articles."
+  hideHeaderFooter={true}
+  disableTransitions={true}
+>
+  <div id="admin-auth-gate" class="min-h-screen flex items-center justify-center bg-canvas px-4">
+    <p class="text-body-sm text-muted">Checking your admin session…</p>
+  </div>
+  <div id="admin-studio" class="hidden">
+    <BlogDashboard client:only="react" apiUrl={apiUrl} siteUrl={siteUrl} />
+  </div>
+
+  <script>
+    import { waitForClerkToken, fetchCurrentUser } from '../../lib/clerk-session';
+
+    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+    const gate = document.getElementById('admin-auth-gate');
+    const studio = document.getElementById('admin-studio');
+
+    function showGate(message: string, isError = false) {
+      if (!gate) return;
+      gate.classList.remove('hidden');
+      studio?.classList.add('hidden');
+      gate.innerHTML = isError
+        ? `<div class="max-w-md text-center space-y-3">
+             <p class="text-body-md text-white font-semibold">${message}</p>
+             <a class="btn-primary inline-flex px-5" href="/login?redirect_url=/admin/dashboard">Sign in again</a>
+             <a class="block text-caption-sm text-muted hover:text-accent" href="/">Back to home</a>
+           </div>`
+        : `<p class="text-body-sm text-muted">${message}</p>`;
+    }
+
+    const token = await waitForClerkToken();
+    if (!token) {
+      window.location.replace('/login?redirect_url=/admin/dashboard');
+    } else {
+      const { user, message } = await fetchCurrentUser(apiUrl, token);
+      if (!user) {
+        showGate(message || 'Could not sync your Clerk account with the database.', true);
+      } else if (!['editor', 'admin'].includes(user.role)) {
+        window.location.replace('/');
+      } else {
+        gate?.classList.add('hidden');
+        studio?.classList.remove('hidden');
+      }
+    }
+  </script>
+</Layout>

@@ -45,6 +45,9 @@
   --color-primary: #292418;
   --color-accent: #327CF6;
   --color-black: #000000;
+  /* Label on filled buttons and badges. Stays light in both themes.
+     --color-white is the body text color and flips to near-black in light mode. */
+  --color-on-fill: #ffffff;
 
   /* Semantic Status */
   --color-error: #EF4444;
@@ -226,14 +229,14 @@
 @layer components {
   /* ── Buttons ── */
   .btn-primary {
-    @apply bg-accent text-white font-medium text-button-md rounded-pill h-9 px-3
+    @apply bg-accent text-on-fill font-medium text-button-md rounded-pill h-9 px-3
            transition-transform duration-150 ease-out
            hover:scale-105 active:scale-95
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
-    @apply bg-primary text-white font-medium text-button-md rounded-pill h-9 px-3
+    @apply bg-primary text-on-fill font-medium text-button-md rounded-pill h-9 px-3
            transition-transform duration-150 ease-out
            hover:scale-105 active:scale-95
            disabled:opacity-50 disabled:cursor-not-allowed;
@@ -278,7 +281,7 @@
 
   .badge-accent {
     @apply inline-flex items-center rounded-lg px-3 py-1.5
-           text-caption-sm font-medium bg-accent text-white;
+           text-caption-sm font-medium bg-accent text-on-fill;
   }
 
   .badge-outline {
@@ -389,6 +392,29 @@
 
 .prose-exam img {
   @apply max-w-full h-auto rounded-xl;
+}
+
+/* BlockNote follows the same canvas/surface/text tokens as the rest of the app. */
+.studio-editor .bn-container {
+  --bn-colors-editor-text: var(--color-white);
+  --bn-colors-editor-background: var(--color-surface);
+  --bn-colors-menu-text: var(--color-white);
+  --bn-colors-menu-background: var(--color-surface);
+  --bn-colors-tooltip-text: var(--color-white);
+  --bn-colors-tooltip-background: var(--color-surface-raised);
+  --bn-colors-hovered-text: var(--color-white);
+  --bn-colors-hovered-background: var(--color-surface-raised);
+  --bn-colors-selected-text: var(--color-white);
+  --bn-colors-selected-background: var(--color-subtle);
+  --bn-colors-disabled-text: var(--color-muted);
+  --bn-colors-disabled-background: var(--color-surface-raised);
+  --bn-colors-shadow: var(--color-border);
+  --bn-colors-border: var(--color-border);
+  --bn-colors-side-menu: var(--color-muted);
+  --bn-font-family: var(--font-sans);
+  font-family: var(--font-sans);
+  color: var(--color-white);
+  background: var(--color-surface);
 }
 
 

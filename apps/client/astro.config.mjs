@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import node from '@astrojs/node';
 import clerk from '@clerk/astro';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,7 +13,7 @@ export default defineConfig({
 	output: 'server',
 	server: { port: 3000, host: true },
 	adapter: node({ mode: 'standalone' }),
-	integrations: [clerk()],
+	integrations: [clerk({ signInUrl: '/login', signUpUrl: '/signup' }), react()],
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {

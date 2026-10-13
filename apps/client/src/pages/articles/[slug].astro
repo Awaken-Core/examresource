@@ -1,0 +1,172 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {
+  renderBlocksToHtml,
+  blocksToPlainText,
+  readingTimeMinutes,
+  type ApiBlog,
+} from '../../lib/blog-render';
+
+const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+const { slug } = Astro.params;
+
+let blog: ApiBlog | null = null;
+try {
+  const res = await fetch(`${apiUrl}/blogs/${encodeURIComponent(slug ?? '')}`);
+  if (res.ok) blog = (await res.json()) as ApiBlog;
+} catch (_) {
+  blog = null;
+}
+
+if (!blog) {
+  Astro.response.status = 404;
+}
+
+const canonicalUrl = `${Astro.url.origin}/articles/${slug}`;
+const blocks = blog?.blocks ?? [];
+const contentHtml = blog ? renderBlocksToHtml(blocks) : '';
+const description =
+  blog?.description?.trim() ||
+  (blog ? blocksToPlainText(blocks).slice(0, 157) : '');
+const readMins = blog ? readingTimeMinutes(blocks) : 0;
+
+const publishedIso = blog?.publishedAt
+  ? new Date(blog.publishedAt).toISOString()
+  : undefined;
+const modifiedIso = blog?.updatedAt
+  ? new Date(blog.updatedAt).toISOString()
+  : publishedIso;
+
+function formatDate(value?: string | null): string {
+  if (!value) return '';
+  try {
+    return new Date(value).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
+}
+
+const jsonLd = blog
+  ? {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'BlogPosting',
+          headline: blog.title,
+          description,
+          image: blog.coverImage ? [blog.coverImage] : undefined,
+          datePublished: publishedIso,
+          dateModified: modifiedIso,
+          author: blog.author
+            ? { '@type': 'Person', name: blog.author.name }
+            : { '@type': 'Organization', name: 'govtpariksha.com' },
+          publisher: {
+            '@type': 'Organization',
+            name: 'govtpariksha.com',
+          },
+          mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl },
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: Astro.url.origin,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Articles',
+              item: `${Astro.url.origin}/articles`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: blog.title,
+              item: canonicalUrl,
+            },
+          ],
+        },
+      ],
+    }
+  : undefined;
+---
+
+{
+  blog ? (
+    <Layout
+      title={`${blog.title} - govtpariksha.com`}
+      description={description}
+      canonicalUrl={canonicalUrl}
+      ogImage={blog.coverImage ?? undefined}
+      publishedTime={publishedIso}
+      modifiedTime={modifiedIso}
+      jsonLd={jsonLd}
+    >
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <nav class="text-body-xs text-muted mb-4 flex items-center gap-2" aria-label="Breadcrumb">
+          <a href="/" class="hover:text-accent">Home</a>
+          <span>/</span>
+          <a href="/articles" class="hover:text-accent">Articles</a>
+          <span>/</span>
+          <span class="text-white font-medium line-clamp-1">{blog.title}</span>
+        </nav>
+
+        <article class="prose-exam">
+          <h1 class="text-heading-xl sm:text-display-md font-bold text-white tracking-tight leading-tight mb-3">
+            {blog.title}
+          </h1>
+
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-body-xs text-muted pb-4 mb-6 border-b border-border not-prose">
+            {blog.author?.name && <span>By <strong class="text-white font-medium">{blog.author.name}</strong></span>}
+            {publishedIso && <span>Published: {formatDate(blog.publishedAt)}</span>}
+            {modifiedIso && modifiedIso !== publishedIso && (
+              <span class="text-accent">Updated: {formatDate(blog.updatedAt)}</span>
+            )}
+            <span>{readMins} min read</span>
+          </div>
+
+          {blog.coverImage && (
+            <img
+              src={blog.coverImage}
+              alt={blog.title}
+              class="w-full rounded-xl border border-border mb-6"
+              loading="eager"
+            />
+          )}
+
+          <div set:html={contentHtml} />
+        </article>
+      </div>
+    </Layout>
+  ) : (
+    <Layout title="Article not found - govtpariksha.com" description="The requested article could not be found.">
+      <div class="max-w-xl mx-auto px-4 py-24 text-center">
+        <h1 class="text-heading-xl font-bold text-white mb-3">Article not found</h1>
+        <p class="text-body-md text-muted mb-6">
+          This article may have been unpublished or the link is incorrect.
+        </p>
+        <a href="/" class="btn-primary inline-flex items-center px-5">Back to home</a>
+      </div>
+    </Layout>
+  )
+}
+
+<style is:global>
+  .prose-exam figure { margin: 1.5rem 0; }
+  .prose-exam figure img { width: 100%; }
+  .prose-exam figcaption {
+    text-align: center;
+    font-size: 12px;
+    color: var(--color-muted);
+    margin-top: 6px;
+  }
+  .prose-exam .table-scroll { overflow-x: auto; margin: 1rem 0; }
+  .prose-exam hr { border: none; border-top: 1px solid var(--color-border); margin: 1.75rem 0; }
+</style>

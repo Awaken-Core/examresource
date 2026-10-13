@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Req,
 } from '@nestjs/common';
 import type { Request } from 'express';
@@ -17,6 +18,7 @@ import {
   createBlockSchema,
   createBlogSchema,
   reorderBlocksSchema,
+  replaceBlocksSchema,
   updateBlockSchema,
   updateBlogSchema,
 } from './dto/blog.dto.js';
@@ -75,6 +77,19 @@ export class BlogController {
     return this.blogs.createBlock(
       blogId,
       this.parse(createBlockSchema, req.body),
+      await this.currentUser(req),
+    );
+  }
+
+  @Put('blogs/:blogId/blocks')
+  async replaceBlocks(
+    @Param('blogId') blogId: string,
+    @Req() req: Request,
+  ) {
+    const input = this.parse(replaceBlocksSchema, req.body);
+    return this.blogs.replaceBlocks(
+      blogId,
+      input.blocks,
       await this.currentUser(req),
     );
   }

@@ -23,8 +23,13 @@ export class ClerkAuthService {
     const token = this.bearerToken(req);
     let payload: Awaited<ReturnType<typeof verifyToken>>;
     try {
-      payload = await verifyToken(token, { secretKey: env.CLERK_SECRET_KEY });
-    } catch {
+      payload = await verifyToken(token, {
+        secretKey: env.CLERK_SECRET_KEY,
+        clockSkewInMs: 60_000,
+      });
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : 'unknown';
+      console.warn(`[clerk] token verify failed: ${reason}`);
       throw new UnauthorizedException('Your sign-in session is invalid or expired.');
     }
     const clerkUserId = payload.sub;
@@ -59,10 +64,15 @@ export class ClerkAuthService {
 
     const [matchingEmail] = await db.select().from(users).where(eq(users.email, email)).limit(1);
     if (matchingEmail) {
-      if (matchingEmail.clerkUserId && matchingEmail.clerkUserId !== clerkUserId) {
+      const linkedId = matchingEmail.clerkUserId?.trim();
+      if (linkedId && linkedId !== clerkUserId) {
         throw new ForbiddenException('This email is linked to a different account.');
       }
-      const [linked] = await db.update(users).set({ clerkUserId, name, updatedAt: new Date() }).where(eq(users.id, matchingEmail.id)).returning();
+      const [linked] = await db
+        .update(users)
+        .set({ clerkUserId, name, updatedAt: new Date() })
+        .where(eq(users.id, matchingEmail.id))
+        .returning();
       if (!linked) throw new UnauthorizedException('Unable to link your account.');
       return linked;
     }
