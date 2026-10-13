@@ -37,15 +37,15 @@ const structuredData = {
       },
       "publisher": {
         "@type": "Organization",
-        "name": "ExamPortal",
+        "name": "govtpariksha.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://example.com/logo.png"
+          "url": "https://govtpariksha.com/logo.png"
         }
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://example.com/${examArticleData.slug}`
+        "@id": `https://govtpariksha.com/${examArticleData.slug}`
       }
     },
     {
@@ -64,9 +64,9 @@ const structuredData = {
 ---
 
 <Layout 
-  title={`${examArticleData.title} - ExamPortal`}
+  title={`${examArticleData.title} - govtpariksha.com`}
   description={examArticleData.summary}
-  canonicalUrl={`https://example.com/${examArticleData.slug}`}
+  canonicalUrl={`https://govtpariksha.com/${examArticleData.slug}`}
   jsonLd={structuredData}
 >
   {/* Breadcrumbs Navigation */}
@@ -84,52 +84,52 @@ const structuredData = {
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
       {/* Left / Main Article Column (8 cols on desktop) */}
-      <article class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 shadow-xs">
+      <article class="lg:col-span-8 card p-5 sm:p-8">
         
         {/* Category Pill and Notice Badge */}
         <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-1 rounded-md">
+          <span class="badge-accent">
             {examArticleData.category.name}
           </span>
-          <span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1 rounded-md">
+          <span class="badge-outline">
             Notice: {examArticleData.noticeNumber}
           </span>
-          <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2.5 py-1 rounded-md flex items-center gap-1">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+          <span class="bg-surface-raised border border-border text-white text-caption-xs font-semibold px-2.5 py-1 rounded-md flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
             Round 1 Out
           </span>
         </div>
 
         {/* Main Article Title (H1) */}
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
+        <h1 class="text-heading-xl sm:text-display-md font-bold text-white tracking-tight leading-tight mb-4">
           {examArticleData.title}
         </h1>
 
         {/* Post Metadata Row */}
-        <div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs sm:text-sm text-slate-500 pb-4 mb-6 border-b border-slate-200">
+        <div class="flex flex-wrap items-center gap-y-2 gap-x-4 text-body-xs text-muted pb-4 mb-6 border-b border-border">
           <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
-            <span>By <strong class="text-slate-700">{examArticleData.author}</strong></span>
+            <span>By <strong class="text-white font-medium">{examArticleData.author}</strong></span>
           </div>
 
           <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span>Published: {examArticleData.postDate}</span>
           </div>
 
-          <div class="flex items-center gap-1.5 text-blue-700 font-medium">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="flex items-center gap-1.5 text-accent font-medium">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             <span>Updated: {examArticleData.updatedDate}</span>
           </div>
 
           <div class="flex items-center gap-1.5">
-            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>{examArticleData.readTime}</span>
@@ -138,24 +138,24 @@ const structuredData = {
 
         {/* Short Executive Summary / Intro */}
         <section id="overview" class="mb-6 scroll-mt-20">
-          <p class="text-base sm:text-lg text-slate-700 leading-relaxed font-normal">
+          <p class="text-body-lg text-muted leading-relaxed font-normal">
             {examArticleData.summary}
           </p>
         </section>
 
         {/* Prominent High-Priority Alert Box */}
-        <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="bg-surface-raised border-l-4 border-accent border-y border-r border-border p-4 rounded-r-xl mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
           <div>
-            <p class="text-sm font-bold text-blue-900">
+            <p class="text-body-md font-bold text-white">
               ⚡ BCECEB Round 1 Allotment Order is Live!
             </p>
-            <p class="text-xs text-blue-700 mt-0.5">
+            <p class="text-caption-sm text-muted mt-0.5">
               Downloading period is open from 12th Oct to 16th Oct 2026. Keep your roll number ready.
             </p>
           </div>
           <a 
             href="#important-links" 
-            class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-md shadow-xs transition shrink-0"
+            class="btn-primary text-button-xs h-8 px-4 shrink-0 inline-flex items-center justify-center gap-1.5"
           >
             Direct Link Below ↓
           </a>
@@ -169,46 +169,46 @@ const structuredData = {
 
         {/* Quick Information Summary Table */}
         <section id="quick-info" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>📌</span>
             <span>Bihar DECE LE 2026: Quick Overview</span>
           </h2>
           
-          <div class="overflow-x-auto rounded-xl border border-slate-200">
-            <table class="min-w-full text-sm text-left">
-              <tbody class="divide-y divide-slate-200">
-                <tr class="bg-slate-50">
-                  <th class="py-3 px-4 font-semibold text-slate-700 w-1/3">Conducting Authority</th>
-                  <td class="py-3 px-4 text-slate-800 font-medium">{examArticleData.organization}</td>
+          <div class="overflow-x-auto rounded-xl border border-border bg-surface">
+            <table class="min-w-full text-body-sm text-left">
+              <tbody class="divide-y divide-border">
+                <tr class="bg-surface-raised/40">
+                  <th class="py-3 px-4 font-semibold text-white w-1/3 border-r border-border/40">Conducting Authority</th>
+                  <td class="py-3 px-4 text-muted font-medium">{examArticleData.organization}</td>
                 </tr>
                 <tr>
-                  <th class="py-3 px-4 font-semibold text-slate-700">Exam / Admission Name</th>
-                  <td class="py-3 px-4 text-slate-800">Diploma Entrance Competitive Exam [Lateral Entry] (DECE-LE 2026)</td>
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Exam / Admission Name</th>
+                  <td class="py-3 px-4 text-muted">Diploma Entrance Competitive Exam [Lateral Entry] (DECE-LE 2026)</td>
                 </tr>
-                <tr class="bg-slate-50">
-                  <th class="py-3 px-4 font-semibold text-slate-700">Course Level</th>
-                  <td class="py-3 px-4 text-slate-800">Diploma 2nd Year (Lateral Entry 3-Year Engineering Courses)</td>
-                </tr>
-                <tr>
-                  <th class="py-3 px-4 font-semibold text-slate-700">Allotment Round</th>
-                  <td class="py-3 px-4 text-slate-800">1st Provisional Round (Round 1)</td>
-                </tr>
-                <tr class="bg-slate-50">
-                  <th class="py-3 px-4 font-semibold text-slate-700">Allotment Release Date</th>
-                  <td class="py-3 px-4 text-emerald-700 font-bold">12 October 2026 (Out)</td>
+                <tr class="bg-surface-raised/40">
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Course Level</th>
+                  <td class="py-3 px-4 text-muted">Diploma 2nd Year (Lateral Entry 3-Year Engineering Courses)</td>
                 </tr>
                 <tr>
-                  <th class="py-3 px-4 font-semibold text-slate-700">Verification Window</th>
-                  <td class="py-3 px-4 text-slate-800 font-semibold">13 October to 16 October 2026</td>
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Allotment Round</th>
+                  <td class="py-3 px-4 text-muted">1st Provisional Round (Round 1)</td>
                 </tr>
-                <tr class="bg-slate-50">
-                  <th class="py-3 px-4 font-semibold text-slate-700">Mode of Allotment</th>
-                  <td class="py-3 px-4 text-slate-800">Online through Candidate Login</td>
+                <tr class="bg-surface-raised/40">
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Allotment Release Date</th>
+                  <td class="py-3 px-4 text-success font-semibold">12 October 2026 (Out)</td>
                 </tr>
                 <tr>
-                  <th class="py-3 px-4 font-semibold text-slate-700">Official Website</th>
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Verification Window</th>
+                  <td class="py-3 px-4 text-white font-medium">13 October to 16 October 2026</td>
+                </tr>
+                <tr class="bg-surface-raised/40">
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Mode of Allotment</th>
+                  <td class="py-3 px-4 text-muted">Online through Candidate Login</td>
+                </tr>
+                <tr>
+                  <th class="py-3 px-4 font-semibold text-white border-r border-border/40">Official Website</th>
                   <td class="py-3 px-4">
-                    <a href={examArticleData.officialWebsite} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">
+                    <a href={examArticleData.officialWebsite} target="_blank" rel="noopener noreferrer" class="text-accent hover:underline font-semibold">
                       bceceboard.bihar.gov.in ↗
                     </a>
                   </td>
@@ -220,34 +220,34 @@ const structuredData = {
 
         {/* Section: Important Dates */}
         <section id="important-dates" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>📅</span>
             <span>Important Counselling Dates & Schedule</span>
           </h2>
-          <p class="text-sm text-slate-600 mb-3 leading-relaxed">
+          <p class="text-body-sm text-muted mb-3 leading-relaxed">
             All candidates must adhere strictly to the following dates issued in the official BCECEB counseling calendar:
           </p>
           
-          <div class="overflow-x-auto rounded-xl border border-slate-200">
-            <table class="min-w-full text-sm text-left">
-              <thead class="bg-blue-50 text-blue-900 font-semibold border-b border-slate-200">
+          <div class="overflow-x-auto rounded-xl border border-border bg-surface">
+            <table class="min-w-full text-body-sm text-left">
+              <thead class="bg-surface-raised text-white font-semibold border-b border-border">
                 <tr>
                   <th class="py-3 px-4">Counselling Event / Activity</th>
                   <th class="py-3 px-4">Important Dates</th>
                   <th class="py-3 px-4 text-right">Status</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-200">
+              <tbody class="divide-y divide-border">
                 {examArticleData.importantDates.map((item, index) => (
-                  <tr class={index % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                    <td class="py-3 px-4 font-medium text-slate-800">{item.event}</td>
-                    <td class="py-3 px-4 text-slate-700 font-semibold">{item.date}</td>
+                  <tr class={index % 2 === 0 ? "bg-surface" : "bg-surface-raised/40"}>
+                    <td class="py-3 px-4 font-medium text-white">{item.event}</td>
+                    <td class="py-3 px-4 text-muted font-medium">{item.date}</td>
                     <td class="py-3 px-4 text-right">
                       <span class={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                        item.statusBadge === 'Released Now' ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' :
-                        item.statusBadge === 'Active' ? 'bg-blue-100 text-blue-800' :
-                        item.statusBadge === 'Upcoming' ? 'bg-amber-100 text-amber-800' :
-                        'bg-slate-100 text-slate-600'
+                        item.statusBadge === 'Released Now' ? 'badge-accent' :
+                        item.statusBadge === 'Active' ? 'badge-outline' :
+                        item.statusBadge === 'Upcoming' ? 'bg-surface-raised border border-border text-muted' :
+                        'bg-surface-raised text-muted'
                       }`}>
                         {item.statusBadge}
                       </span>
@@ -261,24 +261,24 @@ const structuredData = {
 
         {/* Section: Application Fees */}
         <section id="application-fee" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>💳</span>
             <span>Allotment & Verification Fee Details</span>
           </h2>
           
-          <div class="overflow-x-auto rounded-xl border border-slate-200">
-            <table class="min-w-full text-sm text-left">
-              <thead class="bg-blue-50 text-blue-900 font-semibold border-b border-slate-200">
+          <div class="overflow-x-auto rounded-xl border border-border bg-surface">
+            <table class="min-w-full text-body-sm text-left">
+              <thead class="bg-surface-raised text-white font-semibold border-b border-border">
                 <tr>
                   <th class="py-3 px-4">Fee Head</th>
                   <th class="py-3 px-4">Applicable Fee Amount</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-200">
+              <tbody class="divide-y divide-border">
                 {examArticleData.applicationFees.map((fee, idx) => (
-                  <tr class={idx % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                    <td class="py-3 px-4 font-medium text-slate-700">{fee.category}</td>
-                    <td class="py-3 px-4 text-slate-800 font-semibold">{fee.fee}</td>
+                  <tr class={idx % 2 === 0 ? "bg-surface" : "bg-surface-raised/40"}>
+                    <td class="py-3 px-4 font-medium text-muted">{fee.category}</td>
+                    <td class="py-3 px-4 text-white font-semibold">{fee.fee}</td>
                   </tr>
                 ))}
               </tbody>
@@ -291,27 +291,27 @@ const structuredData = {
 
         {/* Section: Eligibility Criteria */}
         <section id="eligibility-seats" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>🎓</span>
             <span>Eligibility Criteria & Seat Distribution</span>
           </h2>
           
           <div class="space-y-4">
-            <div class="overflow-x-auto rounded-xl border border-slate-200">
-              <table class="min-w-full text-sm text-left">
-                <thead class="bg-blue-50 text-blue-900 font-semibold border-b border-slate-200">
+            <div class="overflow-x-auto rounded-xl border border-border bg-surface">
+              <table class="min-w-full text-body-sm text-left">
+                <thead class="bg-surface-raised text-white font-semibold border-b border-border">
                   <tr>
                     <th class="py-3 px-4">Course Stream</th>
                     <th class="py-3 px-4">Minimum Educational Qualification</th>
                     <th class="py-3 px-4">Seat Availability</th>
                   </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200">
+                <tbody class="divide-y divide-border">
                   {examArticleData.eligibility.map((item, idx) => (
-                    <tr class={idx % 2 === 0 ? "bg-white" : "bg-slate-50"}>
-                      <td class="py-3 px-4 font-semibold text-slate-800">{item.post}</td>
-                      <td class="py-3 px-4 text-slate-700">{item.qualification}</td>
-                      <td class="py-3 px-4 text-slate-800 font-medium">{item.vacancies}</td>
+                    <tr class={idx % 2 === 0 ? "bg-surface" : "bg-surface-raised/40"}>
+                      <td class="py-3 px-4 font-semibold text-white">{item.post}</td>
+                      <td class="py-3 px-4 text-muted">{item.qualification}</td>
+                      <td class="py-3 px-4 text-white font-medium">{item.vacancies}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -319,17 +319,17 @@ const structuredData = {
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <h3 class="font-bold text-slate-900 text-sm mb-2">Age Limit Guidelines</h3>
-                <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+              <div class="p-4 bg-surface-raised/40 rounded-xl border border-border">
+                <h3 class="font-bold text-white text-body-sm mb-2">Age Limit Guidelines</h3>
+                <ul class="text-body-xs text-muted space-y-1.5 list-disc pl-4">
                   {examArticleData.ageLimit.map((age) => (
-                    <li><strong>{age.criteria}:</strong> {age.details}</li>
+                    <li><strong class="text-white">{age.criteria}:</strong> {age.details}</li>
                   ))}
                 </ul>
               </div>
-              <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <h3 class="font-bold text-slate-900 text-sm mb-2">Seat Allocation Rule</h3>
-                <p class="text-xs text-slate-600 leading-relaxed">
+              <div class="p-4 bg-surface-raised/40 rounded-xl border border-border">
+                <h3 class="font-bold text-white text-body-sm mb-2">Seat Allocation Rule</h3>
+                <p class="text-body-xs text-muted leading-relaxed">
                   Up to 10% sanctioned seats in 2nd year Diploma courses across Government and Private Polytechnic colleges are allocated through DECE (LE) ranking based on category reservation regulations of the Government of Bihar.
                 </p>
               </div>
@@ -339,19 +339,19 @@ const structuredData = {
 
         {/* Section: Selection Process */}
         <section id="selection-process" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>⚙️</span>
             <span>Admission & Selection Process</span>
           </h2>
           
           <div class="space-y-3">
             {examArticleData.selectionSteps.map((step, idx) => (
-              <div class="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded-lg shadow-2xs">
-                <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
+              <div class="flex items-start gap-3 p-3.5 bg-surface-raised/40 border border-border rounded-xl">
+                <div class="w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center font-bold text-caption-xs shrink-0 mt-0.5">
                   {idx + 1}
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold text-slate-800">{step}</h3>
+                  <h3 class="text-body-sm font-semibold text-white">{step}</h3>
                 </div>
               </div>
             ))}
@@ -360,18 +360,18 @@ const structuredData = {
 
         {/* Section: How to Check / Download */}
         <section id="how-to-download" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>📥</span>
             <span>How to Check Bihar DECE LE Round 1 Allotment Result 2026</span>
           </h2>
-          <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+          <p class="text-body-sm text-muted mb-4 leading-relaxed">
             Follow these direct steps to log in to the official BCECE portal and print your provisional admission allotment order:
           </p>
 
           <ol class="space-y-2.5 list-none">
             {examArticleData.stepsToApply.map((step, idx) => (
-              <li class="flex items-start gap-3 text-sm text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-200/80">
-                <span class="inline-flex items-center justify-center w-6 h-6 rounded bg-blue-100 text-blue-800 font-bold text-xs shrink-0 mt-0.5">
+              <li class="flex items-start gap-3 text-body-sm text-muted bg-surface-raised/40 p-3 rounded-xl border border-border">
+                <span class="inline-flex items-center justify-center w-6 h-6 rounded bg-surface-raised border border-border text-accent font-bold text-caption-xs shrink-0 mt-0.5">
                   {idx + 1}
                 </span>
                 <span class="leading-relaxed">{step}</span>
@@ -382,15 +382,15 @@ const structuredData = {
 
         {/* Section: Documents Required for Verification */}
         <section id="required-documents" class="mt-8 mb-6 scroll-mt-20">
-          <h2 class="text-xl font-bold text-slate-900 mb-3 pb-2 border-b-2 border-blue-600 flex items-center gap-2">
+          <h2 class="text-heading-md font-bold text-white mb-3 pb-2 border-b border-border flex items-center gap-2">
             <span>📑</span>
             <span>List of Documents Required for Verification</span>
           </h2>
-          <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-xl text-sm text-slate-700">
-            <p class="font-semibold text-amber-900 mb-2">
+          <div class="p-5 bg-surface-raised/40 border border-border rounded-xl text-body-sm text-muted">
+            <p class="font-semibold text-white mb-2">
               Carry the original documents along with 2 sets of self-attested photocopies to your allotted nodal reporting center:
             </p>
-            <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+            <ul class="list-disc pl-5 space-y-1.5 text-body-xs text-muted">
               <li>Original Admit Card of DECE(LE)-2026 Examination</li>
               <li>Official Rank Card of DECE(LE)-2026</li>
               <li>Printed Provisional Seat Allotment Order (3 copies)</li>
@@ -411,23 +411,23 @@ const structuredData = {
 
         {/* Section: Important Links Table */}
         <section id="important-links" class="mt-8 mb-6 scroll-mt-20">
-          <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-4 rounded-t-xl flex items-center justify-between">
-            <h2 class="text-lg font-bold tracking-wide !my-0 !border-0 !p-0 flex items-center gap-2 text-white">
+          <div class="bg-surface-raised border-x border-t border-border text-white p-4 rounded-t-xl flex items-center justify-between">
+            <h2 class="text-heading-sm font-bold tracking-wide !my-0 !border-0 !p-0 flex items-center gap-2 text-white">
               <span>🔗</span>
               <span>Important Official Links & Downloads</span>
             </h2>
-            <span class="bg-amber-400 text-blue-950 text-xs font-bold px-2 py-0.5 rounded">Verified Direct Links</span>
+            <span class="badge-outline text-[11px]">Verified Direct Links</span>
           </div>
 
-          <div class="overflow-x-auto rounded-b-xl border-x border-b border-slate-300">
-            <table class="min-w-full text-sm text-left">
-              <tbody class="divide-y divide-slate-200">
+          <div class="overflow-x-auto rounded-b-xl border-x border-b border-border bg-surface">
+            <table class="min-w-full text-body-sm text-left">
+              <tbody class="divide-y divide-border">
                 {examArticleData.importantLinks.map((link, idx) => (
-                  <tr class={`hover:bg-blue-50/50 transition ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
-                    <th class="py-3.5 px-4 font-semibold text-slate-800 text-sm w-3/5">
+                  <tr class={`hover:bg-surface-raised/50 transition ${idx % 2 === 0 ? 'bg-surface' : 'bg-surface-raised/30'}`}>
+                    <th class="py-3.5 px-4 font-semibold text-white text-body-sm w-3/5">
                       <div class="flex items-center gap-2">
                         {link.highlight && (
-                          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                          <span class="inline-block w-2 h-2 rounded-full bg-accent animate-ping"></span>
                         )}
                         <span>{link.title}</span>
                       </div>
@@ -437,11 +437,7 @@ const structuredData = {
                         href={link.url} 
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        class={`inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-lg transition shadow-xs ${
-                          link.highlight 
-                            ? 'bg-blue-700 hover:bg-blue-800 text-white' 
-                            : 'bg-slate-200 hover:bg-slate-300 text-slate-800'
-                        }`}
+                        class={link.highlight ? 'btn-primary text-button-xs h-7 px-3 inline-flex items-center gap-1.5' : 'btn-outline text-button-xs h-7 px-3 inline-flex items-center gap-1.5'}
                       >
                         <span>{link.linkText}</span>
                         <span>↗</span>

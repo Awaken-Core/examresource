@@ -8,21 +8,21 @@ interface Props {
 const { slotId = "ad-slot-1", type = "sidebar", label = "Advertisement Placement" } = Astro.props;
 ---
 
-<div class={`w-full overflow-hidden my-4 border border-dashed border-slate-300 rounded-lg bg-slate-50 flex flex-col items-center justify-center text-center p-3 transition-colors hover:bg-slate-100 ${
+<div class={`w-full overflow-hidden my-4 border border-dashed border-border rounded-xl bg-surface-raised/30 flex flex-col items-center justify-center text-center p-3 transition-colors hover:bg-surface-raised/50 ${
   type === 'sidebar' ? 'min-h-[280px] max-w-[320px] mx-auto' : 
   type === 'banner' ? 'min-h-[100px] w-full' : 
   'min-h-[160px] w-full my-6'
 }`}>
-  <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-400 mb-1">
+  <span class="text-[10px] uppercase tracking-wider font-semibold text-muted/70 mb-1">
     Sponsored Ad Space ({slotId})
   </span>
-  <div class="flex items-center space-x-2 text-slate-400 text-xs">
-    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <div class="flex items-center space-x-2 text-muted text-caption-sm">
+    <svg class="w-4 h-4 text-muted/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
     <span>{label}</span>
   </div>
-  <p class="text-[11px] text-slate-400 mt-1 max-w-[220px]">
+  <p class="text-[11px] text-muted/60 mt-1 max-w-[220px]">
     Reserved layout dimension ({type === 'sidebar' ? '300x250 / 300x600' : type === 'banner' ? '728x90' : 'In-Feed'})
   </p>
 </div>

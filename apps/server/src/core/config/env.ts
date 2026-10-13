@@ -9,10 +9,10 @@ export const EnvSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
     .default('development'),
-  CLIENT_URL: z.string().url().default('http://localhost:4321'),
-  PORT: z.coerce.number().int().min(1).max(65535).default(4000),
+  CLIENT_URL: z.string().url().default('http://localhost:3000'),
+  PORT: z.coerce.number().int().min(1).max(65535).default(5000),
   SESSION_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(30),
-  CLERK_SECRET_KEY: z.string().min(1),
+  CLERK_SECRET_KEY: z.string().min(1).default('sk_test_placeholder_key'),
   CLERK_WEBHOOK_SIGNING_SECRET: z.string().min(1).optional(),
   GOOGLE_CLIENT_ID: z.string().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),

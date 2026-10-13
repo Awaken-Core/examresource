@@ -1,8 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { INITIAL_MOCK_POSTS, STATES_LIST, CATEGORIES_LIST } from '../data/portalMockData';
-const { userId, redirectToSignIn } = Astro.locals.auth();
-if (!userId) return redirectToSignIn();
+let auth: any = null;
+try {
+  auth = typeof Astro.locals.auth === 'function' ? Astro.locals.auth() : null;
+} catch (_) {}
+const userId = auth?.userId;
+if (!userId && auth?.redirectToSignIn) return auth.redirectToSignIn();
 
 // Calculate initial metrics
 const totalArticles = INITIAL_MOCK_POSTS.length;
@@ -16,12 +20,12 @@ const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
   description="Manage government exam articles, publication status, categories, and site settings."
 >
   <script>
-    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:4000/api/v1';
+    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
     const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
     const token = await clerk?.session?.getToken();
     const response = await fetch(`${apiUrl}/me`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
     const user = response.ok ? await response.json() : null;
-    if (user?.role !== 'admin') window.location.replace('/home');
+    if (user?.role !== 'admin') window.location.replace('/');
   </script>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     

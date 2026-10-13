@@ -1,0 +1,311 @@
+---
+import ProfileDropdown from './ProfileDropdown.astro';
+import Tooltip from './Tooltip.astro';
+import NotificationPopup from './NotificationPopup.astro';
+
+interface Props {
+  prefix?: string;
+  isMobileDrawer?: boolean;
+}
+
+const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
+---
+
+<aside 
+  id={`${prefix}-sidebar`} 
+  class="w-64 bg-canvas border-r border-border h-screen md:h-[calc(100vh-2.25rem)] sticky top-0 md:top-9 flex flex-col justify-between shrink-0 select-none z-[1050] transition-all duration-300 overflow-visible"
+>
+  {/* Top Logo, Logoname & Collapse/Close Button in Sidebar */}
+  <div>
+    <div class="sidebar-header h-16 px-4 flex items-center justify-between border-b border-border/60">
+      <a href="/" class="flex items-center gap-2.5 group truncate">
+        <div class="w-7 h-7 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <div class="sidebar-text flex items-center truncate font-bold text-base tracking-tight text-white">
+          <span>govtpariksha</span><span class="text-accent">.com</span>
+        </div>
+      </a>
+
+      {isMobileDrawer ? (
+        <button 
+          id={`${prefix}-sidebar-close-btn`}
+          data-mobile-sidebar-close
+          type="button"
+          class="text-muted hover:text-white p-1.5 rounded-lg hover:bg-surface-raised transition cursor-pointer"
+          title="Close drawer"
+          aria-label="Close navigation drawer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      ) : (
+        <div class="relative group">
+          <button 
+            id={`${prefix}-sidebar-toggle-btn`} 
+            data-sidebar-collapse
+            type="button"
+            class="text-muted hover:text-white p-1.5 rounded-lg hover:bg-surface-raised border border-border/60 hover:border-border transition cursor-pointer shrink-0 flex items-center justify-center"
+            aria-label="Collapse sidebar (Alt+B)"
+          >
+            {/* ◫ icon matching reference */}
+            <svg class="w-4 h-4 text-muted hover:text-white transition" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="3" width="18" height="18" rx="3" stroke-width="2"/>
+              <line x1="9" y1="3" x2="9" y2="21" stroke-width="2"/>
+            </svg>
+          </button>
+
+          {/* Attached Tooltip */}
+          <Tooltip text="Collapse sidebar" shortcut={['Alt', 'B']} position="bottom" />
+        </div>
+      )}
+    </div>
+
+    {/* Navigation Scrollable Body */}
+    <nav class="p-3 space-y-6 overflow-y-auto max-h-[calc(100vh-220px)] scrollbar-none">
+      
+      {/* Group: Prep */}
+      <div>
+        <div class="sidebar-text flex items-center justify-between px-2 mb-2 text-caption-xs font-semibold text-accent uppercase tracking-wider">
+          <span>Prep</span>
+          <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+
+        <div class="space-y-1">
+          {/* Dashboard (Active) */}
+          <a 
+            href="/" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl bg-surface-raised text-white font-semibold text-body-sm shadow-xs border border-border/40"
+            title="Dashboard"
+          >
+            <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            <span class="sidebar-text truncate">Dashboard</span>
+          </a>
+
+          {/* Prep Hub */}
+          <a 
+            href="#quick-info" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium"
+            title="Prep Hub"
+          >
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span class="sidebar-text truncate">Prep Hub</span>
+          </a>
+
+          {/* Practice (Subtree) */}
+          <div class="space-y-0.5">
+            <div class="sidebar-nav-item flex items-center justify-between px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium cursor-pointer">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span class="sidebar-text truncate">Practice</span>
+              </div>
+              <svg class="sidebar-text w-3.5 h-3.5 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+              </svg>
+            </div>
+
+            {/* Tree branch links */}
+            <div class="sidebar-text pl-8 pr-2 space-y-1 border-l border-border/40 ml-5 my-1">
+              <a href="#important-dates" class="block py-1 text-caption-sm text-muted hover:text-white transition">Schedule</a>
+              <a href="#selection-process" class="block py-1 text-caption-sm text-muted hover:text-white transition">Exam Process</a>
+              <a href="#required-documents" class="block py-1 text-caption-sm text-muted hover:text-white transition">Verification Docs</a>
+            </div>
+          </div>
+
+          {/* State Updates */}
+          <a 
+            href="#state-filter-widget" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium"
+            title="State Updates"
+          >
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span class="sidebar-text truncate">State Updates</span>
+          </a>
+
+          {/* Community */}
+          <a 
+            href="#faqs" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium"
+            title="Community"
+          >
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span class="sidebar-text truncate">Community</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Group: Additionals */}
+      <div>
+        <div class="sidebar-text flex items-center justify-between px-2 mb-2 text-caption-xs font-semibold text-muted uppercase tracking-wider">
+          <span>Additionals</span>
+          <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+
+        <div class="space-y-1">
+          {/* Blogs */}
+          <a 
+            href="/" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium"
+            title="Blogs"
+          >
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+            </svg>
+            <span class="sidebar-text truncate">Blogs</span>
+          </a>
+
+          {/* Unlock */}
+          <a 
+            href="#important-links" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium"
+            title="Unlock Direct Links"
+          >
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span class="sidebar-text truncate">Unlock Direct Links</span>
+          </a>
+
+          {/* Dev Tools */}
+          <a 
+            href="/editor" 
+            class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition text-body-sm font-medium"
+            title="Editor Tools"
+          >
+            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            <span class="sidebar-text truncate">Editor Tools</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  {/* BOTTOM PROFILE / AUTH SECTION (Exact match to Image 2) */}
+  <div class="p-3 border-t border-border/60 relative overflow-visible space-y-2">
+    {/* Popover Dropdown (Positioned Bottom-Up) */}
+    <ProfileDropdown id={`${prefix}-profile-dropdown`} position="bottom" />
+
+    {/* Contact support & See plans and pricing links (Matches Image 2) */}
+    <div class="space-y-0.5">
+      <a 
+        href="#support" 
+        class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised transition text-body-sm font-medium"
+        title="Contact support"
+      >
+        <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-width="2"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3m.08 4h.01"/>
+        </svg>
+        <span class="sidebar-text truncate">Contact support</span>
+      </a>
+
+      <a 
+        href="#pricing" 
+        class="sidebar-nav-item flex items-center gap-3 px-3 py-2 rounded-xl text-muted hover:text-white hover:bg-surface-raised transition text-body-sm font-medium"
+        title="See plans and pricing"
+      >
+        <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <rect x="2" y="5" width="20" height="14" rx="2" stroke-width="2"/>
+          <line x1="2" y1="10" x2="22" y2="10" stroke-width="2"/>
+        </svg>
+        <span class="sidebar-text truncate">See plans and pricing</span>
+      </a>
+    </div>
+
+    {/* Logged Out State: Log in / Sign up Button (Exact match to Image 2) */}
+    <div class="sidebar-auth-logged-out block">
+      <a 
+        href="/login" 
+        class="flex items-center justify-center gap-2.5 w-full py-2.5 px-4 rounded-xl bg-surface-raised hover:bg-surface-elevated text-white font-semibold text-body-sm border border-border transition shadow-xs group"
+        title="Log in / Sign up"
+      >
+        <svg class="w-4 h-4 text-muted group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+        </svg>
+        <span class="sidebar-text truncate">Log in / Sign up</span>
+      </a>
+    </div>
+
+    {/* Logged In State: User Profile Card & Notification Pill (Exact match to Images 3 & 4) */}
+    <div class="sidebar-auth-logged-in hidden space-y-2">
+      {/* Notification Pill Button (Opens Notification Popup matching ss) */}
+      <div class="relative">
+        <button 
+          id={`${prefix}-notification-trigger`}
+          data-notification-trigger={`${prefix}-notification-popup`}
+          type="button"
+          class="sidebar-notification-pill-btn w-full px-3 py-2 rounded-xl bg-surface-raised/50 hover:bg-surface-raised border border-border/60 hover:border-border transition flex items-center justify-between text-body-sm text-white/90 cursor-pointer text-left group"
+          title="Open Notifications"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+        >
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span class="notification-dot-indicator relative flex h-2 w-2 shrink-0">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+            </span>
+            <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="sidebar-text truncate text-caption-xs font-medium text-muted notification-pill-text">You have 1 new notification</span>
+          </div>
+          <span class="sidebar-text notification-pill-badge px-1.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/30 leading-none">
+            1
+          </span>
+        </button>
+
+        {/* Popover Notification Popup anchored beside sidebar */}
+        <NotificationPopup id={`${prefix}-notification-popup`} prefix={prefix} />
+      </div>
+
+      <button 
+        id={`${prefix}-profile-trigger`}
+        data-profile-trigger={`${prefix}-profile-dropdown`}
+        type="button"
+        class="sidebar-profile-card w-full flex items-center justify-between p-2 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition-all duration-150 cursor-pointer group text-left"
+        aria-haspopup="true"
+        aria-expanded="false"
+        title="User Profile & Settings"
+      >
+        <div class="flex items-center gap-2.5 min-w-0">
+          {/* Avatar Circle */}
+          <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-caption-xs shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
+            <span class="user-avatar-initials">DW</span>
+            <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" />
+          </div>
+          <div class="sidebar-text truncate">
+            <p class="user-display-name text-body-sm font-bold text-white truncate leading-tight">Devil</p>
+            <p class="user-display-email text-[11px] text-muted leading-none mt-0.5 truncate">Free</p>
+          </div>
+        </div>
+
+        {/* Upgrade Button Badge */}
+        <span class="sidebar-text inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#241e12] border border-[#59441a] text-[#f5a623] hover:bg-[#332a18] text-[11px] font-semibold shrink-0 transition shadow-2xs">
+          <span>✨</span>
+          <span>Upgrade</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</aside>

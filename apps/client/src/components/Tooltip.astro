@@ -1,0 +1,53 @@
+---
+interface Props {
+  text: string;
+  shortcut?: string[] | string;
+  position?: 'bottom' | 'top' | 'left' | 'right';
+  id?: string;
+  textId?: string;
+  class?: string;
+}
+
+const {
+  text,
+  shortcut,
+  position = 'bottom',
+  id,
+  textId,
+  class: className = '',
+} = Astro.props;
+
+const positionClasses = {
+  bottom: 'top-full mt-2 left-1/2 -translate-x-1/2',
+  top: 'bottom-full mb-2 left-1/2 -translate-x-1/2',
+  left: 'right-full mr-2 top-1/2 -translate-y-1/2',
+  right: 'left-full ml-2 top-1/2 -translate-y-1/2',
+};
+
+const shortcutKeys = Array.isArray(shortcut) 
+  ? shortcut 
+  : shortcut 
+    ? [shortcut] 
+    : [];
+---
+
+<div 
+  id={id}
+  class={`pointer-events-none absolute ${positionClasses[position]} opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-150 z-[1100] flex flex-col items-center whitespace-nowrap bg-surface border border-border rounded-xl px-2.5 py-1.5 shadow-elevated ${className}`}
+>
+  <span id={textId} class="text-caption-xs font-semibold text-white">{text}</span>
+  {shortcutKeys.length > 0 && (
+    <div class="inline-flex items-center gap-1 mt-1">
+      {shortcutKeys.map((key, index) => (
+        <>
+          <kbd class="px-1.5 py-0.5 rounded bg-surface-raised border border-border text-[10px] text-muted font-mono font-bold leading-none">
+            {key}
+          </kbd>
+          {index < shortcutKeys.length - 1 && (
+            <span class="text-[10px] text-muted font-bold leading-none">+</span>
+          )}
+        </>
+      ))}
+    </div>
+  )}
+</div>
