@@ -1,0 +1,114 @@
+---
+interface Props {
+  code: string;
+  language?: string;
+  filename?: string;
+  highlightLines?: number[];
+}
+
+const {
+  code,
+  language = 'java',
+  filename,
+  highlightLines = [],
+} = Astro.props;
+
+// Format lines and syntax tokens
+const rawLines = code.trimEnd().split('\n');
+
+function tokenizeJava(lineText: string): string {
+  let escaped = lineText
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  const commentIdx = escaped.indexOf('//');
+  let commentPart = '';
+  let codePart = escaped;
+  if (commentIdx !== -1) {
+    codePart = escaped.slice(0, commentIdx);
+    commentPart = `<span class="text-[#656D76] italic">${escaped.slice(commentIdx)}</span>`;
+  }
+
+  // Keywords (blue / purple)
+  const keywords = ['class', 'public', 'private', 'protected', 'static', 'void', 'new', 'return', 'if', 'else', 'while', 'for', 'int', 'String', 'boolean', 'const', 'vector', 'true', 'false', 'null', 'package', 'import'];
+  const keywordRegex = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+  codePart = codePart.replace(keywordRegex, '<span class="text-[#0550AE] font-semibold">$1</span>');
+
+  // String literals (teal / green)
+  codePart = codePart.replace(/(".*?")/g, '<span class="text-[#0A3069] font-medium">$1</span>');
+
+  // Function calls / methods (purple / dark indigo)
+  codePart = codePart.replace(/\b([a-zA-Z_]\w*)\s*(?=\()/g, '<span class="text-[#8250DF]">$1</span>');
+
+  return codePart + commentPart;
+}
+---
+
+<div class="code-block-wrapper my-5 rounded-2xl overflow-hidden border border-border bg-[#F6F8FA] shadow-xs select-text">
+  {filename && (
+    <div class="flex items-center justify-between px-4 py-2 border-b border-border bg-surface text-xs text-muted">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-accent/40"></span>
+        <span class="font-mono text-[12px] text-white/90 font-medium">{filename}</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="uppercase tracking-wider text-[11px] font-semibold text-muted font-mono">{language}</span>
+        <button 
+          type="button"
+          class="copy-code-btn px-2.5 py-1 rounded-lg text-[11px] text-muted hover:text-white bg-surface hover:bg-surface-raised border border-border transition cursor-pointer flex items-center gap-1 shadow-2xs"
+          aria-label="Copy Code"
+        >
+          <svg class="w-3 h-3 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" stroke-width="2"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+          <span class="copy-label font-medium">Copy</span>
+        </button>
+      </div>
+    </div>
+  )}
+
+  <div class="overflow-x-auto p-4 font-mono text-[13.5px] leading-relaxed text-[#24292F]">
+    <pre class="m-0 p-0 table w-full border-collapse"><code>{rawLines.map((line, idx) => {
+      const lineNum = idx + 1;
+      const isHighlighted = highlightLines.includes(lineNum);
+      const htmlContent = tokenizeJava(line);
+      return (
+        <span class={`table-row group ${isHighlighted ? 'bg-blue-100/60' : 'hover:bg-[#EAEFF4]/50'}`}>
+          <span class="table-cell select-none text-right pr-4 text-[#8C959F] group-hover:text-[#57606A] text-[12px] w-8 shrink-0 font-mono align-top py-0.5">
+            {lineNum}
+          </span>
+          <span class="table-cell pl-2 align-top py-0.5 font-mono whitespace-pre text-[#24292F]" set:html={htmlContent} />
+        </span>
+      );
+    })}</code></pre>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.copy-code-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const wrapper = btn.closest('.code-block-wrapper');
+      if (!wrapper) return;
+      const codeLines = Array.from(wrapper.querySelectorAll('code .table-row')).map(row => {
+        const contentCell = row.children[1];
+        return contentCell ? contentCell.textContent || '' : '';
+      }).join('\n');
+
+      try {
+        await navigator.clipboard.writeText(codeLines);
+        const label = btn.querySelector('.copy-label');
+        if (label) {
+          const original = label.textContent;
+          label.textContent = 'Copied!';
+          setTimeout(() => {
+            label.textContent = original;
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Failed to copy', err);
+      }
+    });
+  });
+</script>
