@@ -1,52 +1,396 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+/* ============================================================
+   EXAMRESOURCE — Global Stylesheet
+   Tailwind CSS v4 · CSS-first configuration
+   Design System: takeUforward-inspired dark theme
+   Reference: design.md
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 @import "tailwindcss";
 
+/* ============================================================
+   @theme — Design Tokens → Tailwind Utility Classes
+   
+   Every variable here auto-generates utilities:
+     --color-*   → bg-*, text-*, border-*, ring-*, etc.
+     --font-*    → font-*
+     --text-*    → text-* (font-size + line-height)
+     --tracking-*→ tracking-*
+     --radius-*  → rounded-*
+     --shadow-*  → shadow-*
+     --spacing-* → p-*, m-*, gap-*, w-*, h-*, etc.
+     --z-*       → z-*
+   ============================================================ */
+
 @theme {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  /* ── Font Families ──────────────────────────────────────────
+     Usage: font-sans, font-display, font-mono
+     ──────────────────────────────────────────────────────── */
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Menlo, monospace;
+
+  /* ── Colors ─────────────────────────────────────────────────
+     Usage: bg-canvas, text-primary, border-border, etc.
+     ──────────────────────────────────────────────────────── */
+
+  /* Core Palette */
+  --color-canvas: #131316;
+  --color-primary: #292418;
+  --color-accent: #327CF6;
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* Semantic Status */
+  --color-error: #4C5973;
+  --color-success: #9CB2DD;
+
+  /* Dark Theme Surfaces */
+  --color-surface: #1C1B1F;
+  --color-surface-raised: #252528;
+  --color-border: #2A2925;
+  --color-muted: #A0A0A3;
+  --color-subtle: #1D1A12;
+
+  /* Light Theme (use with .theme-light or media query) */
+  --color-light-bg: #FBFBFB;
+  --color-light-surface: #F1F1F1;
+  --color-light-raised: #E9E9E9;
+  --color-light-text: #121211;
+  --color-light-muted: #747473;
+  --color-light-border: #D8D8D8;
+
+  /* ── Font Sizes with Line Height ────────────────────────────
+     Usage: text-display-xxl, text-display-lg, text-heading-md, 
+            text-body-md, text-button-md, text-caption-sm, etc.
+     Tailwind v4: --text-<name>: <size> generates text-<name>
+                  with optional line-height shorthand
+     ──────────────────────────────────────────────────────── */
+
+  /* Display sizes */
+  --text-display-xxl: 226.08px;
+  --text-display-xxl--line-height: 1.5;
+  --text-display-xl: 98.33px;
+  --text-display-xl--line-height: 1.2;
+  --text-display-lg: 56px;
+  --text-display-lg--line-height: 1.1;
+  --text-display-md: 48px;
+  --text-display-md--line-height: 1.2;
+
+  /* Heading sizes */
+  --text-heading-xxl: 39.74px;
+  --text-heading-xxl--line-height: 1.2;
+  --text-heading-xl: 32px;
+  --text-heading-xl--line-height: 1.2;
+  --text-heading-lg: 28px;
+  --text-heading-lg--line-height: 1.5;
+  --text-heading-md: 24px;
+  --text-heading-md--line-height: 1.5;
+  --text-heading-sm: 16px;
+  --text-heading-sm--line-height: 1.25;
+  --text-heading-xs: 13px;
+  --text-heading-xs--line-height: 1.5;
+
+  /* Body sizes */
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 2;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 1.5;
+  --text-body-sm: 13px;
+  --text-body-sm--line-height: 1;
+  --text-body-xs: 12px;
+  --text-body-xs--line-height: 1.5;
+
+  /* Button sizes */
+  --text-button-md: 14px;
+  --text-button-md--line-height: 1.5;
+  --text-button-sm: 13px;
+  --text-button-sm--line-height: 1.54;
+  --text-button-xs: 10px;
+  --text-button-xs--line-height: 1.5;
+
+  /* Caption sizes */
+  --text-caption-sm: 12px;
+  --text-caption-sm--line-height: 1;
+  --text-caption-xs: 11px;
+  --text-caption-xs--line-height: 1.45;
+
+  /* Nav & Label */
+  --text-nav: 16px;
+  --text-nav--line-height: 1.5;
+  --text-label: 14px;
+  --text-label--line-height: 1.43;
+
+  /* Code */
+  --text-code: 14px;
+  --text-code--line-height: 1.36;
+
+  /* ── Letter Spacing ─────────────────────────────────────────
+     Usage: tracking-tight, tracking-wide, etc.
+     ──────────────────────────────────────────────────────── */
+  --tracking-tighter: -1.12px;
+  --tracking-tight: -0.32px;
+  --tracking-normal: 0px;
+  --tracking-wide: 0.24px;
+  --tracking-wider: 0.32px;
+
+  /* ── Border Radius ──────────────────────────────────────────
+     Usage: rounded-xs, rounded-sm, rounded-card, rounded-pill, etc.
+     ──────────────────────────────────────────────────────── */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 9px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 14px;
+  --radius-card: 20px;
+  --radius-card-lg: 24px;
+  --radius-hero: 44px;
+  --radius-pill: 9999px;
+
+  /* ── Shadows (layered-micro elevation) ──────────────────────
+     Usage: shadow-sm, shadow-inset, shadow-elevated
+     ──────────────────────────────────────────────────────── */
+  --shadow-sm: -1px 4px 7.7px 0px rgba(34, 34, 34, 0.18);
+  --shadow-inset: inset 4px 4px 9px 0px rgba(235, 235, 235, 0.07);
+  --shadow-elevated: 0px 12px 32px 0px rgba(0, 0, 0, 0.22), inset 0px 1px 0px 0px rgba(255, 255, 255, 0.08);
+
+  /* ── Z-Index Scale ──────────────────────────────────────────
+     Usage: z-base, z-sticky, z-dropdown, z-modal
+     ──────────────────────────────────────────────────────── */
+  --z-base: 1;
+  --z-raised: 2;
+  --z-sticky: 3;
+  --z-dropdown: 10;
+  --z-dropdown-high: 20;
+  --z-modal: 50;
+
+  /* ── Custom Spacing ─────────────────────────────────────────
+     Extends Tailwind's default spacing scale.
+     Usage: p-section, gap-band, m-section, etc.
+     ──────────────────────────────────────────────────────── */
+  --spacing-section: 44px;
+  --spacing-band: 48px;
 }
+
+
+/* ============================================================
+   @layer base — Global defaults applied to bare HTML elements.
+   No raw CSS styling for components — use Tailwind utilities.
+   ============================================================ */
 
 @layer base {
-  button, a { -webkit-tap-highlight-color: transparent; }
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-white);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove tap highlight on mobile */
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Accessible focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
-/* Custom styles for article content */
+
+/* ============================================================
+   @layer components — Reusable component classes.
+   Use @apply to compose Tailwind utilities into named classes.
+   ============================================================ */
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply bg-accent text-white font-medium text-button-md rounded-pill h-9 px-3
+           transition-transform duration-150 ease-out
+           hover:scale-105 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-primary text-white font-medium text-button-md rounded-pill h-9 px-3
+           transition-transform duration-150 ease-out
+           hover:scale-105 active:scale-95
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-white font-medium text-button-md rounded-sm h-8 px-3
+           border border-border
+           transition-colors duration-150 ease-out
+           hover:bg-surface-raised
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply bg-subtle text-white font-medium text-button-md rounded-xs h-8 px-2.5
+           transition-colors duration-150 ease-out
+           hover:bg-surface-raised
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-icon {
+    @apply bg-transparent text-white rounded-pill size-8
+           inline-grid place-items-center
+           transition-colors duration-150 ease-out
+           hover:bg-surface-raised;
+  }
+
+  /* ── Cards ── */
+  .card {
+    @apply bg-surface border border-border rounded-card shadow-elevated;
+  }
+
+  .card-flat {
+    @apply bg-surface border border-border rounded-card;
+  }
+
+  /* ── Badges ── */
+  .badge {
+    @apply inline-flex items-center rounded-lg px-3 py-1.5
+           text-caption-sm font-medium;
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center rounded-lg px-3 py-1.5
+           text-caption-sm font-medium bg-accent text-white;
+  }
+
+  .badge-outline {
+    @apply inline-flex items-center rounded-lg px-3 py-1.5
+           text-caption-sm font-medium border border-border text-muted bg-transparent;
+  }
+
+  /* ── Input ── */
+  .input {
+    @apply w-full bg-surface text-white text-body-md font-sans
+           border border-border rounded-2xl px-4 py-2
+           placeholder:text-muted
+           focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* ── Navigation ── */
+  .nav-link {
+    @apply text-nav font-medium text-white
+           transition-colors duration-150
+           hover:text-accent;
+  }
+
+  .nav-link-muted {
+    @apply text-body-md text-muted
+           transition-colors duration-150
+           hover:text-white;
+  }
+}
+
+
+/* ============================================================
+   @layer utilities — Custom one-off utilities.
+   ============================================================ */
+
+@layer utilities {
+  /* Text muted helper */
+  .text-muted-foreground {
+    color: var(--color-muted);
+  }
+}
+
+
+/* ============================================================
+   Blog / Article Prose Styles
+   Follows: public/blog_formatting_seo_guidelines.md
+   
+   These use @apply with Tailwind utilities where possible.
+   Applied via: <article class="prose-exam">
+   ============================================================ */
+
 .prose-exam h2 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-top: 1.75rem;
-  margin-bottom: 0.75rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 2px solid #e2e8f0;
+  @apply text-heading-md font-bold text-white mt-7 mb-3 pb-1 border-b border-border;
 }
 
 .prose-exam h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
+  @apply text-heading-sm font-semibold text-white mt-5 mb-2;
 }
 
 .prose-exam p {
-  margin-bottom: 1rem;
-  line-height: 1.7;
-  color: #334155;
+  @apply text-body-md text-muted mb-4 leading-relaxed;
 }
 
 .prose-exam ul {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
+  @apply list-disc pl-6 mb-4;
 }
 
 .prose-exam ol {
-  list-style-type: decimal;
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
+  @apply list-decimal pl-6 mb-4;
 }
 
 .prose-exam li {
-  margin-bottom: 0.35rem;
-  line-height: 1.6;
+  @apply mb-1 leading-relaxed;
+}
+
+.prose-exam a {
+  @apply text-accent underline underline-offset-2 hover:opacity-80;
+}
+
+.prose-exam code {
+  @apply font-mono text-code bg-surface-raised px-1.5 py-0.5 rounded-xs;
+}
+
+.prose-exam pre {
+  @apply bg-surface border border-border rounded-xl p-4 overflow-x-auto mb-4;
+}
+
+.prose-exam pre code {
+  @apply bg-transparent p-0 rounded-none;
+}
+
+.prose-exam table {
+  @apply w-full border-collapse mb-4;
+}
+
+.prose-exam th,
+.prose-exam td {
+  @apply border border-border px-3 py-2 text-left;
+}
+
+.prose-exam th {
+  @apply bg-surface font-semibold;
+}
+
+.prose-exam blockquote {
+  @apply border-l-3 border-accent pl-4 my-4 text-muted italic;
+}
+
+.prose-exam img {
+  @apply max-w-full h-auto rounded-xl;
+}
+
+
+/* ============================================================
+   Light Theme Override
+   Apply class="theme-light" on <html> or a container
+   ============================================================ */
+
+.theme-light {
+  --color-canvas: #FBFBFB;
+  --color-surface: #F1F1F1;
+  --color-surface-raised: #E9E9E9;
+  --color-white: #121211;
+  --color-muted: #747473;
+  --color-border: #D8D8D8;
+  --color-subtle: #E0DDD8;
 }

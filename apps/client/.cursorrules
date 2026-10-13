@@ -1,0 +1,25 @@
+# Cursor Rules — examresource Frontend
+
+## ⚠️ MANDATORY: Read Before ANY Frontend Task
+Before performing any frontend work, you MUST read these files:
+1. `design.md` — Design system tokens, color palette, typography, component specs
+2. `public/blog_formatting_seo_guidelines.md` — Blog formatting and SEO standards
+
+## Tech Stack
+- Astro v7 (SSG/SSR)
+- Tailwind CSS v4 (using @theme directive in src/styles/global.css)
+- DM Sans (primary font), Geist (display/labels), ui-monospace (code)
+- Bun as package manager and runtime
+
+## Design System Summary
+- Dark canvas: #131316 | Primary: #292418 | CTA Accent: #327CF6
+- Surface: #1C1B1F | Border: #2A2925 | Text: #FFFFFF | Muted: #A0A0A3
+- Pill buttons (rounded-full), rounded cards (20px), micro-shadow elevation
+- Mobile-first responsive, generous whitespace, high contrast
+
+## Blog Content Rules
+- Structured Markdown/MDX → semantic HTML at build time
+- One H1, logical H2/H3 hierarchy
+- Article/BlogPosting structured data
+- Verify facts against official sources
+- Full guidelines in public/blog_formatting_seo_guidelines.md
