@@ -663,7 +663,7 @@ export class BlogService {
     input: CreateCategoryInput,
     currentUser: CurrentUser,
   ) {
-    this.assertCanWrite(currentUser);
+    this.assertAdmin(currentUser);
     const existing = await db
       .select({ id: categories.id })
       .from(categories)
@@ -693,7 +693,7 @@ export class BlogService {
     input: UpdateCategoryInput,
     currentUser: CurrentUser,
   ) {
-    this.assertCanWrite(currentUser);
+    this.assertAdmin(currentUser);
     if (input.slug) {
       const existing = await db
         .select({ id: categories.id })
@@ -723,7 +723,7 @@ export class BlogService {
   }
 
   async deleteCategory(id: string, currentUser: CurrentUser) {
-    this.assertCanWrite(currentUser);
+    this.assertAdmin(currentUser);
     await db.delete(categories).where(eq(categories.id, id));
   }
 
@@ -742,13 +742,13 @@ export class BlogService {
   }
 
   async createTag(input: CreateTagInput, currentUser: CurrentUser) {
-    this.assertCanWrite(currentUser);
+    this.assertAdmin(currentUser);
     const [t] = await db.insert(tags).values(input).returning();
     return t;
   }
 
   async deleteTag(id: string, currentUser: CurrentUser) {
-    this.assertCanWrite(currentUser);
+    this.assertAdmin(currentUser);
     await db.delete(tags).where(eq(tags.id, id));
   }
 
@@ -962,6 +962,12 @@ export class BlogService {
   private assertCanWrite(currentUser: CurrentUser) {
     if (currentUser.role === 'student') {
       throw new ForbiddenException('Editor access is required.');
+    }
+  }
+
+  private assertAdmin(currentUser: CurrentUser) {
+    if (currentUser.role !== 'admin') {
+      throw new ForbiddenException('Administrator access is required.');
     }
   }
 

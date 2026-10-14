@@ -124,8 +124,21 @@ const {
     <!-- Auth Verification Guard -->
     <script>
       const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
-      const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
-      const token = await clerk?.session?.getToken();
+
+      async function getClerkToken() {
+        for (let attempt = 0; attempt < 50; attempt += 1) {
+          const clerk = (window as Window & {
+            Clerk?: { loaded?: boolean; session?: { getToken: () => Promise<string | null> } };
+          }).Clerk;
+          if (clerk?.loaded && clerk.session) {
+            return clerk.session.getToken().catch(() => null);
+          }
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        return null;
+      }
+
+      const token = await getClerkToken();
       if (token) {
         try {
           const res = await fetch(`${apiUrl}/me`, { headers: { Authorization: `Bearer ${token}` } });
@@ -134,8 +147,8 @@ const {
             const nameEl = document.getElementById('admin-user-name');
             const roleEl = document.getElementById('admin-user-role');
             const avatarEl = document.getElementById('admin-user-avatar');
-            if (nameEl) nameEl.textContent = user.name || 'Editorial Team';
-            if (roleEl) roleEl.textContent = (user.role || 'editor').toUpperCase();
+            if (nameEl) nameEl.textContent = user.name || user.email || 'Administrator';
+            if (roleEl) roleEl.textContent = (user.role || 'admin').toUpperCase();
             if (avatarEl) avatarEl.textContent = (user.name || user.email || 'A')[0].toUpperCase();
           }
         } catch (_) {}
@@ -265,7 +278,7 @@ const {
             A
           </div>
           <div class="flex-1 min-w-0">
-            <span id="admin-user-name" class="block text-xs font-semibold text-slate-800 truncate">Editorial Staff</span>
+            <span id="admin-user-name" class="block text-xs font-semibold text-slate-800 truncate">Loading profile...</span>
             <span id="admin-user-role" class="block text-[10px] font-mono text-slate-400">ADMIN</span>
           </div>
           <a 

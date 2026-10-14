@@ -20,16 +20,12 @@ export class ClerkAuthService {
   private readonly clerk = createClerkClient({ secretKey: env.CLERK_SECRET_KEY });
 
   async requireUser(req: Request): Promise<CurrentUser> {
-    // Allow development bypass if auth header is missing or in development mode
+    // Never infer a privileged identity from a missing or invalid credential.
+    // Local development must use a real Clerk session (or an explicitly seeded
+    // account) just like every other environment.
     const authHeader = req.header('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return {
-        id: '00000000-0000-0000-0000-000000000001',
-        clerkUserId: 'dev_admin_user',
-        name: 'Local Admin (Dev)',
-        email: 'admin@examresource.local',
-        role: 'admin',
-      };
+      throw new UnauthorizedException('Authentication is required.');
     }
 
     const token = this.bearerToken(req);
@@ -37,24 +33,11 @@ export class ClerkAuthService {
     try {
       payload = await verifyToken(token, { secretKey: env.CLERK_SECRET_KEY });
     } catch {
-      // In dev fallback to dev admin instead of rejecting
-      return {
-        id: '00000000-0000-0000-0000-000000000001',
-        clerkUserId: 'dev_admin_user',
-        name: 'Local Admin (Dev)',
-        email: 'admin@examresource.local',
-        role: 'admin',
-      };
+      throw new UnauthorizedException('Authentication token is invalid or expired.');
     }
     const clerkUserId = payload.sub;
     if (!clerkUserId) {
-      return {
-        id: '00000000-0000-0000-0000-000000000001',
-        clerkUserId: 'dev_admin_user',
-        name: 'Local Admin (Dev)',
-        email: 'admin@examresource.local',
-        role: 'admin',
-      };
+      throw new UnauthorizedException('Authentication token is invalid.');
     }
 
     let [user] = await db.select().from(users).where(eq(users.clerkUserId, clerkUserId)).limit(1);
