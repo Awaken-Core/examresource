@@ -1,20 +1,35 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import SubjectHeader from '../../components/blog/SubjectHeader.astro';
-import TopicCard from '../../components/blog/TopicCard.astro';
-import { SUBJECTS_MOCK } from '../../data/blogData';
 
 const { subject: subjectParam } = Astro.params;
-const subjectKey = (subjectParam || 'java').toLowerCase();
+const subjectKey = (subjectParam || '').toLowerCase();
 
-const subject = SUBJECTS_MOCK[subjectKey] || SUBJECTS_MOCK['java'];
+const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
-const pageTitle = `${subject.title} - Technical Reference & Engineering Guides`;
-const pageDescription = subject.shortDescription;
-const canonicalUrl = `https://examresource.local/blog/${subject.slug}`;
+// Fetch live database articles for this category and all categories for navigation
+let liveCategoryPosts: any[] = [];
+let categoryInfo: any = null;
+let allCategories: any[] = [];
 
-// All available subjects for the tab switcher
-const allSubjects = Object.values(SUBJECTS_MOCK);
+try {
+  const [postRes, catRes] = await Promise.all([
+    fetch(`${API_URL}/blogs?category=${subjectKey}&limit=50`),
+    fetch(`${API_URL}/categories`),
+  ]);
+
+  if (postRes.ok) liveCategoryPosts = await postRes.json();
+  if (catRes.ok) {
+    allCategories = await catRes.json();
+    categoryInfo = allCategories.find((c: any) => c.slug === subjectKey);
+  }
+} catch (e) {}
+
+const categoryTitle = categoryInfo?.name || subjectKey.replace(/-/g, ' ').toUpperCase();
+const categoryDesc = categoryInfo?.description || `Browse articles and updates in ${categoryTitle}.`;
+
+const pageTitle = `${categoryTitle} - Reference Guides & Articles | ExamPortal`;
+const pageDescription = categoryDesc;
+const canonicalUrl = `https://examresource.local/blog/${subjectKey}`;
 
 // Schema.org structured data (BreadcrumbList & CollectionPage)
 const jsonLd = {
@@ -22,14 +37,14 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "CollectionPage",
-      "name": subject.title,
-      "description": subject.description,
+      "name": categoryTitle,
+      "description": categoryDesc,
       "url": canonicalUrl,
-      "hasPart": subject.topics.map(t => ({
-        "@type": "TechArticle",
+      "hasPart": liveCategoryPosts.map((t: any) => ({
+        "@type": "Article",
         "headline": t.title,
-        "description": t.description,
-        "url": `https://examresource.local/blog/${subject.slug}/${t.slug}`
+        "description": t.description || t.metaDescription,
+        "url": `https://examresource.local/blog/${subjectKey}/${t.slug}`
       }))
     },
     {
@@ -39,12 +54,12 @@ const jsonLd = {
           "@type": "ListItem",
           "position": 1,
           "name": "Articles",
-          "item": "https://examresource.local/blog/java"
+          "item": "https://examresource.local/blog"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": subject.title,
+          "name": categoryTitle,
           "item": canonicalUrl
         }
       ]
@@ -61,99 +76,84 @@ const jsonLd = {
 >
   <div class="min-h-screen bg-canvas text-white py-8 px-4 sm:px-6 lg:px-8">
     <div class="max-w-5xl mx-auto">
-      {/* Subject Selector Bar */}
+      <!-- Breadcrumb Header -->
+      <nav aria-label="Breadcrumb" class="text-xs text-muted mb-4">
+        <a href="/" class="hover:text-accent">Home</a>
+        <span class="mx-1.5">/</span>
+        <a href="/blog" class="hover:text-accent">Articles</a>
+        <span class="mx-1.5">/</span>
+        <span class="text-white font-semibold">{categoryTitle}</span>
+      </nav>
+
+      <!-- Subject Selector Bar -->
       <nav aria-label="Subject Categories" class="flex items-center gap-1 overflow-x-auto pb-3 mb-6 border-b border-border/70 scrollbar-none">
-        {allSubjects.map((s) => {
-          const isActive = s.slug === subject.slug;
+        <a
+          href="/blog"
+          class="px-3.5 py-1.5 rounded-md text-xs font-medium text-muted hover:text-white hover:bg-surface-raised shrink-0"
+        >
+          All Topics
+        </a>
+        {allCategories.map((c) => {
+          const isActive = c.slug === subjectKey;
           return (
             <a
-              href={`/blog/${s.slug}`}
+              href={`/blog/${c.slug}`}
               class={`px-3.5 py-1.5 rounded-md text-xs font-medium transition-all shrink-0 flex items-center gap-2 ${
                 isActive
                   ? 'bg-surface text-accent font-semibold border border-border shadow-2xs'
                   : 'text-muted hover:text-white hover:bg-surface-raised'
               }`}
             >
-              <span>{s.title}</span>
-              <span class={`text-[10px] font-mono px-1.5 py-0.2 rounded ${isActive ? 'bg-accent/10 text-accent font-bold' : 'text-muted/70'}`}>
-                {s.topicsCount}
-              </span>
+              <span>{c.name}</span>
             </a>
           );
         })}
       </nav>
 
-      {/* Subject Header & Search */}
-      <SubjectHeader subject={subject} />
+      <!-- Header Banner -->
+      <div class="border-b border-border/80 pb-6 mb-6">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          {categoryTitle}
+        </h1>
+        <p class="text-xs sm:text-sm text-muted mt-2 leading-relaxed max-w-2xl">
+          {categoryDesc}
+        </p>
+      </div>
 
-      {/* Content-First Topic List */}
+      <!-- Content-First Topic List -->
       <div class="mt-6">
         <div class="flex items-center justify-between pb-3 border-b border-border/80">
           <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-muted">
-            All Articles ({subject.topics.length})
+            Published Articles ({liveCategoryPosts.length})
           </h2>
-          <span id="search-match-count" class="text-xs font-mono text-muted hidden"></span>
         </div>
 
-        {/* Clean list with unboxed rows */}
-        <div id="topics-list" class="divide-y divide-border/60">
-          {subject.topics.map((t) => (
-            <TopicCard topic={t} subjectSlug={subject.slug} />
-          ))}
-        </div>
-
-        <div id="no-search-results" class="hidden py-16 text-center text-muted border border-border/80 rounded-lg mt-6 bg-surface">
-          <p class="text-sm font-semibold text-white">No articles matched your filter</p>
-          <p class="text-xs mt-1 text-muted">Try adjusting your keywords or browse other subjects above.</p>
-        </div>
+        {liveCategoryPosts.length > 0 ? (
+          <div class="divide-y divide-border/60">
+            {liveCategoryPosts.map((post) => (
+              <div class="py-4 hover:bg-surface-raised/40 p-3 rounded-lg transition group">
+                <div class="flex items-center justify-between text-[11px] text-muted mb-1">
+                  <span>Updated: {new Date(post.updatedAt).toLocaleDateString()}</span>
+                  <span>By {post.author?.name || 'Staff'}</span>
+                </div>
+                <h3 class="text-base font-bold text-white group-hover:text-accent transition">
+                  <a href={`/blog/${subjectKey}/${post.slug}`}>{post.title}</a>
+                </h3>
+                <p class="text-xs text-muted mt-1 line-clamp-2 leading-relaxed">
+                  {post.description || post.metaDescription}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="p-8 text-center bg-surface border border-border rounded-xl mt-4 text-muted">
+            <p class="text-sm">No articles published in this category yet.</p>
+            <a href="/editor" class="text-accent hover:underline text-xs mt-2 inline-block font-semibold">
+              + Publish an article in {categoryTitle}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   </div>
 </Layout>
-
-<script>
-  function setupTopicSearch() {
-    const input = document.getElementById('topic-search-input') as HTMLInputElement | null;
-    const cards = document.querySelectorAll<HTMLElement>('[data-topic-item]');
-    const emptyState = document.getElementById('no-search-results');
-    const matchCount = document.getElementById('search-match-count');
-
-    if (!input || !cards.length) return;
-
-    input.addEventListener('input', () => {
-      const query = input.value.trim().toLowerCase();
-      let visible = 0;
-
-      cards.forEach((card) => {
-        const title = card.getAttribute('data-topic-title') || '';
-        const desc = card.getAttribute('data-topic-desc') || '';
-        const category = card.getAttribute('data-topic-category') || '';
-        const matches = title.includes(query) || desc.includes(query) || category.includes(query);
-
-        if (matches) {
-          card.classList.remove('hidden');
-          visible++;
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-
-      if (emptyState) {
-        if (visible === 0) emptyState.classList.remove('hidden');
-        else emptyState.classList.add('hidden');
-      }
-
-      if (matchCount) {
-        if (query) {
-          matchCount.textContent = `Showing ${visible} of ${cards.length}`;
-          matchCount.classList.remove('hidden');
-        } else {
-          matchCount.classList.add('hidden');
-        }
-      }
-    });
-  }
-
-  setupTopicSearch();
-  document.addEventListener('astro:page-load', setupTopicSearch);
-</script>

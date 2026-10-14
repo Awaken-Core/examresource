@@ -1,365 +1,1199 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { STATES_LIST, CATEGORIES_LIST } from '../data/portalMockData';
-let auth: any = null;
-try {
-  auth = typeof Astro.locals.auth === 'function' ? Astro.locals.auth() : null;
-} catch (_) {}
-const userId = auth?.userId;
-if (!userId && auth?.redirectToSignIn) return auth.redirectToSignIn();
+import AdminLayout from '../layouts/AdminLayout.astro';
 ---
 
-<Layout
-  title="Article Editor - ExamPortal"
-  description="Create and edit government exam articles, notifications, admit cards, and results."
->
-  <script>
-    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
-    const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
-    const token = await clerk?.session?.getToken();
-    const response = await fetch(`${apiUrl}/me`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-    const user = response.ok ? await response.json() : null;
-    if (!user || !['editor', 'admin'].includes(user.role)) window.location.replace('/');
-  </script>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<AdminLayout title="Article Editor" activeNav="new-post">
+  <!-- Top contextual actions inside Admin Header -->
+  <div slot="header-actions" class="flex items-center gap-2">
+    <!-- Back to Articles Button -->
+    <a 
+      href="/admin" 
+      class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition"
+    >
+      <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      <span>Back to Articles</span>
+    </a>
+
+    <!-- Save status indicator -->
+    <div id="save-status" class="text-xs text-slate-500 font-medium px-2 py-1 flex items-center gap-1.5 mr-1">
+      <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+      <span>Saved</span>
+    </div>
+
+    <!-- Secondary Actions Dropdown Menu -->
+    <div class="relative">
+      <button 
+        type="button" 
+        id="editor-options-menu-btn" 
+        class="px-2 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium text-xs transition flex items-center gap-1"
+        title="More Actions"
+      >
+        <span>Options</span>
+        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <div 
+        id="editor-options-dropdown" 
+        class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50 text-xs"
+      >
+        <button 
+          type="button" 
+          id="revisions-modal-btn" 
+          class="w-full text-left px-3 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+        >
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Revision History</span>
+        </button>
+        <button 
+          type="button" 
+          id="duplicate-article-btn" 
+          class="w-full text-left px-3 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+        >
+          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <span>Duplicate Article</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Preview Button -->
+    <button 
+      id="toggle-preview-btn"
+      class="px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs flex items-center gap-1.5 transition"
+    >
+      <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      </svg>
+      <span>Preview</span>
+    </button>
+
+    <!-- Save Draft Button -->
+    <button 
+      id="save-draft-btn"
+      class="px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition"
+    >
+      Save Draft
+    </button>
+
+    <!-- Publish Button -->
+    <button 
+      id="publish-btn"
+      class="px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
+      style="background-color: #2563EB;"
+    >
+      Publish
+    </button>
+  </div>
+
+  <!-- Focused Editorial Canvas Container -->
+  <div class="h-full flex flex-col lg:flex-row overflow-hidden bg-white">
     
-    {/* Editor Header Bar with Actions */}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200">
-      <div>
-        <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-          <a href="/admin" class="hover:text-blue-700">← Back to Admin Dashboard</a>
-          <span>/</span>
-          <span class="text-slate-800 font-semibold">Article Editor</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Exam Article Content Editor
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">
-          Compose structured government exam articles with headings, tables, guidelines, and instant live preview.
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <button 
-          id="toggle-preview-btn"
-          class="px-3.5 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition"
-        >
-          <span>👁️</span>
-          <span id="preview-btn-text">Live Preview</span>
-        </button>
-
-        <button 
-          id="save-draft-btn"
-          class="px-3.5 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-xs sm:text-sm transition"
-        >
-          Save Draft
-        </button>
-
-        <button 
-          id="publish-btn"
-          class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm shadow-xs transition"
-        >
-          Publish Article
-        </button>
-      </div>
-    </div>
-
-    {/* Toast notification message */}
-    <div id="editor-toast" class="hidden my-4 p-3 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-between">
-      <span id="editor-toast-text">Article saved successfully!</span>
-      <button id="editor-toast-close" class="text-emerald-700 font-bold ml-2">✕</button>
-    </div>
-
-    {/* Main Workspace: Split into Form View & Live Preview Panel */}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+    <!-- Main Writing Column: Title, Summary, Toolbar & Spacious Body -->
+    <div id="editor-main-col" class="flex-1 flex flex-col h-full overflow-y-auto">
       
-      {/* Editor Fields Column */}
-      <div id="editor-form-col" class="lg:col-span-7 space-y-6">
-        
-        {/* Core Post Metadata Card */}
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-4">
-          <h2 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-            <span>📝</span>
-            <span>Article Primary Details</span>
-          </h2>
+      <!-- Top Title Area -->
+      <div class="max-w-3xl w-full mx-auto px-6 sm:px-10 pt-10 pb-4">
+        <!-- 1. Article Title -->
+        <input 
+          type="text" 
+          id="field-title"
+          placeholder="Enter article title..."
+          class="w-full text-2xl sm:text-3xl font-extrabold text-slate-900 placeholder:text-slate-300 border-none outline-none focus:ring-0 p-0 bg-transparent leading-tight tracking-tight"
+        />
 
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Article Headline / Title *</label>
-            <input 
-              type="text" 
-              id="field-title"
-              value="Bihar DECE LE Seat Allotment Result 2026: 1st Round Allotment Letter Download Link"
-              class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-            />
-          </div>
+        <!-- 2. Short Summary / Excerpt -->
+        <textarea 
+          id="field-excerpt"
+          rows="2"
+          placeholder="Short summary (optional, used in article listings and search descriptions)..."
+          class="w-full text-sm text-slate-600 placeholder:text-slate-300 border-none outline-none focus:ring-0 p-0 bg-transparent resize-none mt-3 leading-relaxed"
+        ></textarea>
+      </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">URL Slug</label>
-              <input 
-                type="text" 
-                id="field-slug"
-                value="bihar-dece-le-seat-allotment-2026"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-              />
+      <!-- Simplified TipTap Formatting Toolbar (Sticky) -->
+      <div class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-y border-slate-200 px-6 sm:px-10 py-1.5 flex items-center justify-between text-xs text-slate-700">
+        <div id="tiptap-toolbar" class="flex flex-wrap items-center gap-1">
+          <!-- Common formatting visible -->
+          <button type="button" data-action="paragraph" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 font-medium text-slate-700" title="Normal text">Paragraph</button>
+          <button type="button" data-action="h2" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 font-bold text-slate-900" title="Heading 2">H2</button>
+          <button type="button" data-action="h3" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 font-bold text-slate-900" title="Heading 3">H3</button>
+          
+          <div class="w-px h-4 bg-slate-200 mx-1"></div>
+          
+          <button type="button" data-action="bold" class="tool-btn px-2.5 py-1 rounded hover:bg-slate-100 font-bold text-slate-900" title="Bold">B</button>
+          <button type="button" data-action="italic" class="tool-btn px-2.5 py-1 rounded hover:bg-slate-100 italic font-serif text-slate-900" title="Italic">I</button>
+          
+          <div class="w-px h-4 bg-slate-200 mx-1"></div>
+          
+          <button type="button" data-action="bulletList" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-700" title="Bulleted list">Bulleted list</button>
+          <button type="button" data-action="orderedList" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-700" title="Numbered list">Numbered list</button>
+          
+          <div class="w-px h-4 bg-slate-200 mx-1"></div>
+          
+          <button type="button" data-action="insertLink" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-blue-600 font-medium" title="Insert link on selected text">Link</button>
+          <button type="button" data-action="insertImage" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-700" title="Insert image">Image</button>
+          
+          <div class="w-px h-4 bg-slate-200 mx-1"></div>
+          
+          <button type="button" data-action="undo" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-600" title="Undo">Undo</button>
+          <button type="button" data-action="redo" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-600" title="Redo">Redo</button>
+
+          <!-- More Dropdown for less frequent tools -->
+          <div class="relative ml-1">
+            <button 
+              type="button" 
+              id="toolbar-more-btn" 
+              class="px-2 py-1 rounded border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1"
+            >
+              <span>More</span>
+              <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <div 
+              id="toolbar-more-menu" 
+              class="hidden absolute left-0 mt-1 w-36 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-40 text-xs"
+            >
+              <button type="button" data-action="h4" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Heading 4</button>
+              <button type="button" data-action="underline" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Underline</button>
+              <button type="button" data-action="strike" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Strikethrough</button>
+              <button type="button" data-action="blockquote" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Blockquote</button>
+              <button type="button" data-action="codeBlock" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Code block</button>
+              <button type="button" data-action="divider" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Horizontal divider</button>
+              <button type="button" data-action="insertTable" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Table (3x3)</button>
             </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Target State *</label>
-              <select 
-                id="field-state"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-              >
-                {STATES_LIST.map(st => (
-                  <option value={st} selected={st === 'Bihar'}>{st}</option>
-                ))}
-              </select>
-            </div>
           </div>
+        </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
+          <span id="word-count">0 words</span>
+          <span>•</span>
+          <span id="read-time">1 min read</span>
+        </div>
+      </div>
+
+      <!-- 3. Article Body Canvas -->
+      <div class="flex-1 max-w-3xl w-full mx-auto px-6 sm:px-10 py-6">
+        <div 
+          id="tiptap-editor"
+          class="prose prose-slate max-w-none min-h-[500px] focus:outline-none text-slate-800 text-sm sm:text-base leading-relaxed"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar Organized into 4 Collapsible Sections -->
+    <aside id="editor-sidebar" class="w-full lg:w-84 border-t lg:border-t-0 lg:border-l border-slate-200 bg-white flex flex-col h-full overflow-y-auto shrink-0 text-xs">
+      
+      <div class="divide-y divide-slate-200">
+
+        <!-- SECTION 1: Where should this article appear? (Open by default) -->
+        <section class="accordion-item" data-accordion="location">
+          <button 
+            type="button" 
+            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
+          >
+            <span>1. Where should this article appear?</span>
+            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div class="accordion-content px-5 pb-5 pt-1 space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Category *</label>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block font-semibold text-slate-700">
+                  Blog Category <span class="text-red-500">*</span>
+                </label>
+                <button 
+                  type="button" 
+                  id="open-create-category-modal"
+                  class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+                >
+                  + Create category
+                </button>
+              </div>
               <select 
                 id="field-category"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
+                class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
               >
-                {CATEGORIES_LIST.filter(c => c.id !== 'all').map(c => (
-                  <option value={c.name} selected={c.name === 'Admission & Counselling'}>{c.name}</option>
-                ))}
+                <option value="">Select a category...</option>
               </select>
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Notice / Advertisement No.</label>
-              <input 
-                type="text" 
-                id="field-notice"
-                value="BCECEB(DECE-LE)-2026/08"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Executive Summary / Intro Paragraph</label>
-            <textarea 
-              id="field-summary"
-              rows="3"
-              class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 leading-relaxed focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-            >Bihar Combined Entrance Competitive Examination Board (BCECEB) has officially released the Round 1 Seat Allotment result for Lateral Entry Polytechnic diploma admissions.</textarea>
-          </div>
-        </div>
-
-        {/* Content Body Editor with Formatting Bar */}
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-3">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <span>📄</span>
-              <span>Rich Article Content</span>
-            </h2>
-            <span class="text-[11px] text-slate-400">HTML / Markdown Supported</span>
-          </div>
-
-          {/* Editor Quick Insert Toolbar */}
-          <div class="flex flex-wrap items-center gap-1.5 p-1.5 bg-slate-100 rounded-lg text-xs">
-            <button type="button" class="insert-tag px-2 py-1 bg-white hover:bg-slate-200 rounded font-semibold text-slate-700" data-tag="h2">H2 Heading</button>
-            <button type="button" class="insert-tag px-2 py-1 bg-white hover:bg-slate-200 rounded font-semibold text-slate-700" data-tag="h3">H3 Heading</button>
-            <button type="button" class="insert-tag px-2 py-1 bg-white hover:bg-slate-200 rounded font-semibold text-slate-700" data-tag="p">Paragraph</button>
-            <button type="button" class="insert-tag px-2 py-1 bg-white hover:bg-slate-200 rounded font-semibold text-slate-700" data-tag="list">Bullet List</button>
-            <button type="button" class="insert-tag px-2 py-1 bg-white hover:bg-slate-200 rounded font-semibold text-slate-700" data-tag="table">Table Format</button>
-            <button type="button" class="insert-tag px-2 py-1 bg-white hover:bg-slate-200 rounded font-semibold text-slate-700" data-tag="link">Direct Link</button>
-          </div>
-
-          <textarea 
-            id="field-content"
-            rows="12"
-            class="w-full font-mono bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs leading-relaxed text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-          ><h2>Bihar DECE LE 2026: Important Counselling Schedule</h2>
-<p>Candidates can check their college and branch allotment by logging into the official portal using their Roll Number and Password.</p>
-
-<h3>Key Instructions for Document Verification:</h3>
-<ul>
-  <li>Download 3 clear copies of the provisional allotment order.</li>
-  <li>Carry original matriculation and intermediate certificates.</li>
-  <li>Report at the allotted nodal center before 16 October 2026.</li>
-</ul>
-
-<h3>Direct Verification Links:</h3>
-<p><a href="https://bceceboard.bihar.gov.in" target="_blank">Download Round 1 Allotment Letter ↗</a></p></textarea>
-        </div>
-
-        {/* SEO & Featured Media Card */}
-        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs space-y-3">
-          <h2 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center gap-2">
-            <span>🔍</span>
-            <span>SEO & Media Settings</span>
-          </h2>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Featured Image URL</label>
-              <input 
-                type="text" 
-                id="field-image"
-                value="/images/bihar-dece-le-allotment-2026.webp"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-              />
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">Meta Keywords</label>
-              <input 
-                type="text" 
-                id="field-keywords"
-                value="bihar dece le allotment, bceceb lateral entry 2026"
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs text-slate-700 focus:bg-white focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Live Preview Panel (5 cols on lg) */}
-      <div id="preview-panel-col" class="lg:col-span-5 space-y-4">
-        <div class="sticky top-20 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div class="flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <h2 class="text-sm font-bold text-slate-900">Live Article Preview</h2>
-            </div>
-            <span id="preview-status-pill" class="text-[10px] bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-full">
-              Live Rendering
-            </span>
-          </div>
-
-          {/* Rendered Preview Container */}
-          <div class="mt-4 space-y-3">
-            <div class="flex items-center gap-2">
-              <span id="prev-category" class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded">
-                Admission & Counselling
-              </span>
-              <span id="prev-state" class="bg-slate-100 text-slate-700 text-[10px] font-semibold px-2 py-0.5 rounded">
-                📍 Bihar
-              </span>
-            </div>
-
-            <h3 id="prev-title" class="text-base font-extrabold text-slate-900 leading-snug">
-              Bihar DECE LE Seat Allotment Result 2026: 1st Round Allotment Letter Download Link
-            </h3>
-
-            <div class="text-[11px] text-slate-400 pb-2 border-b border-slate-100 flex items-center justify-between">
-              <span>By ExamPortal Team</span>
-              <span id="prev-date">Today</span>
-            </div>
-
-            <div class="bg-blue-50/70 border-l-3 border-blue-600 p-2.5 rounded-r text-xs text-blue-900 font-medium">
-              <p id="prev-summary">
-                Bihar Combined Entrance Competitive Examination Board (BCECEB) has officially released the Round 1 Seat Allotment result.
+              <p id="move-category-hint" class="text-[11px] text-slate-400 mt-1">
+                Assign this article to a section (e.g. Java, Civil Engineering). Changing this selector will move the article to another category.
               </p>
             </div>
 
-            {/* Injected Content Body */}
-            <div id="prev-content" class="text-xs text-slate-700 space-y-2 leading-relaxed pt-2">
-              {/* Dynamic live HTML rendered here */}
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">URL Slug</label>
+              <div class="flex items-center bg-white border border-slate-300 rounded-md px-2 py-1.5">
+                <input 
+                  type="text" 
+                  id="field-slug"
+                  placeholder="article-slug"
+                  class="w-full bg-transparent font-mono text-slate-800 outline-none text-xs"
+                />
+              </div>
             </div>
+
+            <!-- Resulting Live URL Display -->
+            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-md">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Resulting URL:</span>
+              <span id="resulting-url-preview" class="block font-mono text-[11px] text-blue-700 font-medium break-all mt-0.5">
+                /blog/[category]/[article-slug]
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: Featured Image (Open by default) -->
+        <section class="accordion-item" data-accordion="media">
+          <button 
+            type="button" 
+            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
+          >
+            <span>2. Featured Image</span>
+            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Image URL</label>
+              <input 
+                type="text" 
+                id="field-cover-image"
+                placeholder="https://... or /images/..."
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            <!-- Preview Container -->
+            <div id="image-preview-box" class="hidden border border-slate-200 rounded-md overflow-hidden bg-slate-50">
+              <img id="image-preview-el" src="" alt="Cover preview" class="w-full h-32 object-cover" />
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Alternative Text</label>
+              <input 
+                type="text" 
+                id="field-image-alt"
+                placeholder="Description of image for accessibility & SEO"
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Caption <span class="text-slate-400 font-normal">(Optional)</span></label>
+              <input 
+                type="text" 
+                id="field-image-caption"
+                placeholder="Image source or caption"
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: SEO Settings (Collapsed by default) -->
+        <section class="accordion-item" data-accordion="seo">
+          <button 
+            type="button" 
+            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
+          >
+            <div class="flex items-center gap-2">
+              <span>3. SEO Settings</span>
+              <span class="text-[10px] text-slate-400 font-normal">(Advanced)</span>
+            </div>
+            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div class="accordion-content hidden px-5 pb-5 pt-1 space-y-3.5">
+            <!-- Google SERP Snippet Preview -->
+            <div class="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Search Result Preview</span>
+              <div id="serp-title" class="font-semibold text-blue-700 truncate text-xs">
+                Article Title | ExamPortal
+              </div>
+              <div id="serp-url" class="text-[10px] text-emerald-700 font-mono truncate">
+                https://examresource.local/blog/general/article-slug
+              </div>
+              <div id="serp-desc" class="text-slate-600 line-clamp-2 text-[11px] leading-relaxed">
+                Snippet description will appear here in search engine results.
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-semibold text-slate-700">SEO Title</label>
+                <span id="title-char-count" class="text-[10px] text-slate-400 font-mono">0/60</span>
+              </div>
+              <input 
+                type="text" 
+                id="field-meta-title"
+                placeholder="Custom title tag (defaults to article title)"
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="font-semibold text-slate-700">Meta Description</label>
+                <span id="desc-char-count" class="text-[10px] text-slate-400 font-mono">0/160</span>
+              </div>
+              <textarea 
+                id="field-meta-desc"
+                rows="2"
+                placeholder="Meta description (defaults to short summary)"
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Canonical URL</label>
+              <input 
+                type="text" 
+                id="field-canonical-url"
+                placeholder="Leave blank for automatic canonical"
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+
+            <div class="flex items-center gap-2 pt-1">
+              <input type="checkbox" id="field-noindex" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+              <label for="field-noindex" class="text-slate-700 cursor-pointer select-none">
+                Exclude from search index (<code>noindex</code>)
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4: Publishing (Open by default) -->
+        <section class="accordion-item" data-accordion="publishing">
+          <button 
+            type="button" 
+            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
+          >
+            <span>4. Publishing</span>
+            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Publication State</label>
+              <select 
+                id="field-status" 
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+              >
+                <option value="DRAFT">Draft</option>
+                <option value="PUBLISHED">Published</option>
+                <option value="SCHEDULED">Scheduled</option>
+                <option value="ARCHIVED">Archived</option>
+              </select>
+            </div>
+
+            <!-- Schedule publication date (shown when SCHEDULED is selected) -->
+            <div id="schedule-date-group" class="hidden">
+              <label class="block font-semibold text-slate-700 mb-1">Scheduled Date & Time</label>
+              <input 
+                type="datetime-local" 
+                id="field-scheduled-at"
+                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+              <p class="text-[10px] text-slate-400 mt-1">Article will stay private until this scheduled time.</p>
+            </div>
+
+            <!-- Author Information -->
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Author:</span>
+                <span id="author-name-display" class="font-semibold text-slate-800">Editorial Staff</span>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">Current User</span>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Dedicated Quick Category Creator Modal -->
+  <div id="quick-category-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900">Create a Blog Category</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Add a subject section (e.g. Java, Civil Engineering) to organize articles.</p>
+        </div>
+        <button id="close-quick-cat-modal" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <div id="quick-cat-error" class="hidden p-2.5 bg-red-50 border border-red-200 rounded-md text-xs text-red-700"></div>
+
+      <form id="quick-cat-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            Category Name <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="quick-cat-name" 
+            placeholder="e.g. Java, Civil Engineering, Government Jobs" 
+            required
+            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            URL Slug <span class="text-red-500">*</span>
+          </label>
+          <div class="flex items-center bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs">
+            <span class="text-slate-400 select-none font-mono">/blog/</span>
+            <input 
+              type="text" 
+              id="quick-cat-slug" 
+              placeholder="java" 
+              required
+              class="w-full bg-transparent font-mono text-slate-800 outline-none pl-1"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            Short Description <span class="text-slate-400 font-normal">(Optional)</span>
+          </label>
+          <textarea 
+            id="quick-cat-desc" 
+            rows="2"
+            placeholder="Optional summary for this blog section..."
+            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 resize-none"
+          ></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+          <button 
+            type="button" 
+            id="cancel-quick-cat-modal"
+            class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold transition"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            id="save-quick-cat-btn"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-2xs transition"
+          >
+            Create Category
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Link Insertion/Edit Modal -->
+  <div id="link-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-xs font-bold text-slate-900">Insert or Edit Hyperlink</h3>
+        <button id="close-link-modal" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Destination URL</label>
+          <input 
+            type="url" 
+            id="link-modal-url" 
+            placeholder="https://example.com or /blog/..."
+            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+          />
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <button 
+            type="button" 
+            id="remove-link-btn"
+            class="text-xs text-red-600 hover:text-red-800 font-semibold"
+          >
+            Remove Link
+          </button>
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              id="cancel-link-btn"
+              class="px-3 py-1.5 border border-slate-200 rounded-md text-xs text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              id="apply-link-btn"
+              class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-2xs"
+            >
+              Apply
+            </button>
           </div>
         </div>
       </div>
-
     </div>
   </div>
-</Layout>
+
+  <!-- Revisions Modal -->
+  <div id="revisions-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-sm font-bold text-slate-900">Revision History</h3>
+        <button id="close-revisions-modal" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+      </div>
+      <div id="revisions-list" class="space-y-2 max-h-72 overflow-y-auto">
+        <p class="text-xs text-slate-400 text-center py-4">No revisions recorded yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Realtime Full Preview Modal (Using Actual Public Blog Container Simulation) -->
+  <div id="live-preview-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex-col">
+    <div class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
+      <span class="text-xs font-semibold text-slate-700">Public Layout Simulation</span>
+      <button id="close-preview-modal" class="px-2.5 py-1 text-xs border border-slate-200 rounded text-slate-600 hover:bg-slate-50">Close Preview ✕</button>
+    </div>
+    <div class="flex-1 overflow-y-auto bg-slate-50 p-6 sm:p-10 flex justify-center">
+      <article class="max-w-3xl w-full bg-white border border-slate-200 rounded-xl p-8 sm:p-12 space-y-6 shadow-xs">
+        <div class="text-xs text-blue-600 font-semibold" id="prev-modal-cat">Category</div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight" id="prev-modal-title">Article Title</h1>
+        <div class="text-xs text-slate-400" id="prev-modal-date">Published today by Staff</div>
+        <div class="text-slate-600 leading-relaxed text-sm border-l-2 border-blue-600 pl-3 italic" id="prev-modal-excerpt"></div>
+        <div class="prose prose-slate max-w-none pt-4 border-t border-slate-100 text-slate-800" id="prev-modal-content"></div>
+      </article>
+    </div>
+  </div>
+</AdminLayout>
 
 <script>
-  const titleInput = document.getElementById('field-title') as HTMLInputElement | null;
-  const categoryInput = document.getElementById('field-category') as HTMLSelectElement | null;
-  const stateInput = document.getElementById('field-state') as HTMLSelectElement | null;
-  const summaryInput = document.getElementById('field-summary') as HTMLTextAreaElement | null;
-  const contentInput = document.getElementById('field-content') as HTMLTextAreaElement | null;
+  import { Editor } from '@tiptap/core';
+  import StarterKit from '@tiptap/starter-kit';
+  import Link from '@tiptap/extension-link';
+  import Image from '@tiptap/extension-image';
+  import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
+  import Underline from '@tiptap/extension-underline';
+  import CharacterCount from '@tiptap/extension-character-count';
 
-  const prevTitle = document.getElementById('prev-title');
-  const prevCategory = document.getElementById('prev-category');
-  const prevState = document.getElementById('prev-state');
-  const prevSummary = document.getElementById('prev-summary');
-  const prevContent = document.getElementById('prev-content');
+  const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
-  const toast = document.getElementById('editor-toast');
-  const toastText = document.getElementById('editor-toast-text');
-  const toastClose = document.getElementById('editor-toast-close');
-  const saveDraftBtn = document.getElementById('save-draft-btn');
-  const publishBtn = document.getElementById('publish-btn');
-  const togglePreviewBtn = document.getElementById('toggle-preview-btn');
-  const previewPanel = document.getElementById('preview-panel-col');
-
-  function updateLivePreview() {
-    if (prevTitle && titleInput) prevTitle.textContent = titleInput.value || 'Untitled Article';
-    if (prevCategory && categoryInput) prevCategory.textContent = categoryInput.value;
-    if (prevState && stateInput) prevState.textContent = `📍 ${stateInput.value}`;
-    if (prevSummary && summaryInput) prevSummary.textContent = summaryInput.value;
-    if (prevContent && contentInput) {
-      prevContent.innerHTML = contentInput.value;
+  async function getAuthToken(): Promise<string | null> {
+    const clerk = (window as any).Clerk;
+    if (clerk && clerk.session) {
+      return clerk.session.getToken();
     }
+    return null;
   }
 
-  titleInput?.addEventListener('input', updateLivePreview);
-  categoryInput?.addEventListener('change', updateLivePreview);
-  stateInput?.addEventListener('change', updateLivePreview);
-  summaryInput?.addEventListener('input', updateLivePreview);
-  contentInput?.addEventListener('input', updateLivePreview);
+  async function apiFetch(endpoint: string, options: RequestInit = {}) {
+    const token = await getAuthToken();
+    const headers = new Headers(options.headers || {});
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+    return fetch(`${API_URL}${endpoint}`, { ...options, headers });
+  }
 
-  // Initial render
-  updateLivePreview();
+  // Inputs
+  const titleInput = document.getElementById('field-title') as HTMLInputElement | null;
+  const slugInput = document.getElementById('field-slug') as HTMLInputElement | null;
+  const excerptInput = document.getElementById('field-excerpt') as HTMLTextAreaElement | null;
+  const categorySelect = document.getElementById('field-category') as HTMLSelectElement | null;
+  const statusSelect = document.getElementById('field-status') as HTMLSelectElement | null;
+  const scheduledAtInput = document.getElementById('field-scheduled-at') as HTMLInputElement | null;
+  const scheduleDateGroup = document.getElementById('schedule-date-group');
+  const coverImageInput = document.getElementById('field-cover-image') as HTMLInputElement | null;
+  const imageAltInput = document.getElementById('field-image-alt') as HTMLInputElement | null;
+  const imageCaptionInput = document.getElementById('field-image-caption') as HTMLInputElement | null;
+  const imagePreviewBox = document.getElementById('image-preview-box');
+  const imagePreviewEl = document.getElementById('image-preview-el') as HTMLImageElement | null;
+  const metaTitleInput = document.getElementById('field-meta-title') as HTMLInputElement | null;
+  const metaDescInput = document.getElementById('field-meta-desc') as HTMLTextAreaElement | null;
+  const canonicalUrlInput = document.getElementById('field-canonical-url') as HTMLInputElement | null;
+  const noindexCheckbox = document.getElementById('field-noindex') as HTMLInputElement | null;
+  const resultingUrlPreview = document.getElementById('resulting-url-preview');
 
-  // Toolbar tag insertion
-  document.querySelectorAll<HTMLButtonElement>('.insert-tag').forEach((btn) => {
+  // SERP Previews & Counters
+  const serpTitle = document.getElementById('serp-title');
+  const serpUrl = document.getElementById('serp-url');
+  const serpDesc = document.getElementById('serp-desc');
+  const wordCountEl = document.getElementById('word-count');
+  const readTimeEl = document.getElementById('read-time');
+  const titleCharEl = document.getElementById('title-char-count');
+  const descCharEl = document.getElementById('desc-char-count');
+  const saveStatusEl = document.getElementById('save-status');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('edit');
+
+  let currentPostId = editId;
+  let currentVersion = 1;
+  let isDirty = false;
+  let categoriesCache: any[] = [];
+
+  // Options Menu
+  const optionsBtn = document.getElementById('editor-options-menu-btn');
+  const optionsDropdown = document.getElementById('editor-options-dropdown');
+  optionsBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    optionsDropdown?.classList.toggle('hidden');
+  });
+  document.addEventListener('click', () => {
+    optionsDropdown?.classList.add('hidden');
+    toolbarMoreMenu?.classList.add('hidden');
+  });
+
+  // Toolbar More Menu
+  const toolbarMoreBtn = document.getElementById('toolbar-more-btn');
+  const toolbarMoreMenu = document.getElementById('toolbar-more-menu');
+  toolbarMoreBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toolbarMoreMenu?.classList.toggle('hidden');
+  });
+
+  // Accordion Sections Toggle
+  document.querySelectorAll<HTMLButtonElement>('.accordion-trigger').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const tag = btn.dataset.tag;
-      if (!contentInput) return;
-
-      let snippet = '';
-      if (tag === 'h2') snippet = '\n<h2>Section Title</h2>\n';
-      else if (tag === 'h3') snippet = '\n<h3>Subheading Title</h3>\n';
-      else if (tag === 'p') snippet = '\n<p>Add detailed descriptive text here.</p>\n';
-      else if (tag === 'list') snippet = '\n<ul>\n  <li>Important item 1</li>\n  <li>Important item 2</li>\n</ul>\n';
-      else if (tag === 'table') snippet = '\n<table class="w-full text-xs border border-slate-200 my-2">\n  <tr class="bg-slate-100 font-bold"><td>Column 1</td><td>Column 2</td></tr>\n  <tr><td>Value 1</td><td>Value 2</td></tr>\n</table>\n';
-      else if (tag === 'link') snippet = '\n<a href="https://example.com" class="text-blue-600 underline font-semibold">Official Link Here ↗</a>\n';
-
-      const start = contentInput.selectionStart;
-      const end = contentInput.selectionEnd;
-      const text = contentInput.value;
-      contentInput.value = text.substring(0, start) + snippet + text.substring(end);
-      contentInput.focus();
-      updateLivePreview();
+      const section = btn.closest('.accordion-item');
+      const content = section?.querySelector('.accordion-content');
+      const chevron = btn.querySelector('.accordion-chevron');
+      if (content) {
+        const isHidden = content.classList.contains('hidden');
+        if (isHidden) {
+          content.classList.remove('hidden');
+          chevron?.classList.add('rotate-180');
+        } else {
+          content.classList.add('hidden');
+          chevron?.classList.remove('rotate-180');
+        }
+      }
     });
   });
 
-  function showEditorToast(message: string) {
-    if (toast && toastText) {
-      toastText.textContent = message;
-      toast.classList.remove('hidden');
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 4000);
+  // TipTap Instance
+  const editorElement = document.getElementById('tiptap-editor');
+  const editor = new Editor({
+    element: editorElement!,
+    extensions: [
+      StarterKit.configure({
+        heading: { levels: [2, 3, 4] },
+      }),
+      Underline,
+      Link.configure({
+        openOnClick: false,
+        autolink: true,
+      }),
+      Image,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      CharacterCount,
+    ],
+    content: `<p>Start writing your article here...</p>`,
+    onUpdate: () => {
+      isDirty = true;
+      updateMetrics();
+      updateSerp();
+      triggerAutosave();
+    },
+  });
+
+  // Toolbar Actions
+  function runEditorAction(action: string | undefined) {
+    if (!editor || !action) return;
+
+    if (action === 'paragraph') editor.chain().focus().setParagraph().run();
+    else if (action === 'h2') editor.chain().focus().toggleHeading({ level: 2 }).run();
+    else if (action === 'h3') editor.chain().focus().toggleHeading({ level: 3 }).run();
+    else if (action === 'h4') editor.chain().focus().toggleHeading({ level: 4 }).run();
+    else if (action === 'bold') editor.chain().focus().toggleBold().run();
+    else if (action === 'italic') editor.chain().focus().toggleItalic().run();
+    else if (action === 'underline') editor.chain().focus().toggleUnderline().run();
+    else if (action === 'strike') editor.chain().focus().toggleStrike().run();
+    else if (action === 'bulletList') editor.chain().focus().toggleBulletList().run();
+    else if (action === 'orderedList') editor.chain().focus().toggleOrderedList().run();
+    else if (action === 'blockquote') editor.chain().focus().toggleBlockquote().run();
+    else if (action === 'codeBlock') editor.chain().focus().toggleCodeBlock().run();
+    else if (action === 'divider') editor.chain().focus().setHorizontalRule().run();
+    else if (action === 'undo') editor.chain().focus().undo().run();
+    else if (action === 'redo') editor.chain().focus().redo().run();
+    else if (action === 'insertLink') {
+      openLinkModal();
+    } else if (action === 'insertImage') {
+      const url = prompt('Enter image URL:');
+      const alt = prompt('Enter descriptive alt text:') || '';
+      if (url) editor.chain().focus().setImage({ src: url, alt }).run();
+    } else if (action === 'insertTable') {
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
     }
   }
 
-  toastClose?.addEventListener('click', () => {
-    toast?.classList.add('hidden');
+  document.querySelectorAll<HTMLButtonElement>('.tool-btn').forEach((btn) => {
+    btn.addEventListener('click', () => runEditorAction(btn.dataset.action));
   });
 
-  saveDraftBtn?.addEventListener('click', () => {
-    showEditorToast('Draft saved successfully to local state!');
+  document.querySelectorAll<HTMLButtonElement>('.more-tool-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      runEditorAction(btn.dataset.action);
+      toolbarMoreMenu?.classList.add('hidden');
+    });
   });
 
-  publishBtn?.addEventListener('click', () => {
-    showEditorToast('Article published! Live in public portal state filters.');
+  // Link Modal Implementation
+  const linkModal = document.getElementById('link-modal');
+  const linkModalUrl = document.getElementById('link-modal-url') as HTMLInputElement | null;
+  const applyLinkBtn = document.getElementById('apply-link-btn');
+  const removeLinkBtn = document.getElementById('remove-link-btn');
+  const cancelLinkBtn = document.getElementById('cancel-link-btn');
+  const closeLinkModalBtn = document.getElementById('close-link-modal');
+
+  function openLinkModal() {
+    if (!linkModal || !linkModalUrl) return;
+    const previousUrl = editor.getAttributes('link').href || '';
+    linkModalUrl.value = previousUrl;
+    linkModal.classList.remove('hidden');
+    linkModal.classList.add('flex');
+    linkModalUrl.focus();
+  }
+
+  function closeLinkModal() {
+    linkModal?.classList.add('hidden');
+    linkModal?.classList.remove('flex');
+  }
+
+  applyLinkBtn?.addEventListener('click', () => {
+    const url = linkModalUrl?.value.trim();
+    if (url) {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    } else {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+    }
+    closeLinkModal();
   });
 
-  // Mobile toggle preview
-  togglePreviewBtn?.addEventListener('click', () => {
-    if (previewPanel) {
-      previewPanel.scrollIntoView({ behavior: 'smooth' });
+  removeLinkBtn?.addEventListener('click', () => {
+    editor.chain().focus().extendMarkRange('link').unsetLink().run();
+    closeLinkModal();
+  });
+
+  cancelLinkBtn?.addEventListener('click', closeLinkModal);
+  closeLinkModalBtn?.addEventListener('click', closeLinkModal);
+
+  function updateMetrics() {
+    const text = editor.getText();
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const readMin = Math.max(1, Math.ceil(words / 200));
+    if (wordCountEl) wordCountEl.textContent = `${words} words`;
+    if (readTimeEl) readTimeEl.textContent = `${readMin} min read`;
+  }
+
+  function updateSerp() {
+    const title = titleInput?.value || 'Article Title';
+    const slug = slugInput?.value || 'article-slug';
+    const excerpt = excerptInput?.value || 'Short summary will appear here in search engine results.';
+    const metaTitle = metaTitleInput?.value || title;
+    const metaDesc = metaDescInput?.value || excerpt;
+    
+    // Find selected category slug
+    const catId = categorySelect?.value;
+    const selectedCat = categoriesCache.find(c => c.id === catId);
+    const catSlug = selectedCat ? selectedCat.slug : 'general';
+
+    const fullPublicUrl = `/blog/${catSlug}/${slug}`;
+    if (resultingUrlPreview) resultingUrlPreview.textContent = fullPublicUrl;
+
+    if (serpTitle) serpTitle.textContent = `${metaTitle} | ExamPortal`;
+    if (serpUrl) serpUrl.textContent = `https://examresource.local${fullPublicUrl}`;
+    if (serpDesc) serpDesc.textContent = metaDesc;
+
+    if (titleCharEl) titleCharEl.textContent = `${metaTitle.length}/60`;
+    if (descCharEl) descCharEl.textContent = `${metaDesc.length}/160`;
+
+    // Image preview update
+    const coverUrl = coverImageInput?.value.trim();
+    if (coverUrl && imagePreviewBox && imagePreviewEl) {
+      imagePreviewEl.src = coverUrl;
+      imagePreviewBox.classList.remove('hidden');
+    } else if (imagePreviewBox) {
+      imagePreviewBox.classList.add('hidden');
+    }
+  }
+
+  // Publication state handler
+  statusSelect?.addEventListener('change', () => {
+    if (statusSelect.value === 'SCHEDULED') {
+      scheduleDateGroup?.classList.remove('hidden');
+    } else {
+      scheduleDateGroup?.classList.add('hidden');
+    }
+    triggerAutosave();
+  });
+
+  titleInput?.addEventListener('input', () => {
+    if (!slugInput?.value || slugInput.value === slugify(titleInput.defaultValue)) {
+      if (slugInput) slugInput.value = slugify(titleInput.value);
+    }
+    updateSerp();
+    triggerAutosave();
+  });
+  slugInput?.addEventListener('input', updateSerp);
+  excerptInput?.addEventListener('input', updateSerp);
+  metaTitleInput?.addEventListener('input', updateSerp);
+  metaDescInput?.addEventListener('input', updateSerp);
+  categorySelect?.addEventListener('change', updateSerp);
+  coverImageInput?.addEventListener('input', updateSerp);
+
+  // Autosave Handler
+  let autosaveTimer: any = null;
+  function triggerAutosave() {
+    if (saveStatusEl) {
+      saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400"></span><span>Unsaved changes</span>`;
+    }
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(async () => {
+      if (isDirty && (titleInput?.value || '').trim()) {
+        await saveArticle(statusSelect?.value || 'DRAFT', true);
+      }
+    }, 4000);
+  }
+
+  async function saveArticle(targetStatus?: string, isAutosave = false) {
+    const title = titleInput?.value.trim();
+    const slug = slugInput?.value.trim() || slugify(title || 'untitled');
+
+    if (!title) {
+      if (!isAutosave) alert('Please enter an article title before saving.');
+      return;
+    }
+
+    const effectiveStatus = targetStatus || statusSelect?.value || 'DRAFT';
+
+    const payload = {
+      title,
+      slug,
+      description: excerptInput?.value.trim() || null,
+      coverImage: coverImageInput?.value.trim() || null,
+      imageAlt: imageAltInput?.value.trim() || null,
+      imageCaption: imageCaptionInput?.value.trim() || null,
+      categoryId: categorySelect?.value || null,
+      metaTitle: metaTitleInput?.value.trim() || null,
+      metaDescription: metaDescInput?.value.trim() || null,
+      canonicalUrl: canonicalUrlInput?.value.trim() || null,
+      scheduledAt: scheduledAtInput?.value ? new Date(scheduledAtInput.value).toISOString() : null,
+      noindex: noindexCheckbox?.checked ?? false,
+      status: effectiveStatus,
+      htmlContent: editor.getHTML(),
+      currentVersion,
+    };
+
+    try {
+      if (saveStatusEl) {
+        saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span><span>Saving...</span>`;
+      }
+
+      let res: Response;
+      if (currentPostId) {
+        res = await apiFetch(`/blogs/${currentPostId}`, {
+          method: 'PATCH',
+          body: JSON.stringify(payload),
+        });
+      } else {
+        res = await apiFetch('/blogs', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      }
+
+      if (res.ok) {
+        const saved = await res.json();
+        currentPostId = saved.id;
+        currentVersion = saved.version;
+        isDirty = false;
+        if (statusSelect) statusSelect.value = saved.status || effectiveStatus;
+
+        if (saveStatusEl) {
+          saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Saved</span>`;
+        }
+
+        if (!editId && saved.id) {
+          window.history.replaceState({}, '', `/editor?edit=${saved.id}`);
+        }
+      } else if (res.status === 409) {
+        const err = await res.json();
+        alert(`Version Conflict: ${err.message}`);
+      } else {
+        const err = await res.json();
+        alert(`Error saving article: ${err.message || 'Validation error'}`);
+      }
+    } catch (e: any) {
+      console.error(e);
+    }
+  }
+
+  document.getElementById('save-draft-btn')?.addEventListener('click', () => {
+    if (statusSelect) statusSelect.value = 'DRAFT';
+    saveArticle('DRAFT');
+  });
+
+  document.getElementById('publish-btn')?.addEventListener('click', () => {
+    if (statusSelect) statusSelect.value = 'PUBLISHED';
+    saveArticle('PUBLISHED');
+  });
+
+  // Duplicate Article Handler
+  document.getElementById('duplicate-article-btn')?.addEventListener('click', async () => {
+    if (!currentPostId) {
+      alert('Save this article first before duplicating.');
+      return;
+    }
+    const res = await apiFetch(`/blogs/${currentPostId}/duplicate`, { method: 'POST' });
+    if (res.ok) {
+      const duplicated = await res.json();
+      window.location.href = `/editor?edit=${duplicated.id}`;
+    } else {
+      alert('Failed to duplicate article.');
     }
   });
+
+  // Live Preview Modal
+  const previewModal = document.getElementById('live-preview-modal');
+  document.getElementById('toggle-preview-btn')?.addEventListener('click', () => {
+    const title = titleInput?.value || 'Untitled Article';
+    const excerpt = excerptInput?.value || '';
+    const cat = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
+
+    const modalTitle = document.getElementById('prev-modal-title');
+    const modalCat = document.getElementById('prev-modal-cat');
+    const modalExcerpt = document.getElementById('prev-modal-excerpt');
+    const modalContent = document.getElementById('prev-modal-content');
+
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalCat) modalCat.textContent = cat;
+    if (modalExcerpt) modalExcerpt.textContent = excerpt;
+    if (modalContent) modalContent.innerHTML = editor.getHTML();
+
+    previewModal?.classList.remove('hidden');
+    previewModal?.classList.add('flex');
+  });
+
+  document.getElementById('close-preview-modal')?.addEventListener('click', () => {
+    previewModal?.classList.add('hidden');
+    previewModal?.classList.remove('flex');
+  });
+
+  // Revisions Modal
+  const revModal = document.getElementById('revisions-modal');
+  document.getElementById('revisions-modal-btn')?.addEventListener('click', async () => {
+    if (!currentPostId) {
+      alert('Save your article first to view revision history.');
+      return;
+    }
+    const res = await apiFetch(`/blogs/${currentPostId}/revisions`);
+    const listEl = document.getElementById('revisions-list');
+    if (res.ok && listEl) {
+      const revs = await res.json();
+      if (revs.length === 0) {
+        listEl.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No past revisions recorded.</p>';
+      } else {
+        listEl.innerHTML = revs.map((r: any) => `
+          <div class="p-2.5 rounded border border-slate-200 bg-slate-50 flex items-center justify-between text-xs">
+            <div>
+              <span class="font-bold text-slate-900">v${r.version}: ${r.title}</span>
+              <span class="block text-[10px] text-slate-400">${new Date(r.createdAt).toLocaleString()}</span>
+            </div>
+            <button class="restore-rev-btn px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded text-[11px] font-semibold" data-id="${r.id}">
+              Restore
+            </button>
+          </div>
+        `).join('');
+
+        document.querySelectorAll<HTMLButtonElement>('.restore-rev-btn').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            if (!confirm('Restore this revision snapshot?')) return;
+            const revId = btn.dataset.id;
+            const restoreRes = await apiFetch(`/blogs/${currentPostId}/revisions/${revId}/restore`, { method: 'POST' });
+            if (restoreRes.ok) {
+              window.location.reload();
+            }
+          });
+        });
+      }
+    }
+    revModal?.classList.remove('hidden');
+    revModal?.classList.add('flex');
+  });
+
+  document.getElementById('close-revisions-modal')?.addEventListener('click', () => {
+    revModal?.classList.add('hidden');
+    revModal?.classList.remove('flex');
+  });
+
+  // Dedicated Quick Category Creation Modal
+  const quickCatModal = document.getElementById('quick-category-modal');
+  const openQuickCatBtn = document.getElementById('open-create-category-modal');
+  const closeQuickCatBtn = document.getElementById('close-quick-cat-modal');
+  const cancelQuickCatBtn = document.getElementById('cancel-quick-cat-modal');
+  const quickCatForm = document.getElementById('quick-cat-form');
+  const quickCatName = document.getElementById('quick-cat-name') as HTMLInputElement | null;
+  const quickCatSlug = document.getElementById('quick-cat-slug') as HTMLInputElement | null;
+  const quickCatDesc = document.getElementById('quick-cat-desc') as HTMLTextAreaElement | null;
+  const quickCatError = document.getElementById('quick-cat-error');
+  const saveQuickCatBtn = document.getElementById('save-quick-cat-btn') as HTMLButtonElement | null;
+
+  function openQuickCategoryModal() {
+    quickCatError?.classList.add('hidden');
+    if (quickCatName) quickCatName.value = '';
+    if (quickCatSlug) quickCatSlug.value = '';
+    if (quickCatDesc) quickCatDesc.value = '';
+    quickCatModal?.classList.remove('hidden');
+    quickCatModal?.classList.add('flex');
+    quickCatName?.focus();
+  }
+
+  function closeQuickCategoryModal() {
+    quickCatModal?.classList.add('hidden');
+    quickCatModal?.classList.remove('flex');
+  }
+
+  openQuickCatBtn?.addEventListener('click', openQuickCategoryModal);
+  closeQuickCatBtn?.addEventListener('click', closeQuickCategoryModal);
+  cancelQuickCatBtn?.addEventListener('click', closeQuickCategoryModal);
+
+  quickCatName?.addEventListener('input', () => {
+    if (quickCatSlug) quickCatSlug.value = slugify(quickCatName.value);
+  });
+
+  quickCatForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = quickCatName?.value.trim();
+    const slug = slugify(quickCatSlug?.value.trim() || name || '');
+    const description = quickCatDesc?.value.trim() || null;
+
+    if (!name || !slug) return;
+
+    if (saveQuickCatBtn) {
+      saveQuickCatBtn.disabled = true;
+      saveQuickCatBtn.textContent = 'Creating...';
+    }
+
+    try {
+      const res = await apiFetch('/categories', {
+        method: 'POST',
+        body: JSON.stringify({ name, slug, description }),
+      });
+
+      if (res.ok) {
+        const createdCat = await res.json();
+        categoriesCache.push(createdCat);
+        
+        // Add to select and auto-select newly created category
+        if (categorySelect) {
+          const opt = document.createElement('option');
+          opt.value = createdCat.id;
+          opt.textContent = createdCat.name;
+          opt.selected = true;
+          categorySelect.appendChild(opt);
+          categorySelect.value = createdCat.id;
+        }
+
+        closeQuickCategoryModal();
+        updateSerp();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        if (quickCatError) {
+          quickCatError.textContent = err.message || 'Failed to create category. Name or slug may already exist.';
+          quickCatError.classList.remove('hidden');
+        }
+      }
+    } catch (e: any) {
+      if (quickCatError) {
+        quickCatError.textContent = 'Network error while creating category.';
+        quickCatError.classList.remove('hidden');
+      }
+    } finally {
+      if (saveQuickCatBtn) {
+        saveQuickCatBtn.disabled = false;
+        saveQuickCatBtn.textContent = 'Create Category';
+      }
+    }
+  });
+
+  async function init() {
+    // 1. Fetch categories
+    const catRes = await apiFetch('/categories');
+    if (catRes.ok) {
+      categoriesCache = await catRes.json();
+      if (categorySelect) {
+        categorySelect.innerHTML = '<option value="">Select a category...</option>' + 
+          categoriesCache.map((c: any) => `<option value="${c.id}">${c.name}</option>`).join('');
+      }
+    }
+
+    // 2. Fetch existing post if editing
+    if (editId) {
+      const res = await apiFetch(`/me/blogs/${editId}`);
+      if (res.ok) {
+        const post = await res.json();
+        currentVersion = post.version;
+        if (titleInput) titleInput.value = post.title || '';
+        if (slugInput) slugInput.value = post.slug || '';
+        if (excerptInput) excerptInput.value = post.description || '';
+        if (categorySelect && post.categoryId) categorySelect.value = post.categoryId;
+        if (statusSelect && post.status) {
+          statusSelect.value = post.status;
+          if (post.status === 'SCHEDULED') scheduleDateGroup?.classList.remove('hidden');
+        }
+        if (metaTitleInput) metaTitleInput.value = post.metaTitle || '';
+        if (metaDescInput) metaDescInput.value = post.metaDescription || '';
+        if (coverImageInput) coverImageInput.value = post.coverImage || '';
+        if (imageAltInput) imageAltInput.value = post.imageAlt || '';
+        if (imageCaptionInput) imageCaptionInput.value = post.imageCaption || '';
+        if (canonicalUrlInput) canonicalUrlInput.value = post.canonicalUrl || '';
+        if (noindexCheckbox) noindexCheckbox.checked = post.noindex ?? false;
+        if (scheduledAtInput && post.scheduledAt) {
+          scheduledAtInput.value = new Date(post.scheduledAt).toISOString().slice(0, 16);
+        }
+
+        const authorDisplay = document.getElementById('author-name-display');
+        if (authorDisplay && post.author?.name) {
+          authorDisplay.textContent = post.author.name;
+        }
+
+        if (post.htmlContent) {
+          editor.commands.setContent(post.htmlContent);
+        }
+      }
+    }
+
+    updateMetrics();
+    updateSerp();
+  }
+
+  function slugify(text: string): string {
+    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+  }
+
+  init();
 </script>

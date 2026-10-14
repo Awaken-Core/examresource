@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import type { Request } from 'express';
@@ -16,9 +17,12 @@ import { BlogService } from './blog.service.js';
 import {
   createBlockSchema,
   createBlogSchema,
+  createCategorySchema,
+  createTagSchema,
   reorderBlocksSchema,
   updateBlockSchema,
   updateBlogSchema,
+  updateCategorySchema,
 } from './dto/blog.dto.js';
 
 @Controller('api/v1')
@@ -28,9 +32,25 @@ export class BlogController {
     private readonly auth: ClerkAuthService,
   ) {}
 
+  // ==========================================
+  // Public Endpoints
+  // ==========================================
+
   @Get('blogs')
-  listPublished() {
-    return this.blogs.listPublished();
+  listPublished(
+    @Query('category') categorySlug?: string,
+    @Query('tag') tagSlug?: string,
+    @Query('search') search?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ) {
+    return this.blogs.listPublished({
+      categorySlug,
+      tagSlug,
+      search,
+      limit: limit ? parseInt(limit, 10) : undefined,
+      offset: offset ? parseInt(offset, 10) : undefined,
+    });
   }
 
   @Get('blogs/:slug')
@@ -38,9 +58,46 @@ export class BlogController {
     return this.blogs.getPublished(slug);
   }
 
+  @Get('sitemap-entries')
+  getSitemapEntries() {
+    return this.blogs.getSitemapEntries();
+  }
+
+  @Get('redirects/check')
+  checkRedirect(@Query('path') path: string) {
+    return this.blogs.checkRedirect(path);
+  }
+
+  @Get('categories')
+  listCategories() {
+    return this.blogs.listCategories();
+  }
+
+  @Get('tags')
+  listTags() {
+    return this.blogs.listTags();
+  }
+
+  // ==========================================
+  // Editorial & Admin Protected Endpoints
+  // ==========================================
+
   @Get('me/blogs')
-  async listManageable(@Req() req: Request) {
-    return this.blogs.listManageable(await this.currentUser(req));
+  async listManageable(
+    @Req() req: Request,
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('categoryId') categoryId?: string,
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ) {
+    return this.blogs.listManageable(await this.currentUser(req), {
+      search,
+      status,
+      categoryId,
+      limit: limit ? parseInt(limit, 10) : undefined,
+      offset: offset ? parseInt(offset, 10) : undefined,
+    });
   }
 
   @Get('me/blogs/:id')
@@ -57,6 +114,11 @@ export class BlogController {
     );
   }
 
+  @Post('blogs/:id/duplicate')
+  async duplicate(@Param('id') id: string, @Req() req: Request) {
+    return this.blogs.duplicate(id, await this.currentUser(req));
+  }
+
   @Patch('blogs/:id')
   async update(@Param('id') id: string, @Req() req: Request) {
     const currentUser = await this.currentUser(req);
@@ -67,6 +129,67 @@ export class BlogController {
     );
   }
 
+  @Delete('blogs/:id')
+  @HttpCode(204)
+  async remove(@Param('id') id: string, @Req() req: Request) {
+    await this.blogs.remove(id, await this.currentUser(req));
+  }
+
+  // Revisions
+  @Get('blogs/:id/revisions')
+  async listRevisions(@Param('id') id: string, @Req() req: Request) {
+    return this.blogs.listRevisions(id, await this.currentUser(req));
+  }
+
+  @Post('blogs/:id/revisions/:revisionId/restore')
+  async restoreRevision(
+    @Param('id') id: string,
+    @Param('revisionId') revisionId: string,
+    @Req() req: Request,
+  ) {
+    return this.blogs.restoreRevision(id, revisionId, await this.currentUser(req));
+  }
+
+  // Categories CRUD
+  @Post('categories')
+  async createCategory(@Req() req: Request) {
+    return this.blogs.createCategory(
+      this.parse(createCategorySchema, req.body),
+      await this.currentUser(req),
+    );
+  }
+
+  @Patch('categories/:id')
+  async updateCategory(@Param('id') id: string, @Req() req: Request) {
+    return this.blogs.updateCategory(
+      id,
+      this.parse(updateCategorySchema, req.body),
+      await this.currentUser(req),
+    );
+  }
+
+  @Delete('categories/:id')
+  @HttpCode(204)
+  async deleteCategory(@Param('id') id: string, @Req() req: Request) {
+    await this.blogs.deleteCategory(id, await this.currentUser(req));
+  }
+
+  // Tags CRUD
+  @Post('tags')
+  async createTag(@Req() req: Request) {
+    return this.blogs.createTag(
+      this.parse(createTagSchema, req.body),
+      await this.currentUser(req),
+    );
+  }
+
+  @Delete('tags/:id')
+  @HttpCode(204)
+  async deleteTag(@Param('id') id: string, @Req() req: Request) {
+    await this.blogs.deleteTag(id, await this.currentUser(req));
+  }
+
+  // Block granular endpoints
   @Post('blogs/:blogId/blocks')
   async createBlock(
     @Param('blogId') blogId: string,
@@ -114,12 +237,6 @@ export class BlogController {
     @Req() req: Request,
   ) {
     await this.blogs.removeBlock(blogId, blockId, await this.currentUser(req));
-  }
-
-  @Delete('blogs/:id')
-  @HttpCode(204)
-  async remove(@Param('id') id: string, @Req() req: Request) {
-    await this.blogs.remove(id, await this.currentUser(req));
   }
 
   private parse<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {
