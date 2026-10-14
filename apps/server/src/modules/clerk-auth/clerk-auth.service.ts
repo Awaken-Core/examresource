@@ -1,6 +1,6 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { createClerkClient, verifyToken } from '@clerk/backend';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import type { Request } from 'express';
 import { randomUUID } from 'node:crypto';
 import { db } from '../../core/config/db.js';
@@ -91,5 +91,55 @@ export class ClerkAuthService {
 
   async suspendProfile(clerkUserId: string) {
     await db.update(users).set({ status: 'suspended', updatedAt: new Date() }).where(eq(users.clerkUserId, clerkUserId));
+  }
+
+  async listUsers(req: Request) {
+    await this.requireAdmin(req);
+    return db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .orderBy(desc(users.createdAt));
+  }
+
+  async updateUserRole(
+    req: Request,
+    userId: string,
+    role: CurrentUser['role'],
+  ) {
+    const currentUser = await this.requireAdmin(req);
+    if (currentUser.id === userId && role !== 'admin') {
+      throw new ForbiddenException('You cannot remove your own administrator access.');
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
+        createdAt: users.createdAt,
+      });
+
+    if (!updatedUser) throw new NotFoundException('User not found.');
+    return updatedUser;
+  }
+
+  private async requireAdmin(req: Request) {
+    const user = await this.requireUser(req);
+    if (user.role !== 'admin') {
+      throw new ForbiddenException('Administrator access is required.');
+    }
+    return user;
   }
 }

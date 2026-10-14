@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
+import { BadRequestException, Controller, Get, HttpCode, Param, Patch, Post, Req } from '@nestjs/common';
 import { verifyWebhook } from '@clerk/backend/webhooks';
 import type { Request } from 'express';
 import { env } from '../../core/config/env.js';
@@ -11,6 +11,20 @@ export class ClerkAuthController {
   @Get('me')
   me(@Req() req: Request) {
     return this.auth.requireUser(req);
+  }
+
+  @Get('users')
+  listUsers(@Req() req: Request) {
+    return this.auth.listUsers(req);
+  }
+
+  @Patch('users/:id/role')
+  updateUserRole(@Param('id') id: string, @Req() req: Request) {
+    const role = req.body?.role;
+    if (role !== 'student' && role !== 'editor' && role !== 'admin') {
+      throw new BadRequestException('Role must be student, editor, or admin.');
+    }
+    return this.auth.updateUserRole(req, id, role);
   }
 
   @Post('webhooks/clerk')
