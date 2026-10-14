@@ -1,370 +1,799 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { INITIAL_MOCK_POSTS, STATES_LIST, CATEGORIES_LIST } from '../data/portalMockData';
-let auth: any = null;
-try {
-  auth = typeof Astro.locals.auth === 'function' ? Astro.locals.auth() : null;
-} catch (_) {}
-const userId = auth?.userId;
-if (!userId && auth?.redirectToSignIn) return auth.redirectToSignIn();
-
-// Calculate initial metrics
-const totalArticles = INITIAL_MOCK_POSTS.length;
-const publishedCount = INITIAL_MOCK_POSTS.filter(p => p.status === 'Published').length;
-const draftsCount = INITIAL_MOCK_POSTS.filter(p => p.status === 'Draft').length;
-const totalViews = INITIAL_MOCK_POSTS.reduce((sum, p) => sum + p.views, 0);
+import AdminLayout from '../layouts/AdminLayout.astro';
 ---
 
-<Layout
-  title="Admin Dashboard - ExamPortal"
-  description="Manage government exam articles, publication status, categories, and site settings."
->
-  <script>
-    const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
-    const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
-    const token = await clerk?.session?.getToken();
-    const response = await fetch(`${apiUrl}/me`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-    const user = response.ok ? await response.json() : null;
-    if (user?.role !== 'admin') window.location.replace('/');
-  </script>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<AdminLayout title="Articles" activeNav="posts">
+  <!-- Top Header Action -->
+  <div slot="header-actions" class="flex items-center gap-2">
+    <button 
+      id="top-open-cat-btn"
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs rounded-md shadow-2xs transition"
+    >
+      <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>Create a Blog Category</span>
+    </button>
+    <a 
+      href="/editor" 
+      class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-md shadow-2xs transition"
+      style="background-color: #2563EB;"
+    >
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4" />
+      </svg>
+      <span>Write an Article</span>
+    </a>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     
-    {/* Admin Header with Breadcrumbs & Actions */}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
-      <div>
-        <div class="flex items-center gap-2 text-xs text-slate-500 mb-1">
-          <a href="/" class="hover:text-blue-700">ExamPortal</a>
-          <span>/</span>
-          <span class="text-slate-800 font-semibold">Admin Dashboard</span>
-        </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Exam Portal Administration
-        </h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">
-          Frontend prototype for managing exam publications, drafts, categories, and article states.
-        </p>
-      </div>
-
-      <div class="flex items-center gap-2.5">
-        <a 
-          href="/editor" 
-          class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs sm:text-sm rounded-lg shadow-xs transition"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          <span>Write New Article</span>
-        </a>
-        <a 
-          href="/" 
-          class="inline-flex items-center gap-1 px-3 py-2.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm rounded-lg transition"
-        >
-          <span>View Site ↗</span>
-        </a>
-      </div>
-    </div>
-
-    {/* Metric Overview Cards */}
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Articles</span>
-          <span class="p-2 bg-blue-50 text-blue-700 rounded-lg text-lg">📄</span>
-        </div>
-        <div id="stat-total" class="text-2xl font-bold text-slate-900 mt-2">{totalArticles}</div>
-        <span class="text-[11px] text-emerald-600 font-semibold">Live catalog</span>
-      </div>
-
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Published</span>
-          <span class="p-2 bg-emerald-50 text-emerald-700 rounded-lg text-lg">✅</span>
-        </div>
-        <div id="stat-published" class="text-2xl font-bold text-slate-900 mt-2">{publishedCount}</div>
-        <span class="text-[11px] text-slate-500">Live on public portal</span>
-      </div>
-
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Drafts</span>
-          <span class="p-2 bg-amber-50 text-amber-700 rounded-lg text-lg">📝</span>
-        </div>
-        <div id="stat-drafts" class="text-2xl font-bold text-slate-900 mt-2">{draftsCount}</div>
-        <span class="text-[11px] text-amber-600 font-semibold">Pending editorial review</span>
-      </div>
-
-      <div class="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-2xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Impressions</span>
-          <span class="p-2 bg-purple-50 text-purple-700 rounded-lg text-lg">📈</span>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 mt-2">{totalViews.toLocaleString()}</div>
-        <span class="text-[11px] text-slate-500">Candidate article views</span>
-      </div>
-    </div>
-
-    {/* Main Content Area: Article Management + Category Management Sidepanel */}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
-      
-      {/* Article Listing & Table (8 cols on lg) */}
-      <div class="lg:col-span-8 space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
-            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <span>📚</span>
-              <span>Article Repository</span>
-            </h2>
-
-            {/* Table Filters: Search, Status, Category */}
-            <div class="flex flex-wrap items-center gap-2">
-              <input 
-                type="text" 
-                id="admin-search-input"
-                placeholder="Search articles..."
-                class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-              />
-              <select 
-                id="admin-status-filter"
-                class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-700 focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="Published">Published</option>
-                <option value="Draft">Draft</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Action Notification Banner */}
-          <div id="admin-toast" class="hidden my-3 p-3 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-between">
-            <span id="admin-toast-text">Action performed successfully.</span>
-            <button id="admin-toast-close" class="text-emerald-700 hover:text-emerald-900 font-bold ml-2">✕</button>
-          </div>
-
-          {/* Table Container */}
-          <div class="overflow-x-auto mt-3">
-            <table class="min-w-full text-xs text-left">
-              <thead class="bg-slate-50 text-slate-600 uppercase font-semibold border-b border-slate-200 text-[11px]">
-                <tr>
-                  <th class="py-3 px-3">Title & Summary</th>
-                  <th class="py-3 px-2">State</th>
-                  <th class="py-3 px-2">Category</th>
-                  <th class="py-3 px-2">Status</th>
-                  <th class="py-3 px-3 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="admin-articles-tbody" class="divide-y divide-slate-100">
-                {INITIAL_MOCK_POSTS.map((post) => (
-                  <tr class="admin-row hover:bg-slate-50/80 transition" data-id={post.id} data-status={post.status} data-title={post.title.toLowerCase()}>
-                    <td class="py-3 px-3 max-w-xs">
-                      <div class="font-bold text-slate-900 leading-snug line-clamp-1">{post.title}</div>
-                      <div class="text-[10px] text-slate-400 mt-0.5">Updated: {post.updatedDate} • {post.views} views</div>
-                    </td>
-                    <td class="py-3 px-2 whitespace-nowrap text-slate-600 font-medium">{post.state}</td>
-                    <td class="py-3 px-2 whitespace-nowrap text-slate-600">{post.category}</td>
-                    <td class="py-3 px-2 whitespace-nowrap">
-                      <span class={`status-badge px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        post.status === 'Published' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                      }`}>
-                        {post.status}
-                      </span>
-                    </td>
-                    <td class="py-3 px-3 text-right whitespace-nowrap space-x-1">
-                      <button 
-                        class="toggle-status-btn px-2 py-1 rounded border border-slate-200 hover:bg-slate-100 text-slate-700 transition text-[11px]"
-                        data-id={post.id}
-                      >
-                        {post.status === 'Published' ? 'Unpublish' : 'Publish'}
-                      </button>
-                      <a 
-                        href={`/editor?edit=${post.id}`} 
-                        class="inline-block px-2 py-1 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold transition text-[11px]"
-                      >
-                        Edit
-                      </a>
-                      <button 
-                        class="delete-btn px-2 py-1 rounded bg-red-50 text-red-600 hover:bg-red-100 font-semibold transition text-[11px]"
-                        data-id={post.id}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Category Management Side Widget (4 cols on lg) */}
-      <div class="lg:col-span-4 space-y-4">
-        <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs">
-          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <span>🏷️</span>
-              <span>Category Management</span>
-            </h2>
-            <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">UI Prototype</span>
-          </div>
-
-          <div class="mt-3.5 space-y-2">
-            {CATEGORIES_LIST.filter(c => c.id !== 'all').map((cat) => (
-              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-xs">
-                <div class="font-medium text-slate-800">{cat.name}</div>
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] bg-blue-100 text-blue-800 font-semibold px-2 py-0.5 rounded-full">{cat.count} Posts</span>
-                  <button class="text-slate-400 hover:text-slate-600 text-xs font-bold" title="Edit Category">✎</button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Add Category Form Mockup */}
-          <div class="mt-4 pt-3 border-t border-slate-100">
-            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Add New Category</label>
-            <div class="flex gap-2">
-              <input 
-                type="text" 
-                id="new-category-input"
-                placeholder="Category name..." 
-                class="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-600 focus:outline-hidden"
-              />
-              <button 
-                id="add-category-btn"
-                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Quicklinks Help Card */}
-        <div class="bg-blue-50/60 rounded-xl border border-blue-200 p-4 text-xs text-blue-900">
-          <h3 class="font-bold flex items-center gap-1.5 mb-1.5">
-            <span>ℹ️</span>
-            <span>Editorial Workflow Rules</span>
-          </h3>
-          <p class="leading-relaxed text-blue-800 text-[11px]">
-            Articles marked as <strong>Published</strong> immediately appear in search feeds and state filters. Draft posts remain visible in the editor preview mode only.
+    <!-- Page Heading & 2 Clear Primary Actions -->
+    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-2xs">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Content Management</h1>
+          <p class="text-xs text-slate-500 mt-1">
+            Create blog categories (sections like Java, Civil Engineering, Government Jobs) and write articles inside them.
           </p>
         </div>
+
+        <!-- 2 Clearly Separated Primary Actions -->
+        <div class="flex flex-wrap items-center gap-3">
+          <button 
+            id="hero-open-cat-btn"
+            class="inline-flex items-center gap-2 px-4 py-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs rounded-lg shadow-2xs transition"
+          >
+            <svg class="w-4 h-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <span>Create a Blog Category</span>
+          </button>
+
+          <a 
+            href="/editor" 
+            class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-lg shadow-2xs transition"
+            style="background-color: #2563EB;"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Write an Article</span>
+          </a>
+        </div>
       </div>
 
+      <!-- Restrained counts -->
+      <div class="mt-4 pt-4 border-t border-slate-100 flex items-center gap-3 text-xs text-slate-600 font-medium">
+        <div>
+          <span class="text-slate-400">Total Articles:</span> 
+          <span id="stat-total" class="font-semibold text-slate-900 ml-1">0</span>
+        </div>
+        <span class="text-slate-200">|</span>
+        <div>
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1"></span>
+          <span class="text-slate-500">Published:</span> 
+          <span id="stat-published" class="font-semibold text-slate-900 ml-1">0</span>
+        </div>
+        <span class="text-slate-200">|</span>
+        <div>
+          <span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1"></span>
+          <span class="text-slate-500">Drafts:</span> 
+          <span id="stat-drafts" class="font-semibold text-slate-900 ml-1">0</span>
+        </div>
+        <span class="text-slate-200">|</span>
+        <div>
+          <span class="inline-block w-2 h-2 rounded-full bg-purple-400 mr-1"></span>
+          <span class="text-slate-500">Scheduled:</span> 
+          <span id="stat-scheduled" class="font-semibold text-slate-900 ml-1">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="admin-toast" class="hidden p-3 rounded-lg text-xs font-medium border flex items-center justify-between transition">
+      <span id="admin-toast-text"></span>
+      <button id="admin-toast-close" class="font-bold ml-2">✕</button>
+    </div>
+
+    <!-- Error Banner with Retry button if API request fails -->
+    <div id="admin-error-banner" class="hidden p-3.5 bg-red-50 border border-red-200 rounded-lg text-xs text-red-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <span id="admin-error-message">Unable to connect to the backend API server.</span>
+      </div>
+      <button id="admin-retry-btn" class="px-2.5 py-1 bg-red-100 hover:bg-red-200 text-red-800 font-semibold rounded text-xs transition">
+        Retry
+      </button>
+    </div>
+
+    <!-- Clean Articles Section Header & Toolbar -->
+    <div class="space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <h2 class="text-base font-bold text-slate-900 tracking-tight">Articles</h2>
+        
+        <!-- Filter Toolbar -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Search Input -->
+          <div class="relative">
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="Search title, slug..."
+              class="w-48 sm:w-56 bg-white border border-slate-200 rounded-md pl-7 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            />
+            <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <!-- Category Select Filter -->
+          <select 
+            id="category-filter"
+            class="bg-white border border-slate-200 rounded-md px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-600"
+          >
+            <option value="ALL">All Categories</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Status Tabs -->
+      <div class="bg-white border border-slate-200 rounded-lg p-1.5 flex items-center gap-1 overflow-x-auto text-xs shadow-2xs">
+        <button class="status-tab px-3 py-1.5 rounded-md font-semibold text-slate-900 bg-slate-100 transition" data-status="ALL">All Articles</button>
+        <button class="status-tab px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition" data-status="PUBLISHED">Published</button>
+        <button class="status-tab px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition" data-status="DRAFT">Drafts</button>
+        <button class="status-tab px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition" data-status="SCHEDULED">Scheduled</button>
+        <button class="status-tab px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition" data-status="ARCHIVED">Archived</button>
+      </div>
+    </div>
+
+    <!-- Article Table Container (Strict light mode) -->
+    <div class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-2xs">
+      <table class="min-w-full text-xs text-left divide-y divide-slate-100">
+        <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+          <tr>
+            <th class="py-3 px-4">Article Title</th>
+            <th class="py-3 px-3">Blog Category</th>
+            <th class="py-3 px-3">Status</th>
+            <th class="py-3 px-3">Last Updated</th>
+            <th class="py-3 px-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="posts-table-body" class="divide-y divide-slate-100 bg-white text-slate-800">
+          <!-- Light Skeleton Loading State -->
+          <tr class="animate-pulse">
+            <td class="py-3.5 px-4"><div class="h-3.5 bg-slate-100 rounded w-48"></div></td>
+            <td class="py-3.5 px-3"><div class="h-3 bg-slate-100 rounded w-20"></div></td>
+            <td class="py-3.5 px-3"><div class="h-4 bg-slate-100 rounded-full w-16"></div></td>
+            <td class="py-3.5 px-3"><div class="h-3 bg-slate-100 rounded w-20"></div></td>
+            <td class="py-3.5 px-4 text-right"><div class="h-5 bg-slate-100 rounded w-20 ml-auto"></div></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination Bar -->
+      <div class="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span id="pagination-info">Showing articles</span>
+        <div class="flex gap-1.5">
+          <button id="prev-btn" class="px-2.5 py-1 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 transition" disabled>Previous</button>
+          <button id="next-btn" class="px-2.5 py-1 rounded border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-40 transition" disabled>Next</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Management Section (Clear subject sections) -->
+    <div id="categories-section" class="pt-6 border-t border-slate-200 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 tracking-tight">Blog Categories</h2>
+          <p class="text-xs text-slate-500">
+            A Blog Category is a subject or section that contains multiple articles (e.g. Java, Civil Engineering, Government Jobs).
+          </p>
+        </div>
+        <button 
+          id="section-open-cat-btn"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-xs font-semibold shadow-2xs transition self-start sm:self-auto"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>+ Create Category</span>
+        </button>
+      </div>
+
+      <!-- Categories Table List -->
+      <div class="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-2xs">
+        <table class="min-w-full text-xs text-left divide-y divide-slate-100">
+          <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4">Category Name</th>
+              <th class="py-3 px-3">URL Slug</th>
+              <th class="py-3 px-3">Description</th>
+              <th class="py-3 px-3">Articles</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="categories-table-body" class="divide-y divide-slate-100 bg-white text-slate-800">
+            <tr>
+              <td colspan="5" class="py-6 text-center text-slate-400">Loading categories...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dedicated Category Modal (Create & Edit) -->
+  <div id="category-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h3 id="category-modal-title" class="text-sm font-bold text-slate-900">Create a Blog Category</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Creating a category creates a section where multiple articles can be published.</p>
+        </div>
+        <button id="close-cat-modal-btn" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <div id="cat-modal-error" class="hidden p-2.5 bg-red-50 border border-red-200 rounded-md text-xs text-red-700"></div>
+
+      <form id="cat-modal-form" class="space-y-4">
+        <input type="hidden" id="cat-modal-id" value="" />
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            Category Name <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="cat-modal-name" 
+            placeholder="e.g. Java, Civil Engineering, Government Jobs" 
+            required
+            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            URL Slug <span class="text-red-500">*</span>
+          </label>
+          <div class="flex items-center bg-white border border-slate-300 rounded-md px-2.5 py-1.5 text-xs">
+            <span class="text-slate-400 select-none font-mono">/blog/</span>
+            <input 
+              type="text" 
+              id="cat-modal-slug" 
+              placeholder="java" 
+              required
+              class="w-full bg-transparent font-mono text-slate-800 outline-none pl-1"
+            />
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">Articles in this category will be reachable at: <code class="text-slate-600 font-mono">/blog/[category-slug]/[article-slug]</code></p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            Short Description <span class="text-slate-400 font-normal">(Optional)</span>
+          </label>
+          <textarea 
+            id="cat-modal-desc" 
+            rows="2"
+            placeholder="Brief overview of what readers can find in this section..."
+            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600 resize-none"
+          ></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+          <button 
+            type="button" 
+            id="cancel-cat-modal-btn"
+            class="px-3.5 py-2 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold transition"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            id="save-cat-modal-btn"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-2xs transition"
+          >
+            Save Category
+          </button>
+        </div>
+      </form>
     </div>
   </div>
-</Layout>
+
+</AdminLayout>
 
 <script>
-  // Interactive prototype actions for Admin Dashboard
-  const searchInput = document.getElementById('admin-search-input') as HTMLInputElement | null;
-  const statusFilter = document.getElementById('admin-status-filter') as HTMLSelectElement | null;
-  const rows = document.querySelectorAll<HTMLElement>('.admin-row');
-  const toast = document.getElementById('admin-toast');
-  const toastText = document.getElementById('admin-toast-text');
-  const toastClose = document.getElementById('admin-toast-close');
+  const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+
+  async function getAuthToken(): Promise<string | null> {
+    const clerk = (window as any).Clerk;
+    if (clerk && clerk.session) {
+      return clerk.session.getToken();
+    }
+    return null;
+  }
+
+  async function apiFetch(endpoint: string, options: RequestInit = {}) {
+    const token = await getAuthToken();
+    const headers = new Headers(options.headers || {});
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) {
+      headers.set('Content-Type', 'application/json');
+    }
+    return fetch(`${API_URL}${endpoint}`, { ...options, headers });
+  }
+
+  // State
+  let posts: any[] = [];
+  let categories: any[] = [];
+  let currentStatus = 'ALL';
+  let page = 0;
+  const limit = 20;
+
+  // DOM Elements
+  const tbody = document.getElementById('posts-table-body');
+  const catTbody = document.getElementById('categories-table-body');
+  const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+  const categoryFilter = document.getElementById('category-filter') as HTMLSelectElement | null;
+  const statTotal = document.getElementById('stat-total');
   const statPublished = document.getElementById('stat-published');
   const statDrafts = document.getElementById('stat-drafts');
-  const statTotal = document.getElementById('stat-total');
+  const statScheduled = document.getElementById('stat-scheduled');
+  const errorBanner = document.getElementById('admin-error-banner');
+  const errorMessage = document.getElementById('admin-error-message');
+  const retryBtn = document.getElementById('admin-retry-btn');
+  const toastEl = document.getElementById('admin-toast');
+  const toastText = document.getElementById('admin-toast-text');
 
-  function showToast(msg: string) {
-    if (toast && toastText) {
-      toastText.textContent = msg;
-      toast.classList.remove('hidden');
-      setTimeout(() => {
-        toast.classList.add('hidden');
-      }, 3500);
+  // Category Modal Elements
+  const catModal = document.getElementById('category-modal');
+  const catModalTitle = document.getElementById('category-modal-title');
+  const catModalForm = document.getElementById('cat-modal-form');
+  const catModalId = document.getElementById('cat-modal-id') as HTMLInputElement;
+  const catModalName = document.getElementById('cat-modal-name') as HTMLInputElement;
+  const catModalSlug = document.getElementById('cat-modal-slug') as HTMLInputElement;
+  const catModalDesc = document.getElementById('cat-modal-desc') as HTMLTextAreaElement;
+  const catModalError = document.getElementById('cat-modal-error');
+  const closeCatModalBtn = document.getElementById('close-cat-modal-btn');
+  const cancelCatModalBtn = document.getElementById('cancel-cat-modal-btn');
+  const saveCatModalBtn = document.getElementById('save-cat-modal-btn') as HTMLButtonElement;
+
+  function showToast(msg: string, isError = false) {
+    if (!toastEl || !toastText) return;
+    toastText.textContent = msg;
+    toastEl.className = isError 
+      ? 'p-3 rounded-lg text-xs font-medium border bg-red-50 text-red-800 border-red-200 flex items-center justify-between transition'
+      : 'p-3 rounded-lg text-xs font-medium border bg-emerald-50 text-emerald-800 border-emerald-200 flex items-center justify-between transition';
+    toastEl.classList.remove('hidden');
+    setTimeout(() => { toastEl.classList.add('hidden'); }, 4000);
+  }
+
+  document.getElementById('admin-toast-close')?.addEventListener('click', () => {
+    toastEl?.classList.add('hidden');
+  });
+
+  function showError(msg: string) {
+    if (errorBanner && errorMessage) {
+      errorMessage.textContent = msg;
+      errorBanner.classList.remove('hidden');
     }
   }
 
-  toastClose?.addEventListener('click', () => {
-    toast?.classList.add('hidden');
-  });
-
-  function filterAdminTable() {
-    const q = searchInput?.value.toLowerCase().trim() || '';
-    const st = statusFilter?.value || 'ALL';
-
-    rows.forEach((row) => {
-      const title = row.dataset.title || '';
-      const status = row.dataset.status || '';
-
-      const matchesSearch = !q || title.includes(q);
-      const matchesStatus = st === 'ALL' || status === st;
-
-      row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
-    });
+  function hideError() {
+    errorBanner?.classList.add('hidden');
   }
 
-  searchInput?.addEventListener('input', filterAdminTable);
-  statusFilter?.addEventListener('change', filterAdminTable);
+  retryBtn?.addEventListener('click', () => {
+    hideError();
+    loadAll();
+  });
 
-  // Toggle publish / unpublish status
-  document.querySelectorAll<HTMLButtonElement>('.toggle-status-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      const row = target.closest<HTMLElement>('.admin-row');
-      if (!row) return;
+  async function loadAll() {
+    renderLoadingSkeleton();
+    try {
+      const catRes = await apiFetch('/categories');
+      if (catRes.ok) {
+        categories = await catRes.json();
+        renderCategories();
+        renderCategoryFilter();
+      }
 
-      const currentStatus = row.dataset.status;
-      const badge = row.querySelector('.status-badge');
+      await fetchPosts();
+    } catch (e: any) {
+      showError('Unable to connect to the backend server. Verify the server is running on port 5000.');
+      renderEmpty('Connection to backend failed. Click Retry to reconnect.');
+    }
+  }
 
-      if (currentStatus === 'Published') {
-        row.dataset.status = 'Draft';
-        target.textContent = 'Publish';
-        if (badge) {
-          badge.textContent = 'Draft';
-          badge.className = 'status-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800';
-        }
-        showToast('Article status updated to Draft.');
+  function renderLoadingSkeleton() {
+    if (!tbody) return;
+    tbody.innerHTML = `
+      <tr class="animate-pulse">
+        <td class="py-3.5 px-4"><div class="h-3.5 bg-slate-100 rounded w-48"></div></td>
+        <td class="py-3.5 px-3"><div class="h-3 bg-slate-100 rounded w-20"></div></td>
+        <td class="py-3.5 px-3"><div class="h-4 bg-slate-100 rounded-full w-16"></div></td>
+        <td class="py-3.5 px-3"><div class="h-3 bg-slate-100 rounded w-20"></div></td>
+        <td class="py-3.5 px-4 text-right"><div class="h-5 bg-slate-100 rounded w-20 ml-auto"></div></td>
+      </tr>
+      <tr class="animate-pulse">
+        <td class="py-3.5 px-4"><div class="h-3.5 bg-slate-100 rounded w-64"></div></td>
+        <td class="py-3.5 px-3"><div class="h-3 bg-slate-100 rounded w-24"></div></td>
+        <td class="py-3.5 px-3"><div class="h-4 bg-slate-100 rounded-full w-16"></div></td>
+        <td class="py-3.5 px-3"><div class="h-3 bg-slate-100 rounded w-20"></div></td>
+        <td class="py-3.5 px-4 text-right"><div class="h-5 bg-slate-100 rounded w-20 ml-auto"></div></td>
+      </tr>
+    `;
+  }
+
+  async function fetchPosts() {
+    const q = encodeURIComponent(searchInput?.value.trim() || '');
+    const cat = categoryFilter?.value || 'ALL';
+
+    const params = new URLSearchParams();
+    if (q) params.set('search', q);
+    if (currentStatus !== 'ALL') params.set('status', currentStatus);
+    if (cat !== 'ALL') params.set('categoryId', cat);
+    params.set('limit', String(limit));
+    params.set('offset', String(page * limit));
+
+    try {
+      const res = await apiFetch(`/me/blogs?${params.toString()}`);
+      if (res.ok) {
+        posts = await res.json();
+        hideError();
+        renderTable();
+        updateCounters();
       } else {
-        row.dataset.status = 'Published';
-        target.textContent = 'Unpublish';
-        if (badge) {
-          badge.textContent = 'Published';
-          badge.className = 'status-badge px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800';
-        }
-        showToast('Article published to public portal.');
+        const err = await res.json().catch(() => ({}));
+        showError(err.message || 'Error loading articles from server.');
+        renderEmpty(err.message || 'Error loading articles.');
       }
-      updateCounts();
-    });
-  });
-
-  // Delete article handler
-  document.querySelectorAll<HTMLButtonElement>('.delete-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      const row = target.closest<HTMLElement>('.admin-row');
-      if (!row) return;
-
-      if (confirm('Are you sure you want to delete this article?')) {
-        row.remove();
-        showToast('Article removed from catalog.');
-        updateCounts();
-      }
-    });
-  });
-
-  function updateCounts() {
-    const activeRows = document.querySelectorAll<HTMLElement>('.admin-row');
-    let pub = 0;
-    let drf = 0;
-    activeRows.forEach(r => {
-      if (r.dataset.status === 'Published') pub++;
-      else drf++;
-    });
-    if (statTotal) statTotal.textContent = activeRows.length.toString();
-    if (statPublished) statPublished.textContent = pub.toString();
-    if (statDrafts) statDrafts.textContent = drf.toString();
+    } catch (err: any) {
+      showError('Network error: Unable to reach the API server.');
+      renderEmpty('Network error while fetching articles.');
+    }
   }
 
-  // Add Category Handler Mock
-  const addCatBtn = document.getElementById('add-category-btn');
-  const newCatInput = document.getElementById('new-category-input') as HTMLInputElement | null;
-  addCatBtn?.addEventListener('click', () => {
-    if (newCatInput && newCatInput.value.trim()) {
-      showToast(`Category "${newCatInput.value.trim()}" added successfully.`);
-      newCatInput.value = '';
+  function updateCounters() {
+    let pub = 0, drf = 0, sch = 0;
+    posts.forEach((p) => {
+      if (p.status === 'PUBLISHED') pub++;
+      else if (p.status === 'DRAFT') drf++;
+      else if (p.status === 'SCHEDULED') sch++;
+    });
+    if (statTotal) statTotal.textContent = String(posts.length);
+    if (statPublished) statPublished.textContent = String(pub);
+    if (statDrafts) statDrafts.textContent = String(drf);
+    if (statScheduled) statScheduled.textContent = String(sch);
+  }
+
+  function renderTable() {
+    if (!tbody) return;
+    if (posts.length === 0) {
+      renderEmpty('No articles found. Click "Write an Article" to create your first post.');
+      return;
+    }
+
+    tbody.innerHTML = posts.map((post) => {
+      const catName = post.category?.name || 'Uncategorized';
+      const catSlug = post.category?.slug || 'general';
+      const publicUrl = `/blog/${catSlug}/${post.slug}`;
+
+      const statusBadge = 
+        post.status === 'PUBLISHED' ? 'text-emerald-700 bg-emerald-50 border-emerald-200' :
+        post.status === 'SCHEDULED' ? 'text-purple-700 bg-purple-50 border-purple-200' :
+        post.status === 'ARCHIVED' ? 'text-slate-600 bg-slate-100 border-slate-200' : 'text-amber-700 bg-amber-50 border-amber-200';
+
+      const dateStr = post.updatedAt ? new Date(post.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+
+      return `
+        <tr class="hover:bg-slate-50/80 transition" data-id="${post.id}">
+          <td class="py-3 px-4 max-w-sm">
+            <a href="/editor?edit=${post.id}" class="font-semibold text-slate-900 hover:text-blue-600 transition block truncate">
+              ${escapeHtml(post.title)}
+            </a>
+            <span class="text-[10px] text-slate-400 font-mono block truncate">${publicUrl}</span>
+          </td>
+          <td class="py-3 px-3 whitespace-nowrap">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+              ${escapeHtml(catName)}
+            </span>
+          </td>
+          <td class="py-3 px-3 whitespace-nowrap">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border ${statusBadge}">
+              ${post.status}
+            </span>
+          </td>
+          <td class="py-3 px-3 whitespace-nowrap text-slate-400 font-mono text-[11px]">${dateStr}</td>
+          <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
+            <a 
+              href="/editor?edit=${post.id}" 
+              class="px-2.5 py-1 rounded border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold transition text-[11px]"
+            >
+              Edit
+            </a>
+            <a 
+              href="${publicUrl}" 
+              target="_blank"
+              class="px-2.5 py-1 rounded border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition text-[11px]"
+            >
+              Preview ↗
+            </a>
+            <button 
+              class="toggle-status-btn px-2 py-1 rounded text-slate-600 hover:bg-slate-100 transition text-[11px]"
+              data-id="${post.id}"
+              data-status="${post.status}"
+            >
+              ${post.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
+            </button>
+            <button 
+              class="del-btn px-2 py-1 text-slate-400 hover:text-red-600 transition text-[11px]"
+              data-id="${post.id}"
+              title="Delete Article"
+            >
+              ✕
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    attachRowEvents();
+  }
+
+  function renderEmpty(message: string) {
+    if (!tbody) return;
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="py-12 text-center text-slate-400 text-xs">
+          ${message}
+        </td>
+      </tr>
+    `;
+  }
+
+  function attachRowEvents() {
+    document.querySelectorAll<HTMLButtonElement>('.toggle-status-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        const current = btn.dataset.status;
+        const nextStatus = current === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED';
+        const res = await apiFetch(`/blogs/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: nextStatus }),
+        });
+        if (res.ok) {
+          showToast(`Article marked as ${nextStatus}.`);
+          fetchPosts();
+        } else {
+          showToast('Failed to update status', true);
+        }
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.del-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        if (!confirm('Are you sure you want to permanently delete this article?')) return;
+        const res = await apiFetch(`/blogs/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Article deleted successfully.');
+          fetchPosts();
+        } else {
+          showToast('Failed to delete article', true);
+        }
+      });
+    });
+  }
+
+  function renderCategoryFilter() {
+    if (!categoryFilter) return;
+    categoryFilter.innerHTML = '<option value="ALL">All Categories</option>' + categories.map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+  }
+
+  function renderCategories() {
+    if (!catTbody) return;
+    if (categories.length === 0) {
+      catTbody.innerHTML = `
+        <tr>
+          <td colspan="5" class="py-8 text-center text-slate-400 text-xs">
+            No categories yet. Click "Create a Blog Category" to add one.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    catTbody.innerHTML = categories.map((c) => `
+      <tr class="hover:bg-slate-50 transition">
+        <td class="py-3 px-4 font-semibold text-slate-900">${escapeHtml(c.name)}</td>
+        <td class="py-3 px-3 font-mono text-[11px] text-slate-500">/blog/${escapeHtml(c.slug)}</td>
+        <td class="py-3 px-3 text-slate-500 text-xs max-w-xs truncate">${escapeHtml(c.description || '—')}</td>
+        <td class="py-3 px-3 font-mono text-slate-600 text-xs">${c.postCount || 0}</td>
+        <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
+          <button 
+            class="edit-cat-btn px-2.5 py-1 rounded border border-slate-200 text-slate-700 hover:bg-slate-100 font-medium transition text-[11px]"
+            data-id="${c.id}"
+            data-name="${escapeHtml(c.name)}"
+            data-slug="${escapeHtml(c.slug)}"
+            data-desc="${escapeHtml(c.description || '')}"
+          >
+            Edit
+          </button>
+          <a 
+            href="/blog/${c.slug}" 
+            target="_blank"
+            class="px-2.5 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-100 transition text-[11px]"
+          >
+            View ↗
+          </a>
+          <button 
+            class="del-cat-btn px-2 py-1 text-slate-400 hover:text-red-600 transition text-[11px]"
+            data-id="${c.id}"
+            title="Delete Category"
+          >
+            ✕
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+    // Attach Edit & Delete events for categories
+    document.querySelectorAll<HTMLButtonElement>('.edit-cat-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        openCategoryModal({
+          id: btn.dataset.id,
+          name: btn.dataset.name,
+          slug: btn.dataset.slug,
+          description: btn.dataset.desc,
+        });
+      });
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.del-cat-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+        if (!confirm('Are you sure you want to delete this category? Articles assigned to it might lose their category reference.')) return;
+        const res = await apiFetch(`/categories/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          showToast('Category deleted successfully.');
+          loadAll();
+        } else {
+          showToast('Failed to delete category.', true);
+        }
+      });
+    });
+  }
+
+  // Category Modal Handlers
+  function openCategoryModal(cat?: { id?: string; name?: string; slug?: string; description?: string }) {
+    if (!catModal) return;
+    catModalError?.classList.add('hidden');
+    if (cat?.id) {
+      if (catModalTitle) catModalTitle.textContent = 'Edit Blog Category';
+      if (catModalId) catModalId.value = cat.id;
+      if (catModalName) catModalName.value = cat.name || '';
+      if (catModalSlug) catModalSlug.value = cat.slug || '';
+      if (catModalDesc) catModalDesc.value = cat.description || '';
+      if (saveCatModalBtn) saveCatModalBtn.textContent = 'Update Category';
+    } else {
+      if (catModalTitle) catModalTitle.textContent = 'Create a Blog Category';
+      if (catModalId) catModalId.value = '';
+      if (catModalName) catModalName.value = '';
+      if (catModalSlug) catModalSlug.value = '';
+      if (catModalDesc) catModalDesc.value = '';
+      if (saveCatModalBtn) saveCatModalBtn.textContent = 'Save Category';
+    }
+    catModal.classList.remove('hidden');
+    catModal.classList.add('flex');
+    catModalName?.focus();
+  }
+
+  function closeCategoryModal() {
+    catModal?.classList.add('hidden');
+    catModal?.classList.remove('flex');
+    if (catModalError) catModalError.classList.add('hidden');
+  }
+
+  document.getElementById('top-open-cat-btn')?.addEventListener('click', () => openCategoryModal());
+  document.getElementById('hero-open-cat-btn')?.addEventListener('click', () => openCategoryModal());
+  document.getElementById('section-open-cat-btn')?.addEventListener('click', () => openCategoryModal());
+  closeCatModalBtn?.addEventListener('click', closeCategoryModal);
+  cancelCatModalBtn?.addEventListener('click', closeCategoryModal);
+
+  // Auto-slugify in modal unless manually edited
+  catModalName?.addEventListener('input', () => {
+    if (!catModalId.value || !catModalSlug.value) {
+      catModalSlug.value = slugify(catModalName.value);
     }
   });
+
+  catModalForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = catModalId?.value;
+    const name = catModalName?.value.trim();
+    const slug = slugify(catModalSlug?.value.trim() || name);
+    const description = catModalDesc?.value.trim() || null;
+
+    if (!name || !slug) {
+      if (catModalError) {
+        catModalError.textContent = 'Please fill out category name and slug.';
+        catModalError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (saveCatModalBtn) {
+      saveCatModalBtn.disabled = true;
+      saveCatModalBtn.textContent = 'Saving...';
+    }
+
+    try {
+      let res: Response;
+      if (id) {
+        res = await apiFetch(`/categories/${id}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ name, slug, description }),
+        });
+      } else {
+        res = await apiFetch('/categories', {
+          method: 'POST',
+          body: JSON.stringify({ name, slug, description }),
+        });
+      }
+
+      if (res.ok) {
+        closeCategoryModal();
+        showToast(id ? `Category "${name}" updated.` : `Category "${name}" created.`);
+        loadAll();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        if (catModalError) {
+          catModalError.textContent = err.message || 'Error saving category. The name or slug might already exist.';
+          catModalError.classList.remove('hidden');
+        }
+      }
+    } catch (e: any) {
+      if (catModalError) {
+        catModalError.textContent = 'Network error saving category.';
+        catModalError.classList.remove('hidden');
+      }
+    } finally {
+      if (saveCatModalBtn) {
+        saveCatModalBtn.disabled = false;
+        saveCatModalBtn.textContent = id ? 'Update Category' : 'Save Category';
+      }
+    }
+  });
+
+  // Filter Tabs
+  document.querySelectorAll<HTMLButtonElement>('.status-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.status-tab').forEach((t) => {
+        t.className = 'status-tab px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition';
+      });
+      tab.className = 'status-tab px-3 py-1.5 rounded-md font-semibold text-slate-900 bg-slate-100 transition';
+      currentStatus = tab.dataset.status || 'ALL';
+      page = 0;
+      fetchPosts();
+    });
+  });
+
+  searchInput?.addEventListener('input', () => { page = 0; fetchPosts(); });
+  categoryFilter?.addEventListener('change', () => { page = 0; fetchPosts(); });
+
+  function slugify(text: string): string {
+    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+  }
+
+  function escapeHtml(str: string): string {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  loadAll();
 </script>

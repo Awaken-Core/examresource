@@ -1,0 +1,343 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  activeNav?: 'posts' | 'new-post' | 'categories' | 'sitemap';
+}
+
+const {
+  title = 'Posts',
+  activeNav = 'posts',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full antialiased admin-theme" style="color-scheme: light;">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} · ExamPortal CMS</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    
+    <!-- Enforce STRICT clean light theme for admin panel -->
+    <style is:inline>
+      html.admin-theme, body.admin-theme-body {
+        background-color: #F8FAFC !important;
+        color: #111827 !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      html.admin-theme,
+      html.admin-theme.theme-dark,
+      html.admin-theme.theme-light {
+        --color-canvas: #F8FAFC !important;
+        --color-surface: #FFFFFF !important;
+        --color-surface-raised: #F1F5F9 !important;
+        --color-white: #FFFFFF !important;
+        --color-text-primary: #111827 !important;
+        --color-muted: #64748B !important;
+        --color-border: #E5E7EB !important;
+        --color-subtle: #F3F4F6 !important;
+        color-scheme: light !important;
+      }
+      html.admin-theme .bg-white {
+        background-color: #FFFFFF !important;
+      }
+      html.admin-theme .bg-slate-50 {
+        background-color: #F8FAFC !important;
+      }
+      html.admin-theme .bg-slate-100 {
+        background-color: #F1F5F9 !important;
+      }
+      html.admin-theme .border-slate-200 {
+        border-color: #E2E8F0 !important;
+      }
+      html.admin-theme .border-slate-100 {
+        border-color: #F1F5F9 !important;
+      }
+      html.admin-theme .text-slate-900 {
+        color: #0F172A !important;
+      }
+      html.admin-theme .text-slate-800 {
+        color: #1E293B !important;
+      }
+      html.admin-theme .text-slate-700 {
+        color: #334155 !important;
+      }
+      html.admin-theme .text-slate-600 {
+        color: #475569 !important;
+      }
+      html.admin-theme .text-slate-500 {
+        color: #64748B !important;
+      }
+      html.admin-theme .text-slate-400 {
+        color: #94A3B8 !important;
+      }
+      html.admin-theme .text-white {
+        color: #FFFFFF !important;
+      }
+      html.admin-theme input:not([type="checkbox"]):not([type="radio"]),
+      html.admin-theme select,
+      html.admin-theme textarea {
+        background-color: #FFFFFF;
+        color: #0F172A;
+      }
+      html.admin-theme input::placeholder,
+      html.admin-theme textarea::placeholder {
+        color: #94A3B8 !important;
+      }
+      html.admin-theme .ProseMirror {
+        color: #1E293B !important;
+        background-color: transparent !important;
+      }
+      html.admin-theme .ProseMirror p.is-editor-empty:first-child::before {
+        color: #94A3B8 !important;
+      }
+      .admin-layout * {
+        box-sizing: border-box;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #CBD5E1;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94A3B8;
+      }
+    </style>
+  </head>
+  <body class="admin-layout admin-theme-body h-full flex overflow-hidden" style="background-color: #F8FAFC; color: #111827;">
+
+    <!-- Auth Verification Guard -->
+    <script>
+      const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+      const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
+      const token = await clerk?.session?.getToken();
+      if (token) {
+        try {
+          const res = await fetch(`${apiUrl}/me`, { headers: { Authorization: `Bearer ${token}` } });
+          const user = res.ok ? await res.json() : null;
+          if (user) {
+            const nameEl = document.getElementById('admin-user-name');
+            const roleEl = document.getElementById('admin-user-role');
+            const avatarEl = document.getElementById('admin-user-avatar');
+            if (nameEl) nameEl.textContent = user.name || 'Editorial Team';
+            if (roleEl) roleEl.textContent = (user.role || 'editor').toUpperCase();
+            if (avatarEl) avatarEl.textContent = (user.name || user.email || 'A')[0].toUpperCase();
+          }
+        } catch (_) {}
+      }
+    </script>
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div 
+      id="admin-mobile-backdrop" 
+      class="fixed inset-0 bg-slate-900/30 z-40 lg:hidden hidden transition-opacity"
+    ></div>
+
+    <!-- Dedicated Clean White Admin Sidebar -->
+    <aside 
+      id="admin-sidebar"
+      class="fixed inset-y-0 left-0 z-50 w-60 bg-white border-r border-slate-200 flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0"
+      style="background-color: #FFFFFF; border-color: #E5E7EB;"
+    >
+      <div>
+        <!-- Top CMS Brand -->
+        <div class="h-14 flex items-center justify-between px-5 border-b border-slate-100">
+          <a href="/admin" class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center font-bold text-xs tracking-tight">
+              EP
+            </div>
+            <div class="leading-tight">
+              <span class="block text-xs font-bold text-slate-900 tracking-tight">ExamPortal</span>
+              <span class="block text-[10px] font-medium text-slate-400">Admin CMS</span>
+            </div>
+          </a>
+          <button 
+            id="close-mobile-sidebar-btn" 
+            class="lg:hidden p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+            aria-label="Close menu"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navigation Links (Clean & Uncluttered) -->
+        <nav class="p-3 space-y-1 text-xs font-medium">
+          <a 
+            href="/admin" 
+            class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
+              activeNav === 'posts' 
+                ? 'bg-slate-100 text-slate-900 font-semibold' 
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >
+            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+            </svg>
+            <span>Articles</span>
+          </a>
+
+          <a 
+            href="/admin#categories-section" 
+            class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
+              activeNav === 'categories' 
+                ? 'bg-slate-100 text-slate-900 font-semibold' 
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >
+            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <span>Blog Categories</span>
+          </a>
+
+          <a 
+            href="/editor" 
+            class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
+              activeNav === 'new-post' 
+                ? 'bg-slate-100 text-slate-900 font-semibold' 
+                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >
+            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>Write Article</span>
+          </a>
+
+          <div class="pt-4 pb-1">
+            <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">External</span>
+          </div>
+
+          <a 
+            href="/blog" 
+            target="_blank"
+            class="flex items-center justify-between px-3 py-2 rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition"
+          >
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              <span>Public Blog</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono">↗</span>
+          </a>
+
+          <a 
+            href="/sitemap.xml" 
+            target="_blank"
+            class="flex items-center justify-between px-3 py-2 rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition"
+          >
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>XML Sitemap</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono">↗</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Bottom User Account Badge -->
+      <div class="p-3 border-t border-slate-100 bg-white">
+        <div class="flex items-center gap-2.5 px-2 py-1.5">
+          <div 
+            id="admin-user-avatar"
+            class="w-7 h-7 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs"
+          >
+            A
+          </div>
+          <div class="flex-1 min-w-0">
+            <span id="admin-user-name" class="block text-xs font-semibold text-slate-800 truncate">Editorial Staff</span>
+            <span id="admin-user-role" class="block text-[10px] font-mono text-slate-400">ADMIN</span>
+          </div>
+          <a 
+            href="/" 
+            title="Exit Admin"
+            class="p-1 rounded text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace Wrapper -->
+    <div class="flex-1 flex flex-col min-w-0 lg:pl-60">
+      
+      <!-- Top Action Bar (Clean light mode) -->
+      <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 shadow-2xs">
+        
+        <!-- Left: Mobile Menu Trigger + Context Breadcrumb -->
+        <div class="flex items-center gap-3">
+          <button 
+            id="open-mobile-sidebar-btn"
+            class="lg:hidden p-1.5 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+            aria-label="Open navigation"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <div class="flex items-center gap-2 text-xs text-slate-500">
+            <a href="/admin" class="hover:text-slate-800 font-medium transition">Admin</a>
+            <span>/</span>
+            <span class="font-semibold text-slate-900">{title}</span>
+          </div>
+        </div>
+
+        <!-- Right: Slot for page actions (e.g., Save Draft, Publish, etc.) -->
+        <div class="flex items-center gap-2">
+          <slot name="header-actions" />
+        </div>
+      </header>
+
+      <!-- Scrollable Page Canvas -->
+      <main class="flex-1 overflow-y-auto">
+        <slot />
+      </main>
+    </div>
+
+    <!-- Mobile Drawer Interaction Script -->
+    <script>
+      const mobileBtn = document.getElementById('open-mobile-sidebar-btn');
+      const closeBtn = document.getElementById('close-mobile-sidebar-btn');
+      const sidebar = document.getElementById('admin-sidebar');
+      const backdrop = document.getElementById('admin-mobile-backdrop');
+
+      function openDrawer() {
+        sidebar?.classList.remove('-translate-x-full');
+        backdrop?.classList.remove('hidden');
+      }
+
+      function closeDrawer() {
+        sidebar?.classList.add('-translate-x-full');
+        backdrop?.classList.add('hidden');
+      }
+
+      mobileBtn?.addEventListener('click', openDrawer);
+      closeBtn?.addEventListener('click', closeDrawer);
+      backdrop?.addEventListener('click', closeDrawer);
+    </script>
+  </body>
+</html>
