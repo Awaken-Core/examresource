@@ -119,6 +119,16 @@ export function htmlToBlocks(html: string): BlockRecord[] {
         }
         break;
       }
+      case 'div': {
+        if (attributes.includes('callout') || attributes.includes('alert') || attributes.includes('important-note')) {
+          blocks.push({ type: 'CALLOUT', value: innerContent });
+          break;
+        }
+        if (innerContent) {
+          blocks.push({ type: 'PARAGRAPH', value: innerContent });
+        }
+        break;
+      }
       case 'p':
       default: {
         // If image is inside p
