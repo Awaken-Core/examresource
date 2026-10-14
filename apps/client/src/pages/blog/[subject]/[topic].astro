@@ -193,7 +193,7 @@ const jsonLd = {
               </figure>
             )}
 
-            <div class="prose prose-invert max-w-none text-white text-sm sm:text-base leading-relaxed space-y-4" set:html={htmlBody} />
+            <div class="prose-markdown markdown-preview-content max-w-none leading-relaxed space-y-4" set:html={htmlBody} />
           </article>
         ) : (
           <BlogArticle article={article} />

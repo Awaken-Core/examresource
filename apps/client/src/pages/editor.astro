@@ -2,437 +2,1149 @@
 import AdminLayout from '../layouts/AdminLayout.astro';
 ---
 
-<AdminLayout title="Article Editor" activeNav="new-post">
-  <!-- Top contextual actions inside Admin Header -->
-  <div slot="header-actions" class="flex items-center gap-2">
-    <!-- Back to Articles Button -->
-    <a 
-      href="/admin" 
-      class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition"
-    >
-      <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-      </svg>
-      <span>Back to Articles</span>
-    </a>
-
-    <!-- Save status indicator -->
-    <div id="save-status" class="text-xs text-slate-500 font-medium px-2 py-1 flex items-center gap-1.5 mr-1">
-      <span class="w-2 h-2 rounded-full bg-slate-300"></span>
-      <span>Saved</span>
-    </div>
-
-    <!-- Secondary Actions Dropdown Menu -->
-    <div class="relative">
-      <button 
-        type="button" 
-        id="editor-options-menu-btn" 
-        class="px-2 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium text-xs transition flex items-center gap-1"
-        title="More Actions"
-      >
-        <span>Options</span>
-        <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-
-      <div 
-        id="editor-options-dropdown" 
-        class="hidden absolute right-0 mt-1.5 w-44 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-50 text-xs"
-      >
-        <button 
-          type="button" 
-          id="revisions-modal-btn" 
-          class="w-full text-left px-3 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2"
-        >
-          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>Revision History</span>
-        </button>
-        <button 
-          type="button" 
-          id="duplicate-article-btn" 
-          class="w-full text-left px-3 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2"
-        >
-          <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-          <span>Duplicate Article</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Preview Button -->
-    <button 
-      id="toggle-preview-btn"
-      class="px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs flex items-center gap-1.5 transition"
-    >
-      <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-      </svg>
-      <span>Preview</span>
-    </button>
-
-    <!-- Save Draft Button -->
-    <button 
-      id="save-draft-btn"
-      class="px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition"
-    >
-      Save Draft
-    </button>
-
-    <!-- Publish Button -->
-    <button 
-      id="publish-btn"
-      class="px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
-      style="background-color: #2563EB;"
-    >
-      Publish
-    </button>
-  </div>
-
-  <!-- Focused Editorial Canvas Container -->
-  <div class="h-full flex flex-col lg:flex-row overflow-hidden bg-white">
+<AdminLayout title="Article Editor" activeNav="new-post" fullWidth={true}>
+  <!-- Full-Screen Gutenberg & Markdown Hybrid Workspace -->
+  <div class="h-screen w-screen flex flex-col bg-white overflow-hidden text-slate-900 select-none font-sans">
     
-    <!-- Main Writing Column: Title, Summary, Toolbar & Spacious Body -->
-    <div id="editor-main-col" class="flex-1 flex flex-col h-full overflow-y-auto">
+    <!-- 1. Compact Top Toolbar -->
+    <header class="h-13 bg-white border-b border-slate-200 px-3 flex items-center justify-between shrink-0 z-40 select-none">
       
-      <!-- Top Title Area -->
-      <div class="max-w-3xl w-full mx-auto px-6 sm:px-10 pt-10 pb-4">
-        <!-- 1. Article Title -->
-        <input 
-          type="text" 
-          id="field-title"
-          placeholder="Enter article title..."
-          class="w-full text-2xl sm:text-3xl font-extrabold text-slate-900 placeholder:text-slate-300 border-none outline-none focus:ring-0 p-0 bg-transparent leading-tight tracking-tight"
-        />
+      <!-- Left side: Back, Inserter (+), Undo, Redo, Document Outline List View -->
+      <div class="flex items-center gap-1">
+        <!-- Back to Articles -->
+        <a 
+          href="/admin" 
+          id="back-to-posts-btn"
+          class="p-2 rounded hover:bg-slate-100 text-slate-700 transition"
+          title="Back to All Articles"
+          aria-label="Back to All Articles"
+        >
+          <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+        </a>
 
-        <!-- 2. Short Summary / Excerpt -->
-        <textarea 
-          id="field-excerpt"
-          rows="2"
-          placeholder="Short summary (optional, used in article listings and search descriptions)..."
-          class="w-full text-sm text-slate-600 placeholder:text-slate-300 border-none outline-none focus:ring-0 p-0 bg-transparent resize-none mt-3 leading-relaxed"
-        ></textarea>
+        <div class="w-px h-5 bg-slate-200 mx-1"></div>
+
+        <!-- Header Plus Button & Compact Dropdown -->
+        <div class="relative">
+          <button 
+            type="button" 
+            id="top-inserter-toggle-btn"
+            class="w-8 h-8 rounded bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition shadow-2xs"
+            title="Add block / Toggle block menu"
+            aria-label="Add block"
+          >
+            <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+
+          <!-- Compact Header Dropdown Block Menu -->
+          <div 
+            id="header-block-dropdown" 
+            class="hidden absolute left-0 top-full mt-2 z-50 bg-white border border-slate-300 rounded-lg shadow-xl w-68 max-h-96 overflow-y-auto py-1 text-xs select-none"
+          >
+            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 flex items-center justify-between">
+              <span>Quick Add Block</span>
+              <button type="button" id="open-full-library-btn" class="text-blue-600 hover:underline font-semibold text-[10px]">Browse all →</button>
+            </div>
+            <div class="p-1 space-y-0.5">
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="paragraph">
+                <span class="w-5 text-center font-serif text-slate-500 font-bold">¶</span>
+                <div><strong class="text-slate-800 block">Paragraph</strong><span class="text-[10px] text-slate-400 block">Standard body text</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="h2">
+                <span class="w-5 text-center font-bold text-slate-700">H2</span>
+                <div><strong class="text-slate-800 block">Heading 2</strong><span class="text-[10px] text-slate-400 block">Major section header</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="h3">
+                <span class="w-5 text-center font-bold text-slate-700">H3</span>
+                <div><strong class="text-slate-800 block">Heading 3</strong><span class="text-[10px] text-slate-400 block">Subsection header</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="h4">
+                <span class="w-5 text-center font-bold text-slate-700">H4</span>
+                <div><strong class="text-slate-800 block">Heading 4</strong><span class="text-[10px] text-slate-400 block">Minor section header</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="bulletList">
+                <span class="w-5 text-center font-bold text-slate-700">•</span>
+                <div><strong class="text-slate-800 block">Bullet List</strong><span class="text-[10px] text-slate-400 block">Unordered bullet points</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="orderedList">
+                <span class="w-5 text-center font-bold text-slate-700">1.</span>
+                <div><strong class="text-slate-800 block">Numbered List</strong><span class="text-[10px] text-slate-400 block">Sequential numbered steps</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="table">
+                <span class="w-5 text-center font-bold text-slate-700">▦</span>
+                <div><strong class="text-slate-800 block">Table</strong><span class="text-[10px] text-slate-400 block">Tabular data grid</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="image">
+                <span class="w-5 text-center font-bold text-slate-700">🖼</span>
+                <div><strong class="text-slate-800 block">Image</strong><span class="text-[10px] text-slate-400 block">Illustration with alt text</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="codeBlock">
+                <span class="w-5 text-center font-mono text-slate-700">&lt;/&gt;</span>
+                <div><strong class="text-slate-800 block">Code Block</strong><span class="text-[10px] text-slate-400 block">Formatted code snippets</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="blockquote">
+                <span class="w-5 text-center font-serif text-slate-700 font-bold">❝</span>
+                <div><strong class="text-slate-800 block">Blockquote</strong><span class="text-[10px] text-slate-400 block">Highlighted quote or excerpt</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="callout">
+                <span class="w-5 text-center font-bold text-blue-600">ℹ</span>
+                <div><strong class="text-slate-800 block">Callout Note</strong><span class="text-[10px] text-slate-400 block">Notice or alert box</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="divider">
+                <span class="w-5 text-center font-bold text-slate-400">—</span>
+                <div><strong class="text-slate-800 block">Divider</strong><span class="text-[10px] text-slate-400 block">Horizontal separator line</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="video">
+                <span class="w-5 text-center font-bold text-red-500">▶</span>
+                <div><strong class="text-slate-800 block">Video Embed</strong><span class="text-[10px] text-slate-400 block">YouTube or direct video</span></div>
+              </button>
+              <button type="button" class="header-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="toc">
+                <span class="w-5 text-center font-bold text-slate-700">📑</span>
+                <div><strong class="text-slate-800 block">Table of Contents</strong><span class="text-[10px] text-slate-400 block">Auto-generated links</span></div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Undo & Redo -->
+        <button 
+          type="button" 
+          id="top-undo-btn"
+          class="p-2 rounded hover:bg-slate-100 text-slate-600 disabled:opacity-30 disabled:pointer-events-none transition"
+          title="Undo (Ctrl+Z)"
+          aria-label="Undo"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a5 5 0 015 5v2m-15-7l4-4m-4 4l4 4" />
+          </svg>
+        </button>
+
+        <button 
+          type="button" 
+          id="top-redo-btn"
+          class="p-2 rounded hover:bg-slate-100 text-slate-600 disabled:opacity-30 disabled:pointer-events-none transition"
+          title="Redo (Ctrl+Y)"
+          aria-label="Redo"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 10H11a5 5 0 00-5 5v2m15-7l-4-4m4 4l-4 4" />
+          </svg>
+        </button>
+
+        <!-- Document Outline / List View Toggle -->
+        <button 
+          type="button" 
+          id="top-outline-toggle-btn"
+          class="p-2 rounded hover:bg-slate-100 text-slate-600 transition"
+          title="Document Outline & List View"
+          aria-label="Document Outline"
+        >
+          <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+          </svg>
+        </button>
       </div>
 
-      <!-- Simplified TipTap Formatting Toolbar (Sticky) -->
-      <div class="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-y border-slate-200 px-6 sm:px-10 py-1.5 flex items-center justify-between text-xs text-slate-700">
-        <div id="tiptap-toolbar" class="flex flex-wrap items-center gap-1">
-          <!-- Common formatting visible -->
-          <button type="button" data-action="paragraph" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 font-medium text-slate-700" title="Normal text">Paragraph</button>
-          <button type="button" data-action="h2" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 font-bold text-slate-900" title="Heading 2">H2</button>
-          <button type="button" data-action="h3" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 font-bold text-slate-900" title="Heading 3">H3</button>
+      <!-- Center: Mode Switcher (Visual vs Markdown Editor) -->
+      <div class="flex items-center">
+        <div class="bg-slate-100 p-0.5 rounded-lg border border-slate-200 flex items-center text-xs shadow-2xs">
+          <button 
+            type="button" 
+            id="mode-visual-btn"
+            class="editor-mode-toggle px-3 py-1 rounded-md font-bold text-slate-900 bg-white shadow-xs transition flex items-center gap-1.5"
+            data-mode="visual"
+          >
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>Visual Editor</span>
+          </button>
           
-          <div class="w-px h-4 bg-slate-200 mx-1"></div>
-          
-          <button type="button" data-action="bold" class="tool-btn px-2.5 py-1 rounded hover:bg-slate-100 font-bold text-slate-900" title="Bold">B</button>
-          <button type="button" data-action="italic" class="tool-btn px-2.5 py-1 rounded hover:bg-slate-100 italic font-serif text-slate-900" title="Italic">I</button>
-          
-          <div class="w-px h-4 bg-slate-200 mx-1"></div>
-          
-          <button type="button" data-action="bulletList" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-700" title="Bulleted list">Bulleted list</button>
-          <button type="button" data-action="orderedList" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-700" title="Numbered list">Numbered list</button>
-          
-          <div class="w-px h-4 bg-slate-200 mx-1"></div>
-          
-          <button type="button" data-action="insertLink" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-blue-600 font-medium" title="Insert link on selected text">Link</button>
-          <button type="button" data-action="insertImage" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-700" title="Insert image">Image</button>
-          
-          <div class="w-px h-4 bg-slate-200 mx-1"></div>
-          
-          <button type="button" data-action="undo" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-600" title="Undo">Undo</button>
-          <button type="button" data-action="redo" class="tool-btn px-2 py-1 rounded hover:bg-slate-100 text-slate-600" title="Redo">Redo</button>
+          <button 
+            type="button" 
+            id="mode-markdown-btn"
+            class="editor-mode-toggle px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5"
+            data-mode="markdown"
+          >
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            <span>Markdown Editor</span>
+          </button>
+        </div>
+      </div>
 
-          <!-- More Dropdown for less frequent tools -->
-          <div class="relative ml-1">
+      <!-- Right side: Saved state, Overview, Preview, Save Draft, Publish, Settings toggle, More menu -->
+      <div class="flex items-center gap-2">
+        <!-- Live Saved Status Indicator -->
+        <div id="save-status" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 font-medium px-2 py-1">
+          <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+          <span>Saved</span>
+        </div>
+
+        <!-- Word count / Reading time quick indicator -->
+        <div id="document-overview-trigger" class="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-100 text-xs text-slate-600 cursor-pointer" title="Document statistics">
+          <span id="word-count">0 words</span>
+          <span class="text-slate-300">·</span>
+          <span id="read-time">1 min read</span>
+        </div>
+
+        <!-- Preview Button -->
+        <button 
+          type="button"
+          id="preview-btn"
+          class="px-2.5 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 font-medium text-xs flex items-center gap-1.5 transition"
+          title="Preview public article layout"
+        >
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <span class="hidden sm:inline">Preview</span>
+        </button>
+
+        <!-- Save Draft Button -->
+        <button 
+          type="button"
+          id="save-draft-btn"
+          class="px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-2xs"
+        >
+          Save Draft
+        </button>
+
+        <!-- Publish / Update Button -->
+        <button 
+          type="button"
+          id="publish-btn"
+          class="px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
+          style="background-color: #2563EB;"
+        >
+          Publish
+        </button>
+
+        <!-- Settings Sidebar Toggle Button -->
+        <button 
+          type="button" 
+          id="sidebar-toggle-btn"
+          class="p-2 rounded hover:bg-slate-100 text-slate-700 transition"
+          title="Toggle settings sidebar"
+          aria-label="Settings"
+        >
+          <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 3v18" />
+          </svg>
+        </button>
+
+        <!-- More Menu Dropdown -->
+        <div class="relative">
+          <button 
+            type="button" 
+            id="more-options-btn"
+            class="p-2 rounded hover:bg-slate-100 text-slate-600 transition"
+            title="More Options"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <circle cx="12" cy="5" r="1" />
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="12" cy="19" r="1" />
+            </svg>
+          </button>
+
+          <div 
+            id="more-options-menu" 
+            class="hidden absolute right-0 mt-1.5 w-56 bg-white border border-slate-200 rounded-lg shadow-lg py-1.5 z-50 text-xs divide-y divide-slate-100"
+          >
+            <!-- Markdown Import / Export Group -->
+            <div class="py-1">
+              <button 
+                type="button" 
+                id="opt-import-md" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 font-medium"
+              >
+                <svg class="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span>Import Markdown (.md)</span>
+              </button>
+              
+              <button 
+                type="button" 
+                id="opt-export-md" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5"
+              >
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Export as .md File</span>
+              </button>
+
+              <button 
+                type="button" 
+                id="opt-copy-md" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5"
+              >
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span>Copy Markdown to Clipboard</span>
+              </button>
+            </div>
+
+            <!-- Management Group -->
+            <div class="py-1">
+              <button 
+                type="button" 
+                id="opt-revisions" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5"
+              >
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Revision History</span>
+              </button>
+              
+              <button 
+                type="button" 
+                id="opt-duplicate" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5"
+              >
+                <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Duplicate Article</span>
+              </button>
+            </div>
+
+            <div class="py-1">
+              <a 
+                href="/blog" 
+                target="_blank" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center justify-between"
+              >
+                <span>Visit Public Blog</span>
+                <span class="text-slate-400">↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Hidden file input for Markdown file importing -->
+    <input type="file" id="md-file-input" accept=".md,.markdown,text/markdown,text/plain" class="hidden" />
+
+    <!-- Main Workspace: Drawers + Central Canvas + Settings Sidebar -->
+    <div class="flex-1 flex overflow-hidden relative">
+
+      <!-- A. Document Outline / List View Drawer -->
+      <aside 
+        id="document-outline-drawer" 
+        class="hidden w-72 bg-white border-r border-slate-200 h-full flex flex-col z-30 shrink-0 text-xs transition-all duration-200 ease-in-out"
+      >
+        <div class="h-11 px-4 border-b border-slate-100 flex items-center justify-between font-bold text-slate-900">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h10M4 14h16M4 18h10" />
+            </svg>
+            <span>Document Outline</span>
+          </div>
+          <button type="button" id="close-outline-btn" class="p-1 rounded text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+
+        <div class="p-3 bg-slate-50 border-b border-slate-100 text-[11px] text-slate-600 flex items-center justify-between font-mono">
+          <div><span id="outline-word-stat">0</span> words</div>
+          <div><span id="outline-char-stat">0</span> chars</div>
+          <div><span id="outline-headings-stat">0</span> headings</div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-3 space-y-1" id="outline-tree-container">
+          <p class="text-slate-400 text-center py-6 text-xs">No headings created yet. Add H2, H3, or H4 to populate the outline.</p>
+        </div>
+      </aside>
+
+      <!-- B. Searchable Block Inserter Drawer -->
+      <aside 
+        id="block-inserter-drawer" 
+        class="hidden w-80 bg-white border-r border-slate-200 h-full flex flex-col z-30 shrink-0 text-xs transition-all duration-200 ease-in-out shadow-sm"
+      >
+        <div class="p-3 border-b border-slate-100 flex items-center justify-between">
+          <div class="relative w-full mr-2">
+            <input 
+              type="text" 
+              id="block-search-input" 
+              placeholder="Search blocks or patterns..." 
+              class="w-full bg-slate-50 border border-slate-200 rounded-md pl-8 pr-2.5 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+            />
+            <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <button type="button" id="close-inserter-btn" class="p-1.5 rounded text-slate-400 hover:text-slate-600">✕</button>
+        </div>
+
+        <!-- Inserter Tabs -->
+        <div class="flex border-b border-slate-200 px-3 bg-slate-50 text-xs">
+          <button type="button" class="inserter-tab px-3 py-2 font-bold text-slate-900 border-b-2 border-blue-600" data-tab="blocks">Standard Blocks</button>
+          <button type="button" class="inserter-tab px-3 py-2 font-medium text-slate-500 hover:text-slate-800 border-b-2 border-transparent" data-tab="patterns">Exam Patterns</button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-5" id="inserter-content">
+          <div id="inserter-blocks-section" class="space-y-4">
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Text & Hierarchy</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="paragraph">
+                  <span class="font-bold text-slate-900">¶ Paragraph</span>
+                  <span class="text-[10px] text-slate-500">Standard body text</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="h2">
+                  <span class="font-bold text-slate-900">H2 Heading</span>
+                  <span class="text-[10px] text-slate-500">Major section heading</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="h3">
+                  <span class="font-bold text-slate-900">H3 Subheading</span>
+                  <span class="text-[10px] text-slate-500">Subsection heading</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="h4">
+                  <span class="font-bold text-slate-900">H4 Heading</span>
+                  <span class="text-[10px] text-slate-500">Minor topic heading</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Lists & Tables</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="bulletList">
+                  <span class="font-bold text-slate-900">• Bullet List</span>
+                  <span class="text-[10px] text-slate-500">Unordered bullet points</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="orderedList">
+                  <span class="font-bold text-slate-900">1. Numbered List</span>
+                  <span class="text-[10px] text-slate-500">Sequenced step list</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="table">
+                  <span class="font-bold text-slate-900">▦ Table</span>
+                  <span class="text-[10px] text-slate-500">Editable data table</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="divider">
+                  <span class="font-bold text-slate-900">― Separator</span>
+                  <span class="text-[10px] text-slate-500">Horizontal rule divider</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Media & Code</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="image">
+                  <span class="font-bold text-slate-900">🖼 Image</span>
+                  <span class="text-[10px] text-slate-500">Upload or image URL</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="codeBlock">
+                  <span class="font-bold text-slate-900">&lt;/&gt; Code Block</span>
+                  <span class="text-[10px] text-slate-500">Syntax highlighted code</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="blockquote">
+                  <span class="font-bold text-slate-900">❝ Blockquote</span>
+                  <span class="text-[10px] text-slate-500">Quote callout</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="callout">
+                  <span class="font-bold text-slate-900">⚠ Callout Note</span>
+                  <span class="text-[10px] text-slate-500">Important alert box</span>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Embeds & Navigation</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="video">
+                  <span class="font-bold text-slate-900">▶ Video Embed</span>
+                  <span class="text-[10px] text-slate-500">YouTube or video embed</span>
+                </button>
+                <button type="button" class="insert-block-btn p-2.5 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition flex flex-col gap-1" data-type="toc">
+                  <span class="font-bold text-slate-900">📑 Table of Contents</span>
+                  <span class="text-[10px] text-slate-500">Auto-generated links</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exam Patterns Section -->
+          <div id="inserter-patterns-section" class="hidden space-y-2">
+            <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Government Exam Reusable Patterns</span>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="dates">
+              <span class="font-bold text-slate-900 block text-xs">Important Exam Dates</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Pre-built notification schedule & deadline table</span>
+            </button>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="eligibility">
+              <span class="font-bold text-slate-900 block text-xs">Eligibility Criteria</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Age limit, education qualifications, and nationality</span>
+            </button>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="fees">
+              <span class="font-bold text-slate-900 block text-xs">Application Fee Details</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Category-wise fee breakdown table & payment modes</span>
+            </button>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="vacancies">
+              <span class="font-bold text-slate-900 block text-xs">Vacancy & Seat Distribution</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Post-wise and reservation category breakdown</span>
+            </button>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="links">
+              <span class="font-bold text-slate-900 block text-xs">Important Links & Official Portals</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Official notice PDF, registration link, and syllabus</span>
+            </button>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="howto">
+              <span class="font-bold text-slate-900 block text-xs">How to Apply (Step-by-Step)</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Numbered procedural guide for registration</span>
+            </button>
+            <button type="button" class="insert-pattern-btn w-full p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50/20 text-left transition" data-pattern="faqs">
+              <span class="font-bold text-slate-900 block text-xs">Frequently Asked Questions (FAQs)</span>
+              <span class="text-[11px] text-slate-500 block mt-0.5">Candidate questions with answers</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- C. Central Writing Canvas -->
+      <main id="editor-main-canvas" class="flex-1 h-full overflow-y-auto bg-white flex flex-col relative focus:outline-none">
+        
+        <!-- Contextual Block Floating Toolbar (Visual Mode) -->
+        <div 
+          id="contextual-block-toolbar" 
+          class="hidden fixed z-40 bg-white border border-slate-300 rounded-md shadow-md items-center text-xs divide-x divide-slate-200 transition-all select-none"
+          style="top: 0; left: 0;"
+        >
+          <div class="flex items-center px-2 py-1 gap-1 text-slate-700 font-medium">
+            <span id="ctx-block-type-label">¶ Paragraph</span>
+          </div>
+          <div class="flex items-center px-1 py-1 gap-0.5">
+            <button type="button" id="ctx-move-up-btn" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Move block up">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
+            </button>
+            <button type="button" id="ctx-move-down-btn" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Move block down">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+          <div class="flex items-center px-1 py-1 gap-1 text-slate-700">
+            <button type="button" class="ctx-format-btn px-2 py-0.5 rounded hover:bg-slate-100 font-bold" data-action="bold" title="Bold (Ctrl+B)">B</button>
+            <button type="button" class="ctx-format-btn px-2 py-0.5 rounded hover:bg-slate-100 italic font-serif" data-action="italic" title="Italic (Ctrl+I)">I</button>
+            <button type="button" class="ctx-format-btn px-2 py-0.5 rounded hover:bg-slate-100 underline" data-action="underline" title="Underline (Ctrl+U)">U</button>
+            <button type="button" class="ctx-format-btn px-2 py-0.5 rounded hover:bg-slate-100 line-through" data-action="strike" title="Strikethrough">S</button>
+            <button type="button" class="ctx-format-btn px-2 py-0.5 rounded hover:bg-slate-100 text-blue-600 font-semibold" data-action="link" title="Link (Ctrl+K)">Link</button>
+          </div>
+          <div id="ctx-table-tools" class="hidden items-center px-1 py-1 gap-1 text-slate-700">
+            <button type="button" id="table-add-row-btn" class="px-1.5 py-0.5 rounded hover:bg-slate-100 text-[11px]" title="Add row">+Row</button>
+            <button type="button" id="table-add-col-btn" class="px-1.5 py-0.5 rounded hover:bg-slate-100 text-[11px]" title="Add column">+Col</button>
+            <button type="button" id="table-del-row-btn" class="px-1.5 py-0.5 rounded hover:bg-slate-100 text-[11px] text-red-600" title="Delete row">-Row</button>
+            <button type="button" id="table-del-col-btn" class="px-1.5 py-0.5 rounded hover:bg-slate-100 text-[11px] text-red-600" title="Delete column">-Col</button>
+          </div>
+          <div class="flex items-center px-1 py-1 gap-0.5">
+            <button type="button" id="ctx-duplicate-block-btn" class="p-1 rounded hover:bg-slate-100 text-slate-600" title="Duplicate block">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </button>
+            <button type="button" id="ctx-remove-block-btn" class="p-1 rounded hover:bg-slate-100 text-red-600" title="Delete block">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Slash Command Autocomplete Popover -->
+        <div 
+          id="slash-menu-popover" 
+          class="hidden fixed z-50 bg-white border border-slate-300 rounded-lg shadow-xl w-64 max-h-72 overflow-y-auto py-1 text-xs"
+        >
+          <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 flex items-center justify-between">
+            <span>Blocks</span>
+            <span class="text-[9px] font-normal text-slate-400">↑↓ to navigate, ↵ to select</span>
+          </div>
+          <div id="slash-menu-items" class="p-1 space-y-0.5"></div>
+        </div>
+
+        <!-- Inline Floating Plus Button (between blocks on hover / focus) -->
+        <div 
+          id="inline-block-plus-btn"
+          class="hidden fixed z-30 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition-opacity duration-150"
+          style="top: 0; left: 0;"
+        >
+          <button 
+            type="button"
+            id="inline-plus-trigger"
+            class="w-6 h-6 rounded-full bg-white hover:bg-slate-900 text-slate-600 hover:text-white border border-slate-300 shadow-sm flex items-center justify-center transition"
+            title="Add block here"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Inline Compact Block Menu Popover -->
+        <div 
+          id="inline-block-menu" 
+          class="hidden fixed z-40 bg-white border border-slate-300 rounded-lg shadow-xl w-64 max-h-80 overflow-y-auto py-1 text-xs select-none"
+          style="top: 0; left: 0;"
+        >
+          <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 flex items-center justify-between">
+            <span>Insert Block Here</span>
+            <button type="button" id="close-inline-menu-btn" class="text-slate-400 hover:text-slate-700">✕</button>
+          </div>
+          <div class="p-1 space-y-0.5">
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="paragraph">
+              <span class="w-5 text-center font-serif text-slate-500 font-bold">¶</span>
+              <div><strong class="text-slate-800 block">Paragraph</strong><span class="text-[10px] text-slate-400 block">Standard body text</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="h2">
+              <span class="w-5 text-center font-bold text-slate-700">H2</span>
+              <div><strong class="text-slate-800 block">Heading 2</strong><span class="text-[10px] text-slate-400 block">Major section header</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="h3">
+              <span class="w-5 text-center font-bold text-slate-700">H3</span>
+              <div><strong class="text-slate-800 block">Heading 3</strong><span class="text-[10px] text-slate-400 block">Subsection header</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="h4">
+              <span class="w-5 text-center font-bold text-slate-700">H4</span>
+              <div><strong class="text-slate-800 block">Heading 4</strong><span class="text-[10px] text-slate-400 block">Minor section header</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="bulletList">
+              <span class="w-5 text-center font-bold text-slate-700">•</span>
+              <div><strong class="text-slate-800 block">Bullet List</strong><span class="text-[10px] text-slate-400 block">Unordered bullet points</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="orderedList">
+              <span class="w-5 text-center font-bold text-slate-700">1.</span>
+              <div><strong class="text-slate-800 block">Numbered List</strong><span class="text-[10px] text-slate-400 block">Sequential numbered steps</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="table">
+              <span class="w-5 text-center font-bold text-slate-700">▦</span>
+              <div><strong class="text-slate-800 block">Table</strong><span class="text-[10px] text-slate-400 block">Tabular data grid</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="image">
+              <span class="w-5 text-center font-bold text-slate-700">🖼</span>
+              <div><strong class="text-slate-800 block">Image</strong><span class="text-[10px] text-slate-400 block">Illustration with alt text</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="codeBlock">
+              <span class="w-5 text-center font-mono text-slate-700">&lt;/&gt;</span>
+              <div><strong class="text-slate-800 block">Code Block</strong><span class="text-[10px] text-slate-400 block">Formatted code snippets</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="blockquote">
+              <span class="w-5 text-center font-serif text-slate-700 font-bold">❝</span>
+              <div><strong class="text-slate-800 block">Blockquote</strong><span class="text-[10px] text-slate-400 block">Highlighted quote or excerpt</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="callout">
+              <span class="w-5 text-center font-bold text-blue-600">ℹ</span>
+              <div><strong class="text-slate-800 block">Callout Note</strong><span class="text-[10px] text-slate-400 block">Notice or alert box</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="divider">
+              <span class="w-5 text-center font-bold text-slate-400">—</span>
+              <div><strong class="text-slate-800 block">Divider</strong><span class="text-[10px] text-slate-400 block">Horizontal separator line</span></div>
+            </button>
+            <button type="button" class="inline-insert-opt w-full text-left px-2.5 py-1.5 rounded hover:bg-slate-100 flex items-center gap-2" data-type="video">
+              <span class="w-5 text-center font-bold text-red-500">▶</span>
+              <div><strong class="text-slate-800 block">Video Embed</strong><span class="text-[10px] text-slate-400 block">YouTube or direct video</span></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Writing Canvas Container -->
+        <div class="w-full max-w-3xl mx-auto px-6 sm:px-12 pt-10 pb-32 flex-1">
+          
+          <!-- Document Level Title (H1) -->
+          <div class="mb-4">
+            <input 
+              type="text" 
+              id="field-title"
+              placeholder="Add title"
+              class="w-full text-3xl sm:text-5xl font-extrabold text-slate-900 placeholder:text-slate-300 border-none outline-none focus:ring-0 p-0 bg-transparent leading-tight tracking-tight selection:bg-blue-100"
+              autocomplete="off"
+            />
+          </div>
+
+          <!-- Document Excerpt / Summary Field -->
+          <div class="mb-6">
+            <textarea 
+              id="field-excerpt"
+              rows="1"
+              placeholder="Add an optional excerpt or article summary..."
+              class="w-full text-base text-slate-600 placeholder:text-slate-300 border-none outline-none focus:ring-0 p-0 bg-transparent resize-none leading-relaxed selection:bg-blue-100"
+            ></textarea>
+          </div>
+
+          <div class="w-full h-px bg-slate-100 mb-6"></div>
+
+          <!-- 1. Visual Mode TipTap Surface -->
+          <div id="visual-editor-surface">
+            <div 
+              id="tiptap-editor"
+              class="prose-markdown prose prose-slate max-w-none min-h-[500px] text-slate-900 text-base leading-relaxed focus:outline-none"
+            ></div>
+          </div>
+
+          <!-- 2. Markdown Mode Editor Surface (Distraction-Free Full-Width Writing Canvas) -->
+          <div id="markdown-editor-surface" class="hidden flex-col space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-t-lg px-3.5 py-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span class="font-bold text-slate-700 font-mono">GitHub-Flavored Markdown</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span id="md-cursor-pos" class="font-mono text-[11px]">Ln 1, Col 1</span>
+                <button 
+                  type="button" 
+                  id="md-view-preview-btn" 
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs transition"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  <span>Preview</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Distraction-Free Code Textarea with Line Numbers (Full Available Width) -->
+            <div class="flex border border-slate-200 rounded-b-lg overflow-hidden bg-white shadow-2xs min-h-[550px] relative">
+              <div id="md-line-numbers" class="w-10 bg-slate-50 border-r border-slate-200 py-3 text-right pr-2 select-none font-mono text-xs text-slate-400 leading-6 shrink-0">
+                1
+              </div>
+              <textarea 
+                id="markdown-textarea" 
+                spellcheck="false"
+                placeholder="Write your article in Markdown syntax here...&#10;&#10;## Section Heading&#10;Write paragraphs with **bold**, *italic*, and `code`.&#10;&#10;- Lists&#10;- Tables&#10;- Blockquotes"
+                class="flex-1 p-3 bg-white font-mono text-xs sm:text-sm text-slate-900 leading-6 outline-none resize-none selection:bg-blue-100 min-h-[550px]"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- 3. Dedicated Rendered Article Preview Surface (Reading Mode) -->
+          <div id="markdown-preview-surface" class="hidden flex-col space-y-4">
+            <!-- Preview Controls Bar -->
+            <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5">
+              <div class="flex items-center gap-2 text-xs">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="font-bold text-slate-800">Article Preview</span>
+                <span class="text-slate-400">·</span>
+                <span class="text-slate-500 text-[11px] font-mono">Sanitized Semantic HTML</span>
+              </div>
+              <button 
+                type="button" 
+                id="back-to-editor-btn" 
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Back to Editor</span>
+              </button>
+            </div>
+
+            <!-- Clean Rendered Reading Layout -->
+            <article class="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 shadow-xs">
+              <div id="preview-header-meta" class="border-b border-slate-100 pb-4 mb-6">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-blue-600" id="preview-surface-cat">General</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 leading-tight" id="preview-surface-title">Untitled Article</h1>
+                <p class="text-slate-500 text-sm mt-2 italic hidden" id="preview-surface-excerpt"></p>
+              </div>
+              <div 
+                id="preview-rendered-body" 
+                class="prose-markdown markdown-preview-content max-w-none text-slate-900 leading-relaxed"
+              ></div>
+            </article>
+          </div>
+
+        </div>
+      </main>
+
+      <!-- D. Right Settings Sidebar -->
+      <aside 
+        id="editor-sidebar" 
+        class="w-full sm:w-80 md:w-84 border-l border-slate-200 bg-white flex flex-col h-full z-20 shrink-0 text-xs transition-all duration-200 ease-in-out shadow-xs"
+      >
+        <div class="h-12 border-b border-slate-200 px-4 flex items-center justify-between shrink-0 bg-white">
+          <div class="flex items-center gap-1 font-semibold">
             <button 
               type="button" 
-              id="toolbar-more-btn" 
-              class="px-2 py-1 rounded border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium flex items-center gap-1"
+              id="tab-post-settings" 
+              class="sidebar-tab px-3 py-1.5 rounded-md font-bold text-slate-900 bg-slate-100 transition"
+              data-tab="post"
             >
-              <span>More</span>
-              <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              Article
+            </button>
+            <button 
+              type="button" 
+              id="tab-block-settings" 
+              class="sidebar-tab px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition"
+              data-tab="block"
+            >
+              Block
+            </button>
+          </div>
+
+          <button 
+            type="button" 
+            id="close-sidebar-btn" 
+            class="p-1 rounded text-slate-400 hover:text-slate-600 transition"
+            title="Close sidebar"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Sidebar Content: Article Settings Tab -->
+        <div id="sidebar-post-tab-content" class="flex-1 overflow-y-auto divide-y divide-slate-200">
+          
+          <!-- Section 1: Article Organization -->
+          <div class="accordion-item" data-accordion="location">
+            <button type="button" class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition">
+              <span>Organization</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
-            <div 
-              id="toolbar-more-menu" 
-              class="hidden absolute left-0 mt-1 w-36 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-40 text-xs"
-            >
-              <button type="button" data-action="h4" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Heading 4</button>
-              <button type="button" data-action="underline" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Underline</button>
-              <button type="button" data-action="strike" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Strikethrough</button>
-              <button type="button" data-action="blockquote" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Blockquote</button>
-              <button type="button" data-action="codeBlock" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Code block</button>
-              <button type="button" data-action="divider" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Horizontal divider</button>
-              <button type="button" data-action="insertTable" class="more-tool-btn w-full text-left px-3 py-1.5 hover:bg-slate-50 text-slate-700">Table (3x3)</button>
+            <div class="accordion-content px-5 pb-5 pt-1 space-y-4">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="block font-semibold text-slate-700">
+                    Which category should this article appear in? <span class="text-red-500">*</span>
+                  </label>
+                  <button type="button" id="open-create-category-modal" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline">
+                    + Add
+                  </button>
+                </div>
+                <select 
+                  id="field-category"
+                  class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                >
+                  <option value="">Select a blog category...</option>
+                </select>
+                <p class="text-[11px] text-slate-400 mt-1">
+                  Category is the subject section. Moving the article to another category preserves all content.
+                </p>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">URL Slug</label>
+                <div class="flex items-center bg-white border border-slate-300 rounded-md px-2.5 py-1.5">
+                  <input 
+                    type="text" 
+                    id="field-slug"
+                    placeholder="article-slug"
+                    class="w-full bg-transparent font-mono text-slate-800 outline-none text-xs"
+                  />
+                </div>
+              </div>
+
+              <!-- Live URL Preview -->
+              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-md">
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Public URL</span>
+                <span id="resulting-url-preview" class="block font-mono text-[11px] text-blue-700 font-medium break-all mt-0.5">
+                  /blog/[category]/[slug]
+                </span>
+              </div>
+
+              <!-- Author Info -->
+              <div>
+                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Author</span>
+                <span id="author-name-display" class="font-semibold text-slate-800 text-xs">Editorial Staff</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="flex items-center gap-2 text-[11px] text-slate-400 font-mono">
-          <span id="word-count">0 words</span>
-          <span>•</span>
-          <span id="read-time">1 min read</span>
-        </div>
-      </div>
+          <!-- Section 2: Featured Image -->
+          <div class="accordion-item" data-accordion="media">
+            <button type="button" class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition">
+              <span>Featured Image</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
-      <!-- 3. Article Body Canvas -->
-      <div class="flex-1 max-w-3xl w-full mx-auto px-6 sm:px-10 py-6">
-        <div 
-          id="tiptap-editor"
-          class="prose prose-slate max-w-none min-h-[500px] focus:outline-none text-slate-800 text-sm sm:text-base leading-relaxed"
-        ></div>
-      </div>
-    </div>
-
-    <!-- Right Sidebar Organized into 4 Collapsible Sections -->
-    <aside id="editor-sidebar" class="w-full lg:w-84 border-t lg:border-t-0 lg:border-l border-slate-200 bg-white flex flex-col h-full overflow-y-auto shrink-0 text-xs">
-      
-      <div class="divide-y divide-slate-200">
-
-        <!-- SECTION 1: Where should this article appear? (Open by default) -->
-        <section class="accordion-item" data-accordion="location">
-          <button 
-            type="button" 
-            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
-          >
-            <span>1. Where should this article appear?</span>
-            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          <div class="accordion-content px-5 pb-5 pt-1 space-y-4">
-            <div>
-              <div class="flex items-center justify-between mb-1.5">
-                <label class="block font-semibold text-slate-700">
-                  Blog Category <span class="text-red-500">*</span>
-                </label>
-                <button 
-                  type="button" 
-                  id="open-create-category-modal"
-                  class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline"
-                >
-                  + Create category
-                </button>
-              </div>
-              <select 
-                id="field-category"
-                class="w-full bg-white border border-slate-300 rounded-md p-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-              >
-                <option value="">Select a category...</option>
-              </select>
-              <p id="move-category-hint" class="text-[11px] text-slate-400 mt-1">
-                Assign this article to a section (e.g. Java, Civil Engineering). Changing this selector will move the article to another category.
-              </p>
-            </div>
-
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">URL Slug</label>
-              <div class="flex items-center bg-white border border-slate-300 rounded-md px-2 py-1.5">
+            <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Image URL</label>
                 <input 
                   type="text" 
-                  id="field-slug"
-                  placeholder="article-slug"
-                  class="w-full bg-transparent font-mono text-slate-800 outline-none text-xs"
+                  id="field-cover-image"
+                  placeholder="https://... or /images/..."
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+              </div>
+
+              <!-- Cover Image Preview Box -->
+              <div id="image-preview-box" class="hidden border border-slate-200 rounded-md overflow-hidden bg-slate-50 relative group">
+                <img id="image-preview-el" src="" alt="Featured preview" class="w-full h-32 object-cover" />
+                <button type="button" id="remove-cover-btn" class="absolute top-1.5 right-1.5 p-1 bg-black/60 hover:bg-black text-white rounded text-[10px]">Remove</button>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Alt Text (Accessibility & SEO)</label>
+                <input 
+                  type="text" 
+                  id="field-image-alt"
+                  placeholder="Descriptive explanation of the image"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Caption <span class="text-slate-400 font-normal">(Optional)</span></label>
+                <input 
+                  type="text" 
+                  id="field-image-caption"
+                  placeholder="Credit or description caption"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
                 />
               </div>
             </div>
-
-            <!-- Resulting Live URL Display -->
-            <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-md">
-              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Resulting URL:</span>
-              <span id="resulting-url-preview" class="block font-mono text-[11px] text-blue-700 font-medium break-all mt-0.5">
-                /blog/[category]/[article-slug]
-              </span>
-            </div>
           </div>
-        </section>
 
-        <!-- SECTION 2: Featured Image (Open by default) -->
-        <section class="accordion-item" data-accordion="media">
-          <button 
-            type="button" 
-            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
-          >
-            <span>2. Featured Image</span>
-            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+          <!-- Section 3: Publishing & Status -->
+          <div class="accordion-item" data-accordion="publishing">
+            <button type="button" class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition">
+              <span>Publishing & Status</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
-          <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Image URL</label>
-              <input 
-                type="text" 
-                id="field-cover-image"
-                placeholder="https://... or /images/..."
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
-            </div>
-
-            <!-- Preview Container -->
-            <div id="image-preview-box" class="hidden border border-slate-200 rounded-md overflow-hidden bg-slate-50">
-              <img id="image-preview-el" src="" alt="Cover preview" class="w-full h-32 object-cover" />
-            </div>
-
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Alternative Text</label>
-              <input 
-                type="text" 
-                id="field-image-alt"
-                placeholder="Description of image for accessibility & SEO"
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
-            </div>
-
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Caption <span class="text-slate-400 font-normal">(Optional)</span></label>
-              <input 
-                type="text" 
-                id="field-image-caption"
-                placeholder="Image source or caption"
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION 3: SEO Settings (Collapsed by default) -->
-        <section class="accordion-item" data-accordion="seo">
-          <button 
-            type="button" 
-            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
-          >
-            <div class="flex items-center gap-2">
-              <span>3. SEO Settings</span>
-              <span class="text-[10px] text-slate-400 font-normal">(Advanced)</span>
-            </div>
-            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          <div class="accordion-content hidden px-5 pb-5 pt-1 space-y-3.5">
-            <!-- Google SERP Snippet Preview -->
-            <div class="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Search Result Preview</span>
-              <div id="serp-title" class="font-semibold text-blue-700 truncate text-xs">
-                Article Title | ExamPortal
-              </div>
-              <div id="serp-url" class="text-[10px] text-emerald-700 font-mono truncate">
-                https://examresource.local/blog/general/article-slug
-              </div>
-              <div id="serp-desc" class="text-slate-600 line-clamp-2 text-[11px] leading-relaxed">
-                Snippet description will appear here in search engine results.
-              </div>
-            </div>
-
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="font-semibold text-slate-700">SEO Title</label>
-                <span id="title-char-count" class="text-[10px] text-slate-400 font-mono">0/60</span>
-              </div>
-              <input 
-                type="text" 
-                id="field-meta-title"
-                placeholder="Custom title tag (defaults to article title)"
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
-            </div>
-
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <label class="font-semibold text-slate-700">Meta Description</label>
-                <span id="desc-char-count" class="text-[10px] text-slate-400 font-mono">0/160</span>
-              </div>
-              <textarea 
-                id="field-meta-desc"
-                rows="2"
-                placeholder="Meta description (defaults to short summary)"
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none"
-              ></textarea>
-            </div>
-
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Canonical URL</label>
-              <input 
-                type="text" 
-                id="field-canonical-url"
-                placeholder="Leave blank for automatic canonical"
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
-            </div>
-
-            <div class="flex items-center gap-2 pt-1">
-              <input type="checkbox" id="field-noindex" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-              <label for="field-noindex" class="text-slate-700 cursor-pointer select-none">
-                Exclude from search index (<code>noindex</code>)
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- SECTION 4: Publishing (Open by default) -->
-        <section class="accordion-item" data-accordion="publishing">
-          <button 
-            type="button" 
-            class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition"
-          >
-            <span>4. Publishing</span>
-            <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-
-          <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
-            <div>
-              <label class="block font-semibold text-slate-700 mb-1">Publication State</label>
-              <select 
-                id="field-status" 
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
-              >
-                <option value="DRAFT">Draft</option>
-                <option value="PUBLISHED">Published</option>
-                <option value="SCHEDULED">Scheduled</option>
-                <option value="ARCHIVED">Archived</option>
-              </select>
-            </div>
-
-            <!-- Schedule publication date (shown when SCHEDULED is selected) -->
-            <div id="schedule-date-group" class="hidden">
-              <label class="block font-semibold text-slate-700 mb-1">Scheduled Date & Time</label>
-              <input 
-                type="datetime-local" 
-                id="field-scheduled-at"
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
-              <p class="text-[10px] text-slate-400 mt-1">Article will stay private until this scheduled time.</p>
-            </div>
-
-            <!-- Author Information -->
-            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
               <div>
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Author:</span>
-                <span id="author-name-display" class="font-semibold text-slate-800">Editorial Staff</span>
+                <label class="block font-semibold text-slate-700 mb-1">Status</label>
+                <select 
+                  id="field-status" 
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                >
+                  <option value="DRAFT">Draft</option>
+                  <option value="PUBLISHED">Published</option>
+                  <option value="SCHEDULED">Scheduled</option>
+                  <option value="ARCHIVED">Archived</option>
+                </select>
               </div>
-              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">Current User</span>
+
+              <div id="schedule-date-group" class="hidden">
+                <label class="block font-semibold text-slate-700 mb-1">Schedule for</label>
+                <input 
+                  type="datetime-local" 
+                  id="field-scheduled-at"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+                <p class="text-[10px] text-slate-400 mt-1">Stays private until scheduled date/time arrives.</p>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Version: <strong id="doc-version-display" class="font-mono text-slate-800">1</strong></span>
+                <span id="doc-last-saved-time">Not saved yet</span>
+              </div>
             </div>
           </div>
-        </section>
 
-      </div>
-    </aside>
+          <!-- Section 4: SEO & Metadata -->
+          <div class="accordion-item" data-accordion="seo">
+            <button type="button" class="accordion-trigger w-full px-5 py-3.5 flex items-center justify-between text-left font-bold text-slate-900 hover:bg-slate-50 transition">
+              <div class="flex items-center gap-2">
+                <span>SEO & Social</span>
+                <span class="text-[10px] text-slate-400 font-normal">(Search Engine)</span>
+              </div>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 transition transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
+            <div class="accordion-content hidden px-5 pb-5 pt-1 space-y-3.5">
+              <div class="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Google Search Preview</span>
+                <div id="serp-title" class="font-semibold text-blue-700 truncate text-xs">
+                  Article Title | ExamPortal
+                </div>
+                <div id="serp-url" class="text-[10px] text-emerald-700 font-mono truncate">
+                  https://examresource.local/blog/general/article-slug
+                </div>
+                <div id="serp-desc" class="text-slate-600 line-clamp-2 text-[11px] leading-relaxed">
+                  Snippet description will appear here in search engine results.
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="font-semibold text-slate-700">SEO Title</label>
+                  <span id="title-char-count" class="text-[10px] text-slate-400 font-mono">0/60</span>
+                </div>
+                <input 
+                  type="text" 
+                  id="field-meta-title"
+                  placeholder="Defaults to article title"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="font-semibold text-slate-700">Meta Description</label>
+                  <span id="desc-char-count" class="text-[10px] text-slate-400 font-mono">0/160</span>
+                </div>
+                <textarea 
+                  id="field-meta-desc"
+                  rows="2"
+                  placeholder="Defaults to article excerpt"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none"
+                ></textarea>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Canonical URL</label>
+                <input 
+                  type="text" 
+                  id="field-canonical-url"
+                  placeholder="Leave empty for default canonical"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono"
+                />
+              </div>
+
+              <div class="flex items-center gap-2 pt-1">
+                <input type="checkbox" id="field-noindex" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
+                <label for="field-noindex" class="text-slate-700 cursor-pointer select-none">
+                  Exclude from search index (<code>noindex</code>)
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Sidebar Content: Block Settings Tab -->
+        <div id="sidebar-block-tab-content" class="hidden flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+          <div id="block-settings-empty" class="text-center py-8 text-slate-400">
+            <svg class="w-8 h-8 mx-auto text-slate-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <rect x="4" y="4" width="16" height="16" rx="2" stroke-width="2" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9h6M9 13h6M9 17h4" />
+            </svg>
+            <p class="font-medium text-slate-600">No block selected</p>
+            <p class="text-[11px] mt-1">Select a block on the canvas to configure its specific styling, alignment, or attributes.</p>
+          </div>
+
+          <div id="block-settings-active" class="hidden space-y-4">
+            <div class="pb-3 border-b border-slate-100 flex items-center justify-between">
+              <span class="font-bold text-slate-900" id="active-block-name">Paragraph</span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono" id="active-block-tag">P</span>
+            </div>
+
+            <!-- Image Block Specific Controls -->
+            <div id="block-settings-image" class="hidden space-y-3">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Image Source URL</label>
+                <input type="text" id="active-img-src" class="w-full border border-slate-300 rounded p-1.5 text-xs text-slate-800" />
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Alt Text (Alternative text)</label>
+                <input type="text" id="active-img-alt" placeholder="Describe this image for screen readers" class="w-full border border-slate-300 rounded p-1.5 text-xs text-slate-800" />
+              </div>
+            </div>
+
+            <!-- Code Block Specific Controls -->
+            <div id="block-settings-code" class="hidden space-y-3">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Code Language</label>
+                <select id="active-code-lang" class="w-full border border-slate-300 rounded p-1.5 text-xs text-slate-800">
+                  <option value="plaintext">Plain text</option>
+                  <option value="javascript">JavaScript</option>
+                  <option value="typescript">TypeScript</option>
+                  <option value="java">Java</option>
+                  <option value="python">Python</option>
+                  <option value="sql">SQL</option>
+                  <option value="html">HTML</option>
+                  <option value="css">CSS</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Heading Block Specific Controls -->
+            <div id="block-settings-heading" class="hidden space-y-3">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Heading Level</label>
+                <div class="flex gap-2">
+                  <button type="button" class="heading-level-btn px-3 py-1 border border-slate-200 rounded font-bold hover:bg-slate-50" data-level="2">H2</button>
+                  <button type="button" class="heading-level-btn px-3 py-1 border border-slate-200 rounded font-bold hover:bg-slate-50" data-level="3">H3</button>
+                  <button type="button" class="heading-level-btn px-3 py-1 border border-slate-200 rounded font-bold hover:bg-slate-50" data-level="4">H4</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 space-y-2">
+              <button type="button" id="sidebar-duplicate-block" class="w-full py-1.5 border border-slate-200 hover:bg-slate-50 rounded text-slate-700 font-medium">Duplicate Block</button>
+              <button type="button" id="sidebar-delete-block" class="w-full py-1.5 border border-red-200 text-red-600 hover:bg-red-50 rounded font-medium">Delete Block</button>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
   </div>
 
-  <!-- Dedicated Quick Category Creator Modal -->
+  <!-- Dedicated Link Insertion Modal -->
+  <div id="link-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-xs font-bold text-slate-900">Insert or Edit Hyperlink</h3>
+        <button id="close-link-modal" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Destination URL</label>
+          <input 
+            type="url" 
+            id="link-modal-url" 
+            placeholder="https://example.com or /blog/..."
+            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
+          />
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+          <button 
+            type="button" 
+            id="remove-link-btn"
+            class="text-xs text-red-600 hover:text-red-800 font-semibold"
+          >
+            Remove Link
+          </button>
+          <div class="flex items-center gap-2">
+            <button 
+              type="button" 
+              id="cancel-link-btn"
+              class="px-3 py-1.5 border border-slate-200 rounded-md text-xs text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              id="apply-link-btn"
+              class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-2xs"
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dedicated Quick Category Creation Modal -->
   <div id="quick-category-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -507,60 +1219,12 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <!-- Link Insertion/Edit Modal -->
-  <div id="link-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-        <h3 class="text-xs font-bold text-slate-900">Insert or Edit Hyperlink</h3>
-        <button id="close-link-modal" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Destination URL</label>
-          <input 
-            type="url" 
-            id="link-modal-url" 
-            placeholder="https://example.com or /blog/..."
-            class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600"
-          />
-        </div>
-
-        <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-          <button 
-            type="button" 
-            id="remove-link-btn"
-            class="text-xs text-red-600 hover:text-red-800 font-semibold"
-          >
-            Remove Link
-          </button>
-          <div class="flex items-center gap-2">
-            <button 
-              type="button" 
-              id="cancel-link-btn"
-              class="px-3 py-1.5 border border-slate-200 rounded-md text-xs text-slate-700 hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <button 
-              type="button" 
-              id="apply-link-btn"
-              class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-2xs"
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Revisions Modal -->
   <div id="revisions-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-sm font-bold text-slate-900">Revision History</h3>
-        <button id="close-revisions-modal" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+        <button id="close-revisions-modal" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
       </div>
       <div id="revisions-list" class="space-y-2 max-h-72 overflow-y-auto">
         <p class="text-xs text-slate-400 text-center py-4">No revisions recorded yet.</p>
@@ -568,19 +1232,32 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     </div>
   </div>
 
-  <!-- Realtime Full Preview Modal (Using Actual Public Blog Container Simulation) -->
+  <!-- Public Layout Realtime Preview Modal -->
   <div id="live-preview-modal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex-col">
     <div class="h-14 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
-      <span class="text-xs font-semibold text-slate-700">Public Layout Simulation</span>
-      <button id="close-preview-modal" class="px-2.5 py-1 text-xs border border-slate-200 rounded text-slate-600 hover:bg-slate-50">Close Preview ✕</button>
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+        <span class="text-xs font-bold text-slate-900">Public Article Layout Simulation</span>
+      </div>
+      <button id="close-preview-modal" class="px-3 py-1.5 text-xs font-semibold border border-slate-200 rounded-md text-slate-700 hover:bg-slate-50">
+        Close Preview ✕
+      </button>
     </div>
-    <div class="flex-1 overflow-y-auto bg-slate-50 p-6 sm:p-10 flex justify-center">
-      <article class="max-w-3xl w-full bg-white border border-slate-200 rounded-xl p-8 sm:p-12 space-y-6 shadow-xs">
-        <div class="text-xs text-blue-600 font-semibold" id="prev-modal-cat">Category</div>
+    <div class="flex-1 overflow-y-auto bg-slate-100 p-6 sm:p-12 flex justify-center">
+      <article class="max-w-3xl w-full bg-white border border-slate-200 rounded-2xl p-8 sm:p-14 space-y-6 shadow-sm">
+        <div class="flex items-center gap-2 text-xs text-slate-500">
+          <span class="bg-blue-50 text-blue-700 font-semibold px-2 py-0.5 rounded" id="prev-modal-cat">General</span>
+          <span>• Published: Today</span>
+        </div>
         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight" id="prev-modal-title">Article Title</h1>
-        <div class="text-xs text-slate-400" id="prev-modal-date">Published today by Staff</div>
+        
+        <figure id="prev-modal-cover-box" class="hidden my-4">
+          <img id="prev-modal-cover-img" src="" alt="Cover" class="w-full h-auto max-h-96 object-cover rounded-xl" />
+          <figcaption id="prev-modal-cover-caption" class="text-xs text-slate-400 text-center mt-2"></figcaption>
+        </figure>
+
         <div class="text-slate-600 leading-relaxed text-sm border-l-2 border-blue-600 pl-3 italic" id="prev-modal-excerpt"></div>
-        <div class="prose prose-slate max-w-none pt-4 border-t border-slate-100 text-slate-800" id="prev-modal-content"></div>
+        <div class="prose-markdown markdown-preview-content max-w-none pt-4 border-t border-slate-100 text-slate-800" id="prev-modal-content"></div>
       </article>
     </div>
   </div>
@@ -594,6 +1271,84 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
   import Underline from '@tiptap/extension-underline';
   import CharacterCount from '@tiptap/extension-character-count';
+  import { marked } from 'marked';
+  import TurndownService from 'turndown';
+  import DOMPurify from 'dompurify';
+
+  // Configure marked for GitHub flavored markdown with tables and standard rules
+  const markedRenderer = new marked.Renderer();
+  markedRenderer.heading = function ({ tokens, depth, text }: any) {
+    const rawText = text || this.parser.parseInline(tokens);
+    const cleanText = rawText.replace(/<[^>]*>/g, '');
+    const id = cleanText.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+    return `<h${depth} id="${id}">${rawText}</h${depth}>\n`;
+  };
+
+  marked.setOptions({
+    gfm: true,
+    breaks: false, // Standard GitHub Markdown does not convert single soft newlines to <br> unless two spaces or a blank line exist
+    pedantic: false,
+    renderer: markedRenderer,
+  });
+
+  // Safe DOMPurify configuration allowing standard GFM article tags and safe attributes
+  const DOMPURIFY_CONFIG = {
+    ALLOWED_TAGS: [
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'p', 'span', 'strong', 'b', 'em', 'i', 'u', 's', 'del', 'strike',
+      'blockquote', 'pre', 'code', 'hr', 'br',
+      'ul', 'ol', 'li',
+      'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
+      'a', 'img', 'figure', 'figcaption',
+      'div'
+    ],
+    ALLOWED_ATTR: [
+      'href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel',
+      'width', 'height', 'loading'
+    ],
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+  };
+
+  // Configure turndown to serialize HTML to clean GitHub-style markdown
+  const turndownService = new TurndownService({
+    headingStyle: 'atx',
+    hr: '---',
+    bulletListMarker: '-',
+    codeBlockStyle: 'fenced',
+  });
+
+  // Custom turndown rule for tables
+  turndownService.addRule('table', {
+    filter: 'table',
+    replacement: function (content, node: any) {
+      const rows = Array.from(node.querySelectorAll('tr'));
+      if (rows.length === 0) return '';
+      let md = '\n\n';
+      rows.forEach((row: any, rIdx) => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        const rowStr = cells.map((c: any) => c.textContent.trim().replace(/\|/g, '\\|')).join(' | ');
+        md += `| ${rowStr} |\n`;
+        if (rIdx === 0) {
+          const sep = cells.map(() => '---').join(' | ');
+          md += `| ${sep} |\n`;
+        }
+      });
+      return md + '\n';
+    },
+  });
+
+  // Custom turndown rule for callouts
+  turndownService.addRule('callout', {
+    filter: function (node) {
+      return (
+        node.nodeName === 'DIV' &&
+        (node.className.includes('callout') || node.className.includes('alert'))
+      );
+    },
+    replacement: function (content) {
+      return `\n\n> **Note:** ${content.trim()}\n\n`;
+    },
+  });
 
   const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
@@ -628,7 +1383,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     return fetch(`${API_URL}${endpoint}`, { ...options, headers });
   }
 
-  // Inputs
+  // DOM Elements
   const titleInput = document.getElementById('field-title') as HTMLInputElement | null;
   const slugInput = document.getElementById('field-slug') as HTMLInputElement | null;
   const excerptInput = document.getElementById('field-excerpt') as HTMLTextAreaElement | null;
@@ -647,70 +1402,85 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   const noindexCheckbox = document.getElementById('field-noindex') as HTMLInputElement | null;
   const resultingUrlPreview = document.getElementById('resulting-url-preview');
 
-  // SERP Previews & Counters
+  // Top Bar elements
+  const saveStatusEl = document.getElementById('save-status');
+  const wordCountEl = document.getElementById('word-count');
+  const readTimeEl = document.getElementById('read-time');
   const serpTitle = document.getElementById('serp-title');
   const serpUrl = document.getElementById('serp-url');
   const serpDesc = document.getElementById('serp-desc');
-  const wordCountEl = document.getElementById('word-count');
-  const readTimeEl = document.getElementById('read-time');
   const titleCharEl = document.getElementById('title-char-count');
   const descCharEl = document.getElementById('desc-char-count');
-  const saveStatusEl = document.getElementById('save-status');
+  const docVersionDisplay = document.getElementById('doc-version-display');
+  const docLastSavedTime = document.getElementById('doc-last-saved-time');
 
+  // Drawers & Sidebars
+  const outlineDrawer = document.getElementById('document-outline-drawer');
+  const inserterDrawer = document.getElementById('block-inserter-drawer');
+  const editorSidebar = document.getElementById('editor-sidebar');
+  const contextualToolbar = document.getElementById('contextual-block-toolbar');
+  const slashMenuPopover = document.getElementById('slash-menu-popover');
+  const slashMenuItems = document.getElementById('slash-menu-items');
+  const inlineBlockPlusBtn = document.getElementById('inline-block-plus-btn');
+  const inlinePlusTrigger = document.getElementById('inline-plus-trigger');
+  const inlineBlockMenu = document.getElementById('inline-block-menu');
+  const closeInlineMenuBtn = document.getElementById('close-inline-menu-btn');
+  const headerBlockDropdown = document.getElementById('header-block-dropdown');
+  const openFullLibraryBtn = document.getElementById('open-full-library-btn');
+
+  // Mode Switcher Elements
+  const modeVisualBtn = document.getElementById('mode-visual-btn');
+  const modeMarkdownBtn = document.getElementById('mode-markdown-btn');
+  const visualEditorSurface = document.getElementById('visual-editor-surface');
+  const markdownEditorSurface = document.getElementById('markdown-editor-surface');
+  const markdownPreviewSurface = document.getElementById('markdown-preview-surface');
+  const markdownTextarea = document.getElementById('markdown-textarea') as HTMLTextAreaElement | null;
+  const mdLineNumbers = document.getElementById('md-line-numbers');
+  const mdCursorPos = document.getElementById('md-cursor-pos');
+  const mdViewPreviewBtn = document.getElementById('md-view-preview-btn');
+  const backToEditorBtn = document.getElementById('back-to-editor-btn');
+  const previewSurfaceTitle = document.getElementById('preview-surface-title');
+  const previewSurfaceCat = document.getElementById('preview-surface-cat');
+  const previewSurfaceExcerpt = document.getElementById('preview-surface-excerpt');
+  const previewRenderedBody = document.getElementById('preview-rendered-body');
+  const mdFileInput = document.getElementById('md-file-input') as HTMLInputElement | null;
+
+  // Query Params & State
   const urlParams = new URLSearchParams(window.location.search);
   const editId = urlParams.get('edit');
-
   let currentPostId = editId;
   let currentVersion = 1;
   let isDirty = false;
   let categoriesCache: any[] = [];
+  let isSlashMenuOpen = false;
+  let slashSelectedIndex = 0;
+  let slashFilteredList: any[] = [];
+  let inlineInsertPos: number | null = null;
+  let isInlineMenuOpen = false;
+  let currentEditorMode: 'visual' | 'markdown' = 'visual';
 
-  // Options Menu
-  const optionsBtn = document.getElementById('editor-options-menu-btn');
-  const optionsDropdown = document.getElementById('editor-options-dropdown');
-  optionsBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    optionsDropdown?.classList.toggle('hidden');
-  });
-  document.addEventListener('click', () => {
-    optionsDropdown?.classList.add('hidden');
-    toolbarMoreMenu?.classList.add('hidden');
-  });
-
-  // Toolbar More Menu
-  const toolbarMoreBtn = document.getElementById('toolbar-more-btn');
-  const toolbarMoreMenu = document.getElementById('toolbar-more-menu');
-  toolbarMoreBtn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toolbarMoreMenu?.classList.toggle('hidden');
+  // Unsaved changes confirmation
+  window.addEventListener('beforeunload', (e) => {
+    if (isDirty) {
+      e.preventDefault();
+      e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      return e.returnValue;
+    }
   });
 
-  // Accordion Sections Toggle
-  document.querySelectorAll<HTMLButtonElement>('.accordion-trigger').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const section = btn.closest('.accordion-item');
-      const content = section?.querySelector('.accordion-content');
-      const chevron = btn.querySelector('.accordion-chevron');
-      if (content) {
-        const isHidden = content.classList.contains('hidden');
-        if (isHidden) {
-          content.classList.remove('hidden');
-          chevron?.classList.add('rotate-180');
-        } else {
-          content.classList.add('hidden');
-          chevron?.classList.remove('rotate-180');
-        }
-      }
-    });
+  document.getElementById('back-to-posts-btn')?.addEventListener('click', (e) => {
+    if (isDirty && !confirm('You have unsaved changes. Leave anyway?')) {
+      e.preventDefault();
+    }
   });
 
-  // TipTap Instance
+  // TipTap Instance Setup
   const editorElement = document.getElementById('tiptap-editor');
   const editor = new Editor({
     element: editorElement!,
     extensions: [
       StarterKit.configure({
-        heading: { levels: [2, 3, 4] },
+        heading: { levels: [1, 2, 3, 4] },
       }),
       Underline,
       Link.configure({
@@ -724,53 +1494,1169 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       TableCell,
       CharacterCount,
     ],
-    content: `<p>Start writing your article here...</p>`,
+    content: `<p>Start writing, type / for blocks, or use Markdown shortcuts like #, ##, -, 1., >.</p>`,
     onUpdate: () => {
       isDirty = true;
       updateMetrics();
       updateSerp();
+      updateDocumentOutline();
+      checkSlashCommand();
       triggerAutosave();
+    },
+    onSelectionUpdate: () => {
+      if (currentEditorMode === 'visual') {
+        updateContextualToolbar();
+        updateBlockSettingsSidebar();
+        updateInlinePlusButton();
+      }
     },
   });
 
-  // Toolbar Actions
-  function runEditorAction(action: string | undefined) {
-    if (!editor || !action) return;
+  // ==========================================
+  // Markdown Mode Switching & Synchronization
+  // ==========================================
 
-    if (action === 'paragraph') editor.chain().focus().setParagraph().run();
-    else if (action === 'h2') editor.chain().focus().toggleHeading({ level: 2 }).run();
-    else if (action === 'h3') editor.chain().focus().toggleHeading({ level: 3 }).run();
-    else if (action === 'h4') editor.chain().focus().toggleHeading({ level: 4 }).run();
-    else if (action === 'bold') editor.chain().focus().toggleBold().run();
-    else if (action === 'italic') editor.chain().focus().toggleItalic().run();
-    else if (action === 'underline') editor.chain().focus().toggleUnderline().run();
-    else if (action === 'strike') editor.chain().focus().toggleStrike().run();
-    else if (action === 'bulletList') editor.chain().focus().toggleBulletList().run();
-    else if (action === 'orderedList') editor.chain().focus().toggleOrderedList().run();
-    else if (action === 'blockquote') editor.chain().focus().toggleBlockquote().run();
-    else if (action === 'codeBlock') editor.chain().focus().toggleCodeBlock().run();
-    else if (action === 'divider') editor.chain().focus().setHorizontalRule().run();
-    else if (action === 'undo') editor.chain().focus().undo().run();
-    else if (action === 'redo') editor.chain().focus().redo().run();
-    else if (action === 'insertLink') {
-      openLinkModal();
-    } else if (action === 'insertImage') {
-      const url = prompt('Enter image URL:');
-      const alt = prompt('Enter descriptive alt text:') || '';
-      if (url) editor.chain().focus().setImage({ src: url, alt }).run();
-    } else if (action === 'insertTable') {
-      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  let lastSavedMarkdownCursorPos = 0;
+
+  function showMarkdownPreview() {
+    if (!markdownTextarea || !previewRenderedBody) return;
+    
+    // Save cursor position
+    lastSavedMarkdownCursorPos = markdownTextarea.selectionStart || 0;
+
+    const md = markdownTextarea.value;
+    const rawHtml = marked.parse(md) as string;
+    const cleanHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+
+    // Check if markdown content already starts with an H1 heading
+    const startsWithH1 = /^\s*#\s+/m.test(md);
+    const previewHeaderMeta = document.getElementById('preview-header-meta');
+
+    // Update Preview Header Information
+    if (previewSurfaceTitle) {
+      previewSurfaceTitle.textContent = titleInput?.value.trim() || 'Untitled Article';
+    }
+    if (previewSurfaceCat) {
+      previewSurfaceCat.textContent = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
+    }
+    if (previewSurfaceExcerpt) {
+      const excerpt = excerptInput?.value.trim();
+      if (excerpt) {
+        previewSurfaceExcerpt.textContent = excerpt;
+        previewSurfaceExcerpt.classList.remove('hidden');
+      } else {
+        previewSurfaceExcerpt.classList.add('hidden');
+      }
+    }
+
+    if (previewHeaderMeta) {
+      if (startsWithH1) {
+        // If Markdown itself starts with an H1 (e.g. # Java Object Lifecycle),
+        // hide the top redundant title box so the Markdown H1 is the primary H1
+        previewHeaderMeta.classList.add('hidden');
+      } else {
+        previewHeaderMeta.classList.remove('hidden');
+      }
+    }
+
+    // Populate rendered preview body
+    previewRenderedBody.innerHTML = cleanHtml || '<p class="text-slate-400 italic">No content to preview.</p>';
+
+    // Hide editor surfaces, show preview surface
+    markdownEditorSurface?.classList.add('hidden');
+    visualEditorSurface?.classList.add('hidden');
+    markdownPreviewSurface?.classList.remove('hidden');
+    markdownPreviewSurface?.classList.add('flex');
+
+    // Scroll preview to top smoothly
+    const mainCanvas = document.getElementById('editor-main-canvas');
+    if (mainCanvas) mainCanvas.scrollTop = 0;
+  }
+
+  function hideMarkdownPreview() {
+    // Hide preview surface, show markdown writing canvas
+    markdownPreviewSurface?.classList.add('hidden');
+    markdownPreviewSurface?.classList.remove('flex');
+    markdownEditorSurface?.classList.remove('hidden');
+    markdownEditorSurface?.classList.add('flex');
+
+    // Restore cursor position and focus
+    if (markdownTextarea) {
+      markdownTextarea.focus();
+      try {
+        markdownTextarea.setSelectionRange(lastSavedMarkdownCursorPos, lastSavedMarkdownCursorPos);
+      } catch (_) {}
+      updateCursorPosition();
     }
   }
 
-  document.querySelectorAll<HTMLButtonElement>('.tool-btn').forEach((btn) => {
-    btn.addEventListener('click', () => runEditorAction(btn.dataset.action));
+  mdViewPreviewBtn?.addEventListener('click', showMarkdownPreview);
+  backToEditorBtn?.addEventListener('click', hideMarkdownPreview);
+
+  function switchEditorMode(targetMode: 'visual' | 'markdown') {
+    if (currentEditorMode === targetMode) return;
+
+    if (targetMode === 'markdown') {
+      // 1. Sync visual HTML to Markdown text
+      const html = editor.getHTML();
+      const markdown = turndownService.turndown(html);
+      if (markdownTextarea) {
+        markdownTextarea.value = markdown;
+        updateLineNumbers();
+      }
+
+      // Hide visual and preview surfaces, show markdown editor surface
+      visualEditorSurface?.classList.add('hidden');
+      markdownPreviewSurface?.classList.add('hidden');
+      markdownPreviewSurface?.classList.remove('flex');
+      markdownEditorSurface?.classList.remove('hidden');
+      markdownEditorSurface?.classList.add('flex');
+      contextualToolbar?.classList.add('hidden');
+
+      // Update button styling
+      modeVisualBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeVisualBtn?.classList.add('font-medium', 'text-slate-600');
+      modeMarkdownBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeMarkdownBtn?.classList.remove('font-medium', 'text-slate-600');
+
+      currentEditorMode = 'markdown';
+      markdownTextarea?.focus();
+    } else {
+      // 2. Sync Markdown text to visual HTML
+      const markdown = markdownTextarea?.value || '';
+      const rawHtml = marked.parse(markdown) as string;
+      const cleanHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+
+      // Populate visual TipTap editor
+      editor.commands.setContent(cleanHtml);
+
+      // Hide markdown and preview surfaces, show visual surface
+      markdownEditorSurface?.classList.add('hidden');
+      markdownEditorSurface?.classList.remove('flex');
+      markdownPreviewSurface?.classList.add('hidden');
+      markdownPreviewSurface?.classList.remove('flex');
+      visualEditorSurface?.classList.remove('hidden');
+
+      // Update button styling
+      modeMarkdownBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeMarkdownBtn?.classList.add('font-medium', 'text-slate-600');
+      modeVisualBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeVisualBtn?.classList.remove('font-medium', 'text-slate-600');
+
+      currentEditorMode = 'visual';
+      editor.chain().focus();
+    }
+
+    updateMetrics();
+    updateDocumentOutline();
+    updateSerp();
+  }
+
+  modeVisualBtn?.addEventListener('click', () => switchEditorMode('visual'));
+  modeMarkdownBtn?.addEventListener('click', () => switchEditorMode('markdown'));
+
+  // Markdown Textarea events (Line numbers & Cursor stats)
+  markdownTextarea?.addEventListener('input', () => {
+    isDirty = true;
+    updateLineNumbers();
+    updateMetrics();
+    updateDocumentOutline();
+    triggerAutosave();
   });
 
-  document.querySelectorAll<HTMLButtonElement>('.more-tool-btn').forEach((btn) => {
+  markdownTextarea?.addEventListener('keyup', updateCursorPosition);
+  markdownTextarea?.addEventListener('click', updateCursorPosition);
+
+  function updateCursorPosition() {
+    if (!markdownTextarea || !mdCursorPos) return;
+    const pos = markdownTextarea.selectionStart;
+    const lines = markdownTextarea.value.substring(0, pos).split('\n');
+    const lineNum = lines.length;
+    const colNum = lines[lines.length - 1].length + 1;
+    mdCursorPos.textContent = `Ln ${lineNum}, Col ${colNum}`;
+  }
+
+  function updateLineNumbers() {
+    if (!markdownTextarea || !mdLineNumbers) return;
+    const lines = markdownTextarea.value.split('\n').length;
+    const lineArr = Array.from({ length: Math.max(lines, 20) }, (_, i) => i + 1);
+    mdLineNumbers.innerHTML = lineArr.join('<br>');
+  }
+
+  // ==========================================
+  // Markdown Import & Export
+  // ==========================================
+
+  // 1. Import .md File
+  document.getElementById('opt-import-md')?.addEventListener('click', () => {
+    mdFileInput?.click();
+  });
+
+  mdFileInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      applyImportedMarkdown(text, file.name);
+    } catch (err) {
+      alert('Failed to read Markdown file. Please check file permissions and format.');
+    } finally {
+      if (mdFileInput) mdFileInput.value = '';
+    }
+  });
+
+  function applyImportedMarkdown(rawMarkdown: string, fileName?: string) {
+    if (!rawMarkdown || !rawMarkdown.trim()) {
+      alert('Selected Markdown file is empty.');
+      return;
+    }
+
+    let markdown = rawMarkdown;
+
+    // Check if markdown begins with frontmatter (---)
+    const frontmatterMatch = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[1];
+      markdown = markdown.substring(frontmatterMatch[0].length);
+
+      // Parse basic frontmatter (title, description, slug)
+      const titleM = frontmatter.match(/title:\s*["']?(.*?)["']?$/m);
+      if (titleM && titleInput && !titleInput.value) {
+        titleInput.value = titleM[1];
+      }
+      const descM = frontmatter.match(/description:\s*["']?(.*?)["']?$/m);
+      if (descM && excerptInput && !excerptInput.value) {
+        excerptInput.value = descM[1];
+      }
+      const slugM = frontmatter.match(/slug:\s*["']?(.*?)["']?$/m);
+      if (slugM && slugInput && !slugInput.value) {
+        slugInput.value = slugM[1];
+      }
+    }
+
+    // Check if the document has a top-level # H1 heading to initialize article title if not set
+    const h1Match = markdown.match(/^#\s+(.+)$/m);
+    if (h1Match) {
+      const detectedH1 = h1Match[1].trim();
+      if (titleInput && !titleInput.value) {
+        titleInput.value = detectedH1;
+      }
+    } else if (!titleInput?.value && fileName) {
+      // Use filename without extension as default title if title is blank
+      const cleanName = fileName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+      if (titleInput) titleInput.value = cleanName;
+    }
+
+    // Parse Markdown to semantic HTML and sanitize
+    const rawHtml = marked.parse(markdown) as string;
+    const safeHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+
+    // Populate Visual Editor & Markdown Textarea
+    editor.commands.setContent(safeHtml);
+    if (markdownTextarea) {
+      markdownTextarea.value = markdown;
+      updateLineNumbers();
+    }
+
+    isDirty = true;
+    updateMetrics();
+    updateSerp();
+    updateDocumentOutline();
+    triggerAutosave();
+
+    alert('Markdown article successfully imported!');
+  }
+
+  // 2. Export / Download Article as .md
+  document.getElementById('opt-export-md')?.addEventListener('click', () => {
+    let mdContent = '';
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      mdContent = markdownTextarea.value;
+    } else {
+      mdContent = turndownService.turndown(editor.getHTML());
+    }
+
+    const title = titleInput?.value.trim() || 'Untitled Article';
+    const excerpt = excerptInput?.value.trim() || '';
+    const slug = slugInput?.value.trim() || slugify(title);
+
+    // Prepend standard clean Markdown metadata
+    const fullMarkdownDoc = `---
+title: "${title}"
+slug: "${slug}"
+description: "${excerpt}"
+date: "${new Date().toISOString()}"
+---
+
+# ${title}
+
+${mdContent}
+`;
+
+    const blob = new Blob([fullMarkdownDoc], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${slug || 'article'}.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  });
+
+  // 3. Copy Markdown to Clipboard
+  document.getElementById('opt-copy-md')?.addEventListener('click', async () => {
+    let mdContent = '';
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      mdContent = markdownTextarea.value;
+    } else {
+      mdContent = turndownService.turndown(editor.getHTML());
+    }
+
+    try {
+      await navigator.clipboard.writeText(mdContent);
+      alert('Article Markdown successfully copied to clipboard!');
+    } catch (_) {
+      // Fallback
+      prompt('Copy Markdown below:', mdContent);
+    }
+  });
+
+  // Top Undo / Redo
+  document.getElementById('top-undo-btn')?.addEventListener('click', () => {
+    if (currentEditorMode === 'visual') {
+      editor.chain().focus().undo().run();
+    }
+  });
+  document.getElementById('top-redo-btn')?.addEventListener('click', () => {
+    if (currentEditorMode === 'visual') {
+      editor.chain().focus().redo().run();
+    }
+  });
+
+  // Header Plus Button Dropdown & Library Drawer Toggle
+  document.getElementById('top-inserter-toggle-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    headerBlockDropdown?.classList.toggle('hidden');
+    outlineDrawer?.classList.add('hidden');
+    inserterDrawer?.classList.add('hidden');
+  });
+
+  // Option to open full library drawer from dropdown header
+  openFullLibraryBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    headerBlockDropdown?.classList.add('hidden');
+    inserterDrawer?.classList.remove('hidden');
+    const searchInput = document.getElementById('block-search-input') as HTMLInputElement | null;
+    searchInput?.focus();
+  });
+
+  // Handle header dropdown block selections
+  document.querySelectorAll<HTMLButtonElement>('.header-insert-opt').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const type = btn.dataset.type;
+      if (type) {
+        insertBlock(type);
+      }
+      headerBlockDropdown?.classList.add('hidden');
+    });
+  });
+
+  document.getElementById('close-inserter-btn')?.addEventListener('click', () => {
+    inserterDrawer?.classList.add('hidden');
+  });
+
+  document.getElementById('top-outline-toggle-btn')?.addEventListener('click', () => {
+    outlineDrawer?.classList.toggle('hidden');
+    inserterDrawer?.classList.add('hidden');
+    if (!outlineDrawer?.classList.contains('hidden')) {
+      updateDocumentOutline();
+    }
+  });
+
+  document.getElementById('close-outline-btn')?.addEventListener('click', () => {
+    outlineDrawer?.classList.add('hidden');
+  });
+
+  document.getElementById('sidebar-toggle-btn')?.addEventListener('click', () => {
+    editorSidebar?.classList.toggle('hidden');
+  });
+
+  document.getElementById('close-sidebar-btn')?.addEventListener('click', () => {
+    editorSidebar?.classList.add('hidden');
+  });
+
+  // Inserter Tabs (Blocks vs Patterns)
+  document.querySelectorAll<HTMLButtonElement>('.inserter-tab').forEach((tabBtn) => {
+    tabBtn.addEventListener('click', () => {
+      document.querySelectorAll('.inserter-tab').forEach((b) => {
+        b.classList.remove('font-bold', 'text-slate-900', 'border-blue-600');
+        b.classList.add('font-medium', 'text-slate-500', 'border-transparent');
+      });
+      tabBtn.classList.remove('font-medium', 'text-slate-500', 'border-transparent');
+      tabBtn.classList.add('font-bold', 'text-slate-900', 'border-blue-600');
+
+      const tab = tabBtn.dataset.tab;
+      const blocksSec = document.getElementById('inserter-blocks-section');
+      const patternsSec = document.getElementById('inserter-patterns-section');
+      if (tab === 'blocks') {
+        blocksSec?.classList.remove('hidden');
+        patternsSec?.classList.add('hidden');
+      } else {
+        blocksSec?.classList.add('hidden');
+        patternsSec?.classList.remove('hidden');
+      }
+    });
+  });
+
+  // Search Blocks in Inserter
+  const blockSearchInput = document.getElementById('block-search-input') as HTMLInputElement | null;
+  blockSearchInput?.addEventListener('input', () => {
+    const query = (blockSearchInput.value || '').toLowerCase().trim();
+    document.querySelectorAll<HTMLButtonElement>('.insert-block-btn, .insert-pattern-btn').forEach((btn) => {
+      const text = btn.innerText.toLowerCase();
+      if (!query || text.includes(query)) {
+        btn.classList.remove('hidden');
+      } else {
+        btn.classList.add('hidden');
+      }
+    });
+  });
+
+  // Insert standard blocks
+  function insertBlock(type: string, targetPos?: number | null) {
+    if (currentEditorMode === 'markdown') {
+      // In markdown mode, insert markdown snippet
+      insertMarkdownSnippet(type);
+      inserterDrawer?.classList.add('hidden');
+      return;
+    }
+
+    if (!editor) return;
+
+    if (typeof targetPos === 'number') {
+      // Inline block insertion at specific position without replacing content
+      editor.commands.setTextSelection(targetPos);
+      let content = '<p></p>';
+      if (type === 'paragraph') content = '<p></p>';
+      else if (type === 'h2') content = '<h2></h2>';
+      else if (type === 'h3') content = '<h3></h3>';
+      else if (type === 'h4') content = '<h4></h4>';
+      else if (type === 'bulletList') content = '<ul><li></li></ul>';
+      else if (type === 'orderedList') content = '<ol><li></li></ol>';
+      else if (type === 'blockquote') content = '<blockquote><p></p></blockquote>';
+      else if (type === 'codeBlock') content = '<pre><code></code></pre>';
+      else if (type === 'divider') content = '<hr><p></p>';
+      else if (type === 'table') {
+        editor.chain().focus().insertContentAt(targetPos, '<p></p>').run();
+        editor.commands.setTextSelection(targetPos);
+        editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+        inserterDrawer?.classList.add('hidden');
+        return;
+      } else if (type === 'image') {
+        const url = prompt('Enter image URL (or /images/...):');
+        const alt = prompt('Enter descriptive alt text for accessibility & SEO:') || '';
+        if (url) {
+          content = `<img src="${url}" alt="${alt}" /><p></p>`;
+        } else {
+          return;
+        }
+      } else if (type === 'video') {
+        const url = prompt('Enter video embed URL (YouTube or direct embed URL):');
+        if (url) {
+          content = `<div class="aspect-video my-4"><iframe src="${url}" class="w-full h-full rounded-lg" allowfullscreen></iframe></div><p></p>`;
+        } else {
+          return;
+        }
+      } else if (type === 'callout') {
+        content = `<div class="callout p-4 my-4 rounded-lg bg-blue-50/40 border-l-4 border-blue-500 text-slate-800 text-sm leading-relaxed"><p><strong>Important Note:</strong> Enter notice or advisory details here.</p></div><p></p>`;
+      }
+
+      editor.chain().focus().insertContentAt(targetPos, content).run();
+      inserterDrawer?.classList.add('hidden');
+      return;
+    }
+
+    editor.chain().focus();
+
+    if (type === 'paragraph') editor.chain().focus().setParagraph().run();
+    else if (type === 'h2') editor.chain().focus().toggleHeading({ level: 2 }).run();
+    else if (type === 'h3') editor.chain().focus().toggleHeading({ level: 3 }).run();
+    else if (type === 'h4') editor.chain().focus().toggleHeading({ level: 4 }).run();
+    else if (type === 'bulletList') editor.chain().focus().toggleBulletList().run();
+    else if (type === 'orderedList') editor.chain().focus().toggleOrderedList().run();
+    else if (type === 'blockquote') editor.chain().focus().toggleBlockquote().run();
+    else if (type === 'codeBlock') editor.chain().focus().toggleCodeBlock().run();
+    else if (type === 'divider') editor.chain().focus().setHorizontalRule().run();
+    else if (type === 'table') {
+      editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+    } else if (type === 'image') {
+      const url = prompt('Enter image URL (or /images/...):');
+      const alt = prompt('Enter descriptive alt text for accessibility & SEO:') || '';
+      if (url) {
+        editor.chain().focus().setImage({ src: url, alt }).run();
+      }
+    } else if (type === 'video') {
+      const url = prompt('Enter video embed URL (YouTube or direct embed URL):');
+      if (url) {
+        editor.chain().focus().insertContent(`<div class="aspect-video my-4"><iframe src="${url}" class="w-full h-full rounded-lg" allowfullscreen></iframe></div><p></p>`).run();
+      }
+    } else if (type === 'callout') {
+      editor.chain().focus().insertContent(`<div class="callout p-4 my-4 rounded-lg bg-blue-50/40 border-l-4 border-blue-500 text-slate-800 text-sm leading-relaxed"><p><strong>Important Note:</strong> Enter notice or advisory details here.</p></div><p></p>`).run();
+    } else if (type === 'toc') {
+      insertTableOfContentsBlock();
+    }
+
+    inserterDrawer?.classList.add('hidden');
+    editor.chain().focus().run();
+  }
+
+  function insertMarkdownSnippet(type: string) {
+    if (!markdownTextarea) return;
+    let snippet = '';
+    if (type === 'paragraph') snippet = '\n\nParagraph text goes here.\n\n';
+    else if (type === 'h2') snippet = '\n\n## Section Heading\n\n';
+    else if (type === 'h3') snippet = '\n\n### Subheading\n\n';
+    else if (type === 'h4') snippet = '\n\n#### Smaller Heading\n\n';
+    else if (type === 'bulletList') snippet = '\n\n- First item\n- Second item\n- Third item\n\n';
+    else if (type === 'orderedList') snippet = '\n\n1. First step\n2. Second step\n3. Third step\n\n';
+    else if (type === 'blockquote') snippet = '\n\n> This is an important note.\n\n';
+    else if (type === 'codeBlock') snippet = '\n\n```typescript\nconst message: string = "Hello World";\n```\n\n';
+    else if (type === 'divider') snippet = '\n\n---\n\n';
+    else if (type === 'table') snippet = '\n\n| Column 1 | Column 2 | Column 3 |\n| --- | --- | --- |\n| Data 1 | Data 2 | Data 3 |\n\n';
+    else if (type === 'image') snippet = '\n\n![Descriptive image alt text](https://example.com/image.png)\n\n';
+
+    const start = markdownTextarea.selectionStart;
+    const end = markdownTextarea.selectionEnd;
+    const val = markdownTextarea.value;
+    markdownTextarea.value = val.substring(0, start) + snippet + val.substring(end);
+    markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + snippet.length;
+    markdownTextarea.focus();
+    updateLineNumbers();
+    isDirty = true;
+    triggerAutosave();
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.insert-block-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      runEditorAction(btn.dataset.action);
-      toolbarMoreMenu?.classList.add('hidden');
+      const type = btn.dataset.type;
+      if (type) insertBlock(type);
+    });
+  });
+
+  // Insert Exam Patterns
+  function insertExamPattern(pattern: string) {
+    if (currentEditorMode === 'markdown') {
+      let snippet = '';
+      if (pattern === 'dates') {
+        snippet = `\n\n## Important Exam Dates\n\n| Event | Official Date / Timeline |\n| --- | --- |\n| Notification Release Date | To be announced |\n| Online Application Start | Starting soon |\n| Last Date to Submit Application | 25 days from start |\n\n`;
+      } else if (pattern === 'eligibility') {
+        snippet = `\n\n## Eligibility Criteria\n\n- **Nationality:** Must be a citizen of India.\n- **Age Limit:** 21 to 30 years.\n- **Educational Qualification:** Bachelor's Degree in relevant discipline.\n\n> **Note:** Final year students must present degree before interview.\n\n`;
+      } else if (pattern === 'fees') {
+        snippet = `\n\n## Application Fee Structure\n\n| Category | Application Fee |\n| --- | --- |\n| General / OBC / EWS | ₹500 |\n| SC / ST / PwD / Female | Exempted / ₹100 |\n\n`;
+      }
+      if (snippet && markdownTextarea) {
+        insertMarkdownSnippet(snippet);
+        inserterDrawer?.classList.add('hidden');
+        return;
+      }
+    }
+
+    if (!editor) return;
+    editor.chain().focus();
+
+    if (pattern === 'dates') {
+      editor.chain().focus().insertContent(`
+        <h2>Important Exam Dates</h2>
+        <div class="overflow-x-auto my-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Event</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900">Official Date / Timeline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Notification Release Date</td>
+                <td class="p-2 text-xs">To be announced</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Online Application Start</td>
+                <td class="p-2 text-xs">Starting soon</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Last Date to Submit Application</td>
+                <td class="p-2 text-xs">25 days from start</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'eligibility') {
+      editor.chain().focus().insertContent(`
+        <h2>Eligibility Criteria</h2>
+        <ul>
+          <li><strong>Nationality:</strong> Must be a citizen of India.</li>
+          <li><strong>Age Limit:</strong> 21 to 30 years (relaxation applies as per norms).</li>
+          <li><strong>Educational Qualification:</strong> Bachelor's Degree in relevant discipline.</li>
+        </ul>
+        <div class="callout p-4 my-3 rounded-lg bg-amber-50/60 border-l-4 border-amber-500 text-xs text-amber-900">
+          <strong>Note:</strong> Candidates awaiting final results must present certificate before interview.
+        </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'fees') {
+      editor.chain().focus().insertContent(`
+        <h2>Application Fee Structure</h2>
+        <div class="overflow-x-auto my-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Category</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900">Application Fee</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">General / OBC / EWS</td>
+                <td class="p-2 text-xs">₹500</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">SC / ST / PwD / Female Candidates</td>
+                <td class="p-2 text-xs">Exempted / ₹100</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+      `).run();
+    }
+
+    inserterDrawer?.classList.add('hidden');
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.insert-pattern-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const pat = btn.dataset.pattern;
+      if (pat) insertExamPattern(pat);
+    });
+  });
+
+  // Table of Contents generator inside editor
+  function insertTableOfContentsBlock() {
+    const headings: { text: string; id: string; level: number }[] = [];
+    editor.state.doc.descendants((node) => {
+      if (node.type.name === 'heading') {
+        const text = node.textContent;
+        const level = node.attrs.level;
+        const id = slugify(text);
+        headings.push({ text, id, level });
+      }
+    });
+
+    if (headings.length === 0) {
+      editor.chain().focus().insertContent(`<div class="toc-block p-4 my-4 bg-slate-50 border border-slate-200 rounded-lg text-xs"><p><strong>Table of Contents:</strong> Add headings (H2, H3) to populate this list.</p></div><p></p>`).run();
+      return;
+    }
+
+    const tocList = headings
+      .map((h) => `<li style="margin-left: ${(h.level - 2) * 16}px"><a href="#${h.id}" class="text-blue-600 hover:underline">${h.text}</a></li>`)
+      .join('');
+
+    editor.chain().focus().insertContent(`
+      <div class="toc-block p-4 my-4 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+        <strong class="block mb-2 text-slate-800 text-sm">Table of Contents</strong>
+        <ul class="space-y-1 list-none pl-0">${tocList}</ul>
+      </div>
+      <p></p>
+    `).run();
+  }
+
+  // Slash Command (/) Autocomplete
+  function checkSlashCommand() {
+    if (currentEditorMode !== 'visual') return;
+    const { from } = editor.state.selection;
+    const textBefore = editor.state.doc.textBetween(Math.max(0, from - 30), from, '\n', '\0');
+    const match = textBefore.match(/\/([a-zA-Z0-9]*)$/);
+
+    if (match) {
+      const query = match[1].toLowerCase();
+      openSlashMenu(query);
+    } else {
+      closeSlashMenu();
+    }
+  }
+
+  const slashOptions = [
+    { title: 'Paragraph', desc: 'Standard body text', action: () => insertBlock('paragraph') },
+    { title: 'Heading 2', desc: 'Section heading (##)', action: () => insertBlock('h2') },
+    { title: 'Heading 3', desc: 'Subheading (###)', action: () => insertBlock('h3') },
+    { title: 'Heading 4', desc: 'Minor section (####)', action: () => insertBlock('h4') },
+    { title: 'Bullet List', desc: 'Unordered bullet points (-)', action: () => insertBlock('bulletList') },
+    { title: 'Numbered List', desc: 'Numbered step list (1.)', action: () => insertBlock('orderedList') },
+    { title: 'Image', desc: 'Illustration with alt text', action: () => insertBlock('image') },
+    { title: 'Table', desc: 'Row and column data', action: () => insertBlock('table') },
+    { title: 'Code Block', desc: 'Syntax highlighted code (```)', action: () => insertBlock('codeBlock') },
+    { title: 'Blockquote', desc: 'Quoted excerpt (>)', action: () => insertBlock('blockquote') },
+    { title: 'Callout', desc: 'Important note alert', action: () => insertBlock('callout') },
+    { title: 'Divider', desc: 'Horizontal rule (---)', action: () => insertBlock('divider') },
+    { title: 'Video Embed', desc: 'YouTube or direct video player', action: () => insertBlock('video') },
+    { title: 'Table of Contents', desc: 'Heading links', action: () => insertBlock('toc') },
+    { title: 'Important Dates Pattern', desc: 'Exam timeline table', action: () => insertExamPattern('dates') },
+  ];
+
+  function renderSlashMenuItems() {
+    if (!slashMenuItems) return;
+    slashMenuItems.innerHTML = slashFilteredList.map((item, idx) => `
+      <button 
+        type="button" 
+        class="slash-item w-full text-left px-2.5 py-1.5 rounded flex flex-col gap-0.5 text-xs transition ${idx === slashSelectedIndex ? 'bg-blue-50 text-blue-900 font-medium' : 'hover:bg-slate-100 text-slate-800'}" 
+        data-idx="${idx}"
+      >
+        <span class="font-bold">${item.title}</span>
+        <span class="text-[10px] ${idx === slashSelectedIndex ? 'text-blue-600' : 'text-slate-400'}">${item.desc}</span>
+      </button>
+    `).join('');
+
+    const activeEl = slashMenuItems.querySelector(`[data-idx="${slashSelectedIndex}"]`) as HTMLElement | null;
+    activeEl?.scrollIntoView({ block: 'nearest' });
+
+    document.querySelectorAll<HTMLButtonElement>('.slash-item').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.idx);
+        executeSlashItem(idx);
+      });
+      btn.addEventListener('mouseenter', () => {
+        slashSelectedIndex = Number(btn.dataset.idx);
+        renderSlashHighlight();
+      });
+    });
+  }
+
+  function renderSlashHighlight() {
+    if (!slashMenuItems) return;
+    const buttons = slashMenuItems.querySelectorAll<HTMLButtonElement>('.slash-item');
+    buttons.forEach((btn, idx) => {
+      if (idx === slashSelectedIndex) {
+        btn.classList.add('bg-blue-50', 'text-blue-900', 'font-medium');
+        btn.classList.remove('text-slate-800');
+        const descEl = btn.querySelector('.text-\\[10px\\]');
+        descEl?.classList.remove('text-slate-400');
+        descEl?.classList.add('text-blue-600');
+      } else {
+        btn.classList.remove('bg-blue-50', 'text-blue-900', 'font-medium');
+        btn.classList.add('text-slate-800');
+        const descEl = btn.querySelector('.text-\\[10px\\]');
+        descEl?.classList.remove('text-blue-600');
+        descEl?.classList.add('text-slate-400');
+      }
+    });
+    const activeEl = slashMenuItems.querySelector(`[data-idx="${slashSelectedIndex}"]`) as HTMLElement | null;
+    activeEl?.scrollIntoView({ block: 'nearest' });
+  }
+
+  function executeSlashItem(index: number) {
+    if (!slashFilteredList[index]) return;
+    const { from } = editor.state.selection;
+    const textBefore = editor.state.doc.textBetween(Math.max(0, from - 30), from, '\n', '\0');
+    const match = textBefore.match(/\/([a-zA-Z0-9]*)$/);
+    if (match) {
+      editor.commands.deleteRange({ from: from - match[0].length, to: from });
+    }
+    const chosen = slashFilteredList[index];
+    closeSlashMenu();
+    chosen.action();
+  }
+
+  function openSlashMenu(filterQuery: string) {
+    if (!slashMenuPopover || !slashMenuItems) return;
+    slashFilteredList = slashOptions.filter(o => o.title.toLowerCase().includes(filterQuery) || o.desc.toLowerCase().includes(filterQuery));
+
+    if (slashFilteredList.length === 0) {
+      closeSlashMenu();
+      return;
+    }
+
+    if (slashSelectedIndex >= slashFilteredList.length) {
+      slashSelectedIndex = 0;
+    }
+
+    renderSlashMenuItems();
+
+    const { from } = editor.state.selection;
+    const coords = editor.view.coordsAtPos(from);
+    slashMenuPopover.style.top = `${coords.bottom + 8}px`;
+    slashMenuPopover.style.left = `${Math.min(coords.left, window.innerWidth - 280)}px`;
+    slashMenuPopover.classList.remove('hidden');
+    isSlashMenuOpen = true;
+  }
+
+  function closeSlashMenu() {
+    slashMenuPopover?.classList.add('hidden');
+    isSlashMenuOpen = false;
+    slashSelectedIndex = 0;
+  }
+
+  // Keyboard navigation for slash menu
+  window.addEventListener('keydown', (e) => {
+    if (!isSlashMenuOpen || slashFilteredList.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      slashSelectedIndex = (slashSelectedIndex + 1) % slashFilteredList.length;
+      renderSlashHighlight();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      slashSelectedIndex = (slashSelectedIndex - 1 + slashFilteredList.length) % slashFilteredList.length;
+      renderSlashHighlight();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      executeSlashItem(slashSelectedIndex);
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closeSlashMenu();
+    }
+  }, true);
+
+  // ==========================================
+  // Inline Block Insertion (Floating '+' button)
+  // ==========================================
+  
+  function updateInlinePlusButton() {
+    if (!inlineBlockPlusBtn || currentEditorMode !== 'visual' || isInlineMenuOpen) return;
+    if (!editor) return;
+
+    const { state } = editor.view;
+    const { selection } = state;
+    if (!selection.empty) {
+      inlineBlockPlusBtn.classList.add('hidden');
+      return;
+    }
+
+    const { $from } = selection;
+    const nodePos = $from.before(1);
+    const node = state.doc.nodeAt(nodePos);
+    if (!node) {
+      inlineBlockPlusBtn.classList.add('hidden');
+      return;
+    }
+
+    try {
+      const domNode = editor.view.nodeDOM(nodePos) as HTMLElement | null;
+      if (domNode && domNode.getBoundingClientRect) {
+        const rect = domNode.getBoundingClientRect();
+        // Position plus button in left gutter aligned with top of block
+        const btnX = Math.max(16, rect.left - 24);
+        const btnY = rect.top + 14;
+
+        inlineBlockPlusBtn.style.left = `${btnX}px`;
+        inlineBlockPlusBtn.style.top = `${btnY}px`;
+        inlineBlockPlusBtn.classList.remove('hidden');
+        inlineBlockPlusBtn.classList.add('flex');
+        inlineInsertPos = nodePos + node.nodeSize;
+        return;
+      }
+    } catch (_) {}
+    inlineBlockPlusBtn.classList.add('hidden');
+  }
+
+  // Hover detection over editor blocks
+  editorElement?.addEventListener('mousemove', (e) => {
+    if (isInlineMenuOpen || currentEditorMode !== 'visual') return;
+    const target = e.target as HTMLElement | null;
+    const blockEl = target?.closest('#tiptap-editor > .ProseMirror > *') as HTMLElement | null;
+    if (!blockEl) return;
+
+    const rect = blockEl.getBoundingClientRect();
+    const btnX = Math.max(16, rect.left - 24);
+    const btnY = rect.top + 14;
+
+    if (inlineBlockPlusBtn) {
+      inlineBlockPlusBtn.style.left = `${btnX}px`;
+      inlineBlockPlusBtn.style.top = `${btnY}px`;
+      inlineBlockPlusBtn.classList.remove('hidden');
+      inlineBlockPlusBtn.classList.add('flex');
+
+      try {
+        const pos = editor.view.posAtDOM(blockEl, 0);
+        const $pos = editor.state.doc.resolve(pos);
+        const topPos = $pos.before(1);
+        const topNode = editor.state.doc.nodeAt(topPos);
+        if (topNode) {
+          inlineInsertPos = topPos + topNode.nodeSize;
+        } else {
+          inlineInsertPos = pos;
+        }
+      } catch (_) {
+        inlineInsertPos = null;
+      }
+    }
+  });
+
+  // Clicking inline plus trigger opens compact inline block menu
+  inlinePlusTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (!inlineBlockMenu || !inlineBlockPlusBtn) return;
+    const rect = inlineBlockPlusBtn.getBoundingClientRect();
+    inlineBlockMenu.style.top = `${rect.bottom + 6}px`;
+    inlineBlockMenu.style.left = `${Math.min(rect.left, window.innerWidth - 280)}px`;
+    inlineBlockMenu.classList.remove('hidden');
+    isInlineMenuOpen = true;
+  });
+
+  // Close inline block menu button
+  closeInlineMenuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeInlineBlockMenu();
+  });
+
+  function closeInlineBlockMenu() {
+    inlineBlockMenu?.classList.add('hidden');
+    isInlineMenuOpen = false;
+  }
+
+  // Handle inline menu block options
+  document.querySelectorAll<HTMLButtonElement>('.inline-insert-opt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const type = btn.dataset.type;
+      if (type) {
+        insertBlock(type, inlineInsertPos);
+      }
+      closeInlineBlockMenu();
+      inlineBlockPlusBtn?.classList.add('hidden');
+    });
+  });
+
+  // Close menus when clicking outside
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement | null;
+    if (isSlashMenuOpen && !target?.closest('#slash-menu-popover')) {
+      closeSlashMenu();
+    }
+    if (isInlineMenuOpen && !target?.closest('#inline-block-menu') && !target?.closest('#inline-block-plus-btn')) {
+      closeInlineBlockMenu();
+    }
+    if (headerBlockDropdown && !headerBlockDropdown.classList.contains('hidden') && !target?.closest('#top-inserter-toggle-btn') && !target?.closest('#header-block-dropdown')) {
+      headerBlockDropdown.classList.add('hidden');
+    }
+  });
+
+  // Contextual Floating Block Toolbar
+  function updateContextualToolbar() {
+    if (!contextualToolbar || !editor || currentEditorMode !== 'visual') return;
+
+    const { selection } = editor.state;
+    if (selection.empty) {
+      contextualToolbar.classList.add('hidden');
+      return;
+    }
+
+    let blockTypeLabel = '¶ Paragraph';
+    const ctxTypeLabel = document.getElementById('ctx-block-type-label');
+    const tableTools = document.getElementById('ctx-table-tools');
+
+    if (editor.isActive('heading', { level: 2 })) blockTypeLabel = 'H2 Heading';
+    else if (editor.isActive('heading', { level: 3 })) blockTypeLabel = 'H3 Subheading';
+    else if (editor.isActive('heading', { level: 4 })) blockTypeLabel = 'H4 Heading';
+    else if (editor.isActive('bulletList')) blockTypeLabel = '• Bullet list';
+    else if (editor.isActive('orderedList')) blockTypeLabel = '1. Number list';
+    else if (editor.isActive('blockquote')) blockTypeLabel = '❝ Blockquote';
+    else if (editor.isActive('codeBlock')) blockTypeLabel = '&lt;/&gt; Code';
+    else if (editor.isActive('table')) blockTypeLabel = '▦ Table';
+
+    if (ctxTypeLabel) ctxTypeLabel.textContent = blockTypeLabel;
+
+    if (editor.isActive('table')) {
+      tableTools?.classList.remove('hidden');
+      tableTools?.classList.add('flex');
+    } else {
+      tableTools?.classList.add('hidden');
+      tableTools?.classList.remove('flex');
+    }
+
+    const coords = editor.view.coordsAtPos(selection.from);
+    contextualToolbar.style.top = `${Math.max(60, coords.top - 46)}px`;
+    contextualToolbar.style.left = `${Math.max(20, Math.min(coords.left, window.innerWidth - 420))}px`;
+    contextualToolbar.classList.remove('hidden');
+    contextualToolbar.classList.add('flex');
+  }
+
+  // Contextual Toolbar Format Buttons
+  document.querySelectorAll<HTMLButtonElement>('.ctx-format-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      if (!action) return;
+      if (action === 'bold') editor.chain().focus().toggleBold().run();
+      else if (action === 'italic') editor.chain().focus().toggleItalic().run();
+      else if (action === 'underline') editor.chain().focus().toggleUnderline().run();
+      else if (action === 'strike') editor.chain().focus().toggleStrike().run();
+      else if (action === 'link') openLinkModal();
+    });
+  });
+
+  // Table operations
+  document.getElementById('table-add-row-btn')?.addEventListener('click', () => editor.chain().focus().addRowAfter().run());
+  document.getElementById('table-add-col-btn')?.addEventListener('click', () => editor.chain().focus().addColumnAfter().run());
+  document.getElementById('table-del-row-btn')?.addEventListener('click', () => editor.chain().focus().deleteRow().run());
+  document.getElementById('table-del-col-btn')?.addEventListener('click', () => editor.chain().focus().deleteColumn().run());
+
+  // Block movement & manipulation
+  document.getElementById('ctx-move-up-btn')?.addEventListener('click', () => {
+    const { state, dispatch } = editor.view;
+    const { $from } = state.selection;
+    const currentPos = $from.before(1);
+    const node = state.doc.nodeAt(currentPos);
+    if (!node || currentPos === 0) return;
+
+    let prevPos = 0;
+    state.doc.forEach((n, offset) => {
+      if (offset < currentPos) prevPos = offset;
+    });
+
+    const tr = state.tr;
+    tr.delete(currentPos, currentPos + node.nodeSize);
+    tr.insert(prevPos, node);
+    dispatch(tr);
+  });
+
+  document.getElementById('ctx-move-down-btn')?.addEventListener('click', () => {
+    const { state, dispatch } = editor.view;
+    const { $from } = state.selection;
+    const currentPos = $from.before(1);
+    const node = state.doc.nodeAt(currentPos);
+    if (!node) return;
+
+    const nextPos = currentPos + node.nodeSize;
+    if (nextPos >= state.doc.content.size) return;
+    const nextNode = state.doc.nodeAt(nextPos);
+    if (!nextNode) return;
+
+    const tr = state.tr;
+    tr.delete(currentPos, currentPos + node.nodeSize);
+    tr.insert(currentPos + nextNode.nodeSize, node);
+    dispatch(tr);
+  });
+
+  document.getElementById('ctx-duplicate-block-btn')?.addEventListener('click', duplicateSelectedBlock);
+  document.getElementById('sidebar-duplicate-block')?.addEventListener('click', duplicateSelectedBlock);
+
+  function duplicateSelectedBlock() {
+    const { state, dispatch } = editor.view;
+    const { $from } = state.selection;
+    const currentPos = $from.before(1);
+    const node = state.doc.nodeAt(currentPos);
+    if (!node) return;
+    const tr = state.tr;
+    tr.insert(currentPos + node.nodeSize, node);
+    dispatch(tr);
+  }
+
+  document.getElementById('ctx-remove-block-btn')?.addEventListener('click', removeSelectedBlock);
+  document.getElementById('sidebar-delete-block')?.addEventListener('click', removeSelectedBlock);
+
+  function removeSelectedBlock() {
+    const { state, dispatch } = editor.view;
+    const { $from } = state.selection;
+    const currentPos = $from.before(1);
+    const node = state.doc.nodeAt(currentPos);
+    if (!node) return;
+    const tr = state.tr;
+    tr.delete(currentPos, currentPos + node.nodeSize);
+    dispatch(tr);
+  }
+
+  // Right Sidebar Tab Switcher (Article vs Block)
+  const tabPostBtn = document.getElementById('tab-post-settings');
+  const tabBlockBtn = document.getElementById('tab-block-settings');
+  const postTabContent = document.getElementById('sidebar-post-tab-content');
+  const blockTabContent = document.getElementById('sidebar-block-tab-content');
+
+  tabPostBtn?.addEventListener('click', () => {
+    tabPostBtn.classList.add('font-bold', 'text-slate-900', 'bg-slate-100');
+    tabPostBtn.classList.remove('text-slate-500');
+    tabBlockBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-slate-100');
+    tabBlockBtn?.classList.add('text-slate-500');
+    postTabContent?.classList.remove('hidden');
+    blockTabContent?.classList.add('hidden');
+  });
+
+  tabBlockBtn?.addEventListener('click', () => {
+    tabBlockBtn.classList.add('font-bold', 'text-slate-900', 'bg-slate-100');
+    tabBlockBtn.classList.remove('text-slate-500');
+    tabPostBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-slate-100');
+    tabPostBtn?.classList.add('text-slate-500');
+    blockTabContent?.classList.remove('hidden');
+    postTabContent?.classList.add('hidden');
+    updateBlockSettingsSidebar();
+  });
+
+  function updateBlockSettingsSidebar() {
+    const emptyBox = document.getElementById('block-settings-empty');
+    const activeBox = document.getElementById('block-settings-active');
+    const blockName = document.getElementById('active-block-name');
+    const blockTag = document.getElementById('active-block-tag');
+
+    const imgSec = document.getElementById('block-settings-image');
+    const codeSec = document.getElementById('block-settings-code');
+    const headingSec = document.getElementById('block-settings-heading');
+
+    if (!editor || currentEditorMode === 'markdown') return;
+
+    if (editor.isActive('image')) {
+      emptyBox?.classList.add('hidden');
+      activeBox?.classList.remove('hidden');
+      if (blockName) blockName.textContent = 'Image Block';
+      if (blockTag) blockTag.textContent = 'IMG';
+
+      imgSec?.classList.remove('hidden');
+      codeSec?.classList.add('hidden');
+      headingSec?.classList.add('hidden');
+
+      const attrs = editor.getAttributes('image');
+      const srcInput = document.getElementById('active-img-src') as HTMLInputElement | null;
+      const altInput = document.getElementById('active-img-alt') as HTMLInputElement | null;
+      if (srcInput) srcInput.value = attrs.src || '';
+      if (altInput) altInput.value = attrs.alt || '';
+    } else if (editor.isActive('codeBlock')) {
+      emptyBox?.classList.add('hidden');
+      activeBox?.classList.remove('hidden');
+      if (blockName) blockName.textContent = 'Code Block';
+      if (blockTag) blockTag.textContent = 'PRE';
+
+      imgSec?.classList.add('hidden');
+      codeSec?.classList.remove('hidden');
+      headingSec?.classList.add('hidden');
+    } else if (editor.isActive('heading')) {
+      emptyBox?.classList.add('hidden');
+      activeBox?.classList.remove('hidden');
+      if (blockName) blockName.textContent = 'Heading Block';
+      if (blockTag) blockTag.textContent = 'H2-H4';
+
+      imgSec?.classList.add('hidden');
+      codeSec?.classList.add('hidden');
+      headingSec?.classList.remove('hidden');
+    } else {
+      emptyBox?.classList.add('hidden');
+      activeBox?.classList.remove('hidden');
+      if (blockName) blockName.textContent = 'Paragraph';
+      if (blockTag) blockTag.textContent = 'P';
+
+      imgSec?.classList.add('hidden');
+      codeSec?.classList.add('hidden');
+      headingSec?.classList.add('hidden');
+    }
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.heading-level-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const level = parseInt(btn.dataset.level || '2', 10);
+      editor.chain().focus().toggleHeading({ level: level as any }).run();
+      updateBlockSettingsSidebar();
     });
   });
 
@@ -814,22 +2700,140 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   cancelLinkBtn?.addEventListener('click', closeLinkModal);
   closeLinkModalBtn?.addEventListener('click', closeLinkModal);
 
+  // Document Outline / List View Update
+  function updateDocumentOutline() {
+    const tree = document.getElementById('outline-tree-container');
+    const outlineWord = document.getElementById('outline-word-stat');
+    const outlineChar = document.getElementById('outline-char-stat');
+    const outlineHeadings = document.getElementById('outline-headings-stat');
+
+    let text = '';
+    const items: { text: string; id: string; level: number; pos: number }[] = [];
+
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      text = markdownTextarea.value;
+      const lines = text.split('\n');
+      lines.forEach((l, idx) => {
+        const m = l.match(/^(#{1,4})\s+(.+)$/);
+        if (m) {
+          items.push({
+            level: m[1].length,
+            text: m[2].trim(),
+            id: slugify(m[2].trim()),
+            pos: idx,
+          });
+        }
+      });
+    } else {
+      text = editor.getText();
+      editor.state.doc.descendants((node, pos) => {
+        if (node.type.name === 'heading') {
+          items.push({
+            text: node.textContent || 'Untitled Heading',
+            id: slugify(node.textContent || 'heading'),
+            level: node.attrs.level,
+            pos,
+          });
+        }
+      });
+    }
+
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    if (outlineWord) outlineWord.textContent = `${words}`;
+    if (outlineChar) outlineChar.textContent = `${text.length}`;
+    if (outlineHeadings) outlineHeadings.textContent = `${items.length}`;
+
+    if (!tree) return;
+    if (items.length === 0) {
+      tree.innerHTML = `<p class="text-slate-400 text-center py-6 text-xs">No headings created yet. Add H2, H3, or H4 to populate the outline.</p>`;
+      return;
+    }
+
+    tree.innerHTML = items.map((h) => `
+      <div 
+        class="outline-item flex items-center justify-between p-2 rounded hover:bg-slate-50 cursor-pointer text-slate-800 transition"
+        style="padding-left: ${Math.max(8, (h.level - 2) * 16 + 8)}px"
+        data-pos="${h.pos}"
+      >
+        <div class="flex items-center gap-1.5 truncate">
+          <span class="font-mono text-[10px] text-slate-400 font-bold uppercase">H${h.level}</span>
+          <span class="truncate font-medium text-xs">${h.text}</span>
+        </div>
+      </div>
+    `).join('');
+
+    tree.querySelectorAll<HTMLDivElement>('.outline-item').forEach((item) => {
+      item.addEventListener('click', () => {
+        const pos = parseInt(item.dataset.pos || '0', 10);
+        if (currentEditorMode === 'visual') {
+          editor.chain().focus().setTextSelection(pos + 1).run();
+        } else if (markdownTextarea) {
+          const lines = markdownTextarea.value.split('\n');
+          let charIndex = 0;
+          for (let i = 0; i < pos; i++) {
+            charIndex += lines[i].length + 1;
+          }
+          markdownTextarea.focus();
+          markdownTextarea.setSelectionRange(charIndex, charIndex + (lines[pos]?.length || 0));
+        }
+      });
+    });
+  }
+
+  // Accordion Sections Toggle
+  document.querySelectorAll<HTMLButtonElement>('.accordion-trigger').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const section = btn.closest('.accordion-item');
+      const content = section?.querySelector('.accordion-content');
+      const chevron = btn.querySelector('.accordion-chevron');
+      if (content) {
+        const isHidden = content.classList.contains('hidden');
+        if (isHidden) {
+          content.classList.remove('hidden');
+          chevron?.classList.add('rotate-180');
+        } else {
+          content.classList.add('hidden');
+          chevron?.classList.remove('rotate-180');
+        }
+      }
+    });
+  });
+
+  // Top More Options Menu
+  const moreBtn = document.getElementById('more-options-btn');
+  const moreMenu = document.getElementById('more-options-menu');
+  moreBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    moreMenu?.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', () => {
+    moreMenu?.classList.add('hidden');
+    closeSlashMenu();
+  });
+
+  // Metrics (Word count & Reading time)
   function updateMetrics() {
-    const text = editor.getText();
+    let text = '';
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      text = markdownTextarea.value;
+    } else {
+      text = editor.getText();
+    }
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
     const readMin = Math.max(1, Math.ceil(words / 200));
     if (wordCountEl) wordCountEl.textContent = `${words} words`;
     if (readTimeEl) readTimeEl.textContent = `${readMin} min read`;
   }
 
+  // SERP and Live preview
   function updateSerp() {
-    const title = titleInput?.value || 'Article Title';
+    const title = titleInput?.value || 'Add title';
     const slug = slugInput?.value || 'article-slug';
     const excerpt = excerptInput?.value || 'Short summary will appear here in search engine results.';
     const metaTitle = metaTitleInput?.value || title;
     const metaDesc = metaDescInput?.value || excerpt;
-    
-    // Find selected category slug
+
     const catId = categorySelect?.value;
     const selectedCat = categoriesCache.find(c => c.id === catId);
     const catSlug = selectedCat ? selectedCat.slug : 'general';
@@ -844,7 +2848,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     if (titleCharEl) titleCharEl.textContent = `${metaTitle.length}/60`;
     if (descCharEl) descCharEl.textContent = `${metaDesc.length}/160`;
 
-    // Image preview update
+    // Featured Image Preview
     const coverUrl = coverImageInput?.value.trim();
     if (coverUrl && imagePreviewBox && imagePreviewEl) {
       imagePreviewEl.src = coverUrl;
@@ -854,7 +2858,13 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }
   }
 
-  // Publication state handler
+  document.getElementById('remove-cover-btn')?.addEventListener('click', () => {
+    if (coverImageInput) coverImageInput.value = '';
+    imagePreviewBox?.classList.add('hidden');
+    triggerAutosave();
+  });
+
+  // Scheduled date visibility
   statusSelect?.addEventListener('change', () => {
     if (statusSelect.value === 'SCHEDULED') {
       scheduleDateGroup?.classList.remove('hidden');
@@ -871,6 +2881,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     updateSerp();
     triggerAutosave();
   });
+
   slugInput?.addEventListener('input', updateSerp);
   excerptInput?.addEventListener('input', updateSerp);
   metaTitleInput?.addEventListener('input', updateSerp);
@@ -878,7 +2889,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   categorySelect?.addEventListener('change', updateSerp);
   coverImageInput?.addEventListener('input', updateSerp);
 
-  // Autosave Handler
+  // Autosave
   let autosaveTimer: any = null;
   function triggerAutosave() {
     if (saveStatusEl) {
@@ -892,6 +2903,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }, 4000);
   }
 
+  // Core Save Article Function (Draft & Publish)
   async function saveArticle(targetStatus?: string, isAutosave = false) {
     const title = titleInput?.value.trim();
     const slug = slugInput?.value.trim() || slugify(title || 'untitled');
@@ -902,6 +2914,15 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }
 
     const effectiveStatus = targetStatus || statusSelect?.value || 'DRAFT';
+
+    // Get current HTML content regardless of active mode
+    let effectiveHtml = '';
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      const rawHtml = marked.parse(markdownTextarea.value) as string;
+      effectiveHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+    } else {
+      effectiveHtml = editor.getHTML();
+    }
 
     const payload = {
       title,
@@ -917,7 +2938,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       scheduledAt: scheduledAtInput?.value ? new Date(scheduledAtInput.value).toISOString() : null,
       noindex: noindexCheckbox?.checked ?? false,
       status: effectiveStatus,
-      htmlContent: editor.getHTML(),
+      htmlContent: effectiveHtml,
       currentVersion,
     };
 
@@ -945,6 +2966,8 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         currentVersion = saved.version;
         isDirty = false;
         if (statusSelect) statusSelect.value = saved.status || effectiveStatus;
+        if (docVersionDisplay) docVersionDisplay.textContent = `${saved.version}`;
+        if (docLastSavedTime) docLastSavedTime.textContent = `Saved at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
         if (saveStatusEl) {
           saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Saved</span>`;
@@ -971,14 +2994,18 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   });
 
   document.getElementById('publish-btn')?.addEventListener('click', () => {
+    if (!categorySelect?.value) {
+      alert('Please select a Blog Category before publishing.');
+      return;
+    }
     if (statusSelect) statusSelect.value = 'PUBLISHED';
     saveArticle('PUBLISHED');
   });
 
-  // Duplicate Article Handler
-  document.getElementById('duplicate-article-btn')?.addEventListener('click', async () => {
+  // Duplicate Article
+  document.getElementById('opt-duplicate')?.addEventListener('click', async () => {
     if (!currentPostId) {
-      alert('Save this article first before duplicating.');
+      alert('Please save the article first before duplicating.');
       return;
     }
     const res = await apiFetch(`/blogs/${currentPostId}/duplicate`, { method: 'POST' });
@@ -990,35 +3017,9 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }
   });
 
-  // Live Preview Modal
-  const previewModal = document.getElementById('live-preview-modal');
-  document.getElementById('toggle-preview-btn')?.addEventListener('click', () => {
-    const title = titleInput?.value || 'Untitled Article';
-    const excerpt = excerptInput?.value || '';
-    const cat = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
-
-    const modalTitle = document.getElementById('prev-modal-title');
-    const modalCat = document.getElementById('prev-modal-cat');
-    const modalExcerpt = document.getElementById('prev-modal-excerpt');
-    const modalContent = document.getElementById('prev-modal-content');
-
-    if (modalTitle) modalTitle.textContent = title;
-    if (modalCat) modalCat.textContent = cat;
-    if (modalExcerpt) modalExcerpt.textContent = excerpt;
-    if (modalContent) modalContent.innerHTML = editor.getHTML();
-
-    previewModal?.classList.remove('hidden');
-    previewModal?.classList.add('flex');
-  });
-
-  document.getElementById('close-preview-modal')?.addEventListener('click', () => {
-    previewModal?.classList.add('hidden');
-    previewModal?.classList.remove('flex');
-  });
-
   // Revisions Modal
   const revModal = document.getElementById('revisions-modal');
-  document.getElementById('revisions-modal-btn')?.addEventListener('click', async () => {
+  document.getElementById('opt-revisions')?.addEventListener('click', async () => {
     if (!currentPostId) {
       alert('Save your article first to view revision history.');
       return;
@@ -1063,7 +3064,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     revModal?.classList.remove('flex');
   });
 
-  // Dedicated Quick Category Creation Modal
+  // Quick Category Creator
   const quickCatModal = document.getElementById('quick-category-modal');
   const openQuickCatBtn = document.getElementById('open-create-category-modal');
   const closeQuickCatBtn = document.getElementById('close-quick-cat-modal');
@@ -1075,7 +3076,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   const quickCatError = document.getElementById('quick-cat-error');
   const saveQuickCatBtn = document.getElementById('save-quick-cat-btn') as HTMLButtonElement | null;
 
-  function openQuickCategoryModal() {
+  openQuickCatBtn?.addEventListener('click', () => {
     quickCatError?.classList.add('hidden');
     if (quickCatName) quickCatName.value = '';
     if (quickCatSlug) quickCatSlug.value = '';
@@ -1083,14 +3084,13 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     quickCatModal?.classList.remove('hidden');
     quickCatModal?.classList.add('flex');
     quickCatName?.focus();
-  }
+  });
 
   function closeQuickCategoryModal() {
     quickCatModal?.classList.add('hidden');
     quickCatModal?.classList.remove('flex');
   }
 
-  openQuickCatBtn?.addEventListener('click', openQuickCategoryModal);
   closeQuickCatBtn?.addEventListener('click', closeQuickCategoryModal);
   cancelQuickCatBtn?.addEventListener('click', closeQuickCategoryModal);
 
@@ -1105,7 +3105,6 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     const description = quickCatDesc?.value.trim() || null;
 
     if (!name || !slug) return;
-
     if (saveQuickCatBtn) {
       saveQuickCatBtn.disabled = true;
       saveQuickCatBtn.textContent = 'Creating...';
@@ -1120,8 +3119,6 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       if (res.ok) {
         const createdCat = await res.json();
         categoriesCache.push(createdCat);
-        
-        // Add to select and auto-select newly created category
         if (categorySelect) {
           const opt = document.createElement('option');
           opt.value = createdCat.id;
@@ -1130,17 +3127,16 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           categorySelect.appendChild(opt);
           categorySelect.value = createdCat.id;
         }
-
         closeQuickCategoryModal();
         updateSerp();
       } else {
         const err = await res.json().catch(() => ({}));
         if (quickCatError) {
-          quickCatError.textContent = err.message || 'Failed to create category. Name or slug may already exist.';
+          quickCatError.textContent = err.message || 'Failed to create category.';
           quickCatError.classList.remove('hidden');
         }
       }
-    } catch (e: any) {
+    } catch (_) {
       if (quickCatError) {
         quickCatError.textContent = 'Network error while creating category.';
         quickCatError.classList.remove('hidden');
@@ -1153,13 +3149,72 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }
   });
 
+  // Public Layout Live Preview Modal & Markdown Preview Handler
+  const previewModal = document.getElementById('live-preview-modal');
+  document.getElementById('preview-btn')?.addEventListener('click', () => {
+    // If in Markdown Editor mode, trigger the dedicated reading-layout preview surface
+    if (currentEditorMode === 'markdown') {
+      showMarkdownPreview();
+      return;
+    }
+
+    // In Visual Editor mode, open the public layout modal preview
+    const title = titleInput?.value || 'Untitled Article';
+    const excerpt = excerptInput?.value || '';
+    const cat = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
+
+    const modalTitle = document.getElementById('prev-modal-title');
+    const modalCat = document.getElementById('prev-modal-cat');
+    const modalExcerpt = document.getElementById('prev-modal-excerpt');
+    const modalContent = document.getElementById('prev-modal-content');
+    const modalCoverBox = document.getElementById('prev-modal-cover-box');
+    const modalCoverImg = document.getElementById('prev-modal-cover-img') as HTMLImageElement | null;
+    const modalCoverCaption = document.getElementById('prev-modal-cover-caption');
+
+    if (modalTitle) modalTitle.textContent = title;
+    if (modalCat) modalCat.textContent = cat;
+    if (modalExcerpt) modalExcerpt.textContent = excerpt;
+
+    if (modalContent) modalContent.innerHTML = editor.getHTML();
+
+    const coverUrl = coverImageInput?.value.trim();
+    if (coverUrl && modalCoverBox && modalCoverImg) {
+      modalCoverImg.src = coverUrl;
+      modalCoverImg.alt = imageAltInput?.value || title;
+      if (modalCoverCaption) modalCoverCaption.textContent = imageCaptionInput?.value || '';
+      modalCoverBox.classList.remove('hidden');
+    } else if (modalCoverBox) {
+      modalCoverBox.classList.add('hidden');
+    }
+
+    previewModal?.classList.remove('hidden');
+    previewModal?.classList.add('flex');
+  });
+
+  document.getElementById('close-preview-modal')?.addEventListener('click', () => {
+    previewModal?.classList.add('hidden');
+    previewModal?.classList.remove('flex');
+  });
+
+  // Document Overview Trigger
+  document.getElementById('document-overview-trigger')?.addEventListener('click', () => {
+    outlineDrawer?.classList.remove('hidden');
+    updateDocumentOutline();
+  });
+
+  // Helper Slugify
+  function slugify(text: string): string {
+    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+  }
+
+  // Initialization
   async function init() {
-    // 1. Fetch categories
+    // 1. Categories
     const catRes = await apiFetch('/categories');
     if (catRes.ok) {
       categoriesCache = await catRes.json();
       if (categorySelect) {
-        categorySelect.innerHTML = '<option value="">Select a category...</option>' + 
+        categorySelect.innerHTML = '<option value="">Select a blog category...</option>' + 
           categoriesCache.map((c: any) => `<option value="${c.id}">${c.name}</option>`).join('');
       }
     }
@@ -1194,18 +3249,21 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           authorDisplay.textContent = post.author.name;
         }
 
+        if (docVersionDisplay) docVersionDisplay.textContent = `${post.version}`;
+
         if (post.htmlContent) {
           editor.commands.setContent(post.htmlContent);
+          if (markdownTextarea) {
+            markdownTextarea.value = turndownService.turndown(post.htmlContent);
+            updateLineNumbers();
+          }
         }
       }
     }
 
     updateMetrics();
     updateSerp();
-  }
-
-  function slugify(text: string): string {
-    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+    updateDocumentOutline();
   }
 
   init();

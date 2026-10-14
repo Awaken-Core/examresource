@@ -25,11 +25,16 @@
     "@tiptap/extension-table-row": "^3.32.0",
     "@tiptap/extension-underline": "^3.32.0",
     "@tiptap/starter-kit": "^3.32.0",
+    "@types/dompurify": "^3.2.0",
     "astro": "^7.3.8",
+    "dompurify": "^3.4.17",
+    "marked": "^18.1.1",
+    "turndown": "^7.2.4",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@types/turndown": "^5.0.6",
     "tailwindcss": "^4.3.3"
   }
 }
