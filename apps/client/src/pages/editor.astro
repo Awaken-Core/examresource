@@ -235,8 +235,8 @@ import AdminLayout from '../layouts/AdminLayout.astro';
             <div>
               <label class="block font-semibold text-slate-700 mb-1">URL Slug</label>
               <div class="flex items-center bg-white border border-slate-300 rounded-md px-2 py-1.5">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   id="field-slug"
                   placeholder="article-slug"
                   class="w-full bg-transparent font-mono text-slate-800 outline-none text-xs"
@@ -269,12 +269,17 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           <div class="accordion-content px-5 pb-5 pt-1 space-y-3.5">
             <div>
               <label class="block font-semibold text-slate-700 mb-1">Image URL</label>
-              <input 
-                type="text" 
-                id="field-cover-image"
-                placeholder="https://... or /images/..."
-                class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
-              />
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  id="field-cover-image"
+                  placeholder="https://... or /images/..."
+                  class="min-w-0 flex-1 bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                />
+                <button type="button" id="upload-cover-image-btn" class="px-3 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition">Upload</button>
+              </div>
+              <input id="cover-image-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" />
+              <p id="cover-upload-status" class="hidden mt-1 text-[11px] text-slate-500"></p>
             </div>
 
             <!-- Preview Container -->
@@ -637,6 +642,9 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   const scheduledAtInput = document.getElementById('field-scheduled-at') as HTMLInputElement | null;
   const scheduleDateGroup = document.getElementById('schedule-date-group');
   const coverImageInput = document.getElementById('field-cover-image') as HTMLInputElement | null;
+  const coverImageFileInput = document.getElementById('cover-image-file-input') as HTMLInputElement | null;
+  const uploadCoverImageBtn = document.getElementById('upload-cover-image-btn') as HTMLButtonElement | null;
+  const coverUploadStatus = document.getElementById('cover-upload-status');
   const imageAltInput = document.getElementById('field-image-alt') as HTMLInputElement | null;
   const imageCaptionInput = document.getElementById('field-image-caption') as HTMLInputElement | null;
   const imagePreviewBox = document.getElementById('image-preview-box');
@@ -664,6 +672,46 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   let currentVersion = 1;
   let isDirty = false;
   let categoriesCache: any[] = [];
+
+  async function uploadImage(file: File): Promise<string> {
+    const signResponse = await apiFetch('/uploads/images/sign', {
+      method: 'POST',
+      body: JSON.stringify({ contentType: file.type, size: file.size }),
+    });
+    const signed = await signResponse.json().catch(() => null);
+    if (!signResponse.ok || !signed?.uploadUrl || !signed?.publicUrl) {
+      throw new Error(signed?.message || 'Unable to prepare the image upload.');
+    }
+
+    const uploadResponse = await fetch(signed.uploadUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type },
+      body: file,
+    });
+    if (!uploadResponse.ok) {
+      throw new Error('R2 rejected the upload. Check the bucket CORS policy and try again.');
+    }
+    return signed.publicUrl;
+  }
+
+  uploadCoverImageBtn?.addEventListener('click', () => coverImageFileInput?.click());
+  coverImageFileInput?.addEventListener('change', async () => {
+    const file = coverImageFileInput.files?.[0];
+    if (!file || !coverImageInput) return;
+    coverUploadStatus?.classList.remove('hidden');
+    if (coverUploadStatus) coverUploadStatus.textContent = 'Uploading image...';
+    if (uploadCoverImageBtn) uploadCoverImageBtn.disabled = true;
+    try {
+      coverImageInput.value = await uploadImage(file);
+      if (coverUploadStatus) coverUploadStatus.textContent = 'Uploaded to Cloudflare R2.';
+      updateSerp();
+    } catch (error) {
+      if (coverUploadStatus) coverUploadStatus.textContent = error instanceof Error ? error.message : 'Image upload failed.';
+    } finally {
+      if (uploadCoverImageBtn) uploadCoverImageBtn.disabled = false;
+      coverImageFileInput.value = '';
+    }
+  });
 
   // Options Menu
   const optionsBtn = document.getElementById('editor-options-menu-btn');
