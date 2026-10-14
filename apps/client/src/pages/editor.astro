@@ -597,12 +597,25 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 
   const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
+  let authTokenPromise: Promise<string | null> | undefined;
+
   async function getAuthToken(): Promise<string | null> {
-    const clerk = (window as any).Clerk;
-    if (clerk && clerk.session) {
-      return clerk.session.getToken();
-    }
-    return null;
+    authTokenPromise ??= (async () => {
+      // The page script can run before Clerk finishes restoring its session.
+      // Wait briefly so protected requests never leave without a token.
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        const clerk = (window as any).Clerk;
+        if (clerk?.loaded && clerk.session) {
+          return clerk.session.getToken().catch(() => null);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      return null;
+    })();
+
+    const token = await authTokenPromise;
+    if (!token) authTokenPromise = undefined;
+    return token;
   }
 
   async function apiFetch(endpoint: string, options: RequestInit = {}) {

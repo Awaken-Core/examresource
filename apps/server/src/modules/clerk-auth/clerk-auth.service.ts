@@ -1,6 +1,6 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { createClerkClient, verifyToken } from '@clerk/backend';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import type { Request } from 'express';
 import { randomUUID } from 'node:crypto';
 import { db } from '../../core/config/db.js';
@@ -20,16 +20,12 @@ export class ClerkAuthService {
   private readonly clerk = createClerkClient({ secretKey: env.CLERK_SECRET_KEY });
 
   async requireUser(req: Request): Promise<CurrentUser> {
-    // Allow development bypass if auth header is missing or in development mode
+    // Never infer a privileged identity from a missing or invalid credential.
+    // Local development must use a real Clerk session (or an explicitly seeded
+    // account) just like every other environment.
     const authHeader = req.header('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return {
-        id: '00000000-0000-0000-0000-000000000001',
-        clerkUserId: 'dev_admin_user',
-        name: 'Local Admin (Dev)',
-        email: 'admin@examresource.local',
-        role: 'admin',
-      };
+      throw new UnauthorizedException('Authentication is required.');
     }
 
     const token = this.bearerToken(req);
@@ -37,24 +33,11 @@ export class ClerkAuthService {
     try {
       payload = await verifyToken(token, { secretKey: env.CLERK_SECRET_KEY });
     } catch {
-      // In dev fallback to dev admin instead of rejecting
-      return {
-        id: '00000000-0000-0000-0000-000000000001',
-        clerkUserId: 'dev_admin_user',
-        name: 'Local Admin (Dev)',
-        email: 'admin@examresource.local',
-        role: 'admin',
-      };
+      throw new UnauthorizedException('Authentication token is invalid or expired.');
     }
     const clerkUserId = payload.sub;
     if (!clerkUserId) {
-      return {
-        id: '00000000-0000-0000-0000-000000000001',
-        clerkUserId: 'dev_admin_user',
-        name: 'Local Admin (Dev)',
-        email: 'admin@examresource.local',
-        role: 'admin',
-      };
+      throw new UnauthorizedException('Authentication token is invalid.');
     }
 
     let [user] = await db.select().from(users).where(eq(users.clerkUserId, clerkUserId)).limit(1);
@@ -108,5 +91,55 @@ export class ClerkAuthService {
 
   async suspendProfile(clerkUserId: string) {
     await db.update(users).set({ status: 'suspended', updatedAt: new Date() }).where(eq(users.clerkUserId, clerkUserId));
+  }
+
+  async listUsers(req: Request) {
+    await this.requireAdmin(req);
+    return db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .orderBy(desc(users.createdAt));
+  }
+
+  async updateUserRole(
+    req: Request,
+    userId: string,
+    role: CurrentUser['role'],
+  ) {
+    const currentUser = await this.requireAdmin(req);
+    if (currentUser.id === userId && role !== 'admin') {
+      throw new ForbiddenException('You cannot remove your own administrator access.');
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({ role, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
+        createdAt: users.createdAt,
+      });
+
+    if (!updatedUser) throw new NotFoundException('User not found.');
+    return updatedUser;
+  }
+
+  private async requireAdmin(req: Request) {
+    const user = await this.requireUser(req);
+    if (user.role !== 'admin') {
+      throw new ForbiddenException('Administrator access is required.');
+    }
+    return user;
   }
 }
