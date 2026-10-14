@@ -1,0 +1,131 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Users" activeNav="users">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-2xs">
+      <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">User access</h1>
+      <p class="text-xs text-slate-500 mt-1">Assign roles for the CMS. Administrators manage the site; editors can manage only their own articles.</p>
+    </div>
+
+    <div id="users-error" class="hidden mt-5 p-3 rounded-lg border border-red-200 bg-red-50 text-xs text-red-800"></div>
+    <div id="users-success" class="hidden mt-5 p-3 rounded-lg border border-emerald-200 bg-emerald-50 text-xs text-emerald-800"></div>
+
+    <div class="mt-5 bg-white border border-slate-200 rounded-lg overflow-hidden shadow-2xs">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-xs text-left divide-y divide-slate-100">
+          <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4">User</th>
+              <th class="py-3 px-3">Email</th>
+              <th class="py-3 px-3">Status</th>
+              <th class="py-3 px-4 text-right">Role</th>
+            </tr>
+          </thead>
+          <tbody id="users-table" class="divide-y divide-slate-100 text-slate-800">
+            <tr><td colspan="4" class="py-8 text-center text-slate-400">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+  const table = document.getElementById('users-table');
+  const errorBanner = document.getElementById('users-error');
+  const successBanner = document.getElementById('users-success');
+  let currentUserId = '';
+
+  type User = { id: string; name: string; email: string; role: 'student' | 'editor' | 'admin'; status: string };
+
+  function showMessage(element: HTMLElement | null, message: string) {
+    if (!element) return;
+    element.textContent = message;
+    element.classList.remove('hidden');
+  }
+
+  async function getToken() {
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+      const clerk = (window as any).Clerk;
+      if (clerk?.loaded && clerk.session) return clerk.session.getToken().catch(() => null);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return null;
+  }
+
+  async function apiFetch(path: string, options: RequestInit = {}) {
+    const token = await getToken();
+    const headers = new Headers(options.headers);
+    if (token) headers.set('Authorization', `Bearer ${token}`);
+    if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+    return fetch(`${apiUrl}${path}`, { ...options, headers });
+  }
+
+  function escapeHtml(value: string) {
+    const node = document.createElement('div');
+    node.textContent = value;
+    return node.innerHTML;
+  }
+
+  function renderUsers(users: User[]) {
+    if (!table) return;
+    if (!users.length) {
+      table.innerHTML = '<tr><td colspan="4" class="py-8 text-center text-slate-400">No users found.</td></tr>';
+      return;
+    }
+    table.innerHTML = users.map((user) => {
+      const isCurrentUser = user.id === currentUserId;
+      return `<tr>
+        <td class="py-3 px-4 font-semibold text-slate-900">${escapeHtml(user.name || 'Unnamed user')}</td>
+        <td class="py-3 px-3 text-slate-600">${escapeHtml(user.email)}</td>
+        <td class="py-3 px-3"><span class="text-emerald-700">${escapeHtml(user.status)}</span></td>
+        <td class="py-3 px-4 text-right">
+          <select class="role-select border border-slate-200 rounded-md px-2 py-1.5 text-xs text-slate-700" data-id="${user.id}" ${isCurrentUser ? 'disabled title="You cannot remove your own admin role"' : ''}>
+            ${['student', 'editor', 'admin'].map((role) => `<option value="${role}" ${user.role === role ? 'selected' : ''}>${role[0].toUpperCase()}${role.slice(1)}</option>`).join('')}
+          </select>
+        </td>
+      </tr>`;
+    }).join('');
+
+    document.querySelectorAll<HTMLSelectElement>('.role-select').forEach((select) => {
+      select.addEventListener('change', async () => {
+        const role = select.value;
+        const id = select.dataset.id;
+        if (!id || !confirm(`Change this user's role to ${role}?`)) {
+          await loadUsers();
+          return;
+        }
+        select.disabled = true;
+        const response = await apiFetch(`/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) });
+        if (!response.ok) {
+          const result = await response.json().catch(() => null);
+          showMessage(errorBanner, result?.message || 'Unable to update the user role.');
+        } else {
+          showMessage(successBanner, 'User role updated.');
+        }
+        await loadUsers();
+      });
+    });
+  }
+
+  async function loadUsers() {
+    errorBanner?.classList.add('hidden');
+    const meResponse = await apiFetch('/me');
+    if (!meResponse.ok) {
+      showMessage(errorBanner, 'Your session could not be verified. Please sign in again.');
+      return;
+    }
+    currentUserId = (await meResponse.json()).id;
+    const response = await apiFetch('/users');
+    if (!response.ok) {
+      showMessage(errorBanner, response.status === 403 ? 'Administrator access is required.' : 'Unable to load users.');
+      return;
+    }
+    renderUsers(await response.json());
+  }
+
+  loadUsers().catch(() => showMessage(errorBanner, 'Unable to load users.'));
+</script>
