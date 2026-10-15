@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, ServiceUnavailableException } from '@nestjs/common';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'node:crypto';
 import { env } from '../../core/config/env.js';
@@ -16,6 +16,44 @@ const imageExtensions: Record<string, string> = {
 @Injectable()
 export class MediaService {
   private readonly client = this.createClient();
+
+  async listMedia(user: CurrentUser, prefix = 'blog-images/') {
+    if (user.role === 'student') {
+      throw new ForbiddenException('Editor access is required to access media library.');
+    }
+    if (!this.client || !env.R2_BUCKET || !env.R2_PUBLIC_BASE_URL) {
+      throw new ServiceUnavailableException('Media storage is not configured.');
+    }
+
+    try {
+      const command = new ListObjectsV2Command({
+        Bucket: env.R2_BUCKET,
+        Prefix: prefix,
+        MaxKeys: 100,
+      });
+      const response = await this.client.send(command);
+      const baseUrl = env.R2_PUBLIC_BASE_URL.replace(/\/$/, '');
+
+      const items = (response.Contents || [])
+        .filter((item) => item.Key && !item.Key.endsWith('/'))
+        .sort((a, b) => (b.LastModified?.getTime() ?? 0) - (a.LastModified?.getTime() ?? 0))
+        .map((item) => {
+          const key = item.Key!;
+          const filename = key.split('/').pop() || key;
+          return {
+            key,
+            url: `${baseUrl}/${key}`,
+            filename,
+            size: item.Size ?? 0,
+            lastModified: item.LastModified?.toISOString() ?? new Date().toISOString(),
+          };
+        });
+
+      return { items };
+    } catch (error: any) {
+      throw new ServiceUnavailableException(error.message || 'Failed to list media items from storage.');
+    }
+  }
 
   async createImageUploadUrl(
     user: CurrentUser,
