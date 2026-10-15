@@ -1178,10 +1178,10 @@ html.admin-theme.theme-dark .ProseMirror hr {
     grid-column: 2;
     grid-row: 1 / span 2;
     position: sticky;
-    top: 104px;
+    top: 110px;
     display: flex;
-    height: calc(100dvh - 120px);
-    max-height: calc(100dvh - 120px);
+    height: calc(100dvh - 126px);
+    max-height: calc(100dvh - 126px);
     flex-direction: column;
   }
 }
@@ -1192,7 +1192,7 @@ html.admin-theme.theme-dark .ProseMirror hr {
 .blog-reading-view h4,
 .blog-reading-view h5,
 .blog-reading-view h6 {
-  scroll-margin-top: 7.5rem;
+  scroll-margin-top: 8rem;
 }
 
 .toc-link.is-active {
