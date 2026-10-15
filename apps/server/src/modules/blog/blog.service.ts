@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, inArray, ilike, or, sql, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, ilike, ne, or, sql, lte } from 'drizzle-orm';
 import { db } from '../../core/config/db.js';
 import {
   blogBlocks,
@@ -28,6 +28,7 @@ import type {
 } from './dto/blog.dto.js';
 import { htmlToBlocks, blocksToHtml } from './blog-content.adapter.js';
 import { createBlogPublishedNotification } from '../notifications/notification.store.js';
+import { GeminiService } from './gemini.service.js';
 
 type CurrentUser = {
   id: string;
@@ -36,6 +37,7 @@ type CurrentUser = {
 
 @Injectable()
 export class BlogService {
+  constructor(private readonly gemini: GeminiService) {}
   // ==========================================
   // Public Blog Endpoints (SEO & SSR)
   // ==========================================
@@ -44,6 +46,7 @@ export class BlogService {
     categorySlug?: string;
     tagSlug?: string;
     search?: string;
+    language?: 'HINGLISH' | 'ENGLISH';
     limit?: number;
     offset?: number;
   }) {
@@ -56,6 +59,8 @@ export class BlogService {
         id: blogs.id,
         title: blogs.title,
         slug: blogs.slug,
+        language: blogs.language,
+        translationGroupId: blogs.translationGroupId,
         description: blogs.description,
         coverImage: blogs.coverImage,
         imageAlt: blogs.imageAlt,
@@ -87,6 +92,9 @@ export class BlogService {
           options?.categorySlug
             ? eq(categories.slug, options.categorySlug)
             : undefined,
+          options?.language
+            ? eq(blogs.language, options.language)
+            : undefined,
           options?.search
             ? or(
                 ilike(blogs.title, `%${options.search}%`),
@@ -103,13 +111,27 @@ export class BlogService {
     return rows;
   }
 
-  async getPublished(slug: string) {
+  async getPublished(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
     const now = new Date();
+    const conditions = [
+      eq(blogs.slug, slug),
+      or(
+        eq(blogs.status, 'PUBLISHED'),
+        and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
+      ),
+    ];
+
+    if (language) {
+      conditions.push(eq(blogs.language, language));
+    }
+
     const [blog] = await db
       .select({
         id: blogs.id,
         title: blogs.title,
         slug: blogs.slug,
+        language: blogs.language,
+        translationGroupId: blogs.translationGroupId,
         description: blogs.description,
         coverImage: blogs.coverImage,
         imageAlt: blogs.imageAlt,
@@ -134,15 +156,7 @@ export class BlogService {
       .from(blogs)
       .innerJoin(users, eq(blogs.authorId, users.id))
       .leftJoin(categories, eq(blogs.categoryId, categories.id))
-      .where(
-        and(
-          eq(blogs.slug, slug),
-          or(
-            eq(blogs.status, 'PUBLISHED'),
-            and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-          ),
-        ),
-      )
+      .where(and(...conditions))
       .limit(1);
 
     if (!blog) {
@@ -169,6 +183,33 @@ export class BlogService {
       throw new NotFoundException('Blog was not found.');
     }
 
+    // Lookup alternate language translation if translationGroupId is present
+    let alternatePost: { slug: string; language: 'HINGLISH' | 'ENGLISH'; categorySlug: string | null } | null = null;
+    if (blog.translationGroupId) {
+      const [alt] = await db
+        .select({
+          slug: blogs.slug,
+          language: blogs.language,
+          categorySlug: categories.slug,
+        })
+        .from(blogs)
+        .leftJoin(categories, eq(blogs.categoryId, categories.id))
+        .where(
+          and(
+            eq(blogs.translationGroupId, blog.translationGroupId),
+            ne(blogs.id, blog.id),
+            or(
+              eq(blogs.status, 'PUBLISHED'),
+              and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
+            ),
+          ),
+        )
+        .limit(1);
+      if (alt) {
+        alternatePost = alt;
+      }
+    }
+
     const blocks = await this.getBlocks(blog.id);
     const postTagsList = await this.getBlogTags(blog.id);
     const html = blocksToHtml(blocks as any);
@@ -178,6 +219,7 @@ export class BlogService {
       blocks,
       tags: postTagsList,
       htmlContent: html,
+      alternatePost,
     };
   }
 
@@ -197,6 +239,7 @@ export class BlogService {
     return db
       .select({
         slug: blogs.slug,
+        language: blogs.language,
         categorySlug: categories.slug,
         updatedAt: blogs.updatedAt,
         publishedAt: blogs.publishedAt,
@@ -270,6 +313,8 @@ export class BlogService {
         coverImage: blogs.coverImage,
         imageAlt: blogs.imageAlt,
         status: blogs.status,
+        language: blogs.language,
+        translationGroupId: blogs.translationGroupId,
         publishedAt: blogs.publishedAt,
         scheduledAt: blogs.scheduledAt,
         version: blogs.version,
@@ -307,20 +352,54 @@ export class BlogService {
     const postTagsList = await this.getBlogTags(blog.id);
     const html = blocksToHtml(blocks as any);
 
+    let linkedBlog: any = null;
+    if (blog.translationGroupId) {
+      const [alt] = await db
+        .select()
+        .from(blogs)
+        .where(
+          and(
+            eq(blogs.translationGroupId, blog.translationGroupId),
+            ne(blogs.id, blog.id),
+          ),
+        )
+        .limit(1);
+      if (alt) {
+        const altBlocks = await this.getBlocks(alt.id);
+        linkedBlog = {
+          ...alt,
+          blocks: altBlocks,
+          htmlContent: blocksToHtml(altBlocks as any),
+        };
+      }
+    }
+
     return {
       ...blog,
       blocks,
       tags: postTagsList,
       htmlContent: html,
+      linkedBlog,
     };
   }
 
   async create(input: CreateBlogInput, currentUser: CurrentUser) {
     this.assertCanWrite(currentUser);
+    const authorId = await this.resolveAuthorId(input.authorId, currentUser);
+
+    // If an existing draft with this slug already exists for this author, update it instead of duplicating
+    const [existingDraft] = await db
+      .select({ id: blogs.id, status: blogs.status })
+      .from(blogs)
+      .where(and(eq(blogs.slug, input.slug), eq(blogs.authorId, authorId)))
+      .limit(1);
+
+    if (existingDraft && existingDraft.status === 'DRAFT') {
+      return this.update(existingDraft.id, input, currentUser);
+    }
 
     // Validate slug uniqueness proactively
     await this.assertSlugAvailable(input.slug);
-    const authorId = await this.resolveAuthorId(input.authorId, currentUser);
 
     try {
       const created = await db.transaction(async (tx) => {
@@ -346,6 +425,8 @@ export class BlogService {
             metaDescription: input.metaDescription,
             canonicalUrl: input.canonicalUrl || null,
             noindex: input.noindex ?? false,
+            language: input.language ?? 'HINGLISH',
+            translationGroupId: input.translationGroupId || null,
             status,
             publishedAt,
             scheduledAt,
@@ -469,6 +550,11 @@ export class BlogService {
                 ? input.canonicalUrl
                 : existing.canonicalUrl,
             noindex: input.noindex ?? existing.noindex,
+            language: input.language ?? existing.language,
+            translationGroupId:
+              input.translationGroupId !== undefined
+                ? input.translationGroupId
+                : existing.translationGroupId,
             status,
             publishedAt,
             scheduledAt,
@@ -594,7 +680,12 @@ export class BlogService {
 
   async remove(id: string, currentUser: CurrentUser) {
     const existing = await this.findManageable(id, currentUser);
-    await db.delete(blogs).where(eq(blogs.id, existing.id));
+    await db.transaction(async (tx) => {
+      await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, existing.id));
+      await tx.delete(blogTags).where(eq(blogTags.blogId, existing.id));
+      await tx.delete(blogRevisions).where(eq(blogRevisions.blogId, existing.id));
+      await tx.delete(blogs).where(eq(blogs.id, existing.id));
+    });
   }
 
   // Revision history list
@@ -1016,6 +1107,336 @@ export class BlogService {
     if (!available) {
       throw new ConflictException('This URL slug is already taken.');
     }
+  }
+
+  async translateBlog(
+    id: string,
+    targetLanguage: 'HINGLISH' | 'ENGLISH',
+    currentUser: CurrentUser,
+  ) {
+    this.assertCanWrite(currentUser);
+    const source = await this.getManageable(id, currentUser);
+
+    // Ensure source has a translationGroupId
+    let translationGroupId = source.translationGroupId;
+    if (!translationGroupId) {
+      translationGroupId = crypto.randomUUID();
+      await db
+        .update(blogs)
+        .set({ translationGroupId })
+        .where(eq(blogs.id, source.id));
+    }
+
+    // Check if translation already exists for targetLanguage in this group
+    const [existingTranslation] = await db
+      .select({ id: blogs.id, slug: blogs.slug })
+      .from(blogs)
+      .where(
+        and(
+          eq(blogs.translationGroupId, translationGroupId),
+          eq(blogs.language, targetLanguage),
+        ),
+      )
+      .limit(1);
+
+    if (existingTranslation) {
+      throw new BadRequestException(
+        `A ${targetLanguage} translation already exists for this article (Slug: ${existingTranslation.slug}).`,
+      );
+    }
+
+    const sourceBlocks = (source.blocks || []).map((b: any) => ({
+      type: b.type,
+      value: b.value,
+      metadata: b.metadata,
+    }));
+
+    const translated = await this.gemini.translateArticle({
+      title: source.title,
+      description: source.description,
+      targetLanguage,
+      blocks: sourceBlocks,
+      htmlContent: source.htmlContent,
+      metaTitle: source.metaTitle,
+      metaDescription: source.metaDescription,
+      imageAlt: source.imageAlt,
+    });
+
+    // Generate unique slug for translation
+    let baseSlug = `${source.slug.replace(/-(hinglish|english)$/, '')}${translated.slugSuffix}`;
+    let uniqueSlug = baseSlug;
+    let counter = 1;
+    while (true) {
+      const available = await this.isSlugAvailable(uniqueSlug);
+      if (available) break;
+      uniqueSlug = `${baseSlug}-${counter++}`;
+    }
+
+    // Create new translation draft
+    const tagIds = (source.tags || []).map((t: any) => t.id);
+    const created = await this.create(
+      {
+        title: translated.title,
+        slug: uniqueSlug,
+        description: translated.description,
+        coverImage: source.coverImage,
+        imageAlt: translated.imageAlt,
+        imageCaption: source.imageCaption,
+        categoryId: source.categoryId || null,
+        metaTitle: translated.metaTitle,
+        metaDescription: translated.metaDescription,
+        canonicalUrl: source.canonicalUrl,
+        noindex: source.noindex,
+        language: targetLanguage,
+        translationGroupId,
+        status: 'DRAFT',
+        tagIds,
+        blocks: translated.blocks as any,
+      },
+      currentUser,
+    );
+
+    return created;
+  }
+
+  async getSeoSuggestions(
+    input: {
+      blogId?: string;
+      title?: string;
+      description?: string;
+      content?: string;
+      language?: 'HINGLISH' | 'ENGLISH';
+    },
+    currentUser: CurrentUser,
+  ) {
+    this.assertCanWrite(currentUser);
+
+    let title = input.title || '';
+    let description = input.description || '';
+    let content = input.content || '';
+    let language = input.language || 'HINGLISH';
+
+    if (input.blogId) {
+      const post = await this.getManageable(input.blogId, currentUser);
+      title = title || post.title;
+      description = description || post.description || '';
+      language = (post.language as any) || language;
+      if (!content) {
+        content =
+          post.htmlContent ||
+          (post.blocks || []).map((b: any) => b.value).join('\n\n');
+      }
+    }
+
+    if (!title && !content) {
+      throw new BadRequestException(
+        'Title or content is required for SEO optimization analysis.',
+      );
+    }
+
+    return this.gemini.optimizeSeo({
+      title,
+      description,
+      content,
+      language,
+    });
+  }
+
+  async translateMarkdownContent(
+    input: {
+      title: string;
+      markdown: string;
+      sourceLanguage?: 'AUTO' | 'HINGLISH' | 'ENGLISH';
+      targetLanguage?: 'HINGLISH' | 'ENGLISH';
+    },
+    currentUser: CurrentUser,
+  ) {
+    this.assertCanWrite(currentUser);
+    if (!input.title && !input.markdown) {
+      throw new BadRequestException('Title or markdown content is required.');
+    }
+    return this.gemini.translateMarkdownContent(input);
+  }
+
+  async saveBilingual(
+    input: {
+      translationGroupId?: string;
+      categoryId?: string | null;
+      coverImage?: string | null;
+      imageAlt?: string | null;
+      tagIds?: string[];
+      status?: 'DRAFT' | 'PUBLISHED' | 'SCHEDULED';
+      hinglish: {
+        id?: string;
+        title: string;
+        slug: string;
+        markdown?: string;
+        htmlContent?: string;
+        metaTitle?: string;
+        metaDescription?: string;
+        excerpt?: string;
+      };
+      english: {
+        id?: string;
+        title: string;
+        slug: string;
+        markdown?: string;
+        htmlContent?: string;
+        metaTitle?: string;
+        metaDescription?: string;
+        excerpt?: string;
+      };
+    },
+    currentUser: CurrentUser,
+  ) {
+    this.assertCanWrite(currentUser);
+    const translationGroupId = input.translationGroupId || crypto.randomUUID();
+    const status = input.status || 'DRAFT';
+
+    let hinglishHtml = input.hinglish.htmlContent || input.hinglish.markdown || '';
+    if (hinglishHtml === '[object Promise]') hinglishHtml = input.hinglish.markdown || '';
+    let englishHtml = input.english.htmlContent || input.english.markdown || '';
+    if (englishHtml === '[object Promise]') englishHtml = input.english.markdown || '';
+
+    // 0. Auto-resolve existing draft IDs to guarantee update instead of duplicate draft copies
+    if (translationGroupId) {
+      const existingInGroup = await db
+        .select({ id: blogs.id, language: blogs.language })
+        .from(blogs)
+        .where(eq(blogs.translationGroupId, translationGroupId));
+
+      for (const item of existingInGroup) {
+        if (item.language === 'HINGLISH' && !input.hinglish.id) {
+          input.hinglish.id = item.id;
+        }
+        if (item.language === 'ENGLISH' && !input.english.id) {
+          input.english.id = item.id;
+        }
+      }
+    }
+
+    if (!input.hinglish.id && input.hinglish.slug) {
+      const [existingHinglish] = await db
+        .select({ id: blogs.id })
+        .from(blogs)
+        .where(and(eq(blogs.slug, input.hinglish.slug), eq(blogs.authorId, currentUser.id)))
+        .limit(1);
+      if (existingHinglish) {
+        input.hinglish.id = existingHinglish.id;
+      }
+    }
+
+    if (!input.english.id && input.english.slug) {
+      const [existingEnglish] = await db
+        .select({ id: blogs.id })
+        .from(blogs)
+        .where(and(eq(blogs.slug, input.english.slug), eq(blogs.authorId, currentUser.id)))
+        .limit(1);
+      if (existingEnglish) {
+        input.english.id = existingEnglish.id;
+      }
+    }
+
+    // 1. Save or update Hinglish article
+    let hinglishPost;
+    if (input.hinglish.id) {
+      hinglishPost = await this.update(
+        input.hinglish.id,
+        {
+          title: input.hinglish.title,
+          slug: input.hinglish.slug,
+          description: input.hinglish.excerpt,
+          coverImage: input.coverImage,
+          imageAlt: input.imageAlt,
+          categoryId: input.categoryId || null,
+          metaTitle: input.hinglish.metaTitle,
+          metaDescription: input.hinglish.metaDescription,
+          language: 'HINGLISH',
+          translationGroupId,
+          status,
+          htmlContent: hinglishHtml,
+          tagIds: input.tagIds,
+        },
+        currentUser,
+      );
+    } else {
+      hinglishPost = await this.create(
+        {
+          title: input.hinglish.title,
+          slug: input.hinglish.slug,
+          description: input.hinglish.excerpt,
+          coverImage: input.coverImage,
+          imageAlt: input.imageAlt,
+          categoryId: input.categoryId || null,
+          metaTitle: input.hinglish.metaTitle,
+          metaDescription: input.hinglish.metaDescription,
+          language: 'HINGLISH',
+          translationGroupId,
+          status,
+          htmlContent: hinglishHtml,
+          tagIds: input.tagIds,
+        },
+        currentUser,
+      );
+    }
+
+    // 2. Save or update English article
+    let englishPost;
+    if (input.english.id) {
+      englishPost = await this.update(
+        input.english.id,
+        {
+          title: input.english.title,
+          slug: input.english.slug,
+          description: input.english.excerpt,
+          coverImage: input.coverImage,
+          imageAlt: input.imageAlt,
+          categoryId: input.categoryId || null,
+          metaTitle: input.english.metaTitle,
+          metaDescription: input.english.metaDescription,
+          language: 'ENGLISH',
+          translationGroupId,
+          status,
+          htmlContent: englishHtml,
+          tagIds: input.tagIds,
+        },
+        currentUser,
+      );
+    } else {
+      englishPost = await this.create(
+        {
+          title: input.english.title,
+          slug: input.english.slug,
+          description: input.english.excerpt,
+          coverImage: input.coverImage,
+          imageAlt: input.imageAlt,
+          categoryId: input.categoryId || null,
+          metaTitle: input.english.metaTitle,
+          metaDescription: input.english.metaDescription,
+          language: 'ENGLISH',
+          translationGroupId,
+          status,
+          htmlContent: englishHtml,
+          tagIds: input.tagIds,
+        },
+        currentUser,
+      );
+    }
+
+    return {
+      translationGroupId,
+      hinglish: hinglishPost,
+      english: englishPost,
+    };
+  }
+
+  /** Delegate generate-from-reference to GeminiService */
+  async generateBilingualFromReference(
+    input: { referenceContent: string; category?: string; additionalInstructions?: string },
+    currentUser?: CurrentUser,
+  ) {
+    if (currentUser) this.assertCanWrite(currentUser);
+    return this.gemini.generateBilingualFromReference(input);
   }
 
   private assertCanWrite(currentUser: CurrentUser) {

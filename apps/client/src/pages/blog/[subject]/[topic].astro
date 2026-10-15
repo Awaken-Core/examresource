@@ -5,6 +5,7 @@ import TableOfContents from '../../../components/blog/TableOfContents.astro';
 import ReadingProgress from '../../../components/blog/ReadingProgress.astro';
 import TopicNavigation from '../../../components/blog/TopicNavigation.astro';
 import AdSlot from '../../../components/blog/AdSlot.astro';
+import LanguageSwitcher from '../../../components/blog/LanguageSwitcher.astro';
 import type { TopicDetail } from '../../../data/blogData';
 
 const { subject: subjectParam, topic: topicParam } = Astro.params;
@@ -37,20 +38,51 @@ let article: TopicDetail;
 let tocItems: { id: string; text: string; level: number }[] = [];
 let htmlBody: string | null = null;
 
+function toHeadingSlug(text: string): string {
+  const s = text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\\+/g, '')
+    .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+  return s || 'section';
+}
+
 if (livePost) {
   htmlBody = livePost.htmlContent || '';
   
-  // Extract TOC headings from HTML
-  const headingRegex = /<h([2-4])\s+id=["']([^"']+)["'][^>]*>(.*?)<\/h\1>/gi;
+  // Extract TOC headings from HTML and ensure all headings have an id attribute
+  const headingRegex = /<h([2-4])(?:\s+([^>]*))?>([\s\S]*?)<\/h\1>/gi;
   let match;
   tocItems.push({ id: 'overview-top', text: livePost.title, level: 2 });
+  let hIdx = 0;
   while ((match = headingRegex.exec(htmlBody)) !== null) {
+    const level = parseInt(match[1], 10);
+    const attrs = match[2] || '';
+    const innerContent = match[3] || '';
+    const cleanText = innerContent.replace(/<[^>]*>/g, '').replace(/\\+/g, '').trim();
+    if (!cleanText) continue;
+    const idMatch = attrs.match(/id=["']([^"']+)["']/i);
+    const id = idMatch ? idMatch[1] : (toHeadingSlug(cleanText) || `heading-${++hIdx}`);
     tocItems.push({
-      level: parseInt(match[1], 10),
-      id: match[2],
-      text: match[3].replace(/<[^>]*>/g, ''),
+      level,
+      id,
+      text: cleanText,
     });
   }
+
+  // Ensure headings in htmlBody have valid id tags matching TOC
+  htmlBody = htmlBody.replace(/<h([2-4])(?:\s+([^>]*))?>([\s\S]*?)<\/h\1>/gi, (_full, lvl, attrs = '', content = '') => {
+    const cleanText = content.replace(/<[^>]*>/g, '').replace(/\\+/g, '').trim();
+    const idMatch = attrs.match(/id=["']([^"']+)["']/i);
+    const id = idMatch ? idMatch[1] : (toHeadingSlug(cleanText) || `heading-${++hIdx}`);
+    const cleanAttrs = attrs.replace(/id=["'][^"']*["']/i, '').trim();
+    return `<h${lvl} id="${id}"${cleanAttrs ? ' ' + cleanAttrs : ''}>${content.replace(/\\+/g, '')}</h${lvl}>`;
+  });
 
   article = {
     slug: livePost.slug,
@@ -164,6 +196,33 @@ const jsonLd = {
     }
   ]
 };
+const currentLanguage = livePost?.language || 'HINGLISH';
+const isHinglish = currentLanguage === 'HINGLISH';
+
+const hinglishUrl = isHinglish
+  ? `/blog/${article.subjectSlug}/${article.slug}`
+  : (livePost?.alternatePost ? `/blog/${livePost.alternatePost.categorySlug || article.subjectSlug}/${livePost.alternatePost.slug}` : `/blog/${article.subjectSlug}/${article.slug}`);
+
+const englishUrl = !isHinglish
+  ? `/blog/${article.subjectSlug}/${article.slug}`
+  : (livePost?.alternatePost ? `/blog/${livePost.alternatePost.categorySlug || article.subjectSlug}/${livePost.alternatePost.slug}` : null);
+
+const siteOrigin = 'https://govtpariksha.com';
+const alternateLinks: { hreflang: string; href: string }[] = [];
+
+if (isHinglish) {
+  alternateLinks.push({ hreflang: 'hi-Latn', href: `${siteOrigin}${hinglishUrl}` });
+  alternateLinks.push({ hreflang: 'x-default', href: `${siteOrigin}${hinglishUrl}` });
+  if (englishUrl) {
+    alternateLinks.push({ hreflang: 'en', href: `${siteOrigin}${englishUrl}` });
+  }
+} else {
+  alternateLinks.push({ hreflang: 'en', href: `${siteOrigin}${englishUrl}` });
+  if (hinglishUrl) {
+    alternateLinks.push({ hreflang: 'hi-Latn', href: `${siteOrigin}${hinglishUrl}` });
+    alternateLinks.push({ hreflang: 'x-default', href: `${siteOrigin}${hinglishUrl}` });
+  }
+}
 ---
 
 <Layout
@@ -174,6 +233,7 @@ const jsonLd = {
   publishedTime={article.publishedDate}
   modifiedTime={article.updatedDate}
   jsonLd={jsonLd}
+  alternateLinks={alternateLinks}
 >
   <div id="overview-top" class="blog-reading-view min-h-screen bg-canvas text-white">
     <div class="article-shell w-full px-4 pt-5 pb-10 sm:px-6 lg:px-8">
@@ -187,10 +247,13 @@ const jsonLd = {
           <span>/</span>
           <span class="truncate font-medium text-white">{article.title}</span>
         </nav>
-        <div class="mb-5 flex flex-wrap items-center gap-2 text-xs text-muted">
-          <span class="rounded bg-accent/10 px-2 py-0.5 font-semibold text-accent">{article.category}</span>
-          <span>{readMinutes} min read</span>
-          <span>Updated {article.updatedDate}</span>
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="rounded bg-accent/10 px-2 py-0.5 font-semibold text-accent">{article.category}</span>
+            <span>{readMinutes} min read</span>
+            <span>Updated {article.updatedDate}</span>
+          </div>
+          <LanguageSwitcher currentLanguage={currentLanguage} hinglishUrl={hinglishUrl} englishUrl={englishUrl} />
         </div>
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">{article.title}</h1>
         {article.description && (

@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 export const blogStatuses = ['DRAFT', 'SCHEDULED', 'PUBLISHED', 'ARCHIVED'] as const;
 
+export const blogLanguages = ['HINGLISH', 'ENGLISH'] as const;
+
 export const blockTypes = [
   'PARAGRAPH',
   'HEADING_1',
@@ -65,6 +67,8 @@ export const createBlogSchema = z.object({
   imageAlt: z.string().trim().max(500).nullable().optional(),
   imageCaption: z.string().trim().max(500).nullable().optional(),
   noindex: z.boolean().optional(),
+  language: z.enum(blogLanguages).optional(),
+  translationGroupId: z.string().uuid().nullable().optional(),
   version: z.number().int().positive().optional(),
   htmlContent: z.string().optional(), // Raw editor HTML to be parsed to blocks if blocks not provided directly
   blocks: z.array(createBlockSchema).max(1_000).optional(),
