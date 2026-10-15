@@ -5,7 +5,7 @@
    Reference: design.md
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 @import "tailwindcss";
 
 /* ============================================================
@@ -26,9 +26,9 @@
   /* ── Font Families ──────────────────────────────────────────
      Usage: font-sans, font-display, font-mono
      ──────────────────────────────────────────────────────── */
-  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Menlo, monospace;
+  --font-mono: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   /* ── Colors ─────────────────────────────────────────────────
      Usage: bg-canvas, text-primary, border-border, etc.
@@ -44,6 +44,7 @@
   --color-subtle: #F3F4F6;
   --color-primary: #292418;
   --color-accent: #327CF6;
+  --color-on-accent: #FFFFFF;
   --color-black: #000000;
 
   /* Semantic Status */
@@ -226,7 +227,7 @@
 @layer components {
   /* ── Buttons ── */
   .btn-primary {
-    @apply bg-accent text-white font-medium text-button-md rounded-pill h-9 px-3
+    @apply bg-accent text-on-accent font-medium text-button-md rounded-pill h-9 px-3
            transition-transform duration-150 ease-out
            hover:scale-105 active:scale-95
            disabled:opacity-50 disabled:cursor-not-allowed;
@@ -278,7 +279,7 @@
 
   .badge-accent {
     @apply inline-flex items-center rounded-lg px-3 py-1.5
-           text-caption-sm font-medium bg-accent text-white;
+           text-caption-sm font-medium bg-accent text-on-accent;
   }
 
   .badge-outline {
@@ -331,7 +332,7 @@
 .prose-markdown,
 .markdown-preview-content,
 .prose-exam {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   color: #1f2328 !important;
   font-size: 17px !important;
   line-height: 1.7 !important;
@@ -707,7 +708,7 @@ html.admin-theme.theme-dark .library-icon {
 .prose-markdown code,
 .markdown-preview-content code,
 .prose-exam code {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important;
+  font-family: var(--font-sans) !important;
   font-size: 14.5px !important;
   background-color: rgba(175, 184, 193, 0.22) !important;
   color: #1f2328 !important;
@@ -720,7 +721,7 @@ html.admin-theme.theme-dark .library-icon {
 .prose-markdown pre,
 .markdown-preview-content pre,
 .prose-exam pre {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important;
+  font-family: var(--font-sans) !important;
   background-color: #161b22 !important;
   color: #e6edf3 !important;
   border: 1px solid #30363d !important;
@@ -1218,7 +1219,7 @@ html.admin-theme.theme-dark .ProseMirror hr {
 }
 
 .blog-reading-view .tf-code-lang {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
