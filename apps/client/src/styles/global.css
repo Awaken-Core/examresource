@@ -619,7 +619,7 @@
   border: 0 !important;
 }
 
-/* Images */
+/* Images & Media */
 .prose-markdown img,
 .markdown-preview-content img,
 .prose-exam img {
@@ -629,6 +629,32 @@
   margin: 0.75rem 0 !important;
   border: 1px solid #d0d7de !important;
 }
+
+/* Video & Embeds (YouTube, Vimeo, etc.) */
+.prose-markdown iframe,
+.markdown-preview-content iframe,
+.prose-exam iframe,
+div[data-youtube-video] iframe {
+  width: 100% !important;
+  aspect-ratio: 16 / 9 !important;
+  height: auto !important;
+  min-height: 240px;
+  border-radius: 0.5rem !important;
+  border: 0 !important;
+  display: block !important;
+  margin: 1rem 0 !important;
+}
+
+div[data-youtube-video] {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+}
+
 
 /* Dark theme overrides for public article reading if active */
 .theme-dark .prose-exam,
