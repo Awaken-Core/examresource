@@ -80,9 +80,20 @@ export function htmlToBlocks(html: string): BlockRecord[] {
         });
         break;
       }
-      case 'ul':
-        blocks.push({ type: 'BULLET_LIST', value: innerContent });
+      case 'ul': {
+        const bulletMatch = attributes.match(/data-bullet=["'](disc|circle|square)["']/i);
+        blocks.push({
+          type: 'BULLET_LIST',
+          value: innerContent,
+          metadata: { bullet: bulletMatch ? bulletMatch[1].toLowerCase() : 'disc' },
+        });
         break;
+      }
+      case 'figure': {
+        const image = readImageTag(innerContent);
+        if (image) blocks.push(image);
+        break;
+      }
       case 'ol':
         blocks.push({ type: 'NUMBERED_LIST', value: innerContent });
         break;
@@ -90,19 +101,8 @@ export function htmlToBlocks(html: string): BlockRecord[] {
         blocks.push({ type: 'DIVIDER', value: '' });
         break;
       case 'img': {
-        const srcMatch = attributes.match(/src=["']([^"']+)["']/i);
-        const altMatch = attributes.match(/alt=["']([^"']*)["']/i);
-        const titleMatch = attributes.match(/title=["']([^"']*)["']/i);
-        if (srcMatch) {
-          blocks.push({
-            type: 'IMAGE',
-            value: srcMatch[1],
-            metadata: {
-              alt: altMatch ? altMatch[1] : '',
-              caption: titleMatch ? titleMatch[1] : '',
-            },
-          });
-        }
+        const image = readImageTag(`<img${attributes}>`);
+        if (image) blocks.push(image);
         break;
       }
       case 'table':
@@ -131,6 +131,17 @@ export function htmlToBlocks(html: string): BlockRecord[] {
       }
       case 'p':
       default: {
+        const onlyCode = innerContent.match(/^<code([^>]*)>([\s\S]*?)<\/code>$/i);
+        if (tagName === 'p' && onlyCode) {
+          const langMatch = onlyCode[1].match(/language-([a-zA-Z0-9_+-]+)/i);
+          const codeText = stripTags(onlyCode[2]);
+          blocks.push({
+            type: 'CODE',
+            value: codeText,
+            metadata: { language: langMatch?.[1] || guessCodeLanguage(codeText) },
+          });
+          break;
+        }
         // If image is inside p
         const imgInside = attributes.match(/src=["']([^"']+)["']/i) || innerContent.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i);
         if (imgInside && innerContent.startsWith('<img')) {
@@ -193,8 +204,12 @@ export function blocksToHtml(blocks: BlockRecord[]): string {
           const lang = (meta.language as string) || 'plaintext';
           return `<pre class="language-${lang}"><code class="language-${lang}">${escapeHtml(block.value)}</code></pre>`;
         }
-        case 'BULLET_LIST':
-          return `<ul>${sanitizeListHtml(block.value)}</ul>`;
+        case 'BULLET_LIST': {
+          const bullet = ['disc', 'circle', 'square'].includes(String(meta.bullet))
+            ? String(meta.bullet)
+            : 'disc';
+          return `<ul data-bullet="${bullet}">${sanitizeListHtml(block.value)}</ul>`;
+        }
         case 'NUMBERED_LIST':
           return `<ol>${sanitizeListHtml(block.value)}</ol>`;
         case 'DIVIDER':
@@ -202,8 +217,17 @@ export function blocksToHtml(blocks: BlockRecord[]): string {
         case 'IMAGE': {
           const alt = escapeHtml((meta.alt as string) || '');
           const caption = (meta.caption as string) || '';
-          const figCaptionHtml = caption ? `<figcaption class="text-xs text-muted mt-1 text-center">${escapeHtml(caption)}</figcaption>` : '';
-          return `<figure class="my-4"><img src="${escapeHtml(block.value)}" alt="${alt}" loading="lazy" class="rounded-lg max-w-full h-auto" />${figCaptionHtml}</figure>`;
+          const layouts = ['content', 'wide', 'full', 'left', 'center', 'right'];
+          const layout = layouts.includes(String(meta.layout)) ? String(meta.layout) : 'full';
+          const align = ['left', 'center', 'right'].includes(String(meta.align))
+            ? String(meta.align)
+            : layout === 'left' || layout === 'right' || layout === 'center'
+              ? layout
+              : 'center';
+          const width = Number(meta.width);
+          const widthAttr = Number.isFinite(width) && width >= 80 ? ` width="${Math.round(width)}"` : '';
+          const figCaptionHtml = caption ? `<figcaption class="text-xs text-muted mt-1">${escapeHtml(caption)}</figcaption>` : '';
+          return `<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${escapeHtml(block.value)}" alt="${alt}" data-align="${align}" data-layout="${layout}"${widthAttr} loading="lazy" class="article-media rounded-lg h-auto" />${figCaptionHtml}</figure>`;
         }
         case 'VIDEO':
           return `<div class="aspect-video my-4"><iframe src="${escapeHtml(block.value)}" class="w-full h-full rounded-lg" allowfullscreen></iframe></div>`;
@@ -230,7 +254,17 @@ function escapeHtml(str: string): string {
 
 function stripTags(html: string): string {
   if (!html) return '';
-  return html.replace(/<[^>]*>/g, '').trim();
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]*>/g, '')
+    .trim();
+}
+
+function guessCodeLanguage(source: string) {
+  if (/\bpublic class\b|\bSystem\.out\b|\bvoid main\b/.test(source)) return 'java';
+  if (/\bconsole\.log\b|\bfunction\b|\bconst\b|\blet\b/.test(source)) return 'javascript';
+  if (/\bdef \b|\bprint\(/.test(source)) return 'python';
+  return 'plaintext';
 }
 
 function slugify(text: string): string {
@@ -255,6 +289,32 @@ function sanitizeInlineHtml(html: string): string {
     .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
     .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
     .replace(/javascript:/gi, '');
+}
+
+function readImageTag(html: string): BlockRecord | null {
+  const tag = html.match(/<img([^>]*)>/i);
+  if (!tag) return null;
+  const attributes = tag[1];
+  const srcMatch = attributes.match(/src=["']([^"']+)["']/i);
+  if (!srcMatch) return null;
+  const altMatch = attributes.match(/alt=["']([^"']*)["']/i);
+  const titleMatch = attributes.match(/title=["']([^"']*)["']/i);
+  const captionMatch = html.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/i);
+  const alignMatch = attributes.match(/data-align=["'](left|center|right)["']/i);
+  const layoutMatch = attributes.match(/data-layout=["'](content|wide|full|left|center|right)["']/i);
+  const widthMatch = attributes.match(/\bwidth=["'](\d+)["']/i);
+  const width = widthMatch ? Number(widthMatch[1]) : null;
+  return {
+    type: 'IMAGE',
+    value: srcMatch[1],
+    metadata: {
+      alt: altMatch ? altMatch[1] : '',
+      caption: captionMatch ? stripTags(captionMatch[1]) : titleMatch ? titleMatch[1] : '',
+      align: alignMatch ? alignMatch[1] : 'center',
+      layout: layoutMatch ? layoutMatch[1] : 'full',
+      ...(width && width >= 80 ? { width } : {}),
+    },
+  };
 }
 
 function sanitizeListHtml(html: string): string {

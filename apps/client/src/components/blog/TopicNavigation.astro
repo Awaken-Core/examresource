@@ -14,7 +14,7 @@ interface Props {
 const { subjectSlug, prevTopic, nextTopic } = Astro.props;
 ---
 
-<nav aria-label="Topic Navigation" class="topic-navigation mt-12 pt-8 border-t border-border/80 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+<nav aria-label="Topic Navigation" class="topic-navigation mt-12 grid grid-cols-1 gap-4 border-t border-border/80 pt-8 sm:grid-cols-2">
   {prevTopic ? (
     <a
       href={`/blog/${subjectSlug}/${prevTopic.slug}`}

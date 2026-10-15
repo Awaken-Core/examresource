@@ -27,6 +27,7 @@ import type {
   UpdateCategoryInput,
 } from './dto/blog.dto.js';
 import { htmlToBlocks, blocksToHtml } from './blog-content.adapter.js';
+import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 
 type CurrentUser = {
   id: string;
@@ -319,9 +320,10 @@ export class BlogService {
 
     // Validate slug uniqueness proactively
     await this.assertSlugAvailable(input.slug);
+    const authorId = await this.resolveAuthorId(input.authorId, currentUser);
 
     try {
-      return await db.transaction(async (tx) => {
+      const created = await db.transaction(async (tx) => {
         const now = new Date();
         const status = input.status ?? 'DRAFT';
         const publishedAt = status === 'PUBLISHED' ? now : null;
@@ -348,7 +350,7 @@ export class BlogService {
             publishedAt,
             scheduledAt,
             version: 1,
-            authorId: currentUser.id,
+            authorId,
           })
           .returning();
 
@@ -379,6 +381,8 @@ export class BlogService {
 
         return { ...blog, blocks, htmlContent: blocksToHtml(blocks as any) };
       });
+      await this.announceIfNewlyPublished(created, false);
+      return created;
     } catch (error) {
       this.rethrowSlugConflict(error);
     }
@@ -404,8 +408,13 @@ export class BlogService {
       await this.assertSlugAvailable(input.slug, existing.id);
     }
 
+    const authorId =
+      input.authorId !== undefined
+        ? await this.resolveAuthorId(input.authorId, currentUser)
+        : existing.authorId;
+
     try {
-      return await db.transaction(async (tx) => {
+      const updated = await db.transaction(async (tx) => {
         const nextVersion = existing.version + 1;
         const status = input.status ?? existing.status;
         let publishedAt = existing.publishedAt;
@@ -464,6 +473,7 @@ export class BlogService {
             publishedAt,
             scheduledAt,
             version: nextVersion,
+            authorId,
             updatedAt: new Date(),
           })
           .where(eq(blogs.id, existing.id))
@@ -512,6 +522,8 @@ export class BlogService {
           htmlContent: blocksToHtml(blocks as any),
         };
       });
+      await this.announceIfNewlyPublished(updated, existing.status === 'PUBLISHED');
+      return updated;
     } catch (error) {
       this.rethrowSlugConflict(error);
     }
@@ -865,6 +877,22 @@ export class BlogService {
   // Private Helper Utilities
   // ==========================================
 
+  private async resolveAuthorId(
+    requested: string | null | undefined,
+    currentUser: CurrentUser,
+  ) {
+    if (!requested || requested === currentUser.id) return currentUser.id;
+    const [author] = await db
+      .select({ id: users.id, role: users.role })
+      .from(users)
+      .where(eq(users.id, requested))
+      .limit(1);
+    if (!author || (author.role !== 'admin' && author.role !== 'editor')) {
+      return currentUser.id;
+    }
+    return author.id;
+  }
+
   private async findManageable(id: string, currentUser: CurrentUser) {
     this.assertCanWrite(currentUser);
 
@@ -937,6 +965,37 @@ export class BlogService {
         })),
       )
       .returning();
+  }
+
+  private async announceIfNewlyPublished(
+    blog: {
+      id: string;
+      title: string;
+      slug: string;
+      categoryId: string | null;
+      status: string;
+    },
+    previouslyPublished: boolean,
+  ) {
+    if (blog.status !== 'PUBLISHED' || previouslyPublished) return;
+    try {
+      let categorySlug = 'general';
+      if (blog.categoryId) {
+        const [category] = await db
+          .select({ slug: categories.slug })
+          .from(categories)
+          .where(eq(categories.id, blog.categoryId))
+          .limit(1);
+        if (category?.slug) categorySlug = category.slug;
+      }
+      await createBlogPublishedNotification({
+        blogId: blog.id,
+        title: blog.title,
+        href: `/blog/${categorySlug}/${blog.slug}`,
+      });
+    } catch (error) {
+      console.error('Failed to create blog notification', error);
+    }
   }
 
   private async isSlugAvailable(slug: string, excludeId?: string) {

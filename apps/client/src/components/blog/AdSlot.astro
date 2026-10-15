@@ -1,0 +1,55 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+const clientId = import.meta.env.PUBLIC_ADSENSE_CLIENT || '';
+const slotId = import.meta.env.PUBLIC_ADSENSE_SLOT_SIDEBAR || '';
+const ready = Boolean(clientId && slotId);
+---
+
+{ready ? (
+  <div class:list={['ad-slot w-full shrink-0', className]}>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={clientId}
+      data-ad-slot={slotId}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    />
+  </div>
+) : (
+  <Fragment set:html="<!-- AdSense unit stays hidden until PUBLIC_ADSENSE_CLIENT and PUBLIC_ADSENSE_SLOT_SIDEBAR are set. -->" />
+)}
+
+{ready && (
+  <script>
+    const client = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+    function bootAds() {
+      if (!client) return;
+      if (!document.querySelector('script[data-adsense-loader]')) {
+        const loader = document.createElement('script');
+        loader.async = true;
+        loader.dataset.adsenseLoader = 'true';
+        loader.crossOrigin = 'anonymous';
+        loader.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(client)}`;
+        document.head.append(loader);
+      }
+      document.querySelectorAll<HTMLElement>('ins.adsbygoogle').forEach((unit) => {
+        if (unit.dataset.adPushed === 'true') return;
+        unit.dataset.adPushed = 'true';
+        const pageWindow = window as Window & { adsbygoogle?: object[] };
+        try {
+          pageWindow.adsbygoogle = pageWindow.adsbygoogle || [];
+          pageWindow.adsbygoogle.push({});
+        } catch {
+          unit.dataset.adPushed = 'false';
+        }
+      });
+    }
+    bootAds();
+    document.addEventListener('astro:page-load', bootAds);
+  </script>
+)}

@@ -4,6 +4,7 @@ import { AppService } from './app.service.js';
 import { ClerkAuthModule } from './modules/clerk-auth/clerk-auth.module.js';
 import { BlogModule } from './modules/blog/blog.module.js';
 import { MediaModule } from './modules/media/media.module.js';
+import { NotificationModule } from './modules/notifications/notification.module.js';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MediaModule } from './modules/media/media.module.js';
     ClerkAuthModule,
     BlogModule,
     MediaModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
