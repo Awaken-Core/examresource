@@ -179,7 +179,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       </div>
 
       <!-- Right side: Saved state, Overview, Preview, Save Draft, Publish, Settings toggle, More menu -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <!-- Live Saved Status Indicator -->
         <div id="save-status" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 font-medium px-2 py-1">
           <span class="w-2 h-2 rounded-full bg-slate-300"></span>
@@ -187,7 +187,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         </div>
 
         <!-- Word count / Reading time quick indicator -->
-        <div id="document-overview-trigger" class="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-100 text-xs text-slate-600 cursor-pointer" title="Document statistics">
+        <div id="document-overview-trigger" class="hidden xl:flex items-center gap-1.5 px-2 py-1 rounded hover:bg-slate-100 text-xs text-slate-600 cursor-pointer" title="Document statistics">
           <span id="word-count">0 words</span>
           <span class="text-slate-300">·</span>
           <span id="read-time">1 min read</span>
@@ -198,20 +198,20 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           type="button"
           id="preview-btn"
           class="px-2.5 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 font-medium text-xs flex items-center gap-1.5 transition"
-          title="Preview public article layout"
+          title="Preview article"
         >
           <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-          <span class="hidden sm:inline">Preview</span>
+          <span class="hidden md:inline">Preview</span>
         </button>
 
         <!-- Save Draft Button -->
         <button 
           type="button"
           id="save-draft-btn"
-          class="px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-2xs"
+          class="hidden sm:inline-flex px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-2xs"
         >
           Save Draft
         </button>
@@ -220,7 +220,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         <button 
           type="button"
           id="publish-btn"
-          class="px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
+          class="px-3.5 sm:px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
           style="background-color: #2563EB;"
         >
           Publish
@@ -231,7 +231,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           type="button" 
           id="sidebar-toggle-btn"
           class="p-2 rounded hover:bg-slate-100 text-slate-700 transition"
-          title="Toggle settings sidebar"
+          title="Toggle document settings sidebar"
           aria-label="Settings"
         >
           <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -259,6 +259,20 @@ import AdminLayout from '../layouts/AdminLayout.astro';
             id="more-options-menu" 
             class="hidden absolute right-0 mt-1.5 w-56 bg-white border border-slate-200 rounded-lg shadow-lg py-1.5 z-50 text-xs divide-y divide-slate-100"
           >
+            <!-- Mobile-only quick actions -->
+            <div class="py-1 sm:hidden">
+              <button 
+                type="button" 
+                id="opt-mobile-save-draft" 
+                class="w-full text-left px-3.5 py-1.5 text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 font-medium"
+              >
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                <span>Save Draft</span>
+              </button>
+            </div>
+
             <!-- Markdown Import / Export Group -->
             <div class="py-1">
               <button 
@@ -660,7 +674,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         </div>
 
         <!-- Writing Canvas Container -->
-        <div class="w-full max-w-3xl mx-auto px-6 sm:px-12 pt-10 pb-32 flex-1">
+        <div class="w-full min-w-0 flex-1 flex flex-col px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-32">
           
           <!-- Document Level Title (H1) -->
           <div class="mb-4">
@@ -674,7 +688,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           </div>
 
           <!-- Document Excerpt / Summary Field -->
-          <div class="mb-6">
+          <div class="mb-5">
             <textarea 
               id="field-excerpt"
               rows="1"
@@ -685,17 +699,17 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 
           <div class="w-full h-px bg-slate-100 mb-6"></div>
 
-          <!-- 1. Visual Mode TipTap Surface -->
-          <div id="visual-editor-surface">
+          <!-- 1. Visual Mode TipTap Surface (Full-Width Responsive Canvas) -->
+          <div id="visual-editor-surface" class="w-full min-w-0 flex-1 flex flex-col">
             <div 
               id="tiptap-editor"
-              class="prose-markdown prose prose-slate max-w-none min-h-[500px] text-slate-900 text-base leading-relaxed focus:outline-none"
+              class="prose-markdown prose prose-slate w-full max-w-none flex-1 min-h-[550px] text-slate-900 text-base leading-relaxed focus:outline-none"
             ></div>
           </div>
 
           <!-- 2. Markdown Mode Editor Surface (Distraction-Free Full-Width Writing Canvas) -->
-          <div id="markdown-editor-surface" class="hidden flex-col space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-t-lg px-3.5 py-2">
+          <div id="markdown-editor-surface" class="hidden w-full min-w-0 flex-1 flex flex-col space-y-3">
+            <div class="w-full flex items-center justify-between text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-t-lg px-3.5 py-2 shrink-0">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-blue-500"></span>
                 <span class="font-bold text-slate-700 font-mono">GitHub-Flavored Markdown</span>
@@ -716,24 +730,25 @@ import AdminLayout from '../layouts/AdminLayout.astro';
               </div>
             </div>
 
-            <!-- Distraction-Free Code Textarea with Line Numbers (Full Available Width) -->
-            <div class="flex border border-slate-200 rounded-b-lg overflow-hidden bg-white shadow-2xs min-h-[550px] relative">
-              <div id="md-line-numbers" class="w-10 bg-slate-50 border-r border-slate-200 py-3 text-right pr-2 select-none font-mono text-xs text-slate-400 leading-6 shrink-0">
+            <!-- Distraction-Free Code Textarea with Line Numbers (Full Available Width & Height) -->
+            <div class="w-full min-w-0 flex-1 flex border border-slate-200 rounded-b-lg overflow-hidden bg-white shadow-2xs min-h-[550px] relative">
+              <div id="md-line-numbers" class="w-11 bg-slate-50 border-r border-slate-200 py-3.5 text-right pr-2.5 select-none font-mono text-xs text-slate-400 leading-6 shrink-0 overflow-hidden pointer-events-none">
                 1
               </div>
               <textarea 
                 id="markdown-textarea" 
                 spellcheck="false"
                 placeholder="Write your article in Markdown syntax here...&#10;&#10;## Section Heading&#10;Write paragraphs with **bold**, *italic*, and `code`.&#10;&#10;- Lists&#10;- Tables&#10;- Blockquotes"
-                class="flex-1 p-3 bg-white font-mono text-xs sm:text-sm text-slate-900 leading-6 outline-none resize-none selection:bg-blue-100 min-h-[550px]"
+                class="w-full min-w-0 max-w-none flex-1 p-3.5 bg-white font-mono text-xs sm:text-sm text-slate-900 leading-6 outline-none resize-none selection:bg-blue-100 min-h-[550px] overflow-y-auto"
+                style="width: 100%; min-width: 0; max-width: none;"
               ></textarea>
             </div>
           </div>
 
-          <!-- 3. Dedicated Rendered Article Preview Surface (Reading Mode) -->
-          <div id="markdown-preview-surface" class="hidden flex-col space-y-4">
+          <!-- 3. Dedicated Rendered Article Preview Surface (Full-Width Reading Mode) -->
+          <div id="markdown-preview-surface" class="hidden w-full min-w-0 flex-1 flex flex-col space-y-4">
             <!-- Preview Controls Bar -->
-            <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5">
+            <div class="w-full flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 shrink-0">
               <div class="flex items-center gap-2 text-xs">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                 <span class="font-bold text-slate-800">Article Preview</span>
@@ -753,7 +768,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
             </div>
 
             <!-- Clean Rendered Reading Layout -->
-            <article class="bg-white border border-slate-200 rounded-xl p-8 sm:p-12 shadow-xs">
+            <article class="w-full min-w-0 flex-1 bg-white border border-slate-200 rounded-xl p-6 sm:p-10 shadow-xs">
               <div id="preview-header-meta" class="border-b border-slate-100 pb-4 mb-6">
                 <span class="text-[11px] font-bold uppercase tracking-wider text-blue-600" id="preview-surface-cat">General</span>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2 leading-tight" id="preview-surface-title">Untitled Article</h1>
@@ -761,7 +776,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
               </div>
               <div 
                 id="preview-rendered-body" 
-                class="prose-markdown markdown-preview-content max-w-none text-slate-900 leading-relaxed"
+                class="prose-markdown markdown-preview-content w-full max-w-none text-slate-900 leading-relaxed"
               ></div>
             </article>
           </div>
@@ -772,7 +787,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       <!-- D. Right Settings Sidebar -->
       <aside 
         id="editor-sidebar" 
-        class="w-full sm:w-80 md:w-84 border-l border-slate-200 bg-white flex flex-col h-full z-20 shrink-0 text-xs transition-all duration-200 ease-in-out shadow-xs"
+        class="hidden lg:flex fixed lg:static inset-y-0 right-0 z-40 lg:z-20 w-80 max-w-[85vw] border-l border-slate-200 bg-white flex-col h-full shrink-0 text-xs transition-all duration-200 ease-in-out shadow-lg lg:shadow-xs"
       >
         <div class="h-12 border-b border-slate-200 px-4 flex items-center justify-between shrink-0 bg-white">
           <div class="flex items-center gap-1 font-semibold">
@@ -1097,6 +1112,9 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         </div>
 
       </aside>
+
+      <!-- Mobile / Drawer Backdrop -->
+      <div id="editor-drawer-backdrop" class="hidden fixed inset-0 bg-slate-900/30 z-30 transition-opacity lg:hidden"></div>
 
     </div>
   </div>
@@ -1474,6 +1492,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   const outlineDrawer = document.getElementById('document-outline-drawer');
   const inserterDrawer = document.getElementById('block-inserter-drawer');
   const editorSidebar = document.getElementById('editor-sidebar');
+  const drawerBackdrop = document.getElementById('editor-drawer-backdrop');
   const contextualToolbar = document.getElementById('contextual-block-toolbar');
   const slashMenuPopover = document.getElementById('slash-menu-popover');
   const slashMenuItems = document.getElementById('slash-menu-items');
@@ -1588,34 +1607,41 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   });
 
   // ==========================================
-  // Markdown Mode Switching & Synchronization
+  // Preview Mode & Synchronization
   // ==========================================
 
   let lastSavedMarkdownCursorPos = 0;
+  let previewSourceMode: 'visual' | 'markdown' = 'visual';
 
-  function showMarkdownPreview() {
-    if (!markdownTextarea || !previewRenderedBody) return;
-    
-    // Save cursor position
-    lastSavedMarkdownCursorPos = markdownTextarea.selectionStart || 0;
+  function showArticlePreview() {
+    if (!previewRenderedBody) return;
+    previewSourceMode = currentEditorMode;
 
-    const md = markdownTextarea.value;
-    const rawHtml = marked.parse(md) as string;
-    const cleanHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+    let cleanHtml = '';
 
-    // Check if markdown content already starts with an H1 heading
-    const startsWithH1 = /^\s*#\s+/m.test(md);
+    if (currentEditorMode === 'markdown') {
+      if (markdownTextarea) {
+        lastSavedMarkdownCursorPos = markdownTextarea.selectionStart || 0;
+        const md = markdownTextarea.value;
+        const rawHtml = marked.parse(md) as string;
+        cleanHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+      }
+    } else {
+      cleanHtml = editor.getHTML();
+    }
+
+    const title = titleInput?.value.trim() || 'Untitled Article';
+    const excerpt = excerptInput?.value.trim() || '';
+    const cat = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
+
+    // Check if markdown content already starts with an H1 heading (in markdown mode)
+    const startsWithH1 = currentEditorMode === 'markdown' && markdownTextarea && /^\s*#\s+/m.test(markdownTextarea.value);
     const previewHeaderMeta = document.getElementById('preview-header-meta');
 
     // Update Preview Header Information
-    if (previewSurfaceTitle) {
-      previewSurfaceTitle.textContent = titleInput?.value.trim() || 'Untitled Article';
-    }
-    if (previewSurfaceCat) {
-      previewSurfaceCat.textContent = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
-    }
+    if (previewSurfaceTitle) previewSurfaceTitle.textContent = title;
+    if (previewSurfaceCat) previewSurfaceCat.textContent = cat;
     if (previewSurfaceExcerpt) {
-      const excerpt = excerptInput?.value.trim();
       if (excerpt) {
         previewSurfaceExcerpt.textContent = excerpt;
         previewSurfaceExcerpt.classList.remove('hidden');
@@ -1626,8 +1652,6 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 
     if (previewHeaderMeta) {
       if (startsWithH1) {
-        // If Markdown itself starts with an H1 (e.g. # Java Object Lifecycle),
-        // hide the top redundant title box so the Markdown H1 is the primary H1
         previewHeaderMeta.classList.add('hidden');
       } else {
         previewHeaderMeta.classList.remove('hidden');
@@ -1637,36 +1661,41 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     // Populate rendered preview body
     previewRenderedBody.innerHTML = cleanHtml || '<p class="text-slate-400 italic">No content to preview.</p>';
 
-    // Hide editor surfaces, show preview surface
+    // Hide editing surfaces, show dedicated reading preview surface
     markdownEditorSurface?.classList.add('hidden');
     visualEditorSurface?.classList.add('hidden');
     markdownPreviewSurface?.classList.remove('hidden');
     markdownPreviewSurface?.classList.add('flex');
+    contextualToolbar?.classList.add('hidden');
 
     // Scroll preview to top smoothly
     const mainCanvas = document.getElementById('editor-main-canvas');
     if (mainCanvas) mainCanvas.scrollTop = 0;
   }
 
-  function hideMarkdownPreview() {
-    // Hide preview surface, show markdown writing canvas
+  function hideArticlePreview() {
+    // Hide preview surface, restore source editing surface
     markdownPreviewSurface?.classList.add('hidden');
     markdownPreviewSurface?.classList.remove('flex');
-    markdownEditorSurface?.classList.remove('hidden');
-    markdownEditorSurface?.classList.add('flex');
 
-    // Restore cursor position and focus
-    if (markdownTextarea) {
-      markdownTextarea.focus();
-      try {
-        markdownTextarea.setSelectionRange(lastSavedMarkdownCursorPos, lastSavedMarkdownCursorPos);
-      } catch (_) {}
-      updateCursorPosition();
+    if (previewSourceMode === 'markdown') {
+      markdownEditorSurface?.classList.remove('hidden');
+      markdownEditorSurface?.classList.add('flex');
+      if (markdownTextarea) {
+        markdownTextarea.focus();
+        try {
+          markdownTextarea.setSelectionRange(lastSavedMarkdownCursorPos, lastSavedMarkdownCursorPos);
+        } catch (_) {}
+        updateCursorPosition();
+      }
+    } else {
+      visualEditorSurface?.classList.remove('hidden');
+      editor.chain().focus();
     }
   }
 
-  mdViewPreviewBtn?.addEventListener('click', showMarkdownPreview);
-  backToEditorBtn?.addEventListener('click', hideMarkdownPreview);
+  mdViewPreviewBtn?.addEventListener('click', showArticlePreview);
+  backToEditorBtn?.addEventListener('click', hideArticlePreview);
 
   function switchEditorMode(targetMode: 'visual' | 'markdown') {
     if (currentEditorMode === targetMode) return;
@@ -1739,6 +1768,28 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     triggerAutosave();
   });
 
+  // Synchronize Line Numbers with Textarea vertical scroll
+  markdownTextarea?.addEventListener('scroll', () => {
+    if (mdLineNumbers && markdownTextarea) {
+      mdLineNumbers.scrollTop = markdownTextarea.scrollTop;
+    }
+  });
+
+  // Handle Tab key to insert 2 spaces without losing focus
+  markdownTextarea?.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      const start = markdownTextarea.selectionStart;
+      const end = markdownTextarea.selectionEnd;
+      const val = markdownTextarea.value;
+      markdownTextarea.value = val.substring(0, start) + '  ' + val.substring(end);
+      markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + 2;
+      isDirty = true;
+      updateCursorPosition();
+      updateLineNumbers();
+    }
+  });
+
   markdownTextarea?.addEventListener('keyup', updateCursorPosition);
   markdownTextarea?.addEventListener('click', updateCursorPosition);
 
@@ -1754,8 +1805,10 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   function updateLineNumbers() {
     if (!markdownTextarea || !mdLineNumbers) return;
     const lines = markdownTextarea.value.split('\n').length;
-    const lineArr = Array.from({ length: Math.max(lines, 20) }, (_, i) => i + 1);
+    // Calculate estimated lines including potential overflow
+    const lineArr = Array.from({ length: Math.max(lines, 30) }, (_, i) => i + 1);
     mdLineNumbers.innerHTML = lineArr.join('<br>');
+    mdLineNumbers.scrollTop = markdownTextarea.scrollTop;
   }
 
   // ==========================================
@@ -1939,28 +1992,66 @@ ${mdContent}
     });
   });
 
+  function updateDrawerBackdrop() {
+    const isAnyMobileDrawerOpen = 
+      (!editorSidebar?.classList.contains('hidden') && window.innerWidth < 1024) ||
+      (!inserterDrawer?.classList.contains('hidden') && window.innerWidth < 768) ||
+      (!outlineDrawer?.classList.contains('hidden') && window.innerWidth < 768);
+
+    if (isAnyMobileDrawerOpen) {
+      drawerBackdrop?.classList.remove('hidden');
+    } else {
+      drawerBackdrop?.classList.add('hidden');
+    }
+  }
+
   document.getElementById('close-inserter-btn')?.addEventListener('click', () => {
     inserterDrawer?.classList.add('hidden');
+    updateDrawerBackdrop();
   });
 
   document.getElementById('top-outline-toggle-btn')?.addEventListener('click', () => {
     outlineDrawer?.classList.toggle('hidden');
     inserterDrawer?.classList.add('hidden');
+    headerBlockDropdown?.classList.add('hidden');
     if (!outlineDrawer?.classList.contains('hidden')) {
       updateDocumentOutline();
     }
+    updateDrawerBackdrop();
   });
 
   document.getElementById('close-outline-btn')?.addEventListener('click', () => {
     outlineDrawer?.classList.add('hidden');
+    updateDrawerBackdrop();
   });
 
   document.getElementById('sidebar-toggle-btn')?.addEventListener('click', () => {
     editorSidebar?.classList.toggle('hidden');
+    // On small screens, hide inserter or outline if sidebar is opened
+    if (!editorSidebar?.classList.contains('hidden') && window.innerWidth < 1024) {
+      inserterDrawer?.classList.add('hidden');
+      outlineDrawer?.classList.add('hidden');
+      headerBlockDropdown?.classList.add('hidden');
+    }
+    updateDrawerBackdrop();
   });
 
   document.getElementById('close-sidebar-btn')?.addEventListener('click', () => {
     editorSidebar?.classList.add('hidden');
+    updateDrawerBackdrop();
+  });
+
+  drawerBackdrop?.addEventListener('click', () => {
+    editorSidebar?.classList.add('hidden');
+    inserterDrawer?.classList.add('hidden');
+    outlineDrawer?.classList.add('hidden');
+    headerBlockDropdown?.classList.add('hidden');
+    updateDrawerBackdrop();
+  });
+
+  // Handle responsive viewport resize: ensure backdrop does not get stuck if resizing to desktop
+  window.addEventListener('resize', () => {
+    updateDrawerBackdrop();
   });
 
   // Inserter Tabs (Blocks vs Patterns)
@@ -2367,8 +2458,40 @@ ${mdContent}
     slashSelectedIndex = 0;
   }
 
-  // Keyboard navigation for slash menu
+  // Keyboard navigation for slash menu and Escape handling for drawers/menus
   window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (isSlashMenuOpen) {
+        e.preventDefault();
+        closeSlashMenu();
+        return;
+      }
+      if (isInlineMenuOpen) {
+        e.preventDefault();
+        closeInlineBlockMenu();
+        return;
+      }
+      if (headerBlockDropdown && !headerBlockDropdown.classList.contains('hidden')) {
+        headerBlockDropdown.classList.add('hidden');
+        return;
+      }
+      if (inserterDrawer && !inserterDrawer.classList.contains('hidden')) {
+        inserterDrawer.classList.add('hidden');
+        updateDrawerBackdrop();
+        return;
+      }
+      if (outlineDrawer && !outlineDrawer.classList.contains('hidden')) {
+        outlineDrawer.classList.add('hidden');
+        updateDrawerBackdrop();
+        return;
+      }
+      if (editorSidebar && !editorSidebar.classList.contains('hidden') && window.innerWidth < 1024) {
+        editorSidebar.classList.add('hidden');
+        updateDrawerBackdrop();
+        return;
+      }
+    }
+
     if (!isSlashMenuOpen || slashFilteredList.length === 0) return;
 
     if (e.key === 'ArrowDown') {
@@ -2383,9 +2506,6 @@ ${mdContent}
       e.preventDefault();
       e.stopPropagation();
       executeSlashItem(slashSelectedIndex);
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      closeSlashMenu();
     }
   }, true);
 
@@ -2784,13 +2904,28 @@ ${mdContent}
 
   function insertArticleImage(url: string) {
     if (!url) return;
-    const attrs = { src: url, alt: articleImageAltInput?.value.trim() || '' };
-    if (typeof articleImageTargetPos === 'number') {
-      editor.chain().focus().insertContentAt(articleImageTargetPos, [
-        { type: 'image', attrs }, { type: 'paragraph' },
-      ]).run();
+    const altText = articleImageAltInput?.value.trim() || 'image';
+
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      const start = markdownTextarea.selectionStart;
+      const end = markdownTextarea.selectionEnd;
+      const val = markdownTextarea.value;
+      const mdImageSyntax = `\n![${altText}](${url})\n`;
+      markdownTextarea.value = val.substring(0, start) + mdImageSyntax + val.substring(end);
+      markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + mdImageSyntax.length;
+      isDirty = true;
+      updateCursorPosition();
+      updateLineNumbers();
+      markdownTextarea.focus();
     } else {
-      editor.chain().focus().setImage(attrs).run();
+      const attrs = { src: url, alt: altText };
+      if (typeof articleImageTargetPos === 'number') {
+        editor.chain().focus().insertContentAt(articleImageTargetPos, [
+          { type: 'image', attrs }, { type: 'paragraph' },
+        ]).run();
+      } else {
+        editor.chain().focus().setImage(attrs).run();
+      }
     }
     inserterDrawer?.classList.add('hidden');
     closeArticleImageModal();
@@ -3279,51 +3414,11 @@ ${mdContent}
     }
   });
 
-  // Public Layout Live Preview Modal & Markdown Preview Handler
-  const previewModal = document.getElementById('live-preview-modal');
-  document.getElementById('preview-btn')?.addEventListener('click', () => {
-    // If in Markdown Editor mode, trigger the dedicated reading-layout preview surface
-    if (currentEditorMode === 'markdown') {
-      showMarkdownPreview();
-      return;
-    }
+  // Dedicated Rendered Article Preview & Mobile Action Handlers
+  document.getElementById('preview-btn')?.addEventListener('click', showArticlePreview);
 
-    // In Visual Editor mode, open the public layout modal preview
-    const title = titleInput?.value || 'Untitled Article';
-    const excerpt = excerptInput?.value || '';
-    const cat = categorySelect?.options[categorySelect.selectedIndex]?.text || 'General';
-
-    const modalTitle = document.getElementById('prev-modal-title');
-    const modalCat = document.getElementById('prev-modal-cat');
-    const modalExcerpt = document.getElementById('prev-modal-excerpt');
-    const modalContent = document.getElementById('prev-modal-content');
-    const modalCoverBox = document.getElementById('prev-modal-cover-box');
-    const modalCoverImg = document.getElementById('prev-modal-cover-img') as HTMLImageElement | null;
-    const modalCoverCaption = document.getElementById('prev-modal-cover-caption');
-
-    if (modalTitle) modalTitle.textContent = title;
-    if (modalCat) modalCat.textContent = cat;
-    if (modalExcerpt) modalExcerpt.textContent = excerpt;
-
-    if (modalContent) modalContent.innerHTML = editor.getHTML();
-
-    const coverUrl = coverImageInput?.value.trim();
-    if (coverUrl && modalCoverBox && modalCoverImg) {
-      modalCoverImg.src = coverUrl;
-      modalCoverImg.alt = imageAltInput?.value || title;
-      if (modalCoverCaption) modalCoverCaption.textContent = imageCaptionInput?.value || '';
-      modalCoverBox.classList.remove('hidden');
-    } else if (modalCoverBox) {
-      modalCoverBox.classList.add('hidden');
-    }
-
-    previewModal?.classList.remove('hidden');
-    previewModal?.classList.add('flex');
-  });
-
-  document.getElementById('close-preview-modal')?.addEventListener('click', () => {
-    previewModal?.classList.add('hidden');
-    previewModal?.classList.remove('flex');
+  document.getElementById('opt-mobile-save-draft')?.addEventListener('click', () => {
+    document.getElementById('save-draft-btn')?.click();
   });
 
   // Document Overview Trigger
