@@ -3,18 +3,18 @@ import ProfileDropdown from './ProfileDropdown.astro';
 import Tooltip from './Tooltip.astro';
 ---
 
-<header class="bg-surface border-b border-border sticky top-0 md:top-9 z-[1000] shadow-sm relative h-16">
+<header class="bg-surface border-b border-border sticky top-8 sm:top-9 z-[1000] shadow-sm relative h-14 sm:h-16">
   {/* Main Navbar */}
-  <div class="w-full flex items-center justify-between h-16">
+  <div class="w-full flex items-center justify-between h-14 sm:h-16">
     
     {/* Left: Mobile Drawer Button + Header Brand (Exact same w-64 px-4 justify-between as LeftSidebar!) */}
-    <div class="flex items-center shrink-0">
-      {/* Mobile Drawer Toggle (visible ONLY on mobile screens) */}
+    <div class="flex items-center shrink-0 min-w-0">
+      {/* Mobile Drawer Toggle (visible ONLY on mobile/tablet screens) */}
       <button 
         id="mobile-drawer-toggle-btn"
         data-sidebar-toggle
         type="button"
-        class="lg:hidden ml-4 text-muted hover:text-white p-2 rounded-xl hover:bg-surface-raised border border-border/60 transition cursor-pointer flex items-center justify-center"
+        class="lg:hidden ml-3 sm:ml-4 text-muted hover:text-white p-2 rounded-xl hover:bg-surface-raised border border-border/60 transition cursor-pointer flex items-center justify-center shrink-0"
         title="Open Menu"
         aria-label="Open Navigation Menu"
       >
@@ -22,6 +22,19 @@ import Tooltip from './Tooltip.astro';
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
+
+      {/* Mobile Brand Logo — visible on mobile/tablet only (hidden on desktop where sidebar shows brand) */}
+      <a href="/" class="lg:hidden flex items-center gap-2 ml-2.5 group shrink-0" aria-label="govtpariksha.com home">
+        <div class="w-7 h-7 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <span class="hidden sm:flex items-center font-bold text-sm tracking-tight text-white">
+          govtpariksha<span class="text-accent">.com</span>
+        </span>
+      </a>
 
       {/* Collapsed State Header Brand & Expand Toggle (Exact same coordinates as LeftSidebar header!) */}
       <div id="header-brand-collapsed" class="hidden h-16 w-64 px-4 items-center justify-between border-r border-border/60 shrink-0">
@@ -57,42 +70,38 @@ import Tooltip from './Tooltip.astro';
       </div>
     </div>
 
-    {/* Center: Search Section in Mid */}
-    <div class="hidden md:flex flex-1 items-center justify-center px-4 min-w-0">
+    {/* Center: Search Section — visible on ALL screen sizes */}
+    <div class="flex flex-1 items-center justify-center px-2 sm:px-4 min-w-0">
       <div class="w-full max-w-md lg:max-w-lg">
         <button 
           id="desktop-search-trigger"
           data-open-search
           type="button"
-          class="relative w-full flex items-center justify-between bg-surface-raised hover:bg-surface-elevated border border-border/80 hover:border-border rounded-pill py-2 pl-3 pr-3 text-body-sm text-muted cursor-pointer transition shadow-2xs text-left"
+          class="relative w-full flex items-center bg-surface-raised hover:bg-surface-elevated border border-border/80 hover:border-border rounded-xl sm:rounded-pill py-2 pl-3 pr-2 sm:pr-3 text-body-sm text-muted cursor-pointer transition shadow-2xs text-left gap-2"
           title="Search anything (Ctrl+K)"
         >
-          {/* Search Icon with its own Tooltip */}
-          <div class="relative group flex items-center justify-center p-1 -m-1 rounded-md text-muted hover:text-white transition">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <Tooltip text="Search" position="bottom" />
-          </div>
+          <svg class="w-4 h-4 shrink-0 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
 
-          <span class="truncate pl-2.5 flex-1 select-none">Search exams, notifications, results...</span>
+          <span class="truncate flex-1 select-none text-xs sm:text-sm">
+            <span class="hidden sm:inline">Search exams, notifications, results...</span>
+            <span class="sm:hidden">Search...</span>
+          </span>
 
-          {/* Shortcut Key Badge with its own Tooltip */}
-          <div class="relative group hidden sm:inline-flex items-center">
-            <kbd class="inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-muted hover:text-white bg-canvas hover:bg-surface-elevated border border-border rounded font-mono font-bold transition">
-              <span>Ctrl</span><span>K</span>
-            </kbd>
-            <Tooltip text="Quick Search" shortcut={['Ctrl', 'K']} position="bottom" />
-          </div>
+          {/* Shortcut Key Badge — hidden on mobile */}
+          <kbd class="hidden md:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-muted bg-canvas border border-border rounded font-mono font-bold shrink-0">
+            <span>Ctrl</span><span>K</span>
+          </kbd>
         </button>
       </div>
     </div>
 
-    {/* Right Toolbar Items: Quick links, Upgrade badge, Language, Favorites, and Profile Avatar */}
-    <div class="flex items-center gap-2.5 sm:gap-3 shrink-0 px-4 sm:px-6">
+    {/* Right Toolbar Items: Language, Favorites, and Profile Avatar */}
+    <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0 px-3 sm:px-4 lg:px-6">
 
-      {/* Language Switcher (English / Hindi) */}
-      <div class="relative" id="header-language-container">
+      {/* Language Switcher (English / Hindi) — hidden on phones, visible sm+ */}
+      <div class="relative hidden sm:block" id="header-language-container">
         <div class="relative group">
           <button 
             id="header-language-btn"
@@ -147,8 +156,8 @@ import Tooltip from './Tooltip.astro';
         </div>
       </div>
 
-      {/* Favorites / Saved Notices Button */}
-      <div class="relative" id="header-favorites-container">
+      {/* Favorites / Saved Notices Button — hidden on phones */}
+      <div class="relative hidden sm:block" id="header-favorites-container">
         <div class="relative group">
           <button 
             id="header-favorites-btn"
@@ -203,15 +212,16 @@ import Tooltip from './Tooltip.astro';
         <ProfileDropdown id="header-profile-dropdown" position="top" />
       </div>
 
-      {/* Modern "Get Started >" Button (Shown when user is NOT logged in) */}
+      {/* Modern "Get Started >" / "Log in" Button (Shown when user is NOT logged in) */}
       <div class="header-auth-logged-out flex items-center">
         <a 
           href="/login"
           id="header-login-btn"
-          class="group inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-accent hover:bg-accent/90 text-[#ffffff] font-semibold text-xs shadow-xs hover:shadow-sm transition-all duration-150 shrink-0 cursor-pointer"
-          title="Get Started on govtpariksha.com"
+          class="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-xl bg-accent hover:bg-accent/90 text-[#ffffff] font-semibold text-xs shadow-xs hover:shadow-sm transition-all duration-150 shrink-0 cursor-pointer"
+          title="Log in / Get Started"
         >
-          <span class="tracking-tight">Get Started</span>
+          <span class="tracking-tight sm:hidden">Log in</span>
+          <span class="tracking-tight hidden sm:inline">Get Started</span>
           <svg 
             class="w-3.5 h-3.5 text-[#ffffff] transition-transform duration-200 ease-out group-hover:translate-x-1" 
             viewBox="0 0 24 24" 
@@ -227,19 +237,5 @@ import Tooltip from './Tooltip.astro';
         </a>
       </div>
     </div>
-  </div>
-
-  {/* Mobile Dropdown Search */}
-  <div id="mobile-search-bar" class="md:hidden border-t border-border bg-surface px-4 py-2">
-    <button 
-      type="button"
-      data-open-search
-      class="relative w-full flex items-center bg-surface-raised border border-border rounded-xl py-2 pl-9 pr-3 text-body-sm text-muted cursor-pointer text-left"
-    >
-      <svg class="w-4 h-4 text-muted absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-      <span>Search exams on govtpariksha.com...</span>
-    </button>
   </div>
 </header>
