@@ -16,6 +16,7 @@ interface Props {
   modifiedTime?: string;
   jsonLd?: object;
   hideHeaderFooter?: boolean;
+  alternateLinks?: { hreflang: string; href: string }[];
 }
 
 const {
@@ -27,6 +28,7 @@ const {
   modifiedTime = "2026-10-12T14:45:00+05:30",
   jsonLd,
   hideHeaderFooter = false,
+  alternateLinks = [],
 } = Astro.props;
 ---
 
@@ -44,6 +46,11 @@ const {
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+
+    {/* Multilingual Alternate Language Links */}
+    {alternateLinks.map((alt) => (
+      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+    ))}
 
     {/* Open Graph / Facebook */}
     <meta property="og:type" content="article" />

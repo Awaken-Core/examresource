@@ -1,0 +1,82 @@
+---
+interface Props {
+  currentLanguage?: 'HINGLISH' | 'ENGLISH';
+  hinglishUrl: string;
+  englishUrl?: string | null;
+  className?: string;
+}
+
+const {
+  currentLanguage = 'HINGLISH',
+  hinglishUrl,
+  englishUrl,
+  className = '',
+} = Astro.props;
+
+const isHinglish = currentLanguage === 'HINGLISH';
+---
+
+<div class={`language-switcher-pill inline-flex items-center gap-1 p-1 bg-surface-elevated/80 backdrop-blur-md border border-border/80 rounded-full shadow-xs select-none ${className}`} role="group" aria-label="Language Switcher">
+  <!-- Hinglish Option (Default) -->
+  <a
+    href={hinglishUrl}
+    data-lang="hinglish"
+    class={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 ${
+      isHinglish
+        ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-2xs shadow-amber-500/10'
+        : 'text-muted hover:text-white hover:bg-white/5'
+    }`}
+    aria-current={isHinglish ? 'true' : undefined}
+    title="Read in conversational Hinglish"
+  >
+    <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+    <span>🇮🇳 Hinglish</span>
+    {isHinglish && <span class="text-[9px] uppercase tracking-wider font-bold opacity-75 ml-0.5">Default</span>}
+  </a>
+
+  <!-- English Option -->
+  {englishUrl ? (
+    <a
+      href={englishUrl}
+      data-lang="en"
+      class={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all duration-200 ${
+        !isHinglish
+          ? 'bg-blue-500/15 text-blue-300 border border-blue-500/30 shadow-2xs shadow-blue-500/10'
+          : 'text-muted hover:text-white hover:bg-white/5'
+      }`}
+      aria-current={!isHinglish ? 'true' : undefined}
+      title="Read in formal English"
+    >
+      <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+      <span>🌐 English</span>
+    </a>
+  ) : (
+    <span
+      class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium text-muted/50 cursor-not-allowed"
+      title="English version coming soon"
+    >
+      <span class="w-1.5 h-1.5 rounded-full bg-muted/40"></span>
+      <span>English (Soon)</span>
+    </span>
+  )}
+</div>
+
+<script>
+  function setupLangSwitchers() {
+    const switchers = document.querySelectorAll<HTMLAnchorElement>('.language-switcher-pill a[data-lang]');
+    switchers.forEach((el) => {
+      el.addEventListener('click', () => {
+        const lang = el.dataset.lang;
+        if (lang) {
+          try {
+            localStorage.setItem('preferred_exam_lang', lang);
+            document.cookie = `preferred_lang=${lang};path=/;max-age=31536000;SameSite=Lax`;
+          } catch (e) {}
+        }
+      });
+    });
+  }
+
+  setupLangSwitchers();
+  document.addEventListener('astro:after-swap', setupLangSwitchers);
+</script>

@@ -162,13 +162,13 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         </button>
       </div>
 
-      <!-- Center: Mode Switcher (Visual vs Markdown Editor) -->
-      <div class="flex items-center">
+      <!-- Center: Mode Switcher & Language Switcher -->
+      <div class="flex items-center gap-2">
         <div class="bg-slate-100 p-0.5 rounded-lg border border-slate-200 flex items-center text-xs shadow-2xs">
           <button 
             type="button" 
             id="mode-visual-btn"
-            class="editor-mode-toggle px-3 py-1 rounded-md font-bold text-slate-900 bg-white shadow-xs transition flex items-center gap-1.5"
+            class="editor-mode-toggle px-3 py-1 rounded-md font-bold text-slate-900 bg-white shadow-xs transition flex items-center gap-1.5 cursor-pointer"
             data-mode="visual"
           >
             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -180,19 +180,78 @@ import AdminLayout from '../layouts/AdminLayout.astro';
           <button 
             type="button" 
             id="mode-markdown-btn"
-            class="editor-mode-toggle px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5"
+            class="editor-mode-toggle px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 cursor-pointer"
             data-mode="markdown"
           >
             <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
             </svg>
-            <span>Markdown Editor</span>
+            <span>Markdown</span>
+          </button>
+
+          <button 
+            type="button" 
+            id="mode-compare-btn"
+            class="editor-mode-toggle px-3 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 cursor-pointer"
+            data-mode="compare"
+            title="Side-by-side comparison of Hindi & English articles"
+          >
+            <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            </svg>
+            <span>Compare</span>
+          </button>
+        </div>
+
+        <!-- Language Switcher Pill (Switches active article in Visual & Markdown editors) -->
+        <div id="top-lang-pill-container" class="bg-slate-100 p-0.5 rounded-lg border border-slate-200 flex items-center text-xs shadow-2xs">
+          <button 
+            type="button" 
+            id="top-lang-hindi-btn"
+            class="px-2.5 py-1 rounded-md font-bold text-slate-900 bg-white shadow-xs transition flex items-center gap-1 cursor-pointer"
+            title="Switch editor view to Hindi (हिंदी + Technical Terms)"
+          >
+            <span>🇮🇳 Hindi</span>
+          </button>
+          <button 
+            type="button" 
+            id="top-lang-english-btn"
+            class="px-2.5 py-1 rounded-md font-medium text-slate-600 hover:text-slate-900 transition flex items-center gap-1 cursor-pointer"
+            title="Switch editor view to English"
+          >
+            <span>🌐 English</span>
           </button>
         </div>
       </div>
 
       <!-- Right side: Saved state, Overview, Preview, Save Draft, Publish, Settings toggle, More menu -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <!-- Bilingual Mode Shortcut -->
+        <button 
+          type="button"
+          id="top-bilingual-btn"
+          class="px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+          title="Bilingual: Compare Hindi and English articles side-by-side"
+        >
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span class="hidden sm:inline">Bilingual</span>
+        </button>
+
+        <!-- Reference Post Rewriter -->
+        <button 
+          type="button"
+          id="top-ai-writer-btn"
+          class="px-2.5 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+          title="Reference Rewriter: Paste reference blog/notice to generate Hindi (Devanagari) & English articles"
+        >
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+          </svg>
+          <span class="hidden sm:inline">Reference Rewriter</span>
+        </button>
+
         <!-- Live Saved Status Indicator -->
         <div id="save-status" class="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 font-medium px-2 py-1">
           <span class="w-2 h-2 rounded-full bg-slate-300"></span>
@@ -224,19 +283,21 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         <button 
           type="button"
           id="save-draft-btn"
-          class="hidden sm:inline-flex px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-2xs"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-2xs disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Save Draft
+          <span id="save-draft-spinner" class="hidden w-3 h-3 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span>
+          <span id="save-draft-label">Save Draft</span>
         </button>
 
         <!-- Publish / Update Button -->
         <button 
           type="button"
           id="publish-btn"
-          class="px-3.5 sm:px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition"
+          class="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-2xs transition disabled:opacity-60 disabled:cursor-not-allowed"
           style="background-color: #2563EB;"
         >
-          Publish
+          <span id="publish-spinner" class="hidden w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span id="publish-label">Publish</span>
         </button>
 
         <!-- Settings Sidebar Toggle Button -->
@@ -344,6 +405,17 @@ import AdminLayout from '../layouts/AdminLayout.astro';
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 <span>Duplicate Article</span>
+              </button>
+
+              <button 
+                type="button" 
+                id="opt-delete-article" 
+                class="w-full text-left px-3.5 py-1.5 text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition"
+              >
+                <svg class="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>Delete Article</span>
               </button>
             </div>
 
@@ -1037,6 +1109,199 @@ import AdminLayout from '../layouts/AdminLayout.astro';
             </article>
           </div>
 
+          <!-- 4. Dedicated Bilingual Side-by-Side Compare Workspace -->
+          <div id="compare-surface" class="hidden w-full min-w-0 flex-1 flex flex-col space-y-4">
+            <!-- Compare Surface Action & Status Banner -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-3 bg-white border border-slate-200 rounded-xl p-3.5 sm:p-4 shadow-sm">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    Bilingual Compare & Publish
+                    <span id="compare-sync-badge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      Ready
+                    </span>
+                  </h3>
+                  <p class="text-[11px] text-slate-500">Paste in one language, AI auto-translates the other. Review side-by-side before publishing.</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button 
+                  type="button" 
+                  id="compare-open-ai-writer-btn"
+                  class="px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                  title="Paste reference article or notification"
+                >
+                  <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                  </svg>
+                  <span>Paste Reference</span>
+                </button>
+
+                <button 
+                  type="button" 
+                  id="compare-auto-translate-btn"
+                  class="px-3 py-1.5 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                  title="Detects source text and translates opposite language"
+                >
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                  </svg>
+                  <span id="compare-ai-btn-label">Auto-Translate</span>
+                </button>
+
+                <button 
+                  type="button" 
+                  id="compare-save-bilingual-btn"
+                  class="px-3.5 py-1.5 rounded-md bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+                  title="Saves and links both blogs under the same translation group"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Save Both Versions</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Two-Column Side-by-Side Split View -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-[620px]">
+              <!-- Left Column: 🇮🇳 Hinglish -->
+              <div class="flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <div class="bg-slate-50 border-b border-slate-200 px-4 py-2.5 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                      <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                      🇮🇳 Hindi (हिंदी + English)
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-normal">Devanagari · BiharHelp Style</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span id="compare-hinglish-stats" class="text-[10px] text-slate-500 font-mono">0 words</span>
+                    <button type="button" id="btn-sync-h-to-e" class="text-[10px] font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 px-2 py-1 rounded-md transition cursor-pointer shadow-2xs" title="Translate Hindi content to English">
+                      → English
+                    </button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 space-y-2.5 border-b border-slate-100">
+                  <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Hindi Title (हिंदी + English)</label>
+                    <input 
+                      type="text" 
+                      id="compare-hinglish-title" 
+                      placeholder="e.g. RRB NTPC New Vacancy 2026: 11,558 पदों पर नोटिफिकेशन जारी, जानें योग्यता और आवेदन प्रक्रिया"
+                      class="w-full bg-white border border-slate-200 rounded-md p-2 text-xs text-slate-900 font-semibold focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 transition"
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Slug</label>
+                      <input 
+                        type="text" 
+                        id="compare-hinglish-slug" 
+                        placeholder="rrb-ntpc-ug-hinglish"
+                        class="w-full bg-white border border-slate-200 rounded-md p-1.5 text-[11px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Excerpt</label>
+                      <input 
+                        type="text" 
+                        id="compare-hinglish-excerpt" 
+                        placeholder="Brief summary in Hinglish..."
+                        class="w-full bg-white border border-slate-200 rounded-md p-1.5 text-[11px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 transition"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Hinglish Markdown Editor -->
+                <div class="flex-1 flex flex-col p-3">
+                  <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 px-1">
+                    <span>Markdown Content</span>
+                    <span>GFM · Tables · Lists</span>
+                  </div>
+                  <textarea 
+                    id="compare-hinglish-markdown" 
+                    spellcheck="false"
+                    placeholder="Write or paste your Hinglish article in Markdown format here...&#10;&#10;## Important Dates&#10;- Application Start: 15 October 2026&#10;- Last Date: 13 November 2026"
+                    class="w-full flex-1 p-3 bg-slate-50/50 border border-slate-200 rounded-lg font-mono text-xs sm:text-[13px] text-slate-900 leading-relaxed outline-none resize-none focus:border-violet-400 focus:bg-white focus:ring-2 focus:ring-violet-500/10 transition min-h-[420px]"
+                  ></textarea>
+                </div>
+              </div>
+
+              <!-- Right Column: 🌐 English -->
+              <div class="flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <div class="bg-slate-50 border-b border-slate-200 px-4 py-2.5 flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                      <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                      🌐 English
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-normal">Formal · SEO Indexed</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span id="compare-english-stats" class="text-[10px] text-slate-500 font-mono">0 words</span>
+                    <button type="button" id="btn-sync-e-to-h" class="text-[10px] font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 px-2 py-1 rounded-md transition cursor-pointer shadow-2xs" title="Translate English content to Hindi">
+                      ← Hindi
+                    </button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 space-y-2.5 border-b border-slate-100">
+                  <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">English Title</label>
+                    <input 
+                      type="text" 
+                      id="compare-english-title" 
+                      placeholder="e.g. RRB NTPC 10+2 Recruitment 2026: Apply Online for 1,688 Posts"
+                      class="w-full bg-white border border-slate-200 rounded-md p-2 text-xs text-slate-900 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Slug</label>
+                      <input 
+                        type="text" 
+                        id="compare-english-slug" 
+                        placeholder="rrb-ntpc-ug-recruitment-2026"
+                        class="w-full bg-white border border-slate-200 rounded-md p-1.5 text-[11px] font-mono text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Excerpt</label>
+                      <input 
+                        type="text" 
+                        id="compare-english-excerpt" 
+                        placeholder="Brief summary in English..."
+                        class="w-full bg-white border border-slate-200 rounded-md p-1.5 text-[11px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- English Markdown Editor -->
+                <div class="flex-1 flex flex-col p-3">
+                  <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1 px-1">
+                    <span>Markdown Content</span>
+                    <span>GFM · Tables · Lists</span>
+                  </div>
+                  <textarea 
+                    id="compare-english-markdown" 
+                    spellcheck="false"
+                    placeholder="Write or paste your English article in Markdown format here...&#10;&#10;## Important Dates&#10;- Application Start: 15 October 2026&#10;- Last Date: 13 November 2026"
+                    class="w-full flex-1 p-3 bg-slate-50/50 border border-slate-200 rounded-lg font-mono text-xs sm:text-[13px] text-slate-900 leading-relaxed outline-none resize-none focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition min-h-[420px]"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 
@@ -1094,7 +1359,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
                     Which category should this article appear in? <span class="text-red-500">*</span>
                   </label>
                   <button type="button" id="open-create-category-modal" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 hover:underline">
-                    + Add
+                    Add Category
                   </button>
                 </div>
                 <select 
@@ -1318,6 +1583,56 @@ import AdminLayout from '../layouts/AdminLayout.astro';
                 <label for="field-noindex" class="text-slate-700 cursor-pointer select-none">
                   Exclude from search index (<code>noindex</code>)
                 </label>
+              </div>
+
+              <!-- AI SEO Trigger Button -->
+              <div class="pt-2 border-t border-slate-100">
+                <button 
+                  type="button" 
+                  id="btn-ai-seo-audit"
+                  class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs shadow-2xs transition cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <span>AI SEO &amp; Quality Audit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Language & Translation -->
+          <div class="accordion-item" data-accordion="language">
+            <button type="button" class="accordion-trigger w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-slate-50 transition">
+              <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>
+              <span class="font-semibold text-slate-900">Language</span>
+              <span id="summary-language" class="ml-auto text-[11px] text-slate-500">Hinglish</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </button>
+
+            <div class="accordion-content hidden px-5 pb-5 pt-1 space-y-3.5">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1">Post Language</label>
+                <select 
+                  id="field-language"
+                  class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-pointer"
+                >
+                  <option value="HINGLISH">🇮🇳 Hinglish (Default)</option>
+                  <option value="ENGLISH">🌐 English</option>
+                </select>
+                <p class="text-[10px] text-slate-400 mt-1">Hinglish is conversational Romanized Hindi, optimized for Indian exam queries.</p>
+              </div>
+
+              <!-- Multilingual Translation Box -->
+              <div class="p-3 bg-slate-50 border border-slate-200 rounded-md space-y-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Multilingual Pairing</span>
+                <p id="translation-status-msg" class="text-[11px] text-slate-600 leading-relaxed">No linked translation created yet.</p>
+                <button 
+                  type="button" 
+                  id="btn-auto-translate"
+                  class="w-full flex items-center justify-center gap-2 py-1.5 px-3 rounded-md border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs shadow-2xs transition cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                  <span id="btn-translate-label">Translate with Gemini</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1906,6 +2221,271 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       </article>
     </div>
   </div>
+
+  <!-- AI SEO & Quality Audit Modal -->
+  <div id="ai-seo-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+      <!-- Modal Header -->
+      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center border border-slate-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-semibold text-slate-900">SEO &amp; Content Quality Audit</h3>
+              <span id="ai-seo-score-badge" class="px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                Score: --
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-500">Gemini 3.8 Flash · CTR titles, descriptions, keywords &amp; structure diagnostics</p>
+          </div>
+        </div>
+        <button type="button" id="close-ai-seo-modal-btn" class="p-1.5 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div id="ai-seo-modal-body" class="p-5 overflow-y-auto space-y-4 text-xs text-slate-700 flex-1">
+        <div id="ai-seo-loading" class="py-12 flex flex-col items-center justify-center text-center space-y-3">
+          <div class="w-8 h-8 border-3 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+          <p class="font-semibold text-slate-700 text-sm">Auditing content with Gemini...</p>
+          <p class="text-slate-400 text-xs">Analyzing keyword density, missing exam criteria, and CTR title variants</p>
+        </div>
+        <div id="ai-seo-results" class="hidden space-y-4"></div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+        <button type="button" id="close-ai-seo-bottom-btn" class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-100 transition">
+          Close
+        </button>
+        <button type="button" id="apply-all-seo-btn" class="hidden px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-xs transition items-center gap-2">
+          <span>Apply All Recommendations</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Reference Article Rewriter Modal (Clean Utility UI) -->
+  <div id="ai-reference-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-5">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center border border-slate-200">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-semibold text-slate-900">Reference Article Rewriter</h3>
+              <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">Gemini 3.8 Flash</span>
+            </div>
+            <p class="text-[11px] text-slate-500">Converts raw notifications into bilingual articles: Hindi (Devanagari + English terms) &amp; English</p>
+          </div>
+        </div>
+        <button type="button" id="close-ai-reference-modal-btn" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer" title="Close">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 overflow-y-auto space-y-4 flex-1 text-xs">
+        
+        <!-- Guidance Bar -->
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+          <div>
+            <span class="font-semibold text-slate-900">Editorial Standard:</span>
+            <span class="ml-1 text-slate-600">Devanagari Hindi with technical terms (BiharHelp / SarkariResult style) + Structured English</span>
+          </div>
+          <div class="flex items-center gap-2.5 text-[10px] text-slate-500">
+            <span>✓ GFM Tables</span>
+            <span>·</span>
+            <span>✓ Important Dates</span>
+            <span>·</span>
+            <span>✓ Full SEO Meta</span>
+          </div>
+        </div>
+
+        <!-- Input Box -->
+        <div class="space-y-3 bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <label for="ai-ref-category" class="text-[11px] font-medium text-slate-700">Category:</label>
+              <select 
+                id="ai-ref-category"
+                class="bg-white border border-slate-200 rounded-md px-2 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 cursor-pointer"
+              >
+                <option value="auto-detect">Auto-Detect</option>
+                <option value="notifications">Notification / Vacancy</option>
+                <option value="syllabus">Syllabus &amp; Pattern</option>
+                <option value="admit-card">Admit Card</option>
+                <option value="answer-key">Answer Key</option>
+                <option value="cut-off">Cut-off Marks</option>
+                <option value="results">Results / Merit List</option>
+                <option value="study-material">Study Material</option>
+              </select>
+            </div>
+            
+            <div class="flex items-center gap-1.5">
+              <button 
+                type="button" 
+                id="ai-ref-insert-demo-btn" 
+                class="px-2.5 py-1 rounded text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
+              >
+                Load Sample Notice
+              </button>
+              <button 
+                type="button" 
+                id="ai-ref-clear-btn" 
+                class="px-2 py-1 rounded text-[11px] font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition cursor-pointer"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <textarea 
+              id="ai-ref-content"
+              rows="7"
+              placeholder="Paste raw exam notification, official release, or competitor post here..."
+              class="w-full bg-slate-50/50 border border-slate-200 rounded-md p-3 text-xs text-slate-900 leading-relaxed outline-none resize-y focus:bg-white focus:border-slate-400 font-mono transition"
+            ></textarea>
+            <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1 px-0.5">
+              <span id="ai-ref-char-count">0 words · 0 characters</span>
+              <span>Min. 50 characters required</span>
+            </div>
+          </div>
+
+          <div>
+            <label for="ai-ref-instructions" class="block text-[11px] font-medium text-slate-700 mb-1">
+              Custom Focus / Instructions <span class="font-normal text-slate-400">(Optional)</span>
+            </label>
+            <input 
+              type="text" 
+              id="ai-ref-instructions"
+              placeholder="e.g. Highlight 3-year COVID age relaxation, post-wise eligibility, CBT-1 dates..."
+              class="w-full bg-white border border-slate-200 rounded-md px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400 transition"
+            />
+          </div>
+
+          <div class="flex items-center justify-end pt-1">
+            <button 
+              type="button" 
+              id="ai-ref-generate-btn"
+              class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-xs transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span id="ai-ref-btn-label">Generate Bilingual Articles</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Clean Loading Card -->
+        <div id="ai-ref-loading-card" class="hidden border border-slate-200 bg-slate-50 rounded-lg p-4 space-y-3">
+          <div class="flex items-center gap-2 text-slate-800 font-medium text-xs">
+            <div class="w-3.5 h-3.5 border-2 border-slate-700 border-t-transparent rounded-full animate-spin"></div>
+            <span id="ai-ref-loading-status">Analyzing reference and generating bilingual articles...</span>
+          </div>
+          <div class="space-y-1.5 text-[11px] text-slate-600 pl-5">
+            <div id="ai-step-1" class="flex items-center gap-2 text-slate-900 font-medium">
+              <span>●</span> Extracting dates, vacancies, eligibility, and fees...
+            </div>
+            <div id="ai-step-2" class="flex items-center gap-2 text-slate-400">
+              <span>○</span> Drafting Hindi (हिंदी + Technical Terms) with GFM tables...
+            </div>
+            <div id="ai-step-3" class="flex items-center gap-2 text-slate-400">
+              <span>○</span> Drafting English article with SEO headings...
+            </div>
+            <div id="ai-step-4" class="flex items-center gap-2 text-slate-400">
+              <span>○</span> Generating meta titles, slugs, and keywords...
+            </div>
+          </div>
+        </div>
+
+        <!-- Clean Results Card -->
+        <div id="ai-ref-results-card" class="hidden border border-slate-200 bg-white rounded-lg p-4 space-y-3 shadow-xs">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-slate-900">Articles Ready for Review</span>
+              <span id="ai-ref-result-category" class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">Notification</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] text-slate-500">SEO Score:</span>
+              <span id="ai-ref-result-seo-score" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">88/100</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <!-- Hindi Card -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] font-semibold text-slate-900">
+                <span>🇮🇳 Hindi (हिंदी + English Terms)</span>
+                <span id="ai-res-h-words" class="text-[10px] text-slate-500 font-mono">0 words</span>
+              </div>
+              <h4 id="ai-res-h-title" class="font-semibold text-slate-900 text-xs line-clamp-2"></h4>
+              <p id="ai-res-h-excerpt" class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed"></p>
+              <div class="text-[10px] text-slate-400 font-mono truncate" id="ai-res-h-slug"></div>
+            </div>
+
+            <!-- English Card -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] font-semibold text-slate-900">
+                <span>🇬🇧 English</span>
+                <span id="ai-res-e-words" class="text-[10px] text-slate-500 font-mono">0 words</span>
+              </div>
+              <h4 id="ai-res-e-title" class="font-semibold text-slate-900 text-xs line-clamp-2"></h4>
+              <p id="ai-res-e-excerpt" class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed"></p>
+              <div class="text-[10px] text-slate-400 font-mono truncate" id="ai-res-e-slug"></div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+            <button 
+              type="button" 
+              id="ai-ref-reset-btn"
+              class="px-2.5 py-1.5 text-xs text-slate-600 hover:text-slate-900 transition cursor-pointer"
+            >
+              ← Edit Reference
+            </button>
+            <button 
+              type="button" 
+              id="ai-ref-apply-compare-btn"
+              class="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              <span>Load into Compare Editor</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 shrink-0">
+        <span>Compare mode allows side-by-side editing before 1-click publishing.</span>
+        <button type="button" id="close-ai-reference-bottom-btn" class="px-3 py-1 rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
 </AdminLayout>
 
 <script>
@@ -1925,9 +2505,16 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   // Configure marked for GitHub flavored markdown with tables and standard rules
   const markedRenderer = new marked.Renderer();
   markedRenderer.heading = function ({ tokens, depth, text }: any) {
-    const rawText = text || this.parser.parseInline(tokens);
+    const rawText = (text || this.parser.parseInline(tokens)).replace(/\\+/g, '');
     const cleanText = rawText.replace(/<[^>]*>/g, '');
-    const id = cleanText.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+    const id = cleanText
+      .toLowerCase()
+      .trim()
+      .replace(/\\+/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
+      .replace(/\-\-+/g, '-')
+      .replace(/(^-|-$)/g, '') || `section-${depth}`;
     return `<h${depth} id="${id}">${rawText}</h${depth}>\n`;
   };
 
@@ -1965,6 +2552,9 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     bulletListMarker: '-',
     codeBlockStyle: 'fenced',
   });
+  // Prevent turndown from escaping markdown characters (like numbers followed by periods in headings: "1." -> "1\.")
+  // which causes cascading backslash accumulation (1\. -> 1\\\. -> 1\\\\\\.) on repeated edits/saves.
+  turndownService.escape = (str: string) => str;
 
   // Custom turndown rule for tables
   turndownService.addRule('table', {
@@ -2320,6 +2910,20 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   const canonicalUrlInput = document.getElementById('field-canonical-url') as HTMLInputElement | null;
   const noindexCheckbox = document.getElementById('field-noindex') as HTMLInputElement | null;
   const resultingUrlPreview = document.getElementById('resulting-url-preview');
+  const languageSelect = document.getElementById('field-language') as HTMLSelectElement | null;
+  const summaryLanguage = document.getElementById('summary-language');
+  const translationStatusMsg = document.getElementById('translation-status-msg');
+  const btnAutoTranslate = document.getElementById('btn-auto-translate');
+  const btnTranslateLabel = document.getElementById('btn-translate-label');
+
+  const btnAiSeoAudit = document.getElementById('btn-ai-seo-audit');
+  const aiSeoModal = document.getElementById('ai-seo-modal');
+  const aiSeoScoreBadge = document.getElementById('ai-seo-score-badge');
+  const aiSeoLoading = document.getElementById('ai-seo-loading');
+  const aiSeoResults = document.getElementById('ai-seo-results');
+  const closeAiSeoModalBtn = document.getElementById('close-ai-seo-modal-btn');
+  const closeAiSeoBottomBtn = document.getElementById('close-ai-seo-bottom-btn');
+  const applyAllSeoBtn = document.getElementById('apply-all-seo-btn');
 
   // Top Bar elements
   const saveStatusEl = document.getElementById('save-status');
@@ -2365,9 +2969,35 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   // Mode Switcher Elements
   const modeVisualBtn = document.getElementById('mode-visual-btn');
   const modeMarkdownBtn = document.getElementById('mode-markdown-btn');
+  const modeCompareBtn = document.getElementById('mode-compare-btn');
+  const topBilingualBtn = document.getElementById('top-bilingual-btn');
+  const topLangHindiBtn = document.getElementById('top-lang-hindi-btn');
+  const topLangEnglishBtn = document.getElementById('top-lang-english-btn');
+  const topLangPillContainer = document.getElementById('top-lang-pill-container');
   const visualEditorSurface = document.getElementById('visual-editor-surface');
   const markdownEditorSurface = document.getElementById('markdown-editor-surface');
   const markdownPreviewSurface = document.getElementById('markdown-preview-surface');
+  const compareSurface = document.getElementById('compare-surface');
+  const compareSyncBadge = document.getElementById('compare-sync-badge');
+  const compareAutoTranslateBtn = document.getElementById('compare-auto-translate-btn');
+  const compareAiBtnLabel = document.getElementById('compare-ai-btn-label');
+  const compareSaveBilingualBtn = document.getElementById('compare-save-bilingual-btn');
+
+  // Compare Pane Elements
+  const compareHinglishTitle = document.getElementById('compare-hinglish-title') as HTMLInputElement | null;
+  const compareHinglishSlug = document.getElementById('compare-hinglish-slug') as HTMLInputElement | null;
+  const compareHinglishExcerpt = document.getElementById('compare-hinglish-excerpt') as HTMLInputElement | null;
+  const compareHinglishMarkdown = document.getElementById('compare-hinglish-markdown') as HTMLTextAreaElement | null;
+  const compareHinglishStats = document.getElementById('compare-hinglish-stats');
+  const btnSyncHToE = document.getElementById('btn-sync-h-to-e');
+
+  const compareEnglishTitle = document.getElementById('compare-english-title') as HTMLInputElement | null;
+  const compareEnglishSlug = document.getElementById('compare-english-slug') as HTMLInputElement | null;
+  const compareEnglishExcerpt = document.getElementById('compare-english-excerpt') as HTMLInputElement | null;
+  const compareEnglishMarkdown = document.getElementById('compare-english-markdown') as HTMLTextAreaElement | null;
+  const compareEnglishStats = document.getElementById('compare-english-stats');
+  const btnSyncEToH = document.getElementById('btn-sync-e-to-h');
+
   const markdownTextarea = document.getElementById('markdown-textarea') as HTMLTextAreaElement | null;
   const mdLineNumbers = document.getElementById('md-line-numbers');
   const mdCursorPos = document.getElementById('md-cursor-pos');
@@ -2383,6 +3013,9 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   const urlParams = new URLSearchParams(window.location.search);
   const editId = urlParams.get('edit');
   let currentPostId = editId;
+  let hinglishBlogId: string | null = null;
+  let englishBlogId: string | null = null;
+  let currentTranslationGroupId: string | null = null;
   let currentVersion = 1;
   let isDirty = false;
   let categoriesCache: any[] = [];
@@ -2391,7 +3024,37 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   let slashFilteredList: any[] = [];
   let inlineInsertPos: number | null = null;
   let isInlineMenuOpen = false;
-  let currentEditorMode: 'visual' | 'markdown' = 'visual';
+  let currentEditorMode: 'visual' | 'markdown' | 'compare' = 'visual';
+  let tagCatalog: { id: string; name: string }[] = [];
+
+  function applyKeywordsAndTags(keywords: string[]) {
+    if (!keywords || !keywords.length) return;
+    const cleanKeywords = keywords
+      .map((k) => k.trim().toLowerCase())
+      .filter(Boolean);
+    const matchedTagIds: string[] = [];
+
+    for (const tag of tagCatalog) {
+      const tagNameLower = tag.name.trim().toLowerCase();
+      const tagWords = tagNameLower.split(/\s+/);
+      const isMatched = cleanKeywords.some((kw) => {
+        if (kw === tagNameLower || kw.includes(tagNameLower) || tagNameLower.includes(kw)) return true;
+        const kwWords = kw.split(/\s+/);
+        return tagWords.some((tw) => tw.length > 2 && kwWords.includes(tw));
+      });
+      if (isMatched) {
+        matchedTagIds.push(tag.id);
+      }
+    }
+
+    if (matchedTagIds.length > 0) {
+      document.querySelectorAll<HTMLInputElement>('#field-tags input[type="checkbox"]').forEach((checkbox) => {
+        if (matchedTagIds.includes(checkbox.value)) {
+          checkbox.checked = true;
+        }
+      });
+    }
+  }
 
   uploadCoverImageBtn?.addEventListener('click', () => coverImageFileInput?.click());
   coverImageFileInput?.addEventListener('change', async () => {
@@ -2578,22 +3241,111 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   mdViewPreviewBtn?.addEventListener('click', showArticlePreview);
   backToEditorBtn?.addEventListener('click', hideArticlePreview);
 
-  function switchEditorMode(targetMode: 'visual' | 'markdown') {
+  function updateCompareStats() {
+    if (compareHinglishMarkdown && compareHinglishStats) {
+      const words = compareHinglishMarkdown.value.trim().split(/\s+/).filter(Boolean).length;
+      compareHinglishStats.textContent = `${words} words`;
+    }
+    if (compareEnglishMarkdown && compareEnglishStats) {
+      const words = compareEnglishMarkdown.value.trim().split(/\s+/).filter(Boolean).length;
+      compareEnglishStats.textContent = `${words} words`;
+    }
+  }
+
+  async function switchEditorMode(targetMode: 'visual' | 'markdown' | 'compare') {
     if (currentEditorMode === targetMode) return;
 
-    if (targetMode === 'markdown') {
-      // 1. Sync visual HTML to Markdown text
-      const html = editor.getHTML();
-      const markdown = turndownService.turndown(html);
+    if (targetMode === 'compare') {
+      // 1. Entering Compare Mode
+      let currentMd = '';
+      if (currentEditorMode === 'visual') {
+        const html = editor.getHTML();
+        if (html && html !== '<p></p>') {
+          currentMd = turndownService.turndown(html);
+        } else if (markdownTextarea?.value.trim()) {
+          currentMd = markdownTextarea.value;
+        }
+      } else if (currentEditorMode === 'markdown') {
+        currentMd = markdownTextarea?.value || '';
+      }
+
+      const isEnglish = languageSelect?.value === 'ENGLISH';
+      if (isEnglish) {
+        if (compareEnglishMarkdown && currentMd && !compareEnglishMarkdown.value.trim()) {
+          compareEnglishMarkdown.value = currentMd;
+        }
+        if (compareEnglishTitle && titleInput && !compareEnglishTitle.value.trim()) {
+          compareEnglishTitle.value = titleInput.value;
+        }
+        if (compareEnglishSlug && slugInput && !compareEnglishSlug.value.trim()) {
+          compareEnglishSlug.value = slugInput.value;
+        }
+        if (compareEnglishExcerpt && excerptInput && !compareEnglishExcerpt.value.trim()) {
+          compareEnglishExcerpt.value = excerptInput.value;
+        }
+      } else {
+        if (compareHinglishMarkdown && currentMd && !compareHinglishMarkdown.value.trim()) {
+          compareHinglishMarkdown.value = currentMd;
+        }
+        if (compareHinglishTitle && titleInput && !compareHinglishTitle.value.trim()) {
+          compareHinglishTitle.value = titleInput.value;
+        }
+        if (compareHinglishSlug && slugInput && !compareHinglishSlug.value.trim()) {
+          compareHinglishSlug.value = slugInput.value;
+        }
+        if (compareHinglishExcerpt && excerptInput && !compareHinglishExcerpt.value.trim()) {
+          compareHinglishExcerpt.value = excerptInput.value;
+        }
+      }
+
+      // Hide all other surfaces, show compare surface
+      visualEditorSurface?.classList.add('hidden');
+      markdownEditorSurface?.classList.add('hidden');
+      markdownEditorSurface?.classList.remove('flex');
+      markdownPreviewSurface?.classList.add('hidden');
+      markdownPreviewSurface?.classList.remove('flex');
+      compareSurface?.classList.remove('hidden');
+      compareSurface?.classList.add('flex');
+      contextualToolbar?.classList.add('hidden');
+
+      // Update button styling
+      modeVisualBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeVisualBtn?.classList.add('font-medium', 'text-slate-600');
+      modeMarkdownBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeMarkdownBtn?.classList.add('font-medium', 'text-slate-600');
+      modeCompareBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeCompareBtn?.classList.remove('font-medium', 'text-slate-600');
+
+      currentEditorMode = 'compare';
+      updateCompareStats();
+    } else if (targetMode === 'markdown') {
+      // 2. Entering Markdown Mode
+      let markdown = '';
+      if (currentEditorMode === 'compare') {
+        const isEnglish = languageSelect?.value === 'ENGLISH';
+        markdown = isEnglish ? (compareEnglishMarkdown?.value || '') : (compareHinglishMarkdown?.value || '');
+        const currentTitle = isEnglish ? compareEnglishTitle?.value : compareHinglishTitle?.value;
+        if (titleInput && currentTitle) titleInput.value = currentTitle;
+      } else {
+        const html = editor.getHTML();
+        if (html && html !== '<p></p>') {
+          markdown = turndownService.turndown(html);
+        } else if (markdownTextarea?.value.trim()) {
+          markdown = markdownTextarea.value;
+        }
+      }
+
       if (markdownTextarea) {
         markdownTextarea.value = markdown;
         updateLineNumbers();
       }
 
-      // Hide visual and preview surfaces, show markdown editor surface
+      // Hide visual, preview & compare surfaces, show markdown editor surface
       visualEditorSurface?.classList.add('hidden');
       markdownPreviewSurface?.classList.add('hidden');
       markdownPreviewSurface?.classList.remove('flex');
+      compareSurface?.classList.add('hidden');
+      compareSurface?.classList.remove('flex');
       markdownEditorSurface?.classList.remove('hidden');
       markdownEditorSurface?.classList.add('flex');
       contextualToolbar?.classList.add('hidden');
@@ -2601,35 +3353,63 @@ import AdminLayout from '../layouts/AdminLayout.astro';
       // Update button styling
       modeVisualBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
       modeVisualBtn?.classList.add('font-medium', 'text-slate-600');
+      modeCompareBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeCompareBtn?.classList.add('font-medium', 'text-slate-600');
       modeMarkdownBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
       modeMarkdownBtn?.classList.remove('font-medium', 'text-slate-600');
 
       currentEditorMode = 'markdown';
       markdownTextarea?.focus();
     } else {
-      // 2. Sync Markdown text to visual HTML
-      const markdown = markdownTextarea?.value || '';
-      const rawHtml = marked.parse(markdown) as string;
-      const cleanHtml = DOMPurify.sanitize(rawHtml, DOMPURIFY_CONFIG);
+      // 3. Entering Visual Mode
+      let markdown = '';
+      if (currentEditorMode === 'compare') {
+        const isEnglish = languageSelect?.value === 'ENGLISH';
+        markdown = isEnglish ? (compareEnglishMarkdown?.value || '') : (compareHinglishMarkdown?.value || '');
+        const currentTitle = isEnglish ? compareEnglishTitle?.value : compareHinglishTitle?.value;
+        if (titleInput && currentTitle) titleInput.value = currentTitle;
+      } else {
+        markdown = markdownTextarea?.value || '';
+      }
+
+      const rawHtml = await marked.parse(markdown);
+      const cleanHtml = DOMPurify.sanitize(String(rawHtml), DOMPURIFY_CONFIG);
 
       // Populate visual TipTap editor
       editor.commands.setContent(cleanHtml);
 
-      // Hide markdown and preview surfaces, show visual surface
+      // Hide markdown, preview & compare surfaces, show visual surface
       markdownEditorSurface?.classList.add('hidden');
       markdownEditorSurface?.classList.remove('flex');
       markdownPreviewSurface?.classList.add('hidden');
       markdownPreviewSurface?.classList.remove('flex');
+      compareSurface?.classList.add('hidden');
+      compareSurface?.classList.remove('flex');
       visualEditorSurface?.classList.remove('hidden');
 
       // Update button styling
       modeMarkdownBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
       modeMarkdownBtn?.classList.add('font-medium', 'text-slate-600');
+      modeCompareBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      modeCompareBtn?.classList.add('font-medium', 'text-slate-600');
       modeVisualBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
       modeVisualBtn?.classList.remove('font-medium', 'text-slate-600');
 
       currentEditorMode = 'visual';
       editor.chain().focus();
+    }
+
+    const activeLang = languageSelect?.value === 'ENGLISH' ? 'ENGLISH' : 'HINGLISH';
+    if (activeLang === 'HINGLISH') {
+      topLangHindiBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangHindiBtn?.classList.remove('font-medium', 'text-slate-600');
+      topLangEnglishBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangEnglishBtn?.classList.add('font-medium', 'text-slate-600');
+    } else {
+      topLangEnglishBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangEnglishBtn?.classList.remove('font-medium', 'text-slate-600');
+      topLangHindiBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangHindiBtn?.classList.add('font-medium', 'text-slate-600');
     }
 
     updateMetrics();
@@ -2640,6 +3420,675 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 
   modeVisualBtn?.addEventListener('click', () => switchEditorMode('visual'));
   modeMarkdownBtn?.addEventListener('click', () => switchEditorMode('markdown'));
+  modeCompareBtn?.addEventListener('click', () => switchEditorMode('compare'));
+
+  // Language Switcher Logic (Allows seamless switching between Hindi & English in Visual and Markdown modes)
+  function syncCurrentEditorToState() {
+    const currentLang = languageSelect?.value === 'ENGLISH' ? 'ENGLISH' : 'HINGLISH';
+    let md = '';
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      md = markdownTextarea.value;
+    } else if (currentEditorMode === 'compare') {
+      md = currentLang === 'ENGLISH' ? (compareEnglishMarkdown?.value || '') : (compareHinglishMarkdown?.value || '');
+    } else if (editor) {
+      const html = editor.getHTML();
+      if (html && html !== '<p></p>') {
+        md = turndownService.turndown(html);
+      } else if (markdownTextarea?.value.trim()) {
+        md = markdownTextarea.value;
+      }
+    }
+
+    if (currentLang === 'ENGLISH') {
+      if (compareEnglishTitle && titleInput?.value) compareEnglishTitle.value = titleInput.value;
+      if (compareEnglishSlug && slugInput?.value) compareEnglishSlug.value = slugInput.value;
+      if (compareEnglishExcerpt && excerptInput?.value) compareEnglishExcerpt.value = excerptInput.value;
+      if (compareEnglishMarkdown && md) compareEnglishMarkdown.value = md;
+    } else {
+      if (compareHinglishTitle && titleInput?.value) compareHinglishTitle.value = titleInput.value;
+      if (compareHinglishSlug && slugInput?.value) compareHinglishSlug.value = slugInput.value;
+      if (compareHinglishExcerpt && excerptInput?.value) compareHinglishExcerpt.value = excerptInput.value;
+      if (compareHinglishMarkdown && md) compareHinglishMarkdown.value = md;
+    }
+  }
+
+  async function setActiveLanguage(targetLang: 'HINGLISH' | 'ENGLISH', forceRefresh = false) {
+    if (!forceRefresh && languageSelect?.value === targetLang && currentEditorMode !== 'compare') return;
+
+    // 1. Save whatever is currently typed in active editor into current language draft
+    syncCurrentEditorToState();
+
+    // 2. Set languageSelect value
+    if (languageSelect) languageSelect.value = targetLang;
+    refreshSidebarSummaries();
+
+    // 3. Update top pill button styling
+    if (targetLang === 'HINGLISH') {
+      topLangHindiBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangHindiBtn?.classList.remove('font-medium', 'text-slate-600');
+      topLangEnglishBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangEnglishBtn?.classList.add('font-medium', 'text-slate-600');
+    } else {
+      topLangEnglishBtn?.classList.add('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangEnglishBtn?.classList.remove('font-medium', 'text-slate-600');
+      topLangHindiBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
+      topLangHindiBtn?.classList.add('font-medium', 'text-slate-600');
+    }
+
+    // 4. Retrieve target language content
+    const targetTitle = targetLang === 'ENGLISH'
+      ? (compareEnglishTitle?.value || '')
+      : (compareHinglishTitle?.value || '');
+    const targetSlug = targetLang === 'ENGLISH'
+      ? (compareEnglishSlug?.value || '')
+      : (compareHinglishSlug?.value || '');
+    const targetExcerpt = targetLang === 'ENGLISH'
+      ? (compareEnglishExcerpt?.value || '')
+      : (compareHinglishExcerpt?.value || '');
+    const targetMd = targetLang === 'ENGLISH'
+      ? (compareEnglishMarkdown?.value || '')
+      : (compareHinglishMarkdown?.value || '');
+
+    if (titleInput && targetTitle) titleInput.value = targetTitle;
+    if (slugInput && targetSlug) slugInput.value = targetSlug;
+    if (excerptInput && targetExcerpt) excerptInput.value = targetExcerpt;
+
+    // 5. If currently in Compare mode and user clicked a language, switch back to Visual editor for that language
+    if (currentEditorMode === 'compare') {
+      await switchEditorMode('visual');
+      return;
+    }
+
+    // 6. Populate current surface
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      markdownTextarea.value = targetMd;
+      updateLineNumbers();
+    } else if (currentEditorMode === 'visual') {
+      const cleanHtml = targetMd ? DOMPurify.sanitize(String(await marked.parse(targetMd)), DOMPURIFY_CONFIG) : '<p></p>';
+      editor.commands.setContent(cleanHtml);
+    }
+
+    updateSerp();
+    updateMetrics();
+    updateDocumentOutline();
+  }
+
+  topLangHindiBtn?.addEventListener('click', () => setActiveLanguage('HINGLISH'));
+  topLangEnglishBtn?.addEventListener('click', () => setActiveLanguage('ENGLISH'));
+
+  // Live Stats for Compare Mode textareas
+  compareHinglishMarkdown?.addEventListener('input', () => {
+    isDirty = true;
+    updateCompareStats();
+  });
+  compareEnglishMarkdown?.addEventListener('input', () => {
+    isDirty = true;
+    updateCompareStats();
+  });
+
+  // 1-Click Bi-directional Bilingual Translation Workflow
+  async function runBilingualTranslation(forceDirection?: 'H_TO_E' | 'E_TO_H') {
+    if (currentEditorMode !== 'compare') {
+      switchEditorMode('compare');
+    }
+
+    const hText = compareHinglishMarkdown?.value.trim() || '';
+    const eText = compareEnglishMarkdown?.value.trim() || '';
+    const hTitle = compareHinglishTitle?.value.trim() || '';
+    const eTitle = compareEnglishTitle?.value.trim() || '';
+
+    let direction = forceDirection;
+    if (!direction) {
+      if (hText && !eText) {
+        direction = 'H_TO_E';
+      } else if (eText && !hText) {
+        direction = 'E_TO_H';
+      } else if (languageSelect?.value === 'ENGLISH') {
+        direction = 'E_TO_H';
+      } else {
+        direction = 'H_TO_E';
+      }
+    }
+
+    const isHinglishSource = direction === 'H_TO_E';
+    const sourceTitle = isHinglishSource
+      ? (hTitle || titleInput?.value || '')
+      : (eTitle || titleInput?.value || '');
+    const sourceMarkdown = isHinglishSource
+      ? (hText || (markdownTextarea?.value || turndownService.turndown(editor.getHTML())))
+      : (eText || (markdownTextarea?.value || turndownService.turndown(editor.getHTML())));
+
+    if (!sourceMarkdown && !sourceTitle) {
+      alert('Please enter or paste article content into either the Hinglish or English editor pane first!');
+      return;
+    }
+
+    // Set UI Feedback
+    if (compareAiBtnLabel) compareAiBtnLabel.textContent = 'Translating with Gemini...';
+    if (topBilingualBtn) {
+      topBilingualBtn.classList.add('opacity-70', 'cursor-not-allowed');
+      topBilingualBtn.setAttribute('disabled', 'true');
+    }
+    if (compareAutoTranslateBtn) {
+      compareAutoTranslateBtn.setAttribute('disabled', 'true');
+    }
+    if (compareSyncBadge) {
+      compareSyncBadge.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200';
+      compareSyncBadge.textContent = 'Translating...';
+    }
+
+    try {
+      const res = await apiFetch('/blogs/translate-content', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: sourceTitle,
+          markdown: sourceMarkdown,
+          sourceLanguage: isHinglishSource ? 'HINGLISH' : 'ENGLISH',
+          targetLanguage: isHinglishSource ? 'ENGLISH' : 'HINGLISH',
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (isHinglishSource) {
+        if (compareEnglishTitle) compareEnglishTitle.value = data.title || '';
+        if (compareEnglishMarkdown) compareEnglishMarkdown.value = data.markdown || '';
+        if (compareEnglishExcerpt) compareEnglishExcerpt.value = data.excerpt || '';
+        if (compareEnglishSlug && data.slugSuggestion) {
+          compareEnglishSlug.value = data.slugSuggestion.endsWith('-english') ? data.slugSuggestion : `${data.slugSuggestion}-english`;
+        }
+        if (compareHinglishSlug && !compareHinglishSlug.value.trim() && slugInput?.value) {
+          compareHinglishSlug.value = slugInput.value.endsWith('-hinglish') ? slugInput.value : `${slugInput.value}-hinglish`;
+        }
+      } else {
+        if (compareHinglishTitle) compareHinglishTitle.value = data.title || '';
+        if (compareHinglishMarkdown) compareHinglishMarkdown.value = data.markdown || '';
+        if (compareHinglishExcerpt) compareHinglishExcerpt.value = data.excerpt || '';
+        if (compareHinglishSlug && data.slugSuggestion) {
+          compareHinglishSlug.value = data.slugSuggestion.endsWith('-hinglish') ? data.slugSuggestion : `${data.slugSuggestion}-hinglish`;
+        }
+        if (compareEnglishSlug && !compareEnglishSlug.value.trim() && slugInput?.value) {
+          compareEnglishSlug.value = slugInput.value.endsWith('-english') ? slugInput.value : `${slugInput.value}-english`;
+        }
+      }
+
+      updateCompareStats();
+
+      if (compareSyncBadge) {
+        compareSyncBadge.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+        compareSyncBadge.textContent = 'Both Blogs Synced';
+      }
+
+      isDirty = true;
+    } catch (err: any) {
+      console.error('Bilingual translation failed:', err);
+      alert(`Translation failed: ${err.message || 'Please verify Gemini API key configuration.'}`);
+      if (compareSyncBadge) {
+        compareSyncBadge.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-red-50 text-red-700 border border-red-200';
+        compareSyncBadge.textContent = 'Translation Failed';
+      }
+    } finally {
+      if (compareAiBtnLabel) compareAiBtnLabel.textContent = 'Auto-Translate';
+      if (topBilingualBtn) {
+        topBilingualBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+        topBilingualBtn.removeAttribute('disabled');
+      }
+      if (compareAutoTranslateBtn) {
+        compareAutoTranslateBtn.removeAttribute('disabled');
+      }
+    }
+  }
+
+  // Wire bilingual translation actions
+  topBilingualBtn?.addEventListener('click', () => runBilingualTranslation());
+  compareAutoTranslateBtn?.addEventListener('click', () => runBilingualTranslation());
+  btnSyncHToE?.addEventListener('click', () => runBilingualTranslation('H_TO_E'));
+  btnSyncEToH?.addEventListener('click', () => runBilingualTranslation('E_TO_H'));
+
+  // Save Both Hinglish and English Blogs Together (Linked via translationGroupId)
+  async function saveBilingualBlogs() {
+    const hTitle = compareHinglishTitle?.value.trim() || '';
+    const hMd = compareHinglishMarkdown?.value.trim() || '';
+    const eTitle = compareEnglishTitle?.value.trim() || '';
+    const eMd = compareEnglishMarkdown?.value.trim() || '';
+
+    if (!hTitle || !hMd) {
+      alert('Please provide title and markdown content for the Hinglish blog.');
+      return;
+    }
+    if (!eTitle || !eMd) {
+      alert('Please provide title and markdown content for the English blog.');
+      return;
+    }
+
+    const categorySelect = document.getElementById('field-category') as HTMLSelectElement | null;
+    const coverImageInput = document.getElementById('field-cover-image') as HTMLInputElement | null;
+    const imageAltInput = document.getElementById('field-image-alt') as HTMLInputElement | null;
+    const statusSelect = document.getElementById('field-status') as HTMLSelectElement | null;
+
+    if (compareSaveBilingualBtn) {
+      compareSaveBilingualBtn.setAttribute('disabled', 'true');
+      compareSaveBilingualBtn.textContent = 'Saving Both...';
+    }
+
+    try {
+      const hHtml = DOMPurify.sanitize(String(await marked.parse(hMd)), DOMPURIFY_CONFIG);
+      const eHtml = DOMPurify.sanitize(String(await marked.parse(eMd)), DOMPURIFY_CONFIG);
+
+      const payload = {
+        categoryId: categorySelect?.value || null,
+        coverImage: coverImageInput?.value || null,
+        imageAlt: imageAltInput?.value || null,
+        status: statusSelect?.value || 'DRAFT',
+        tagIds: [...document.querySelectorAll<HTMLInputElement>('#field-tags input:checked')].map((input) => input.value),
+        translationGroupId: currentTranslationGroupId || undefined,
+        hinglish: {
+          id: hinglishBlogId || (languageSelect?.value === 'HINGLISH' && currentPostId ? currentPostId : undefined),
+          title: hTitle,
+          slug: compareHinglishSlug?.value.trim() || hTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-hinglish',
+          markdown: hMd,
+          htmlContent: hHtml,
+          excerpt: compareHinglishExcerpt?.value.trim() || '',
+        },
+        english: {
+          id: englishBlogId || (languageSelect?.value === 'ENGLISH' && currentPostId ? currentPostId : undefined),
+          title: eTitle,
+          slug: compareEnglishSlug?.value.trim() || eTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-english',
+          markdown: eMd,
+          htmlContent: eHtml,
+          excerpt: compareEnglishExcerpt?.value.trim() || '',
+        },
+      };
+
+      const res = await apiFetch('/blogs/save-bilingual', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      isDirty = false;
+
+      if (data.hinglish?.id) hinglishBlogId = data.hinglish.id;
+      if (data.english?.id) englishBlogId = data.english.id;
+      if (data.translationGroupId) currentTranslationGroupId = data.translationGroupId;
+
+      if (languageSelect?.value === 'ENGLISH' && data.english?.id) {
+        currentPostId = data.english.id;
+        window.history.replaceState({}, '', `/editor?edit=${data.english.id}`);
+      } else if (data.hinglish?.id) {
+        currentPostId = data.hinglish.id;
+        window.history.replaceState({}, '', `/editor?edit=${data.hinglish.id}`);
+      }
+
+      if (data.hinglish?.slug && compareHinglishSlug) compareHinglishSlug.value = data.hinglish.slug;
+      if (data.english?.slug && compareEnglishSlug) compareEnglishSlug.value = data.english.slug;
+
+      if (saveStatusEl) {
+        saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Saved</span>`;
+      }
+      if (docLastSavedTime) {
+        docLastSavedTime.textContent = `Saved at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      }
+
+      if (translationStatusMsg && data.translationGroupId) {
+        translationStatusMsg.innerHTML = `<span class="text-blue-600 font-semibold">Linked Group:</span> <span class="font-mono text-[10px] text-slate-500">${data.translationGroupId.slice(0, 8)}...</span>`;
+      }
+
+      if (compareSyncBadge) {
+        compareSyncBadge.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+        compareSyncBadge.textContent = 'Both Drafts Persisted';
+      }
+    } catch (err: any) {
+      console.error('Save bilingual failed:', err);
+      alert(`Failed to save bilingual articles: ${err.message}`);
+    } finally {
+      if (compareSaveBilingualBtn) {
+        compareSaveBilingualBtn.removeAttribute('disabled');
+        compareSaveBilingualBtn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg><span>Save Both Drafts</span>`;
+      }
+    }
+  }
+
+  compareSaveBilingualBtn?.addEventListener('click', saveBilingualBlogs);
+
+  // ─── AI Blog Copilot / Reference Blog Generator ────────────────
+  const aiReferenceModal = document.getElementById('ai-reference-modal');
+  const topAiWriterBtn = document.getElementById('top-ai-writer-btn');
+  const compareOpenAiWriterBtn = document.getElementById('compare-open-ai-writer-btn');
+  const floatingAiWriterBtn = document.getElementById('floating-ai-writer-btn');
+  const closeAiReferenceModalBtn = document.getElementById('close-ai-reference-modal-btn');
+  const closeAiReferenceBottomBtn = document.getElementById('close-ai-reference-bottom-btn');
+  const aiRefCategory = document.getElementById('ai-ref-category') as HTMLSelectElement | null;
+  const aiRefContent = document.getElementById('ai-ref-content') as HTMLTextAreaElement | null;
+  const aiRefInstructions = document.getElementById('ai-ref-instructions') as HTMLInputElement | null;
+  const aiRefCharCount = document.getElementById('ai-ref-char-count');
+  const aiRefInsertDemoBtn = document.getElementById('ai-ref-insert-demo-btn');
+  const aiRefClearBtn = document.getElementById('ai-ref-clear-btn');
+  const aiRefGenerateBtn = document.getElementById('ai-ref-generate-btn') as HTMLButtonElement | null;
+  const aiRefBtnLabel = document.getElementById('ai-ref-btn-label');
+  const aiRefLoadingCard = document.getElementById('ai-ref-loading-card');
+  const aiRefLoadingStatus = document.getElementById('ai-ref-loading-status');
+  const aiRefResultsCard = document.getElementById('ai-ref-results-card');
+  const aiRefResultCategory = document.getElementById('ai-ref-result-category');
+  const aiRefResultSeoScore = document.getElementById('ai-ref-result-seo-score');
+  const aiResHTitle = document.getElementById('ai-res-h-title');
+  const aiResHExcerpt = document.getElementById('ai-res-h-excerpt');
+  const aiResHSlug = document.getElementById('ai-res-h-slug');
+  const aiResHWords = document.getElementById('ai-res-h-words');
+  const aiResETitle = document.getElementById('ai-res-e-title');
+  const aiResEExcerpt = document.getElementById('ai-res-e-excerpt');
+  const aiResESlug = document.getElementById('ai-res-e-slug');
+  const aiResEWords = document.getElementById('ai-res-e-words');
+  const aiRefResetBtn = document.getElementById('ai-ref-reset-btn');
+  const aiRefApplyCompareBtn = document.getElementById('ai-ref-apply-compare-btn');
+
+  const DEMO_REFERENCE_TEXT = `Railway Recruitment Board (RRB) has released the centralized employment notification (CEN 05/2026) for Non-Technical Popular Categories (NTPC) Graduate and Undergraduate posts. A total of 11,558 vacancies have been announced across Indian Railways.
+
+Important Dates:
+- Official Notification Release: 12 October 2026
+- Online Application Starts: 15 October 2026
+- Last Date to Submit Online Application: 14 November 2026 (23:59 Hrs)
+- Correction Window: 16 November to 25 November 2026
+- Computer Based Test (CBT-1) Exam Date: January/February 2027
+
+Vacancy Details:
+- Chief Commercial cum Ticket Supervisor: 1,736 posts (Level 6)
+- Station Master: 994 posts (Level 6)
+- Goods Train Manager: 3,144 posts (Level 5)
+- Junior Accounts Assistant cum Typist: 1,507 posts (Level 5)
+- Senior Clerk cum Typist: 732 posts (Level 5)
+- Commercial cum Ticket Clerk: 2,022 posts (Level 3)
+- Accounts Clerk cum Typist: 361 posts (Level 2)
+- Junior Clerk cum Typist: 990 posts (Level 2)
+- Trains Clerk: 72 posts (Level 2)
+
+Eligibility Criteria:
+- Age Limit: 18 to 36 years as on 01.07.2026 (including 3-year COVID age relaxation). SC/ST gets 5 years, OBC gets 3 years relaxation.
+- Educational Qualification: Graduate degree for Level 5 and 6 posts from recognized university. 12th (+2 Stage) with minimum 50% marks for Level 2 and 3 posts.
+
+Application Fee:
+- General / OBC / EWS Male candidates: ₹500 (₹400 refundable on appearing in CBT-1).
+- SC / ST / Ex-Servicemen / Female / Transgender / Minorities / EBC: ₹250 (Full ₹250 refundable on appearing in CBT-1).
+
+Selection Process:
+1. 1st Stage Computer Based Test (CBT 1) - Common Screening Test
+2. 2nd Stage Computer Based Test (CBT 2) - Post-wise Merit Test
+3. Computer Based Aptitude Test (CBAT) for Station Master / Typing Skill Test for Typist posts
+4. Document Verification (DV) & Medical Examination`;
+
+  let lastGeneratedBilingual: any = null;
+
+  function openAiReferenceModal() {
+    if (!aiReferenceModal) return;
+    aiReferenceModal.style.setProperty('display', 'flex', 'important');
+    aiReferenceModal.classList.remove('hidden');
+    if (aiRefContent && !aiRefContent.value.trim()) {
+      setTimeout(() => aiRefContent?.focus(), 100);
+    }
+  }
+
+  function closeAiReferenceModal() {
+    if (!aiReferenceModal) return;
+    aiReferenceModal.style.setProperty('display', 'none', 'important');
+    aiReferenceModal.classList.add('hidden');
+    aiReferenceModal.classList.remove('flex');
+  }
+
+  [topAiWriterBtn, compareOpenAiWriterBtn, floatingAiWriterBtn].forEach((btn) => {
+    btn?.addEventListener('click', openAiReferenceModal);
+  });
+  closeAiReferenceModalBtn?.addEventListener('click', closeAiReferenceModal);
+  closeAiReferenceBottomBtn?.addEventListener('click', closeAiReferenceModal);
+  aiReferenceModal?.addEventListener('click', (e) => {
+    if (e.target === aiReferenceModal) closeAiReferenceModal();
+  });
+
+  // Character and word counter
+  function updateAiRefCounters() {
+    const text = aiRefContent?.value || '';
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    const chars = text.length;
+    if (aiRefCharCount) {
+      aiRefCharCount.textContent = `${words} words · ${chars} characters`;
+      if (chars < 50) {
+        aiRefCharCount.classList.add('text-amber-500');
+        aiRefCharCount.classList.remove('text-slate-400', 'text-emerald-600');
+      } else {
+        aiRefCharCount.classList.remove('text-amber-500');
+        aiRefCharCount.classList.add('text-emerald-600');
+      }
+    }
+    if (aiRefGenerateBtn) {
+      aiRefGenerateBtn.disabled = chars < 50;
+    }
+  }
+
+  aiRefContent?.addEventListener('input', updateAiRefCounters);
+
+  // Demo loader
+  aiRefInsertDemoBtn?.addEventListener('click', () => {
+    if (aiRefContent) {
+      aiRefContent.value = DEMO_REFERENCE_TEXT;
+      if (aiRefCategory) aiRefCategory.value = 'notifications';
+      if (aiRefInstructions) aiRefInstructions.value = 'Highlight 11,558 vacancies, 3-year COVID age relaxation, and CBT-1 dates.';
+      updateAiRefCounters();
+      aiRefContent.focus();
+    }
+  });
+
+  // Clear button
+  aiRefClearBtn?.addEventListener('click', () => {
+    if (aiRefContent) aiRefContent.value = '';
+    if (aiRefInstructions) aiRefInstructions.value = '';
+    updateAiRefCounters();
+  });
+
+  aiRefResetBtn?.addEventListener('click', () => {
+    aiRefResultsCard?.classList.add('hidden');
+    aiRefLoadingCard?.classList.add('hidden');
+    if (aiRefContent) aiRefContent.focus();
+  });
+
+  // Generate complete bilingual blog from reference
+  async function generateBilingualFromReference() {
+    const content = aiRefContent?.value.trim() || '';
+    if (content.length < 50) {
+      alert('Please paste at least 50 characters of reference content.');
+      aiRefContent?.focus();
+      return;
+    }
+
+    const category = aiRefCategory?.value || 'auto-detect';
+    const instructions = aiRefInstructions?.value.trim() || '';
+
+    if (aiRefGenerateBtn) {
+      aiRefGenerateBtn.disabled = true;
+      if (aiRefBtnLabel) aiRefBtnLabel.textContent = 'Generating Bilingual Articles...';
+    }
+
+    aiRefResultsCard?.classList.add('hidden');
+    aiRefLoadingCard?.classList.remove('hidden');
+
+    // Multi-step progress animation
+    const steps = [
+      { id: 'ai-step-1', text: 'Extracting dates, vacancies, eligibility, and fees...' },
+      { id: 'ai-step-2', text: 'Drafting Hindi (हिंदी + Technical Terms) with GFM tables...' },
+      { id: 'ai-step-3', text: 'Drafting English article with SEO structure...' },
+      { id: 'ai-step-4', text: 'Finalizing SEO titles, slugs, and descriptions...' },
+    ];
+    let currentStep = 0;
+    const stepInterval = setInterval(() => {
+      currentStep = (currentStep + 1) % steps.length;
+      if (aiRefLoadingStatus) aiRefLoadingStatus.textContent = steps[currentStep].text;
+      steps.forEach((s, idx) => {
+        const el = document.getElementById(s.id);
+        if (!el) return;
+        if (idx < currentStep) {
+          el.className = 'flex items-center gap-2 text-emerald-700 font-medium';
+          if (el.firstElementChild) el.firstElementChild.textContent = '✓';
+        } else if (idx === currentStep) {
+          el.className = 'flex items-center gap-2 text-slate-900 font-semibold';
+          if (el.firstElementChild) el.firstElementChild.textContent = '●';
+        } else {
+          el.className = 'flex items-center gap-2 text-slate-400';
+          if (el.firstElementChild) el.firstElementChild.textContent = '○';
+        }
+      });
+    }, 2800);
+
+    try {
+      const res = await apiFetch('/blogs/generate-from-reference', {
+        method: 'POST',
+        body: JSON.stringify({
+          referenceContent: content,
+          category: category !== 'auto-detect' ? category : undefined,
+          additionalInstructions: instructions,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      lastGeneratedBilingual = data;
+
+      // Populate Result Preview Card
+      if (aiRefResultCategory) {
+        aiRefResultCategory.textContent = data.detectedCategory || category || 'Exam Notification';
+      }
+      if (aiRefResultSeoScore) {
+        const score = typeof data.seoScore === 'number' ? data.seoScore : 85;
+        aiRefResultSeoScore.textContent = `${score}/100`;
+      }
+
+      if (aiResHTitle) aiResHTitle.textContent = data.hinglish?.title || '';
+      if (aiResHExcerpt) aiResHExcerpt.textContent = data.hinglish?.excerpt || '';
+      if (aiResHSlug) aiResHSlug.textContent = `/${data.hinglish?.slug || ''}`;
+      if (aiResHWords) {
+        const hw = (data.hinglish?.content || '').trim().split(/\s+/).length;
+        aiResHWords.textContent = `${hw} words`;
+      }
+
+      if (aiResETitle) aiResETitle.textContent = data.english?.title || '';
+      if (aiResEExcerpt) aiResEExcerpt.textContent = data.english?.excerpt || '';
+      if (aiResESlug) aiResESlug.textContent = `/${data.english?.slug || ''}`;
+      if (aiResEWords) {
+        const ew = (data.english?.content || '').trim().split(/\s+/).length;
+        aiResEWords.textContent = `${ew} words`;
+      }
+
+      aiRefLoadingCard?.classList.add('hidden');
+      aiRefResultsCard?.classList.remove('hidden');
+      setTimeout(() => {
+        aiRefResultsCard?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 50);
+
+    } catch (err: any) {
+      console.error('Failed to generate from reference:', err);
+      alert(`AI Generation Failed: ${err.message || 'Please check Gemini API key configuration.'}`);
+      aiRefLoadingCard?.classList.add('hidden');
+    } finally {
+      clearInterval(stepInterval);
+      if (aiRefGenerateBtn) {
+        aiRefGenerateBtn.disabled = false;
+        if (aiRefBtnLabel) aiRefBtnLabel.textContent = 'Generate Bilingual Articles';
+      }
+    }
+  }
+
+  aiRefGenerateBtn?.addEventListener('click', generateBilingualFromReference);
+
+  // Transfer generated drafts to Compare Mode
+  aiRefApplyCompareBtn?.addEventListener('click', async () => {
+    if (!lastGeneratedBilingual) return;
+    const { hinglish, english, detectedCategory } = lastGeneratedBilingual;
+
+    // Switch to compare mode first so surfaces are active
+    await switchEditorMode('compare');
+
+    // Hinglish (Hindi) inputs
+    if (compareHinglishTitle && hinglish?.title) compareHinglishTitle.value = hinglish.title;
+    if (compareHinglishSlug && hinglish?.slug) {
+      compareHinglishSlug.value = hinglish.slug.endsWith('-hinglish') ? hinglish.slug : `${hinglish.slug}-hinglish`;
+    }
+    if (compareHinglishExcerpt && hinglish?.excerpt) compareHinglishExcerpt.value = hinglish.excerpt;
+    if (compareHinglishMarkdown && hinglish?.content) compareHinglishMarkdown.value = hinglish.content;
+
+    // English inputs
+    if (compareEnglishTitle && english?.title) compareEnglishTitle.value = english.title;
+    if (compareEnglishSlug && english?.slug) {
+      compareEnglishSlug.value = english.slug.endsWith('-english') ? english.slug : `${english.slug}-english`;
+    }
+    if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
+    if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
+
+    // Determine active language
+    const isEnglish = languageSelect?.value === 'ENGLISH';
+    const activeData = isEnglish ? english : hinglish;
+
+    // Also populate primary title/slug and SEO fields in sidebar
+    if (titleInput && activeData?.title) titleInput.value = activeData.title;
+    if (slugInput && activeData?.slug) slugInput.value = activeData.slug;
+    if (excerptInput && activeData?.excerpt) excerptInput.value = activeData.excerpt;
+
+    const metaTitleInput = document.getElementById('field-meta-title') as HTMLInputElement | null;
+    const metaDescInput = document.getElementById('field-meta-desc') as HTMLTextAreaElement | null;
+    if (metaTitleInput && (activeData?.metaTitle || hinglish?.metaTitle || english?.metaTitle)) {
+      metaTitleInput.value = activeData?.metaTitle || hinglish?.metaTitle || english?.metaTitle || '';
+    }
+    if (metaDescInput && (activeData?.metaDescription || hinglish?.metaDescription || english?.metaDescription)) {
+      metaDescInput.value = activeData?.metaDescription || hinglish?.metaDescription || english?.metaDescription || '';
+    }
+
+    // Crucial: Populate visual TipTap editor and markdownTextarea immediately!
+    const targetMd = activeData?.content || '';
+    if (markdownTextarea) {
+      markdownTextarea.value = targetMd;
+      updateLineNumbers();
+    }
+    if (targetMd) {
+      const cleanHtml = DOMPurify.sanitize(String(await marked.parse(targetMd)), DOMPURIFY_CONFIG);
+      editor.commands.setContent(cleanHtml);
+    }
+
+    // Category matching if available
+    const categorySelect = document.getElementById('field-category') as HTMLSelectElement | null;
+    if (categorySelect && detectedCategory) {
+      const match = Array.from(categorySelect.options).find(
+        (opt) => opt.text.toLowerCase().includes(detectedCategory.toLowerCase()) || opt.value.toLowerCase().includes(detectedCategory.toLowerCase())
+      );
+      if (match) categorySelect.value = match.value;
+    }
+
+    // Auto-match keywords to tags
+    const allKeywords = [
+      ...(hinglish?.keywords || []),
+      ...(english?.keywords || []),
+    ];
+    applyKeywordsAndTags(allKeywords);
+
+    isDirty = true;
+    updateCompareStats();
+    updateSerp();
+    closeAiReferenceModal();
+
+    if (compareSyncBadge) {
+      compareSyncBadge.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+      compareSyncBadge.textContent = 'Drafts Synced';
+    }
+  });
 
   // Markdown Textarea events (Line numbers & Cursor stats)
   editorElement?.addEventListener('dragover', (event) => {
@@ -4997,10 +6446,11 @@ ${mdContent}
       lines.forEach((l, idx) => {
         const m = l.match(/^(#{1,4})\s+(.+)$/);
         if (m) {
+          const headingText = m[2].trim().replace(/\\+/g, '');
           items.push({
             level: m[1].length,
-            text: m[2].trim(),
-            id: slugify(m[2].trim()),
+            text: headingText,
+            id: slugify(headingText),
             pos: idx,
           });
         }
@@ -5009,9 +6459,10 @@ ${mdContent}
       text = editor.getText();
       editor.state.doc.descendants((node, pos) => {
         if (node.type.name === 'heading') {
+          const headingText = (node.textContent || 'Untitled Heading').replace(/\\+/g, '');
           items.push({
-            text: node.textContent || 'Untitled Heading',
-            id: slugify(node.textContent || 'heading'),
+            text: headingText,
+            id: slugify(headingText),
             level: node.attrs.level,
             pos,
           });
@@ -5213,55 +6664,115 @@ ${mdContent}
 
   // Core Save Article Function (Draft & Publish)
   async function saveArticle(targetStatus?: string, isAutosave = false) {
-    const title = titleInput?.value.trim();
-    const slug = slugInput?.value.trim() || slugify(title || 'untitled');
-
-    if (!title) {
-      if (!isAutosave) alert('Please enter an article title before saving.');
-      return;
-    }
+    const saveDraftBtn = document.getElementById('save-draft-btn') as HTMLButtonElement | null;
+    const saveDraftSpinner = document.getElementById('save-draft-spinner');
+    const saveDraftLabel = document.getElementById('save-draft-label');
+    const publishBtn = document.getElementById('publish-btn') as HTMLButtonElement | null;
+    const publishSpinner = document.getElementById('publish-spinner');
+    const publishLabel = document.getElementById('publish-label');
 
     const effectiveStatus = targetStatus || statusSelect?.value || 'DRAFT';
-    await imageUploadChain;
-    try {
-      await replaceLocalImagesInEditor();
-    } catch (error) {
-      if (!isAutosave) alert(error instanceof Error ? error.message : 'Image upload failed.');
-      return;
+    const isPublishing = effectiveStatus === 'PUBLISHED';
+
+    if (!isAutosave) {
+      if (isPublishing) {
+        publishSpinner?.classList.remove('hidden');
+        publishBtn?.setAttribute('disabled', 'true');
+        if (publishLabel) publishLabel.textContent = currentPostId ? 'Updating...' : 'Publishing...';
+      } else {
+        saveDraftSpinner?.classList.remove('hidden');
+        saveDraftBtn?.setAttribute('disabled', 'true');
+        if (saveDraftLabel) saveDraftLabel.textContent = 'Saving...';
+      }
     }
 
-    // Get current HTML content regardless of active mode
-    let effectiveHtml = '';
-    if (currentEditorMode === 'markdown' && markdownTextarea) {
-      const rawHtml = await marked.parse(markdownTextarea.value);
-      effectiveHtml = DOMPurify.sanitize(String(rawHtml), DOMPURIFY_CONFIG);
-    } else {
-      effectiveHtml = editor.getHTML();
-    }
-
-    const payload = {
-      title,
-      slug,
-      description: excerptInput?.value.trim() || null,
-      coverImage: coverImageInput?.value.trim() || null,
-      imageAlt: imageAltInput?.value.trim() || null,
-      imageCaption: imageCaptionInput?.value.trim() || null,
-      categoryId: categorySelect?.value || null,
-      metaTitle: metaTitleInput?.value.trim() || null,
-      metaDescription: metaDescInput?.value.trim() || null,
-      canonicalUrl: canonicalUrlInput?.value.trim() || null,
-      scheduledAt: scheduledAtInput?.value ? new Date(scheduledAtInput.value).toISOString() : null,
-      noindex: noindexCheckbox?.checked ?? false,
-      ...((document.getElementById('field-author') as HTMLSelectElement | null)?.value
-        ? { authorId: (document.getElementById('field-author') as HTMLSelectElement).value }
-        : {}),
-      tagIds: [...document.querySelectorAll<HTMLInputElement>('#field-tags input:checked')].map((input) => input.value),
-      status: effectiveStatus,
-      htmlContent: effectiveHtml,
-      currentVersion,
-    };
-
     try {
+      syncCurrentEditorToState();
+
+      // If both Hinglish and English drafts exist, delegate to saveBilingualBlogs so neither is lost
+      const hasBothBilingual = Boolean(
+        compareHinglishMarkdown?.value.trim() &&
+        compareEnglishMarkdown?.value.trim() &&
+        compareHinglishTitle?.value.trim() &&
+        compareEnglishTitle?.value.trim()
+      );
+      if (hasBothBilingual && (currentEditorMode === 'compare' || !currentPostId)) {
+        await saveBilingualBlogs();
+        return;
+      }
+
+      let title = titleInput?.value.trim();
+      if (!title && currentEditorMode === 'compare') {
+        title = languageSelect?.value === 'ENGLISH'
+          ? (compareEnglishTitle?.value.trim() || '')
+          : (compareHinglishTitle?.value.trim() || '');
+        if (titleInput && title) titleInput.value = title;
+      }
+      let slug = slugInput?.value.trim();
+      if (!slug && currentEditorMode === 'compare') {
+        slug = languageSelect?.value === 'ENGLISH'
+          ? (compareEnglishSlug?.value.trim() || '')
+          : (compareHinglishSlug?.value.trim() || '');
+        if (slugInput && slug) slugInput.value = slug;
+      }
+      slug = slug || slugify(title || 'untitled');
+
+      if (!title) {
+        if (!isAutosave) alert('Please enter an article title before saving.');
+        return;
+      }
+
+      await imageUploadChain;
+      try {
+        await replaceLocalImagesInEditor();
+      } catch (error) {
+        if (!isAutosave) alert(error instanceof Error ? error.message : 'Image upload failed.');
+        return;
+      }
+
+      // Get current HTML content regardless of active mode
+      let effectiveHtml = '';
+      if (currentEditorMode === 'markdown' && markdownTextarea) {
+        const rawHtml = await marked.parse(markdownTextarea.value);
+        effectiveHtml = DOMPurify.sanitize(String(rawHtml), DOMPURIFY_CONFIG);
+      } else if (currentEditorMode === 'compare') {
+        const activeMd = languageSelect?.value === 'ENGLISH'
+          ? (compareEnglishMarkdown?.value || '')
+          : (compareHinglishMarkdown?.value || '');
+        const rawHtml = await marked.parse(activeMd);
+        effectiveHtml = DOMPurify.sanitize(String(rawHtml), DOMPURIFY_CONFIG);
+      } else {
+        effectiveHtml = editor.getHTML();
+        if ((!effectiveHtml || effectiveHtml === '<p></p>') && markdownTextarea?.value.trim()) {
+          const rawHtml = await marked.parse(markdownTextarea.value);
+          effectiveHtml = DOMPurify.sanitize(String(rawHtml), DOMPURIFY_CONFIG);
+        }
+      }
+
+      const payload = {
+        title,
+        slug,
+        description: excerptInput?.value.trim() || null,
+        coverImage: coverImageInput?.value.trim() || null,
+        imageAlt: imageAltInput?.value.trim() || null,
+        imageCaption: imageCaptionInput?.value.trim() || null,
+        categoryId: categorySelect?.value || null,
+        metaTitle: metaTitleInput?.value.trim() || null,
+        metaDescription: metaDescInput?.value.trim() || null,
+        canonicalUrl: canonicalUrlInput?.value.trim() || null,
+        scheduledAt: scheduledAtInput?.value ? new Date(scheduledAtInput.value).toISOString() : null,
+        noindex: noindexCheckbox?.checked ?? false,
+        language: languageSelect?.value || 'HINGLISH',
+        translationGroupId: currentTranslationGroupId || undefined,
+        ...((document.getElementById('field-author') as HTMLSelectElement | null)?.value
+          ? { authorId: (document.getElementById('field-author') as HTMLSelectElement).value }
+          : {}),
+        tagIds: [...document.querySelectorAll<HTMLInputElement>('#field-tags input:checked')].map((input) => input.value),
+        status: effectiveStatus,
+        htmlContent: effectiveHtml,
+        currentVersion,
+      };
+
       if (saveStatusEl) {
         saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span><span>Saving...</span>`;
       }
@@ -5284,6 +6795,10 @@ ${mdContent}
         currentPostId = saved.id;
         currentVersion = saved.version;
         isDirty = false;
+        if (saved.translationGroupId) currentTranslationGroupId = saved.translationGroupId;
+        if (saved.language === 'ENGLISH') englishBlogId = saved.id;
+        else if (saved.language === 'HINGLISH') hinglishBlogId = saved.id;
+
         if (statusSelect) statusSelect.value = saved.status || effectiveStatus;
         if (docVersionDisplay) docVersionDisplay.textContent = `${saved.version}`;
         if (docLastSavedTime) docLastSavedTime.textContent = `Saved at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
@@ -5304,6 +6819,18 @@ ${mdContent}
       }
     } catch (e: any) {
       console.error(e);
+    } finally {
+      if (!isAutosave) {
+        if (isPublishing) {
+          publishSpinner?.classList.add('hidden');
+          publishBtn?.removeAttribute('disabled');
+          if (publishLabel) publishLabel.textContent = (statusSelect?.value === 'PUBLISHED' || currentPostId) ? 'Update' : 'Publish';
+        } else {
+          saveDraftSpinner?.classList.add('hidden');
+          saveDraftBtn?.removeAttribute('disabled');
+          if (saveDraftLabel) saveDraftLabel.textContent = 'Save Draft';
+        }
+      }
     }
   }
 
@@ -5333,6 +6860,23 @@ ${mdContent}
       window.location.href = `/editor?edit=${duplicated.id}`;
     } else {
       alert('Failed to duplicate article.');
+    }
+  });
+
+  // Delete Article
+  document.getElementById('opt-delete-article')?.addEventListener('click', async () => {
+    if (!currentPostId) {
+      alert('This draft has not been saved yet.');
+      return;
+    }
+    if (!confirm('Are you sure you want to permanently delete this article? This action cannot be undone.')) return;
+    const res = await apiFetch(`/blogs/${currentPostId}`, { method: 'DELETE' });
+    if (res.ok) {
+      alert('Article deleted successfully.');
+      window.location.href = '/admin';
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(`Failed to delete article: ${err.message || 'Error'}`);
     }
   });
 
@@ -5483,11 +7027,17 @@ ${mdContent}
 
   // Helper Slugify
   function slugify(text: string): string {
-    return text.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '').replace(/\-\-+/g, '-');
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/\\+/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
+      .replace(/\-\-+/g, '-')
+      .replace(/(^-|-$)/g, '');
   }
 
   // Initialization
-  let tagCatalog: { id: string; name: string }[] = [];
 
   function fillTags(selected: string[] = []) {
     const box = document.getElementById('field-tags');
@@ -5522,7 +7072,406 @@ ${mdContent}
     const categoryText = categorySelect?.selectedOptions[0]?.textContent || 'None';
     if (categoryEl) categoryEl.textContent = categorySelect?.value ? categoryText : 'None';
     if (authorEl) authorEl.textContent = (document.getElementById('field-author') as HTMLSelectElement | null)?.selectedOptions[0]?.textContent || '';
+    if (summaryLanguage) summaryLanguage.textContent = languageSelect?.value === 'ENGLISH' ? 'English' : 'Hindi (हिंदी)';
+    if (btnTranslateLabel) {
+      btnTranslateLabel.textContent = languageSelect?.value === 'ENGLISH' ? 'Translate to Hindi' : 'Translate to English';
+    }
   }
+
+  // Language Change Listener
+  languageSelect?.addEventListener('change', () => {
+    const lang = (languageSelect.value === 'ENGLISH' ? 'ENGLISH' : 'HINGLISH');
+    setActiveLanguage(lang, true);
+  });
+
+  // Auto-Translate with Gemini
+  btnAutoTranslate?.addEventListener('click', async () => {
+    if (!currentPostId) {
+      alert('Please save the article as a draft first before generating an AI translation.');
+      return;
+    }
+
+    const currentLang = languageSelect?.value || 'HINGLISH';
+    const targetLang = currentLang === 'HINGLISH' ? 'ENGLISH' : 'HINGLISH';
+
+    const confirmed = confirm(
+      `Translate this entire article from ${currentLang} to ${targetLang} using Gemini?\n\nThis will translate title, blocks, metadata, and link both articles automatically.`,
+    );
+    if (!confirmed) return;
+
+    if (btnAutoTranslate && btnTranslateLabel) {
+      (btnAutoTranslate as HTMLButtonElement).disabled = true;
+      btnTranslateLabel.textContent = `Translating to ${targetLang}...`;
+    }
+
+    try {
+      const res = await apiFetch(`/blogs/${currentPostId}/translate`, {
+        method: 'POST',
+        body: JSON.stringify({ targetLanguage: targetLang }),
+      });
+
+      if (res.ok) {
+        const created = await res.json();
+        alert(`Translation created successfully! Opening ${targetLang} draft...`);
+        window.location.href = `/editor?edit=${created.id}`;
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Translation failed: ${err.message || 'Server error'}`);
+      }
+    } catch (e: any) {
+      alert(`Network error during translation: ${e?.message || e}`);
+    } finally {
+      if (btnAutoTranslate && btnTranslateLabel) {
+        (btnAutoTranslate as HTMLButtonElement).disabled = false;
+        btnTranslateLabel.textContent = currentLang === 'ENGLISH' ? 'Translate to Hindi' : 'Translate to English';
+      }
+    }
+  });
+
+  // AI SEO Optimizer & Quality Audit
+  let latestSeoSuggestions: any = null;
+
+  function closeAiSeoModal() {
+    aiSeoModal?.classList.add('hidden');
+    aiSeoModal?.classList.remove('flex');
+  }
+
+  closeAiSeoModalBtn?.addEventListener('click', closeAiSeoModal);
+  closeAiSeoBottomBtn?.addEventListener('click', closeAiSeoModal);
+
+  btnAiSeoAudit?.addEventListener('click', async () => {
+    aiSeoModal?.classList.remove('hidden');
+    aiSeoModal?.classList.add('flex');
+    aiSeoLoading?.classList.remove('hidden');
+    aiSeoResults?.classList.add('hidden');
+    applyAllSeoBtn?.classList.add('hidden');
+    applyAllSeoBtn?.classList.remove('flex');
+
+    const effectiveHtml =
+      currentEditorMode === 'markdown' && markdownTextarea
+        ? await marked.parse(markdownTextarea.value)
+        : editor.getHTML();
+
+    const payload = {
+      blogId: currentPostId || undefined,
+      title: titleInput?.value.trim() || '',
+      description: excerptInput?.value.trim() || '',
+      content: effectiveHtml,
+      language: languageSelect?.value || 'HINGLISH',
+    };
+
+    try {
+      const res = await apiFetch('/blogs/ai-seo', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || 'Failed to run SEO audit.');
+      }
+
+      const data = await res.json();
+      latestSeoSuggestions = data;
+
+      // Update Score Badge
+      const score = data.seoScore || 75;
+      if (aiSeoScoreBadge) {
+        aiSeoScoreBadge.textContent = `Score: ${score}/100`;
+        aiSeoScoreBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+          score >= 80
+            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+            : score >= 60
+              ? 'bg-amber-100 text-amber-800 border-amber-300'
+              : 'bg-red-100 text-red-800 border-red-300'
+        }`;
+      }
+
+      // Render Recommendations & Guidelines Audit
+      if (aiSeoResults) {
+        const currentTitle = titleInput?.value.trim() || '';
+        const currentDesc = metaDescInput?.value.trim() || excerptInput?.value.trim() || '';
+        const currentAlt = imageAltInput?.value.trim() || '';
+        const currentContent = effectiveHtml;
+
+        const titleLen = currentTitle.length;
+        const titlePass = titleLen >= 40 && titleLen <= 65;
+
+        const descLen = currentDesc.length;
+        const descPass = descLen >= 120 && descLen <= 165;
+
+        const hasTables = /<table|\|\s*---/i.test(currentContent);
+        const h2Count = (currentContent.match(/<h2|##\s+/gi) || []).length;
+        const h2Pass = h2Count >= 2;
+
+        const checkedTagsCount = document.querySelectorAll<HTMLInputElement>('#field-tags input:checked').length;
+        const tagsPass = checkedTagsCount >= 2;
+        const altPass = Boolean(currentAlt);
+
+        const guidelineItems = [
+          {
+            name: 'Title Length (CTR Format)',
+            status: titlePass ? 'pass' : titleLen === 0 ? 'error' : 'warn',
+            metric: `${titleLen}/60 chars`,
+            target: 'Ideal 50–60 chars',
+            fix: titlePass ? 'Perfect length for Google SERP' : `AI suggested: "${data.metaTitle}"`,
+          },
+          {
+            name: 'Meta Description Format',
+            status: descPass ? 'pass' : descLen === 0 ? 'error' : 'warn',
+            metric: `${descLen}/160 chars`,
+            target: 'Ideal 140–160 chars',
+            fix: descPass ? 'Well-balanced summary' : 'AI prepared an action-oriented 150-char description',
+          },
+          {
+            name: 'Structured Exam Tables',
+            status: hasTables ? 'pass' : 'warn',
+            metric: hasTables ? 'Tables Present' : 'No tables detected',
+            target: 'Overview, Dates, Fee tables',
+            fix: hasTables ? 'Tables enhance featured snippets' : 'Add Markdown overview & important dates tables',
+          },
+          {
+            name: 'H2 Section Hierarchy',
+            status: h2Pass ? 'pass' : 'warn',
+            metric: `${h2Count} H2 headings`,
+            target: 'At least 2–4 subheadings',
+            fix: h2Pass ? 'Clear hierarchy' : 'Break content into Eligibility, Vacancy & Application stages',
+          },
+          {
+            name: 'Image Alt Text',
+            status: altPass ? 'pass' : 'warn',
+            metric: altPass ? 'Alt Text Set' : 'Missing alt text',
+            target: 'Descriptive alt tag',
+            fix: altPass ? 'Good for accessibility & Google Images' : `AI suggested: "${data.imageAltSuggestion || 'Exam notification cover'}"`,
+          },
+          {
+            name: 'Tags & Keywords Coverage',
+            status: tagsPass ? 'pass' : 'warn',
+            metric: `${checkedTagsCount} tags selected`,
+            target: '2–5 relevant tags',
+            fix: tagsPass ? 'Tagged for taxonomy' : 'AI will auto-match and check relevant tags from catalog',
+          },
+        ];
+
+        const passedCount = guidelineItems.filter((g) => g.status === 'pass').length;
+
+        aiSeoResults.innerHTML = `
+          <!-- Guidelines Format Checklist -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">SEO &amp; Editorial Guidelines Audit</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold ${passedCount >= 5 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                ${passedCount} of ${guidelineItems.length} Guidelines Passed
+              </span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${guidelineItems.map((g) => `
+                <div class="p-2.5 rounded-lg border bg-white ${
+                  g.status === 'pass'
+                    ? 'border-emerald-200'
+                    : g.status === 'error'
+                      ? 'border-red-200'
+                      : 'border-amber-200'
+                }">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-semibold text-slate-800 text-[11px] truncate">${g.name}</span>
+                    <span class="px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                      g.status === 'pass'
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : g.status === 'error'
+                          ? 'bg-red-50 text-red-700'
+                          : 'bg-amber-50 text-amber-700'
+                    }">${g.status === 'pass' ? '✓ PASS' : g.status === 'error' ? '⚠️ FIX' : '⚡ WARN'}</span>
+                  </div>
+                  <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono mb-1">
+                    <span>${g.metric}</span>
+                    <span>${g.target}</span>
+                  </div>
+                  <p class="text-[10px] text-slate-500 line-clamp-1">${g.fix}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Section A: Optimized Meta Fields -->
+          <div class="space-y-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">AI Recommended Meta Fields (High CTR)</span>
+            
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">SEO Title:</span>
+                <button type="button" id="apply-ai-title-btn" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline">Apply Title</button>
+              </div>
+              <p class="p-2 bg-white border border-slate-200 rounded text-slate-800 font-medium">${data.metaTitle}</p>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Meta Description:</span>
+                <button type="button" id="apply-ai-desc-btn" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline">Apply Description</button>
+              </div>
+              <p class="p-2 bg-white border border-slate-200 rounded text-slate-800 leading-relaxed">${data.metaDescription}</p>
+            </div>
+
+            ${data.slugSuggestion ? `
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">SEO Slug:</span>
+                <button type="button" id="apply-ai-slug-btn" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline">Apply Slug</button>
+              </div>
+              <p class="p-2 bg-white border border-slate-200 rounded text-slate-800 font-mono text-[11px]">/${data.slugSuggestion}</p>
+            </div>
+            ` : ''}
+
+            ${data.imageAltSuggestion ? `
+            <div class="space-y-1">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Image Alt Text:</span>
+                <button type="button" id="apply-ai-alt-btn" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline">Apply Alt Text</button>
+              </div>
+              <p class="p-2 bg-white border border-slate-200 rounded text-slate-800">${data.imageAltSuggestion}</p>
+            </div>
+            ` : ''}
+          </div>
+
+          <!-- Section B: Keywords & Tags -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Identified Search Keywords &amp; Tags</span>
+              <button type="button" id="apply-ai-tags-btn" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 hover:underline">Match &amp; Check Tags</button>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              ${(data.keywords?.primary || []).map((k: string) => `<span class="px-2 py-0.5 bg-blue-100 text-blue-800 border border-blue-200 rounded-full font-medium text-[11px]">★ ${k}</span>`).join('')}
+              ${(data.keywords?.secondary || []).map((k: string) => `<span class="px-2 py-0.5 bg-slate-200/80 text-slate-700 rounded-full text-[11px]">${k}</span>`).join('')}
+            </div>
+          </div>
+
+          <!-- Section C: Content & Formatting Diagnostics -->
+          <div class="space-y-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Content &amp; Structure Diagnostics</span>
+            ${(data.formattingIssues || []).length === 0 ? `
+              <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 font-medium flex items-center gap-2">
+                <span>✓ No critical formatting issues found! Excellent structure.</span>
+              </div>
+            ` : (data.formattingIssues || []).map((issue: any) => `
+              <div class="p-3 rounded-xl border ${
+                issue.type === 'error'
+                  ? 'bg-red-50 border-red-200 text-red-900'
+                  : issue.type === 'warning'
+                    ? 'bg-amber-50 border-amber-200 text-amber-900'
+                    : 'bg-blue-50 border-blue-200 text-blue-900'
+              }">
+                <div class="flex items-center gap-1.5 font-bold mb-0.5">
+                  <span>${issue.type === 'error' ? '⚠️' : issue.type === 'warning' ? '⚡' : 'ℹ️'}</span>
+                  <span>${issue.message}</span>
+                </div>
+                <p class="text-[11px] opacity-90 pl-5"><strong>Fix:</strong> ${issue.fix}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Section D: Ranking Tips -->
+          ${(data.suggestions || []).length > 0 ? `
+          <div class="p-3.5 bg-indigo-50 border border-indigo-200 rounded-xl space-y-1.5 text-indigo-900">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 block">Ranking &amp; Traffic Suggestions</span>
+            <ul class="list-disc list-inside space-y-1 text-[11px]">
+              ${data.suggestions.map((s: string) => `<li>${s}</li>`).join('')}
+            </ul>
+          </div>
+          ` : ''}
+        `;
+
+        // Wire individual apply buttons
+        document.getElementById('apply-ai-title-btn')?.addEventListener('click', () => {
+          if (titleInput) titleInput.value = data.metaTitle;
+          if (metaTitleInput) metaTitleInput.value = data.metaTitle;
+          updateSerp();
+          triggerAutosave();
+          alert('Applied SEO Title!');
+        });
+
+        document.getElementById('apply-ai-desc-btn')?.addEventListener('click', () => {
+          if (metaDescInput) metaDescInput.value = data.metaDescription;
+          if (excerptInput && !excerptInput.value.trim()) excerptInput.value = data.metaDescription;
+          updateSerp();
+          triggerAutosave();
+          alert('Applied Meta Description!');
+        });
+
+        document.getElementById('apply-ai-slug-btn')?.addEventListener('click', () => {
+          if (slugInput && data.slugSuggestion) {
+            slugInput.value = data.slugSuggestion;
+            updateSerp();
+            triggerAutosave();
+            alert('Applied SEO Slug!');
+          }
+        });
+
+        document.getElementById('apply-ai-alt-btn')?.addEventListener('click', () => {
+          if (imageAltInput && data.imageAltSuggestion) {
+            imageAltInput.value = data.imageAltSuggestion;
+            triggerAutosave();
+            alert('Applied Image Alt Text!');
+          }
+        });
+
+        document.getElementById('apply-ai-tags-btn')?.addEventListener('click', () => {
+          const allKw = [
+            ...(data.keywords?.primary || []),
+            ...(data.keywords?.secondary || []),
+          ];
+          applyKeywordsAndTags(allKw);
+          triggerAutosave();
+          alert('Matched and checked relevant tags!');
+        });
+      }
+
+      aiSeoLoading?.classList.add('hidden');
+      aiSeoResults?.classList.remove('hidden');
+      applyAllSeoBtn?.classList.remove('hidden');
+      applyAllSeoBtn?.classList.add('flex');
+    } catch (err: any) {
+      if (aiSeoResults) {
+        aiSeoResults.innerHTML = `
+          <div class="p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 space-y-1">
+            <p class="font-bold">Audit failed</p>
+            <p class="text-xs">${err.message || 'Please ensure GEMINI_API_KEY is configured in apps/server/.env.'}</p>
+          </div>
+        `;
+      }
+      aiSeoLoading?.classList.add('hidden');
+      aiSeoResults?.classList.remove('hidden');
+    }
+  });
+
+  // Apply All SEO Recommendations
+  applyAllSeoBtn?.addEventListener('click', () => {
+    if (!latestSeoSuggestions) return;
+    if (titleInput && latestSeoSuggestions.metaTitle) titleInput.value = latestSeoSuggestions.metaTitle;
+    if (metaTitleInput && latestSeoSuggestions.metaTitle) metaTitleInput.value = latestSeoSuggestions.metaTitle;
+    if (metaDescInput && latestSeoSuggestions.metaDescription) metaDescInput.value = latestSeoSuggestions.metaDescription;
+    if (excerptInput && (latestSeoSuggestions.excerptSuggestion || latestSeoSuggestions.metaDescription)) {
+      excerptInput.value = latestSeoSuggestions.excerptSuggestion || latestSeoSuggestions.metaDescription;
+    }
+    if (slugInput && latestSeoSuggestions.slugSuggestion) {
+      slugInput.value = latestSeoSuggestions.slugSuggestion;
+    }
+    if (imageAltInput && latestSeoSuggestions.imageAltSuggestion) {
+      imageAltInput.value = latestSeoSuggestions.imageAltSuggestion;
+    }
+
+    // Auto-match keywords to tags
+    const allKw = [
+      ...(latestSeoSuggestions.keywords?.primary || []),
+      ...(latestSeoSuggestions.keywords?.secondary || []),
+    ];
+    applyKeywordsAndTags(allKw);
+
+    updateSerp();
+    triggerAutosave();
+    closeAiSeoModal();
+    alert('Applied all AI SEO recommendations: Title, Description, Slug, Alt Text, and matched Tags.');
+  });
 
   function fillAuthorSelect(authors: { id: string; name: string; role?: string }[], selectedId?: string) {
     const authorSelect = document.getElementById('field-author') as HTMLSelectElement | null;
@@ -5576,6 +7525,10 @@ ${mdContent}
         if (statusSelect && post.status) {
           statusSelect.value = post.status;
           if (post.status === 'SCHEDULED') scheduleDateGroup?.classList.remove('hidden');
+          const publishLabel = document.getElementById('publish-label');
+          if (publishLabel && post.status === 'PUBLISHED') {
+            publishLabel.textContent = 'Update';
+          }
         }
         if (metaTitleInput) metaTitleInput.value = post.metaTitle || '';
         if (metaDescInput) metaDescInput.value = post.metaDescription || '';
@@ -5586,6 +7539,16 @@ ${mdContent}
         if (noindexCheckbox) noindexCheckbox.checked = post.noindex ?? false;
         if (scheduledAtInput && post.scheduledAt) {
           scheduledAtInput.value = new Date(post.scheduledAt).toISOString().slice(0, 16);
+        }
+        if (languageSelect && post.language) {
+          languageSelect.value = post.language;
+        }
+        if (translationStatusMsg) {
+          if (post.translationGroupId) {
+            translationStatusMsg.innerHTML = `<span class="text-blue-600 font-semibold">Linked Group:</span> <span class="font-mono text-[10px] text-slate-500">${post.translationGroupId.slice(0, 8)}...</span>`;
+          } else {
+            translationStatusMsg.textContent = 'No linked translation created yet.';
+          }
         }
 
         const authorSelect = document.getElementById('field-author') as HTMLSelectElement | null;
@@ -5609,6 +7572,44 @@ ${mdContent}
             updateLineNumbers();
           }
         }
+
+        currentTranslationGroupId = post.translationGroupId || null;
+        const isPostEnglish = post.language === 'ENGLISH';
+        if (isPostEnglish) {
+          englishBlogId = post.id;
+          hinglishBlogId = post.linkedBlog?.id || null;
+        } else {
+          hinglishBlogId = post.id;
+          englishBlogId = post.linkedBlog?.id || null;
+        }
+
+        const postMd = post.htmlContent ? turndownService.turndown(post.htmlContent) : '';
+        if (isPostEnglish) {
+          if (compareEnglishTitle) compareEnglishTitle.value = post.title || '';
+          if (compareEnglishSlug) compareEnglishSlug.value = post.slug || '';
+          if (compareEnglishExcerpt) compareEnglishExcerpt.value = post.description || '';
+          if (compareEnglishMarkdown) compareEnglishMarkdown.value = postMd;
+          if (post.linkedBlog) {
+            const linkedMd = post.linkedBlog.htmlContent ? turndownService.turndown(post.linkedBlog.htmlContent) : '';
+            if (compareHinglishTitle) compareHinglishTitle.value = post.linkedBlog.title || '';
+            if (compareHinglishSlug) compareHinglishSlug.value = post.linkedBlog.slug || '';
+            if (compareHinglishExcerpt) compareHinglishExcerpt.value = post.linkedBlog.description || '';
+            if (compareHinglishMarkdown) compareHinglishMarkdown.value = linkedMd;
+          }
+        } else {
+          if (compareHinglishTitle) compareHinglishTitle.value = post.title || '';
+          if (compareHinglishSlug) compareHinglishSlug.value = post.slug || '';
+          if (compareHinglishExcerpt) compareHinglishExcerpt.value = post.description || '';
+          if (compareHinglishMarkdown) compareHinglishMarkdown.value = postMd;
+          if (post.linkedBlog) {
+            const linkedMd = post.linkedBlog.htmlContent ? turndownService.turndown(post.linkedBlog.htmlContent) : '';
+            if (compareEnglishTitle) compareEnglishTitle.value = post.linkedBlog.title || '';
+            if (compareEnglishSlug) compareEnglishSlug.value = post.linkedBlog.slug || '';
+            if (compareEnglishExcerpt) compareEnglishExcerpt.value = post.linkedBlog.description || '';
+            if (compareEnglishMarkdown) compareEnglishMarkdown.value = linkedMd;
+          }
+        }
+        updateCompareStats();
       }
     }
 

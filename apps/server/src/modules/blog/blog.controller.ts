@@ -41,6 +41,7 @@ export class BlogController {
     @Query('category') categorySlug?: string,
     @Query('tag') tagSlug?: string,
     @Query('search') search?: string,
+    @Query('language') language?: 'HINGLISH' | 'ENGLISH',
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
   ) {
@@ -48,14 +49,18 @@ export class BlogController {
       categorySlug,
       tagSlug,
       search,
+      language,
       limit: limit ? parseInt(limit, 10) : undefined,
       offset: offset ? parseInt(offset, 10) : undefined,
     });
   }
 
   @Get('blogs/:slug')
-  getPublished(@Param('slug') slug: string) {
-    return this.blogs.getPublished(slug);
+  getPublished(
+    @Param('slug') slug: string,
+    @Query('language') language?: 'HINGLISH' | 'ENGLISH',
+  ) {
+    return this.blogs.getPublished(slug, language);
   }
 
   @Get('sitemap-entries')
@@ -117,6 +122,64 @@ export class BlogController {
   @Post('blogs/:id/duplicate')
   async duplicate(@Param('id') id: string, @Req() req: Request) {
     return this.blogs.duplicate(id, await this.currentUser(req));
+  }
+
+  @Post('blogs/:id/translate')
+  async translateBlog(@Param('id') id: string, @Req() req: Request) {
+    const targetLanguage = req.body?.targetLanguage || 'HINGLISH';
+    if (targetLanguage !== 'HINGLISH' && targetLanguage !== 'ENGLISH') {
+      throw new BadRequestException('targetLanguage must be HINGLISH or ENGLISH');
+    }
+    return this.blogs.translateBlog(id, targetLanguage, await this.currentUser(req));
+  }
+
+  @Post('blogs/ai-seo')
+  async getSeoSuggestions(@Req() req: Request) {
+    const body = (req.body as any) || {};
+    return this.blogs.getSeoSuggestions(
+      {
+        blogId: body.blogId,
+        title: body.title,
+        description: body.description,
+        content: body.content,
+        language: body.language,
+      },
+      await this.currentUser(req),
+    );
+  }
+
+  @Post('blogs/translate-content')
+  async translateMarkdownContent(@Req() req: Request) {
+    const body = (req.body as any) || {};
+    return this.blogs.translateMarkdownContent(
+      {
+        title: body.title || '',
+        markdown: body.markdown || '',
+        sourceLanguage: body.sourceLanguage,
+        targetLanguage: body.targetLanguage,
+      },
+      await this.currentUser(req),
+    );
+  }
+
+  @Post('blogs/save-bilingual')
+  async saveBilingual(@Req() req: Request) {
+    const body = (req.body as any) || {};
+    return this.blogs.saveBilingual(body, await this.currentUser(req));
+  }
+
+  @Post('blogs/generate-from-reference')
+  async generateFromReference(@Req() req: Request) {
+    const body = (req.body as any) || {};
+    if (!body.referenceContent || typeof body.referenceContent !== 'string' || body.referenceContent.trim().length < 50) {
+      throw new BadRequestException('referenceContent must be at least 50 characters.');
+    }
+    await this.currentUser(req); // Auth guard — must be logged in
+    return this.blogs.generateBilingualFromReference({
+      referenceContent: body.referenceContent,
+      category: body.category,
+      additionalInstructions: body.additionalInstructions,
+    });
   }
 
   @Patch('blogs/:id')
