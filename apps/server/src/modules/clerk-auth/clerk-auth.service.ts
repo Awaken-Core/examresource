@@ -1,11 +1,12 @@
 import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { createClerkClient, verifyToken } from '@clerk/backend';
-import { desc, eq } from 'drizzle-orm';
+import { asc, desc, eq, or } from 'drizzle-orm';
 import type { Request } from 'express';
 import { randomUUID } from 'node:crypto';
 import { db } from '../../core/config/db.js';
 import { env } from '../../core/config/env.js';
 import { users } from '../../core/schema/index.js';
+import { ensureWelcomeNotification } from '../notifications/notification.store.js';
 
 export type CurrentUser = {
   id: string;
@@ -86,11 +87,32 @@ export class ClerkAuthService {
       emailVerifiedAt: clerkUser.primaryEmailAddress?.verification?.status === 'verified' ? new Date() : null,
     }).returning();
     if (!created) throw new UnauthorizedException('Unable to create your account profile.');
+    try {
+      await ensureWelcomeNotification({ id: created.id, name: created.name });
+    } catch (error) {
+      console.error('Failed to create welcome notification', error);
+    }
     return created;
   }
 
   async suspendProfile(clerkUserId: string) {
     await db.update(users).set({ status: 'suspended', updatedAt: new Date() }).where(eq(users.clerkUserId, clerkUserId));
+  }
+
+  async listAuthors(req: Request) {
+    const user = await this.requireUser(req);
+    if (user.role !== 'admin' && user.role !== 'editor') {
+      throw new ForbiddenException('Editor access is required.');
+    }
+    return db
+      .select({
+        id: users.id,
+        name: users.name,
+        role: users.role,
+      })
+      .from(users)
+      .where(or(eq(users.role, 'admin'), eq(users.role, 'editor')))
+      .orderBy(asc(users.name));
   }
 
   async listUsers(req: Request) {

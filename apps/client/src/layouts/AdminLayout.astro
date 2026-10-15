@@ -3,7 +3,7 @@ import '../styles/global.css';
 
 interface Props {
   title?: string;
-  activeNav?: 'posts' | 'new-post' | 'categories' | 'sitemap' | 'users';
+  activeNav?: 'posts' | 'new-post' | 'categories' | 'sitemap' | 'users' | 'notifications';
   fullWidth?: boolean;
 }
 
@@ -15,9 +15,26 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" class="h-full antialiased admin-theme" style="color-scheme: light;">
+<html lang="en" class="h-full antialiased admin-theme theme-light">
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      (function() {
+        function applyStoredTheme() {
+          var root = document.documentElement;
+          var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
+          var dark = pref === 'dark';
+          root.classList.toggle('theme-dark', dark);
+          root.classList.toggle('theme-light', !dark);
+          root.style.colorScheme = dark ? 'dark' : 'light';
+        }
+        applyStoredTheme();
+        if (!window.__examThemeBound) {
+          window.__examThemeBound = true;
+          document.addEventListener('astro:after-swap', applyStoredTheme);
+        }
+      })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} · ExamPortal CMS</title>
@@ -26,19 +43,20 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     
-    <!-- Enforce STRICT clean light theme for admin panel -->
+    <!-- Admin chrome follows the same saved theme as the public site -->
     <style is:inline>
       html.admin-theme, body.admin-theme-body {
-        background-color: #F8FAFC !important;
-        color: #111827 !important;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         margin: 0;
         padding: 0;
         height: 100%;
       }
-      html.admin-theme,
-      html.admin-theme.theme-dark,
-      html.admin-theme.theme-light {
+      html.admin-theme:not(.theme-dark),
+      html.admin-theme:not(.theme-dark) body.admin-theme-body {
+        background-color: #F8FAFC !important;
+        color: #111827 !important;
+      }
+      html.admin-theme:not(.theme-dark) {
         --color-canvas: #F8FAFC !important;
         --color-surface: #FFFFFF !important;
         --color-surface-raised: #F1F5F9 !important;
@@ -49,58 +67,250 @@ const {
         --color-subtle: #F3F4F6 !important;
         color-scheme: light !important;
       }
-      html.admin-theme .bg-white {
+      html.admin-theme.theme-dark,
+      html.admin-theme.theme-dark body.admin-theme-body {
+        background-color: #131316 !important;
+        color: #F8FAFC !important;
+      }
+      html.admin-theme.theme-dark {
+        --color-canvas: #131316 !important;
+        --color-surface: #1C1B1F !important;
+        --color-surface-raised: #252528 !important;
+        --color-white: #FFFFFF !important;
+        --color-text-primary: #F8FAFC !important;
+        --color-muted: #A0A0A3 !important;
+        --color-border: #2A2925 !important;
+        --color-subtle: #1D1A12 !important;
+        color-scheme: dark !important;
+      }
+      html.admin-theme:not(.theme-dark) .bg-white {
         background-color: #FFFFFF !important;
       }
-      html.admin-theme .bg-slate-50 {
+      html.admin-theme:not(.theme-dark) .bg-slate-50 {
         background-color: #F8FAFC !important;
       }
-      html.admin-theme .bg-slate-100 {
+      html.admin-theme:not(.theme-dark) .bg-slate-100 {
         background-color: #F1F5F9 !important;
       }
-      html.admin-theme .border-slate-200 {
+      html.admin-theme:not(.theme-dark) .border-slate-200 {
         border-color: #E2E8F0 !important;
       }
-      html.admin-theme .border-slate-100 {
+      html.admin-theme:not(.theme-dark) .border-slate-100 {
         border-color: #F1F5F9 !important;
       }
-      html.admin-theme .text-slate-900 {
+      html.admin-theme:not(.theme-dark) .text-slate-900 {
         color: #0F172A !important;
       }
-      html.admin-theme .text-slate-800 {
+      html.admin-theme:not(.theme-dark) .text-slate-800 {
         color: #1E293B !important;
       }
-      html.admin-theme .text-slate-700 {
+      html.admin-theme:not(.theme-dark) .text-slate-700 {
         color: #334155 !important;
       }
-      html.admin-theme .text-slate-600 {
+      html.admin-theme:not(.theme-dark) .text-slate-600 {
         color: #475569 !important;
       }
-      html.admin-theme .text-slate-500 {
+      html.admin-theme:not(.theme-dark) .text-slate-500 {
         color: #64748B !important;
       }
-      html.admin-theme .text-slate-400 {
+      html.admin-theme:not(.theme-dark) .text-slate-400 {
         color: #94A3B8 !important;
       }
       html.admin-theme .text-white {
         color: #FFFFFF !important;
       }
-      html.admin-theme input:not([type="checkbox"]):not([type="radio"]),
-      html.admin-theme select,
-      html.admin-theme textarea {
+      html.admin-theme:not(.theme-dark) input:not([type="checkbox"]):not([type="radio"]),
+      html.admin-theme:not(.theme-dark) select,
+      html.admin-theme:not(.theme-dark) textarea {
         background-color: #FFFFFF;
         color: #0F172A;
       }
-      html.admin-theme input::placeholder,
-      html.admin-theme textarea::placeholder {
+      html.admin-theme:not(.theme-dark) input::placeholder,
+      html.admin-theme:not(.theme-dark) textarea::placeholder {
         color: #94A3B8 !important;
       }
-      html.admin-theme .ProseMirror {
+      html.admin-theme:not(.theme-dark) .ProseMirror {
         color: #1E293B !important;
         background-color: transparent !important;
       }
-      html.admin-theme .ProseMirror p.is-editor-empty:first-child::before {
+      html.admin-theme:not(.theme-dark) .ProseMirror p.is-editor-empty:first-child::before {
         color: #94A3B8 !important;
+      }
+      .find-match {
+        background-color: #FDE68A;
+        color: #1F2328;
+        border-radius: 2px;
+      }
+      .find-match-active {
+        background-color: #F59E0B;
+        color: #1F2328;
+        box-shadow: inset 0 -2px 0 #B45309;
+      }
+      html.admin-theme.theme-dark .bg-white {
+        background-color: #1C1B1F !important;
+      }
+      html.admin-theme.theme-dark .hover\:bg-white:hover {
+        background-color: #323238 !important;
+      }
+      html.admin-theme.theme-dark .bg-slate-50,
+      html.admin-theme.theme-dark .bg-slate-50\/80 {
+        background-color: #16161A !important;
+      }
+      html.admin-theme.theme-dark .hover\:bg-slate-50:hover,
+      html.admin-theme.theme-dark .hover\:bg-slate-50\/80:hover {
+        background-color: #323238 !important;
+      }
+      html.admin-theme.theme-dark .bg-slate-100 {
+        background-color: #2A2A30 !important;
+      }
+      html.admin-theme.theme-dark .hover\:bg-slate-100:hover {
+        background-color: #3A3A42 !important;
+      }
+      html.admin-theme.theme-dark .bg-slate-200 {
+        background-color: #2A2925 !important;
+      }
+      html.admin-theme.theme-dark .bg-slate-900 {
+        background-color: #3F3F46 !important;
+      }
+      html.admin-theme.theme-dark .hover\:bg-slate-800:hover,
+      html.admin-theme.theme-dark .bg-slate-800 {
+        background-color: #52525B !important;
+      }
+      html.admin-theme.theme-dark .text-slate-900,
+      html.admin-theme.theme-dark .text-slate-800,
+      html.admin-theme.theme-dark .hover\:text-slate-900:hover,
+      html.admin-theme.theme-dark .hover\:text-slate-800:hover {
+        color: #F8FAFC !important;
+      }
+      html.admin-theme.theme-dark .text-slate-700,
+      html.admin-theme.theme-dark .text-slate-600,
+      html.admin-theme.theme-dark .hover\:text-slate-700:hover,
+      html.admin-theme.theme-dark .hover\:text-slate-600:hover {
+        color: #E2E8F0 !important;
+      }
+      html.admin-theme.theme-dark .text-slate-500,
+      html.admin-theme.theme-dark .text-slate-400,
+      html.admin-theme.theme-dark .hover\:text-slate-500:hover,
+      html.admin-theme.theme-dark .hover\:text-slate-400:hover {
+        color: #A0A0A3 !important;
+      }
+      html.admin-theme.theme-dark .text-blue-600,
+      html.admin-theme.theme-dark .hover\:text-blue-600:hover,
+      html.admin-theme.theme-dark .text-blue-700,
+      html.admin-theme.theme-dark .hover\:text-blue-700:hover {
+        color: #93C5FD !important;
+      }
+      html.admin-theme.theme-dark .text-red-500,
+      html.admin-theme.theme-dark .text-red-600,
+      html.admin-theme.theme-dark .text-red-700,
+      html.admin-theme.theme-dark .text-red-800,
+      html.admin-theme.theme-dark .text-rose-950,
+      html.admin-theme.theme-dark .hover\:text-red-600:hover,
+      html.admin-theme.theme-dark .hover\:text-red-800:hover {
+        color: #FCA5A5 !important;
+      }
+      html.admin-theme.theme-dark .text-emerald-700,
+      html.admin-theme.theme-dark .text-emerald-800,
+      html.admin-theme.theme-dark .text-emerald-950 {
+        color: #6EE7B7 !important;
+      }
+      html.admin-theme.theme-dark .text-amber-700,
+      html.admin-theme.theme-dark .text-amber-900,
+      html.admin-theme.theme-dark .text-amber-950 {
+        color: #FCD34D !important;
+      }
+      html.admin-theme.theme-dark .bg-blue-50,
+      html.admin-theme.theme-dark .bg-blue-50\/40,
+      html.admin-theme.theme-dark .bg-blue-50\/50,
+      html.admin-theme.theme-dark .hover\:bg-blue-50\/20:hover {
+        background-color: rgba(50, 124, 246, 0.16) !important;
+      }
+      html.admin-theme.theme-dark .text-blue-950 {
+        color: #BFDBFE !important;
+      }
+      html.admin-theme.theme-dark .bg-blue-100,
+      html.admin-theme.theme-dark .hover\:bg-blue-100:hover {
+        background-color: rgba(50, 124, 246, 0.28) !important;
+      }
+      html.admin-theme.theme-dark .bg-red-50,
+      html.admin-theme.theme-dark .bg-rose-50\/50,
+      html.admin-theme.theme-dark .hover\:bg-red-50:hover {
+        background-color: rgba(239, 68, 68, 0.14) !important;
+      }
+      html.admin-theme.theme-dark .bg-red-100,
+      html.admin-theme.theme-dark .hover\:bg-red-100:hover,
+      html.admin-theme.theme-dark .hover\:bg-red-200:hover {
+        background-color: rgba(239, 68, 68, 0.24) !important;
+      }
+      html.admin-theme.theme-dark .border-red-200 {
+        border-color: rgba(248, 113, 113, 0.4) !important;
+      }
+      html.admin-theme.theme-dark .bg-emerald-50,
+      html.admin-theme.theme-dark .bg-emerald-50\/50 {
+        background-color: rgba(16, 185, 129, 0.14) !important;
+      }
+      html.admin-theme.theme-dark .border-emerald-200 {
+        border-color: rgba(52, 211, 153, 0.4) !important;
+      }
+      html.admin-theme.theme-dark .bg-amber-50,
+      html.admin-theme.theme-dark .bg-amber-50\/50,
+      html.admin-theme.theme-dark .bg-amber-50\/60 {
+        background-color: rgba(245, 158, 11, 0.14) !important;
+      }
+      html.admin-theme.theme-dark .border-amber-200 {
+        border-color: rgba(251, 191, 36, 0.4) !important;
+      }
+      html.admin-theme.theme-dark .selection\:bg-blue-100::selection,
+      html.admin-theme.theme-dark .selection\:bg-blue-100 *::selection,
+      html.admin-theme.theme-dark ::selection {
+        background-color: #1D4ED8 !important;
+        color: #FFFFFF !important;
+      }
+      html.admin-theme.theme-dark .placeholder\:text-slate-400::placeholder,
+      html.admin-theme.theme-dark .placeholder\:text-slate-300::placeholder {
+        color: #8B8B90 !important;
+      }
+      html.admin-theme.theme-dark .border-slate-100,
+      html.admin-theme.theme-dark .border-slate-200,
+      html.admin-theme.theme-dark .border-slate-300,
+      html.admin-theme.theme-dark .divide-slate-100 > :not(:last-child),
+      html.admin-theme.theme-dark .divide-slate-200 > :not(:last-child),
+      html.admin-theme.theme-dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+      html.admin-theme.theme-dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+        border-color: #2A2925 !important;
+      }
+      html.admin-theme.theme-dark input:not([type="checkbox"]):not([type="radio"]),
+      html.admin-theme.theme-dark select,
+      html.admin-theme.theme-dark textarea {
+        background-color: #1C1B1F;
+        color: #F8FAFC;
+        border-color: #2A2925;
+      }
+      html.admin-theme.theme-dark textarea.bg-slate-900 {
+        background-color: #0F0F12 !important;
+        color: #F1F5F9 !important;
+      }
+      html.admin-theme.theme-dark .ProseMirror {
+        color: #E2E8F0 !important;
+        background-color: transparent !important;
+      }
+      html.admin-theme.theme-dark .ProseMirror p.is-editor-empty:first-child::before {
+        color: #8B8B90 !important;
+      }
+      html.admin-theme.theme-dark .find-match {
+        background-color: #854D0E;
+        color: #FFFBEB;
+      }
+      html.admin-theme.theme-dark .find-match-active {
+        background-color: #D97706;
+        color: #FFFBEB;
+        box-shadow: inset 0 -2px 0 #FDE68A;
+      }
+      html.admin-theme.theme-dark ::-webkit-scrollbar-thumb {
+        background: #3F3F46;
+      }
+      html.admin-theme.theme-dark ::-webkit-scrollbar-thumb:hover {
+        background: #52525B;
       }
       .admin-layout * {
         box-sizing: border-box;
@@ -121,7 +331,7 @@ const {
       }
     </style>
   </head>
-  <body class="admin-layout admin-theme-body h-full flex overflow-hidden" style="background-color: #F8FAFC; color: #111827;">
+  <body class="admin-layout admin-theme-body h-full flex overflow-hidden">
 
     <!-- Auth Verification Guard -->
     <script>
@@ -154,7 +364,6 @@ const {
       <aside 
         id="admin-sidebar"
         class="fixed inset-y-0 left-0 z-50 w-60 bg-white border-r border-slate-200 flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0"
-        style="background-color: #FFFFFF; border-color: #E5E7EB;"
       >
         <div>
           <!-- Top CMS Brand -->
@@ -235,6 +444,20 @@ const {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2m18 0v-2a4 4 0 00-3-3.87m-1-12.15a4 4 0 010 7.75M12 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
               <span>Users</span>
+            </a>
+
+            <a
+              href="/admin/notifications"
+              class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
+                activeNav === 'notifications'
+                  ? 'bg-slate-100 text-slate-900 font-semibold'
+                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              }`}
+            >
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span>Notifications</span>
             </a>
 
             <div class="pt-4 pb-1">

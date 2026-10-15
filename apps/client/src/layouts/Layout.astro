@@ -69,17 +69,19 @@ const {
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
 
-    {/* Inline script to set default theme to WHITE / LIGHT across the website */}
+    {/* Apply the saved theme before paint, and again after view transitions replace the html class */}
     <script is:inline>
       (function() {
-        const userChoice = localStorage.getItem('theme_preference');
-        if (userChoice === 'dark') {
-          document.documentElement.classList.add('theme-dark');
-          document.documentElement.classList.remove('theme-light');
-        } else {
-          document.documentElement.classList.remove('theme-dark');
-          document.documentElement.classList.add('theme-light');
-          localStorage.setItem('theme', 'light');
+        function applyStoredTheme() {
+          var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
+          var dark = pref === 'dark';
+          document.documentElement.classList.toggle('theme-dark', dark);
+          document.documentElement.classList.toggle('theme-light', !dark);
+        }
+        applyStoredTheme();
+        if (!window.__examThemeBound) {
+          window.__examThemeBound = true;
+          document.addEventListener('astro:after-swap', applyStoredTheme);
         }
       })();
     </script>
@@ -125,6 +127,8 @@ const {
 
     {/* Global Robust Interactive Script */}
     <script>
+      import { markAllNotificationsRead, markNotificationRead, refreshNotifications } from '../lib/notifications';
+
       (function initApp() {
         if ((window as any).__APP_INTERACTIVITY_INITIALIZED__) return;
         (window as any).__APP_INTERACTIVITY_INITIALIZED__ = true;
@@ -632,25 +636,14 @@ const {
           if (markAllReadBtn) {
             e.preventDefault();
             e.stopPropagation();
-            document.querySelectorAll('.notification-badge-count, .notification-pill-badge').forEach((el) => {
-              el.textContent = '0';
-              el.classList.add('opacity-50');
-            });
-            document.querySelectorAll('.notification-dot-indicator').forEach((el) => {
-              el.classList.add('hidden');
-            });
-            document.querySelectorAll('.notification-pill-text').forEach((el) => {
-              el.textContent = 'All caught up (0 new)';
-            });
-            document.querySelectorAll('.notification-unread-dot').forEach((el) => {
-              el.classList.add('hidden');
-            });
-            const notifItem = document.getElementById('notification-item-welcome');
-            if (notifItem) {
-              notifItem.classList.remove('border-l-accent');
-              notifItem.classList.add('border-l-border', 'opacity-70');
-            }
+            void markAllNotificationsRead();
             return;
+          }
+
+          const notificationLink = target.closest('[data-notification-link]');
+          if (notificationLink) {
+            const notificationId = notificationLink.getAttribute('data-notification-link');
+            if (notificationId) markNotificationRead(notificationId);
           }
 
           // If clicked inside notifications popup, don't close
@@ -848,12 +841,15 @@ const {
 
           const user = clerk.user || clerk.session?.user;
           const token = await clerk.session?.getToken?.().catch(() => null);
+          const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
-          // Ping backend /api/v1/me if token exists
           if (token) {
-            fetch('http://localhost:5000/api/v1/me', {
+            fetch(`${apiUrl}/me`, {
               headers: { Authorization: `Bearer ${token}` },
             }).catch(() => null);
+            void refreshNotifications(token);
+          } else {
+            void refreshNotifications(null);
           }
 
           const nameEls = document.querySelectorAll('.user-display-name');

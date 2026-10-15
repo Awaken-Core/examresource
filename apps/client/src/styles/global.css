@@ -433,11 +433,215 @@
 /* Lists */
 .prose-markdown ul,
 .markdown-preview-content ul,
-.prose-exam ul {
+.prose-exam ul,
+.ProseMirror ul {
   list-style-type: disc !important;
   padding-left: 2rem !important;
   margin-top: 0 !important;
   margin-bottom: 16px !important;
+}
+
+.prose-markdown ul[data-bullet="circle"],
+.markdown-preview-content ul[data-bullet="circle"],
+.prose-exam ul[data-bullet="circle"],
+.ProseMirror ul[data-bullet="circle"] {
+  list-style-type: circle !important;
+}
+
+.prose-markdown ul[data-bullet="square"],
+.markdown-preview-content ul[data-bullet="square"],
+.prose-exam ul[data-bullet="square"],
+.ProseMirror ul[data-bullet="square"] {
+  list-style-type: square !important;
+}
+
+.prose-markdown .article-figure,
+.markdown-preview-content .article-figure,
+.prose-exam .article-figure,
+.ProseMirror .article-figure {
+  max-width: 100%;
+  margin: 1rem 0;
+}
+
+.prose-markdown .article-figure[data-align="center"],
+.markdown-preview-content .article-figure[data-align="center"],
+.prose-exam .article-figure[data-align="center"],
+.prose-markdown img[data-align="center"],
+.markdown-preview-content img[data-align="center"],
+.prose-exam img[data-align="center"],
+.ProseMirror img[data-align="center"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose-markdown .article-figure[data-align="left"],
+.markdown-preview-content .article-figure[data-align="left"],
+.prose-exam .article-figure[data-align="left"],
+.prose-markdown img[data-align="left"],
+.markdown-preview-content img[data-align="left"],
+.prose-exam img[data-align="left"],
+.ProseMirror img[data-align="left"] {
+  float: left;
+  margin: 0.25rem 1.25rem 0.75rem 0;
+}
+
+.prose-markdown .article-figure[data-align="right"],
+.markdown-preview-content .article-figure[data-align="right"],
+.prose-exam .article-figure[data-align="right"],
+.prose-markdown img[data-align="right"],
+.markdown-preview-content img[data-align="right"],
+.prose-exam img[data-align="right"],
+.ProseMirror img[data-align="right"] {
+  float: right;
+  margin: 0.25rem 0 0.75rem 1.25rem;
+}
+
+/* Editor images: corner handles sit on the picture, not the full column. */
+.ProseMirror [data-resize-container] {
+  width: 100%;
+  max-width: 100%;
+}
+.ProseMirror [data-resize-wrapper] {
+  width: fit-content;
+  max-width: 100%;
+}
+.ProseMirror [data-resize-container]:has(img[data-align="left"]),
+.ProseMirror [data-resize-container]:has(img[data-layout="left"]) {
+  justify-content: flex-start;
+}
+.ProseMirror [data-resize-container]:has(img[data-align="center"]),
+.ProseMirror [data-resize-container]:has(img[data-layout="content"]),
+.ProseMirror [data-resize-container]:has(img[data-layout="wide"]),
+.ProseMirror [data-resize-container]:has(img[data-layout="full"]),
+.ProseMirror [data-resize-container]:has(img[data-layout="center"]),
+.ProseMirror [data-resize-container]:not(:has(img[data-align])) {
+  justify-content: center;
+}
+.ProseMirror [data-resize-container]:has(img[data-align="right"]),
+.ProseMirror [data-resize-container]:has(img[data-layout="right"]) {
+  justify-content: flex-end;
+}
+.ProseMirror [data-resize-container]:has(img[data-layout="content"]) [data-resize-wrapper],
+.ProseMirror [data-resize-container]:has(img[data-layout="center"]) [data-resize-wrapper] {
+  max-width: min(620px, 100%);
+}
+.ProseMirror [data-resize-container]:has(img[data-layout="wide"]) [data-resize-wrapper] {
+  max-width: min(1440px, 100%);
+}
+.ProseMirror [data-resize-container]:has(img[data-layout="full"]) [data-resize-wrapper] {
+  max-width: 100%;
+}
+.article-figure[data-layout="content"],
+.article-figure[data-layout="center"] {
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+}
+.article-figure[data-layout="wide"] {
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+}
+.article-figure[data-layout="full"] {
+  max-width: none;
+  width: 100%;
+  float: none;
+}
+.article-figure[data-layout="full"] img {
+  width: 100%;
+}
+.article-figure[data-layout="left"] {
+  float: left;
+  max-width: min(480px, 100%);
+  margin: 0.25rem 1.25rem 0.75rem 0;
+}
+.article-figure[data-layout="right"] {
+  float: right;
+  max-width: min(480px, 100%);
+  margin: 0.25rem 0 0.75rem 1.25rem;
+}
+.ProseMirror [data-resize-wrapper] img {
+  float: none !important;
+  display: block !important;
+  margin: 0 !important;
+  max-width: 100%;
+  height: auto;
+}
+.library-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.4rem 0.45rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.4rem;
+  background: #fff;
+  color: #0f172a;
+  font-weight: 600;
+  text-align: left;
+}
+.library-tile:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+.library-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 0.3rem;
+  background: #f1f5f9;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+html.admin-theme.theme-dark .library-tile {
+  background: #1c1b1f;
+  border-color: #2a2925;
+  color: #f8fafc;
+}
+html.admin-theme.theme-dark .library-icon {
+  background: #2a2a30;
+  color: #f8fafc;
+}
+
+.ProseMirror [data-resize-handle] {
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border: 2px solid #2563eb;
+  border-radius: 2px;
+  z-index: 5;
+  box-sizing: border-box;
+}
+.ProseMirror [data-resize-handle="top-left"] {
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+}
+.ProseMirror [data-resize-handle="top-right"] {
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+}
+.ProseMirror [data-resize-handle="bottom-left"] {
+  transform: translate(-50%, 50%);
+  cursor: nesw-resize;
+}
+.ProseMirror [data-resize-handle="bottom-right"] {
+  transform: translate(50%, 50%);
+  cursor: nwse-resize;
+}
+
+.prose-markdown h2,
+.prose-markdown h3,
+.markdown-preview-content h2,
+.markdown-preview-content h3,
+.prose-exam h2,
+.prose-exam h3 {
+  clear: both;
 }
 
 .prose-markdown ol,
@@ -658,60 +862,186 @@ div[data-youtube-video] {
 
 /* Dark theme overrides for public article reading if active */
 .theme-dark .prose-exam,
-.blog-reading-view.theme-dark .prose-markdown,
-.blog-reading-view.theme-dark .markdown-preview-content {
+.theme-dark .blog-reading-view .prose-markdown,
+.theme-dark .blog-reading-view .markdown-preview-content {
   color: #e6edf3 !important;
 }
 .theme-dark .prose-exam h1,
 .theme-dark .prose-exam h2,
 .theme-dark .prose-exam h3,
 .theme-dark .prose-exam h4,
-.blog-reading-view.theme-dark .prose-markdown h1,
-.blog-reading-view.theme-dark .prose-markdown h2,
-.blog-reading-view.theme-dark .prose-markdown h3,
-.blog-reading-view.theme-dark .prose-markdown h4 {
+.theme-dark .blog-reading-view .prose-markdown h1,
+.theme-dark .blog-reading-view .prose-markdown h2,
+.theme-dark .blog-reading-view .prose-markdown h3,
+.theme-dark .blog-reading-view .prose-markdown h4 {
   color: #ffffff !important;
   border-bottom-color: #30363d !important;
 }
 .theme-dark .prose-exam p,
-.blog-reading-view.theme-dark .prose-markdown p {
+.theme-dark .blog-reading-view .prose-markdown p {
   color: #c9d1d9 !important;
 }
 .theme-dark .prose-exam code,
-.blog-reading-view.theme-dark .prose-markdown code {
+.theme-dark .blog-reading-view .prose-markdown code {
   background-color: rgba(110, 118, 129, 0.4) !important;
   color: #e6edf3 !important;
   border-color: #30363d !important;
 }
 .theme-dark .prose-exam pre,
-.blog-reading-view.theme-dark .prose-markdown pre {
+.theme-dark .blog-reading-view .prose-markdown pre {
   background-color: #161b22 !important;
   border-color: #30363d !important;
 }
 .theme-dark .prose-exam pre code,
-.blog-reading-view.theme-dark .prose-markdown pre code {
+.theme-dark .blog-reading-view .prose-markdown pre code {
   color: #e6edf3 !important;
 }
 .theme-dark .prose-exam th,
-.blog-reading-view.theme-dark .prose-markdown th {
+.theme-dark .blog-reading-view .prose-markdown th {
   background-color: #161b22 !important;
   color: #ffffff !important;
   border-color: #30363d !important;
 }
 .theme-dark .prose-exam td,
-.blog-reading-view.theme-dark .prose-markdown td {
+.theme-dark .blog-reading-view .prose-markdown td {
   border-color: #30363d !important;
   color: #c9d1d9 !important;
 }
 .theme-dark .prose-exam tr:nth-child(2n),
-.blog-reading-view.theme-dark .prose-markdown tr:nth-child(2n) {
+.theme-dark .blog-reading-view .prose-markdown tr:nth-child(2n) {
   background-color: #161b22 !important;
 }
 .theme-dark .prose-exam blockquote,
-.blog-reading-view.theme-dark .prose-markdown blockquote {
+.theme-dark .blog-reading-view .prose-markdown blockquote {
   border-left-color: #388bfd !important;
   background-color: #161b22 !important;
   color: #8b949e !important;
+}
+.theme-dark .blog-reading-view .prose-markdown h5,
+.theme-dark .blog-reading-view .prose-markdown h6,
+.theme-dark .blog-reading-view .markdown-preview-content h5,
+.theme-dark .blog-reading-view .markdown-preview-content h6 {
+  color: #ffffff !important;
+}
+.theme-dark .blog-reading-view .prose-markdown li,
+.theme-dark .blog-reading-view .prose-markdown strong,
+.theme-dark .blog-reading-view .markdown-preview-content li,
+.theme-dark .blog-reading-view .markdown-preview-content strong {
+  color: #c9d1d9 !important;
+}
+.theme-dark .blog-reading-view .prose-markdown a,
+.theme-dark .blog-reading-view .markdown-preview-content a {
+  color: #79b8ff !important;
+}
+.theme-dark .blog-reading-view .prose-markdown a:hover,
+.theme-dark .blog-reading-view .markdown-preview-content a:hover {
+  color: #a5d6ff !important;
+}
+.theme-dark .blog-reading-view .prose-markdown hr,
+.theme-dark .blog-reading-view .markdown-preview-content hr {
+  background-color: #2a2925 !important;
+}
+.theme-dark .blog-reading-view .prose-markdown ::selection,
+.theme-dark .blog-reading-view .prose-markdown::selection,
+.theme-dark .blog-reading-view .markdown-preview-content ::selection,
+.theme-dark .blog-reading-view .markdown-preview-content::selection {
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+}
+
+/* Admin and editor canvases use the same prose classes without .blog-reading-view */
+html.admin-theme.theme-dark .prose-markdown,
+html.admin-theme.theme-dark .markdown-preview-content,
+html.admin-theme.theme-dark .ProseMirror {
+  color: #e6edf3 !important;
+}
+html.admin-theme.theme-dark .prose-markdown h1,
+html.admin-theme.theme-dark .prose-markdown h2,
+html.admin-theme.theme-dark .prose-markdown h3,
+html.admin-theme.theme-dark .prose-markdown h4,
+html.admin-theme.theme-dark .prose-markdown h5,
+html.admin-theme.theme-dark .prose-markdown h6,
+html.admin-theme.theme-dark .markdown-preview-content h1,
+html.admin-theme.theme-dark .markdown-preview-content h2,
+html.admin-theme.theme-dark .markdown-preview-content h3,
+html.admin-theme.theme-dark .markdown-preview-content h4,
+html.admin-theme.theme-dark .markdown-preview-content h5,
+html.admin-theme.theme-dark .markdown-preview-content h6,
+html.admin-theme.theme-dark .ProseMirror h1,
+html.admin-theme.theme-dark .ProseMirror h2,
+html.admin-theme.theme-dark .ProseMirror h3,
+html.admin-theme.theme-dark .ProseMirror h4,
+html.admin-theme.theme-dark .ProseMirror h5,
+html.admin-theme.theme-dark .ProseMirror h6 {
+  color: #ffffff !important;
+  border-bottom-color: #30363d !important;
+}
+html.admin-theme.theme-dark .prose-markdown p,
+html.admin-theme.theme-dark .prose-markdown li,
+html.admin-theme.theme-dark .prose-markdown strong,
+html.admin-theme.theme-dark .markdown-preview-content p,
+html.admin-theme.theme-dark .markdown-preview-content li,
+html.admin-theme.theme-dark .markdown-preview-content strong,
+html.admin-theme.theme-dark .ProseMirror p,
+html.admin-theme.theme-dark .ProseMirror li,
+html.admin-theme.theme-dark .ProseMirror strong {
+  color: #c9d1d9 !important;
+}
+html.admin-theme.theme-dark .prose-markdown a,
+html.admin-theme.theme-dark .markdown-preview-content a,
+html.admin-theme.theme-dark .ProseMirror a {
+  color: #79b8ff !important;
+}
+html.admin-theme.theme-dark .prose-markdown a:hover,
+html.admin-theme.theme-dark .markdown-preview-content a:hover,
+html.admin-theme.theme-dark .ProseMirror a:hover {
+  color: #a5d6ff !important;
+}
+html.admin-theme.theme-dark .prose-markdown code,
+html.admin-theme.theme-dark .markdown-preview-content code,
+html.admin-theme.theme-dark .ProseMirror code {
+  background-color: rgba(110, 118, 129, 0.4) !important;
+  color: #e6edf3 !important;
+  border-color: #30363d !important;
+}
+html.admin-theme.theme-dark .prose-markdown pre,
+html.admin-theme.theme-dark .markdown-preview-content pre,
+html.admin-theme.theme-dark .ProseMirror pre,
+html.admin-theme.theme-dark .prose-markdown pre code,
+html.admin-theme.theme-dark .markdown-preview-content pre code,
+html.admin-theme.theme-dark .ProseMirror pre code {
+  background-color: #0f0f12 !important;
+  color: #e6edf3 !important;
+  border-color: #30363d !important;
+}
+html.admin-theme.theme-dark .prose-markdown th,
+html.admin-theme.theme-dark .prose-markdown td,
+html.admin-theme.theme-dark .markdown-preview-content th,
+html.admin-theme.theme-dark .markdown-preview-content td,
+html.admin-theme.theme-dark .ProseMirror th,
+html.admin-theme.theme-dark .ProseMirror td {
+  color: #c9d1d9 !important;
+  border-color: #30363d !important;
+}
+html.admin-theme.theme-dark .prose-markdown th,
+html.admin-theme.theme-dark .markdown-preview-content th,
+html.admin-theme.theme-dark .ProseMirror th,
+html.admin-theme.theme-dark .prose-markdown tr:nth-child(2n),
+html.admin-theme.theme-dark .markdown-preview-content tr:nth-child(2n),
+html.admin-theme.theme-dark .ProseMirror tr:nth-child(2n) {
+  background-color: #16161a !important;
+}
+html.admin-theme.theme-dark .prose-markdown blockquote,
+html.admin-theme.theme-dark .markdown-preview-content blockquote,
+html.admin-theme.theme-dark .ProseMirror blockquote {
+  border-left-color: #388bfd !important;
+  background-color: #16161a !important;
+  color: #a0a0a3 !important;
+}
+html.admin-theme.theme-dark .prose-markdown hr,
+html.admin-theme.theme-dark .markdown-preview-content hr,
+html.admin-theme.theme-dark .ProseMirror hr {
+  background-color: #2a2925 !important;
 }
 
 

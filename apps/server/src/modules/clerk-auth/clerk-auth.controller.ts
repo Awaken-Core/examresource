@@ -13,6 +13,11 @@ export class ClerkAuthController {
     return this.auth.requireUser(req);
   }
 
+  @Get('authors')
+  listAuthors(@Req() req: Request) {
+    return this.auth.listAuthors(req);
+  }
+
   @Get('users')
   listUsers(@Req() req: Request) {
     return this.auth.listUsers(req);
