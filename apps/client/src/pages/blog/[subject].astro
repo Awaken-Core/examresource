@@ -80,7 +80,7 @@ const jsonLd = {
       <nav aria-label="Breadcrumb" class="text-xs text-muted mb-4">
         <a href="/" class="hover:text-accent">Home</a>
         <span class="mx-1.5">/</span>
-        <a href="/blog" class="hover:text-accent">Articles</a>
+        <a href="/" class="hover:text-accent">Articles</a>
         <span class="mx-1.5">/</span>
         <span class="text-white font-semibold">{categoryTitle}</span>
       </nav>
@@ -88,7 +88,7 @@ const jsonLd = {
       <!-- Subject Selector Bar -->
       <nav aria-label="Subject Categories" class="flex items-center gap-1 overflow-x-auto pb-3 mb-6 border-b border-border/70 scrollbar-none">
         <a
-          href="/blog"
+          href="/"
           class="px-3.5 py-1.5 rounded-md text-xs font-medium text-muted hover:text-white hover:bg-surface-raised shrink-0"
         >
           All Topics
@@ -131,26 +131,22 @@ const jsonLd = {
         {liveCategoryPosts.length > 0 ? (
           <div class="divide-y divide-border/60">
             {liveCategoryPosts.map((post) => (
-              <div class="py-4 hover:bg-surface-raised/40 p-3 rounded-lg transition group">
-                <div class="flex items-center justify-between text-[11px] text-muted mb-1">
+              <a href={`/blog/${subjectKey}/${post.slug}`} class="block rounded-lg p-3 py-4 transition hover:bg-surface-raised/40">
+                <span class="mb-1 flex items-center justify-between text-[11px] text-muted">
                   <span>Updated: {new Date(post.updatedAt).toLocaleDateString()}</span>
                   <span>By {post.author?.name || 'Staff'}</span>
-                </div>
-                <h3 class="text-base font-bold text-white group-hover:text-accent transition">
-                  <a href={`/blog/${subjectKey}/${post.slug}`}>{post.title}</a>
-                </h3>
-                <p class="text-xs text-muted mt-1 line-clamp-2 leading-relaxed">
+                </span>
+                <span class="block text-base font-bold text-white">{post.title}</span>
+                <span class="mt-1 line-clamp-2 block text-xs leading-relaxed text-muted">
                   {post.description || post.metaDescription}
-                </p>
-              </div>
+                </span>
+              </a>
             ))}
           </div>
         ) : (
           <div class="p-8 text-center bg-surface border border-border rounded-xl mt-4 text-muted">
             <p class="text-sm">No articles published in this category yet.</p>
-            <a href="/editor" class="text-accent hover:underline text-xs mt-2 inline-block font-semibold">
-              + Publish an article in {categoryTitle}
-            </a>
+            <a href="/" class="mt-2 inline-block text-xs font-semibold text-accent hover:underline">Back to all articles</a>
           </div>
         )}
       </div>

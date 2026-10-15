@@ -131,6 +131,17 @@ export function htmlToBlocks(html: string): BlockRecord[] {
       }
       case 'p':
       default: {
+        const onlyCode = innerContent.match(/^<code([^>]*)>([\s\S]*?)<\/code>$/i);
+        if (tagName === 'p' && onlyCode) {
+          const langMatch = onlyCode[1].match(/language-([a-zA-Z0-9_+-]+)/i);
+          const codeText = stripTags(onlyCode[2]);
+          blocks.push({
+            type: 'CODE',
+            value: codeText,
+            metadata: { language: langMatch?.[1] || guessCodeLanguage(codeText) },
+          });
+          break;
+        }
         // If image is inside p
         const imgInside = attributes.match(/src=["']([^"']+)["']/i) || innerContent.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i);
         if (imgInside && innerContent.startsWith('<img')) {
@@ -243,7 +254,17 @@ function escapeHtml(str: string): string {
 
 function stripTags(html: string): string {
   if (!html) return '';
-  return html.replace(/<[^>]*>/g, '').trim();
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]*>/g, '')
+    .trim();
+}
+
+function guessCodeLanguage(source: string) {
+  if (/\bpublic class\b|\bSystem\.out\b|\bvoid main\b/.test(source)) return 'java';
+  if (/\bconsole\.log\b|\bfunction\b|\bconst\b|\blet\b/.test(source)) return 'javascript';
+  if (/\bdef \b|\bprint\(/.test(source)) return 'python';
+  return 'plaintext';
 }
 
 function slugify(text: string): string {

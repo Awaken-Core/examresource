@@ -7,9 +7,10 @@ import clerk from '@clerk/astro';
 // https://astro.build/config
 export default defineConfig({
 	devToolbar: {
-		enabled: true,
+		enabled: false,
 	},
 	output: 'server',
+	compressHTML: true,
 	server: { port: 3000, host: true },
 	adapter: node({ mode: 'standalone' }),
 	integrations: [clerk()],

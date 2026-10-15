@@ -389,15 +389,17 @@ const {
 
         // --- Global Spotlight Search Modal Management (Matching Image 1) ---
         const SEARCH_ITEMS = [
-          { title: "Bihar DECE LE 2026 1st Round Seat Allotment Letter", category: "results", href: "#important-links", tag: "Seat Allotment", icon: "🏆" },
-          { title: "BCECEB DECE LE Document Verification Schedule & Reporting Dates", category: "exams", href: "#important-dates", tag: "Schedule", icon: "📅" },
-          { title: "Bihar DECE LE Merit Rank Card 2026 Download", category: "results", href: "#important-links", tag: "Result", icon: "⚡" },
-          { title: "Bihar Lateral Entry Required Verification Documents Checklist", category: "admissions", href: "#required-documents", tag: "Documents", icon: "📑" },
-          { title: "DECE LE Selection Process & Counselling Guidelines", category: "exams", href: "#selection-process", tag: "Process", icon: "📋" },
-          { title: "BCECEB Helpdesk, Helpline & Frequently Asked Questions (FAQs)", category: "all", href: "#faqs", tag: "Help", icon: "❓" },
-          { title: "BCECEB Official Portal (bceceboard.bihar.gov.in)", category: "admissions", href: "https://bceceboard.bihar.gov.in", tag: "Portal", icon: "🔗" },
-          { title: "Bihar State Polytechnic / Lateral Entry Seat Matrix", category: "state", href: "#state-filter-widget", tag: "State Updates", icon: "🏛️" },
-          { title: "Bihar DECE LE 2026 Admit Card Archive", category: "admit-cards", href: "#important-dates", tag: "Admit Card", icon: "🎫" },
+          { title: "UPSC", category: "exams", href: "https://www.upsc.gov.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "SSC", category: "exams", href: "https://ssc.gov.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "RRB", category: "exams", href: "https://rrb.indianrailways.gov.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "IBPS", category: "exams", href: "https://www.ibps.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "NTA", category: "exams", href: "https://nta.ac.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "BCECEB", category: "admissions", href: "https://bceceboard.bihar.gov.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "BPSC", category: "exams", href: "https://bpsc.bihar.gov.in/", tag: "Exam portal", icon: "🔗" },
+          { title: "National Portal of India", category: "all", href: "https://www.india.gov.in/", tag: "Gov portal", icon: "🏛️" },
+          { title: "DigiLocker", category: "all", href: "https://www.digilocker.gov.in/", tag: "Gov portal", icon: "🏛️" },
+          { title: "Site FAQs", category: "all", href: "/#faqs", tag: "Help", icon: "❓" },
+          { title: "Important official links", category: "all", href: "/#important-links", tag: "Links", icon: "📌" },
         ];
 
         let currentSearchCategory = 'all';
@@ -468,7 +470,7 @@ const {
             resultsList.innerHTML = `
               <div class="py-8 text-center text-muted text-body-sm">
                 <p>No results found for "${query}"</p>
-                <p class="text-caption-xs mt-1 text-muted/70">Try searching for "Seat Allotment", "Schedule", or "Verification"</p>
+                <p class="text-caption-xs mt-1 text-muted/70">Try searching for UPSC, SSC, RRB, or an official portal</p>
               </div>
             `;
             activeResultIndex = -1;
