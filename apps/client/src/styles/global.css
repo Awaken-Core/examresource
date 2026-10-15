@@ -323,72 +323,369 @@
 
 
 /* ============================================================
-   Blog / Article Prose Styles
-   Follows: public/blog_formatting_seo_guidelines.md
-   
-   These use @apply with Tailwind utilities where possible.
-   Applied via: <article class="prose-exam">
+   Blog / Article Prose Styles (GitHub Flavored Markdown & Rich Text)
+   Dedicated article typography stylesheet scoped to .prose-markdown
+   and .markdown-preview-content
    ============================================================ */
 
+.prose-markdown,
+.markdown-preview-content,
+.prose-exam {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  color: #1f2328 !important;
+  font-size: 17px !important;
+  line-height: 1.7 !important;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+/* Headings with clear visual hierarchy, sizes and bottom borders */
+.prose-markdown h1,
+.markdown-preview-content h1,
+.prose-exam h1 {
+  font-size: 36px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.4rem !important;
+  border-bottom: 1px solid #d0d7de !important;
+  color: #1f2328 !important;
+  letter-spacing: -0.02em;
+}
+
+.prose-markdown h2,
+.markdown-preview-content h2,
 .prose-exam h2 {
-  @apply text-heading-md font-bold text-white mt-7 mb-3 pb-1 border-b border-border;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 0.35rem !important;
+  border-bottom: 1px solid #d0d7de !important;
+  color: #1f2328 !important;
+  letter-spacing: -0.015em;
 }
 
+.prose-markdown h3,
+.markdown-preview-content h3,
 .prose-exam h3 {
-  @apply text-heading-sm font-semibold text-white mt-5 mb-2;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  margin-top: 1.75rem !important;
+  margin-bottom: 0.75rem !important;
+  color: #1f2328 !important;
 }
 
+.prose-markdown h4,
+.markdown-preview-content h4,
+.prose-exam h4 {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #1f2328 !important;
+}
+
+.prose-markdown h5,
+.markdown-preview-content h5,
+.prose-exam h5 {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #1f2328 !important;
+}
+
+.prose-markdown h6,
+.markdown-preview-content h6,
+.prose-exam h6 {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #656d76 !important;
+}
+
+/* First heading should not have extra top margin */
+.prose-markdown > :first-child,
+.markdown-preview-content > :first-child,
+.prose-exam > :first-child {
+  margin-top: 0 !important;
+}
+
+/* Paragraphs */
+.prose-markdown p,
+.markdown-preview-content p,
 .prose-exam p {
-  @apply text-body-md text-muted mb-4 leading-relaxed;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+  color: #1f2328 !important;
+  font-size: 17px !important;
+  line-height: 1.7 !important;
 }
 
+/* Lists */
+.prose-markdown ul,
+.markdown-preview-content ul,
 .prose-exam ul {
-  @apply list-disc pl-6 mb-4;
+  list-style-type: disc !important;
+  padding-left: 2rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
 }
 
+.prose-markdown ol,
+.markdown-preview-content ol,
 .prose-exam ol {
-  @apply list-decimal pl-6 mb-4;
+  list-style-type: decimal !important;
+  padding-left: 2rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
 }
 
+.prose-markdown ul ul,
+.prose-markdown ol ul,
+.prose-markdown ul ol,
+.prose-markdown ol ol,
+.markdown-preview-content ul ul,
+.markdown-preview-content ol ul,
+.markdown-preview-content ul ol,
+.markdown-preview-content ol ol,
+.prose-exam ul ul,
+.prose-exam ol ul,
+.prose-exam ul ol,
+.prose-exam ol ol {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.prose-markdown li,
+.markdown-preview-content li,
 .prose-exam li {
-  @apply mb-1 leading-relaxed;
+  margin-bottom: 0.4rem !important;
+  font-size: 17px !important;
+  line-height: 1.65 !important;
+  color: #1f2328 !important;
 }
 
+/* Links */
+.prose-markdown a,
+.markdown-preview-content a,
 .prose-exam a {
-  @apply text-accent underline underline-offset-2 hover:opacity-80;
+  color: #0969da !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  font-weight: 500 !important;
+  transition: color 0.15s ease;
 }
 
+.prose-markdown a:hover,
+.markdown-preview-content a:hover,
+.prose-exam a:hover {
+  color: #0550ae !important;
+}
+
+/* Strong & Em */
+.prose-markdown strong,
+.markdown-preview-content strong,
+.prose-exam strong {
+  font-weight: 600 !important;
+  color: #1f2328 !important;
+}
+
+/* Inline Code */
+.prose-markdown code,
+.markdown-preview-content code,
 .prose-exam code {
-  @apply font-mono text-code bg-surface-raised px-1.5 py-0.5 rounded-xs;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important;
+  font-size: 14.5px !important;
+  background-color: rgba(175, 184, 193, 0.22) !important;
+  color: #1f2328 !important;
+  padding: 0.2em 0.45em !important;
+  border-radius: 6px !important;
+  border: 1px solid rgba(175, 184, 193, 0.3) !important;
 }
 
+/* Pre / Fenced Code Blocks */
+.prose-markdown pre,
+.markdown-preview-content pre,
 .prose-exam pre {
-  @apply bg-surface border border-border rounded-xl p-4 overflow-x-auto mb-4;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important;
+  background-color: #161b22 !important;
+  color: #e6edf3 !important;
+  border: 1px solid #30363d !important;
+  border-radius: 8px !important;
+  padding: 1.15rem 1.25rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+  overflow-x: auto !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
+.prose-markdown pre code,
+.markdown-preview-content pre code,
 .prose-exam pre code {
-  @apply bg-transparent p-0 rounded-none;
+  background-color: transparent !important;
+  color: #e6edf3 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  font-size: 14px !important;
 }
 
+/* Tables (GitHub style with zebra striping, borders, and clear headings) */
+.prose-markdown table,
+.markdown-preview-content table,
 .prose-exam table {
-  @apply w-full border-collapse mb-4;
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin-top: 0 !important;
+  margin-bottom: 20px !important;
+  display: table !important;
+  overflow-x: auto !important;
+  border: 1px solid #d0d7de !important;
+  border-radius: 6px !important;
 }
 
+.prose-markdown th,
+.prose-markdown td,
+.markdown-preview-content th,
+.markdown-preview-content td,
 .prose-exam th,
 .prose-exam td {
-  @apply border border-border px-3 py-2 text-left;
+  border: 1px solid #d0d7de !important;
+  padding: 0.65rem 1rem !important;
+  text-align: left !important;
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  color: #1f2328 !important;
 }
 
+.prose-markdown th,
+.markdown-preview-content th,
 .prose-exam th {
-  @apply bg-surface font-semibold;
+  background-color: #f6f8fa !important;
+  font-weight: 600 !important;
+  color: #1f2328 !important;
 }
 
+.prose-markdown tr:nth-child(2n),
+.markdown-preview-content tr:nth-child(2n),
+.prose-exam tr:nth-child(2n) {
+  background-color: #f6f8fa !important;
+}
+
+/* Blockquotes */
+.prose-markdown blockquote,
+.markdown-preview-content blockquote,
 .prose-exam blockquote {
-  @apply border-l-3 border-accent pl-4 my-4 text-muted italic;
+  border-left: 0.3rem solid #327cf6 !important;
+  padding: 0.75rem 1.25rem !important;
+  margin: 0 0 20px 0 !important;
+  color: #57606a !important;
+  background-color: #f6f8fa !important;
+  border-radius: 0 8px 8px 0 !important;
+  font-style: normal !important;
 }
 
+.prose-markdown blockquote > :first-child,
+.markdown-preview-content blockquote > :first-child,
+.prose-exam blockquote > :first-child {
+  margin-top: 0 !important;
+}
+
+.prose-markdown blockquote > :last-child,
+.markdown-preview-content blockquote > :last-child,
+.prose-exam blockquote > :last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Horizontal Rule */
+.prose-markdown hr,
+.markdown-preview-content hr,
+.prose-exam hr {
+  height: 0.25rem !important;
+  padding: 0 !important;
+  margin: 24px 0 !important;
+  background-color: #d0d7de !important;
+  border: 0 !important;
+}
+
+/* Images */
+.prose-markdown img,
+.markdown-preview-content img,
 .prose-exam img {
-  @apply max-w-full h-auto rounded-xl;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  margin: 0.75rem 0 !important;
+  border: 1px solid #d0d7de !important;
+}
+
+/* Dark theme overrides for public article reading if active */
+.theme-dark .prose-exam,
+.blog-reading-view.theme-dark .prose-markdown,
+.blog-reading-view.theme-dark .markdown-preview-content {
+  color: #e6edf3 !important;
+}
+.theme-dark .prose-exam h1,
+.theme-dark .prose-exam h2,
+.theme-dark .prose-exam h3,
+.theme-dark .prose-exam h4,
+.blog-reading-view.theme-dark .prose-markdown h1,
+.blog-reading-view.theme-dark .prose-markdown h2,
+.blog-reading-view.theme-dark .prose-markdown h3,
+.blog-reading-view.theme-dark .prose-markdown h4 {
+  color: #ffffff !important;
+  border-bottom-color: #30363d !important;
+}
+.theme-dark .prose-exam p,
+.blog-reading-view.theme-dark .prose-markdown p {
+  color: #c9d1d9 !important;
+}
+.theme-dark .prose-exam code,
+.blog-reading-view.theme-dark .prose-markdown code {
+  background-color: rgba(110, 118, 129, 0.4) !important;
+  color: #e6edf3 !important;
+  border-color: #30363d !important;
+}
+.theme-dark .prose-exam pre,
+.blog-reading-view.theme-dark .prose-markdown pre {
+  background-color: #161b22 !important;
+  border-color: #30363d !important;
+}
+.theme-dark .prose-exam pre code,
+.blog-reading-view.theme-dark .prose-markdown pre code {
+  color: #e6edf3 !important;
+}
+.theme-dark .prose-exam th,
+.blog-reading-view.theme-dark .prose-markdown th {
+  background-color: #161b22 !important;
+  color: #ffffff !important;
+  border-color: #30363d !important;
+}
+.theme-dark .prose-exam td,
+.blog-reading-view.theme-dark .prose-markdown td {
+  border-color: #30363d !important;
+  color: #c9d1d9 !important;
+}
+.theme-dark .prose-exam tr:nth-child(2n),
+.blog-reading-view.theme-dark .prose-markdown tr:nth-child(2n) {
+  background-color: #161b22 !important;
+}
+.theme-dark .prose-exam blockquote,
+.blog-reading-view.theme-dark .prose-markdown blockquote {
+  border-left-color: #388bfd !important;
+  background-color: #161b22 !important;
+  color: #8b949e !important;
 }
 
 
