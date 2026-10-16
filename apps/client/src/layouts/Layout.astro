@@ -4,6 +4,8 @@ import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
 import TrendingBanner from '../components/TrendingBanner.astro';
 import SearchModal from '../components/SearchModal.astro';
+import BrandLogo from '../components/BrandLogo.astro';
+import { whatsappChannel, telegramChannel } from '../data/site';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 
@@ -38,7 +40,12 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0a58ca" />
     <meta name="generator" content={Astro.generator} />
 
     {/* Primary SEO Meta Tags */}
@@ -94,11 +101,8 @@ const {
     </script>
   </head>
   <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
-    {/* Full-Width Trending / Latest Updates Banner across very top (Always 100% width, never shrinks!) */}
-    {!hideHeaderFooter && <TrendingBanner />}
-
     {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right */}
-    <div class="flex-1 flex min-h-[calc(100vh-2rem)] sm:min-h-[calc(100vh-2.25rem)] relative">
+    <div class="flex-1 flex min-h-screen relative">
       {/* Desktop Left Navigation Sidebar (Full height on left) */}
       {!hideHeaderFooter && (
         <div id="desktop-sidebar-wrapper" class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300">
@@ -140,13 +144,8 @@ const {
     >
       {/* ── Drawer Header ── */}
       <div class="flex items-center justify-between h-14 px-4 border-b border-border/60 shrink-0 bg-canvas">
-        <a href="/" class="flex items-center gap-2.5 group">
-          <div class="w-7 h-7 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent shrink-0 shadow-sm group-hover:scale-105 transition-transform">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-          </div>
+        <a href="/" class="flex items-center gap-2 group" aria-label="govtpariksha.com home">
+          <BrandLogo size={32} class="group-hover:scale-105 transition-transform shrink-0" />
           <span class="font-bold text-sm tracking-tight text-white">
             govtpariksha<span class="text-accent">.com</span>
           </span>
@@ -170,7 +169,7 @@ const {
         <div>
           <p class="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted/70">Channels</p>
           <div class="space-y-0.5">
-            <a href="https://www.whatsapp.com/" target="_blank" rel="noopener noreferrer"
+            <a href={whatsappChannel} target="_blank" rel="noopener noreferrer"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition-all group"
             >
               <svg class="w-4 h-4 shrink-0 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
@@ -178,7 +177,7 @@ const {
               </svg>
               <span class="text-sm font-medium">WhatsApp channel</span>
             </a>
-            <a href="https://telegram.org/" target="_blank" rel="noopener noreferrer"
+            <a href={telegramChannel} target="_blank" rel="noopener noreferrer"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition-all group"
             >
               <svg class="w-4 h-4 shrink-0 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
@@ -1036,6 +1035,8 @@ const {
           const imgEls = document.querySelectorAll<HTMLImageElement>('.user-avatar-img');
           const logoutBtns = document.querySelectorAll<HTMLElement>('.auth-logout-btn');
           const loginLinks = document.querySelectorAll<HTMLElement>('.auth-login-link');
+          const headerProfileIcons = document.querySelectorAll<HTMLElement>('.header-profile-icon');
+          const headerProfileInitials = document.querySelectorAll<HTMLElement>('.header-profile-initials');
 
           if (user) {
             const fullName = user.fullName || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'User';
@@ -1052,6 +1053,11 @@ const {
                 img.classList.remove('hidden');
               });
               initialEls.forEach(el => el.classList.add('hidden'));
+              headerProfileIcons.forEach(el => el.classList.add('hidden'));
+            } else {
+              imgEls.forEach(img => img.classList.add('hidden'));
+              initialEls.forEach(el => el.classList.remove('hidden'));
+              headerProfileIcons.forEach(el => el.classList.add('hidden'));
             }
 
             logoutBtns.forEach(b => b.classList.remove('hidden'));
@@ -1079,7 +1085,12 @@ const {
             emailEls.forEach(el => el.textContent = 'Sign in to access your profile');
             initialEls.forEach(el => el.textContent = 'GP');
             imgEls.forEach(img => img.classList.add('hidden'));
-            initialEls.forEach(el => el.classList.remove('hidden'));
+            
+            // In header profile button, show clean profile SVG icon and hide initials
+            headerProfileIcons.forEach(el => el.classList.remove('hidden'));
+            headerProfileInitials.forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll<HTMLElement>('.user-avatar-initials:not(.header-profile-initials)').forEach(el => el.classList.remove('hidden'));
+
             logoutBtns.forEach(b => b.classList.add('hidden'));
             loginLinks.forEach(l => l.classList.remove('hidden'));
 

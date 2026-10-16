@@ -1,5 +1,5 @@
-export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL || 'https://www.whatsapp.com/';
-export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL || 'https://telegram.org/';
+export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL || 'https://whatsapp.com/channel/0029VbDrCtD2P59lOMdotQ0S';
+export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL || 'https://t.me/govtpariksha108';
 
 export const siteFaqs = [
   {

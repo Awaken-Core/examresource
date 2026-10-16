@@ -21,5 +21,10 @@
   },
   "vars": {
     "NODE_ENV": "production"
+  },
+  "previews": {
+    "vars": {
+      "NODE_ENV": "preview"
+    }
   }
 }

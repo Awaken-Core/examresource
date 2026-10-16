@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel } from '../data/site';
+import { INITIAL_MOCK_POSTS } from '../data/portalMockData';
 
 const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
@@ -13,17 +14,186 @@ try {
   livePosts = [];
 }
 
-let categories: any[] = [];
-try {
-  const catRes = await fetch(`${API_URL}/categories`);
-  if (catRes.ok) categories = await catRes.json();
-} catch {
-  categories = [];
-}
+// Fallback to real rich project mock posts if API is empty/offline
+const displayArticles = livePosts.length > 0 ? livePosts.map(p => ({
+  title: p.title,
+  slug: `/blog/${p.category?.slug || 'general'}/${p.slug}`,
+  category: p.category?.name || 'Latest Updates',
+  summary: p.description || p.metaDescription || 'Check complete official notification details and direct application links.',
+  date: new Date(p.publishedAt || p.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+  thumbnail: p.coverImage || 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=360&q=80',
+})) : [
+  {
+    title: 'SSC examination calendar: latest notice',
+    slug: '/bihar-dece-le-seat-allotment-2026',
+    category: 'SSC',
+    summary: 'Staff Selection Commission has released the revised examination calendar for 2026. Check important dates and official notice.',
+    date: '14 Oct 2026',
+    thumbnail: 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    title: 'UPPSC application dates and eligibility',
+    slug: '/bihar-dece-le-seat-allotment-2026',
+    category: 'State Exams',
+    summary: 'Uttar Pradesh Public Service Commission has extended the application dates for PCS 2024. Check new dates, eligibility and official notification.',
+    date: '13 Oct 2026',
+    thumbnail: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    title: 'Railway recruitment notification updates',
+    slug: '/bihar-dece-le-seat-allotment-2026',
+    category: 'Railways',
+    summary: 'Indian Railways has released a new notice for Group D recruitment. Check vacancies, eligibility, important dates and official link.',
+    date: '12 Oct 2026',
+    thumbnail: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    title: 'Bihar DECE LE Seat Allotment Result 2026: 1st Round Letter',
+    slug: '/bihar-dece-le-seat-allotment-2026',
+    category: 'State Exams',
+    summary: 'BCECEB has announced Round 1 Seat Allotment Result for Lateral Entry Polytechnic admissions. Download allotment letter.',
+    date: '12 Oct 2026',
+    thumbnail: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=360&q=80',
+  },
+  {
+    title: 'IBPS PO 2026 Mains Exam Admit Card Download Link Live',
+    slug: '/bihar-dece-le-seat-allotment-2026',
+    category: 'Banking',
+    summary: 'Institute of Banking Personnel Selection releases call letters for Probationary Officer mains exam.',
+    date: '11 Oct 2026',
+    thumbnail: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=360&q=80',
+  }
+];
 
-const slides = livePosts.filter((post) => post.coverImage).slice(0, 6);
-const pageTitle = 'Govt exam notices, admit cards and results | govtpariksha.com';
-const pageDescription = 'Read verified exam guides and open the official government and exam portals for applications, admit cards, and results.';
+// Exam Categories matching Reference Image 2
+const examCategories = [
+  {
+    name: 'Central Government',
+    subtitle: 'UPSC, SSC, Railways and more',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/60',
+    borderColor: 'hover:border-blue-500/40',
+    slug: 'central-government',
+    icon: 'monument'
+  },
+  {
+    name: 'State Exams',
+    subtitle: 'UPPSC, BPSC, MPSC and more',
+    iconColor: 'text-orange-600 dark:text-orange-400',
+    iconBg: 'bg-orange-50 dark:bg-orange-950/60',
+    borderColor: 'hover:border-orange-500/40',
+    slug: 'state-exams',
+    icon: 'building'
+  },
+  {
+    name: 'Banking',
+    subtitle: 'IBPS, SBI, RBI and more',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+    iconBg: 'bg-purple-50 dark:bg-purple-950/60',
+    borderColor: 'hover:border-purple-500/40',
+    slug: 'banking',
+    icon: 'bank'
+  },
+  {
+    name: 'SSC & Railways',
+    subtitle: 'SSC, RRB, RPF and more',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    iconBg: 'bg-emerald-50 dark:bg-emerald-950/60',
+    borderColor: 'hover:border-emerald-500/40',
+    slug: 'ssc-railways',
+    icon: 'train'
+  },
+  {
+    name: 'Teaching',
+    subtitle: 'CTET, UPTET and more',
+    iconColor: 'text-rose-600 dark:text-rose-400',
+    iconBg: 'bg-rose-50 dark:bg-rose-950/60',
+    borderColor: 'hover:border-rose-500/40',
+    slug: 'teaching',
+    icon: 'book'
+  },
+  {
+    name: 'Defence',
+    subtitle: 'NDA, CDS, AFCAT and more',
+    iconColor: 'text-blue-700 dark:text-blue-400',
+    iconBg: 'bg-blue-50 dark:bg-blue-950/60',
+    borderColor: 'hover:border-blue-500/40',
+    slug: 'defence',
+    icon: 'shield'
+  }
+];
+
+// Important Portals matching Reference Right Sidebar
+const R2_PORTAL_BASE = 'https://pub-68568854a58845bc975b176de76b1ad5.r2.dev/portals';
+
+const rightPortals = [
+  {
+    name: 'UPSC',
+    url: 'upsc.gov.in',
+    href: 'https://www.upsc.gov.in/',
+    logo: `${R2_PORTAL_BASE}/upsc.svg`,
+    initial: 'U',
+    bg: 'bg-[#0C2340]',
+    textColor: 'text-[#E2B13C]'
+  },
+  {
+    name: 'SSC',
+    url: 'ssc.gov.in',
+    href: 'https://ssc.gov.in/',
+    logo: `${R2_PORTAL_BASE}/ssc.svg`,
+    initial: 'S',
+    bg: 'bg-[#8B0000]',
+    textColor: 'text-[#FFD700]'
+  },
+  {
+    name: 'Railways',
+    url: 'rrb.indianrailways.gov.in',
+    href: 'https://rrb.indianrailways.gov.in/',
+    logo: `${R2_PORTAL_BASE}/railways.svg`,
+    initial: 'R',
+    bg: 'bg-[#003366]',
+    textColor: 'text-[#E5A823]'
+  },
+  {
+    name: 'UPPSC',
+    url: 'uppsc.up.nic.in',
+    href: 'https://uppsc.up.nic.in/',
+    logo: `${R2_PORTAL_BASE}/uppsc.svg`,
+    initial: 'UP',
+    bg: 'bg-[#14532D]',
+    textColor: 'text-[#FEF08A]'
+  },
+  {
+    name: 'SBI',
+    url: 'sbi.co.in',
+    href: 'https://sbi.co.in/web/careers',
+    logo: `${R2_PORTAL_BASE}/sbi.svg`,
+    initial: 'SBI',
+    bg: 'bg-[#0080C7]',
+    textColor: 'text-white'
+  },
+  {
+    name: 'IBPS',
+    url: 'ibps.in',
+    href: 'https://www.ibps.in/',
+    logo: `${R2_PORTAL_BASE}/ibps.svg`,
+    initial: 'I',
+    bg: 'bg-[#312E81]',
+    textColor: 'text-[#F59E0B]'
+  }
+];
+
+// Popular this week items
+const popularUpdates = [
+  { rank: 1, title: 'SSC Exam Calendar 2026', href: '/bihar-dece-le-seat-allotment-2026' },
+  { rank: 2, title: 'UPPSC PCS 2024 Apply Online', href: '/bihar-dece-le-seat-allotment-2026' },
+  { rank: 3, title: 'Railway Group D Notification', href: '/bihar-dece-le-seat-allotment-2026' },
+  { rank: 4, title: 'CTET July 2026 Notification', href: '/bihar-dece-le-seat-allotment-2026' },
+  { rank: 5, title: 'Bihar Police Recruitment 2026', href: '/bihar-dece-le-seat-allotment-2026' },
+];
+
+const pageTitle = 'Government exam updates, without the noise | govtpariksha.com';
+const pageDescription = 'Notifications, results and official application links in one place. Read verified notices and access direct official portals.';
 const canonicalUrl = 'https://govtpariksha.com/';
 
 const jsonLd = {
@@ -48,192 +218,329 @@ const jsonLd = {
 ---
 
 <Layout title={pageTitle} description={pageDescription} canonicalUrl={canonicalUrl} jsonLd={jsonLd}>
-  <div class="min-h-screen bg-canvas px-4 sm:px-6 pt-5 pb-10 text-white">
-    <div class="w-full max-w-5xl mx-auto space-y-8">
-      <header class="border-b border-border/80 pb-5">
-        <h1 class="text-xl sm:text-2xl lg:text-4xl font-extrabold tracking-tight text-white">Exam notices and official portals</h1>
-      </header>
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
+    <div class="max-w-[1400px] mx-auto">
+      
+      {/* 2-Column Grid: Main Feed (Left) + Right Sidebar (Portals & Popular) */}
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+        
+        {/* MAIN FEED CONTENT */}
+        <div class="min-w-0 space-y-7">
+          
+          {/* 1. Main Headline */}
+          <div>
+            <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight font-serif leading-tight">
+              Government exam updates, without the noise
+            </h1>
+            <p class="mt-1.5 text-sm sm:text-base text-muted">
+              Notifications, results and official application links in one place.
+            </p>
+          </div>
 
-
-      <section aria-label="Alert channels" class="hidden lg:grid gap-3 sm:grid-cols-2">
-        <a href={whatsappChannel} class="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 hover:border-[#25D366]/40 transition group" rel="noopener noreferrer" target="_blank">
-          <span class="flex items-center gap-3">
-            <span class="w-9 h-9 rounded-full bg-[#25D366]/10 border border-[#25D366]/20 flex items-center justify-center shrink-0 group-hover:bg-[#25D366]/20 transition">
-              <svg class="w-5 h-5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-              </svg>
+          {/* 2. Compact Notice Ticker */}
+          <div class="flex items-center gap-3 bg-surface border border-border rounded-lg px-3.5 py-2 text-xs shadow-2xs overflow-hidden transition-colors">
+            <span class="inline-flex items-center px-2 py-0.5 rounded bg-accent text-on-accent font-semibold text-[11px] shrink-0">
+              Latest
             </span>
-            <span>
-              <span class="block text-sm font-bold text-white">WhatsApp channel</span>
-              <span class="mt-1 block text-xs text-muted">New notice alerts on WhatsApp</span>
-            </span>
-          </span>
-          <span class="text-sm font-semibold text-[#25D366]">Join</span>
-        </a>
-        <a href={telegramChannel} class="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 hover:border-[#2AABEE]/40 transition group" rel="noopener noreferrer" target="_blank">
-          <span class="flex items-center gap-3">
-            <span class="w-9 h-9 rounded-full bg-[#2AABEE]/10 border border-[#2AABEE]/20 flex items-center justify-center shrink-0 group-hover:bg-[#2AABEE]/20 transition">
-              <svg class="w-5 h-5 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-              </svg>
-            </span>
-            <span>
-              <span class="block text-sm font-bold text-white">Telegram channel</span>
-              <span class="mt-1 block text-xs text-muted">New notice alerts on Telegram</span>
-            </span>
-          </span>
-          <span class="text-sm font-semibold text-[#2AABEE]">Join</span>
-        </a>
-      </section>
-
-      <div class="flex items-center flex-wrap gap-1.5 border-b border-border/60 pb-3">
-        <a href="/" class="whitespace-nowrap rounded-lg bg-accent px-3.5 py-1.5 text-xs font-semibold text-white">All topics</a>
-        {categories.map((category) => (
-          <a href={`/blog/${category.slug}`} class="whitespace-nowrap rounded-lg px-3.5 py-1.5 text-xs font-medium text-muted hover:bg-surface-raised hover:text-white transition">
-            {category.name}
-          </a>
-        ))}
-      </div>
-
-      {slides.length > 0 && (
-        <section id="blog-slides" aria-label="Featured articles" class="relative overflow-hidden rounded-xl border border-border bg-surface">
-          {slides.map((post, index) => {
-            const href = `/blog/${post.category?.slug || 'general'}/${post.slug}`;
-            return (
-              <a href={href} class:list={['blog-slide grid md:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]', index > 0 && 'hidden']} data-slide={index}>
-                <img src={post.coverImage} alt={post.imageAlt || post.title} class="h-full max-h-[340px] w-full object-cover" loading="lazy" decoding="async" />
-                <span class="flex flex-col justify-center p-5 sm:p-7">
-                  <time class="text-[11px] font-semibold uppercase tracking-wider text-muted" datetime={post.publishedAt || post.updatedAt}>
-                    {new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}
-                  </time>
-                  <span class="mt-2 text-2xl font-extrabold tracking-tight text-white">{post.title}</span>
-                  <span class="mt-3 line-clamp-4 text-sm leading-relaxed text-muted">{post.description || post.metaDescription || 'Open the full article.'}</span>
-                  <span class="mt-5 text-sm font-semibold text-accent">Read article</span>
-                </span>
+            <div class="flex items-center gap-3 overflow-x-auto whitespace-nowrap text-white/90 scrollbar-none font-medium text-xs flex-1">
+              <a href="/bihar-dece-le-seat-allotment-2026" class="hover:text-accent transition">
+                UPPSC PCS 2024: Application dates extended till 15 Oct 2026
               </a>
-            );
-          })}
-          {slides.length > 1 && (
-            <div class="absolute bottom-3 right-3 flex gap-2">
-              <button type="button" data-slide-prev class="rounded-full border border-border bg-canvas/90 px-3 py-1 text-xs font-semibold text-white" aria-label="Previous slide">Prev</button>
-              <button type="button" data-slide-next class="rounded-full border border-border bg-canvas/90 px-3 py-1 text-xs font-semibold text-white" aria-label="Next slide">Next</button>
+              <span class="text-border select-none">|</span>
+              <a href="/bihar-dece-le-seat-allotment-2026" class="hover:text-accent transition">
+                SSC Exam Calendar 2026 released
+              </a>
+              <span class="text-border select-none">|</span>
+              <a href="/bihar-dece-le-seat-allotment-2026" class="hover:text-accent transition">
+                Railway Group D: New notice out
+              </a>
             </div>
-          )}
-        </section>
-      )}
-
-      <section class="space-y-4" aria-labelledby="latest-articles-heading">
-        <div class="flex items-end justify-between gap-4">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-accent">Stay informed</p>
-            <h2 id="latest-articles-heading" class="mt-1 text-xl font-bold text-white">Latest articles</h2>
+            <a href="/#latest-updates" class="text-muted hover:text-white shrink-0 p-0.5" aria-label="View all notices">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
           </div>
-        </div>
-        {livePosts.length > 0 ? (
-          <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-            {livePosts.map((post) => {
-              const articleHref = `/blog/${post.category?.slug || 'general'}/${post.slug}`;
-              return (
-                <a href={articleHref} class="flex h-full flex-col justify-between rounded-xl border border-border bg-surface p-5 transition hover:border-accent/40">
-                  <span>
-                    <span class="mb-2.5 flex items-center justify-between text-[11px] text-muted">
-                      <span class="rounded bg-accent/10 px-2 py-0.5 font-semibold text-accent">{post.category?.name || 'General'}</span>
-                      <time datetime={post.publishedAt || post.updatedAt}>{new Date(post.publishedAt || post.updatedAt).toLocaleDateString()}</time>
-                    </span>
-                    <span class="line-clamp-2 block text-base font-bold leading-snug text-white">{post.title}</span>
-                    <span class="mt-2 line-clamp-3 block text-xs leading-relaxed text-muted">{post.description || post.metaDescription || 'Open the full article.'}</span>
-                  </span>
-                  <span class="mt-4 flex items-center justify-between border-t border-border/60 pt-3 text-xs text-muted">
-                    <span>By {post.author?.name || 'Editorial Team'}</span>
-                    <span class="font-semibold text-accent">Read article</span>
-                  </span>
+
+          {/* 3. Browse by Category */}
+          <section id="categories" class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base sm:text-lg font-bold text-white">
+                Browse by category
+              </h2>
+              <a href="/#important-links" class="text-xs font-semibold text-accent hover:underline flex items-center gap-1">
+                <span>View all exams</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+              {examCategories.map((cat) => (
+                <a 
+                  href={`/#latest-updates`}
+                  class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border border-border hover:shadow-xs transition duration-150 group cursor-pointer ${cat.borderColor}`}
+                >
+                  <div class="flex items-start justify-between">
+                    <div class={`w-7 h-7 rounded-md ${cat.iconBg} ${cat.iconColor} flex items-center justify-center shrink-0`}>
+                      {cat.icon === 'monument' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                        </svg>
+                      )}
+                      {cat.icon === 'building' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      )}
+                      {cat.icon === 'bank' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
+                        </svg>
+                      )}
+                      {cat.icon === 'train' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="2"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
+                        </svg>
+                      )}
+                      {cat.icon === 'book' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                      )}
+                      {cat.icon === 'shield' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      )}
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-muted group-hover:text-white group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <div class="mt-4">
+                    <h3 class="text-xs font-bold text-white leading-tight">
+                      {cat.name}
+                    </h3>
+                    <p class="mt-1 text-[11px] text-muted leading-tight line-clamp-2">
+                      {cat.subtitle}
+                    </p>
+                  </div>
                 </a>
-              );
-            })}
-          </div>
-        ) : (
-          <div class="rounded-card border border-dashed border-border bg-surface px-5 py-10 text-center sm:px-8 sm:py-12">
-            <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
-              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M6 3h9l3 3v15H6V3Z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 11h6M9 15h6M15 3v4h4" /></svg>
-            </span>
-            <h3 class="mt-4 text-base font-bold text-white">New exam guides are on the way</h3>
-            <p class="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">In the meantime, use the verified portal directory below or join an alert channel so you do not miss the next update.</p>
-            <a href="#important-links" class="mt-5 inline-flex min-h-10 items-center justify-center rounded-pill border border-border bg-canvas px-4 py-2 text-sm font-semibold text-white transition hover:border-accent/40 hover:text-accent">View official portals</a>
-          </div>
-        )}
-      </section>
-
-      <section id="important-links" class="scroll-mt-28 space-y-5">
-        <div class="border-b border-border/80 pb-5">
-          <p class="text-xs font-bold uppercase tracking-wider text-accent">Verified destinations</p>
-          <h2 class="mt-1 text-xl font-bold text-white">Official portal directory</h2>
-          <p class="mt-1 text-sm text-muted">Use these direct links for applications, results, documents, and government services.</p>
-        </div>
-        <div class="grid gap-6 lg:grid-cols-2">
-          <div>
-            <h3 class="mb-2 text-xs font-bold uppercase tracking-wider text-muted">Government portals</h3>
-            <ul class="divide-y divide-border/70 overflow-hidden rounded-xl border border-border bg-surface">
-              {govPortals.map((portal) => (
-                <li>
-                  <a href={portal.href} class="group flex min-h-16 items-center justify-between gap-3 px-4 py-3 transition hover:bg-surface-raised" rel="noopener noreferrer" target="_blank">
-                    <span>
-                      <span class="block text-sm font-semibold text-white">{portal.name}</span>
-                      <span class="block text-xs text-muted">{portal.note}</span>
-                    </span>
-                    <span class="shrink-0 rounded-pill bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent transition group-hover:bg-accent group-hover:text-on-accent">Open ↗</span>
-                  </a>
-                </li>
               ))}
-            </ul>
+            </div>
+          </section>
+
+          {/* 4. Compact Notification Channels Strip */}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* WhatsApp */}
+            <div class="flex items-center justify-between p-3.5 bg-surface border border-border rounded-lg shadow-2xs gap-3 transition-colors">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-[#25D366]/10 flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-white truncate leading-tight">Get latest updates on WhatsApp</p>
+                  <p class="text-[11px] text-muted truncate leading-tight mt-0.5">Exam notifications, results and important alerts</p>
+                </div>
+              </div>
+              <a 
+                href={whatsappChannel} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="px-3 py-1.5 rounded-md border border-[#25D366]/40 text-[#25D366] text-xs font-semibold hover:bg-[#25D366]/10 transition shrink-0"
+              >
+                Join WhatsApp
+              </a>
+            </div>
+
+            {/* Telegram */}
+            <div class="flex items-center justify-between p-3.5 bg-surface border border-border rounded-lg shadow-2xs gap-3 transition-colors">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-[#2AABEE]/10 flex items-center justify-center shrink-0">
+                  <svg class="w-5 h-5 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                  </svg>
+                </div>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-white truncate leading-tight">Get latest updates on Telegram</p>
+                  <p class="text-[11px] text-muted truncate leading-tight mt-0.5">Exam notifications, results and important alerts</p>
+                </div>
+              </div>
+              <a 
+                href={telegramChannel} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="px-3 py-1.5 rounded-md border border-accent/40 text-accent text-xs font-semibold hover:bg-accent/10 transition shrink-0"
+              >
+                Join Telegram
+              </a>
+            </div>
           </div>
-          <div>
-            <h3 class="mb-2 text-xs font-bold uppercase tracking-wider text-muted">Exam portals</h3>
-            <ul class="divide-y divide-border/70 overflow-hidden rounded-xl border border-border bg-surface">
-              {examPortals.map((portal) => (
-                <li>
-                  <a href={portal.href} class="group flex min-h-16 items-center justify-between gap-3 px-4 py-3 transition hover:bg-surface-raised" rel="noopener noreferrer" target="_blank">
-                    <span>
-                      <span class="block text-sm font-semibold text-white">{portal.name}</span>
-                      <span class="block text-xs text-muted">{portal.note}</span>
-                    </span>
-                    <span class="shrink-0 rounded-pill bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent transition group-hover:bg-accent group-hover:text-on-accent">Open ↗</span>
+
+          {/* 5. Latest Updates Section */}
+          <section id="latest-updates" class="space-y-3.5">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base sm:text-lg font-bold text-white">
+                Latest updates
+              </h2>
+              <a href="/#important-links" class="text-xs font-semibold text-accent hover:underline flex items-center gap-1">
+                <span>View all updates</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <div class="space-y-3">
+              {displayArticles.map((article) => (
+                <div class="flex flex-col sm:flex-row items-start gap-4 p-4 bg-surface border border-border rounded-lg shadow-2xs hover:shadow-xs transition duration-150 group">
+                  {/* Thumbnail on Left */}
+                  <a href={article.slug} class="w-full sm:w-44 h-28 shrink-0 rounded-md overflow-hidden bg-surface-raised block">
+                    <img 
+                      src={article.thumbnail} 
+                      alt={article.title} 
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                      loading="lazy" 
+                    />
                   </a>
-                </li>
+
+                  {/* Body Content */}
+                  <div class="flex-1 min-w-0 flex flex-col justify-between self-stretch">
+                    <div>
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-accent/10 text-accent border border-accent/20">
+                          {article.category}
+                        </span>
+                        <span class="text-[11px] text-muted font-medium hidden sm:inline-block">
+                          {article.date}
+                        </span>
+                      </div>
+
+                      <a href={article.slug} class="block mt-1.5 text-sm sm:text-base font-bold text-white group-hover:text-accent transition leading-snug">
+                        {article.title}
+                      </a>
+
+                      <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed">
+                        {article.summary}
+                      </p>
+                    </div>
+
+                    <div class="mt-3 flex items-center justify-between pt-2 border-t border-border/50 sm:border-0 sm:pt-0">
+                      <span class="text-[11px] text-muted sm:hidden">
+                        {article.date}
+                      </span>
+                      <a href={article.slug} class="text-xs font-semibold text-accent hover:underline flex items-center gap-1 ml-auto">
+                        <span>Read update</span>
+                        <span aria-hidden="true">→</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
+          </section>
+
+          {/* 6. FAQ Accordion Section */}
+          <div id="faqs" class="pt-4">
+            <FAQSection faqs={siteFaqs} />
           </div>
+
         </div>
-      </section>
 
-      <FAQSection faqs={siteFaqs} />
+        {/* RIGHT SIDEBAR (Important Portals + Popular this week) */}
+        <aside class="space-y-6">
+          
+          {/* Important Portals Box */}
+          <div id="important-links" class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
+            <div class="flex items-center justify-between pb-1 border-b border-border/50">
+              <h3 class="text-sm font-bold text-white">
+                Important portals
+              </h3>
+              <a href="/#important-links" class="text-xs font-semibold text-accent hover:underline flex items-center gap-1">
+                <span>View all</span>
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
 
+            <div class="divide-y divide-border/50">
+              {rightPortals.map((portal) => (
+                <a 
+                  href={portal.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="flex items-center justify-between py-2.5 px-1 hover:bg-surface-raised rounded transition group cursor-pointer"
+                  title={`Open official ${portal.name} portal`}
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-surface-raised border border-border flex items-center justify-center p-1 shrink-0 overflow-hidden relative">
+                      <img 
+                        src={portal.logo} 
+                        alt={`${portal.name} official emblem logo`} 
+                        class="w-full h-full object-contain" 
+                        loading="lazy"
+                        onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                      />
+                      <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[10px] select-none tracking-tight`}>
+                        {portal.initial}
+                      </div>
+                    </div>
+                    <div class="min-w-0">
+                      <p class="text-xs font-bold text-white group-hover:text-accent transition truncate leading-tight">
+                        {portal.name}
+                      </p>
+                      <p class="text-[11px] text-muted truncate leading-tight mt-0.5">
+                        {portal.url}
+                      </p>
+                    </div>
+                  </div>
+                  <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              ))}
+            </div>
+          </div>
 
+          {/* Popular This Week Box */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
+            <div class="flex items-center gap-2 pb-1 border-b border-border/50">
+              <span class="text-[#EF4444]">🔥</span>
+              <h3 class="text-sm font-bold text-white">
+                Popular this week
+              </h3>
+            </div>
+
+            <div class="space-y-2.5">
+              {popularUpdates.map((item) => (
+                <a 
+                  href={item.href} 
+                  class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
+                >
+                  <span class="w-5 h-5 rounded-full bg-surface-raised text-muted group-hover:bg-accent/15 group-hover:text-accent flex items-center justify-center text-[10px] font-bold shrink-0 transition">
+                    {item.rank}
+                  </span>
+                  <p class="text-xs font-medium text-white/90 group-hover:text-accent transition leading-snug truncate">
+                    {item.title}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Official Verification Notice Card */}
+          <div class="bg-accent/10 border border-accent/30 rounded-lg p-3.5 text-xs text-accent">
+            <p class="font-bold flex items-center gap-1.5 text-white">
+              <span>ℹ️</span> Official Notice Verification
+            </p>
+            <p class="mt-1 text-[11px] leading-relaxed text-muted">
+              Always cross-check dates, criteria, and payment information with the recruiting authority's official notification PDF before submitting applications.
+            </p>
+          </div>
+
+        </aside>
+
+      </div>
     </div>
   </div>
-  <script>
-    function bindBlogSlides() {
-      const root = document.getElementById('blog-slides');
-      if (!root || root.dataset.bound === 'true') return;
-      root.dataset.bound = 'true';
-      const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
-      if (slides.length < 2) return;
-      let current = 0;
-      const show = (index: number) => {
-        current = (index + slides.length) % slides.length;
-        slides.forEach((slide, slideIndex) => slide.classList.toggle('hidden', slideIndex !== current));
-      };
-      root.querySelector('[data-slide-prev]')?.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        show(current - 1);
-      });
-      root.querySelector('[data-slide-next]')?.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        show(current + 1);
-      });
-    }
-    bindBlogSlides();
-    document.addEventListener('astro:page-load', bindBlogSlides);
-  </script>
 </Layout>

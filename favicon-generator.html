@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>govtpariksha.com — Favicon ZIP Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f4f6f9; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; color: #0c2340; }
+    .card { background: white; padding: 32px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); max-width: 580px; width: 100%; text-align: center; }
+    h2 { margin: 0 0 8px; font-size: 22px; }
+    p { margin: 0 0 20px; color: #4a5568; font-size: 14px; }
+    .preview-row { display: flex; gap: 16px; justify-content: center; align-items: flex-end; margin: 24px 0; padding: 20px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .preview-item { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; color: #64748b; font-weight: 600; }
+    .box { background: conic-gradient(#eee 90deg, #fff 90deg 180deg, #eee 180deg 270deg, #fff 270deg) 0 0 / 12px 12px; border: 1px solid #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 4px; }
+    .btn { padding: 14px 28px; font-size: 16px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; background: #0a58ca; color: white; transition: 0.2s; width: 100%; box-shadow: 0 4px 12px rgba(10, 88, 202, 0.25); }
+    .btn:hover { background: #053888; }
+    .btn:disabled { background: #94a3b8; cursor: not-allowed; }
+    .file-list { text-align: left; background: #f1f5f9; padding: 16px 20px; border-radius: 10px; font-family: monospace; font-size: 13px; margin-bottom: 24px; line-height: 1.7; color: #1e293b; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>govtpariksha.com Favicon Pack</h2>
+    <p>Generates all required favicon sizes, Apple Touch Icon, Android PWA icons, and manifest in one ZIP.</p>
+
+    <div class="preview-row">
+      <div class="preview-item">
+        <div class="box" style="width: 64px; height: 64px;">
+          <svg id="source-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="100%" height="100%">
+            <defs>
+              <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0a58ca" />
+                <stop offset="55%" stop-color="#053888" />
+                <stop offset="100%" stop-color="#032054" />
+              </linearGradient>
+              <linearGradient id="swooshGrad" x1="0%" y1="0%" x2="80%" y2="100%">
+                <stop offset="0%" stop-color="#38b6ff" />
+                <stop offset="50%" stop-color="#0077ff" />
+                <stop offset="100%" stop-color="#053888" />
+              </linearGradient>
+            </defs>
+            <g transform="translate(130, 145)">
+              <polygon points="0,-125 -95,-82 0,-42 95,-82" fill="url(#mainGrad)" />
+              <path d="M -52,-60 L 0,-38 L 52,-60 L 42,-42 C 20,-52 -20,-52 -42,-42 Z" fill="#042a6b" />
+              <path d="M -62,-48 C -98,-10 -92,58 -45,88 C -75,52 -78,-8 -44,-40 Z" fill="url(#swooshGrad)" />
+              <path d="M 55,-32 C 38,-50 12,-58 -14,-53 C -54,-46 -80,-8 -73,32 C -66,72 -28,99 12,92 C 52,85 82,52 84,8 L 84,-4 L 8,-4 L 8,24 L 50,24 C 44,47 23,63 -2,61 C -29,59 -48,36 -46,8 C -44,-20 -20,-38 8,-34 C 22,-32 34,-25 42,-15 L 63,-35 Z" fill="url(#mainGrad)" />
+              <path d="M -18,-52 C -55,-42 -76,-4 -66,35 C -58,64 -34,84 -5,90 C -38,76 -54,44 -50,8 C -46,-24 -22,-44 6,-47 Z" fill="url(#swooshGrad)" opacity="0.85" />
+            </g>
+          </svg>
+        </div>
+        <span>64×64</span>
+      </div>
+
+      <div class="preview-item">
+        <div class="box" style="width: 32px; height: 32px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="100%" height="100%">
+            <use href="#source-svg" />
+          </svg>
+        </div>
+        <span>32×32</span>
+      </div>
+
+      <div class="preview-item">
+        <div class="box" style="width: 16px; height: 16px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="100%" height="100%">
+            <use href="#source-svg" />
+          </svg>
+        </div>
+        <span>16×16</span>
+      </div>
+    </div>
+
+    <div class="file-list">
+      📦 <strong>govtpariksha-favicons.zip</strong><br>
+      ├── favicon.ico (32×32)<br>
+      ├── favicon.svg (Vector)<br>
+      ├── favicon-16x16.png<br>
+      ├── favicon-32x32.png<br>
+      ├── apple-touch-icon.png (180×180)<br>
+      ├── android-chrome-192x192.png<br>
+      ├── android-chrome-512x512.png<br>
+      ├── site.webmanifest<br>
+      └── head-tags.html
+    </div>
+
+    <button id="dl-btn" class="btn" onclick="generateFaviconZip()">Download govtpariksha-favicons.zip</button>
+  </div>
+
+  <script>
+    const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a58ca" />
+      <stop offset="55%" stop-color="#053888" />
+      <stop offset="100%" stop-color="#032054" />
+    </linearGradient>
+    <linearGradient id="swooshGrad" x1="0%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#38b6ff" />
+      <stop offset="50%" stop-color="#0077ff" />
+      <stop offset="100%" stop-color="#053888" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(130, 145)">
+    <polygon points="0,-125 -95,-82 0,-42 95,-82" fill="url(#mainGrad)" />
+    <path d="M -52,-60 L 0,-38 L 52,-60 L 42,-42 C 20,-52 -20,-52 -42,-42 Z" fill="#042a6b" />
+    <path d="M -62,-48 C -98,-10 -92,58 -45,88 C -75,52 -78,-8 -44,-40 Z" fill="url(#swooshGrad)" />
+    <path d="M 55,-32 C 38,-50 12,-58 -14,-53 C -54,-46 -80,-8 -73,32 C -66,72 -28,99 12,92 C 52,85 82,52 84,8 L 84,-4 L 8,-4 L 8,24 L 50,24 C 44,47 23,63 -2,61 C -29,59 -48,36 -46,8 C -44,-20 -20,-38 8,-34 C 22,-32 34,-25 42,-15 L 63,-35 Z" fill="url(#mainGrad)" />
+    <path d="M -18,-52 C -55,-42 -76,-4 -66,35 C -58,64 -34,84 -5,90 C -38,76 -54,44 -50,8 C -46,-24 -22,-44 6,-47 Z" fill="url(#swooshGrad)" opacity="0.85" />
+  </g>
+</svg>`;
+
+    function renderPNGBlob(size, bgWhite = false, paddingRatio = 0) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+
+          if (bgWhite) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, size, size);
+          }
+
+          const pad = Math.round(size * paddingRatio);
+          ctx.drawImage(img, pad, pad, size - pad * 2, size - pad * 2);
+          URL.revokeObjectURL(url);
+
+          canvas.toBlob((blob) => resolve(blob), 'image/png');
+        };
+        img.src = url;
+      });
+    }
+
+    // Wrap a 32x32 PNG inside a valid .ICO binary container
+    async function createICOBlob(pngBlob) {
+      const pngBuffer = await pngBlob.arrayBuffer();
+      const pngBytes = new Uint8Array(pngBuffer);
+      const icoBuffer = new ArrayBuffer(22 + pngBytes.length);
+      const view = new DataView(icoBuffer);
+
+      // ICO Header (6 bytes)
+      view.setUint16(0, 0, true);   // Reserved
+      view.setUint16(2, 1, true);   // Type: 1 = ICO
+      view.setUint16(4, 1, true);   // Number of images: 1
+
+      // ICO Directory Entry (16 bytes)
+      view.setUint8(6, 32);         // Width: 32px
+      view.setUint8(7, 32);         // Height: 32px
+      view.setUint8(8, 0);          // Color palette: 0
+      view.setUint8(9, 0);          // Reserved: 0
+      view.setUint16(10, 1, true);  // Color planes: 1
+      view.setUint16(12, 32, true); // Bits per pixel: 32
+      view.setUint32(14, pngBytes.length, true); // Size of PNG data
+      view.setUint32(18, 22, true); // Offset of PNG data (6 + 16 = 22)
+
+      // Copy PNG bytes
+      const icoBytes = new Uint8Array(icoBuffer);
+      icoBytes.set(pngBytes, 22);
+
+      return new Blob([icoBuffer], { type: 'image/x-icon' });
+    }
+
+    async function generateFaviconZip() {
+      const btn = document.getElementById('dl-btn');
+      btn.disabled = true;
+      btn.textContent = 'Generating ZIP...';
+
+      const zip = new JSZip();
+
+      // 1. Add SVG Favicon
+      zip.file('favicon.svg', svgString);
+
+      // 2. Render PNGs
+      const png16 = await renderPNGBlob(16);
+      const png32 = await renderPNGBlob(32);
+      const appleTouch180 = await renderPNGBlob(180, true, 0.1); // White bg + 10% padding for iOS
+      const android192 = await renderPNGBlob(192);
+      const android512 = await renderPNGBlob(512);
+
+      zip.file('favicon-16x16.png', png16);
+      zip.file('favicon-32x32.png', png32);
+      zip.file('apple-touch-icon.png', appleTouch180);
+      zip.file('android-chrome-192x192.png', android192);
+      zip.file('android-chrome-512x512.png', android512);
+
+      // 3. Create favicon.ico (from 32x32 PNG)
+      const icoBlob = await createICOBlob(png32);
+      zip.file('favicon.ico', icoBlob);
+
+      // 4. Add site.webmanifest
+      const manifest = {
+        name: "GovtPariksha.com",
+        short_name: "GovtPariksha",
+        icons: [
+          { src: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" }
+        ],
+        theme_color: "#0a58ca",
+        background_color: "#ffffff",
+        display: "standalone"
+      };
+      zip.file('site.webmanifest', JSON.stringify(manifest, null, 2));
+
+      // 5. Add HTML head snippet instructions
+      const headTags = `<!-- Copy and paste these tags into the <head> of your website -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a58ca">`;
+      zip.file('head-tags.html', headTags);
+
+      // 6. Trigger ZIP download
+      const zipContent = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(zipContent);
+      a.download = 'govtpariksha-favicons.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
+
+      btn.disabled = false;
+      btn.textContent = 'Download govtpariksha-favicons.zip';
+    }
+  </script>
+</body>
+</html>
