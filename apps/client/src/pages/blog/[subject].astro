@@ -44,7 +44,7 @@ const jsonLd = {
         "@type": "Article",
         "headline": t.title,
         "description": t.description || t.metaDescription,
-        "url": `https://examresource.local/blog/${subjectKey}/${t.slug}`
+        "url": `https://govtpariksha.com/${t.slug}`
       }))
     },
     {
@@ -131,7 +131,7 @@ const jsonLd = {
         {liveCategoryPosts.length > 0 ? (
           <div class="divide-y divide-border/60">
             {liveCategoryPosts.map((post) => (
-              <a href={`/blog/${subjectKey}/${post.slug}`} class="block rounded-lg p-3 py-4 transition hover:bg-surface-raised/40">
+              <a href={`/${post.slug}`} class="block rounded-lg p-3 py-4 transition hover:bg-surface-raised/40">
                 <span class="mb-1 flex items-center justify-between text-[11px] text-muted">
                   <span>Updated: {new Date(post.updatedAt).toLocaleDateString()}</span>
                   <span>By {post.author?.name || 'Staff'}</span>

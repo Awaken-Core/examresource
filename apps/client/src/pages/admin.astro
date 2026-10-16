@@ -269,7 +269,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
               class="w-full bg-transparent font-mono text-slate-800 outline-none pl-1"
             />
           </div>
-          <p class="text-[11px] text-slate-400 mt-1">Articles in this category will be reachable at: <code class="text-slate-600 font-mono">/blog/[category-slug]/[article-slug]</code></p>
+          <p class="text-[11px] text-slate-400 mt-1">Articles are reachable directly at: <code class="text-slate-600 font-mono">/[article-slug]</code></p>
         </div>
 
         <div>
@@ -631,8 +631,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 
     tbody.innerHTML = posts.map((post) => {
       const catName = post.category?.name || 'Uncategorized';
-      const catSlug = post.category?.slug || 'general';
-      const publicUrl = `/blog/${catSlug}/${post.slug}`;
+      const publicUrl = `/${post.slug}`;
 
       const statusBadge = 
         post.status === 'PUBLISHED' ? 'text-emerald-700 bg-emerald-50 border-emerald-200' :
@@ -647,7 +646,20 @@ import AdminLayout from '../layouts/AdminLayout.astro';
             <a href="/editor?edit=${post.id}" class="font-semibold text-slate-900 hover:text-blue-600 transition block truncate">
               ${escapeHtml(post.title)}
             </a>
-            <span class="text-[10px] text-slate-400 font-mono block truncate">${publicUrl}</span>
+            <div class="flex items-center gap-2 mt-0.5">
+              <span class="text-[10px] text-slate-400 font-mono truncate">${publicUrl}</span>
+              <span class="inline-flex items-center gap-1 shrink-0">
+                ${(post.languages || [{ language: post.language || 'HINGLISH', id: post.id }]).map((l) => `
+                  <a href="/editor?edit=${l.id}" title="Edit ${l.language === 'ENGLISH' ? 'English' : 'Hinglish'} draft" class="px-1.5 py-0.2 rounded text-[9px] font-bold transition hover:opacity-80 ${
+                    l.language === 'ENGLISH' 
+                      ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                      : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  }">
+                    ${l.language === 'ENGLISH' ? '🌐 EN' : '🇮🇳 HI'}
+                  </a>
+                `).join('')}
+              </span>
+            </div>
           </td>
           <td class="py-3 px-3 whitespace-nowrap">
             <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">

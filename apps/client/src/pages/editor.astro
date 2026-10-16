@@ -1393,7 +1393,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
               <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-md">
                 <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Public URL</span>
                 <span id="resulting-url-preview" class="block font-mono text-[11px] text-blue-700 font-medium break-all mt-0.5">
-                  /blog/[category]/[slug]
+                  /[slug]
                 </span>
               </div>
 
@@ -1535,7 +1535,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
                   Article Title | ExamPortal
                 </div>
                 <div id="serp-url" class="text-[10px] text-emerald-700 font-mono truncate">
-                  https://examresource.local/blog/general/article-slug
+                  https://govtpariksha.com/article-slug
                 </div>
                 <div id="serp-desc" class="text-slate-600 line-clamp-2 text-[11px] leading-relaxed">
                   Snippet description will appear here in search engine results.
@@ -3517,6 +3517,9 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   topLangEnglishBtn?.addEventListener('click', () => setActiveLanguage('ENGLISH'));
 
   // Live Stats for Compare Mode textareas
+  let lastFocusedCompareTextarea: HTMLTextAreaElement | null = null;
+  compareHinglishMarkdown?.addEventListener('focus', () => { lastFocusedCompareTextarea = compareHinglishMarkdown; });
+  compareEnglishMarkdown?.addEventListener('focus', () => { lastFocusedCompareTextarea = compareEnglishMarkdown; });
   compareHinglishMarkdown?.addEventListener('input', () => {
     isDirty = true;
     updateCompareStats();
@@ -6086,13 +6089,55 @@ ${mdContent}
     const layout = selectedImageLayout() === 'custom' ? align : selectedImageLayout();
     const width = selectedImageWidth();
 
-    if (currentEditorMode === 'markdown' && markdownTextarea) {
+    const widthAttr = width ? ` width="${width}"` : '';
+    const captionHtml = caption ? `<figcaption>${caption}</figcaption>` : '';
+    const mdSnippet = `\n\n<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${finalImageUrl}" alt="${altText}" data-align="${align}" data-layout="${layout}"${widthAttr} />${captionHtml}</figure>\n\n`;
+
+    if (currentEditorMode === 'compare') {
+      const activeTa = lastFocusedCompareTextarea || (languageSelect?.value === 'ENGLISH' ? compareEnglishMarkdown : compareHinglishMarkdown) || compareHinglishMarkdown;
+      const siblingTa = activeTa === compareEnglishMarkdown ? compareHinglishMarkdown : compareEnglishMarkdown;
+
+      if (activeTa) {
+        const start = activeTa.selectionStart ?? activeTa.value.length;
+        const end = activeTa.selectionEnd ?? activeTa.value.length;
+        const val = activeTa.value;
+        activeTa.value = val.substring(0, start) + mdSnippet + val.substring(end);
+        activeTa.selectionStart = activeTa.selectionEnd = start + mdSnippet.length;
+        activeTa.focus();
+      }
+
+      if (siblingTa && siblingTa.value.trim()) {
+        const activeTextBefore = (activeTa?.value || '').substring(0, activeTa?.selectionStart || 0);
+        const headingsBefore = (activeTextBefore.match(/^#{1,6}\s+.+$/gm) || []).length;
+        
+        const siblingLines = siblingTa.value.split('\n');
+        let insertLineIdx = siblingLines.length;
+        if (headingsBefore > 0) {
+          let foundHeadings = 0;
+          for (let i = 0; i < siblingLines.length; i++) {
+            if (/^#{1,6}\s+.+$/.test(siblingLines[i])) {
+              foundHeadings++;
+              if (foundHeadings === headingsBefore) {
+                insertLineIdx = i + 1;
+                while (insertLineIdx < siblingLines.length && !/^#{1,6}\s+.+$/.test(siblingLines[insertLineIdx])) {
+                  insertLineIdx++;
+                }
+                break;
+              }
+            }
+          }
+        }
+        siblingLines.splice(insertLineIdx, 0, mdSnippet.trim());
+        siblingTa.value = siblingLines.join('\n');
+      }
+
+      updateCompareStats();
+      isDirty = true;
+      triggerAutosave();
+    } else if (currentEditorMode === 'markdown' && markdownTextarea) {
       const start = markdownTextarea.selectionStart;
       const end = markdownTextarea.selectionEnd;
       const val = markdownTextarea.value;
-      const widthAttr = width ? ` width="${width}"` : '';
-      const captionHtml = caption ? `<figcaption>${caption}</figcaption>` : '';
-      const mdSnippet = `\n\n<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${finalImageUrl}" alt="${altText}" data-align="${align}" data-layout="${layout}"${widthAttr} />${captionHtml}</figure>\n\n`;
 
       markdownTextarea.value = val.substring(0, start) + mdSnippet + val.substring(end);
       markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + mdSnippet.length;
@@ -6597,11 +6642,11 @@ ${mdContent}
     const selectedCat = categoriesCache.find(c => c.id === catId);
     const catSlug = selectedCat ? selectedCat.slug : 'general';
 
-    const fullPublicUrl = `/blog/${catSlug}/${slug}`;
+    const fullPublicUrl = `/${slug}`;
     if (resultingUrlPreview) resultingUrlPreview.textContent = fullPublicUrl;
 
     if (serpTitle) serpTitle.textContent = `${metaTitle} | ExamPortal`;
-    if (serpUrl) serpUrl.textContent = `https://examresource.local${fullPublicUrl}`;
+    if (serpUrl) serpUrl.textContent = `https://govtpariksha.com${fullPublicUrl}`;
     if (serpDesc) serpDesc.textContent = metaDesc;
 
     if (titleCharEl) titleCharEl.textContent = `${metaTitle.length}/60`;

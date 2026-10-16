@@ -225,7 +225,7 @@ Rules for Structure:
 - Translate the title, description/excerpt, metaTitle, metaDescription, and imageAlt.
 - If blocks are provided, preserve all block types ('PARAGRAPH', 'HEADING_1', 'HEADING_2', 'HEADING_3', 'IMAGE', 'TABLE', 'CALLOUT', 'BULLET_LIST', 'NUMBERED_LIST', 'QUOTE', 'CODE', 'DIVIDER') and their positions. Only translate the 'value' text of each block. Keep all HTML tags inside block values (like <strong>, <a>, <table>, <tr>, <td>) intact.
 - If htmlContent is provided, translate text nodes while preserving all HTML tags and attributes.
-- Generate a clean slugSuffix: "-hinglish" if translating to Hinglish, or "-english" if translating to English.
+- Generate a clean slugSuffix: leave it as an empty string "" since both language versions now share the same URL slug.
 
 Output must be valid JSON matching this schema:
 {
@@ -258,7 +258,7 @@ Output must be valid JSON matching this schema:
       return {
         title: parsed.title || input.title,
         description: parsed.description || input.description || '',
-        slugSuffix: parsed.slugSuffix || (isTargetHinglish ? '-hinglish' : '-english'),
+        slugSuffix: '',
         metaTitle: parsed.metaTitle || parsed.title || input.title,
         metaDescription: parsed.metaDescription || parsed.description || '',
         imageAlt: parsed.imageAlt || input.imageAlt || '',
@@ -428,7 +428,7 @@ SEO METADATA FOR BOTH:
 ══════════════════════════════════════════════════════════════════════════════
 - metaTitle: Under 60 chars, high-intent keywords (Year, Exam Name, Vacancy Count)
 - metaDescription: Under 155 chars, clear call-to-action
-- slug: clean, lowercase, hyphens only
+- slug: clean, lowercase, hyphens only — use the SAME slug for both hinglish and english (they share one URL)
 - keywords: 5-8 target keywords array
 - excerpt: 1-2 compelling summary sentences
 
@@ -436,7 +436,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
 {
   "hinglish": {
     "title": "Bilingual Title in English & Hindi",
-    "slug": "slug-name-hinglish",
+    "slug": "slug-name",
     "excerpt": "Short excerpt in Hindi with English keywords",
     "content": "Full GFM markdown string with Devanagari text, English terms, and markdown tables",
     "metaTitle": "SEO title under 60 chars",
@@ -445,7 +445,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
   },
   "english": {
     "title": "English Title",
-    "slug": "slug-name-english",
+    "slug": "slug-name",
     "excerpt": "Short excerpt in English",
     "content": "Full GFM markdown string in English with tables",
     "metaTitle": "SEO title under 60 chars",
@@ -469,7 +469,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       return {
         hinglish: {
           title: parsed.hinglish?.title || 'Untitled Hinglish Article',
-          slug: parsed.hinglish?.slug || 'hinglish-article',
+          slug: parsed.hinglish?.slug || parsed.english?.slug || 'article',
           excerpt: parsed.hinglish?.excerpt || '',
           content: parsed.hinglish?.content || '',
           metaTitle: parsed.hinglish?.metaTitle || parsed.hinglish?.title || '',
@@ -478,7 +478,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
         },
         english: {
           title: parsed.english?.title || 'Untitled English Article',
-          slug: parsed.english?.slug || 'english-article',
+          slug: parsed.english?.slug || parsed.hinglish?.slug || 'article',
           excerpt: parsed.english?.excerpt || '',
           content: parsed.english?.content || '',
           metaTitle: parsed.english?.metaTitle || parsed.english?.title || '',

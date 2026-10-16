@@ -17,11 +17,11 @@ try {
 // Fallback to real rich project mock posts if API is empty/offline
 const displayArticles = livePosts.length > 0 ? livePosts.map(p => ({
   title: p.title,
-  slug: `/blog/${p.category?.slug || 'general'}/${p.slug}`,
+  slug: `/${p.slug}`,
   category: p.category?.name || 'Latest Updates',
   summary: p.description || p.metaDescription || 'Check complete official notification details and direct application links.',
   date: new Date(p.publishedAt || p.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-  thumbnail: p.coverImage || 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=360&q=80',
+  thumbnail: p.firstImage || p.coverImage || 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=360&q=80',
 })) : [
   {
     title: 'SSC examination calendar: latest notice',
@@ -396,11 +396,11 @@ const jsonLd = {
               {displayArticles.map((article) => (
                 <div class="flex flex-col sm:flex-row items-start gap-4 p-4 bg-surface border border-border rounded-lg shadow-2xs hover:shadow-xs transition duration-150 group">
                   {/* Thumbnail on Left */}
-                  <a href={article.slug} class="w-full sm:w-44 h-28 shrink-0 rounded-md overflow-hidden bg-surface-raised block">
+                  <a href={article.slug} class="w-full sm:w-48 h-32 sm:h-28 shrink-0 rounded-md overflow-hidden bg-surface-raised/80 border border-border/60 flex items-center justify-center p-1.5 block">
                     <img 
                       src={article.thumbnail} 
                       alt={article.title} 
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                      class="max-w-full max-h-full object-contain select-none" 
                       loading="lazy" 
                     />
                   </a>

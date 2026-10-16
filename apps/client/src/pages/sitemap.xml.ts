@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async () => {
   const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
-  const siteUrl = 'https://examresource.local';
+  const siteUrl = import.meta.env.PUBLIC_SITE_URL || 'https://govtpariksha.com';
 
   let sitemapEntries: any[] = [];
   try {
@@ -14,16 +14,11 @@ export const GET: APIRoute = async () => {
 
   const staticUrls = [
     { loc: `${siteUrl}/`, changefreq: 'daily', priority: '1.0' },
-    { loc: `${siteUrl}/blog`, changefreq: 'daily', priority: '0.9' },
-    { loc: `${siteUrl}/blog/java`, changefreq: 'weekly', priority: '0.8' },
-    { loc: `${siteUrl}/blog/dsa`, changefreq: 'weekly', priority: '0.8' },
-    { loc: `${siteUrl}/blog/sql`, changefreq: 'weekly', priority: '0.8' },
   ];
 
   const dynamicUrls = sitemapEntries.map((post) => {
-    const catSlug = post.categorySlug || 'general';
     return {
-      loc: `${siteUrl}/blog/${catSlug}/${post.slug}`,
+      loc: `${siteUrl}/${post.slug}`,
       lastmod: post.updatedAt ? new Date(post.updatedAt).toISOString() : new Date().toISOString(),
       changefreq: 'weekly',
       priority: '0.8',

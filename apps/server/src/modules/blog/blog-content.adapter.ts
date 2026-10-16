@@ -329,3 +329,110 @@ function sanitizeTableHtml(html: string): string {
   if (!html) return '';
   return sanitizeInlineHtml(html);
 }
+
+/**
+ * Synchronizes inline IMAGE blocks from sourceBlocks into targetBlocks at corresponding
+ * heading-based or relative positions.
+ * Ensures that images added to one language version automatically appear at the matching
+ * position in the sibling language version (e.g. Hindi/Hinglish).
+ */
+export function syncImageBlocks(
+  targetBlocks: BlockRecord[],
+  sourceBlocks: BlockRecord[],
+): BlockRecord[] {
+  if (!sourceBlocks || sourceBlocks.length === 0) return targetBlocks || [];
+  if (!targetBlocks || targetBlocks.length === 0) {
+    return sourceBlocks.filter((b) => b.type === 'IMAGE');
+  }
+
+  const sourceImages = sourceBlocks.filter((b) => b.type === 'IMAGE');
+  if (sourceImages.length === 0) return targetBlocks;
+
+  const targetImageUrls = new Set(
+    targetBlocks.filter((b) => b.type === 'IMAGE').map((b) => b.value),
+  );
+
+  const missingImages = sourceImages.filter((img) => !targetImageUrls.has(img.value));
+  if (missingImages.length === 0) return targetBlocks;
+
+  const result = [...targetBlocks];
+
+  const isHeading = (b: BlockRecord) =>
+    ['HEADING_1', 'HEADING_2', 'HEADING_3', 'HEADING_4', 'HEADING_5', 'HEADING_6'].includes(
+      b.type,
+    );
+
+  for (const img of missingImages) {
+    const sourceIdx = sourceBlocks.indexOf(img);
+
+    // 1. Count headings before this image in source & blocks after last heading
+    let headingsBefore = 0;
+    let blocksAfterLastHeading = 0;
+    for (let i = 0; i < sourceIdx; i++) {
+      if (isHeading(sourceBlocks[i])) {
+        headingsBefore++;
+        blocksAfterLastHeading = 0;
+      } else if (sourceBlocks[i].type !== 'IMAGE') {
+        blocksAfterLastHeading++;
+      }
+    }
+
+    // 2. Find matching location in target
+    let targetInsertIdx = -1;
+    if (headingsBefore > 0) {
+      let targetHeadingsFound = 0;
+      for (let j = 0; j < result.length; j++) {
+        if (isHeading(result[j])) {
+          targetHeadingsFound++;
+          if (targetHeadingsFound === headingsBefore) {
+            // Found matching heading in target. Advance by blocksAfterLastHeading, but stop before next heading
+            let offset = 0;
+            let k = j + 1;
+            while (
+              k < result.length &&
+              !isHeading(result[k]) &&
+              offset < blocksAfterLastHeading
+            ) {
+              if (result[k].type !== 'IMAGE') offset++;
+              k++;
+            }
+            targetInsertIdx = k;
+            break;
+          }
+        }
+      }
+    } else {
+      // Image is before any headings (introductory section)
+      let offset = 0;
+      let k = 0;
+      while (
+        k < result.length &&
+        !isHeading(result[k]) &&
+        offset < blocksAfterLastHeading
+      ) {
+        if (result[k].type !== 'IMAGE') offset++;
+        k++;
+      }
+      targetInsertIdx = k;
+    }
+
+    // 3. Fallback to relative ratio if targetInsertIdx is still -1
+    if (targetInsertIdx === -1) {
+      const sourceTotal = Math.max(1, sourceBlocks.length);
+      const ratio = sourceIdx / sourceTotal;
+      targetInsertIdx = Math.min(
+        result.length,
+        Math.max(0, Math.round(ratio * result.length)),
+      );
+    }
+
+    // Insert image block into target at the calculated position
+    result.splice(targetInsertIdx, 0, {
+      type: 'IMAGE',
+      value: img.value,
+      metadata: img.metadata ? { ...img.metadata } : null,
+    });
+  }
+
+  return result;
+}

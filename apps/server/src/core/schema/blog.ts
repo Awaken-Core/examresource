@@ -81,7 +81,7 @@ export const blogs = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
 
     title: text("title").notNull(),
-    slug: text("slug").notNull().unique(), // URL slug
+    slug: text("slug").notNull(), // URL slug — unique per language (compound unique below)
     description: text("description"), // Short excerpt
     coverImage: text("coverImage"),
 
@@ -122,6 +122,8 @@ export const blogs = pgTable(
     index("Blog_categoryId_idx").on(table.categoryId),
     index("Blog_translationGroupId_idx").on(table.translationGroupId),
     index("Blog_language_idx").on(table.language),
+    index("Blog_slug_idx").on(table.slug),
+    unique("Blog_slug_language_key").on(table.slug, table.language),
   ],
 );
 
