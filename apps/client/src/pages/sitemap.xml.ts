@@ -1,7 +1,6 @@
-import type { APIRoute } from 'astro';
+import { API_URL } from '../lib/api';
 
 export const GET: APIRoute = async () => {
-  const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
   const siteUrl = (import.meta.env.PUBLIC_SITE_URL || 'https://govtpariksha.com').replace(/\/$/, '');
 
   let sitemapEntries: any[] = [];

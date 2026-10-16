@@ -385,7 +385,7 @@ const {
 
     <!-- Auth Verification Guard -->
     <script>
-      const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+      const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
       const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
       const token = await clerk?.session?.getToken();
       if (token) {

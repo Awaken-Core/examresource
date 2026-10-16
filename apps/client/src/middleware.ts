@@ -1,4 +1,5 @@
 import { clerkMiddleware } from '@clerk/astro/server';
+import { API_URL } from './lib/api';
 
 function isProtectedPath(pathname: string) {
   return pathname === '/admin' ||
@@ -22,7 +23,7 @@ export const onRequest = clerkMiddleware(async (auth, context, next) => {
     return Response.redirect(new URL('/', context.url), 302);
   }
 
-  const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+  const apiUrl = API_URL;
   let profile: { role?: string };
   try {
     const response = await fetch(`${apiUrl}/me`, {

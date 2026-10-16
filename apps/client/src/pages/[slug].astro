@@ -16,7 +16,7 @@ const requestedLanguage: 'HINGLISH' | 'ENGLISH' =
     ? 'ENGLISH'
     : 'HINGLISH';
 
-const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+import { API_URL } from '../lib/api';
 
 let livePost: any = null;
 let redirectUrl: string | null = null;

@@ -3,17 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel } from '../data/site';
 
-const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
-
-const selectedCategory = Astro.url.searchParams.get('category') || '';
+const API_URL = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
 
 let livePosts: any[] = [];
 try {
-  let fetchUrl = `${API_URL}/blogs?limit=50`;
-  if (selectedCategory) {
-    fetchUrl += `&categorySlug=${encodeURIComponent(selectedCategory)}`;
-  }
-  const res = await fetch(fetchUrl);
+  const res = await fetch(`${API_URL}/blogs?limit=50`);
   if (res.ok) livePosts = await res.json();
 } catch {
   livePosts = [];
@@ -26,7 +20,7 @@ const displayArticles = (livePosts || []).map(p => ({
   categories: p.categories || (p.category ? [p.category] : []),
   summary: p.description || p.metaDescription || 'Check complete official notification details and direct application links.',
   date: new Date(p.publishedAt || p.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-  thumbnail: p.firstImage || p.coverImage || 'https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=360&q=80',
+  thumbnail: p.firstImage || p.coverImage || null,
 }));
 
 // Exam Categories matching Reference Image 2
@@ -217,18 +211,11 @@ const jsonLd = {
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-              {examCategories.map((cat) => {
-                const isActive = selectedCategory === cat.slug;
-                const linkHref = isActive ? '/#latest-updates' : `/?category=${cat.slug}#latest-updates`;
-                return (
-                  <a 
-                    href={linkHref}
-                    class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border transition duration-150 group cursor-pointer ${
-                      isActive
-                        ? 'border-accent shadow-xs ring-1 ring-accent/30 bg-surface-raised/40'
-                        : `border-border hover:shadow-xs ${cat.borderColor}`
-                    }`}
-                  >
+              {examCategories.map((cat) => (
+                <a 
+                  href={`/category/${cat.slug}`}
+                  class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border border-border hover:shadow-xs ${cat.borderColor} transition duration-150 group cursor-pointer`}
+                >
                   <div class="flex items-start justify-between">
                     <div class={`w-7 h-7 rounded-md ${cat.iconBg} ${cat.iconColor} flex items-center justify-center shrink-0`}>
                       {cat.icon === 'monument' && (
@@ -276,7 +263,7 @@ const jsonLd = {
                     </p>
                   </div>
                 </a>
-              ); })}
+              ))}
             </div>
           </section>
 
@@ -332,26 +319,9 @@ const jsonLd = {
           {/* 5. Latest Updates Section */}
           <section id="latest-updates" class="space-y-3.5">
             <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2.5">
-                <h2 class="text-base sm:text-lg font-bold text-white">
-                  Latest updates
-                </h2>
-                {selectedCategory && (
-                  <a 
-                    href="/#latest-updates" 
-                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/15 text-accent border border-accent/30 hover:bg-accent/25 transition"
-                    title="Click to clear filter"
-                  >
-                    <span>{examCategories.find(c => c.slug === selectedCategory)?.name || selectedCategory}</span>
-                    <span class="text-xs">&times;</span>
-                  </a>
-                )}
-              </div>
-              {selectedCategory && (
-                <a href="/#latest-updates" class="text-xs text-muted hover:text-white transition">
-                  Show all
-                </a>
-              )}
+              <h2 class="text-base sm:text-lg font-bold text-white">
+                Latest updates
+              </h2>
             </div>
 
             <div class="space-y-3">
@@ -361,18 +331,20 @@ const jsonLd = {
                     href={article.slug}
                     class="flex flex-col sm:flex-row items-start gap-4 p-4 bg-surface border border-border rounded-lg shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 group cursor-pointer block"
                   >
-                    {/* Thumbnail on Left */}
-                    <div class="w-full sm:w-48 h-32 sm:h-28 shrink-0 rounded-md overflow-hidden bg-surface-raised/80 border border-border/60 flex items-center justify-center p-1.5">
-                      <img 
-                        src={article.thumbnail} 
-                        alt={article.title} 
-                        class="max-w-full max-h-full object-contain select-none group-hover:scale-105 transition-transform duration-200" 
-                        loading="lazy"
-                        decoding="async"
-                        width="360"
-                        height="240"
-                      />
-                    </div>
+                    {/* Thumbnail on Left (only if image exists) */}
+                    {article.thumbnail && (
+                      <div class="w-full sm:w-48 h-32 sm:h-28 shrink-0 rounded-md overflow-hidden bg-surface-raised/80 border border-border/60 flex items-center justify-center p-1.5">
+                        <img 
+                          src={article.thumbnail} 
+                          alt={article.title} 
+                          class="max-w-full max-h-full object-contain select-none group-hover:scale-105 transition-transform duration-200" 
+                          loading="lazy"
+                          decoding="async"
+                          width="360"
+                          height="240"
+                        />
+                      </div>
+                    )}
 
                     {/* Body Content */}
                     <div class="flex-1 min-w-0 flex flex-col justify-between self-stretch">

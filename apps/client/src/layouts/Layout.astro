@@ -1124,7 +1124,7 @@ const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
 
           const user = clerk.user || clerk.session?.user;
           const token = await clerk.session?.getToken?.().catch(() => null);
-          const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+          const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
 
           if (token) {
             fetch(`${apiUrl}/me`, {

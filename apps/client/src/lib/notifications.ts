@@ -8,7 +8,7 @@ export type AppNotification = {
   read: boolean;
 };
 
-const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+import { API_URL } from './api';
 const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
 
 let currentItems: AppNotification[] = [];

@@ -85,7 +85,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 </AdminLayout>
 
 <script>
-  const apiUrl = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+  const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
   const form = document.getElementById('notice-form') as HTMLFormElement | null;
   const table = document.getElementById('notice-table');
   const errorBanner = document.getElementById('notice-error');

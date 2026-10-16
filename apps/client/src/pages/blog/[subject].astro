@@ -1,10 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { API_URL } from '../../lib/api';
 
 const { subject: subjectParam } = Astro.params;
 const subjectKey = (subjectParam || '').toLowerCase();
-
-const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
 
 // Fetch live database articles for this category and all categories for navigation
 let liveCategoryPosts: any[] = [];

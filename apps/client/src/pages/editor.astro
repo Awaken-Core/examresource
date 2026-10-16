@@ -2600,7 +2600,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   });
 
 
-  const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+  const API_URL = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
 
   let clerkReady: Promise<any> | undefined;
 
