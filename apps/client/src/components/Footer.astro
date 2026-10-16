@@ -1,4 +1,6 @@
 ---
+import BrandLogo from './BrandLogo.astro';
+import { whatsappChannel, telegramChannel } from '../data/site';
 ---
 
 <footer class="bg-surface text-muted mt-16 border-t border-border text-body-xs">
@@ -6,13 +8,8 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
       {/* Brand Column */}
       <div class="md:col-span-1 space-y-3">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent shadow-sm">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-          </div>
+        <div class="flex items-center gap-2.5">
+          <BrandLogo size={32} class="shrink-0" />
           <span class="text-heading-sm font-bold text-white tracking-tight">
             govtpariksha<span class="text-accent">.com</span>
           </span>
@@ -56,7 +53,9 @@
 
     <div class="border-t border-border mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-caption-xs text-muted gap-4">
       <p>© 2026 govtpariksha.com. All rights reserved.</p>
-      <div class="flex gap-4">
+      <div class="flex flex-wrap items-center gap-4">
+        <a href={whatsappChannel} target="_blank" rel="noopener noreferrer" class="hover:text-[#25D366] transition inline-flex items-center gap-1 font-medium">WhatsApp</a>
+        <a href={telegramChannel} target="_blank" rel="noopener noreferrer" class="hover:text-[#2AABEE] transition inline-flex items-center gap-1 font-medium">Telegram</a>
         <a href="#" class="hover:text-white transition">Privacy Policy</a>
         <a href="#" class="hover:text-white transition">Terms of Service</a>
         <a href="#" class="hover:text-white transition">Contact Us</a>

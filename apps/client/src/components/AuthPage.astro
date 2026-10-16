@@ -1,5 +1,6 @@
 ---
 import type { AuthMode } from '../stores/auth';
+import BrandLogo from './BrandLogo.astro';
 
 interface Props { mode: AuthMode }
 const { mode } = Astro.props;
@@ -10,13 +11,8 @@ const isSignup = mode === 'signup';
   <div class="w-full max-w-[430px] bg-[#16171b] border border-[#25272e] rounded-xl sm:rounded-2xl p-5 sm:p-7 lg:p-10 shadow-2xl relative">
     
     {/* Brand Logo & Name (Matches Image 3) */}
-    <div class="flex items-center justify-center gap-2.5 mb-6">
-      <div class="w-8 h-8 rounded-lg bg-accent/15 border border-accent/30 flex items-center justify-center text-accent shadow-sm">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-        </svg>
-      </div>
+    <div class="flex items-center justify-center gap-3 mb-6">
+      <BrandLogo size={38} class="shrink-0" />
       <span class="text-heading-sm font-bold tracking-tight text-[#ffffff] flex items-center">
         govtpariksha<span class="text-accent">.com</span>
       </span>
