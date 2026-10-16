@@ -1,0 +1,329 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BlogArticle from '../components/blog/BlogArticle.astro';
+import TableOfContents from '../components/blog/TableOfContents.astro';
+import ReadingProgress from '../components/blog/ReadingProgress.astro';
+import TopicNavigation from '../components/blog/TopicNavigation.astro';
+import AdSlot from '../components/blog/AdSlot.astro';
+import LanguageSwitcher from '../components/blog/LanguageSwitcher.astro';
+import type { TopicDetail } from '../data/blogData';
+
+const { slug: slugParam } = Astro.params;
+const slugKey = (slugParam || '').toLowerCase();
+
+// Language is determined by ?lang= query param (default: HINGLISH)
+const langParam = Astro.url.searchParams.get('lang');
+const requestedLanguage: 'HINGLISH' | 'ENGLISH' =
+  langParam === 'en' || langParam === 'english' || langParam === 'ENGLISH'
+    ? 'ENGLISH'
+    : 'HINGLISH';
+
+const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+
+let livePost: any = null;
+let redirectUrl: string | null = null;
+
+try {
+  const res = await fetch(`${API_URL}/blogs/${slugKey}?language=${requestedLanguage}`);
+  if (res.ok) {
+    livePost = await res.json();
+  } else if (res.status === 404) {
+    const errData = await res.json();
+    if (errData?.redirectUrl) {
+      redirectUrl = errData.redirectUrl;
+    }
+  }
+} catch (e) {}
+
+if (redirectUrl) {
+  return Astro.redirect(redirectUrl, 301);
+}
+
+// If database returned live post, construct the article object and TOC
+let article: TopicDetail;
+let tocItems: { id: string; text: string; level: number }[] = [];
+let htmlBody: string | null = null;
+
+function toHeadingSlug(text: string): string {
+  const s = text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\\+/g, '')
+    .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+  return s || 'section';
+}
+
+if (livePost) {
+  htmlBody = livePost.htmlContent || '';
+  
+  // Extract TOC headings from HTML and ensure all headings have an id attribute
+  const headingRegex = /<h([2-4])(?:\s+([^>]*))>([\s\S]*?)<\/h\1>/gi;
+  let match;
+  tocItems.push({ id: 'overview-top', text: livePost.title, level: 2 });
+  let hIdx = 0;
+  while ((match = headingRegex.exec(htmlBody)) !== null) {
+    const level = parseInt(match[1], 10);
+    const attrs = match[2] || '';
+    const innerContent = match[3] || '';
+    const cleanText = innerContent.replace(/<[^>]*>/g, '').replace(/\\+/g, '').trim();
+    if (!cleanText) continue;
+    const idMatch = attrs.match(/id=["']([^"']+)["']/i);
+    const id = idMatch ? idMatch[1] : (toHeadingSlug(cleanText) || `heading-${++hIdx}`);
+    tocItems.push({
+      level,
+      id,
+      text: cleanText,
+    });
+  }
+
+  // Ensure headings in htmlBody have valid id tags matching TOC
+  htmlBody = htmlBody.replace(/<h([2-4])(?:\s+([^>]*))?>([\s\S]*?)<\/h\1>/gi, (_full, lvl, attrs = '', content = '') => {
+    const cleanText = content.replace(/<[^>]*>/g, '').replace(/\\+/g, '').trim();
+    const idMatch = attrs.match(/id=["']([^"']+)["']/i);
+    const id = idMatch ? idMatch[1] : (toHeadingSlug(cleanText) || `heading-${++hIdx}`);
+    const cleanAttrs = attrs.replace(/id=["'][^"']*["']/i, '').trim();
+    return `<h${lvl} id="${id}"${cleanAttrs ? ' ' + cleanAttrs : ''}>${content.replace(/\\+/g, '')}</h${lvl}>`;
+  });
+
+  const subjectSlug = livePost.category?.slug || 'general';
+
+  article = {
+    slug: livePost.slug,
+    title: livePost.title,
+    subjectSlug,
+    subjectTitle: livePost.category?.name || 'General',
+    description: livePost.description || livePost.metaDescription || '',
+    readTime: '4 min read',
+    difficulty: 'Intermediate',
+    category: livePost.category?.name || 'Articles',
+    publishedDate: livePost.publishedAt ? new Date(livePost.publishedAt).toISOString().split('T')[0] : '2026-10-13',
+    updatedDate: livePost.updatedAt ? new Date(livePost.updatedAt).toISOString().split('T')[0] : '2026-10-13',
+    introParagraphs: [
+      livePost.description || 'Detailed guide and notification information.',
+    ],
+    sections: [],
+    summaryPoints: [
+      `Official publication for ${livePost.title}.`,
+      'Review complete eligibility, timelines, and guidelines below.',
+    ],
+  };
+}
+
+if (!livePost) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Article Not Found',
+  });
+}
+
+const plainText = (htmlBody || article.introParagraphs.join(' ')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const wordCount = plainText ? plainText.split(' ').length : 0;
+const readMinutes = Math.max(1, Math.round(wordCount / 200));
+
+type ListingPost = {
+  slug: string;
+  title: string;
+  description?: string | null;
+  metaDescription?: string | null;
+  coverImage?: string | null;
+  imageAlt?: string | null;
+  publishedAt?: string | null;
+  updatedAt?: string | null;
+  category?: { slug?: string; name?: string } | null;
+};
+
+let similarPosts: ListingPost[] = [];
+try {
+  const listRes = await fetch(`${API_URL}/blogs?limit=12`);
+  if (listRes.ok) {
+    const all = (await listRes.json()) as ListingPost[];
+    const sameCategory = all.filter((post) => post.slug !== livePost.slug && post.category?.slug === livePost.category?.slug);
+    const others = all.filter((post) => post.slug !== livePost.slug && post.category?.slug !== livePost.category?.slug);
+    similarPosts = [...sameCategory, ...others].slice(0, 3);
+  }
+} catch {
+  similarPosts = [];
+}
+
+const pageTitle = livePost?.metaTitle || `${article.title} | ${article.subjectTitle} Guide`;
+const pageDescription = livePost?.metaDescription || article.description;
+// Canonical URL is always the slug without query params (/{slug})
+const canonicalUrl = livePost?.canonicalUrl || `https://govtpariksha.com/${article.slug}`;
+
+// Schema.org Article & Breadcrumbs
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BlogPosting",
+      "headline": article.title,
+      "description": pageDescription,
+      "image": livePost?.coverImage ? [livePost.coverImage] : undefined,
+      "datePublished": article.publishedDate,
+      "dateModified": article.updatedDate,
+      "author": {
+        "@type": "Person",
+        "name": livePost?.author?.name || "Editorial Team"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "GovtPariksha",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://govtpariksha.com/logo.png"
+        }
+      },
+      "mainEntityOfPage": canonicalUrl,
+      "inLanguage": requestedLanguage === 'ENGLISH' ? 'en' : 'hi-Latn'
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://govtpariksha.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": article.subjectTitle,
+          "item": `https://govtpariksha.com/blog/${article.subjectSlug}`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": article.title,
+          "item": canonicalUrl
+        }
+      ]
+    }
+  ]
+};
+
+const currentLanguage = livePost?.language || 'HINGLISH';
+const isHinglish = currentLanguage === 'HINGLISH';
+const hasAlternateLanguage = livePost?.hasAlternateLanguage ?? false;
+
+// Both language versions share the same slug — language is toggled via ?lang= param
+const hinglishUrl = `/${article.slug}`;
+const englishUrl = hasAlternateLanguage ? `/${article.slug}?lang=en` : null;
+
+const siteOrigin = 'https://govtpariksha.com';
+const alternateLinks: { hreflang: string; href: string }[] = [];
+
+// Hinglish is always available (it's the default)
+alternateLinks.push({ hreflang: 'hi-Latn', href: `${siteOrigin}/${article.slug}` });
+alternateLinks.push({ hreflang: 'x-default', href: `${siteOrigin}/${article.slug}` });
+if (hasAlternateLanguage) {
+  alternateLinks.push({ hreflang: 'en', href: `${siteOrigin}/${article.slug}?lang=en` });
+}
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={canonicalUrl}
+  ogImage={livePost?.coverImage || undefined}
+  publishedTime={article.publishedDate}
+  modifiedTime={article.updatedDate}
+  jsonLd={jsonLd}
+  alternateLinks={alternateLinks}
+>
+  <div id="overview-top" class="blog-reading-view min-h-screen bg-canvas text-white">
+    <div class="article-shell w-full px-4 pt-5 pb-10 sm:px-6 lg:px-8">
+      <header class="article-shell-head min-w-0">
+        <nav aria-label="Breadcrumb" class="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted">
+          <a href="/" class="hover:text-accent">Home</a>
+          <span>/</span>
+          <a href="/" class="hover:text-accent">Articles</a>
+          <span>/</span>
+          <a href={`/blog/${article.subjectSlug}`} class="hover:text-accent">{article.subjectTitle}</a>
+          <span>/</span>
+          <span class="truncate font-medium text-white">{article.title}</span>
+        </nav>
+        <div class="mb-5 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="rounded bg-accent/10 px-2 py-0.5 font-semibold text-accent">{article.category}</span>
+            <span>{readMinutes} min read</span>
+            <span>Updated {article.updatedDate}</span>
+          </div>
+          <LanguageSwitcher currentLanguage={currentLanguage} hinglishUrl={hinglishUrl} englishUrl={englishUrl} />
+        </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white">{article.title}</h1>
+        {article.description && (
+          <p class="mt-3 max-w-4xl text-base leading-relaxed text-muted">{article.description}</p>
+        )}
+      </header>
+
+      <aside aria-label="Reading progress and page outline" class="article-shell-rail hidden xl:flex">
+        <div class="article-rail-panel flex flex-col overflow-hidden rounded-xl border border-border bg-surface xl:min-h-0 xl:flex-1">
+          <ReadingProgress />
+          <div class="min-h-0 flex-1">
+            <TableOfContents items={tocItems} />
+          </div>
+        </div>
+        <AdSlot class="mt-3 hidden shrink-0 xl:block" />
+      </aside>
+
+      <div class="article-shell-body min-w-0">
+        {htmlBody ? (
+          <article id="article-body" class="space-y-6">
+            {livePost.coverImage && (
+              <figure class="my-2">
+                <img
+                  src={livePost.coverImage}
+                  alt={livePost.imageAlt || article.title}
+                  class="max-h-[28rem] w-full rounded-xl border border-border object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+                {livePost.imageCaption && (
+                  <figcaption class="mt-2 text-center text-xs text-muted">{livePost.imageCaption}</figcaption>
+                )}
+              </figure>
+            )}
+            <div class="prose-markdown markdown-preview-content max-w-none" set:html={htmlBody} />
+          </article>
+        ) : (
+          <div id="article-body">
+            <BlogArticle article={article} />
+          </div>
+        )}
+
+        {similarPosts.length > 0 && (
+          <section class="mt-12 border-t border-border/80 pt-8" aria-label="Similar articles">
+            <h2 class="mb-4 text-lg font-bold text-white">Read similar articles</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {similarPosts.map((post) => {
+                const href = `/${post.slug}`;
+                return (
+                  <a href={href} class="flex h-full flex-col rounded-xl border border-border bg-surface p-4 transition hover:border-accent/40">
+                    <span class="text-[11px] font-semibold text-accent">{post.category?.name || 'Article'}</span>
+                    <span class="mt-2 line-clamp-2 font-bold text-white">{post.title}</span>
+                    <span class="mt-2 line-clamp-3 flex-1 text-xs leading-relaxed text-muted">
+                      {post.description || post.metaDescription || 'Open the full article.'}
+                    </span>
+                    <span class="mt-3 text-xs font-semibold text-accent">Read article</span>
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        <TopicNavigation
+          subjectSlug={article.subjectSlug}
+          prevTopic={article.prevTopic}
+          nextTopic={article.nextTopic}
+        />
+      </div>
+    </div>
+  </div>
+</Layout>

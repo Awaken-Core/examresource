@@ -107,8 +107,7 @@ try {
     {livePosts.length > 0 ? (
       livePosts.map((post) => {
         const catName = post.category?.name || 'General';
-        const catSlug = post.category?.slug || 'general';
-        const articleHref = `/blog/${catSlug}/${post.slug}`;
+        const articleHref = `/${post.slug}`;
         const dateStr = post.publishedAt || post.updatedAt ? new Date(post.publishedAt || post.updatedAt).toLocaleDateString() : 'Recent';
 
         return (

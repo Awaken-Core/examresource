@@ -26,7 +26,7 @@ import type {
   UpdateBlogInput,
   UpdateCategoryInput,
 } from './dto/blog.dto.js';
-import { htmlToBlocks, blocksToHtml } from './blog-content.adapter.js';
+import { htmlToBlocks, blocksToHtml, syncImageBlocks } from './blog-content.adapter.js';
 import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 import { GeminiService } from './gemini.service.js';
 
@@ -53,6 +53,33 @@ export class BlogService {
     const now = new Date();
     const limit = Math.min(options?.limit ?? 20, 100);
     const offset = options?.offset ?? 0;
+
+    // When no language filter is specified, deduplicate by translationGroupId
+    // showing only one entry per article (prefer HINGLISH as default display).
+    // Both language versions share the same slug, so we only need one listing entry.
+    const conditions = [
+      or(
+        eq(blogs.status, 'PUBLISHED'),
+        and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
+      ),
+    ];
+
+    if (options?.categorySlug) {
+      conditions.push(eq(categories.slug, options.categorySlug));
+    }
+    if (options?.search) {
+      conditions.push(
+        or(
+          ilike(blogs.title, `%${options.search}%`),
+          ilike(blogs.description, `%${options.search}%`),
+        ),
+      );
+    }
+
+    // If a specific language is requested, filter by it.
+    // Otherwise default to showing HINGLISH to avoid duplicates (both versions share the same slug).
+    const displayLanguage = options?.language || 'HINGLISH';
+    conditions.push(eq(blogs.language, displayLanguage));
 
     let baseQuery = db
       .select({
@@ -82,50 +109,101 @@ export class BlogService {
       .from(blogs)
       .innerJoin(users, eq(blogs.authorId, users.id))
       .leftJoin(categories, eq(blogs.categoryId, categories.id))
-      .where(
-        and(
-          // Active published posts: status is PUBLISHED or (SCHEDULED and scheduledAt <= now)
-          or(
-            eq(blogs.status, 'PUBLISHED'),
-            and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-          ),
-          options?.categorySlug
-            ? eq(categories.slug, options.categorySlug)
-            : undefined,
-          options?.language
-            ? eq(blogs.language, options.language)
-            : undefined,
-          options?.search
-            ? or(
-                ilike(blogs.title, `%${options.search}%`),
-                ilike(blogs.description, `%${options.search}%`),
-              )
-            : undefined,
-        ),
-      )
+      .where(and(...conditions))
       .orderBy(desc(blogs.publishedAt), desc(blogs.createdAt))
       .limit(limit)
       .offset(offset);
 
     const rows = await baseQuery;
-    return rows;
+    if (rows.length === 0) return [];
+
+    // Find the first inline image block for each blog or its translation group
+    const blogIds = rows.map((r) => r.id);
+    const groupIds = rows
+      .map((r) => r.translationGroupId)
+      .filter((id): id is string => Boolean(id));
+
+    let allRelatedBlogIds = [...blogIds];
+    if (groupIds.length > 0) {
+      const siblingBlogs = await db
+        .select({ id: blogs.id })
+        .from(blogs)
+        .where(inArray(blogs.translationGroupId, groupIds));
+      allRelatedBlogIds = [
+        ...new Set([...allRelatedBlogIds, ...siblingBlogs.map((s) => s.id)]),
+      ];
+    }
+
+    const imageBlocks = await db
+      .select({
+        blogId: blogBlocks.blogId,
+        value: blogBlocks.value,
+        position: blogBlocks.position,
+      })
+      .from(blogBlocks)
+      .where(
+        and(
+          inArray(blogBlocks.blogId, allRelatedBlogIds),
+          eq(blogBlocks.type, 'IMAGE'),
+        ),
+      )
+      .orderBy(asc(blogBlocks.position));
+
+    const blogImageMap = new Map<string, string>();
+    for (const img of imageBlocks) {
+      if (!blogImageMap.has(img.blogId)) {
+        blogImageMap.set(img.blogId, img.value);
+      }
+    }
+
+    const groupImageMap = new Map<string, string>();
+    if (groupIds.length > 0) {
+      const blogsWithGroups = await db
+        .select({ id: blogs.id, translationGroupId: blogs.translationGroupId })
+        .from(blogs)
+        .where(inArray(blogs.id, allRelatedBlogIds));
+
+      for (const b of blogsWithGroups) {
+        if (
+          b.translationGroupId &&
+          blogImageMap.has(b.id) &&
+          !groupImageMap.has(b.translationGroupId)
+        ) {
+          groupImageMap.set(b.translationGroupId, blogImageMap.get(b.id)!);
+        }
+      }
+    }
+
+    return rows.map((row) => {
+      const firstInlineImage =
+        blogImageMap.get(row.id) ||
+        (row.translationGroupId ? groupImageMap.get(row.translationGroupId) : null) ||
+        null;
+
+      const firstImage = firstInlineImage || row.coverImage || null;
+
+      return {
+        ...row,
+        firstImage,
+        coverImage: row.coverImage || firstInlineImage || null,
+      };
+    });
   }
 
   async getPublished(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
     const now = new Date();
+    // Default to HINGLISH when no language specified (primary audience)
+    const requestedLang = language || 'HINGLISH';
     const conditions = [
       eq(blogs.slug, slug),
+      eq(blogs.language, requestedLang),
       or(
         eq(blogs.status, 'PUBLISHED'),
         and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
       ),
     ];
 
-    if (language) {
-      conditions.push(eq(blogs.language, language));
-    }
-
-    const [blog] = await db
+    let [blog] = await db
       .select({
         id: blogs.id,
         title: blogs.title,
@@ -159,6 +237,119 @@ export class BlogService {
       .where(and(...conditions))
       .limit(1);
 
+    // If requested language not found directly by slug, check if a sibling in the translation group matches requested language
+    if (!blog) {
+      const [anyBlogWithSlug] = await db
+        .select({
+          id: blogs.id,
+          translationGroupId: blogs.translationGroupId,
+        })
+        .from(blogs)
+        .where(
+          and(
+            eq(blogs.slug, slug),
+            or(
+              eq(blogs.status, 'PUBLISHED'),
+              and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
+            ),
+          ),
+        )
+        .limit(1);
+
+      if (anyBlogWithSlug?.translationGroupId) {
+        const [groupMatch] = await db
+          .select({
+            id: blogs.id,
+            title: blogs.title,
+            slug: blogs.slug,
+            language: blogs.language,
+            translationGroupId: blogs.translationGroupId,
+            description: blogs.description,
+            coverImage: blogs.coverImage,
+            imageAlt: blogs.imageAlt,
+            imageCaption: blogs.imageCaption,
+            metaTitle: blogs.metaTitle,
+            metaDescription: blogs.metaDescription,
+            canonicalUrl: blogs.canonicalUrl,
+            noindex: blogs.noindex,
+            publishedAt: blogs.publishedAt,
+            updatedAt: blogs.updatedAt,
+            version: blogs.version,
+            category: {
+              id: categories.id,
+              name: categories.name,
+              slug: categories.slug,
+            },
+            author: {
+              id: users.id,
+              name: users.name,
+            },
+          })
+          .from(blogs)
+          .innerJoin(users, eq(blogs.authorId, users.id))
+          .leftJoin(categories, eq(blogs.categoryId, categories.id))
+          .where(
+            and(
+              eq(blogs.translationGroupId, anyBlogWithSlug.translationGroupId),
+              eq(blogs.language, requestedLang),
+              or(
+                eq(blogs.status, 'PUBLISHED'),
+                and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
+              ),
+            ),
+          )
+          .limit(1);
+
+        if (groupMatch) blog = groupMatch;
+      }
+    }
+
+    // If still not found, fallback to whichever language is available for this slug
+    if (!blog) {
+      const [fallback] = await db
+        .select({
+          id: blogs.id,
+          title: blogs.title,
+          slug: blogs.slug,
+          language: blogs.language,
+          translationGroupId: blogs.translationGroupId,
+          description: blogs.description,
+          coverImage: blogs.coverImage,
+          imageAlt: blogs.imageAlt,
+          imageCaption: blogs.imageCaption,
+          metaTitle: blogs.metaTitle,
+          metaDescription: blogs.metaDescription,
+          canonicalUrl: blogs.canonicalUrl,
+          noindex: blogs.noindex,
+          publishedAt: blogs.publishedAt,
+          updatedAt: blogs.updatedAt,
+          version: blogs.version,
+          category: {
+            id: categories.id,
+            name: categories.name,
+            slug: categories.slug,
+          },
+          author: {
+            id: users.id,
+            name: users.name,
+          },
+        })
+        .from(blogs)
+        .innerJoin(users, eq(blogs.authorId, users.id))
+        .leftJoin(categories, eq(blogs.categoryId, categories.id))
+        .where(
+          and(
+            eq(blogs.slug, slug),
+            or(
+              eq(blogs.status, 'PUBLISHED'),
+              and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
+            ),
+          ),
+        )
+        .limit(1);
+      if (fallback) blog = fallback;
+    }
+
     if (!blog) {
       // Check if there is an active 301 redirect for this slug
       const [redirect] = await db
@@ -167,6 +358,7 @@ export class BlogService {
         .where(
           or(
             eq(urlRedirects.sourcePath, slug),
+            eq(urlRedirects.sourcePath, `/${slug}`),
             eq(urlRedirects.sourcePath, `/blog/${slug}`),
           ),
         )
@@ -183,17 +375,14 @@ export class BlogService {
       throw new NotFoundException('Blog was not found.');
     }
 
-    // Lookup alternate language translation if translationGroupId is present
-    let alternatePost: { slug: string; language: 'HINGLISH' | 'ENGLISH'; categorySlug: string | null } | null = null;
+    // Check if alternate language version exists (both share the same slug)
+    let hasAlternateLanguage = false;
+    let effectiveBlocks = await this.getBlocks(blog.id);
+
     if (blog.translationGroupId) {
       const [alt] = await db
-        .select({
-          slug: blogs.slug,
-          language: blogs.language,
-          categorySlug: categories.slug,
-        })
+        .select({ id: blogs.id })
         .from(blogs)
-        .leftJoin(categories, eq(blogs.categoryId, categories.id))
         .where(
           and(
             eq(blogs.translationGroupId, blog.translationGroupId),
@@ -205,21 +394,24 @@ export class BlogService {
           ),
         )
         .limit(1);
+      hasAlternateLanguage = !!alt;
+
       if (alt) {
-        alternatePost = alt;
+        // Sync any images from alternate language version into this language version
+        const altBlocks = await this.getBlocks(alt.id);
+        effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
       }
     }
 
-    const blocks = await this.getBlocks(blog.id);
     const postTagsList = await this.getBlogTags(blog.id);
-    const html = blocksToHtml(blocks as any);
+    const html = blocksToHtml(effectiveBlocks as any);
 
     return {
       ...blog,
-      blocks,
+      blocks: effectiveBlocks,
       tags: postTagsList,
       htmlContent: html,
-      alternatePost,
+      hasAlternateLanguage,
     };
   }
 
@@ -343,14 +535,52 @@ export class BlogService {
       .limit(limit)
       .offset(offset);
 
-    return rows;
+    // Group articles by translation group so bilingual versions are treated as 1 single article
+    const groupedMap = new Map<string, any>();
+    for (const row of rows) {
+      const groupKey = row.translationGroupId || row.slug || row.id;
+      if (!groupedMap.has(groupKey)) {
+        groupedMap.set(groupKey, {
+          ...row,
+          languages: [
+            {
+              language: row.language,
+              id: row.id,
+              title: row.title,
+            },
+          ],
+          hinglishId: row.language === 'HINGLISH' ? row.id : null,
+          englishId: row.language === 'ENGLISH' ? row.id : null,
+        });
+      } else {
+        const existing = groupedMap.get(groupKey);
+        existing.languages.push({
+          language: row.language,
+          id: row.id,
+          title: row.title,
+        });
+        if (row.language === 'HINGLISH') {
+          existing.hinglishId = row.id;
+          // Prefer Hinglish title as primary default
+          existing.title = row.title;
+          existing.id = row.id;
+        }
+        if (row.language === 'ENGLISH') {
+          existing.englishId = row.id;
+        }
+        if (new Date(row.updatedAt) > new Date(existing.updatedAt)) {
+          existing.updatedAt = row.updatedAt;
+        }
+      }
+    }
+
+    return Array.from(groupedMap.values());
   }
 
   async getManageable(id: string, currentUser: CurrentUser) {
     const blog = await this.findManageable(id, currentUser);
-    const blocks = await this.getBlocks(blog.id);
+    let blocks = await this.getBlocks(blog.id);
     const postTagsList = await this.getBlogTags(blog.id);
-    const html = blocksToHtml(blocks as any);
 
     let linkedBlog: any = null;
     if (blog.translationGroupId) {
@@ -365,7 +595,13 @@ export class BlogService {
         )
         .limit(1);
       if (alt) {
-        const altBlocks = await this.getBlocks(alt.id);
+        let altBlocks = await this.getBlocks(alt.id);
+        // Bidirectional image sync so opening either blog in editor has all images synchronized
+        const syncedBlocks = syncImageBlocks(blocks as any, altBlocks as any);
+        const syncedAltBlocks = syncImageBlocks(altBlocks as any, blocks as any);
+        blocks = syncedBlocks as any;
+        altBlocks = syncedAltBlocks as any;
+
         linkedBlog = {
           ...alt,
           blocks: altBlocks,
@@ -373,6 +609,8 @@ export class BlogService {
         };
       }
     }
+
+    const html = blocksToHtml(blocks as any);
 
     return {
       ...blog,
@@ -387,19 +625,20 @@ export class BlogService {
     this.assertCanWrite(currentUser);
     const authorId = await this.resolveAuthorId(input.authorId, currentUser);
 
-    // If an existing draft with this slug already exists for this author, update it instead of duplicating
+    // If an existing draft with this slug + language already exists for this author, update it instead of duplicating
+    const language = input.language ?? 'HINGLISH';
     const [existingDraft] = await db
       .select({ id: blogs.id, status: blogs.status })
       .from(blogs)
-      .where(and(eq(blogs.slug, input.slug), eq(blogs.authorId, authorId)))
+      .where(and(eq(blogs.slug, input.slug), eq(blogs.language, language), eq(blogs.authorId, authorId)))
       .limit(1);
 
     if (existingDraft && existingDraft.status === 'DRAFT') {
       return this.update(existingDraft.id, input, currentUser);
     }
 
-    // Validate slug uniqueness proactively
-    await this.assertSlugAvailable(input.slug);
+    // Validate slug uniqueness proactively (per-language)
+    await this.assertSlugAvailable(input.slug, undefined, language);
 
     try {
       const created = await db.transaction(async (tx) => {
@@ -486,7 +725,7 @@ export class BlogService {
 
     // Slug collision & 301 redirect management
     if (input.slug && input.slug !== existing.slug) {
-      await this.assertSlugAvailable(input.slug, existing.id);
+      await this.assertSlugAvailable(input.slug, existing.id, existing.language);
     }
 
     const authorId =
@@ -511,7 +750,7 @@ export class BlogService {
             ? new Date(input.scheduledAt)
             : existing.scheduledAt;
 
-        // If published URL changed, record automatic 301 redirect
+        // If published URL changed, record automatic 301 redirect (no /blog/ prefix)
         if (
           input.slug &&
           input.slug !== existing.slug &&
@@ -520,13 +759,25 @@ export class BlogService {
           await tx
             .insert(urlRedirects)
             .values({
-              sourcePath: `/blog/${existing.slug}`,
-              targetPath: `/blog/${input.slug}`,
+              sourcePath: `/${existing.slug}`,
+              targetPath: `/${input.slug}`,
               statusCode: 301,
             })
             .onConflictDoUpdate({
               target: urlRedirects.sourcePath,
-              set: { targetPath: `/blog/${input.slug}`, createdAt: new Date() },
+              set: { targetPath: `/${input.slug}`, createdAt: new Date() },
+            });
+          // Also redirect old /blog/ paths for backwards compatibility
+          await tx
+            .insert(urlRedirects)
+            .values({
+              sourcePath: `/blog/${existing.slug}`,
+              targetPath: `/${input.slug}`,
+              statusCode: 301,
+            })
+            .onConflictDoUpdate({
+              target: urlRedirects.sourcePath,
+              set: { targetPath: `/${input.slug}`, createdAt: new Date() },
             });
         }
 
@@ -590,6 +841,69 @@ export class BlogService {
         // Sync tags if provided
         if (input.tagIds) {
           await this.syncTags(tx, blog.id, input.tagIds);
+        }
+
+        // Sync shared fields to sibling language version (coverImage, imageAlt, imageCaption, categoryId, tags)
+        if (blog.translationGroupId) {
+          const [sibling] = await tx
+            .select({ id: blogs.id })
+            .from(blogs)
+            .where(
+              and(
+                eq(blogs.translationGroupId, blog.translationGroupId),
+                ne(blogs.id, blog.id),
+              ),
+            )
+            .limit(1);
+
+          const sharedFieldsToSync: Record<string, any> = {};
+          if (input.status !== undefined) {
+            sharedFieldsToSync.status = status;
+            sharedFieldsToSync.publishedAt = publishedAt;
+            sharedFieldsToSync.scheduledAt = scheduledAt;
+          }
+          if (input.coverImage !== undefined) sharedFieldsToSync.coverImage = blog.coverImage;
+          if (input.imageAlt !== undefined) sharedFieldsToSync.imageAlt = blog.imageAlt;
+          if (input.imageCaption !== undefined) sharedFieldsToSync.imageCaption = blog.imageCaption;
+          if (input.categoryId !== undefined) sharedFieldsToSync.categoryId = blog.categoryId;
+          if (input.noindex !== undefined) sharedFieldsToSync.noindex = blog.noindex;
+
+          if (Object.keys(sharedFieldsToSync).length > 0) {
+            sharedFieldsToSync.updatedAt = new Date();
+            await tx
+              .update(blogs)
+              .set(sharedFieldsToSync)
+              .where(
+                and(
+                  eq(blogs.translationGroupId, blog.translationGroupId),
+                  ne(blogs.id, blog.id),
+                ),
+              );
+          }
+
+          // Sync tags to sibling
+          if (input.tagIds && sibling) {
+            await this.syncTags(tx, sibling.id, input.tagIds);
+          }
+
+          // Sync inline image blocks to sibling language version
+          if (sibling && blocksToPersist !== null) {
+            const siblingBlocks = await tx
+              .select()
+              .from(blogBlocks)
+              .where(eq(blogBlocks.blogId, sibling.id))
+              .orderBy(asc(blogBlocks.position));
+
+            const syncedSiblingBlocks = syncImageBlocks(siblingBlocks as any, blocks as any);
+            if (syncedSiblingBlocks.length !== siblingBlocks.length) {
+              await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, sibling.id));
+              await this.insertBlocks(tx, sibling.id, syncedSiblingBlocks as any);
+              await tx
+                .update(blogs)
+                .set({ updatedAt: new Date() })
+                .where(eq(blogs.id, sibling.id));
+            }
+          }
         }
 
         // Record revision snapshot
@@ -681,10 +995,23 @@ export class BlogService {
   async remove(id: string, currentUser: CurrentUser) {
     const existing = await this.findManageable(id, currentUser);
     await db.transaction(async (tx) => {
-      await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, existing.id));
-      await tx.delete(blogTags).where(eq(blogTags.blogId, existing.id));
-      await tx.delete(blogRevisions).where(eq(blogRevisions.blogId, existing.id));
-      await tx.delete(blogs).where(eq(blogs.id, existing.id));
+      const idsToDelete = [existing.id];
+      if (existing.translationGroupId) {
+        const siblings = await tx
+          .select({ id: blogs.id })
+          .from(blogs)
+          .where(eq(blogs.translationGroupId, existing.translationGroupId));
+        for (const s of siblings) {
+          if (!idsToDelete.includes(s.id)) idsToDelete.push(s.id);
+        }
+      }
+
+      for (const blogId of idsToDelete) {
+        await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, blogId));
+        await tx.delete(blogTags).where(eq(blogTags.blogId, blogId));
+        await tx.delete(blogRevisions).where(eq(blogRevisions.blogId, blogId));
+        await tx.delete(blogs).where(eq(blogs.id, blogId));
+      }
     });
   }
 
@@ -1082,17 +1409,22 @@ export class BlogService {
       await createBlogPublishedNotification({
         blogId: blog.id,
         title: blog.title,
-        href: `/blog/${categorySlug}/${blog.slug}`,
+        href: `/${blog.slug}`,
       });
     } catch (error) {
       console.error('Failed to create blog notification', error);
     }
   }
 
-  private async isSlugAvailable(slug: string, excludeId?: string) {
+  private async isSlugAvailable(slug: string, excludeId?: string, language?: string) {
     const conditions = [eq(blogs.slug, slug)];
     if (excludeId) {
       conditions.push(sql`${blogs.id} != ${excludeId}`);
+    }
+    // With unified slugs, allow the same slug for different languages within the same translationGroup.
+    // Only block if a different article (different translationGroup) uses the same slug.
+    if (language) {
+      conditions.push(eq(blogs.language, language as any));
     }
     const [existing] = await db
       .select({ id: blogs.id })
@@ -1102,8 +1434,8 @@ export class BlogService {
     return !existing;
   }
 
-  private async assertSlugAvailable(slug: string, excludeId?: string) {
-    const available = await this.isSlugAvailable(slug, excludeId);
+  private async assertSlugAvailable(slug: string, excludeId?: string, language?: string) {
+    const available = await this.isSlugAvailable(slug, excludeId, language);
     if (!available) {
       throw new ConflictException('This URL slug is already taken.');
     }
@@ -1162,22 +1494,15 @@ export class BlogService {
       imageAlt: source.imageAlt,
     });
 
-    // Generate unique slug for translation
-    let baseSlug = `${source.slug.replace(/-(hinglish|english)$/, '')}${translated.slugSuffix}`;
-    let uniqueSlug = baseSlug;
-    let counter = 1;
-    while (true) {
-      const available = await this.isSlugAvailable(uniqueSlug);
-      if (available) break;
-      uniqueSlug = `${baseSlug}-${counter++}`;
-    }
+    // Use the SAME slug as the source article — both language versions share one URL
+    const sharedSlug = source.slug;
 
-    // Create new translation draft
+    // Create new translation draft with the same slug
     const tagIds = (source.tags || []).map((t: any) => t.id);
     const created = await this.create(
       {
         title: translated.title,
-        slug: uniqueSlug,
+        slug: sharedSlug,
         description: translated.description,
         coverImage: source.coverImage,
         imageAlt: translated.imageAlt,
@@ -1293,10 +1618,23 @@ export class BlogService {
     const translationGroupId = input.translationGroupId || crypto.randomUUID();
     const status = input.status || 'DRAFT';
 
+    // Both language versions share the same slug (use the English slug as canonical)
+    const sharedSlug = input.english.slug || input.hinglish.slug;
+    input.hinglish.slug = sharedSlug;
+    input.english.slug = sharedSlug;
+
     let hinglishHtml = input.hinglish.htmlContent || input.hinglish.markdown || '';
     if (hinglishHtml === '[object Promise]') hinglishHtml = input.hinglish.markdown || '';
     let englishHtml = input.english.htmlContent || input.english.markdown || '';
     if (englishHtml === '[object Promise]') englishHtml = input.english.markdown || '';
+
+    // Bidirectional inline image synchronization between Hinglish and English versions
+    let hBlocks = htmlToBlocks(hinglishHtml);
+    let eBlocks = htmlToBlocks(englishHtml);
+    hBlocks = syncImageBlocks(hBlocks, eBlocks);
+    eBlocks = syncImageBlocks(eBlocks, hBlocks);
+    hinglishHtml = blocksToHtml(hBlocks);
+    englishHtml = blocksToHtml(eBlocks);
 
     // 0. Auto-resolve existing draft IDs to guarantee update instead of duplicate draft copies
     if (translationGroupId) {
@@ -1315,22 +1653,22 @@ export class BlogService {
       }
     }
 
-    if (!input.hinglish.id && input.hinglish.slug) {
+    if (!input.hinglish.id && sharedSlug) {
       const [existingHinglish] = await db
         .select({ id: blogs.id })
         .from(blogs)
-        .where(and(eq(blogs.slug, input.hinglish.slug), eq(blogs.authorId, currentUser.id)))
+        .where(and(eq(blogs.slug, sharedSlug), eq(blogs.language, 'HINGLISH'), eq(blogs.authorId, currentUser.id)))
         .limit(1);
       if (existingHinglish) {
         input.hinglish.id = existingHinglish.id;
       }
     }
 
-    if (!input.english.id && input.english.slug) {
+    if (!input.english.id && sharedSlug) {
       const [existingEnglish] = await db
         .select({ id: blogs.id })
         .from(blogs)
-        .where(and(eq(blogs.slug, input.english.slug), eq(blogs.authorId, currentUser.id)))
+        .where(and(eq(blogs.slug, sharedSlug), eq(blogs.language, 'ENGLISH'), eq(blogs.authorId, currentUser.id)))
         .limit(1);
       if (existingEnglish) {
         input.english.id = existingEnglish.id;
@@ -1344,7 +1682,7 @@ export class BlogService {
         input.hinglish.id,
         {
           title: input.hinglish.title,
-          slug: input.hinglish.slug,
+          slug: sharedSlug,
           description: input.hinglish.excerpt,
           coverImage: input.coverImage,
           imageAlt: input.imageAlt,
@@ -1363,7 +1701,7 @@ export class BlogService {
       hinglishPost = await this.create(
         {
           title: input.hinglish.title,
-          slug: input.hinglish.slug,
+          slug: sharedSlug,
           description: input.hinglish.excerpt,
           coverImage: input.coverImage,
           imageAlt: input.imageAlt,
@@ -1380,14 +1718,14 @@ export class BlogService {
       );
     }
 
-    // 2. Save or update English article
+    // 2. Save or update English article (same slug)
     let englishPost;
     if (input.english.id) {
       englishPost = await this.update(
         input.english.id,
         {
           title: input.english.title,
-          slug: input.english.slug,
+          slug: sharedSlug,
           description: input.english.excerpt,
           coverImage: input.coverImage,
           imageAlt: input.imageAlt,
@@ -1406,7 +1744,7 @@ export class BlogService {
       englishPost = await this.create(
         {
           title: input.english.title,
-          slug: input.english.slug,
+          slug: sharedSlug,
           description: input.english.excerpt,
           coverImage: input.coverImage,
           imageAlt: input.imageAlt,
