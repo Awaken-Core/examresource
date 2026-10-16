@@ -1,5 +1,3 @@
-/// <reference path="../worker-configuration.d.ts" />
-
 import { httpServerHandler } from 'cloudflare:node';
 import { createApplication } from './bootstrap.js';
 
