@@ -56,6 +56,7 @@ const ogImageType = ogImageExt === 'jpg' || ogImageExt === 'jpeg' ? 'image/jpeg'
 const googleVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerification = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
+const gtmId = import.meta.env.PUBLIC_GTM_ID || 'GTM-PX3RG8RR';
 ---
 
 <!doctype html>
@@ -63,6 +64,28 @@ const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {/* Google Tag Manager */}
+    <script is:inline define:vars={{ gtmId }}>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer',gtmId);
+    </script>
+    <script is:inline>
+      document.addEventListener('astro:page-load', function() {
+        if (window.dataLayer) {
+          window.dataLayer.push({
+            event: 'page_view',
+            page_path: window.location.pathname,
+            page_title: document.title,
+            page_location: window.location.href
+          });
+        }
+      });
+    </script>
+    {/* End Google Tag Manager */}
 
     {/* Preconnect to Google Fonts (saves ~200ms per Lighthouse) */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -150,6 +173,10 @@ const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
     </script>
   </head>
   <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+    {/* Google Tag Manager (noscript) */}
+    <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    {/* End Google Tag Manager (noscript) */}
     {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right */}
     <div class="flex-1 flex min-h-screen relative">
       {/* Desktop Left Navigation Sidebar (Full height on left) */}
