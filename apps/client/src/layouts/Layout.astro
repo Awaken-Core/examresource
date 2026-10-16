@@ -31,7 +31,7 @@ const {
   title = "govtpariksha.com - Govt Jobs, Admissions & Results",
   description = "Get verified government examination notices, admit cards, answer keys and counselling results on govtpariksha.com.",
   canonicalUrl = `${siteOrigin}${cleanPath || '/'}`,
-  ogImage = `${siteOrigin}/og-image.png`,
+  ogImage = `${siteOrigin}/og-image.jpg`,
   ogType = Astro.props.publishedTime ? 'article' : 'website',
   publishedTime,
   modifiedTime,
@@ -46,6 +46,13 @@ const resolvedOgImage = ogImage.startsWith('http')
   ? ogImage
   : `${siteOrigin}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
 
+// Derive OG image MIME type from URL extension (blog images may be jpg/webp, not always png)
+const ogImageExt = resolvedOgImage.split('?')[0].split('.').pop()?.toLowerCase() || 'png';
+const ogImageType = ogImageExt === 'jpg' || ogImageExt === 'jpeg' ? 'image/jpeg'
+  : ogImageExt === 'webp' ? 'image/webp'
+  : ogImageExt === 'gif' ? 'image/gif'
+  : 'image/png';
+
 const googleVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerification = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
@@ -56,6 +63,15 @@ const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {/* Preconnect to Google Fonts (saves ~200ms per Lighthouse) */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    {/* DNS prefetch for Clerk & R2 (reduces connection setup time) */}
+    <link rel="dns-prefetch" href="https://notable-raven-5844.clerk.accounts.dev" />
+    <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -93,7 +109,7 @@ const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
     <meta property="og:description" content={description} />
     <meta property="og:image" content={resolvedOgImage} />
     <meta property="og:image:secure_url" content={resolvedOgImage} />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:type" content={ogImageType} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={title} />
@@ -257,14 +273,14 @@ const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
 
         {/* Help */}
         <div class="space-y-0.5">
-          <a href="/#faqs" data-mobile-sidebar-close
+          <a href="/#important-links" data-mobile-sidebar-close
             class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised transition-all text-sm font-medium"
           >
             <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" stroke-width="2"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3m.08 4h.01"/>
             </svg>
-            <span>Help and FAQs</span>
+            <span>Help and resources</span>
           </a>
         </div>
       </nav>

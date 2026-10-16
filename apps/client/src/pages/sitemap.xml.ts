@@ -25,6 +25,10 @@ export const GET: APIRoute = async () => {
     { loc: `${siteUrl}/blog/ssc-railways`, changefreq: 'daily', priority: '0.8', lastmod: currentDate },
     { loc: `${siteUrl}/blog/teaching`, changefreq: 'daily', priority: '0.8', lastmod: currentDate },
     { loc: `${siteUrl}/blog/defence`, changefreq: 'daily', priority: '0.8', lastmod: currentDate },
+    { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.5', lastmod: currentDate },
+    { loc: `${siteUrl}/terms-of-service`, changefreq: 'monthly', priority: '0.5', lastmod: currentDate },
+    { loc: `${siteUrl}/contact-us`, changefreq: 'monthly', priority: '0.6', lastmod: currentDate },
+    { loc: `${siteUrl}/sitemap`, changefreq: 'weekly', priority: '0.7', lastmod: currentDate },
   ];
 
   // Known fallback articles to guarantee crawler coverage if API is offline

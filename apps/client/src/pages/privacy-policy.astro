@@ -1,0 +1,397 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const lastUpdated = "October 16, 2026";
+const pageTitle = "Privacy Policy — govtpariksha.com";
+const pageDescription = "Learn how govtpariksha.com collects, uses, and protects your information while browsing government job alerts, notifications, exam patterns, and admit cards.";
+const canonicalUrl = "https://govtpariksha.com/privacy-policy";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Privacy Policy",
+  "url": canonicalUrl,
+  "description": pageDescription,
+  "publisher": {
+    "@type": "Organization",
+    "name": "govtpariksha.com",
+    "url": "https://govtpariksha.com",
+    "logo": "https://govtpariksha.com/og-image.jpg"
+  },
+  "breadcrumb": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://govtpariksha.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Privacy Policy",
+        "item": canonicalUrl
+      }
+    ]
+  }
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
+>
+  <div class="min-h-screen bg-canvas text-white">
+    {/* Hero Section */}
+    <div class="border-b border-border/80 bg-surface/60 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-caption-xs text-muted">
+          <a href="/" class="hover:text-accent transition">Home</a>
+          <span class="text-border">/</span>
+          <span class="text-white font-medium">Privacy Policy</span>
+        </nav>
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div class="space-y-3 max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-caption-xs font-semibold uppercase tracking-wider">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Transparency & Data Protection
+            </div>
+            <h1 class="text-heading-xl sm:text-heading-xxl font-extrabold text-white tracking-tight">
+              Privacy Policy
+            </h1>
+            <p class="text-body-md text-muted leading-relaxed">
+              We respect your privacy and are committed to protecting it. This policy outlines how <strong class="text-white">govtpariksha.com</strong> handles information when you access our educational summaries, exam schedules, and recruitment guides.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0 text-caption-xs text-muted bg-surface-raised/60 border border-border/80 px-4 py-3 rounded-xl">
+            <div>
+              <span class="block text-muted/80">Effective Date</span>
+              <span class="font-semibold text-white">{lastUpdated}</span>
+            </div>
+            <div class="h-6 w-px bg-border/80 hidden sm:block"></div>
+            <div>
+              <span class="block text-muted/80">Reading Time</span>
+              <span class="font-semibold text-white">5 min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Highlights Banner */}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl bg-surface border border-border/70 hover:border-accent/40 transition">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <h3 class="text-body-sm font-semibold text-white mb-1">Open & Public Access</h3>
+          <p class="text-caption-xs text-muted">No mandatory sign-ups or payment required to read alerts and syllabus breakdowns.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-surface border border-border/70 hover:border-accent/40 transition">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-body-sm font-semibold text-white mb-1">Official Links Only</h3>
+          <p class="text-caption-xs text-muted">All admit card and job application URLs link directly to verified official government portals.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-surface border border-border/70 hover:border-accent/40 transition">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+            </svg>
+          </div>
+          <h3 class="text-body-sm font-semibold text-white mb-1">No Data Brokerage</h3>
+          <p class="text-caption-xs text-muted">We never sell, rent, or trade your personally identifiable information to third parties.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-surface border border-border/70 hover:border-accent/40 transition">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <h3 class="text-body-sm font-semibold text-white mb-1">Indian Law Aligned</h3>
+          <p class="text-caption-xs text-muted">Compliant with the Information Technology Act, 2000 & DPDP Act principles.</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Main Content Layout with Sidebar Sticky Navigation */}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Sticky Table of Contents */}
+        <aside class="hidden lg:block lg:col-span-4 sticky top-24 space-y-4">
+          <div class="p-5 rounded-2xl bg-surface border border-border/70 shadow-sm">
+            <h2 class="text-caption-xs uppercase tracking-wider font-bold text-muted mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+              </svg>
+              Table of Contents
+            </h2>
+            <nav class="space-y-1.5 text-body-xs font-medium text-muted">
+              <a href="#introduction" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">1. Introduction & Scope</a>
+              <a href="#information-collected" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">2. Information We Collect</a>
+              <a href="#how-we-use" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">3. How We Use Information</a>
+              <a href="#cookies" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">4. Cookies & Analytics</a>
+              <a href="#third-party-links" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">5. Third-Party Links & Advertising</a>
+              <a href="#data-security" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">6. Data Security & Storage</a>
+              <a href="#children" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">7. Children's Privacy</a>
+              <a href="#user-rights" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">8. Your Rights & Choices</a>
+              <a href="#updates" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">9. Policy Updates</a>
+              <a href="#contact" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">10. Grievance & Contact</a>
+            </nav>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-surface to-surface-raised border border-border/80">
+            <h4 class="text-body-sm font-semibold text-white mb-1.5">Have questions?</h4>
+            <p class="text-caption-xs text-muted mb-3 leading-relaxed">
+              If you need clarification about our privacy practices, our team is here to assist.
+            </p>
+            <a href="/contact-us" class="inline-flex items-center gap-1.5 text-caption-xs font-semibold text-accent hover:underline">
+              <span>Contact Privacy Officer</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+        </aside>
+
+        {/* Policy Body */}
+        <div class="lg:col-span-8 space-y-8">
+          
+          {/* Section 1 */}
+          <section id="introduction" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">1</span>
+              <h2 class="text-heading-md font-bold text-white">Introduction & Scope</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                Welcome to <strong class="text-white">govtpariksha.com</strong> ("we", "our", or "us"). We are an educational and information aggregation portal dedicated to delivering timely updates on government recruitment exams (SSC, UPSC, RRB, Banking, State PSCs, Defence, Teaching), admit cards, answer keys, results, and syllabus analyses.
+              </p>
+              <p>
+                This Privacy Policy explains what information we collect when you visit <a href="https://govtpariksha.com" class="text-accent hover:underline">govtpariksha.com</a>, how we utilize and safeguard that data, and your rights concerning your browsing experience. By accessing or using our website, you signify your agreement with this Privacy Policy.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 2 */}
+          <section id="information-collected" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">2</span>
+              <h2 class="text-heading-md font-bold text-white">Information We Collect</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>We believe in minimal data collection. We collect only what is strictly necessary to provide a fast, secure, and reliable experience:</p>
+              
+              <div class="space-y-3 pl-2">
+                <div class="border-l-2 border-accent/40 pl-4 py-1">
+                  <h4 class="font-semibold text-white text-body-sm">A. Automatically Collected Technical Data</h4>
+                  <p class="text-caption-sm text-muted mt-0.5">
+                    When you access our pages, our servers and CDN (e.g. Cloudflare) automatically record standard log entries including IP address (anonymized where feasible), browser user-agent, operating system, referrer URL, pages visited, and timestamp. This data is used exclusively for DDoS prevention, rate limiting, and technical performance analysis.
+                  </p>
+                </div>
+
+                <div class="border-l-2 border-accent/40 pl-4 py-1">
+                  <h4 class="font-semibold text-white text-body-sm">B. Information You Voluntarily Provide</h4>
+                  <p class="text-caption-sm text-muted mt-0.5">
+                    If you contact us via our contact form or email us at support@govtpariksha.com, we collect your name, email address, and message content to address your inquiry or notification correction request.
+                  </p>
+                </div>
+
+                <div class="border-l-2 border-accent/40 pl-4 py-1">
+                  <h4 class="font-semibold text-white text-body-sm">C. No Sensitive Exam Candidate Data</h4>
+                  <p class="text-caption-sm text-muted mt-0.5">
+                    We <strong class="text-white">never</strong> ask for or collect sensitive examination credentials such as Roll Numbers, Registration Passwords, Date of Birth, Aadhaar details, or payment card details. All fee payments and official applications occur on the respective government recruiting body portals.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 3 */}
+          <section id="how-we-use" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">3</span>
+              <h2 class="text-heading-md font-bold text-white">How We Use Your Information</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>The collected information is deployed exclusively for legitimate educational and technical objectives:</p>
+              <ul class="list-disc pl-5 space-y-2 text-caption-sm text-slate-300">
+                <li>To serve fast, high-availability exam summaries, syllabi, and notification breakdowns across India.</li>
+                <li>To monitor, diagnose, and optimize site speed, Core Web Vitals, and server infrastructure.</li>
+                <li>To prevent fraud, malicious bots, automated scraping, and unauthorized attempts to breach site integrity.</li>
+                <li>To respond to user inquiries, correction reports, and copyright notifications in a timely manner.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 4 */}
+          <section id="cookies" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">4</span>
+              <h2 class="text-heading-md font-bold text-white">Cookies & Local Storage</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                Cookies are small text files placed on your device to ensure seamless website functionality. We utilize:
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div class="p-4 rounded-xl bg-surface-raised border border-border/60">
+                  <h4 class="font-semibold text-white text-body-sm mb-1">Essential Cookies & Storage</h4>
+                  <p class="text-caption-xs text-muted">
+                    Save theme preferences (dark/light mode), collapsed sidebar state, and language selection (Hinglish/English).
+                  </p>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-raised border border-border/60">
+                  <h4 class="font-semibold text-white text-body-sm mb-1">Analytics & Performance</h4>
+                  <p class="text-caption-xs text-muted">
+                    Aggregated, non-identifying telemetry to understand popular exam categories and improve navigation speed.
+                  </p>
+                </div>
+              </div>
+              <p class="text-caption-sm text-muted pt-2">
+                You can manage or disable cookies via your browser settings (Chrome, Safari, Firefox, Edge). Note that disabling cookies might reset your dark mode preference.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 5 */}
+          <section id="third-party-links" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">5</span>
+              <h2 class="text-heading-md font-bold text-white">Third-Party Links & Advertising Partners</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <div class="p-4 rounded-xl bg-accent/5 border border-accent/20 mb-3">
+                <h4 class="font-semibold text-white text-body-sm mb-1 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                  </svg>
+                  Government Portals Disclaimer
+                </h4>
+                <p class="text-caption-sm text-muted">
+                  govtpariksha.com contains outbound links to official recruitment portals (e.g. ssc.gov.in, upsc.gov.in, rrbcdg.gov.in, ibps.in). Once you click an external link, you leave our site and become subject to the respective external portal's privacy policy and security practices.
+                </p>
+              </div>
+              <p>
+                <strong class="text-white">Advertising:</strong> To keep this educational resource freely accessible to all candidates across India, we may display contextual advertisements through third-party ad networks (such as Google AdSense). These partners may use cookies to serve ads based on prior visits. Users may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">Google Ads Settings</a>.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 6 */}
+          <section id="data-security" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">6</span>
+              <h2 class="text-heading-md font-bold text-white">Data Security & Retention</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                We employ modern, industry-standard security protocols to defend our infrastructure:
+              </p>
+              <ul class="list-disc pl-5 space-y-1.5 text-caption-sm text-slate-300">
+                <li>End-to-end encryption in transit via modern TLS/HTTPS certificates.</li>
+                <li>DDoS mitigation, web application firewalls (WAF), and automated intrusion detection.</li>
+                <li>Strict internal least-privilege access controls.</li>
+              </ul>
+              <p class="text-caption-sm text-muted">
+                Server logs are routinely rotated and purged within standard retention schedules. Support correspondence is retained only for the duration required to address the inquiry.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 7 */}
+          <section id="children" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">7</span>
+              <h2 class="text-heading-md font-bold text-white">Children's Privacy Protection</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                govtpariksha.com provides competitive examination and higher education notifications intended for candidates seeking employment or admissions (typically individuals aged 16 and above). We do not knowingly solicit or collect personally identifiable information from children under 13 years of age.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 8 */}
+          <section id="user-rights" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">8</span>
+              <h2 class="text-heading-md font-bold text-white">Your Rights & Choices</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>Under applicable Indian and global privacy laws, you possess the right to:</p>
+              <ul class="list-disc pl-5 space-y-1.5 text-caption-sm text-slate-300">
+                <li>Request access to any personal communications or contact records we hold for you.</li>
+                <li>Request rectification or erasure of correspondence or feedback provided to us.</li>
+                <li>Opt out of advertising personalization or clear local browsing preferences at any time.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 9 */}
+          <section id="updates" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">9</span>
+              <h2 class="text-heading-md font-bold text-white">Changes to this Privacy Policy</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                We may periodically update this policy to reflect enhancements in our portal, regulatory updates, or changes in legal requirements. Any modifications will be posted directly on this page with an updated "Effective Date". We encourage users to check this page occasionally.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 10 */}
+          <section id="contact" class="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-surface to-surface-raised border border-border/80 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">10</span>
+              <h2 class="text-heading-md font-bold text-white">Grievance Officer & Contact</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                Pursuant to the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules, 2021, if you have any questions, concerns, or grievances concerning data handling, you may write to our designated officer:
+              </p>
+              <div class="p-4 rounded-xl bg-canvas border border-border/70 space-y-2 text-caption-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span class="text-muted">Entity / Platform:</span>
+                  <span class="font-medium text-white">govtpariksha.com</span>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span class="text-muted">Email Contact:</span>
+                  <a href="mailto:support@govtpariksha.com" class="font-medium text-accent hover:underline">support@govtpariksha.com</a>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span class="text-muted">Grievance Desk:</span>
+                  <a href="/contact-us" class="font-medium text-accent hover:underline">govtpariksha.com/contact-us</a>
+                </div>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <span class="text-muted">Jurisdiction:</span>
+                  <span class="font-medium text-white">India</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

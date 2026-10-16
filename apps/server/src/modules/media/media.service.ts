@@ -79,7 +79,13 @@ export class MediaService {
     const key = `blog-images/${user.id}/${new Date().toISOString().slice(0, 10)}/${randomUUID()}.${extension}`;
     const uploadUrl = await getSignedUrl(
       this.client,
-      new PutObjectCommand({ Bucket: env.R2_BUCKET, Key: key, ContentType: contentType }),
+      new PutObjectCommand({
+        Bucket: env.R2_BUCKET,
+        Key: key,
+        ContentType: contentType,
+        CacheControl: 'public, max-age=31536000, immutable',
+        ContentDisposition: 'inline',
+      }),
       { expiresIn: 300 },
     );
 

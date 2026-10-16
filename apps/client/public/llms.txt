@@ -1,0 +1,19 @@
+# GovtPariksha.com
+
+> Your trusted source for verified government job notifications, admit cards, exam answer keys, and counselling results across India.
+
+## About
+
+GovtPariksha.com is an informational education portal providing verified government examination notices, admit cards, answer keys, and counselling results. We summarize official notifications and provide direct links to official portals.
+
+## Important Links
+
+- [Home](https://govtpariksha.com/)
+- [Sitemap](https://govtpariksha.com/sitemap.xml)
+- [Latest Updates](https://govtpariksha.com/#latest-updates)
+- [Important Portals](https://govtpariksha.com/#important-links)
+- [FAQs](https://govtpariksha.com/#faqs)
+
+## Disclaimer
+
+Guides published on this site are summaries. Apply, pay fees, and download admit cards only from the official portal named in the notice. govtpariksha.com is not associated with any government department or recruitment commission.

@@ -1,0 +1,327 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const lastUpdated = "October 16, 2026";
+const pageTitle = "Terms of Service — govtpariksha.com";
+const pageDescription = "Read the Terms of Service for govtpariksha.com. Learn about our educational non-government disclaimer, terms of use, content guidelines, and user responsibilities.";
+const canonicalUrl = "https://govtpariksha.com/terms-of-service";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Terms of Service",
+  "url": canonicalUrl,
+  "description": pageDescription,
+  "publisher": {
+    "@type": "Organization",
+    "name": "govtpariksha.com",
+    "url": "https://govtpariksha.com",
+    "logo": "https://govtpariksha.com/og-image.jpg"
+  },
+  "breadcrumb": {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://govtpariksha.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Terms of Service",
+        "item": canonicalUrl
+      }
+    ]
+  }
+};
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
+>
+  <div class="min-h-screen bg-canvas text-white">
+    {/* Hero Section */}
+    <div class="border-b border-border/80 bg-surface/60 backdrop-blur-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-caption-xs text-muted">
+          <a href="/" class="hover:text-accent transition">Home</a>
+          <span class="text-border">/</span>
+          <span class="text-white font-medium">Terms of Service</span>
+        </nav>
+
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div class="space-y-3 max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-caption-xs font-semibold uppercase tracking-wider">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>
+              Legal Agreement & Terms of Use
+            </div>
+            <h1 class="text-heading-xl sm:text-heading-xxl font-extrabold text-white tracking-tight">
+              Terms of Service
+            </h1>
+            <p class="text-body-md text-muted leading-relaxed">
+              Please read these terms carefully before utilizing <strong class="text-white">govtpariksha.com</strong>. By accessing our platform, you agree to comply with and be bound by the terms detailed below.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0 text-caption-xs text-muted bg-surface-raised/60 border border-border/80 px-4 py-3 rounded-xl">
+            <div>
+              <span class="block text-muted/80">Last Revised</span>
+              <span class="font-semibold text-white">{lastUpdated}</span>
+            </div>
+            <div class="h-6 w-px bg-border/80 hidden sm:block"></div>
+            <div>
+              <span class="block text-muted/80">Applicable Region</span>
+              <span class="font-semibold text-white">India (Nationwide)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Primary Non-Government Disclaimer Banner (CRITICAL) */}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent border border-amber-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-body-md font-bold text-amber-300">Important Government Non-Affiliation Disclaimer</h3>
+            <p class="text-caption-sm text-slate-300 leading-relaxed max-w-4xl">
+              <strong class="text-white">govtpariksha.com</strong> is a strictly private, independent educational portal. We are <strong>not affiliated, associated, authorized, endorsed by, or in any way officially connected</strong> with the Government of India, any State Government, Union Public Service Commission (UPSC), Staff Selection Commission (SSC), Railway Recruitment Boards (RRB), National Testing Agency (NTA), Institute of Banking Personnel Selection (IBPS), or any other recruitment agency. Official notifications must always be confirmed on official portals ending in <code class="px-1.5 py-0.5 rounded bg-black/40 text-amber-300 text-xs">.gov.in</code> or <code class="px-1.5 py-0.5 rounded bg-black/40 text-amber-300 text-xs">.nic.in</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Main Layout with Sticky Navigation */}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        {/* Sticky Table of Contents */}
+        <aside class="hidden lg:block lg:col-span-4 sticky top-24 space-y-4">
+          <div class="p-5 rounded-2xl bg-surface border border-border/70 shadow-sm">
+            <h2 class="text-caption-xs uppercase tracking-wider font-bold text-muted mb-4 flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              Table of Contents
+            </h2>
+            <nav class="space-y-1.5 text-body-xs font-medium text-muted">
+              <a href="#acceptance" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">1. Acceptance of Terms</a>
+              <a href="#nature-of-service" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">2. Nature of Service & Use</a>
+              <a href="#candidate-responsibility" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">3. Candidate Due Diligence</a>
+              <a href="#ip-rights" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">4. Intellectual Property Rights</a>
+              <a href="#prohibited-acts" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">5. Prohibited User Conduct</a>
+              <a href="#external-links" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">6. External Official Portals</a>
+              <a href="#disclaimer-warranties" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">7. Disclaimer of Warranties</a>
+              <a href="#limitation-liability" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">8. Limitation of Liability</a>
+              <a href="#modifications" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">9. Amendments to Terms</a>
+              <a href="#governing-law" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">10. Governing Law & Dispute Resolution</a>
+            </nav>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-surface to-surface-raised border border-border/80">
+            <h4 class="text-body-sm font-semibold text-white mb-1.5">Spot an inaccurate detail?</h4>
+            <p class="text-caption-xs text-muted mb-3 leading-relaxed">
+              If an exam schedule has been updated by an official board and our article needs a refresh, let us know immediately!
+            </p>
+            <a href="/contact-us" class="inline-flex items-center gap-1.5 text-caption-xs font-semibold text-accent hover:underline">
+              <span>Submit Notification Correction</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+        </aside>
+
+        {/* Content Body */}
+        <div class="lg:col-span-8 space-y-8">
+          
+          {/* Section 1 */}
+          <section id="acceptance" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">1</span>
+              <h2 class="text-heading-md font-bold text-white">Acceptance of Terms</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                By accessing, browsing, or utilizing <strong class="text-white">govtpariksha.com</strong> (including all subdomains, RSS feeds, and related mobile interfaces), you agree that you have read, understood, and consented to be bound by these Terms of Service, along with our <a href="/privacy-policy" class="text-accent hover:underline">Privacy Policy</a>.
+              </p>
+              <p>
+                If you do not agree with any part of these terms, you must refrain from using this website.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 2 */}
+          <section id="nature-of-service" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">2</span>
+              <h2 class="text-heading-md font-bold text-white">Nature of Service & Educational Purpose</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                govtpariksha.com operates as an educational aggregator and study-guide companion. Our platform summarizes public notices issued by governmental, autonomous, and public sector undertaking (PSU) recruiting bodies.
+              </p>
+              <p>
+                The information provided includes summaries of:
+              </p>
+              <ul class="list-disc pl-5 space-y-1 text-caption-sm text-slate-300">
+                <li>Recruitment notifications & vacancy distribution.</li>
+                <li>Eligibility benchmarks (age limit, education, physical standards).</li>
+                <li>Exam syllabus, pattern, previous year cut-offs, and preparation tips.</li>
+                <li>Direct navigation links to official portals for online application and admit card downloads.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 3 */}
+          <section id="candidate-responsibility" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 font-bold text-caption-sm flex items-center justify-center">3</span>
+              <h2 class="text-heading-md font-bold text-white">Candidate Due Diligence & Obligation</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                While our editorial team strives for utmost precision when transcribing and summarizing notices:
+              </p>
+              <div class="p-4 rounded-xl bg-surface-raised border border-border/80 space-y-2 text-caption-sm">
+                <p class="font-medium text-white">Candidates are strictly required to:</p>
+                <ul class="list-disc pl-5 space-y-1.5 text-muted">
+                  <li>Download and thoroughly read the official PDF notification from the designated government recruiting authority prior to submitting applications or paying exam fees.</li>
+                  <li>Verify crucial dates including application deadlines, fee payment windows, and correction windows directly on the official commission portal.</li>
+                  <li>Confirm relaxation quotas, category reservations, and required certificates (OBC-NCL, EWS, SC/ST, PwBD) with current government guidelines.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 4 */}
+          <section id="ip-rights" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">4</span>
+              <h2 class="text-heading-md font-bold text-white">Intellectual Property Rights</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                <strong class="text-white">Our Content:</strong> The unique design, UI components, code, editorial analysis, custom tables, infographics, and written summaries on govtpariksha.com are protected under Indian and international copyright and intellectual property laws.
+              </p>
+              <p>
+                <strong class="text-white">Third-Party & Official Marks:</strong> Logos, trademarks, seals, and official recruitment advertisements of government entities (such as UPSC, SSC, Railways, State PSCs, Banks) remain the exclusive intellectual property of their respective departments and are referenced herein solely for identification, educational commentary, and nominative fair use.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 5 */}
+          <section id="prohibited-acts" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 font-bold text-caption-sm flex items-center justify-center">5</span>
+              <h2 class="text-heading-md font-bold text-white">Prohibited User Conduct</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>When utilizing govtpariksha.com, you agree NOT to:</p>
+              <ul class="list-disc pl-5 space-y-1.5 text-caption-sm text-slate-300">
+                <li>Deploy automated scrapers, crawlers, or harvesting tools to extract content without prior written permission.</li>
+                <li>Attempt to bypass rate limiting, security perimeters, or access control headers.</li>
+                <li>Transmit malicious code, viruses, worms, or exploit platform vulnerabilities.</li>
+                <li>Post false or misleading examination rumors, fraudulent fee links, or impersonate recruitment officials.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 6 */}
+          <section id="external-links" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">6</span>
+              <h2 class="text-heading-md font-bold text-white">External Official Portals & Services</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                Our guides contain hyperlinks pointing directly to external domains (e.g. ssc.gov.in, upsc.gov.in, rrbapply.gov.in, ibpsonline.ibps.in). We exercise no control over the content, uptime, payment gateways, or server stability of these government websites. We are not liable for any transaction failures or server timeouts experienced on external commission portals.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 7 */}
+          <section id="disclaimer-warranties" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">7</span>
+              <h2 class="text-heading-md font-bold text-white">Disclaimer of Warranties</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                This platform is provided on an <strong class="text-white">"as is"</strong> and <strong class="text-white">"as available"</strong> basis without warranties of any kind, whether express or implied. We do not warrant that the site will be uninterrupted, error-free, completely bug-free, or that discrepancies in official dates will be resolved instantly.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 8 */}
+          <section id="limitation-liability" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">8</span>
+              <h2 class="text-heading-md font-bold text-white">Limitation of Liability</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                In no event shall govtpariksha.com, its operators, editors, or contributors be held liable for any direct, indirect, incidental, consequential, or punitive damages arising from:
+              </p>
+              <ul class="list-disc pl-5 space-y-1.5 text-caption-sm text-slate-300">
+                <li>Any candidate's failure to apply on time or meet exam commission eligibility.</li>
+                <li>Typographical inaccuracies in notification digests or answer key interpretations.</li>
+                <li>Changes made by exam boards without public pre-intimation.</li>
+                <li>Interruption of service, downtime, or technical glitches.</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section 9 */}
+          <section id="modifications" class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/70 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">9</span>
+              <h2 class="text-heading-md font-bold text-white">Amendments to Terms</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                We reserve the right to revise or amend these Terms of Service at any time. Any changes take effect immediately upon posting to this URL. Continued use of govtpariksha.com following any revisions constitutes your acceptance of the new terms.
+              </p>
+            </div>
+          </section>
+
+          {/* Section 10 */}
+          <section id="governing-law" class="p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-surface to-surface-raised border border-border/80 scroll-mt-24 space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-accent/10 text-accent font-bold text-caption-sm flex items-center justify-center">10</span>
+              <h2 class="text-heading-md font-bold text-white">Governing Law & Jurisdiction</h2>
+            </div>
+            <div class="text-body-md text-slate-300 leading-relaxed space-y-3">
+              <p>
+                These Terms of Service are governed by and construed in accordance with the laws of the Republic of India. Any legal dispute, controversy, or claim arising out of or relating to the use of this website shall be subject to the exclusive jurisdiction of the competent courts of law in India.
+              </p>
+              <div class="pt-2 flex flex-wrap items-center gap-3 text-caption-sm">
+                <a href="/contact-us" class="px-4 py-2 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold transition">
+                  Contact Support Desk
+                </a>
+                <a href="/privacy-policy" class="px-4 py-2 rounded-xl bg-surface hover:bg-surface-raised text-muted hover:text-white border border-border transition">
+                  Read Privacy Policy
+                </a>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>

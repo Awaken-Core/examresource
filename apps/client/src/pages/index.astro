@@ -183,7 +183,7 @@ const jsonLd = {
   title={pageTitle}
   description={pageDescription}
   canonicalUrl={canonicalUrl}
-  ogImage="https://govtpariksha.com/og-image.png"
+  ogImage="https://govtpariksha.com/og-image.jpg"
   ogType="website"
   jsonLd={jsonLd}
 >
@@ -367,7 +367,10 @@ const jsonLd = {
                         src={article.thumbnail} 
                         alt={article.title} 
                         class="max-w-full max-h-full object-contain select-none group-hover:scale-105 transition-transform duration-200" 
-                        loading="lazy" 
+                        loading="lazy"
+                        decoding="async"
+                        width="360"
+                        height="240"
                       />
                     </div>
 
@@ -456,6 +459,9 @@ const jsonLd = {
                         alt={`${portal.name} official emblem logo`} 
                         class="w-full h-full object-contain" 
                         loading="lazy"
+                        decoding="async"
+                        width="32"
+                        height="32"
                         onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                       />
                       <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[10px] select-none tracking-tight`}>
