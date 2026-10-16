@@ -145,6 +145,24 @@ export const blogTags = pgTable(
   ],
 );
 
+// Blog to Categories pivot (many-to-many: a blog can belong to multiple categories)
+export const blogCategories = pgTable(
+  "blog_category",
+  {
+    blogId: uuid("blogId")
+      .notNull()
+      .references(() => blogs.id, { onDelete: "cascade" }),
+    categoryId: uuid("categoryId")
+      .notNull()
+      .references(() => categories.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    unique("BlogCategory_blogId_categoryId_key").on(table.blogId, table.categoryId),
+    index("BlogCategory_blogId_idx").on(table.blogId),
+    index("BlogCategory_categoryId_idx").on(table.categoryId),
+  ],
+);
+
 // Blog blocks table
 export const blogBlocks = pgTable(
   "blog_block",

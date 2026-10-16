@@ -187,6 +187,36 @@ const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
     </nav>
   </div>
 
+  {/* Language Toggle in Sidebar / Slider Drawer */}
+  <div class="px-3 pt-2 pb-1 border-t border-border/40">
+    <div class="flex items-center justify-between p-2 rounded-xl bg-surface-raised/40 border border-border/60">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+        </svg>
+        <span class="sidebar-text text-caption-xs font-semibold text-white/90 truncate">Language</span>
+      </div>
+      <div class="sidebar-text inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none">
+        <button
+          type="button"
+          data-app-lang="hinglish"
+          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+          title="Switch to Hinglish"
+        >
+          HI
+        </button>
+        <button
+          type="button"
+          data-app-lang="en"
+          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+          title="Switch to English"
+        >
+          EN
+        </button>
+      </div>
+    </div>
+  </div>
+
   {/* BOTTOM PROFILE / AUTH SECTION (Exact match to Image 2) */}
   <div class="p-3 border-t border-border/60 relative overflow-visible space-y-2">
     {/* Popover Dropdown (Positioned Bottom-Up) */}

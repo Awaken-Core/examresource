@@ -6,6 +6,7 @@ import clerk from '@clerk/astro';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://govtpariksha.com',
 	devToolbar: {
 		enabled: false,
 	},

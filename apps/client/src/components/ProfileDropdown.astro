@@ -84,6 +84,35 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
       <span>Troubleshooting</span>
     </a>
 
+    {/* Language Toggle */}
+    <div class="flex items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition">
+      <div class="flex items-center gap-3">
+        <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+        </svg>
+        <span>Language</span>
+      </div>
+
+      <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none">
+        <button 
+          type="button"
+          data-app-lang="hinglish"
+          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+          title="Switch to Hinglish"
+        >
+          HI
+        </button>
+        <button 
+          type="button"
+          data-app-lang="en"
+          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+          title="Switch to English"
+        >
+          EN
+        </button>
+      </div>
+    </div>
+
     {/* Theme Toggle (Exact Match to Reference Images 4 & 5) */}
     <div class="flex items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition">
       <div class="flex items-center gap-3">

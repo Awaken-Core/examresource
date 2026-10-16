@@ -13,6 +13,7 @@ import {
   categories,
   tags,
   blogTags,
+  blogCategories,
   blogRevisions,
   urlRedirects,
   users,
@@ -65,7 +66,16 @@ export class BlogService {
     ];
 
     if (options?.categorySlug) {
-      conditions.push(eq(categories.slug, options.categorySlug));
+      conditions.push(
+        or(
+          eq(categories.slug, options.categorySlug),
+          sql`EXISTS (
+            SELECT 1 FROM blog_category bc
+            JOIN category c ON bc."categoryId" = c.id
+            WHERE bc."blogId" = ${blogs.id} AND c.slug = ${options.categorySlug}
+          )`,
+        ),
+      );
     }
     if (options?.search) {
       conditions.push(
@@ -174,6 +184,29 @@ export class BlogService {
       }
     }
 
+    const catRows =
+      allRelatedBlogIds.length > 0
+        ? await db
+            .select({
+              blogId: blogCategories.blogId,
+              id: categories.id,
+              name: categories.name,
+              slug: categories.slug,
+            })
+            .from(blogCategories)
+            .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
+            .where(inArray(blogCategories.blogId, allRelatedBlogIds))
+        : [];
+
+    const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
+    for (const cr of catRows) {
+      const list = blogCategoryMap.get(cr.blogId) || [];
+      if (!list.some((c) => c.id === cr.id)) {
+        list.push({ id: cr.id, name: cr.name, slug: cr.slug });
+      }
+      blogCategoryMap.set(cr.blogId, list);
+    }
+
     return rows.map((row) => {
       const firstInlineImage =
         blogImageMap.get(row.id) ||
@@ -182,8 +215,15 @@ export class BlogService {
 
       const firstImage = firstInlineImage || row.coverImage || null;
 
+      const attachedCats =
+        blogCategoryMap.get(row.id) ||
+        (row.category?.id ? [row.category] : []);
+      const primaryCategory = attachedCats[0] || row.category;
+
       return {
         ...row,
+        category: primaryCategory,
+        categories: attachedCats,
         firstImage,
         coverImage: row.coverImage || firstInlineImage || null,
       };
@@ -404,10 +444,14 @@ export class BlogService {
     }
 
     const postTagsList = await this.getBlogTags(blog.id);
+    const postCategories = await this.getBlogCategories(blog.id);
+    const primaryCategory = postCategories[0] || blog.category;
     const html = blocksToHtml(effectiveBlocks as any);
 
     return {
       ...blog,
+      category: primaryCategory,
+      categories: postCategories,
       blocks: effectiveBlocks,
       tags: postTagsList,
       htmlContent: html,
@@ -481,7 +525,15 @@ export class BlogService {
     }
 
     if (filters?.categoryId && filters.categoryId !== 'ALL') {
-      conditions.push(eq(blogs.categoryId, filters.categoryId));
+      conditions.push(
+        or(
+          eq(blogs.categoryId, filters.categoryId),
+          sql`EXISTS (
+            SELECT 1 FROM blog_category bc
+            WHERE bc."blogId" = ${blogs.id} AND bc."categoryId" = ${filters.categoryId}::uuid
+          )`,
+        ),
+      );
     }
 
     if (filters?.search) {
@@ -516,6 +568,7 @@ export class BlogService {
         noindex: blogs.noindex,
         createdAt: blogs.createdAt,
         updatedAt: blogs.updatedAt,
+        categoryId: blogs.categoryId,
         category: {
           id: categories.id,
           name: categories.name,
@@ -535,13 +588,46 @@ export class BlogService {
       .limit(limit)
       .offset(offset);
 
+    const allBlogIds = rows.map((r) => r.id);
+    const catRows =
+      allBlogIds.length > 0
+        ? await db
+            .select({
+              blogId: blogCategories.blogId,
+              id: categories.id,
+              name: categories.name,
+              slug: categories.slug,
+            })
+            .from(blogCategories)
+            .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
+            .where(inArray(blogCategories.blogId, allBlogIds))
+        : [];
+
+    const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
+    for (const cr of catRows) {
+      const list = blogCategoryMap.get(cr.blogId) || [];
+      if (!list.some((c) => c.id === cr.id)) {
+        list.push({ id: cr.id, name: cr.name, slug: cr.slug });
+      }
+      blogCategoryMap.set(cr.blogId, list);
+    }
+
     // Group articles by translation group so bilingual versions are treated as 1 single article
     const groupedMap = new Map<string, any>();
     for (const row of rows) {
       const groupKey = row.translationGroupId || row.slug || row.id;
+      const attachedCats =
+        blogCategoryMap.get(row.id) ||
+        (row.category?.id ? [row.category] : []);
+      const primaryCategory = attachedCats[0] || row.category;
+      const primaryCategoryId = primaryCategory?.id || row.categoryId || null;
+
       if (!groupedMap.has(groupKey)) {
         groupedMap.set(groupKey, {
           ...row,
+          categoryId: primaryCategoryId,
+          category: primaryCategory,
+          categories: attachedCats,
           languages: [
             {
               language: row.language,
@@ -564,6 +650,9 @@ export class BlogService {
           // Prefer Hinglish title as primary default
           existing.title = row.title;
           existing.id = row.id;
+          existing.categoryId = primaryCategoryId || existing.categoryId;
+          existing.category = primaryCategory || existing.category;
+          if (attachedCats.length > 0) existing.categories = attachedCats;
         }
         if (row.language === 'ENGLISH') {
           existing.englishId = row.id;
@@ -611,9 +700,12 @@ export class BlogService {
     }
 
     const html = blocksToHtml(blocks as any);
+    const postCategories = await this.getBlogCategories(blog.id);
 
     return {
       ...blog,
+      category: postCategories[0] || blog.categoryId ? { id: blog.categoryId } : null,
+      categories: postCategories,
       blocks,
       tags: postTagsList,
       htmlContent: html,
@@ -650,6 +742,14 @@ export class BlogService {
             ? new Date(input.scheduledAt)
             : null;
 
+        const initialCategoryIds =
+          input.categoryIds && input.categoryIds.length > 0
+            ? input.categoryIds
+            : input.categoryId
+              ? [input.categoryId]
+              : [];
+        const primaryCategoryId = initialCategoryIds[0] || null;
+
         const [blog] = await tx
           .insert(blogs)
           .values({
@@ -659,7 +759,7 @@ export class BlogService {
             coverImage: input.coverImage,
             imageAlt: input.imageAlt,
             imageCaption: input.imageCaption,
-            categoryId: input.categoryId || null,
+            categoryId: primaryCategoryId,
             metaTitle: input.metaTitle,
             metaDescription: input.metaDescription,
             canonicalUrl: input.canonicalUrl || null,
@@ -687,6 +787,11 @@ export class BlogService {
         // Tags
         if (input.tagIds && input.tagIds.length > 0) {
           await this.syncTags(tx, blog.id, input.tagIds);
+        }
+
+        // Categories (multi-category support)
+        if (initialCategoryIds.length > 0) {
+          await this.syncCategories(tx, blog.id, initialCategoryIds);
         }
 
         // Create initial revision
@@ -781,6 +886,18 @@ export class BlogService {
             });
         }
 
+        const updatedCategoryIds =
+          input.categoryIds !== undefined
+            ? input.categoryIds
+            : input.categoryId !== undefined
+              ? (input.categoryId ? [input.categoryId] : [])
+              : undefined;
+
+        const updatedPrimaryCategoryId =
+          updatedCategoryIds !== undefined
+            ? (updatedCategoryIds[0] || null)
+            : existing.categoryId;
+
         const [blog] = await tx
           .update(blogs)
           .set({
@@ -790,10 +907,7 @@ export class BlogService {
             coverImage: input.coverImage ?? existing.coverImage,
             imageAlt: input.imageAlt ?? existing.imageAlt,
             imageCaption: input.imageCaption ?? existing.imageCaption,
-            categoryId:
-              input.categoryId !== undefined
-                ? input.categoryId
-                : existing.categoryId,
+            categoryId: updatedPrimaryCategoryId,
             metaTitle: input.metaTitle ?? existing.metaTitle,
             metaDescription: input.metaDescription ?? existing.metaDescription,
             canonicalUrl:
@@ -843,6 +957,11 @@ export class BlogService {
           await this.syncTags(tx, blog.id, input.tagIds);
         }
 
+        // Sync categories if provided
+        if (updatedCategoryIds !== undefined) {
+          await this.syncCategories(tx, blog.id, updatedCategoryIds);
+        }
+
         // Sync shared fields to sibling language version (coverImage, imageAlt, imageCaption, categoryId, tags)
         if (blog.translationGroupId) {
           const [sibling] = await tx
@@ -865,7 +984,7 @@ export class BlogService {
           if (input.coverImage !== undefined) sharedFieldsToSync.coverImage = blog.coverImage;
           if (input.imageAlt !== undefined) sharedFieldsToSync.imageAlt = blog.imageAlt;
           if (input.imageCaption !== undefined) sharedFieldsToSync.imageCaption = blog.imageCaption;
-          if (input.categoryId !== undefined) sharedFieldsToSync.categoryId = blog.categoryId;
+          if (updatedPrimaryCategoryId !== undefined) sharedFieldsToSync.categoryId = updatedPrimaryCategoryId;
           if (input.noindex !== undefined) sharedFieldsToSync.noindex = blog.noindex;
 
           if (Object.keys(sharedFieldsToSync).length > 0) {
@@ -884,6 +1003,11 @@ export class BlogService {
           // Sync tags to sibling
           if (input.tagIds && sibling) {
             await this.syncTags(tx, sibling.id, input.tagIds);
+          }
+
+          // Sync categories to sibling
+          if (updatedCategoryIds !== undefined && sibling) {
+            await this.syncCategories(tx, sibling.id, updatedCategoryIds);
           }
 
           // Sync inline image blocks to sibling language version
@@ -1348,6 +1472,19 @@ export class BlogService {
       .where(eq(blogTags.blogId, blogId));
   }
 
+  private async getBlogCategories(blogId: string) {
+    return db
+      .select({
+        id: categories.id,
+        name: categories.name,
+        slug: categories.slug,
+        description: categories.description,
+      })
+      .from(blogCategories)
+      .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
+      .where(eq(blogCategories.blogId, blogId));
+  }
+
   private async syncTags(
     tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
     blogId: string,
@@ -1359,6 +1496,22 @@ export class BlogService {
         tagIds.map((tagId) => ({
           blogId,
           tagId,
+        })),
+      );
+    }
+  }
+
+  private async syncCategories(
+    tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
+    blogId: string,
+    categoryIds: string[],
+  ) {
+    await tx.delete(blogCategories).where(eq(blogCategories.blogId, blogId));
+    if (categoryIds.length > 0) {
+      await tx.insert(blogCategories).values(
+        categoryIds.map((categoryId) => ({
+          blogId,
+          categoryId,
         })),
       );
     }

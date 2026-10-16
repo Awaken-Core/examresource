@@ -27,9 +27,9 @@ try {
 const categoryTitle = categoryInfo?.name || subjectKey.replace(/-/g, ' ').toUpperCase();
 const categoryDesc = categoryInfo?.description || `Browse articles and updates in ${categoryTitle}.`;
 
-const pageTitle = `${categoryTitle} - Reference Guides & Articles | ExamPortal`;
+const pageTitle = `${categoryTitle} - Exam Guides & Notifications | GovtPariksha`;
 const pageDescription = categoryDesc;
-const canonicalUrl = `https://examresource.local/blog/${subjectKey}`;
+const canonicalUrl = `https://govtpariksha.com/blog/${subjectKey}`;
 
 // Schema.org structured data (BreadcrumbList & CollectionPage)
 const jsonLd = {
@@ -53,8 +53,8 @@ const jsonLd = {
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Articles",
-          "item": "https://examresource.local/blog"
+          "name": "Home",
+          "item": "https://govtpariksha.com/"
         },
         {
           "@type": "ListItem",

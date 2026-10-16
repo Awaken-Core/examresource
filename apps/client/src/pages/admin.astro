@@ -339,6 +339,57 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     </div>
   </div>
 
+  <!-- Dedicated Assign Categories Modal (Multi-Category Assignment) -->
+  <div id="assign-categories-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="min-w-0 pr-2">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>
+            <span>Assign Categories</span>
+          </h3>
+          <p id="assign-cat-blog-title" class="text-xs font-semibold text-slate-700 mt-1 line-clamp-1 break-words"></p>
+        </div>
+        <button id="close-assign-cat-modal-btn" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-2">
+        <div class="flex items-center justify-between text-xs text-slate-500">
+          <span>Select all categories that apply to this article:</span>
+          <div class="space-x-2">
+            <button type="button" id="assign-cat-select-all" class="text-blue-600 hover:underline font-medium text-[11px]">Select All</button>
+            <span class="text-slate-300">|</span>
+            <button type="button" id="assign-cat-clear-all" class="text-slate-500 hover:underline font-medium text-[11px]">Clear All</button>
+          </div>
+        </div>
+
+        <div id="assign-cat-list" class="max-h-60 overflow-y-auto divide-y divide-slate-100 border border-slate-200 rounded-lg p-1 bg-slate-50/50">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button 
+          type="button" 
+          id="cancel-assign-cat-modal-btn" 
+          class="px-3.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold transition"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          id="save-assign-cat-modal-btn" 
+          class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold shadow-2xs transition disabled:opacity-50"
+        >
+          <span id="save-assign-cat-spinner" class="hidden w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+          <span id="save-assign-cat-label">Save Categories</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </AdminLayout>
 
 <script>
@@ -513,6 +564,129 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }
   });
 
+  // Assign Categories Modal Elements & Handlers
+  const assignCatModal = document.getElementById('assign-categories-modal');
+  const assignCatBlogTitle = document.getElementById('assign-cat-blog-title');
+  const assignCatList = document.getElementById('assign-cat-list');
+  const closeAssignCatModalBtn = document.getElementById('close-assign-cat-modal-btn');
+  const cancelAssignCatModalBtn = document.getElementById('cancel-assign-cat-modal-btn');
+  const saveAssignCatModalBtn = document.getElementById('save-assign-cat-modal-btn') as HTMLButtonElement | null;
+  const saveAssignCatSpinner = document.getElementById('save-assign-cat-spinner');
+  const saveAssignCatLabel = document.getElementById('save-assign-cat-label');
+  const assignCatSelectAll = document.getElementById('assign-cat-select-all');
+  const assignCatClearAll = document.getElementById('assign-cat-clear-all');
+  let currentAssignBlogId: string | null = null;
+
+  function openAssignCategoriesModal(blogId: string) {
+    const post = posts.find((p) => p.id === blogId);
+    if (!post || !assignCatModal) return;
+
+    currentAssignBlogId = blogId;
+    if (assignCatBlogTitle) {
+      assignCatBlogTitle.textContent = post.title || 'Untitled Article';
+    }
+
+    const currentAttachedIds = new Set<string>();
+    if (post.categoryId) currentAttachedIds.add(post.categoryId);
+    if (Array.isArray(post.categories)) {
+      post.categories.forEach((c: any) => {
+        if (c?.id) currentAttachedIds.add(c.id);
+      });
+    }
+
+    if (assignCatList) {
+      if (categories.length === 0) {
+        assignCatList.innerHTML = `<p class="p-4 text-xs text-slate-400 text-center">No categories exist yet. Create a category in the section below first.</p>`;
+      } else {
+        assignCatList.innerHTML = categories.map((cat) => {
+          const isChecked = currentAttachedIds.has(cat.id);
+          return `
+            <label class="flex items-start gap-2.5 p-2 rounded hover:bg-white cursor-pointer transition select-none">
+              <input 
+                type="checkbox" 
+                class="assign-cat-checkbox mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" 
+                value="${cat.id}"
+                ${isChecked ? 'checked' : ''}
+              />
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-semibold text-slate-800">${escapeHtml(cat.name)}</span>
+                  <span class="text-[10px] font-mono text-slate-400">/blog/${cat.slug}</span>
+                </div>
+                ${cat.description ? `<p class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">${escapeHtml(cat.description)}</p>` : ''}
+              </div>
+            </label>
+          `;
+        }).join('');
+      }
+    }
+
+    assignCatModal.classList.remove('hidden');
+    assignCatModal.classList.add('flex');
+  }
+
+  function closeAssignCategoriesModal() {
+    if (!assignCatModal) return;
+    assignCatModal.classList.add('hidden');
+    assignCatModal.classList.remove('flex');
+    currentAssignBlogId = null;
+  }
+
+  closeAssignCatModalBtn?.addEventListener('click', closeAssignCategoriesModal);
+  cancelAssignCatModalBtn?.addEventListener('click', closeAssignCategoriesModal);
+  assignCatModal?.addEventListener('click', (e) => {
+    if (e.target === assignCatModal) closeAssignCategoriesModal();
+  });
+
+  assignCatSelectAll?.addEventListener('click', () => {
+    document.querySelectorAll<HTMLInputElement>('.assign-cat-checkbox').forEach((cb) => {
+      cb.checked = true;
+    });
+  });
+
+  assignCatClearAll?.addEventListener('click', () => {
+    document.querySelectorAll<HTMLInputElement>('.assign-cat-checkbox').forEach((cb) => {
+      cb.checked = false;
+    });
+  });
+
+  saveAssignCatModalBtn?.addEventListener('click', async () => {
+    if (!currentAssignBlogId) return;
+    const selectedIds: string[] = [];
+    document.querySelectorAll<HTMLInputElement>('.assign-cat-checkbox:checked').forEach((cb) => {
+      selectedIds.push(cb.value);
+    });
+
+    if (saveAssignCatModalBtn) saveAssignCatModalBtn.disabled = true;
+    if (saveAssignCatSpinner) saveAssignCatSpinner.classList.remove('hidden');
+    if (saveAssignCatLabel) saveAssignCatLabel.textContent = 'Saving...';
+
+    try {
+      const res = await apiFetch(`/blogs/${currentAssignBlogId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          categoryIds: selectedIds,
+          categoryId: selectedIds[0] || null,
+        }),
+      });
+
+      if (res.ok) {
+        showToast('Categories updated successfully.');
+        closeAssignCategoriesModal();
+        await fetchPosts();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.message || 'Failed to update categories', true);
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Network error updating categories', true);
+    } finally {
+      if (saveAssignCatModalBtn) saveAssignCatModalBtn.disabled = false;
+      if (saveAssignCatSpinner) saveAssignCatSpinner.classList.add('hidden');
+      if (saveAssignCatLabel) saveAssignCatLabel.textContent = 'Save Categories';
+    }
+  });
+
   function showToast(msg: string, isError = false) {
     if (!toastEl || !toastText) return;
     toastText.textContent = msg;
@@ -630,7 +804,11 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     }
 
     tbody.innerHTML = posts.map((post) => {
-      const catName = post.category?.name || 'Uncategorized';
+      const primaryCatId = post.categoryId || (post.category?.id) || '';
+      const attachedCategories = (Array.isArray(post.categories) && post.categories.length > 0)
+        ? post.categories
+        : (post.category ? [post.category] : []);
+      const extraCount = attachedCategories.length > 1 ? attachedCategories.length - 1 : 0;
       const publicUrl = `/${post.slug}`;
 
       const statusBadge = 
@@ -661,10 +839,41 @@ import AdminLayout from '../layouts/AdminLayout.astro';
               </span>
             </div>
           </td>
-          <td class="py-3 px-3 whitespace-nowrap">
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
-              ${escapeHtml(catName)}
-            </span>
+          <td class="py-3 px-3">
+            <div class="flex flex-col gap-1 min-w-[150px]">
+              <select 
+                class="row-category-select text-[11px] bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 hover:border-slate-300 focus:border-blue-500 rounded px-2 py-1 text-slate-700 font-medium transition outline-none cursor-pointer"
+                data-id="${post.id}"
+                data-prev="${primaryCatId}"
+                title="Change Primary Category"
+              >
+                <option value="">-- No Category --</option>
+                ${categories.map((c) => `
+                  <option value="${c.id}" ${primaryCatId === c.id ? 'selected' : ''}>
+                    ${escapeHtml(c.name)}
+                  </option>
+                `).join('')}
+              </select>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${extraCount > 0 ? `
+                  <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200" title="${escapeHtml(attachedCategories.map((c: any) => c.name).join(', '))}">
+                    +${extraCount} more
+                  </span>
+                ` : ''}
+                <button 
+                  type="button" 
+                  class="manage-categories-btn text-[10px] text-blue-600 hover:text-blue-800 font-medium hover:underline inline-flex items-center gap-0.5 cursor-pointer"
+                  data-id="${post.id}"
+                  data-title="${escapeHtml(post.title)}"
+                  title="Assign to multiple categories"
+                >
+                  <svg class="w-3 h-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
+                  Categories (${attachedCategories.length})
+                </button>
+              </div>
+            </div>
           </td>
           <td class="py-3 px-3 whitespace-nowrap">
             <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border ${statusBadge}">
@@ -726,6 +935,50 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   }
 
   function attachRowEvents() {
+    document.querySelectorAll<HTMLSelectElement>('.row-category-select').forEach((sel) => {
+      sel.onchange = async () => {
+        const id = sel.dataset.id;
+        const newCatId = sel.value;
+        const prevCatId = sel.dataset.prev || '';
+        if (!id) return;
+        sel.disabled = true;
+
+        try {
+          const res = await apiFetch(`/blogs/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+              categoryId: newCatId || null,
+              categoryIds: newCatId ? [newCatId] : [],
+            }),
+          });
+          if (res.ok) {
+            const catObj = categories.find((c) => c.id === newCatId);
+            showToast(`Category updated to "${catObj ? catObj.name : 'Uncategorized'}".`);
+            await fetchPosts();
+          } else {
+            const err = await res.json().catch(() => ({}));
+            showToast(err.message || 'Failed to update category', true);
+            sel.value = prevCatId;
+            sel.disabled = false;
+          }
+        } catch {
+          showToast('Failed to update category', true);
+          sel.value = prevCatId;
+          sel.disabled = false;
+        }
+      };
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.manage-categories-btn').forEach((btn) => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (!id) return;
+        openAssignCategoriesModal(id);
+      };
+    });
+
     document.querySelectorAll<HTMLButtonElement>('.toggle-status-btn').forEach((btn) => {
       btn.onclick = async () => {
         const id = btn.dataset.id;
@@ -766,6 +1019,14 @@ import AdminLayout from '../layouts/AdminLayout.astro';
   // Delegated post table events as robust fallback
   tbody?.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    const catBtn = target.closest<HTMLButtonElement>('.manage-categories-btn');
+    if (catBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = catBtn.dataset.id;
+      if (id) openAssignCategoriesModal(id);
+      return;
+    }
     const delBtn = target.closest<HTMLButtonElement>('.del-btn');
     if (delBtn) {
       e.preventDefault();

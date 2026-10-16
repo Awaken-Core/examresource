@@ -47,20 +47,33 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
     </button>
   </div>
 
-  <div data-notification-new class="space-y-2 mt-1">
+  {/* Browser / Device Alert Opt-In Banner */}
+  <div data-browser-notification-prompt class="hidden mb-2.5 p-2.5 rounded-xl bg-accent/10 border border-accent/30 text-xs">
+    <div class="flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-sm shrink-0">🔔</span>
+        <span class="text-[11px] text-white/90 font-medium leading-tight">Enable device alerts for new exams & results</span>
+      </div>
+      <button 
+        type="button" 
+        data-enable-browser-notifications
+        class="px-2 py-1 rounded bg-accent text-on-accent text-[10px] font-bold hover:brightness-110 transition shrink-0 cursor-pointer"
+      >
+        Enable
+      </button>
+    </div>
+  </div>
+
+  <div data-notification-new class="space-y-2 mt-1 max-h-[380px] overflow-y-auto pr-1">
     <p class="text-xs text-muted py-2 text-center">Loading notifications...</p>
   </div>
 
-  <div class="mt-4 pt-3 border-t border-border/40">
-    <h4 class="text-xs font-semibold text-muted mb-2.5">Earlier</h4>
-    <div data-notification-earlier class="space-y-2"></div>
-    <div data-notification-caught-up class="flex items-center justify-center gap-2 py-3 px-3 rounded-xl bg-surface-raised/30 border border-border/30 text-muted text-xs">
-      <div class="w-4 h-4 rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shrink-0">
-        <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-        </svg>
-      </div>
-      <span class="font-medium text-muted">You're all caught up!</span>
+  <div data-notification-caught-up class="hidden mt-3 flex items-center justify-center gap-2 py-4 px-3 rounded-xl bg-surface-raised/30 border border-border/30 text-muted text-xs">
+    <div class="w-4 h-4 rounded-full bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 flex items-center justify-center shrink-0">
+      <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
     </div>
+    <span class="font-medium text-muted">You're all caught up!</span>
   </div>
 </div>

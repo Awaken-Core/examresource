@@ -9,6 +9,7 @@ export type AppNotification = {
 };
 
 const API_URL = import.meta.env.PUBLIC_API_URL ?? 'http://localhost:5000/api/v1';
+const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
 
 let currentItems: AppNotification[] = [];
 let currentToken: string | null = null;
@@ -31,11 +32,111 @@ function iconFor(kind: AppNotification['kind']) {
   return '📢';
 }
 
+function getFiredIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(FIRED_STORAGE_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveFiredIds(ids: Set<string>) {
+  try {
+    const arr = Array.from(ids).slice(-100);
+    localStorage.setItem(FIRED_STORAGE_KEY, JSON.stringify(arr));
+  } catch {}
+}
+
+export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
+  if (typeof window === 'undefined' || !('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+
+  const firedIds = getFiredIds();
+  const isFirstRun = localStorage.getItem(FIRED_STORAGE_KEY) === null;
+
+  const candidates = unreadItems.filter((item) => !item.read && !firedIds.has(item.id));
+  const toFire = isFirstRun ? candidates.slice(0, 2) : candidates;
+
+  for (const item of candidates) {
+    firedIds.add(item.id);
+  }
+  saveFiredIds(firedIds);
+
+  for (const item of toFire) {
+    const title = item.title ? `GovtPariksha: ${item.title}` : 'GovtPariksha Alert';
+    const body = item.body || 'New examination notification published.';
+    const options: NotificationOptions = {
+      body,
+      icon: '/logo.png',
+      badge: '/favicon.svg',
+      tag: item.id,
+      data: { url: item.href || '/' },
+    };
+
+    try {
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration().catch(() => null);
+        if (reg && 'showNotification' in reg) {
+          await reg.showNotification(title, options);
+          continue;
+        }
+      }
+    } catch (_) {}
+
+    try {
+      const notif = new Notification(title, options);
+      notif.onclick = () => {
+        window.focus();
+        if (item.href) {
+          window.location.assign(item.href);
+        }
+      };
+    } catch (err) {
+      console.warn('System Notification error:', err);
+    }
+  }
+}
+
+export async function requestBrowserNotificationPermission(): Promise<boolean> {
+  if (typeof window === 'undefined' || !('Notification' in window)) return false;
+  if (Notification.permission === 'granted') {
+    updateBrowserNotificationUI();
+    return true;
+  }
+  if (Notification.permission === 'denied') {
+    updateBrowserNotificationUI();
+    return false;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    updateBrowserNotificationUI();
+    if (permission === 'granted') {
+      const unread = currentItems.filter((i) => !i.read);
+      void fireUnreadToSystem(unread);
+      return true;
+    }
+  } catch (err) {
+    console.warn('Failed to request notification permission:', err);
+  }
+  return false;
+}
+
+export function updateBrowserNotificationUI() {
+  if (typeof window === 'undefined') return;
+  const supported = 'Notification' in window;
+  const permission = supported ? Notification.permission : 'denied';
+
+  document.querySelectorAll<HTMLElement>('[data-browser-notification-prompt]').forEach((el) => {
+    el.classList.toggle('hidden', !supported || permission !== 'default');
+  });
+}
+
 function buildCard(item: AppNotification) {
   const card = document.createElement(item.href ? 'a' : 'div');
-  card.className = item.read
-    ? 'notification-item block border-l-3 border-l-border bg-surface-raised/20 hover:bg-surface-raised border border-border/30 rounded-xl p-3 transition opacity-80'
-    : 'notification-item block border-l-3 border-l-accent bg-surface-raised/50 hover:bg-surface-raised border border-border/40 rounded-xl p-3 transition';
+  card.className =
+    'notification-item group/item relative block border-l-3 border-l-accent bg-surface-raised/50 hover:bg-surface-raised border border-border/40 rounded-xl p-3 transition pr-9';
   if (card instanceof HTMLAnchorElement && item.href) {
     card.href = item.href;
     card.dataset.notificationLink = item.id;
@@ -72,44 +173,58 @@ function buildCard(item: AppNotification) {
   }
 
   const meta = document.createElement('div');
-  meta.className = 'flex items-center justify-end gap-1 mt-1.5 text-[11px] font-medium text-accent';
-  if (!item.read) {
-    const dot = document.createElement('span');
-    dot.className = 'notification-unread-dot w-1.5 h-1.5 rounded-full bg-accent';
-    meta.append(dot);
-  }
+  meta.className = 'flex items-center justify-between gap-1 mt-1.5 text-[11px] font-medium text-accent';
+
+  const dotWrap = document.createElement('div');
+  dotWrap.className = 'flex items-center gap-1.5';
+  const dot = document.createElement('span');
+  dot.className = 'notification-unread-dot w-1.5 h-1.5 rounded-full bg-accent';
+  const newLabel = document.createElement('span');
+  newLabel.className = 'text-[10px] uppercase font-bold tracking-wider text-accent';
+  newLabel.textContent = 'New';
+  dotWrap.append(dot, newLabel);
+
   const time = document.createElement('span');
+  time.className = 'text-muted text-[10px] font-normal';
   time.textContent = relativeTime(item.createdAt);
-  meta.append(time);
+  meta.append(dotWrap, time);
 
   content.append(message, meta);
   row.append(icon, content);
-  card.append(row);
+
+  // Dismiss / Mark as Read button
+  const dismissBtn = document.createElement('button');
+  dismissBtn.type = 'button';
+  dismissBtn.dataset.dismissNotification = item.id;
+  dismissBtn.title = 'Mark as read and dismiss';
+  dismissBtn.className =
+    'absolute top-2.5 right-2.5 p-1 rounded-md text-muted hover:text-white hover:bg-surface-raised border border-transparent hover:border-border/40 transition opacity-70 group-hover/item:opacity-100 cursor-pointer';
+  dismissBtn.innerHTML = `
+    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  `;
+
+  card.append(row, dismissBtn);
   return card;
 }
 
 function paint(items: AppNotification[]) {
+  // Only display unread notifications - read ones are completely removed
   const unread = items.filter((item) => !item.read);
-  const earlier = items.filter((item) => item.read);
 
   document.querySelectorAll<HTMLElement>('[data-notification-new]').forEach((list) => {
     list.replaceChildren();
     if (!unread.length) {
-      const empty = document.createElement('p');
-      empty.className = 'text-xs text-muted py-2 text-center';
-      empty.textContent = 'No new notifications';
-      list.append(empty);
+      list.classList.add('hidden');
       return;
     }
+    list.classList.remove('hidden');
     unread.forEach((item) => list.append(buildCard(item)));
   });
 
-  document.querySelectorAll<HTMLElement>('[data-notification-earlier]').forEach((list) => {
-    list.replaceChildren(...earlier.map((item) => buildCard(item)));
-  });
-
   document.querySelectorAll<HTMLElement>('[data-notification-caught-up]').forEach((node) => {
-    node.classList.toggle('hidden', earlier.length > 0);
+    node.classList.toggle('hidden', unread.length > 0);
   });
 
   document.querySelectorAll('.notification-badge-count, .notification-pill-badge').forEach((node) => {
@@ -126,6 +241,8 @@ function paint(items: AppNotification[]) {
   document.querySelectorAll('.notification-dot-indicator').forEach((node) => {
     node.classList.toggle('hidden', unread.length === 0);
   });
+
+  updateBrowserNotificationUI();
 }
 
 export async function refreshNotifications(token: string | null) {
@@ -144,6 +261,7 @@ export async function refreshNotifications(token: string | null) {
     const data = (await response.json()) as { items?: AppNotification[] };
     currentItems = data.items ?? [];
     paint(currentItems);
+    void fireUnreadToSystem(currentItems.filter((item) => !item.read));
   } catch {
     // Keep the last rendered list if the request fails.
   }

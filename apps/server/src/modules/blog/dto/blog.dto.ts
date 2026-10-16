@@ -59,6 +59,7 @@ export const createBlogSchema = z.object({
   status: z.enum(blogStatuses).optional(),
   scheduledAt: z.string().datetime().nullable().optional(),
   categoryId: z.string().uuid().nullable().optional(),
+  categoryIds: z.array(z.string().uuid()).optional(),
   authorId: z.string().trim().min(1).max(80).nullable().optional(),
   tagIds: z.array(z.string().uuid()).optional(),
   metaTitle: z.string().trim().max(300).nullable().optional(),

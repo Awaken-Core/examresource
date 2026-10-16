@@ -5,5 +5,18 @@
       "release/prod": true,
       "*": false
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.govtpariksha.com"
+        }
+      ],
+      "destination": "https://govtpariksha.com/:path*",
+      "permanent": true
+    }
+  ]
 }

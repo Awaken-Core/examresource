@@ -1181,11 +1181,13 @@ html.admin-theme.theme-dark .ProseMirror hr {
     grid-column: 2;
     grid-row: 1 / span 2;
     position: sticky;
-    top: 110px;
+    top: 80px;
     display: flex;
-    height: calc(100dvh - 126px);
-    max-height: calc(100dvh - 126px);
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    scrollbar-width: thin;
     flex-direction: column;
+    padding-bottom: 1rem;
   }
 }
 
