@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { whatsappChannel, telegramChannel } from '../data/site';
+import { whatsappChannel, telegramChannel, contactEmail } from '../data/site';
 
 const pageTitle = "Contact Us — govtpariksha.com Support & Editorial Desk";
 const pageDescription = "Get in touch with the govtpariksha.com team for exam notification inquiries, corrections, technical assistance, or partnership proposals.";
@@ -19,7 +19,7 @@ const jsonLd = {
     "logo": "https://govtpariksha.com/og-image.jpg",
     "contactPoint": {
       "@type": "ContactPoint",
-      "email": "support@govtpariksha.com",
+      "email": contactEmail,
       "contactType": "Customer Support",
       "areaServed": "IN",
       "availableLanguage": ["en", "hi"]
@@ -53,124 +53,115 @@ const jsonLd = {
   jsonLd={jsonLd}
 >
   <div class="min-h-screen bg-canvas text-white">
-    {/* Hero Section */}
-    <div class="border-b border-border/80 bg-surface/60 backdrop-blur-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        <nav aria-label="Breadcrumb" class="mb-4 flex items-center gap-2 text-caption-xs text-muted">
-          <a href="/" class="hover:text-accent transition">Home</a>
-          <span class="text-border">/</span>
-          <span class="text-white font-medium">Contact Us</span>
-        </nav>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      
+      {/* Breadcrumb */}
+      <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted">
+        <a href="/" class="hover:text-accent transition">Home</a>
+        <span>/</span>
+        <span class="font-medium text-white">Contact Us</span>
+      </nav>
 
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div class="space-y-3 max-w-3xl">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-caption-xs font-semibold uppercase tracking-wider">
-              <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-              </span>
-              Support & Editorial Desk
-            </div>
-            <h1 class="text-heading-xl sm:text-heading-xxl font-extrabold text-white tracking-tight">
-              Get in Touch with Us
-            </h1>
-            <p class="text-body-md text-muted leading-relaxed">
-              Have a question about an exam pattern, spotted a corrigendum that needs updating, or want to discuss collaboration? Our team is ready to help.
-            </p>
-          </div>
-
-          <div class="flex items-center gap-3 shrink-0 text-caption-xs text-muted bg-surface-raised/60 border border-border/80 px-4 py-3 rounded-xl">
-            <div class="flex items-center gap-2 text-emerald-400 font-semibold">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Response SLA: Within 24-48 Hours</span>
-            </div>
-          </div>
+      {/* Header Banner */}
+      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-8 shadow-xs">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs font-semibold mb-3">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+          </span>
+          Awaken Studios Support Desk
         </div>
-      </div>
-    </div>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">
+          Get in Touch with Us
+        </h1>
+        <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
+          Have a question about an exam pattern, spotted a corrigendum that needs updating, or want to discuss collaboration? Our team is ready to help.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
+          <span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Response SLA: Within 24-48 Hours
+          </span>
+          <span>•</span>
+          <span>Mon – Sat, 9:00 AM – 6:00 PM IST</span>
+        </div>
+      </header>
 
-    {/* Contact Cards Overview */}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Contact Channels */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         
-        {/* Card 1: Official Email */}
-        <div class="p-6 rounded-2xl bg-surface border border-border/70 hover:border-accent/40 transition group relative overflow-hidden flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {/* Email */}
+        <div class="rounded-xl border border-border bg-surface p-5 hover:border-accent/40 transition flex flex-col justify-between group">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
             </div>
-            <div>
-              <h3 class="text-body-md font-bold text-white mb-1">Direct Email</h3>
-              <p class="text-caption-sm text-muted">For general queries, corrections, and editorial updates.</p>
-            </div>
+            <h3 class="text-sm font-bold text-white mb-1">Direct Email</h3>
+            <p class="text-xs text-muted leading-relaxed mb-4">Official Awaken Studios support desk for queries and corrections.</p>
           </div>
-          <div class="pt-4 mt-4 border-t border-border/50">
+          <div class="pt-3 border-t border-border">
             <a 
-              href="mailto:support@govtpariksha.com" 
-              class="text-body-sm font-semibold text-accent hover:underline flex items-center gap-1.5"
+              href={`mailto:${contactEmail}`} 
+              class="text-xs font-semibold text-accent hover:underline flex items-center gap-1.5 truncate"
             >
-              <span>support@govtpariksha.com</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span class="truncate">{contactEmail}</span>
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
               </svg>
             </a>
           </div>
         </div>
 
-        {/* Card 2: WhatsApp Channel */}
-        <div class="p-6 rounded-2xl bg-surface border border-border/70 hover:border-[#25D366]/40 transition group relative overflow-hidden flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="w-12 h-12 rounded-xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        {/* WhatsApp */}
+        <div class="rounded-xl border border-border bg-surface p-5 hover:border-[#25D366]/40 transition flex flex-col justify-between group">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-[#25D366]/10 text-[#25D366] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.07-1.782-.406-1.464-.608-2.42-2.126-2.493-2.224-.072-.098-.59-1.026-.59-1.956 0-.93.486-1.385.66-1.577.174-.192.38-.24.507-.24.127 0 .253.002.364.007.119.006.278-.045.435.334.162.392.553 1.35.602 1.448.049.098.082.213.016.344-.066.13-.099.213-.197.327-.098.115-.207.257-.295.344-.099.098-.202.205-.087.402.115.197.512.844 1.098 1.366.755.672 1.391.88 1.588.978.197.098.312.082.427-.049.115-.13.493-.574.624-.77.131-.197.262-.164.442-.098.18.066 1.144.539 1.341.637.197.098.328.147.377.23.049.082.049.475-.095.88zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.178L2 22l4.981-1.395A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
               </svg>
             </div>
-            <div>
-              <h3 class="text-body-md font-bold text-white mb-1">WhatsApp Channel</h3>
-              <p class="text-caption-sm text-muted">Join over 10,000+ candidates for instant exam alerts and notifications.</p>
-            </div>
+            <h3 class="text-sm font-bold text-white mb-1">WhatsApp Channel</h3>
+            <p class="text-xs text-muted leading-relaxed mb-4">Join candidates for instant exam alerts, admit cards, and notices.</p>
           </div>
-          <div class="pt-4 mt-4 border-t border-border/50">
+          <div class="pt-3 border-t border-border">
             <a 
               href={whatsappChannel} 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="text-body-sm font-semibold text-[#25D366] hover:underline flex items-center gap-1.5"
+              class="text-xs font-semibold text-[#25D366] hover:underline flex items-center gap-1.5"
             >
               <span>Join WhatsApp Channel</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
               </svg>
             </a>
           </div>
         </div>
 
-        {/* Card 3: Telegram Community */}
-        <div class="p-6 rounded-2xl bg-surface border border-border/70 hover:border-[#2AABEE]/40 transition group relative overflow-hidden flex flex-col justify-between">
-          <div class="space-y-3">
-            <div class="w-12 h-12 rounded-xl bg-[#2AABEE]/10 text-[#2AABEE] flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        {/* Telegram */}
+        <div class="rounded-xl border border-border bg-surface p-5 hover:border-[#2AABEE]/40 transition flex flex-col justify-between group">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-[#2AABEE]/10 text-[#2AABEE] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .36z"/>
               </svg>
             </div>
-            <div>
-              <h3 class="text-body-md font-bold text-white mb-1">Telegram Community</h3>
-              <p class="text-caption-sm text-muted">Real-time PDFs, syllabus revisions, and exam discussion group.</p>
-            </div>
+            <h3 class="text-sm font-bold text-white mb-1">Telegram Community</h3>
+            <p class="text-xs text-muted leading-relaxed mb-4">Official syllabus revisions, PDF notes, and discussion group.</p>
           </div>
-          <div class="pt-4 mt-4 border-t border-border/50">
+          <div class="pt-3 border-t border-border">
             <a 
               href={telegramChannel} 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="text-body-sm font-semibold text-[#2AABEE] hover:underline flex items-center gap-1.5"
+              class="text-xs font-semibold text-[#2AABEE] hover:underline flex items-center gap-1.5"
             >
               <span>Join Telegram Group</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
               </svg>
             </a>
@@ -178,105 +169,96 @@ const jsonLd = {
         </div>
 
       </div>
-    </div>
 
-    {/* Form & Support Details Section */}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Main Form & FAQs Grid */}
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Form: Interactive Message & Correction Desk */}
+        {/* Contact Form */}
         <div class="lg:col-span-7">
-          <div class="p-6 sm:p-8 rounded-2xl bg-surface border border-border/80 shadow-sm relative">
-            <div class="mb-6">
-              <h2 class="text-heading-md font-bold text-white mb-1">Send a Message or Report an Update</h2>
-              <p class="text-body-sm text-muted">
-                Fill out the form below. We prioritize notification corrections, dead link reports, and candidate inquiries.
-              </p>
-            </div>
+          <div class="rounded-xl border border-border bg-surface p-6 sm:p-8 shadow-xs">
+            <h2 class="text-lg sm:text-xl font-bold text-white mb-1">Send a Message</h2>
+            <p class="text-xs sm:text-sm text-muted mb-6 leading-relaxed">
+              We prioritize notification updates, dead link reports, and candidate inquiries.
+            </p>
 
-            {/* Success Banner (Hidden by default) */}
-            <div id="contact-success-banner" class="hidden mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-              <div class="flex items-start gap-3">
-                <svg class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {/* Success Banner */}
+            <div id="contact-success-banner" class="hidden mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300">
+              <div class="flex items-start gap-2.5">
+                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div class="text-caption-sm space-y-1">
-                  <p class="font-bold text-emerald-300">Inquiry Received Successfully!</p>
-                  <p class="text-emerald-400/90">Thank you for writing to us. Our editorial and support desk has logged your request and will review it promptly.</p>
+                <div class="text-xs space-y-0.5">
+                  <p class="font-bold">Inquiry Received Successfully!</p>
+                  <p class="text-muted">Thank you for writing to us. Our Awaken Studios editorial desk will review and respond promptly.</p>
                 </div>
               </div>
             </div>
 
-            {/* Interactive Form */}
             <form id="contact-form" class="space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
-                  <label for="contact-name" class="block text-caption-xs font-semibold uppercase tracking-wider text-muted">
+                  <label for="contact-name" class="block text-xs font-semibold text-white">
                     Your Full Name <span class="text-accent">*</span>
                   </label>
-                  <div class="relative">
-                    <input 
-                      type="text" 
-                      id="contact-name" 
-                      name="name" 
-                      required
-                      placeholder="e.g. Rahul Sharma" 
-                      class="w-full px-4 py-2.5 rounded-xl bg-canvas border border-border/80 text-white placeholder-muted/60 text-body-sm focus:outline-none focus:border-accent transition"
-                    />
-                  </div>
+                  <input 
+                    type="text" 
+                    id="contact-name" 
+                    name="name" 
+                    required
+                    placeholder="e.g. Rahul Sharma" 
+                    class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
+                  />
                 </div>
 
                 <div class="space-y-1.5">
-                  <label for="contact-email" class="block text-caption-xs font-semibold uppercase tracking-wider text-muted">
+                  <label for="contact-email" class="block text-xs font-semibold text-white">
                     Email Address <span class="text-accent">*</span>
                   </label>
-                  <div class="relative">
-                    <input 
-                      type="email" 
-                      id="contact-email" 
-                      name="email" 
-                      required
-                      placeholder="e.g. rahul@example.com" 
-                      class="w-full px-4 py-2.5 rounded-xl bg-canvas border border-border/80 text-white placeholder-muted/60 text-body-sm focus:outline-none focus:border-accent transition"
-                    />
-                  </div>
+                  <input 
+                    type="email" 
+                    id="contact-email" 
+                    name="email" 
+                    required
+                    placeholder="e.g. rahul@example.com" 
+                    class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
+                  />
                 </div>
               </div>
 
               <div class="space-y-1.5">
-                <label for="contact-subject" class="block text-caption-xs font-semibold uppercase tracking-wider text-muted">
+                <label for="contact-subject" class="block text-xs font-semibold text-white">
                   Topic / Query Nature <span class="text-accent">*</span>
                 </label>
                 <select 
                   id="contact-subject" 
                   name="subject" 
                   required
-                  class="w-full px-4 py-2.5 rounded-xl bg-canvas border border-border/80 text-white text-body-sm focus:outline-none focus:border-accent transition cursor-pointer"
+                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition cursor-pointer"
                 >
-                  <option value="" disabled selected>Select an option...</option>
-                  <option value="correction">Exam Notification Correction / Update</option>
-                  <option value="general">General Candidate Inquiry</option>
-                  <option value="broken-link">Broken Link or Official URL Issue</option>
-                  <option value="advertisement">Advertising & Partnerships</option>
-                  <option value="grievance">Grievance / Legal Inquiry</option>
+                  <option value="" disabled selected class="bg-surface text-white">Select a category...</option>
+                  <option value="correction" class="bg-surface text-white">Exam Notification Correction / Update</option>
+                  <option value="general" class="bg-surface text-white">General Candidate Question</option>
+                  <option value="broken-link" class="bg-surface text-white">Broken Link or Official URL Issue</option>
+                  <option value="advertisement" class="bg-surface text-white">Advertising & Partnerships</option>
+                  <option value="grievance" class="bg-surface text-white">Grievance / Feedback</option>
                 </select>
               </div>
 
               <div class="space-y-1.5">
-                <label for="contact-article-url" class="block text-caption-xs font-semibold uppercase tracking-wider text-muted">
-                  Article or Exam URL <span class="text-muted/60 font-normal">(Optional)</span>
+                <label for="contact-article-url" class="block text-xs font-semibold text-white">
+                  Article or Exam URL <span class="text-muted font-normal">(Optional)</span>
                 </label>
                 <input 
                   type="url" 
                   id="contact-article-url" 
                   name="articleUrl" 
                   placeholder="https://govtpariksha.com/rrb-ntpc-recruitment..." 
-                  class="w-full px-4 py-2.5 rounded-xl bg-canvas border border-border/80 text-white placeholder-muted/60 text-body-sm focus:outline-none focus:border-accent transition"
+                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
                 />
               </div>
 
               <div class="space-y-1.5">
-                <label for="contact-message" class="block text-caption-xs font-semibold uppercase tracking-wider text-muted">
+                <label for="contact-message" class="block text-xs font-semibold text-white">
                   Your Message <span class="text-accent">*</span>
                 </label>
                 <textarea 
@@ -284,19 +266,19 @@ const jsonLd = {
                   name="message" 
                   rows="5" 
                   required
-                  placeholder="Please describe your query or specify the exact date/notice details that need attention..."
-                  class="w-full px-4 py-2.5 rounded-xl bg-canvas border border-border/80 text-white placeholder-muted/60 text-body-sm focus:outline-none focus:border-accent transition resize-y"
+                  placeholder="Describe your query or specify the notice details that need attention..."
+                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition resize-y"
                 ></textarea>
               </div>
 
               <div class="pt-2 flex items-center justify-between gap-4">
-                <p class="text-[11px] text-muted">
-                  We respect your privacy. No spam, ever.
+                <p class="text-xs text-muted">
+                  We respect your privacy. No spam.
                 </p>
                 <button 
                   type="submit" 
                   id="contact-submit-btn"
-                  class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold text-body-sm transition shadow-sm cursor-pointer disabled:opacity-50"
+                  class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-on-accent font-semibold text-sm transition shadow-sm cursor-pointer disabled:opacity-50"
                 >
                   <span>Send Message</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -308,59 +290,49 @@ const jsonLd = {
           </div>
         </div>
 
-        {/* Right Info: FAQs & Operational Details */}
+        {/* FAQs & Desk Details */}
         <div class="lg:col-span-5 space-y-6">
-          
-          {/* Quick FAQ card */}
-          <div class="p-6 rounded-2xl bg-surface border border-border/80 space-y-4">
-            <h3 class="text-body-md font-bold text-white flex items-center gap-2">
-              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="rounded-xl border border-border bg-surface p-6 shadow-xs space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Common Questions
+              Quick Help
             </h3>
 
             <div class="space-y-3">
-              <div class="p-3.5 rounded-xl bg-surface-raised border border-border/60">
-                <h4 class="text-caption-sm font-semibold text-white mb-1">Can I apply directly on this website?</h4>
-                <p class="text-caption-xs text-muted leading-relaxed">
-                  No. govtpariksha.com provides exam guides and eligibility summaries. You must apply and pay exam fees only on the official board portal (e.g. ssc.gov.in, upsc.gov.in) linked in our tables.
+              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
+                <h4 class="text-xs font-semibold text-white mb-1">Can I apply directly on this website?</h4>
+                <p class="text-xs text-muted leading-relaxed">
+                  No. govtpariksha.com publishes educational guides. Applications and fees must be submitted only on official commission portals (e.g. ssc.gov.in, upsc.gov.in).
                 </p>
               </div>
 
-              <div class="p-3.5 rounded-xl bg-surface-raised border border-border/60">
-                <h4 class="text-caption-sm font-semibold text-white mb-1">How fast are exam updates posted?</h4>
-                <p class="text-caption-xs text-muted leading-relaxed">
-                  Our team tracks official press releases and gazette releases daily. New notices, answer keys, and admit card links are published typically within 15–30 minutes of release.
+              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
+                <h4 class="text-xs font-semibold text-white mb-1">How fast are exam updates posted?</h4>
+                <p class="text-xs text-muted leading-relaxed">
+                  Our team tracks official press releases and gazettes daily. Updates are typically published within 15–30 minutes of release.
                 </p>
               </div>
 
-              <div class="p-3.5 rounded-xl bg-surface-raised border border-border/60">
-                <h4 class="text-caption-sm font-semibold text-white mb-1">Is there any fee to access guides?</h4>
-                <p class="text-caption-xs text-muted leading-relaxed">
-                  All syllabus breakdowns, exam pattern guides, and recruitment notifications are 100% free for all students and job seekers across India.
+              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
+                <h4 class="text-xs font-semibold text-white mb-1">Is there any subscription fee?</h4>
+                <p class="text-xs text-muted leading-relaxed">
+                  All notifications, syllabus guides, and exam resources are 100% free for all students and aspirants across India.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Operational hours & Grievance desk */}
-          <div class="p-6 rounded-2xl bg-surface border border-border/80 space-y-3">
-            <h3 class="text-body-md font-bold text-white flex items-center gap-2">
-              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-              </svg>
-              Editorial & Operational Hours
-            </h3>
-            <p class="text-caption-sm text-muted">
-              Our editorial and verification desk operates from Monday to Saturday, 9:00 AM – 6:00 PM IST. Critical recruitment notifications released on weekends are processed in expedited cycles.
+          <div class="rounded-xl border border-border bg-surface p-5 text-xs text-muted space-y-2">
+            <div class="flex items-center justify-between">
+              <span>Managed by: <strong class="text-white">Awaken Studios</strong></span>
+              <span class="text-accent font-medium">India</span>
+            </div>
+            <p class="text-muted leading-relaxed">
+              For official editorial inquiries or content correction escalations, reach out at <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>.
             </p>
-            <div class="pt-2 border-t border-border/60 flex items-center justify-between text-caption-xs text-muted">
-              <span>Location: New Delhi / India</span>
-              <span class="text-accent font-medium">IST (GMT +5:30)</span>
-            </div>
           </div>
-
         </div>
 
       </div>
@@ -389,7 +361,6 @@ const jsonLd = {
           `;
         }
 
-        // Simulate fast polite client acknowledgement
         setTimeout(() => {
           if (successBanner) {
             successBanner.classList.remove('hidden');
@@ -413,7 +384,7 @@ const jsonLd = {
               `;
             }, 3000);
           }
-        }, 600);
+        }, 500);
       });
     }
   </script>

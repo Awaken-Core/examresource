@@ -1,5 +1,6 @@
 export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL || 'https://whatsapp.com/channel/0029VbDrCtD2P59lOMdotQ0S';
 export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL || 'https://t.me/govtpariksha108';
+export const contactEmail = 'awakenstudioss@gmail.com';
 
 export const siteFaqs = [
   {
