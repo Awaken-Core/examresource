@@ -211,7 +211,7 @@ try {
       CATEGORY_ID,
       'RRB NTPC 10+2 UG Recruitment 2026: Dates, Vacancies, and Eligibility',
       'RRB NTPC 10+2 UG CEN 07/2026 covers 1,688 posts. Apply online from 15 October 2026 until 13 November 2026. Check age, fee, and eligibility.',
-      'https://examresource.local/blog/notification/rrb-ntpc-10-2-ug-recruitment-2026',
+      'https://govtpariksha.com/rrb-ntpc-10-2-ug-recruitment-2026',
     ],
   );
 

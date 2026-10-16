@@ -6,7 +6,7 @@ export const siteFaqs = [
   {
     question: 'Is govtpariksha.com an official government website?',
     answer:
-      'No. govtpariksha.com publishes guides and notices for candidates. Applications, fees, and results are accepted only on the official government or exam portal linked from the article.',
+      'GovtPariksha (govtpariksha.com) is an independent informational education portal and is not affiliated with any government department or recruitment commission. We publish verified recruitment guides, exam notices, admit card alerts, and syllabi for candidates, with direct links to official government portals for applications, fee payment, and results.',
   },
   {
     question: 'Where should I apply for SSC, UPSC, Railway, and bank exams?',

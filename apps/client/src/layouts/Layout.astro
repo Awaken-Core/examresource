@@ -136,6 +136,15 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
       name="robots"
       content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
     />
+    <meta name="author" content="GovtPariksha" />
+    <meta name="publisher" content="GovtPariksha" />
+    <meta name="application-name" content="GovtPariksha" />
+    <meta name="apple-mobile-web-app-title" content="GovtPariksha" />
+
+    {/* Feeds & AI Agent Discovery */}
+    <link rel="alternate" type="application/rss+xml" title="GovtPariksha RSS Feed" href={`${siteOrigin}/rss.xml`} />
+    <link rel="alternate" type="text/plain" href={`${siteOrigin}/llms.txt`} title="LLM Context Summary" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href={`${siteOrigin}/sitemap.xml`} />
 
     {/* Search Engine Verifications if configured */}
     {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
@@ -153,6 +162,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:locale:alternate" content="hi_IN" />
     <meta property="og:image" content={resolvedOgImage} />
     <meta property="og:image:secure_url" content={resolvedOgImage} />
     <meta property="og:image:type" content={ogImageType} />
@@ -164,6 +175,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
 
     {/* Twitter Cards */}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@govtpariksha" />
+    <meta name="twitter:creator" content="@govtpariksha" />
     <meta name="twitter:url" content={canonicalUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
