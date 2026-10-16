@@ -21,6 +21,11 @@ export const blogStatusEnum = pgEnum("BlogStatus", [
   "ARCHIVED",
 ]);
 
+export const blogLanguageEnum = pgEnum("BlogLanguage", [
+  "HINGLISH",
+  "ENGLISH",
+]);
+
 export const blogBlockTypeEnum = pgEnum("BlogBlockType", [
   "PARAGRAPH",
   "HEADING_1",
@@ -99,6 +104,8 @@ export const blogs = pgTable(
     imageAlt: text("imageAlt"),
     imageCaption: text("imageCaption"),
     noindex: boolean("noindex").notNull().default(false),
+    language: blogLanguageEnum("language").notNull().default("HINGLISH"),
+    translationGroupId: uuid("translationGroupId"),
 
     // Optimistic Concurrency version control
     version: integer("version").notNull().default(1),
@@ -113,6 +120,8 @@ export const blogs = pgTable(
     index("Blog_authorId_createdAt_idx").on(table.authorId, table.createdAt),
     index("Blog_status_publishedAt_idx").on(table.status, table.publishedAt),
     index("Blog_categoryId_idx").on(table.categoryId),
+    index("Blog_translationGroupId_idx").on(table.translationGroupId),
+    index("Blog_language_idx").on(table.language),
   ],
 );
 
