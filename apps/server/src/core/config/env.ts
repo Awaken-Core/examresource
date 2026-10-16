@@ -7,7 +7,7 @@ export const EnvSchema = z.object({
     .url()
     .default('postgres://postgres:postgres@localhost:5433/postgres'),
   NODE_ENV: z
-    .enum(['development', 'test', 'production'])
+    .enum(['development', 'test', 'production', 'preview'])
     .default('development'),
   CLIENT_URL: z.string().url().default('http://localhost:3000'),
   PORT: z.coerce.number().int().min(1).max(65535).default(5000),
