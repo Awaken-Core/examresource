@@ -257,6 +257,7 @@ function stripTags(html: string): string {
   return html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<[^>]*>/g, '')
+    .replace(/\\+/g, '')
     .trim();
 }
 
@@ -268,15 +269,17 @@ function guessCodeLanguage(source: string) {
 }
 
 function slugify(text: string): string {
-  return text
+  const cleaned = text
     .toString()
     .toLowerCase()
     .trim()
+    .replace(/\\+/g, '')
+    .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/\-+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
+  return cleaned || 'section';
 }
 
 /**

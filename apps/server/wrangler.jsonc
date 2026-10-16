@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "examresource",
+  "main": "dist/worker.js",
+  "compatibility_date": "2026-10-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "keep_vars": true,
+  "upload_source_maps": true,
+  "alias": {
+    "class-validator": "./dist/worker-shims/nest-optional.js",
+    "class-transformer": "./dist/worker-shims/nest-optional.js",
+    "@nestjs/microservices": "./dist/worker-shims/nest-optional.js",
+    "@nestjs/microservices/microservices-module.js": "./dist/worker-shims/nest-optional.js",
+    "@nestjs/websockets/socket-module.js": "./dist/worker-shims/nest-optional.js"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "NODE_ENV": "production"
+  }
+}
