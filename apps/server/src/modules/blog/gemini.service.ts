@@ -49,6 +49,22 @@ export interface SeoOptimizationOutput {
   suggestions: string[];
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function extractCandidateText(data: unknown): string | undefined {
+  if (!isRecord(data) || !Array.isArray(data.candidates)) return undefined;
+
+  const candidate = data.candidates[0];
+  if (!isRecord(candidate) || !isRecord(candidate.content)) return undefined;
+
+  const { parts } = candidate.content;
+  if (!Array.isArray(parts) || !isRecord(parts[0])) return undefined;
+
+  return typeof parts[0].text === 'string' ? parts[0].text : undefined;
+}
+
 @Injectable()
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name);
@@ -100,16 +116,21 @@ export class GeminiService {
         });
 
         if (response.ok) {
-          const data = await response.json();
-          const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          const data: unknown = await response.json();
+          const candidateText = extractCandidateText(data);
           if (candidateText) return candidateText;
+
+          lastError = `Model ${model} returned a successful response without candidate text.`;
+          this.logger.warn(lastError);
+          continue;
         }
 
         const errorText = await response.text();
         lastError = `Model ${model} returned (${response.status}): ${errorText.slice(0, 300)}`;
         this.logger.warn(`Gemini try failed with ${model}: ${lastError}. Trying next candidate if available...`);
-      } catch (err: any) {
-        lastError = `Network/fetch failed with ${model}: ${err.message}`;
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        lastError = `Network/fetch failed with ${model}: ${message}`;
       }
     }
 
