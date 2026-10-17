@@ -11,7 +11,7 @@ import {
   Res,
   UnauthorizedException,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
+import type { CookieOptions, Request, Response } from 'express';
 import { env } from '../../core/config/env.js';
 import {
   forgotPasswordSchema,
@@ -54,7 +54,7 @@ export class AuthController {
     const { state, url } = await this.auth.createGoogleAuthorizationUrl();
     res.cookie(this.googleStateCookieName(), state, {
       httpOnly: true,
-      secure: env.NODE_ENV === 'production',
+      secure: this.isHostedEnvironment(),
       sameSite: 'lax',
       path: '/api/v1/auth/google',
       maxAge: 10 * 60_000,
@@ -92,7 +92,7 @@ export class AuthController {
   ) {
     this.assertSafeMutation(req);
     await this.auth.logout(this.sessionToken(req));
-    res.clearCookie(this.cookieName(), { path: '/' });
+    res.clearCookie(this.cookieName(), this.sessionCookieOptions());
   }
 
   @Post('auth/forgot-password')
@@ -191,19 +191,28 @@ export class AuthController {
     return current;
   }
   private cookieName() {
-    return env.NODE_ENV === 'production' ? '__Host-sid' : 'sid';
+    return this.isHostedEnvironment() ? '__Host-sid' : 'sid';
   }
   private googleStateCookieName() {
-    return env.NODE_ENV === 'production'
+    return this.isHostedEnvironment()
       ? '__Secure-google-oauth-state'
       : 'google-oauth-state';
   }
+  private isHostedEnvironment() {
+    return env.NODE_ENV === 'production' || env.NODE_ENV === 'preview';
+  }
+  private sessionCookieOptions(): CookieOptions {
+    const hosted = this.isHostedEnvironment();
+    return {
+      httpOnly: true,
+      secure: hosted,
+      sameSite: hosted ? 'none' : 'lax',
+      path: '/',
+    };
+  }
   private setSessionCookie(res: Response, token: string) {
     res.cookie(this.cookieName(), token, {
-      httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
+      ...this.sessionCookieOptions(),
       maxAge: env.SESSION_TTL_DAYS * 86_400_000,
     });
   }

@@ -321,7 +321,9 @@ export class AuthService {
   }
 
   private cookieName() {
-    return env.NODE_ENV === 'production' ? '__Host-sid' : 'sid';
+    return env.NODE_ENV === 'production' || env.NODE_ENV === 'preview'
+      ? '__Host-sid'
+      : 'sid';
   }
 
   async logout(token: string | undefined) {
