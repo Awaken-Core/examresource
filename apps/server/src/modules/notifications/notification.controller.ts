@@ -1,13 +1,13 @@
 import { BadRequestException, Controller, ForbiddenException, Get, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
-import { ClerkAuthService } from '../clerk-auth/clerk-auth.service.js';
+import { AuthService } from '../auth/auth.service.js';
 import { NotificationService } from './notification.service.js';
 
 @Controller('api/v1')
 export class NotificationController {
   constructor(
     private readonly notifications: NotificationService,
-    private readonly auth: ClerkAuthService,
+    private readonly auth: AuthService,
   ) {}
 
   @Get('me/notifications')

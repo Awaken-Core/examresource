@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ClerkAuthModule } from '../clerk-auth/clerk-auth.module.js';
+import { AuthModule } from '../auth/auth.module.js';
 import { BlogController } from './blog.controller.js';
 import { BlogService } from './blog.service.js';
 import { GeminiService } from './gemini.service.js';
 
 @Module({
-  imports: [ClerkAuthModule],
+  imports: [AuthModule],
   controllers: [BlogController],
   providers: [BlogService, GeminiService],
   exports: [BlogService, GeminiService],

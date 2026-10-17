@@ -3,7 +3,7 @@ import { ListObjectsV2Command, PutObjectCommand, S3Client } from '@aws-sdk/clien
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'node:crypto';
 import { env } from '../../core/config/env.js';
-import type { CurrentUser } from '../clerk-auth/clerk-auth.service.js';
+import type { CurrentUser } from '../auth/auth.service.js';
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const imageExtensions: Record<string, string> = {

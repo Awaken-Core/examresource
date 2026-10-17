@@ -272,9 +272,7 @@ export async function refreshNotifications(token: string | null) {
   }
 
   try {
-    const response = await fetch(`${API_URL}/me/notifications`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(`${API_URL}/me/notifications`, { credentials: 'include' });
     if (!response.ok) return;
     const data = (await response.json()) as { items?: AppNotification[] };
     currentItems = data.items ?? [];
@@ -292,9 +290,10 @@ export async function markAllNotificationsRead() {
   await fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${currentToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Protection': '1',
     },
+    credentials: 'include',
     body: '{}',
     keepalive: true,
   }).catch(() => null);
@@ -308,9 +307,10 @@ export function markNotificationRead(id: string) {
   void fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${currentToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Protection': '1',
     },
+    credentials: 'include',
     body: JSON.stringify({ ids: [id] }),
     keepalive: true,
   }).catch(() => null);
