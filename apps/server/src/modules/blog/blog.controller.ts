@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Param,
   Patch,
@@ -37,6 +38,7 @@ export class BlogController {
   // ==========================================
 
   @Get('blogs')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
   listPublished(
     @Query('category') categorySlug?: string,
     @Query('tag') tagSlug?: string,
@@ -56,6 +58,7 @@ export class BlogController {
   }
 
   @Get('blogs/:slug')
+  @Header('Cache-Control', 'public, max-age=120, s-maxage=300, stale-while-revalidate=600')
   getPublished(
     @Param('slug') slug: string,
     @Query('language') language?: 'HINGLISH' | 'ENGLISH',
@@ -64,21 +67,25 @@ export class BlogController {
   }
 
   @Get('sitemap-entries')
+  @Header('Cache-Control', 'public, max-age=600, s-maxage=1800, stale-while-revalidate=3600')
   getSitemapEntries() {
     return this.blogs.getSitemapEntries();
   }
 
   @Get('redirects/check')
+  @Header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800')
   checkRedirect(@Query('path') path: string) {
     return this.blogs.checkRedirect(path);
   }
 
   @Get('categories')
+  @Header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800')
   listCategories() {
     return this.blogs.listCategories();
   }
 
   @Get('tags')
+  @Header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800')
   listTags() {
     return this.blogs.listTags();
   }
