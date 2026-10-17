@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteUrl, siteName, siteDomain } from '../data/site';
+
+// Return HTTP 404 status code to clients and search crawlers
+Astro.response.status = 404;
+
+const pageTitle = `404 - Page Not Found | ${siteName}`;
+const pageDescription = `The page, exam notification, or resource you are looking for could not be found on ${siteDomain}. Search or explore active recruitment categories.`;
+
+const popularCategories = [
+  { name: 'Central Government', slug: 'central-government', icon: '🏛️', count: 'UPSC, SSC, Railways' },
+  { name: 'State Exams', slug: 'state-exams', icon: '🏢', count: 'UPPSC, BPSC, MPSC' },
+  { name: 'Banking', slug: 'banking', icon: '🏦', count: 'IBPS, SBI, RBI' },
+  { name: 'SSC & Railways', slug: 'ssc-railways', icon: '🚆', count: 'CGL, CHSL, RRB NTPC' },
+  { name: 'Teaching', slug: 'teaching', icon: '📚', count: 'CTET, KVS, UPTET' },
+  { name: 'Defence', slug: 'defence', icon: '🎖️', count: 'NDA, CDS, AFCAT' },
+];
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={`${siteUrl}/404`}
+  noindex={true}
+>
+  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <div class="max-w-2xl w-full text-center space-y-8">
+      
+      {/* 404 Badge & Visual */}
+      <div class="space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span>404 Error • Resource Not Found</span>
+        </div>
+        
+        <h1 class="text-7xl sm:text-9xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-200 to-slate-500 select-none">
+          404
+        </h1>
+        
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          Exam notification or page not found
+        </h2>
+        
+        <p class="text-sm sm:text-base text-muted max-w-lg mx-auto leading-relaxed">
+          The notification, admit card link, or page you requested may have been archived, moved to a new syllabus section, or the link may be outdated.
+        </p>
+      </div>
+
+      {/* Action Buttons: Home & Instant Search */}
+      <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-accent text-white hover:bg-accent/90 shadow-sm hover:shadow transition-all duration-150 cursor-pointer"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span>Back to Home</span>
+        </a>
+
+        <button
+          type="button"
+          data-open-search
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-surface-raised border border-border hover:border-accent/50 text-white hover:text-accent shadow-xs transition-all duration-150 cursor-pointer"
+        >
+          <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <span>Search Notifications</span>
+          <kbd class="hidden sm:inline-block px-1.5 py-0.5 text-[10px] text-muted bg-surface border border-border rounded font-mono">Ctrl K</kbd>
+        </button>
+
+        <a
+          href="/contact-us"
+          class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm text-muted hover:text-white hover:bg-surface transition cursor-pointer"
+        >
+          <span>Report broken link</span>
+          <span>→</span>
+        </a>
+      </div>
+
+      {/* Popular Categories Grid */}
+      <div class="pt-6 border-t border-border/60 text-left">
+        <p class="text-xs font-bold uppercase tracking-wider text-muted mb-3 text-center sm:text-left">
+          Or explore active exam categories:
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+          {popularCategories.map((cat) => (
+            <a
+              href={`/category/${cat.slug}`}
+              class="group flex items-center gap-3 p-3 rounded-xl bg-surface border border-border hover:border-accent/40 hover:bg-surface-raised transition-all duration-150 cursor-pointer"
+            >
+              <span class="text-xl shrink-0 group-hover:scale-110 transition-transform duration-150">{cat.icon}</span>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-bold text-white group-hover:text-accent transition truncate">
+                  {cat.name}
+                </p>
+                <p class="text-[11px] text-muted truncate">
+                  {cat.count}
+                </p>
+              </div>
+              <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Help Note */}
+      <p class="text-xs text-muted/80">
+        Looking for a specific commission? Visit our <a href="/#important-links" class="text-accent hover:underline">Official Portals Directory</a> or check latest updates on our <a href="/" class="text-accent hover:underline">homepage</a>.
+      </p>
+
+    </div>
+  </div>
+</Layout>

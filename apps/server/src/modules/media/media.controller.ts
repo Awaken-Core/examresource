@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
-import { ClerkAuthService } from '../clerk-auth/clerk-auth.service.js';
+import { AuthService } from '../auth/auth.service.js';
 import { MediaService } from './media.service.js';
 
 @Controller('api/v1/uploads')
 export class MediaController {
   constructor(
-    private readonly auth: ClerkAuthService,
+    private readonly auth: AuthService,
     private readonly media: MediaService,
   ) {}
 

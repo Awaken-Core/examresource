@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { API_URL } from '../lib/api';
+import { siteUrl, siteName } from '../data/site';
 
 let livePosts: any[] = [];
 try {
@@ -63,9 +64,9 @@ const officialPortals = [
   { name: 'National Career Service (NCS)', url: 'https://www.ncs.gov.in/' }
 ];
 
-const pageTitle = "Sitemap & Mock Test Directory | GovtPariksha";
-const pageDescription = "Browse the complete directory of free mock tests, exam categories, previous year questions (PYQs), official commission portals, and legal resources on GovtPariksha.";
-const canonicalUrl = "https://govtpariksha.com/sitemap";
+const pageTitle = `Sitemap & Mock Test Directory | ${siteName}`;
+const pageDescription = `Browse the complete directory of free mock tests, exam categories, previous year questions (PYQs), official commission portals, and legal resources on ${siteName}.`;
+const canonicalUrl = `${siteUrl}/sitemap`;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -81,7 +82,7 @@ const jsonLd = {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://govtpariksha.com/"
+        "item": `${siteUrl}/`
       },
       {
         "@type": "ListItem",
@@ -136,7 +137,7 @@ const jsonLd = {
           Mock Test &amp; Resource Directory
         </h1>
         <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Explore all free mock test categories, previous year papers (PYQs), official government recruiting commissions, and legal policies on <strong class="text-white">GovtPariksha</strong>.
+          Explore all free mock test categories, previous year papers (PYQs), official government recruiting commissions, and legal policies on <strong class="text-white">{siteName}</strong>.
         </p>
       </header>
 

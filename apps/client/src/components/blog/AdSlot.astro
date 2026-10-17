@@ -4,8 +4,8 @@ interface Props {
 }
 
 const { class: className = '' } = Astro.props;
-const clientId = import.meta.env.PUBLIC_ADSENSE_CLIENT || '';
-const slotId = import.meta.env.PUBLIC_ADSENSE_SLOT_SIDEBAR || '';
+const clientId = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+const slotId = import.meta.env.PUBLIC_ADSENSE_SLOT_SIDEBAR;
 const ready = Boolean(clientId && slotId);
 ---
 

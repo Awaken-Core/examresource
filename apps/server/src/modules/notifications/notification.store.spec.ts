@@ -4,7 +4,7 @@ import { normalizeNotificationHref } from './notification.store.js';
 describe('normalizeNotificationHref', () => {
   it('accepts site paths and https links', () => {
     expect(normalizeNotificationHref('/blog/jobs/rrb-ntpc')).toBe('/blog/jobs/rrb-ntpc');
-    expect(normalizeNotificationHref('https://govtpariksha.com/blog')).toBe('https://govtpariksha.com/blog');
+    expect(normalizeNotificationHref('https://example.com/blog')).toBe('https://example.com/blog');
     expect(normalizeNotificationHref('  ')).toBeNull();
     expect(normalizeNotificationHref(null)).toBeNull();
   });

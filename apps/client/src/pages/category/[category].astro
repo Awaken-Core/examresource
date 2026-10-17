@@ -1,19 +1,35 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { API_URL } from '../../lib/api';
+import { siteUrl, siteName } from '../../data/site';
+import {
+  appLangToBlogLanguage,
+  articleHref,
+  preferredLangFromCookieHeader,
+} from '../../lib/preferred-lang';
 
 const { category: categoryParam } = Astro.params;
 const categorySlug = (categoryParam || '').toLowerCase();
+const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
+const listLanguage = appLangToBlogLanguage(preferredAppLang);
 
 // Fetch live database articles for this category and all categories for navigation
 let liveCategoryPosts: any[] = [];
 let categoryInfo: any = null;
 let allCategories: any[] = [];
 
+// Edge CDN caching: cache category list for 120s, serve stale up to 600s while revalidating
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=120, stale-while-revalidate=600');
+Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
+
 try {
   const [postRes, catRes] = await Promise.all([
-    fetch(`${API_URL}/blogs?category=${encodeURIComponent(categorySlug)}&limit=50`),
-    fetch(`${API_URL}/categories`),
+    fetch(`${API_URL}/blogs?category=${encodeURIComponent(categorySlug)}&limit=50&language=${listLanguage}`, {
+      signal: AbortSignal.timeout(6000),
+    }),
+    fetch(`${API_URL}/categories`, {
+      signal: AbortSignal.timeout(6000),
+    }),
   ]);
 
   if (postRes.ok) liveCategoryPosts = await postRes.json();
@@ -35,12 +51,17 @@ const defaultCategoryNames: Record<string, string> = {
   'defence': 'Defence',
 };
 
+// If the category does not exist in the database, is not a known category, and has no posts, return 404
+if (!categoryInfo && !defaultCategoryNames[categorySlug] && liveCategoryPosts.length === 0) {
+  return Astro.rewrite('/404');
+}
+
 const categoryTitle = categoryInfo?.name || defaultCategoryNames[categorySlug] || categorySlug.replace(/-/g, ' ').toUpperCase();
 const categoryDesc = categoryInfo?.description || `Browse notifications, exam patterns, syllabi, and official updates for ${categoryTitle}.`;
 
-const pageTitle = `${categoryTitle} Exam Updates & Notifications | govtpariksha.com`;
+const pageTitle = `${categoryTitle} Exam Updates & Notifications | ${siteName}`;
 const pageDescription = categoryDesc;
-const canonicalUrl = `https://govtpariksha.com/category/${categorySlug}`;
+const canonicalUrl = `${siteUrl}/category/${categorySlug}`;
 
 // Schema.org structured data (BreadcrumbList & CollectionPage)
 const jsonLd = {
@@ -55,7 +76,7 @@ const jsonLd = {
         "@type": "Article",
         "headline": t.title,
         "description": t.description || t.metaDescription,
-        "url": `https://govtpariksha.com/${t.slug}`
+        "url": `${siteUrl}/${t.slug}`
       }))
     },
     {
@@ -65,7 +86,7 @@ const jsonLd = {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://govtpariksha.com/"
+          "item": `${siteUrl}/`
         },
         {
           "@type": "ListItem",
@@ -132,14 +153,14 @@ const displayCategories = allCategories && allCategories.length > 0 ? allCategor
       </nav>
 
       {/* Category Header Banner */}
-      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-8 shadow-xs">
+      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-8 shadow-xs" transition:name="page-hero">
         <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs font-semibold mb-3">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
           </svg>
           Category Stream
         </div>
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-2">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-2" transition:name="category-title">
           {categoryTitle}
         </h1>
         <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
@@ -151,7 +172,7 @@ const displayCategories = allCategories && allCategories.length > 0 ? allCategor
       </header>
 
       {/* Articles Feed */}
-      <div class="space-y-4">
+      <div class="space-y-4" transition:name="main-content">
         <div class="flex items-center justify-between pb-2 border-b border-border">
           <h2 class="text-xs uppercase tracking-wider font-bold text-muted">
             Articles in {categoryTitle}
@@ -166,7 +187,8 @@ const displayCategories = allCategories && allCategories.length > 0 ? allCategor
               const date = new Date(post.publishedAt || post.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
               return (
                 <a 
-                  href={`/${post.slug}`} 
+                  href={articleHref(post.slug, preferredAppLang)}
+                  data-article-link={post.slug}
                   class="flex flex-col sm:flex-row items-start gap-4 p-4 bg-surface border border-border rounded-lg shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 group cursor-pointer block"
                 >
                   {/* Thumbnail on Left (only if image exists) */}
@@ -196,11 +218,11 @@ const displayCategories = allCategories && allCategories.length > 0 ? allCategor
                         </span>
                       </div>
 
-                      <h3 class="mt-1.5 text-sm sm:text-base font-bold text-white group-hover:text-accent transition leading-snug">
+                      <h3 class="mt-1.5 text-sm sm:text-base font-bold text-white group-hover:text-accent transition leading-snug" data-article-title>
                         {post.title}
                       </h3>
 
-                      <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed">
+                      <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed" data-article-summary>
                         {post.description || post.metaDescription || 'Click to view full notification details and official links.'}
                       </p>
                     </div>

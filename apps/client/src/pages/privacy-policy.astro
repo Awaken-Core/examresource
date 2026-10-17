@@ -1,11 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactEmail } from '../data/site';
+import { contactEmail, siteUrl, siteName, siteDomain } from '../data/site';
 
 const lastUpdated = "October 17, 2026";
-const pageTitle = "Privacy Policy | GovtPariksha";
-const pageDescription = "Learn how GovtPariksha collects, uses, and protects your personal data on our free mock test platform. Compliant with the IT Act 2000 and DPDP Act 2023.";
-const canonicalUrl = "https://govtpariksha.com/privacy-policy";
+const pageTitle = `Privacy Policy | ${siteName}`;
+const pageDescription = `Learn how ${siteName} collects, uses, and protects your personal data on our free mock test platform. Compliant with the IT Act 2000 and DPDP Act 2023.`;
+const canonicalUrl = `${siteUrl}/privacy-policy`;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -15,9 +15,9 @@ const jsonLd = {
   "description": pageDescription,
   "publisher": {
     "@type": "Organization",
-    "name": "GovtPariksha",
-    "url": "https://govtpariksha.com",
-    "logo": "https://govtpariksha.com/og-image.jpg"
+    "name": siteName,
+    "url": siteUrl,
+    "logo": `${siteUrl}/og-image.jpg`
   },
   "breadcrumb": {
     "@context": "https://schema.org",
@@ -27,7 +27,7 @@ const jsonLd = {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://govtpariksha.com/"
+        "item": `${siteUrl}/`
       },
       {
         "@type": "ListItem",
@@ -68,7 +68,7 @@ const jsonLd = {
           Privacy Policy
         </h1>
         <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Welcome to <strong class="text-white">GovtPariksha</strong> ("we," "our," or "us"). We operate the website <a href="https://govtpariksha.com/" class="text-accent hover:underline">https://govtpariksha.com/</a> (the "Platform"), a free online exam preparation platform. We respect your privacy and are committed to protecting your personal data in accordance with the <strong class="text-white">Information Technology Act, 2000</strong> and the <strong class="text-white">Digital Personal Data Protection (DPDP) Act, 2023</strong> of India.
+          Welcome to <strong class="text-white">{siteName}</strong> ("we," "our," or "us"). We operate the website <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a> (the "Platform"), a free online exam preparation platform. We respect your privacy and are committed to protecting your personal data in accordance with the <strong class="text-white">Information Technology Act, 2000</strong> and the <strong class="text-white">Digital Personal Data Protection (DPDP) Act, 2023</strong> of India.
         </p>
         <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
           <span>Last Updated: <strong class="text-white">{lastUpdated}</strong></span>
@@ -170,7 +170,7 @@ const jsonLd = {
             </div>
             <div class="text-sm text-white/90 leading-relaxed space-y-3">
               <p>
-                When you register or attempt mock tests on GovtPariksha, we collect only the minimum information required to track your progress:
+                When you register or attempt mock tests on {siteName}, we collect only the minimum information required to track your progress:
               </p>
 
               <div class="space-y-3">
@@ -206,7 +206,7 @@ const jsonLd = {
                     No Financial Data Collected
                   </h4>
                   <p class="text-xs text-muted leading-relaxed">
-                    GovtPariksha is a <strong class="text-white">100% free platform</strong>. We do not charge users for access to mock tests or study materials, and we never ask for or store any bank account, UPI, or credit/debit card details.
+                    {siteName} is a <strong class="text-white">100% free platform</strong>. We do not charge users for access to mock tests or study materials, and we never ask for or store any bank account, UPI, or credit/debit card details.
                   </p>
                 </div>
 
@@ -250,7 +250,7 @@ const jsonLd = {
             </div>
             <div class="text-sm text-white/90 leading-relaxed space-y-3">
               <p>
-                When you attempt a mock test or live quiz on GovtPariksha, your <strong class="text-white">Name</strong>, <strong class="text-white">Score</strong>, and <strong class="text-white">Rank</strong> may be displayed on the test leaderboard to give all students a real competitive exam experience.
+                When you attempt a mock test or live quiz on {siteName}, your <strong class="text-white">Name</strong>, <strong class="text-white">Score</strong>, and <strong class="text-white">Rank</strong> may be displayed on the test leaderboard to give all students a real competitive exam experience.
               </p>
             </div>
           </section>
@@ -321,11 +321,11 @@ const jsonLd = {
               <div class="rounded-lg bg-surface-raised p-4 border border-border/80 space-y-2.5 text-xs">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <span class="text-muted">Platform Name:</span>
-                  <span class="font-medium text-white">GovtPariksha</span>
+                  <span class="font-medium text-white">{siteName}</span>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <span class="text-muted">Website:</span>
-                  <a href="https://govtpariksha.com/" class="font-medium text-accent hover:underline">https://govtpariksha.com/</a>
+                  <a href={`${siteUrl}/`} class="font-medium text-accent hover:underline">{siteUrl}/</a>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <span class="text-muted">Email:</span>

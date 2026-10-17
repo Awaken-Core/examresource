@@ -7,7 +7,7 @@ A practical publishing standard for exam resources, recruitment updates, study g
 
 ## 1. Purpose and scope
 
-This guide defines how writers, editors and developers should format, validate and publish articles on govtpariksha.com. It covers content structure, HTML output, metadata, multilingual pages, technical SEO, accessibility and publishing QA.
+This guide defines how writers, editors and developers should format, validate and publish articles on the platform. It covers content structure, HTML output, metadata, multilingual pages, technical SEO, accessibility and publishing QA.
 
 **SEO note:** formatting supports crawling, usability and relevance; it does not guarantee rankings or traffic. Prioritize accuracy, usefulness, originality and satisfying the reader's search intent.
 

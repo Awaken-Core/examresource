@@ -64,22 +64,77 @@ const isHinglish = currentLanguage === 'HINGLISH';
 </div>
 
 <script>
+  import { canSwapArticleLanguage, swapArticleLanguage } from '../../lib/article-lang-swap';
+
+  function persistLang(lang: string) {
+    try {
+      localStorage.setItem('preferred_exam_lang', lang);
+      document.cookie = `preferred_lang=${lang};path=/;max-age=31536000;SameSite=Lax`;
+    } catch {}
+  }
+
   function setupLangSwitchers() {
     const switchers = document.querySelectorAll<HTMLAnchorElement>('.language-switcher-pill a[data-lang]');
     switchers.forEach((el) => {
-      el.addEventListener('click', () => {
+      if ((el as any).__langSwapBound) return;
+      (el as any).__langSwapBound = true;
+
+      el.addEventListener('click', (e) => {
         const lang = el.dataset.lang;
-        if (lang) {
-          try {
-            localStorage.setItem('preferred_exam_lang', lang);
-            document.cookie = `preferred_lang=${lang};path=/;max-age=31536000;SameSite=Lax`;
-            window.dispatchEvent(new CustomEvent('exam:language-change', { detail: { lang } }));
-          } catch (e) {}
+        if (!lang) return;
+
+        // Instant client-side swap when both languages are embedded
+        if (canSwapArticleLanguage(lang)) {
+          e.preventDefault();
+          e.stopPropagation();
+          persistLang(lang);
+          swapArticleLanguage(lang);
+          return;
         }
+
+        // Fallback: normal navigation (ClientRouter) when alternate isn't embedded
+        persistLang(lang);
+        window.dispatchEvent(new CustomEvent('exam:language-change', { detail: { lang } }));
       });
     });
   }
 
+  async function softNavigate(lang: string) {
+    const path = window.location.pathname;
+    const search = new URLSearchParams(window.location.search);
+    if (lang === 'en' || lang === 'english' || lang === 'ENGLISH') {
+      search.set('lang', 'en');
+    } else {
+      search.delete('lang');
+    }
+    const qs = search.toString();
+    const url = qs ? `${path}?${qs}` : path;
+    try {
+      const { navigate } = await import('astro:transitions/client');
+      navigate(url);
+    } catch {
+      window.location.href = url;
+    }
+  }
+
+  function onArticleLangSwap(e: Event) {
+    const detail = (e as CustomEvent).detail;
+    const lang = detail?.lang;
+    if (!lang) return;
+    persistLang(lang);
+    if (canSwapArticleLanguage(lang)) {
+      swapArticleLanguage(lang);
+    } else {
+      void softNavigate(lang);
+    }
+  }
+
   setupLangSwitchers();
   document.addEventListener('astro:after-swap', setupLangSwitchers);
+  document.addEventListener('astro:page-load', setupLangSwitchers);
+
+  if (!(window as any).__ARTICLE_LANG_SWAP_LISTENER__) {
+    (window as any).__ARTICLE_LANG_SWAP_LISTENER__ = true;
+    window.addEventListener('exam:article-lang-swap', onArticleLangSwap as EventListener);
+  }
 </script>

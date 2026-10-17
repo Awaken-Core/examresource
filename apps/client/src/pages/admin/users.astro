@@ -33,7 +33,7 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
 </AdminLayout>
 
 <script>
-  const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
+  const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
   const table = document.getElementById('users-table');
   const errorBanner = document.getElementById('users-error');
   const successBanner = document.getElementById('users-success');
@@ -47,21 +47,11 @@ import AdminLayout from '../../layouts/AdminLayout.astro';
     element.classList.remove('hidden');
   }
 
-  async function getToken() {
-    for (let attempt = 0; attempt < 50; attempt += 1) {
-      const clerk = (window as any).Clerk;
-      if (clerk?.loaded && clerk.session) return clerk.session.getToken().catch(() => null);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-    return null;
-  }
-
   async function apiFetch(path: string, options: RequestInit = {}) {
-    const token = await getToken();
     const headers = new Headers(options.headers);
-    if (token) headers.set('Authorization', `Bearer ${token}`);
     if (options.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
-    return fetch(`${apiUrl}${path}`, { ...options, headers });
+    if (options.method && !['GET', 'HEAD'].includes(options.method.toUpperCase())) headers.set('X-CSRF-Protection', '1');
+    return fetch(`${apiUrl}${path}`, { ...options, headers, credentials: 'include' });
   }
 
   function escapeHtml(value: string) {

@@ -1,4 +1,5 @@
 ---
+import { siteDomain } from '../data/site';
 // SearchModal.astro - Global Spotlight Search Dialog (Matching takeUforward Image 1)
 ---
 
@@ -21,7 +22,7 @@
       <input 
         id="global-search-input"
         type="text" 
-        placeholder="Search anything on govtpariksha.com..." 
+        placeholder={`Search anything on ${siteDomain}...`} 
         class="w-full bg-transparent text-white placeholder:text-muted text-base sm:text-lg focus:outline-none focus:ring-0 border-none p-0 font-medium"
         autocomplete="off"
         spellcheck="false"

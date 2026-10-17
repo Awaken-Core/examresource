@@ -3,7 +3,7 @@ import ProfileDropdown from './ProfileDropdown.astro';
 import Tooltip from './Tooltip.astro';
 import NotificationPopup from './NotificationPopup.astro';
 import BrandLogo from './BrandLogo.astro';
-import { telegramChannel, whatsappChannel } from '../data/site';
+import { telegramChannel, whatsappChannel, siteDomain } from '../data/site';
 
 interface Props {
   prefix?: string;
@@ -11,6 +11,8 @@ interface Props {
 }
 
 const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
+const [brandPrefix, ...brandRest] = siteDomain.split('.');
+const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 ---
 
 <aside 
@@ -20,10 +22,10 @@ const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
   {/* Top Logo, Logoname & Collapse/Close Button in Sidebar */}
   <div>
     <div class="sidebar-header h-16 px-4 flex items-center justify-between border-b border-border/60">
-      <a href="/" class="flex items-center gap-2.5 group truncate" aria-label="govtpariksha.com home">
+      <a href="/" class="flex items-center gap-2.5 group truncate" aria-label={`${siteDomain} home`}>
         <BrandLogo size={36} class="group-hover:scale-105 transition-transform shrink-0" />
         <div class="sidebar-text flex items-center truncate font-bold text-base tracking-tight text-white">
-          <span>govtpariksha</span><span class="text-accent">.com</span>
+          <span>{brandPrefix}</span><span class="text-accent">{brandSuffix}</span>
         </div>
       </a>
 
@@ -107,7 +109,7 @@ const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
 
       {/* 4. Results */}
       <a 
-        href="/?category=results#latest-updates" 
+        href="/#latest-updates" 
         class="sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium" 
         title="Exam results"
       >
@@ -119,7 +121,7 @@ const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
 
       {/* 5. Admit cards */}
       <a 
-        href="/?category=admit-cards#latest-updates" 
+        href="/#latest-updates" 
         class="sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium" 
         title="Download admit cards"
       >
@@ -185,36 +187,6 @@ const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
         </a>
       </div>
     </nav>
-  </div>
-
-  {/* Language Toggle in Sidebar / Slider Drawer */}
-  <div class="px-3 pt-2 pb-1 border-t border-border/40">
-    <div class="flex items-center justify-between p-2 rounded-xl bg-surface-raised/40 border border-border/60">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-        </svg>
-        <span class="sidebar-text text-caption-xs font-semibold text-white/90 truncate">Language</span>
-      </div>
-      <div class="sidebar-text inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none">
-        <button
-          type="button"
-          data-app-lang="hinglish"
-          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
-          title="Switch to Hinglish"
-        >
-          HI
-        </button>
-        <button
-          type="button"
-          data-app-lang="en"
-          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
-          title="Switch to English"
-        >
-          EN
-        </button>
-      </div>
-    </div>
   </div>
 
   {/* BOTTOM PROFILE / AUTH SECTION (Exact match to Image 2) */}
@@ -296,7 +268,7 @@ const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
           {/* Avatar Circle */}
           <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-caption-xs shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
             <span class="user-avatar-initials">DW</span>
-            <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" />
+            <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" width="40" height="40" decoding="async" loading="lazy" />
           </div>
           <div class="sidebar-text truncate">
             <p class="user-display-name text-body-sm font-bold text-white truncate leading-tight">Devil</p>

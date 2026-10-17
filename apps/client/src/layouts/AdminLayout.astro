@@ -385,12 +385,10 @@ const {
 
     <!-- Auth Verification Guard -->
     <script>
-      const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
-      const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
-      const token = await clerk?.session?.getToken();
-      if (token) {
+      const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+      {
         try {
-          const res = await fetch(`${apiUrl}/me`, { headers: { Authorization: `Bearer ${token}` } });
+          const res = await fetch(`${apiUrl}/me`, { credentials: 'include' });
           const user = res.ok ? await res.json() : null;
           if (user) {
             const nameEl = document.getElementById('admin-user-name');

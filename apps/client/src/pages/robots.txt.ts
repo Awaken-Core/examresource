@@ -1,4 +1,8 @@
-# Default rules for all web search crawlers
+import type { APIRoute } from 'astro';
+
+export const GET: APIRoute = async () => {
+  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  const content = `# Default rules for all web search crawlers
 User-agent: *
 Allow: /
 Disallow: /admin
@@ -59,5 +63,15 @@ User-agent: cohere-ai
 Allow: /
 
 # XML Sitemap and RSS Feed locations
-Sitemap: https://govtpariksha.com/sitemap.xml
-Sitemap: https://govtpariksha.com/rss.xml
+Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/rss.xml
+`;
+
+  return new Response(content, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
+};

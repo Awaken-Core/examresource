@@ -1,390 +1,71 @@
 ---
 import type { AuthMode } from '../stores/auth';
 import BrandLogo from './BrandLogo.astro';
+import { siteDomain } from '../data/site';
 
 interface Props { mode: AuthMode }
 const { mode } = Astro.props;
-const isSignup = mode === 'signup';
+const [brandPrefix, ...brandRest] = siteDomain.split('.');
+const brandSuffix = brandRest.length ? `.${brandRest.join('.')}` : '';
+const title = mode === 'signup' ? 'Create your account' : 'Welcome back';
 ---
 
-<main class="min-h-screen w-full flex items-center justify-center bg-[#0d0e11] px-3 sm:px-4 py-6 sm:py-8 select-none">
-  <div class="w-full max-w-[430px] bg-[#16171b] border border-[#25272e] rounded-xl sm:rounded-2xl p-5 sm:p-7 lg:p-10 shadow-2xl relative">
-    
-    {/* Brand Logo & Name (Matches Image 3) */}
-    <div class="flex items-center justify-center gap-3 mb-6">
+<main class="min-h-screen w-full bg-canvas px-4 py-8 flex items-center justify-center">
+  <section class="card w-full max-w-md p-6 sm:p-8" aria-labelledby="auth-title">
+    <a href="/" class="mb-8 flex items-center justify-center gap-3" aria-label={`${siteDomain} home`}>
       <BrandLogo size={38} class="shrink-0" />
-      <span class="text-heading-sm font-bold tracking-tight text-[#ffffff] flex items-center">
-        govtpariksha<span class="text-accent">.com</span>
+      <span class="text-heading-sm font-bold tracking-tight text-white">
+        {brandPrefix}<span class="text-accent">{brandSuffix}</span>
       </span>
+    </a>
+    <div class="text-center">
+      <h1 id="auth-title" class="text-heading-lg font-bold text-white">{title}</h1>
+      <p class="mt-2 text-body-md text-muted">Continue securely with your Google account.</p>
     </div>
-
-    {/* Heading (Exact match to Image 3) */}
-    <h1 id="auth-title" class="text-2xl sm:text-[26px] font-bold text-[#ffffff] text-center mb-6 tracking-tight">
-      {isSignup ? "Welcome 👋 Let's Get Started!" : "Welcome 👋 Let's Get Started!"}
-    </h1>
-
-    {/* Status Message / Notification Banner */}
-    <div id="auth-status-banner" class="hidden mb-4 p-3 rounded-xl text-caption-sm transition"></div>
-
-    {/* Step 1: Email Form */}
-    <form id="email-step-form" class="space-y-3">
-      <div>
-        <label for="auth-email-input" class="sr-only">Email address</label>
-        <input 
-          type="email" 
-          id="auth-email-input" 
-          name="email"
-          required
-          autocomplete="email"
-          placeholder="Enter your email" 
-          class="w-full bg-[#111215] border border-[#282a32] rounded-xl px-4 py-3 text-body-sm text-[#ffffff] placeholder:text-[#888b96] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition"
-        />
-      </div>
-
-      <button 
-        id="auth-continue-btn"
-        type="submit" 
-        class="w-full bg-[#273549] hover:bg-[#324560] text-[#93c5fd] hover:text-[#ffffff] font-semibold py-3 px-4 rounded-xl text-body-sm transition cursor-pointer flex items-center justify-center gap-2"
-      >
-        <span id="btn-text">Continue</span>
-        <div id="btn-spinner" class="hidden w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-      </button>
-    </form>
-
-    {/* Step 2: Custom OTP Verification Form (Shown after email submitted) */}
-    <form id="otp-step-form" class="hidden space-y-3">
-      <div>
-        <label for="auth-otp-input" class="block text-caption-xs text-[#888b96] mb-1.5 font-medium">Enter 6-digit verification code</label>
-        <input 
-          type="text" 
-          id="auth-otp-input" 
-          name="otp"
-          maxlength="6"
-          placeholder="000000" 
-          class="w-full tracking-widest text-center text-lg font-mono bg-[#111215] border border-[#282a32] rounded-xl px-4 py-3 text-[#ffffff] placeholder:text-[#888b96] focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition"
-        />
-      </div>
-
-      <button 
-        id="otp-verify-btn"
-        type="submit" 
-        class="w-full bg-accent hover:bg-accent-hover text-[#ffffff] font-semibold py-3 px-4 rounded-xl text-body-sm transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
-      >
-        <span id="otp-btn-text">Verify & Sign In</span>
-        <div id="otp-btn-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-      </button>
-
-      <button 
-        id="otp-back-btn" 
-        type="button" 
-        class="w-full text-center text-caption-xs text-[#888b96] hover:text-[#ffffff] py-1 transition cursor-pointer"
-      >
-        ← Use a different email
-      </button>
-    </form>
-
-    {/* Divider (or) */}
-    <div id="auth-divider" class="relative flex py-5 items-center">
-      <div class="flex-grow border-t border-[#25272e]"></div>
-      <span class="flex-shrink mx-3 text-caption-xs text-[#888b96]">or</span>
-      <div class="flex-grow border-t border-[#25272e]"></div>
+    <div id="auth-error" role="alert" class="mt-5 hidden rounded-xl border border-error bg-error/10 p-3 text-body-sm text-white">
+      Google sign-in could not be completed. Please try again.
     </div>
-
-    {/* Google Login Button (Exact match to Image 3) */}
-    <button 
+    <a
       id="google-continue-btn"
-      type="button" 
-      class="w-full flex items-center justify-center gap-3 bg-[#1e2025] hover:bg-[#252830] border border-[#2b2d35] text-[#ffffff] font-medium py-3 px-4 rounded-xl text-body-sm transition cursor-pointer shadow-xs active:scale-[0.99]"
+      href="#"
+      class="mt-7 flex min-h-11 w-full items-center justify-center gap-3 rounded-pill border border-border bg-surface-raised px-5 py-3 text-button-md font-semibold text-white transition hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
-      <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+      <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
       </svg>
-      <span id="google-btn-text">Continue with Google</span>
-      <div id="google-spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-    </button>
-
-    {/* Session Duration Caption */}
-    <p class="text-center text-[11px] text-[#888b96] mt-4">
-      OTP Login: 1-Day session • Google Login: 30-Day session
+      <span>Continue with Google</span>
+    </a>
+    <p class="mt-5 text-center text-caption-xs text-muted">
+      By continuing, you agree to our <a class="text-accent hover:underline" href="/terms-of-service">Terms</a> and <a class="text-accent hover:underline" href="/privacy-policy">Privacy Policy</a>.
     </p>
-
-    {/* Skip and continue to Home */}
-    <div class="text-center mt-6">
-      <a href="/" class="text-caption-sm text-[#888b96] hover:text-[#ffffff] transition">
-        Skip and continue to <span class="text-accent underline underline-offset-4 font-medium">Home</span>
-      </a>
-    </div>
-  </div>
+    <p class="mt-6 text-center">
+      <a href="/" class="text-body-sm text-muted transition hover:text-white">Continue without signing in</a>
+    </p>
+  </section>
 </main>
 
 <script>
-  function setupAuthInteractivity() {
-    const isSignupMode = window.location.pathname.includes('signup');
-    const googleBtn = document.getElementById('google-continue-btn');
-    const googleBtnText = document.getElementById('google-btn-text');
-    const googleSpinner = document.getElementById('google-spinner');
+  import { API_URL } from '../lib/api';
 
-    const emailForm = document.getElementById('email-step-form') as HTMLFormElement | null;
-    const emailInput = document.getElementById('auth-email-input') as HTMLInputElement | null;
-    const continueBtn = document.getElementById('auth-continue-btn');
-    const btnText = document.getElementById('btn-text');
-    const btnSpinner = document.getElementById('btn-spinner');
-
-    const otpForm = document.getElementById('otp-step-form') as HTMLFormElement | null;
-    const otpInput = document.getElementById('auth-otp-input') as HTMLInputElement | null;
-    const otpVerifyBtn = document.getElementById('otp-verify-btn');
-    const otpBtnText = document.getElementById('otp-btn-text');
-    const otpBtnSpinner = document.getElementById('otp-btn-spinner');
-    const otpBackBtn = document.getElementById('otp-back-btn');
-
-    const statusBanner = document.getElementById('auth-status-banner');
-    const divider = document.getElementById('auth-divider');
-
-    let currentSignUp: any = null;
-    let currentSignIn: any = null;
-    let pendingEmail = '';
-
-    function showStatus(message: string, type: 'error' | 'success' | 'info') {
-      if (!statusBanner) return;
-      statusBanner.classList.remove('hidden', 'bg-red-500/15', 'text-red-400', 'border-red-500/30', 'bg-blue-500/15', 'text-blue-300', 'border-blue-500/30', 'bg-green-500/15', 'text-green-300', 'border-green-500/30');
-      statusBanner.classList.add('border');
-
-      if (type === 'error') {
-        statusBanner.classList.add('bg-red-500/15', 'text-red-400', 'border-red-500/30');
-      } else if (type === 'success') {
-        statusBanner.classList.add('bg-green-500/15', 'text-green-300', 'border-green-500/30');
-      } else {
-        statusBanner.classList.add('bg-blue-500/15', 'text-blue-300', 'border-blue-500/30');
-      }
-      statusBanner.textContent = message;
-    }
-
-    function clearStatus() {
-      if (statusBanner) {
-        statusBanner.classList.add('hidden');
-        statusBanner.textContent = '';
-      }
-    }
-
-    async function getReadyClerk() {
-      const clerk = (window as any).Clerk;
-      if (!clerk) return null;
-      if (!clerk.loaded && typeof clerk.load === 'function') {
-        try {
-          await clerk.load();
-        } catch (_) {}
-      }
-      return clerk;
-    }
-
-    // --- 1. Custom Google OAuth Flow ---
-    if (googleBtn) {
-      googleBtn.addEventListener('click', async () => {
-        clearStatus();
-        googleBtnText?.classList.add('opacity-50');
-        googleSpinner?.classList.remove('hidden');
-
-        const clerk = await getReadyClerk();
-        if (!clerk) {
-          showStatus('Clerk service is initializing, please try again.', 'info');
-          googleBtnText?.classList.remove('opacity-50');
-          googleSpinner?.classList.add('hidden');
-          return;
-        }
-
-        const callbackUrl = `${window.location.origin}/sso-callback`;
-        const completeUrl = `${window.location.origin}/`;
-
-        try {
-          // If in sign up mode, use signUp.authenticateWithRedirect
-          if (isSignupMode && clerk.client?.signUp?.authenticateWithRedirect) {
-            await clerk.client.signUp.authenticateWithRedirect({
-              strategy: 'oauth_google',
-              redirectUrl: callbackUrl,
-              redirectUrlComplete: completeUrl,
-            });
-            return;
-          }
-
-          // In sign in mode (or default)
-          if (clerk.client?.signIn?.authenticateWithRedirect) {
-            await clerk.client.signIn.authenticateWithRedirect({
-              strategy: 'oauth_google',
-              redirectUrl: callbackUrl,
-              redirectUrlComplete: completeUrl,
-            });
-            return;
-          }
-        } catch (err: any) {
-          console.warn('Google sign-in attempt warning:', err);
-          // If signIn fails (e.g. account doesn't exist yet), seamlessly try signUp
-          try {
-            if (clerk.client?.signUp?.authenticateWithRedirect) {
-              await clerk.client.signUp.authenticateWithRedirect({
-                strategy: 'oauth_google',
-                redirectUrl: callbackUrl,
-                redirectUrlComplete: completeUrl,
-              });
-              return;
-            }
-          } catch (signUpErr: any) {
-            console.error('OAuth redirect error:', signUpErr);
-            showStatus(signUpErr?.errors?.[0]?.message || 'Google Sign-in failed. Please try again.', 'error');
-          }
-        } finally {
-          googleBtnText?.classList.remove('opacity-50');
-          googleSpinner?.classList.add('hidden');
-        }
-      });
-    }
-
-    // --- 2. Custom Email Step Flow ---
-    if (emailForm) {
-      emailForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        clearStatus();
-
-        const email = emailInput?.value.trim();
-        if (!email) return;
-
-        btnText?.classList.add('opacity-50');
-        btnSpinner?.classList.remove('hidden');
-
-        const clerk = await getReadyClerk();
-        if (!clerk) {
-          showStatus('Clerk is loading, please try again in a moment.', 'info');
-          btnText?.classList.remove('opacity-50');
-          btnSpinner?.classList.add('hidden');
-          return;
-        }
-
-        pendingEmail = email;
-
-        try {
-          // Try SignIn first
-          let signInAttempt: any = null;
-          try {
-            signInAttempt = await clerk.client.signIn.create({ identifier: email });
-            currentSignIn = signInAttempt;
-          } catch (signInErr: any) {
-            // If user doesn't exist yet, automatically start SignUp
-            const errorCode = signInErr?.errors?.[0]?.code;
-            if (errorCode === 'form_identifier_not_found') {
-              const signUpAttempt = await clerk.client.signUp.create({ emailAddress: email });
-              currentSignUp = signUpAttempt;
-              await clerk.client.signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-              
-              // Transition to OTP step
-              emailForm.classList.add('hidden');
-              divider?.classList.add('hidden');
-              googleBtn?.classList.add('hidden');
-              otpForm?.classList.remove('hidden');
-              showStatus(`Verification code sent to ${email}`, 'success');
-              otpInput?.focus();
-              return;
-            }
-            throw signInErr;
-          }
-
-          if (signInAttempt) {
-            // Find email_code factor
-            const emailCodeFactor = signInAttempt.supportedFirstFactors?.find(
-              (f: any) => f.strategy === 'email_code'
-            );
-
-            if (emailCodeFactor) {
-              await clerk.client.signIn.prepareFirstFactor({
-                strategy: 'email_code',
-                emailAddressId: emailCodeFactor.emailAddressId,
-              });
-
-              // Transition to OTP step
-              emailForm.classList.add('hidden');
-              divider?.classList.add('hidden');
-              googleBtn?.classList.add('hidden');
-              otpForm?.classList.remove('hidden');
-              showStatus(`Verification code sent to ${email}`, 'success');
-              otpInput?.focus();
-            } else if (signInAttempt.status === 'complete') {
-              await clerk.setActive({ session: signInAttempt.createdSessionId });
-              window.location.assign('/');
-            } else {
-              showStatus('Please sign in using Google or check your email settings.', 'info');
-            }
-          }
-        } catch (err: any) {
-          console.error('Email sign in error:', err);
-          showStatus(err?.errors?.[0]?.message || 'Could not verify email. Please try again.', 'error');
-        } finally {
-          btnText?.classList.remove('opacity-50');
-          btnSpinner?.classList.add('hidden');
-        }
-      });
-    }
-
-    // --- 3. Custom OTP Verification Flow ---
-    if (otpForm) {
-      otpForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        clearStatus();
-
-        const code = otpInput?.value.trim();
-        if (!code) return;
-
-        otpBtnText?.classList.add('opacity-50');
-        otpBtnSpinner?.classList.remove('hidden');
-
-        const clerk = await getReadyClerk();
-        if (!clerk) return;
-
-        try {
-          if (currentSignUp) {
-            const completeSignUp = await clerk.client.signUp.attemptEmailAddressVerification({ code });
-            if (completeSignUp.status === 'complete') {
-              await clerk.setActive({ session: completeSignUp.createdSessionId });
-              window.location.assign('/');
-              return;
-            }
-          }
-
-          if (currentSignIn) {
-            const completeSignIn = await clerk.client.signIn.attemptFirstFactor({
-              strategy: 'email_code',
-              code,
-            });
-            if (completeSignIn.status === 'complete') {
-              await clerk.setActive({ session: completeSignIn.createdSessionId });
-              window.location.assign('/');
-              return;
-            }
-          }
-
-          showStatus('Verification incomplete. Please verify the code and try again.', 'error');
-        } catch (err: any) {
-          console.error('OTP verification error:', err);
-          showStatus(err?.errors?.[0]?.message || 'Invalid code. Please try again.', 'error');
-        } finally {
-          otpBtnText?.classList.remove('opacity-50');
-          otpBtnSpinner?.classList.add('hidden');
-        }
-      });
-    }
-
-    // --- 4. Back Button (from OTP to Email) ---
-    if (otpBackBtn) {
-      otpBackBtn.addEventListener('click', () => {
-        clearStatus();
-        otpForm?.classList.add('hidden');
-        emailForm?.classList.remove('hidden');
-        divider?.classList.remove('hidden');
-        googleBtn?.classList.remove('hidden');
-      });
+  function setupGoogleAuth() {
+    const link = document.getElementById('google-continue-btn') as HTMLAnchorElement | null;
+    if (!link || link.dataset.ready === 'true') return;
+    link.dataset.ready = 'true';
+    link.href = `${API_URL}/auth/google`;
+    link.addEventListener('click', () => {
+      link.setAttribute('aria-disabled', 'true');
+      link.classList.add('pointer-events-none', 'opacity-70');
+      const label = link.querySelector('span');
+      if (label) label.textContent = 'Redirecting to Google…';
+    });
+    if (new URLSearchParams(window.location.search).has('error')) {
+      document.getElementById('auth-error')?.classList.remove('hidden');
     }
   }
 
-  document.addEventListener('astro:page-load', setupAuthInteractivity);
-  setupAuthInteractivity();
+  document.addEventListener('astro:page-load', setupGoogleAuth);
+  setupGoogleAuth();
 </script>

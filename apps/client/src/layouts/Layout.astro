@@ -5,7 +5,7 @@ import LeftSidebar from '../components/LeftSidebar.astro';
 import TrendingBanner from '../components/TrendingBanner.astro';
 import SearchModal from '../components/SearchModal.astro';
 import BrandLogo from '../components/BrandLogo.astro';
-import { whatsappChannel, telegramChannel } from '../data/site';
+import { whatsappChannel, telegramChannel, siteUrl, siteDomain, siteName } from '../data/site';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Analytics from '@vercel/analytics/astro';
@@ -25,13 +25,18 @@ interface Props {
   noindex?: boolean;
 }
 
-const siteOrigin = 'https://govtpariksha.com';
+const siteOrigin = siteUrl;
+const domainDotIndex = siteDomain.lastIndexOf('.');
+const domainPrefix = domainDotIndex !== -1 ? siteDomain.slice(0, domainDotIndex) : siteDomain;
+const domainSuffix = domainDotIndex !== -1 ? siteDomain.slice(domainDotIndex) : '';
+const twitterHandle = `@${siteName.toLowerCase().replace(/\s+/g, '')}`;
+const defaultAvatarInitials = siteName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || 'GP';
 const currentPath = Astro.url.pathname;
 const cleanPath = currentPath === '/' ? '' : currentPath.replace(/\/$/, '');
 
 const {
-  title = "govtpariksha.com - Govt Jobs, Admissions & Results",
-  description = "Get verified government examination notices, admit cards, answer keys and counselling results on govtpariksha.com.",
+  title = `${siteDomain} - Govt Jobs, Admissions & Results`,
+  description = `Get verified government examination notices, admit cards, answer keys and counselling results on ${siteDomain}.`,
   canonicalUrl = `${siteOrigin}${cleanPath || '/'}`,
   ogImage = `${siteOrigin}/og-image.jpg`,
   ogType = Astro.props.publishedTime ? 'article' : 'website',
@@ -58,8 +63,8 @@ const ogImageType = ogImageExt === 'jpg' || ogImageExt === 'jpeg' ? 'image/jpeg'
 const googleVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerification = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
-const gtmId = import.meta.env.PUBLIC_GTM_ID || 'GTM-PX3RG8RR';
-const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQP';
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
@@ -110,12 +115,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     </script>
     {/* End Google Tag Manager */}
 
-    {/* Preconnect to Google Fonts (saves ~200ms per Lighthouse) */}
+    {/* Google Fonts: Preconnect & Direct Non-blocking Link */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
 
-    {/* DNS prefetch for Clerk & R2 (reduces connection setup time) */}
-    <link rel="dns-prefetch" href="https://clerk.govtpariksha.com" />
+    {/* Preconnect and DNS prefetch for the media CDN */}
+    <link rel="preconnect" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" crossorigin />
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -136,13 +142,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
       name="robots"
       content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
     />
-    <meta name="author" content="GovtPariksha" />
-    <meta name="publisher" content="GovtPariksha" />
-    <meta name="application-name" content="GovtPariksha" />
-    <meta name="apple-mobile-web-app-title" content="GovtPariksha" />
+    <meta name="author" content={siteName} />
+    <meta name="publisher" content={siteName} />
+    <meta name="application-name" content={siteName} />
+    <meta name="apple-mobile-web-app-title" content={siteName} />
 
     {/* Feeds & AI Agent Discovery */}
-    <link rel="alternate" type="application/rss+xml" title="GovtPariksha RSS Feed" href={`${siteOrigin}/rss.xml`} />
+    <link rel="alternate" type="application/rss+xml" title={`${siteName} RSS Feed`} href={`${siteOrigin}/rss.xml`} />
     <link rel="alternate" type="text/plain" href={`${siteOrigin}/llms.txt`} title="LLM Context Summary" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href={`${siteOrigin}/sitemap.xml`} />
 
@@ -157,7 +163,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     ))}
 
     {/* Open Graph / Facebook / WhatsApp */}
-    <meta property="og:site_name" content="GovtPariksha" />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
@@ -175,8 +181,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
 
     {/* Twitter Cards */}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@govtpariksha" />
-    <meta name="twitter:creator" content="@govtpariksha" />
+    <meta name="twitter:site" content={twitterHandle} />
+    <meta name="twitter:creator" content={twitterHandle} />
     <meta name="twitter:url" content={canonicalUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -209,6 +215,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     </script>
   </head>
   <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+    <div id="route-loading-bar" class="fixed top-0 left-0 right-0 h-[2px] bg-accent z-[99999] opacity-0 pointer-events-none origin-left scale-x-0" transition:persist></div>
     {/* Google Tag Manager (noscript) */}
     <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -256,10 +263,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     >
       {/* ── Drawer Header ── */}
       <div class="flex items-center justify-between h-14 px-4 border-b border-border/60 shrink-0 bg-canvas">
-        <a href="/" class="flex items-center gap-2 group" aria-label="govtpariksha.com home">
+        <a href="/" class="flex items-center gap-2 group" aria-label={`${siteDomain} home`}>
           <BrandLogo size={32} class="group-hover:scale-105 transition-transform shrink-0" />
           <span class="font-bold text-sm tracking-tight text-white">
-            govtpariksha<span class="text-accent">.com</span>
+            {domainPrefix}<span class="text-accent">{domainSuffix}</span>
           </span>
         </a>
         <button 
@@ -368,8 +375,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer"
           >
             <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
-              <span class="user-avatar-initials">GP</span>
-              <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" />
+              <span class="user-avatar-initials">{defaultAvatarInitials}</span>
+              <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" width="40" height="40" decoding="async" loading="lazy" />
             </div>
             <div class="flex-1 min-w-0 text-left">
               <p class="user-display-name text-sm font-bold text-white truncate leading-tight">User</p>
@@ -387,7 +394,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     {/* Global Robust Interactive Script */}
     <script>
       import { markAllNotificationsRead, markNotificationRead, refreshNotifications, requestBrowserNotificationPermission, updateBrowserNotificationUI } from '../lib/notifications';
-      import { searchItems } from '../data/site';
+      import { canSwapArticleLanguage, getDisplayedArticleLang, swapArticleLanguage } from '../lib/article-lang-swap';
+      import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
+      import { API_URL } from '../lib/api';
+      import { searchItems, siteDomain } from '../data/site';
 
       (function initApp() {
 
@@ -617,9 +627,74 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
         }
 
         // --- Language Switcher Integration ---
-        function setLanguage(lang: string, shouldNavigate: boolean = false) {
-          const normalized = (lang === 'en' || lang === 'english' || lang === 'ENGLISH') ? 'en' : 'hinglish';
+        function syncListingCardLinks(lang: string) {
+          const normalized = normalizeAppLang(lang);
+          document.querySelectorAll<HTMLAnchorElement>('[data-article-link]').forEach((a) => {
+            const slug = a.getAttribute('data-article-link');
+            if (!slug) return;
+            a.setAttribute('href', articleHref(slug, normalized));
+          });
+        }
+
+        function softNavigate(url: string) {
+          void import('astro:transitions/client')
+            .then(({ navigate }) => navigate(url))
+            .catch(() => { window.location.href = url; });
+        }
+
+        /** Update home/category cards in place — no navigation, no scroll jump. */
+        async function refreshListingCardsInPlace(lang: string) {
+          const normalized = normalizeAppLang(lang);
+          const blogLang = appLangToBlogLanguage(normalized);
+          const path = window.location.pathname;
+          const categoryMatch = path.match(/^\/category\/([^/]+)\/?$/);
+          const params = new URLSearchParams({ limit: '50', language: blogLang });
+          if (categoryMatch?.[1]) params.set('category', categoryMatch[1]);
+
           try {
+            const res = await fetch(`${API_URL}/blogs?${params.toString()}`);
+            if (!res.ok) return;
+            const posts = await res.json();
+            if (!Array.isArray(posts)) return;
+
+            const bySlug = new Map<string, any>();
+            posts.forEach((p: any) => {
+              if (p?.slug) bySlug.set(String(p.slug).toLowerCase(), p);
+            });
+
+            document.querySelectorAll<HTMLAnchorElement>('[data-article-link]').forEach((a) => {
+              const slug = (a.getAttribute('data-article-link') || '').toLowerCase();
+              const post = bySlug.get(slug);
+              if (!post) return;
+
+              a.setAttribute('href', articleHref(slug, normalized));
+
+              const titleEl = a.querySelector<HTMLElement>('[data-article-title]');
+              if (titleEl && post.title) titleEl.textContent = post.title;
+
+              const summaryEl = a.querySelector<HTMLElement>('[data-article-summary]');
+              if (summaryEl) {
+                summaryEl.textContent =
+                  post.description || post.metaDescription || summaryEl.textContent || '';
+              }
+
+              const img = a.querySelector<HTMLImageElement>('img');
+              if (img && post.title) img.alt = post.title;
+            });
+          } catch {
+            // Keep existing card text; hrefs already updated via syncListingCardLinks
+          }
+        }
+
+        function setLanguage(lang: string, shouldNavigate: boolean = false) {
+          const normalized = normalizeAppLang(lang);
+          let previous: string = 'hinglish';
+          try {
+            previous = normalizeAppLang(
+              localStorage.getItem('preferred_exam_lang')
+                || localStorage.getItem('site_language')
+                || 'hinglish',
+            );
             localStorage.setItem('preferred_exam_lang', normalized);
             localStorage.setItem('site_language', normalized);
             document.cookie = `preferred_lang=${normalized};path=/;max-age=31536000;SameSite=Lax`;
@@ -628,7 +703,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           const label = document.getElementById('current-language-label');
           if (label) label.textContent = normalized === 'en' ? 'EN' : 'HI';
 
-          // Update UI buttons across ProfileDropdown, LeftSidebar, and LanguageSwitcher
+          // Update profile language toggle buttons
           const appLangBtns = document.querySelectorAll<HTMLElement>('[data-app-lang], [data-global-lang]');
           appLangBtns.forEach((btn) => {
             const btnLang = btn.getAttribute('data-app-lang') || btn.getAttribute('data-global-lang');
@@ -642,24 +717,35 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             }
           });
 
-          // If on a blog article page and user initiated switch, navigate to corresponding language version
-          if (shouldNavigate) {
-            const currentPath = window.location.pathname;
-            const currentSearch = new URLSearchParams(window.location.search);
-            const isArticle = document.querySelector('.blog-reading-view') !== null || (currentPath !== '/' && !currentPath.startsWith('/admin') && !currentPath.startsWith('/login') && !currentPath.startsWith('/signup') && !currentPath.startsWith('/blog/'));
+          // Keep listing card links aligned with preference
+          syncListingCardLinks(normalized);
 
-            if (isArticle) {
-              if (normalized === 'en') {
-                currentSearch.set('lang', 'en');
-                const newUrl = `${currentPath}?${currentSearch.toString()}`;
-                window.location.assign(newUrl);
-              } else {
-                currentSearch.delete('lang');
-                const searchStr = currentSearch.toString();
-                const newUrl = searchStr ? `${currentPath}?${searchStr}` : currentPath;
-                window.location.assign(newUrl);
-              }
+          if (!shouldNavigate) return;
+
+          const isArticle = document.querySelector('.blog-reading-view') !== null
+            || document.getElementById('article-lang-data') !== null;
+
+          if (isArticle) {
+            const displayed = getDisplayedArticleLang();
+            if (displayed === normalized) return;
+
+            if (canSwapArticleLanguage(normalized)) {
+              swapArticleLanguage(normalized);
+            } else {
+              const path = window.location.pathname;
+              const search = new URLSearchParams(window.location.search);
+              if (normalized === 'en') search.set('lang', 'en');
+              else search.delete('lang');
+              const qs = search.toString();
+              softNavigate(qs ? `${path}?${qs}` : path);
             }
+            return;
+          }
+
+          // Home / category: update cards in place (preserves scroll position)
+          const path = window.location.pathname;
+          if ((path === '/' || path.startsWith('/category/')) && previous !== normalized) {
+            void refreshListingCardsInPlace(normalized);
           }
         }
 
@@ -751,7 +837,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
                 <span class="text-lg shrink-0">${item.icon}</span>
                 <div class="truncate">
                   <p class="text-body-sm font-semibold text-white group-hover:text-accent transition truncate">${item.title}</p>
-                  <p class="text-[11px] text-muted truncate">${item.tag} • govtpariksha.com</p>
+                  <p class="text-[11px] text-muted truncate">${item.tag} • ${siteDomain}</p>
                 </div>
               </div>
               <svg class="w-4 h-4 text-muted group-hover:text-accent shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -829,14 +915,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             if (target.closest('[data-auth-action="logout"]')) {
               e.preventDefault();
               e.stopPropagation();
-              const clerk = (window as any).Clerk;
-              if (clerk && typeof clerk.signOut === 'function') {
-                clerk.signOut().then(() => {
-                  window.location.assign('/login');
-                });
-              } else {
-                window.location.assign('/login');
-              }
+              const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+              void fetch(`${apiUrl}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'X-CSRF-Protection': '1' },
+              }).finally(() => window.location.assign('/login'));
               return;
             }
 
@@ -1096,40 +1180,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
         }
       }
 
-        // --- Clerk User State Integration ---
-        async function syncClerkProfile() {
-          const clerk = (window as any).Clerk;
-          if (!clerk) return;
+        async function syncAuthProfile() {
+          const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+          const response = await fetch(`${apiUrl}/me`, { credentials: 'include' }).catch(() => null);
+          const user = response?.ok ? await response.json().catch(() => null) : null;
 
-          if (!clerk.loaded && typeof clerk.load === 'function') {
-            try {
-              await clerk.load();
-            } catch (_) {}
-          }
+          if (user) {
+            void refreshNotifications('session');
 
-          if (typeof clerk.addListener === 'function' && !(window as any).__clerkListenerAttached) {
-            (window as any).__clerkListenerAttached = true;
-            clerk.addListener(() => syncClerkProfile());
-          }
-
-          const user = clerk.user || clerk.session?.user;
-          const token = await clerk.session?.getToken?.().catch(() => null);
-          const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
-
-          if (token) {
-            fetch(`${apiUrl}/me`, {
-              headers: { Authorization: `Bearer ${token}` },
-            }).catch(() => null);
-            void refreshNotifications(token);
-
-            // Periodically refresh notifications & fire browser notifications
             if (!(window as any).__notifPollInterval) {
-              (window as any).__notifPollInterval = setInterval(async () => {
-                const refreshedToken = await clerk.session?.getToken?.().catch(() => null);
-                if (refreshedToken) {
-                  void refreshNotifications(refreshedToken);
-                }
-              }, 45000);
+              (window as any).__notifPollInterval = setInterval(() => void refreshNotifications('session'), 45000);
             }
           } else {
             void refreshNotifications(null);
@@ -1145,29 +1205,26 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           const headerProfileInitials = document.querySelectorAll<HTMLElement>('.header-profile-initials');
 
           if (user) {
-            const fullName = user.fullName || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'User';
-            const email = user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress || 'Account';
-            const initials = ((user.firstName?.[0] || fullName[0] || 'U') + (user.lastName?.[0] || '')).toUpperCase();
+            const fullName = user.name || 'User';
+            const email = user.email || 'Account';
+            const initials = fullName.split(/\s+/).map((part: string) => part[0]).join('').slice(0, 2).toUpperCase() || 'U';
 
             nameEls.forEach(el => el.textContent = fullName);
             emailEls.forEach(el => el.textContent = email);
             initialEls.forEach(el => el.textContent = initials);
 
-            if (user.imageUrl) {
-              imgEls.forEach(img => {
-                img.src = user.imageUrl;
-                img.classList.remove('hidden');
-              });
-              initialEls.forEach(el => el.classList.add('hidden'));
-              headerProfileIcons.forEach(el => el.classList.add('hidden'));
-            } else {
-              imgEls.forEach(img => img.classList.add('hidden'));
-              initialEls.forEach(el => el.classList.remove('hidden'));
-              headerProfileIcons.forEach(el => el.classList.add('hidden'));
-            }
+            imgEls.forEach(img => img.classList.add('hidden'));
+            initialEls.forEach(el => el.classList.remove('hidden'));
+            headerProfileIcons.forEach(el => el.classList.add('hidden'));
 
-            logoutBtns.forEach(b => b.classList.remove('hidden'));
-            loginLinks.forEach(l => l.classList.add('hidden'));
+            logoutBtns.forEach((b) => {
+              b.classList.remove('hidden');
+              b.style.display = 'flex';
+            });
+            loginLinks.forEach((l) => {
+              l.classList.add('hidden');
+              l.style.display = 'none';
+            });
 
             // Show Logged In Profile UI in Sidebar & Header, HIDE Logged Out CTA (Get Started button)
             document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
@@ -1197,8 +1254,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             headerProfileInitials.forEach(el => el.classList.add('hidden'));
             document.querySelectorAll<HTMLElement>('.user-avatar-initials:not(.header-profile-initials)').forEach(el => el.classList.remove('hidden'));
 
-            logoutBtns.forEach(b => b.classList.add('hidden'));
-            loginLinks.forEach(l => l.classList.remove('hidden'));
+            logoutBtns.forEach((b) => {
+              b.classList.add('hidden');
+              b.style.display = 'none';
+            });
+            loginLinks.forEach((l) => {
+              l.classList.remove('hidden');
+              l.style.display = 'flex';
+            });
 
             // Show Logged Out UI in Sidebar & Header, HIDE Profile Card & Profile Icon
             document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
@@ -1229,13 +1292,29 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           const initialIsLight = !document.documentElement.classList.contains('theme-dark');
           updateAllThemeToggles(initialIsLight);
 
-          // Sync Language
-          const urlParams = new URLSearchParams(window.location.search);
-          const urlLang = urlParams.get('lang');
-          const initialLang = (urlLang === 'en' || urlLang === 'english')
-            ? 'en'
-            : (localStorage.getItem('preferred_exam_lang') || localStorage.getItem('site_language') || 'hinglish');
-          setLanguage(initialLang, false);
+          // Sync language toggle with rendered content (fixes EN toggle + Hinglish body)
+          const preferred = normalizeAppLang(
+            localStorage.getItem('preferred_exam_lang')
+              || localStorage.getItem('site_language')
+              || 'hinglish',
+          );
+          const displayedArticleLang = getDisplayedArticleLang();
+          const urlLangRaw = new URLSearchParams(window.location.search).get('lang');
+          const hasExplicitUrlLang = urlLangRaw != null && urlLangRaw !== '';
+
+          if (displayedArticleLang) {
+            if (hasExplicitUrlLang) {
+              // Explicit ?lang= wins — sync preference to match URL/content
+              setLanguage(displayedArticleLang, false);
+            } else {
+              setLanguage(displayedArticleLang, false);
+              if (preferred !== displayedArticleLang && canSwapArticleLanguage(preferred)) {
+                setLanguage(preferred, true);
+              }
+            }
+          } else {
+            setLanguage(preferred, false);
+          }
 
           // Setup hover-peek triggers
           const headerToggleWrapper = document.getElementById('header-sidebar-toggle-wrapper');
@@ -1278,8 +1357,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             };
           });
 
-          // Sync Clerk Profile on the freshly rendered DOM
-          syncClerkProfile();
+          syncAuthProfile();
         }
 
         // --- Global One-Time Event Listeners & Lifecycles ---
@@ -1308,20 +1386,31 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             }
           });
 
+          document.addEventListener('astro:before-preparation', () => {
+            const bar = document.getElementById('route-loading-bar');
+            if (bar) {
+              bar.style.transition = 'transform 0.3s ease, opacity 0.15s ease';
+              bar.style.opacity = '1';
+              bar.style.transform = 'scaleX(0.7)';
+            }
+          });
+
           // Re-initialize dynamic elements on every Astro ClientRouter navigation
           document.addEventListener('astro:page-load', () => {
+            const bar = document.getElementById('route-loading-bar');
+            if (bar) {
+              bar.style.transform = 'scaleX(1)';
+              setTimeout(() => {
+                bar.style.opacity = '0';
+                setTimeout(() => {
+                  bar.style.transform = 'scaleX(0)';
+                }, 200);
+              }, 150);
+            }
             reinitPageElements();
           });
 
-          // Single one-time Clerk readiness check
-          let clerkPollCount = 0;
-          const clerkInterval = setInterval(() => {
-            clerkPollCount++;
-            if ((window as any).Clerk?.loaded || clerkPollCount > 15) {
-              clearInterval(clerkInterval);
-              syncClerkProfile();
-            }
-          }, 200);
+          void syncAuthProfile();
         }
 
         // Run immediately for initial page render

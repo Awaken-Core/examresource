@@ -9,6 +9,7 @@ export type AppNotification = {
 };
 
 import { API_URL } from './api';
+import { siteName } from '../data/site';
 const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
 
 let currentItems: AppNotification[] = [];
@@ -24,6 +25,23 @@ function relativeTime(iso: string) {
   const days = Math.floor(hours / 24);
   if (days < 7) return `${days}d`;
   return new Date(iso).toLocaleDateString();
+}
+
+/** Same-origin / relative hrefs soft-navigate via ClientRouter; externals hard-navigate. */
+async function goToNotificationHref(href: string) {
+  try {
+    const url = new URL(href, window.location.origin);
+    const isSameOrigin = url.origin === window.location.origin;
+    if (isSameOrigin) {
+      const path = `${url.pathname}${url.search}${url.hash}`;
+      const { navigate } = await import('astro:transitions/client');
+      navigate(path);
+      return;
+    }
+  } catch {
+    // fall through
+  }
+  window.location.assign(href);
 }
 
 function iconFor(kind: AppNotification['kind']) {
@@ -64,7 +82,7 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
   saveFiredIds(firedIds);
 
   for (const item of toFire) {
-    const title = item.title ? `GovtPariksha: ${item.title}` : 'GovtPariksha Alert';
+    const title = item.title ? `${siteName}: ${item.title}` : `${siteName} Alert`;
     const body = item.body || 'New examination notification published.';
     const options: NotificationOptions = {
       body,
@@ -89,7 +107,7 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
       notif.onclick = () => {
         window.focus();
         if (item.href) {
-          window.location.assign(item.href);
+          void goToNotificationHref(item.href);
         }
       };
     } catch (err) {
@@ -254,9 +272,7 @@ export async function refreshNotifications(token: string | null) {
   }
 
   try {
-    const response = await fetch(`${API_URL}/me/notifications`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(`${API_URL}/me/notifications`, { credentials: 'include' });
     if (!response.ok) return;
     const data = (await response.json()) as { items?: AppNotification[] };
     currentItems = data.items ?? [];
@@ -274,9 +290,10 @@ export async function markAllNotificationsRead() {
   await fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${currentToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Protection': '1',
     },
+    credentials: 'include',
     body: '{}',
     keepalive: true,
   }).catch(() => null);
@@ -290,9 +307,10 @@ export function markNotificationRead(id: string) {
   void fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${currentToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Protection': '1',
     },
+    credentials: 'include',
     body: JSON.stringify({ ids: [id] }),
     keepalive: true,
   }).catch(() => null);

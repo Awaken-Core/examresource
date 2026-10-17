@@ -1,25 +1,32 @@
 // @ts-check
+import 'dotenv/config';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
-import clerk from '@clerk/astro';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://govtpariksha.com',
+	site: process.env.PUBLIC_SITE_URL,
 	devToolbar: {
-		enabled: false,
+		enabled: process.env.NODE_ENV !== 'production',
 	},
 	output: 'server',
 	compressHTML: true,
-	server: { port: 3000, host: true },
+	prefetch: {
+		prefetchAll: true,
+		defaultStrategy: 'hover',
+	},
+	server: { port: Number(process.env.PORT || 3000), host: true },
 	adapter: vercel(),
-	integrations: [clerk()],
+	integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 750,
+    },
     optimizeDeps: {
       include: [
-        '@clerk/astro/internal',
         'astro/virtual-modules/transitions-events.js',
         'astro/virtual-modules/transitions-router.js',
         'astro/virtual-modules/transitions-swap-functions.js',

@@ -1,12 +1,15 @@
-export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL || 'https://whatsapp.com/channel/0029VbDrCtD2P59lOMdotQ0S';
-export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL || 'https://t.me/govtpariksha108';
-export const contactEmail = 'awakenstudioss@gmail.com';
+export const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+export const siteName = import.meta.env.PUBLIC_SITE_NAME;
+export const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN;
+export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL;
+export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL;
+export const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL;
 
 export const siteFaqs = [
   {
-    question: 'Is govtpariksha.com an official government website?',
+    question: `Is ${siteDomain} an official government website?`,
     answer:
-      'GovtPariksha (govtpariksha.com) is an independent informational education portal and is not affiliated with any government department or recruitment commission. We publish verified recruitment guides, exam notices, admit card alerts, and syllabi for candidates, with direct links to official government portals for applications, fee payment, and results.',
+      `${siteName} (${siteDomain}) is an independent informational education portal and is not affiliated with any government department or recruitment commission. We publish verified recruitment guides, exam notices, admit card alerts, and syllabi for candidates, with direct links to official government portals for applications, fee payment, and results.`,
   },
   {
     question: 'Where should I apply for SSC, UPSC, Railway, and bank exams?',

@@ -69,12 +69,11 @@ function extractCandidateText(data: unknown): string | undefined {
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name);
   private readonly candidateModels = [
-    process.env.GEMINI_MODEL,
-    'gemini-3.8-flash',
-  ].filter(Boolean) as string[];
+    env.GEMINI_MODEL,
+  ].filter((m): m is string => Boolean(m));
 
   private getApiKey(): string {
-    const key = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const key = env.GEMINI_API_KEY;
     if (!key) {
       throw new BadRequestException(
         'GEMINI_API_KEY is not configured in server environment. Please set GEMINI_API_KEY in apps/server/.env',
@@ -370,7 +369,7 @@ Output must be valid JSON matching this schema:
     seoScore: number;
     detectedCategory?: string;
   }> {
-    const systemPrompt = `You are an elite bilingual content writer and SEO specialist for an Indian government exam portal (ExamPortal / GovtPariksha), strictly following the editorial format of top Indian education websites like BiharHelp.in and SarkariResult.com.
+    const systemPrompt = `You are an elite bilingual content writer and SEO specialist for an Indian government exam portal, strictly following the editorial format of top Indian education websites like BiharHelp.in and SarkariResult.com.
 
 Your task: Read the REFERENCE article (notification PDF, syllabus, or competitor post) and REWRITE it as TWO complete, publication-ready, search-engine-dominating blog articles.
 

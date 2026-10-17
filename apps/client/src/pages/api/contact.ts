@@ -37,12 +37,9 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const recipientEmail =
-      import.meta.env.CONTACT_RECEIVER_EMAIL ||
-      process.env.CONTACT_RECEIVER_EMAIL ||
-      contactEmail;
+    const recipientEmail = import.meta.env.CONTACT_RECEIVER_EMAIL;
 
-    const emailSubject = `[GovtPariksha Inquiry] ${subject || 'Contact Form'}: ${name.trim()}`;
+    const emailSubject = `[Inquiry] ${subject || 'Contact Form'}: ${name.trim()}`;
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -66,7 +63,7 @@ export const POST: APIRoute = async ({ request }) => {
         <body>
           <div class="container">
             <div class="header">
-              <h2>New Inquiry on GovtPariksha</h2>
+              <h2>New Inquiry</h2>
               <div class="badge">${escapeHtml(subject || 'General Inquiry')}</div>
             </div>
             <div class="body">
@@ -94,7 +91,7 @@ export const POST: APIRoute = async ({ request }) => {
               </div>
             </div>
             <div class="footer">
-              Submitted from https://govtpariksha.com/contact-us • Click Reply to answer the student directly.
+              Submitted from ${import.meta.env.PUBLIC_SITE_URL}/contact-us • Click Reply to answer the student directly.
             </div>
           </div>
         </body>
@@ -102,14 +99,10 @@ export const POST: APIRoute = async ({ request }) => {
     `;
 
     // 1. Resend API (HTTP-based, zero extra dependencies)
-    const resendApiKey =
-      import.meta.env.RESEND_API_KEY || process.env.RESEND_API_KEY;
+    const resendApiKey = import.meta.env.RESEND_API_KEY;
 
     if (resendApiKey) {
-      const fromEmail =
-        import.meta.env.RESEND_FROM_EMAIL ||
-        process.env.RESEND_FROM_EMAIL ||
-        'GovtPariksha <onboarding@resend.dev>';
+      const fromEmail = import.meta.env.RESEND_FROM_EMAIL;
 
       const resendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -148,14 +141,10 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // 2. Brevo API (HTTP-based alternative: https://api.brevo.com/v3/smtp/email)
-    const brevoApiKey =
-      import.meta.env.BREVO_API_KEY || process.env.BREVO_API_KEY;
+    const brevoApiKey = import.meta.env.BREVO_API_KEY;
 
     if (brevoApiKey) {
-      const fromEmail =
-        import.meta.env.BREVO_FROM_EMAIL ||
-        process.env.BREVO_FROM_EMAIL ||
-        recipientEmail;
+      const fromEmail = import.meta.env.BREVO_FROM_EMAIL;
 
       const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
@@ -165,8 +154,8 @@ export const POST: APIRoute = async ({ request }) => {
           Accept: 'application/json',
         },
         body: JSON.stringify({
-          sender: { name: 'GovtPariksha Portal', email: fromEmail },
-          to: [{ email: recipientEmail, name: 'GovtPariksha Support' }],
+          sender: { name: `${import.meta.env.PUBLIC_SITE_NAME} Portal`, email: fromEmail },
+          to: [{ email: recipientEmail, name: `${import.meta.env.PUBLIC_SITE_NAME} Support` }],
           replyTo: { email: email.trim(), name: name.trim() },
           subject: emailSubject,
           htmlContent: htmlContent,
