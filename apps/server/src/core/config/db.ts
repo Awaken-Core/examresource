@@ -1,6 +1,8 @@
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
-import { env } from './env.js';
+import { drizzle as neonDrizzle } from "drizzle-orm/neon-serverless";
+import { drizzle as nodeDrizzle } from "drizzle-orm/node-postgres";
+import { env } from "./env.js";
 
-export const pool = new Pool({ connectionString: env.DATABASE_URL });
-export const db = drizzle({ client: pool });
+const isProd = env.NODE_ENV === "production";
+export const db = isProd
+  ? neonDrizzle({ connection: env.DATABASE_URL })
+  : nodeDrizzle({ connection: env.DATABASE_URL });
