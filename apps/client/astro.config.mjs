@@ -3,20 +3,28 @@ import 'dotenv/config';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
+import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
 	site: process.env.PUBLIC_SITE_URL,
 	devToolbar: {
-		enabled: false,
+		enabled: process.env.NODE_ENV !== 'production',
 	},
 	output: 'server',
 	compressHTML: true,
+	prefetch: {
+		prefetchAll: true,
+		defaultStrategy: 'hover',
+	},
 	server: { port: Number(process.env.PORT || 3000), host: true },
 	adapter: vercel(),
-	integrations: [],
+	integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 750,
+    },
     optimizeDeps: {
       include: [
         'astro/virtual-modules/transitions-events.js',
