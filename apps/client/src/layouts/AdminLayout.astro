@@ -15,7 +15,7 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" class="h-full antialiased admin-theme theme-light">
+<html lang="en" class="h-full antialiased admin-theme theme-light auth-pending">
   <head>
     <meta charset="utf-8" />
     <script is:inline>
@@ -56,6 +56,9 @@ const {
         margin: 0;
         padding: 0;
         height: 100%;
+      }
+      html.auth-pending body {
+        visibility: hidden;
       }
       html.admin-theme:not(.theme-dark),
       html.admin-theme:not(.theme-dark) body.admin-theme-body {
@@ -386,21 +389,38 @@ const {
     <!-- Auth Verification Guard -->
     <script>
       const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
-      const clerk = (window as Window & { Clerk?: { session?: { getToken: () => Promise<string | null> } } }).Clerk;
-      const token = await clerk?.session?.getToken();
-      if (token) {
+      {
         try {
-          const res = await fetch(`${apiUrl}/me`, { headers: { Authorization: `Bearer ${token}` } });
-          const user = res.ok ? await res.json() : null;
-          if (user) {
-            const nameEl = document.getElementById('admin-user-name');
-            const roleEl = document.getElementById('admin-user-role');
-            const avatarEl = document.getElementById('admin-user-avatar');
-            if (nameEl) nameEl.textContent = user.name || user.email || 'Administrator';
-            if (roleEl) roleEl.textContent = (user.role || 'admin').toUpperCase();
-            if (avatarEl) avatarEl.textContent = (user.name || user.email || 'A')[0].toUpperCase();
+          const res = await fetch(`${apiUrl}/me`, { credentials: 'include' });
+          if (res.status === 401) {
+            const returnTo = window.location.pathname + window.location.search;
+            window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+          } else if (!res.ok) {
+            throw new Error(`Profile request failed with ${res.status}`);
+          } else {
+            const user = await res.json();
+            const isAdminRoute = window.location.pathname === '/admin' ||
+              window.location.pathname.startsWith('/admin/');
+            const canAccess = isAdminRoute
+              ? user.role === 'admin'
+              : user.role === 'admin' || user.role === 'editor';
+
+            if (!canAccess) {
+              window.location.replace('/');
+            } else {
+              const nameEl = document.getElementById('admin-user-name');
+              const roleEl = document.getElementById('admin-user-role');
+              const avatarEl = document.getElementById('admin-user-avatar');
+              if (nameEl) nameEl.textContent = user.name || user.email || 'Administrator';
+              if (roleEl) roleEl.textContent = user.role.toUpperCase();
+              if (avatarEl) avatarEl.textContent = (user.name || user.email || 'A')[0].toUpperCase();
+              document.documentElement.classList.remove('auth-pending');
+            }
           }
-        } catch (_) {}
+        } catch (_) {
+          document.body.textContent = 'Unable to verify access. Please try again later.';
+          document.documentElement.classList.remove('auth-pending');
+        }
       }
     </script>
 
