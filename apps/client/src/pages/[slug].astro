@@ -17,6 +17,7 @@ const requestedLanguage: 'HINGLISH' | 'ENGLISH' =
     : 'HINGLISH';
 
 import { API_URL } from '../lib/api';
+import { siteUrl, siteName, siteDomain } from '../data/site';
 
 let livePost: any = null;
 let redirectUrl: string | null = null;
@@ -147,16 +148,16 @@ try {
 }
 
 const baseTitle = livePost?.metaTitle || article.title;
-const brandSuffix = baseTitle.toLowerCase().includes('govtpariksha') ? '' : ' | GovtPariksha';
+const brandSuffix = baseTitle.toLowerCase().includes(siteName.toLowerCase()) ? '' : ` | ${siteName}`;
 const pageTitle = `${baseTitle}${brandSuffix}`;
 
 const rawDesc = livePost?.metaDescription || article.description || article.introParagraphs?.[0] || '';
 const pageDescription = rawDesc.trim().length > 0
   ? rawDesc.trim()
-  : `Read complete official notification details, eligibility, exam dates, syllabus, and direct application links for ${article.title} on GovtPariksha (govtpariksha.com).`;
+  : `Read complete official notification details, eligibility, exam dates, syllabus, and direct application links for ${article.title} on ${siteName} (${siteDomain}).`;
 
 // Canonical URL is always the slug without query params (/{slug})
-let canonicalUrl = `https://govtpariksha.com/${article.slug}`;
+let canonicalUrl = `${siteUrl}/${article.slug}`;
 if (livePost?.canonicalUrl) {
   const custom = String(livePost.canonicalUrl).trim();
   if (custom && !custom.includes('.local') && !custom.includes('localhost') && /^https?:\/\//i.test(custom)) {
@@ -164,7 +165,7 @@ if (livePost?.canonicalUrl) {
   }
 }
 
-const postCover = livePost?.coverImage || livePost?.firstImage || 'https://govtpariksha.com/og-image.jpg';
+const postCover = livePost?.coverImage || livePost?.firstImage || `${siteUrl}/og-image.jpg`;
 
 // Schema.org Article & Breadcrumbs
 const jsonLd = {
@@ -188,16 +189,16 @@ const jsonLd = {
       "dateModified": article.updatedDate,
       "author": {
         "@type": "Organization",
-        "name": livePost?.author?.name || "GovtPariksha Editorial Team",
-        "url": "https://govtpariksha.com"
+        "name": livePost?.author?.name || `${siteName} Editorial Team`,
+        "url": siteUrl
       },
       "publisher": {
         "@type": "Organization",
-        "name": "GovtPariksha",
-        "url": "https://govtpariksha.com",
+        "name": siteName,
+        "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
-          "url": "https://govtpariksha.com/logo.png",
+          "url": `${siteUrl}/logo.png`,
           "width": 512,
           "height": 512
         }
@@ -213,7 +214,7 @@ const jsonLd = {
       "keywords": [
         article.title,
         article.subjectTitle,
-        "GovtPariksha",
+        siteName,
         "Government Exam",
         "Sarkari Naukri",
         "Recruitment Notification"
@@ -227,13 +228,13 @@ const jsonLd = {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://govtpariksha.com/"
+          "item": `${siteUrl}/`
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": article.subjectTitle,
-          "item": `https://govtpariksha.com/category/${article.subjectSlug}`
+          "item": `${siteUrl}/category/${article.subjectSlug}`
         },
         {
           "@type": "ListItem",
@@ -254,7 +255,7 @@ const hasAlternateLanguage = livePost?.hasAlternateLanguage ?? false;
 const hinglishUrl = `/${article.slug}`;
 const englishUrl = hasAlternateLanguage ? `/${article.slug}?lang=en` : null;
 
-const siteOrigin = 'https://govtpariksha.com';
+const siteOrigin = siteUrl;
 const alternateLinks: { hreflang: string; href: string }[] = [];
 
 // Hinglish is always available (it's the default)

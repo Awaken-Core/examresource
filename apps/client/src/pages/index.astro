@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
-import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel } from '../data/site';
+import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
 
-const API_URL = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
+const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
 
 let livePosts: any[] = [];
 let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string; status?: number; durationMs: number } | null = null;
@@ -175,53 +175,53 @@ const popularUpdates = displayArticles.slice(0, 5).map((item, idx) => ({
   href: item.slug,
 }));
 
-const pageTitle = 'GovtPariksha — Verified Government Exam Updates, Sarkari Jobs & Results';
-const pageDescription = 'GovtPariksha (govtpariksha.com) is India\'s trusted portal for verified government exam notifications, Sarkari job updates, admit cards, answer keys, results, and official portal links without noise.';
-const canonicalUrl = 'https://govtpariksha.com/';
+const pageTitle = `${siteName} — Verified Government Exam Updates, Sarkari Jobs & Results`;
+const pageDescription = `${siteName} (${siteDomain}) is India's trusted portal for verified government exam notifications, Sarkari job updates, admit cards, answer keys, results, and official portal links without noise.`;
+const canonicalUrl = `${siteUrl}/`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
     {
       '@type': 'WebSite',
-      '@id': 'https://govtpariksha.com/#website',
-      name: 'GovtPariksha',
-      alternateName: ['Govt Pariksha', 'govtpariksha.com', 'GovtPariksha Exam Updates'],
+      '@id': `${siteUrl}/#website`,
+      name: siteName,
+      alternateName: [siteName, siteDomain, `${siteName} Exam Updates`],
       url: canonicalUrl,
       description: pageDescription,
       inLanguage: ['en-IN', 'hi-Latn'],
       publisher: {
-        '@id': 'https://govtpariksha.com/#organization',
+        '@id': `${siteUrl}/#organization`,
       },
       potentialAction: {
         '@type': 'SearchAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://govtpariksha.com/?search={search_term_string}',
+          urlTemplate: `${siteUrl}/?search={search_term_string}`,
         },
         'query-input': 'required name=search_term_string',
       },
     },
     {
       '@type': 'Organization',
-      '@id': 'https://govtpariksha.com/#organization',
-      name: 'GovtPariksha',
-      alternateName: ['Govt Pariksha', 'govtpariksha.com'],
+      '@id': `${siteUrl}/#organization`,
+      name: siteName,
+      alternateName: [siteName, siteDomain],
       url: canonicalUrl,
       logo: {
         '@type': 'ImageObject',
-        url: 'https://govtpariksha.com/logo.png',
+        url: `${siteUrl}/logo.png`,
         width: 512,
         height: 512,
-        caption: 'GovtPariksha Logo',
+        caption: `${siteName} Logo`,
       },
-      image: 'https://govtpariksha.com/og-image.jpg',
+      image: `${siteUrl}/og-image.jpg`,
       sameAs: [whatsappChannel, telegramChannel].filter(Boolean),
       description: 'Verified government exam notifications, Sarkari job updates, admit cards, answer keys, and counselling results portal across India.',
     },
     {
       '@type': 'FAQPage',
-      '@id': 'https://govtpariksha.com/#faq',
+      '@id': `${siteUrl}/#faq`,
       mainEntity: siteFaqs.map((faq) => ({
         '@type': 'Question',
         name: faq.question,
@@ -236,7 +236,7 @@ const jsonLd = {
   title={pageTitle}
   description={pageDescription}
   canonicalUrl={canonicalUrl}
-  ogImage="https://govtpariksha.com/og-image.jpg"
+  ogImage={`${siteUrl}/og-image.jpg`}
   ogType="website"
   jsonLd={jsonLd}
 >
@@ -256,10 +256,10 @@ const jsonLd = {
               Verified Government Exam &amp; Sarkari Naukri Portal
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight font-serif leading-tight">
-              GovtPariksha — Government Exam Updates, Without the Noise
+              {siteName} — Government Exam Updates, Without the Noise
             </h1>
             <p class="mt-2 text-sm sm:text-base text-muted max-w-3xl leading-relaxed">
-              GovtPariksha (govtpariksha.com) provides verified central &amp; state government exam notifications, admit cards, answer keys, syllabi, and direct official commission portal links across India.
+              {siteName} ({siteDomain}) provides verified central &amp; state government exam notifications, admit cards, answer keys, syllabi, and direct official commission portal links across India.
             </p>
           </div>
 

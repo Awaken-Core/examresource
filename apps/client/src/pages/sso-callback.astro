@@ -1,8 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { siteDomain } from '../data/site';
 ---
 
-<Layout title="Authenticating... - govtpariksha.com" hideHeaderFooter={true}>
+<Layout title={`Authenticating... - ${siteDomain}`} hideHeaderFooter={true}>
   <main class="min-h-screen w-full flex flex-col items-center justify-center bg-[#0d0e11] text-[#ffffff] px-4">
     <div class="flex flex-col items-center gap-4 text-center max-w-sm">
       <div class="w-10 h-10 border-3 border-accent border-t-transparent rounded-full animate-spin"></div>

@@ -2,7 +2,9 @@ import type { APIRoute } from 'astro';
 import { API_URL } from '../lib/api';
 
 export const GET: APIRoute = async () => {
-  const siteUrl = (import.meta.env.PUBLIC_SITE_URL || 'https://govtpariksha.com').replace(/\/$/, '');
+  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  const siteName = import.meta.env.PUBLIC_SITE_NAME;
+  const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN;
 
   let livePosts: any[] = [];
   try {
@@ -31,7 +33,7 @@ export const GET: APIRoute = async () => {
       <description><![CDATA[${description}]]></description>
       <category><![CDATA[${category}]]></category>
       <pubDate>${pubDate}</pubDate>
-      <dc:creator><![CDATA[GovtPariksha Editorial Team]]></dc:creator>${
+      <dc:creator><![CDATA[${siteName} Editorial Team]]></dc:creator>${
         coverImage
           ? `\n      <enclosure url="${coverImage.startsWith('http') ? coverImage : `${siteUrl}${coverImage.startsWith('/') ? '' : '/'}${coverImage}`}" type="image/jpeg" />`
           : ''
@@ -42,15 +44,15 @@ export const GET: APIRoute = async () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>GovtPariksha — Verified Government Exam Updates &amp; Sarkari Naukri Alerts</title>
+    <title>${siteName} — Verified Government Exam Updates &amp; Sarkari Naukri Alerts</title>
     <link>${siteUrl}/</link>
-    <description>Latest verified government exam notifications, Sarkari job alerts, admit cards, answer keys, and results from GovtPariksha (govtpariksha.com).</description>
+    <description>Latest verified government exam notifications, Sarkari job alerts, admit cards, answer keys, and results from ${siteName} (${siteDomain}).</description>
     <language>en-IN</language>
     <lastBuildDate>${buildDate}</lastBuildDate>
     <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
     <image>
       <url>${siteUrl}/logo.png</url>
-      <title>GovtPariksha</title>
+      <title>${siteName}</title>
       <link>${siteUrl}/</link>
       <width>144</width>
       <height>144</height>

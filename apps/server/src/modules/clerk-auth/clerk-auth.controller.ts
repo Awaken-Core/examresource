@@ -41,7 +41,7 @@ export class ClerkAuthController {
     let event: Awaited<ReturnType<typeof verifyWebhook>>;
     try {
       event = await verifyWebhook(
-        new Request('http://localhost/api/v1/webhooks/clerk', {
+        new Request(`${env.SERVER_URL.replace(/\/$/, '')}/api/v1/webhooks/clerk`, {
           method: 'POST',
           headers: req.headers as HeadersInit,
           body: req.rawBody.toString('utf8'),

@@ -1,6 +1,9 @@
 ---
 import BrandLogo from './BrandLogo.astro';
-import { whatsappChannel, telegramChannel } from '../data/site';
+import { whatsappChannel, telegramChannel, siteDomain } from '../data/site';
+
+const [brandPrefix, ...brandRest] = siteDomain.split('.');
+const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 ---
 
 <footer class="bg-surface text-muted mt-16 border-t border-border text-body-xs">
@@ -11,7 +14,7 @@ import { whatsappChannel, telegramChannel } from '../data/site';
         <div class="flex items-center gap-2.5">
           <BrandLogo size={32} class="shrink-0" />
           <span class="text-heading-sm font-bold text-white tracking-tight">
-            govtpariksha<span class="text-accent">.com</span>
+            {brandPrefix}<span class="text-accent">{brandSuffix}</span>
           </span>
         </div>
         <p class="text-caption-sm text-muted leading-relaxed">
@@ -46,13 +49,13 @@ import { whatsappChannel, telegramChannel } from '../data/site';
       <div>
         <h4 class="text-white font-semibold text-caption-xs uppercase tracking-wider mb-3">Disclaimer</h4>
         <p class="text-caption-sm text-muted leading-relaxed">
-          Guides published on this site are summaries. Apply, pay fees, and download admit cards only from the official portal named in the notice. govtpariksha.com is an informational education portal and is not associated with any government department or recruitment commission.
+          Guides published on this site are summaries. Apply, pay fees, and download admit cards only from the official portal named in the notice. {siteDomain} is an informational education portal and is not associated with any government department or recruitment commission.
         </p>
       </div>
     </div>
 
     <div class="border-t border-border mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-caption-xs text-muted gap-4">
-      <p>© 2026 govtpariksha.com. All rights reserved.</p>
+      <p>© 2026 {siteDomain}. All rights reserved.</p>
       <div class="flex flex-wrap items-center gap-4">
         <a href={whatsappChannel} target="_blank" rel="noopener noreferrer" class="hover:text-[#25D366] transition inline-flex items-center gap-1 font-medium min-h-[44px] py-2">WhatsApp</a>
         <a href={telegramChannel} target="_blank" rel="noopener noreferrer" class="hover:text-[#2AABEE] transition inline-flex items-center gap-1 font-medium min-h-[44px] py-2">Telegram</a>

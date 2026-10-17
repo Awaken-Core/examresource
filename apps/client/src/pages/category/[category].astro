@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { API_URL } from '../../lib/api';
+import { siteUrl, siteName } from '../../data/site';
 
 const { category: categoryParam } = Astro.params;
 const categorySlug = (categoryParam || '').toLowerCase();
@@ -38,9 +39,9 @@ const defaultCategoryNames: Record<string, string> = {
 const categoryTitle = categoryInfo?.name || defaultCategoryNames[categorySlug] || categorySlug.replace(/-/g, ' ').toUpperCase();
 const categoryDesc = categoryInfo?.description || `Browse notifications, exam patterns, syllabi, and official updates for ${categoryTitle}.`;
 
-const pageTitle = `${categoryTitle} Exam Updates & Notifications | govtpariksha.com`;
+const pageTitle = `${categoryTitle} Exam Updates & Notifications | ${siteName}`;
 const pageDescription = categoryDesc;
-const canonicalUrl = `https://govtpariksha.com/category/${categorySlug}`;
+const canonicalUrl = `${siteUrl}/category/${categorySlug}`;
 
 // Schema.org structured data (BreadcrumbList & CollectionPage)
 const jsonLd = {
@@ -55,7 +56,7 @@ const jsonLd = {
         "@type": "Article",
         "headline": t.title,
         "description": t.description || t.metaDescription,
-        "url": `https://govtpariksha.com/${t.slug}`
+        "url": `${siteUrl}/${t.slug}`
       }))
     },
     {
@@ -65,7 +66,7 @@ const jsonLd = {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://govtpariksha.com/"
+          "item": `${siteUrl}/`
         },
         {
           "@type": "ListItem",

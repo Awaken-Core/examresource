@@ -4,8 +4,7 @@ import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
 import TrendingBanner from '../components/TrendingBanner.astro';
 import SearchModal from '../components/SearchModal.astro';
-import BrandLogo from '../components/BrandLogo.astro';
-import { whatsappChannel, telegramChannel } from '../data/site';
+import { whatsappChannel, telegramChannel, siteUrl, siteDomain, siteName } from '../data/site';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Analytics from '@vercel/analytics/astro';
@@ -25,13 +24,19 @@ interface Props {
   noindex?: boolean;
 }
 
-const siteOrigin = 'https://govtpariksha.com';
+const siteOrigin = siteUrl;
+const domainDotIndex = siteDomain.lastIndexOf('.');
+const domainPrefix = domainDotIndex !== -1 ? siteDomain.slice(0, domainDotIndex) : siteDomain;
+const domainSuffix = domainDotIndex !== -1 ? siteDomain.slice(domainDotIndex) : '';
+const twitterHandle = `@${siteName.toLowerCase().replace(/\s+/g, '')}`;
+const clerkHost = `clerk.${siteDomain}`;
+const defaultAvatarInitials = siteName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || 'GP';
 const currentPath = Astro.url.pathname;
 const cleanPath = currentPath === '/' ? '' : currentPath.replace(/\/$/, '');
 
 const {
-  title = "govtpariksha.com - Govt Jobs, Admissions & Results",
-  description = "Get verified government examination notices, admit cards, answer keys and counselling results on govtpariksha.com.",
+  title = `${siteDomain} - Govt Jobs, Admissions & Results`,
+  description = `Get verified government examination notices, admit cards, answer keys and counselling results on ${siteDomain}.`,
   canonicalUrl = `${siteOrigin}${cleanPath || '/'}`,
   ogImage = `${siteOrigin}/og-image.jpg`,
   ogType = Astro.props.publishedTime ? 'article' : 'website',
@@ -58,8 +63,8 @@ const ogImageType = ogImageExt === 'jpg' || ogImageExt === 'jpeg' ? 'image/jpeg'
 const googleVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const bingVerification = import.meta.env.PUBLIC_BING_SITE_VERIFICATION;
 const yandexVerification = import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION;
-const gtmId = import.meta.env.PUBLIC_GTM_ID || 'GTM-PX3RG8RR';
-const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQP';
+const gtmId = import.meta.env.PUBLIC_GTM_ID;
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
@@ -115,7 +120,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     {/* DNS prefetch for Clerk & R2 (reduces connection setup time) */}
-    <link rel="dns-prefetch" href="https://clerk.govtpariksha.com" />
+    <link rel="dns-prefetch" href={`https://${clerkHost}`} />
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -136,13 +141,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
       name="robots"
       content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
     />
-    <meta name="author" content="GovtPariksha" />
-    <meta name="publisher" content="GovtPariksha" />
-    <meta name="application-name" content="GovtPariksha" />
-    <meta name="apple-mobile-web-app-title" content="GovtPariksha" />
+    <meta name="author" content={siteName} />
+    <meta name="publisher" content={siteName} />
+    <meta name="application-name" content={siteName} />
+    <meta name="apple-mobile-web-app-title" content={siteName} />
 
     {/* Feeds & AI Agent Discovery */}
-    <link rel="alternate" type="application/rss+xml" title="GovtPariksha RSS Feed" href={`${siteOrigin}/rss.xml`} />
+    <link rel="alternate" type="application/rss+xml" title={`${siteName} RSS Feed`} href={`${siteOrigin}/rss.xml`} />
     <link rel="alternate" type="text/plain" href={`${siteOrigin}/llms.txt`} title="LLM Context Summary" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href={`${siteOrigin}/sitemap.xml`} />
 
@@ -157,7 +162,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     ))}
 
     {/* Open Graph / Facebook / WhatsApp */}
-    <meta property="og:site_name" content="GovtPariksha" />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
@@ -175,8 +180,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
 
     {/* Twitter Cards */}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@govtpariksha" />
-    <meta name="twitter:creator" content="@govtpariksha" />
+    <meta name="twitter:site" content={twitterHandle} />
+    <meta name="twitter:creator" content={twitterHandle} />
     <meta name="twitter:url" content={canonicalUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -256,10 +261,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     >
       {/* ── Drawer Header ── */}
       <div class="flex items-center justify-between h-14 px-4 border-b border-border/60 shrink-0 bg-canvas">
-        <a href="/" class="flex items-center gap-2 group" aria-label="govtpariksha.com home">
+        <a href="/" class="flex items-center gap-2 group" aria-label={`${siteDomain} home`}>
           <BrandLogo size={32} class="group-hover:scale-105 transition-transform shrink-0" />
           <span class="font-bold text-sm tracking-tight text-white">
-            govtpariksha<span class="text-accent">.com</span>
+            {domainPrefix}<span class="text-accent">{domainSuffix}</span>
           </span>
         </a>
         <button 
@@ -368,7 +373,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
             class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer"
           >
             <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
-              <span class="user-avatar-initials">GP</span>
+              <span class="user-avatar-initials">{defaultAvatarInitials}</span>
               <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" />
             </div>
             <div class="flex-1 min-w-0 text-left">
@@ -387,7 +392,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     {/* Global Robust Interactive Script */}
     <script>
       import { markAllNotificationsRead, markNotificationRead, refreshNotifications, requestBrowserNotificationPermission, updateBrowserNotificationUI } from '../lib/notifications';
-      import { searchItems } from '../data/site';
+      import { searchItems, siteDomain } from '../data/site';
 
       (function initApp() {
 
@@ -751,7 +756,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
                 <span class="text-lg shrink-0">${item.icon}</span>
                 <div class="truncate">
                   <p class="text-body-sm font-semibold text-white group-hover:text-accent transition truncate">${item.title}</p>
-                  <p class="text-[11px] text-muted truncate">${item.tag} • govtpariksha.com</p>
+                  <p class="text-[11px] text-muted truncate">${item.tag} • ${siteDomain}</p>
                 </div>
               </div>
               <svg class="w-4 h-4 text-muted group-hover:text-accent shrink-0 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1114,7 +1119,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
 
           const user = clerk.user || clerk.session?.user;
           const token = await clerk.session?.getToken?.().catch(() => null);
-          const apiUrl = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
+          const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
 
           if (token) {
             fetch(`${apiUrl}/me`, {

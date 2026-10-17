@@ -1,10 +1,13 @@
 ---
 import type { AuthMode } from '../stores/auth';
 import BrandLogo from './BrandLogo.astro';
+import { siteDomain } from '../data/site';
 
 interface Props { mode: AuthMode }
 const { mode } = Astro.props;
 const isSignup = mode === 'signup';
+const [brandPrefix, ...brandRest] = siteDomain.split('.');
+const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 ---
 
 <main class="min-h-screen w-full flex items-center justify-center bg-[#0d0e11] px-3 sm:px-4 py-6 sm:py-8 select-none">
@@ -14,7 +17,7 @@ const isSignup = mode === 'signup';
     <div class="flex items-center justify-center gap-3 mb-6">
       <BrandLogo size={38} class="shrink-0" />
       <span class="text-heading-sm font-bold tracking-tight text-[#ffffff] flex items-center">
-        govtpariksha<span class="text-accent">.com</span>
+        {brandPrefix}<span class="text-accent">{brandSuffix}</span>
       </span>
     </div>
 

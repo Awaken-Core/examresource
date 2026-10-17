@@ -14,14 +14,14 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
     getPublished: (slug: string) => Promise.resolve({ id: '1', slug, title: 'Article Detail' }),
     listCategories: () => Promise.resolve([{ id: 'c1', name: 'Banking' }]),
     listTags: () => Promise.resolve([{ id: 't1', name: 'Admit Card' }]),
-    getSitemapEntries: () => Promise.resolve([{ url: 'https://govtpariksha.com/test' }]),
+    getSitemapEntries: () => Promise.resolve([{ url: 'https://example.com/test' }]),
     checkRedirect: (path: string) => Promise.resolve({ targetPath: '/canonical' }),
     listManageable: () => Promise.resolve({ data: [{ id: 'admin-1', title: 'Draft' }] }),
   };
 
   const mockClerkAuthService = {
-    requireUser: () => Promise.resolve({ id: 'user-1', email: 'admin@govtpariksha.com', role: 'admin' }),
-    getUser: () => Promise.resolve({ id: 'user-1', email: 'admin@govtpariksha.com', role: 'admin' }),
+    requireUser: () => Promise.resolve({ id: 'user-1', email: 'admin@example.com', role: 'admin' }),
+    getUser: () => Promise.resolve({ id: 'user-1', email: 'admin@example.com', role: 'admin' }),
   };
 
   beforeAll(async () => {

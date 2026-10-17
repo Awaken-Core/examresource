@@ -2,6 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { and, desc, eq, gte, isNull, or } from 'drizzle-orm';
 import { db } from '../../core/config/db.js';
+import { env } from '../../core/config/env.js';
 import {
   notificationReads,
   notifications,
@@ -56,13 +57,14 @@ function requireText(value: unknown, label: string, limit: number) {
 
 export async function ensureWelcomeNotification(user: { id: string; name: string }) {
   const name = user.name.trim() || 'there';
+  const siteHost = new URL(env.CLIENT_URL).host;
   await db
     .insert(notifications)
     .values({
       id: randomUUID(),
       kind: 'welcome',
       title: 'Welcome',
-      body: `Hi ${name}, your account is ready. Start preparing on govtpariksha.com.`,
+      body: `Hi ${name}, your account is ready. Start preparing on ${siteHost}.`,
       audienceUserId: user.id,
       sourceKey: `welcome:${user.id}`,
     })

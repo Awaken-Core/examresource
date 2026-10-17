@@ -2,7 +2,8 @@ import type { APIRoute } from 'astro';
 import { API_URL } from '../lib/api';
 
 export const GET: APIRoute = async () => {
-  const siteUrl = (import.meta.env.PUBLIC_SITE_URL || 'https://govtpariksha.com').replace(/\/$/, '');
+  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  const siteName = import.meta.env.PUBLIC_SITE_NAME;
   const currentDate = new Date().toISOString().split('T')[0];
 
   let sitemapEntries: any[] = [];
@@ -38,7 +39,7 @@ export const GET: APIRoute = async () => {
       lastmod: currentDate,
       image: {
         loc: `${siteUrl}/og-image.jpg`,
-        title: 'GovtPariksha — Verified Government Exam Updates & Sarkari Naukri Portal',
+        title: `${siteName} — Verified Government Exam Updates & Sarkari Naukri Portal`,
       },
     },
     { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
@@ -96,7 +97,7 @@ export const GET: APIRoute = async () => {
           image: imgUrl
             ? {
                 loc: imgUrl.startsWith('http') ? imgUrl : `${siteUrl}${imgUrl.startsWith('/') ? '' : '/'}${imgUrl}`,
-                title: post.title || 'GovtPariksha Notification',
+                title: post.title || `${siteName} Notification`,
               }
             : undefined,
         });

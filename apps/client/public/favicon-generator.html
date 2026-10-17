@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>govtpariksha.com — Favicon ZIP Generator</title>
+  <title>Favicon ZIP Generator</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; background: #f4f6f9; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; color: #0c2340; }
@@ -21,7 +21,7 @@
 <body>
 
   <div class="card">
-    <h2>govtpariksha.com Favicon Pack</h2>
+    <h2>Favicon Pack Generator</h2>
     <p>Generates all required favicon sizes, Apple Touch Icon, Android PWA icons, and manifest in one ZIP.</p>
 
     <div class="preview-row">
@@ -72,7 +72,7 @@
     </div>
 
     <div class="file-list">
-      📦 <strong>govtpariksha-favicons.zip</strong><br>
+      📦 <strong>favicons.zip</strong><br>
       ├── favicon.ico (32×32)<br>
       ├── favicon.svg (Vector)<br>
       ├── favicon-16x16.png<br>
@@ -84,7 +84,7 @@
       └── head-tags.html
     </div>
 
-    <button id="dl-btn" class="btn" onclick="generateFaviconZip()">Download govtpariksha-favicons.zip</button>
+    <button id="dl-btn" class="btn" onclick="generateFaviconZip()">Download favicons.zip</button>
   </div>
 
   <script>
@@ -195,8 +195,8 @@
 
       // 4. Add site.webmanifest
       const manifest = {
-        name: "GovtPariksha.com",
-        short_name: "GovtPariksha",
+        name: window.location.hostname || "Portal",
+        short_name: window.location.hostname?.split('.')[0] || "Portal",
         icons: [
           { src: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
           { src: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" }
@@ -222,12 +222,12 @@
       const zipContent = await zip.generateAsync({ type: 'blob' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(zipContent);
-      a.download = 'govtpariksha-favicons.zip';
+      a.download = 'favicons.zip';
       a.click();
       URL.revokeObjectURL(a.href);
 
       btn.disabled = false;
-      btn.textContent = 'Download govtpariksha-favicons.zip';
+      btn.textContent = 'Download favicons.zip';
     }
   </script>
 </body>

@@ -9,6 +9,7 @@ export type AppNotification = {
 };
 
 import { API_URL } from './api';
+import { siteName } from '../data/site';
 const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
 
 let currentItems: AppNotification[] = [];
@@ -64,7 +65,7 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
   saveFiredIds(firedIds);
 
   for (const item of toFire) {
-    const title = item.title ? `GovtPariksha: ${item.title}` : 'GovtPariksha Alert';
+    const title = item.title ? `${siteName}: ${item.title}` : `${siteName} Alert`;
     const body = item.body || 'New examination notification published.';
     const options: NotificationOptions = {
       body,

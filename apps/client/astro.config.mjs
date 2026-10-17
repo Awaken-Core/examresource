@@ -1,4 +1,5 @@
 // @ts-check
+import 'dotenv/config';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
@@ -6,13 +7,13 @@ import clerk from '@clerk/astro';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://govtpariksha.com',
+	site: process.env.PUBLIC_SITE_URL,
 	devToolbar: {
 		enabled: false,
 	},
 	output: 'server',
 	compressHTML: true,
-	server: { port: 3000, host: true },
+	server: { port: Number(process.env.PORT), host: true },
 	adapter: vercel(),
 	integrations: [clerk()],
   vite: {

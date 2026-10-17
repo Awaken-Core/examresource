@@ -1,4 +1,6 @@
 ---
+import { siteDomain } from '../data/site';
+
 interface Props {
   size?: number | string;
   class?: string;
@@ -17,7 +19,7 @@ const swooshGradId = `brand-swoosh-${uniqueId}`;
   height={size}
   fill="none"
   class={`shrink-0 select-none ${className}`}
-  aria-label="govtpariksha.com logo"
+  aria-label={`${siteDomain} logo`}
 >
   <defs>
     <linearGradient id={mainGradId} x1="0%" y1="0%" x2="100%" y2="100%">

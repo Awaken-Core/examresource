@@ -1,11 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactEmail } from '../data/site';
+import { contactEmail, siteUrl, siteName, siteDomain } from '../data/site';
 
 const lastUpdated = "October 17, 2026";
-const pageTitle = "Terms of Service | GovtPariksha";
-const pageDescription = "Read the Terms and Conditions for GovtPariksha. Learn about our 100% free educational platform, anti-scraping policy, user conduct, disclaimer, and governing law.";
-const canonicalUrl = "https://govtpariksha.com/terms-of-service";
+const pageTitle = `Terms of Service | ${siteName}`;
+const pageDescription = `Read the Terms and Conditions for ${siteName}. Learn about our 100% free educational platform, anti-scraping policy, user conduct, disclaimer, and governing law.`;
+const canonicalUrl = `${siteUrl}/terms-of-service`;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -15,9 +15,9 @@ const jsonLd = {
   "description": pageDescription,
   "publisher": {
     "@type": "Organization",
-    "name": "GovtPariksha",
-    "url": "https://govtpariksha.com",
-    "logo": "https://govtpariksha.com/og-image.jpg"
+    "name": siteName,
+    "url": siteUrl,
+    "logo": `${siteUrl}/og-image.jpg`
   },
   "breadcrumb": {
     "@context": "https://schema.org",
@@ -27,7 +27,7 @@ const jsonLd = {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://govtpariksha.com/"
+        "item": `${siteUrl}/`
       },
       {
         "@type": "ListItem",
@@ -68,7 +68,7 @@ const jsonLd = {
           Terms and Conditions
         </h1>
         <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Please read these Terms and Conditions ("Terms") carefully before using <a href="https://govtpariksha.com/" class="text-accent hover:underline">https://govtpariksha.com/</a> ("Platform"), operated by <strong class="text-white">GovtPariksha</strong> ("we," "us," or "our"). By accessing or using the Platform, you agree to comply with and be bound by these Terms.
+          Please read these Terms and Conditions ("Terms") carefully before using <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a> ("Platform"), operated by <strong class="text-white">{siteName}</strong> ("we," "us," or "our"). By accessing or using the Platform, you agree to comply with and be bound by these Terms.
         </p>
         <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
           <span>Last Updated: <strong class="text-white">{lastUpdated}</strong></span>
@@ -88,7 +88,7 @@ const jsonLd = {
           <div class="space-y-1">
             <h3 class="font-bold text-rose-400 text-sm sm:text-base">Fraud Alert</h3>
             <p class="text-xs sm:text-sm text-white/90 leading-relaxed">
-              GovtPariksha does not charge any fee for registration or attempting mock tests. If anyone demands money in the name of GovtPariksha, please do not pay and report it immediately to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline font-semibold">{contactEmail}</a>.
+              {siteName} does not charge any fee for registration or attempting mock tests. If anyone demands money in the name of {siteName}, please do not pay and report it immediately to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline font-semibold">{contactEmail}</a>.
             </p>
           </div>
         </div>
@@ -142,10 +142,10 @@ const jsonLd = {
             </div>
             <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
               <p>
-                GovtPariksha is a free educational initiative built to help students prepare for competitive government examinations. All mock tests, previous year questions (PYQs), quizzes, and performance analytics currently available on the Platform are provided <strong class="text-white">free of cost</strong>.
+                {siteName} is a free educational initiative built to help students prepare for competitive government examinations. All mock tests, previous year questions (PYQs), quizzes, and performance analytics currently available on the Platform are provided <strong class="text-white">free of cost</strong>.
               </p>
               <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60 text-xs text-muted leading-relaxed">
-                <strong class="text-white">Fraud Alert:</strong> GovtPariksha does not charge any fee for registration or attempting mock tests. If anyone demands money in the name of GovtPariksha, please do not pay and report it immediately to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>.
+                <strong class="text-white">Fraud Alert:</strong> {siteName} does not charge any fee for registration or attempting mock tests. If anyone demands money in the name of {siteName}, please do not pay and report it immediately to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>.
               </div>
             </div>
           </section>
@@ -172,7 +172,7 @@ const jsonLd = {
             </div>
             <div class="text-sm text-white/90 leading-relaxed space-y-3">
               <p>
-                Even though GovtPariksha is free to use for students, all content on the Platform (including compiled question banks, detailed solutions, UI design, logos, and source code) is the intellectual property of GovtPariksha.
+                Even though {siteName} is free to use for students, all content on the Platform (including compiled question banks, detailed solutions, UI design, logos, and source code) is the intellectual property of {siteName}.
               </p>
               <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60 text-xs text-muted leading-relaxed">
                 <strong class="text-white">Personal Use:</strong> You are permitted to use the Platform strictly for your personal, non-commercial exam preparation.
@@ -209,24 +209,24 @@ const jsonLd = {
             <div class="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 space-y-2 text-xs leading-relaxed text-white/95">
               <h4 class="font-bold text-amber-400 text-sm">Non-Affiliation with the Government (Important Notice)</h4>
               <p>
-                GovtPariksha (https://govtpariksha.com/) is an independent, private educational platform and is NOT affiliated with, endorsed by, authorized by, or associated with the Government of India, any State Government, or any official examination conducting body (including but not limited to UPSC, SSC, IBPS, RRB, UPPSC, UPPRPB, or any other government commission).
+                {siteName} ({siteUrl}/) is an independent, private educational platform and is NOT affiliated with, endorsed by, authorized by, or associated with the Government of India, any State Government, or any official examination conducting body (including but not limited to UPSC, SSC, IBPS, RRB, UPPSC, UPPRPB, or any other government commission).
               </p>
               <p class="text-muted">
-                The name "GovtPariksha" is used solely to signify that our platform provides free practice mock tests and educational resources for students preparing for competitive government examinations.
+                The name "{siteName}" is used solely to signify that our platform provides free practice mock tests and educational resources for students preparing for competitive government examinations.
               </p>
             </div>
 
             <div class="text-sm text-white/90 leading-relaxed space-y-3">
               <p class="text-xs sm:text-sm text-muted">
-                GovtPariksha provides all mock tests and study materials on an "as-is" and "as-available" basis. While we work hard to keep our questions, answer keys, and explanations 100% accurate and aligned with the latest exam patterns, we do not warrant that the Platform will always be error-free or uninterrupted. GovtPariksha shall not be liable for any direct or indirect damages arising from your use of the Platform.
+                {siteName} provides all mock tests and study materials on an "as-is" and "as-available" basis. While we work hard to keep our questions, answer keys, and explanations 100% accurate and aligned with the latest exam patterns, we do not warrant that the Platform will always be error-free or uninterrupted. {siteName} shall not be liable for any direct or indirect damages arising from your use of the Platform.
               </p>
 
               <div class="space-y-2 text-xs text-muted">
                 <p>
-                  <strong class="text-white">Mock Tests &amp; Answer Keys:</strong> In case of any discrepancy between an answer key or explanation on GovtPariksha and the official answer key released by an examination commission, the official commission's decision will always be final. If you spot a typo or error, please use the "Report Question" option inside the test portal or email us.
+                  <strong class="text-white">Mock Tests &amp; Answer Keys:</strong> In case of any discrepancy between an answer key or explanation on {siteName} and the official answer key released by an examination commission, the official commission's decision will always be final. If you spot a typo or error, please use the "Report Question" option inside the test portal or email us.
                 </p>
                 <p>
-                  <strong class="text-white">No Guarantee of Selection:</strong> Success in competitive exams depends entirely on a candidate's hard work, consistency, and preparation. Attempting mock tests on GovtPariksha is meant to boost your practice and does not guarantee selection or rank in any actual government examination.
+                  <strong class="text-white">No Guarantee of Selection:</strong> Success in competitive exams depends entirely on a candidate's hard work, consistency, and preparation. Attempting mock tests on {siteName} is meant to boost your practice and does not guarantee selection or rank in any actual government examination.
                 </p>
               </div>
             </div>
@@ -256,8 +256,8 @@ const jsonLd = {
                 For any queries regarding these Terms, please contact us at:
               </p>
               <div class="rounded-lg bg-surface-raised p-4 border border-border/80 text-xs space-y-2">
-                <p><span class="text-muted">Platform:</span> <strong class="text-white">GovtPariksha</strong></p>
-                <p><span class="text-muted">Website:</span> <a href="https://govtpariksha.com/" class="text-accent hover:underline">https://govtpariksha.com/</a></p>
+                <p><span class="text-muted">Platform:</span> <strong class="text-white">{siteName}</strong></p>
+                <p><span class="text-muted">Website:</span> <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a></p>
                 <p><span class="text-muted">Email:</span> <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a></p>
               </div>
             </div>
