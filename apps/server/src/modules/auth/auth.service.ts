@@ -6,7 +6,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import argon2 from 'argon2';
 import { OAuth2Client } from 'google-auth-library';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { and, asc, desc, eq, gt, isNull, or } from 'drizzle-orm';
@@ -21,6 +20,7 @@ import {
   users,
 } from '../../core/schema/index.js';
 import { ensureWelcomeNotification } from '../notifications/notification.store.js';
+import { hashPassword, verifyPassword } from './password-hash.js';
 
 export type CurrentUser = {
   id: string;
@@ -73,9 +73,7 @@ export class AuthService {
           name: input.name,
           email: input.email,
           phone: input.phone,
-          passwordHash: await argon2.hash(input.password, {
-            type: argon2.argon2id,
-          }),
+          passwordHash: await hashPassword(input.password),
         })
         .returning();
       if (!user) throw new Error('User creation did not return a row.');
@@ -100,7 +98,7 @@ export class AuthService {
       !user ||
       user.status !== 'active' ||
       !user.passwordHash ||
-      !(await argon2.verify(user.passwordHash, password))
+      !(await verifyPassword(user.passwordHash, password))
     )
       throw new UnauthorizedException('Invalid email or password.');
     const token = this.newToken();
@@ -445,7 +443,7 @@ export class AuthService {
       await tx
         .update(users)
         .set({
-          passwordHash: await argon2.hash(password, { type: argon2.argon2id }),
+          passwordHash: await hashPassword(password),
           updatedAt: new Date(),
         })
         .where(eq(users.id, row.userId));
