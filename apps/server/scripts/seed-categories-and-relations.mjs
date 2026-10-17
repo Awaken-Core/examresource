@@ -7,17 +7,16 @@ await client.connect();
 try {
   await client.query('BEGIN');
 
-  // 1. Ensure blog_category table exists
-  await client.query(`
-    CREATE TABLE IF NOT EXISTS "blog_category" (
-      "blogId" uuid NOT NULL REFERENCES "blog"("id") ON DELETE CASCADE,
-      "categoryId" uuid NOT NULL REFERENCES "category"("id") ON DELETE CASCADE,
-      CONSTRAINT "BlogCategory_blogId_categoryId_key" UNIQUE ("blogId", "categoryId")
+  // Schema changes belong to Drizzle migrations. Fail with a useful message when
+  // this data seed is accidentally run before `drizzle-kit migrate`.
+  const relationTable = await client.query(
+    `SELECT to_regclass('public.blog_category') AS name`
+  );
+  if (!relationTable.rows[0]?.name) {
+    throw new Error(
+      'blog_category does not exist. Run `bun run drizzle:migrate` before this seed.'
     );
-    CREATE INDEX IF NOT EXISTS "BlogCategory_blogId_idx" ON "blog_category" ("blogId");
-    CREATE INDEX IF NOT EXISTS "BlogCategory_categoryId_idx" ON "blog_category" ("categoryId");
-  `);
-  console.log('blog_category table ensured.');
+  }
 
   // 2. Define categories to upsert
   const categoriesToUpsert = [
