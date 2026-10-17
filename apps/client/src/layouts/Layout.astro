@@ -71,7 +71,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', gaMeasurementId);
+      gtag('config', gaMeasurementId, { send_page_view: false });
 
       // Track page views on Astro ClientRouter view transitions
       document.addEventListener('astro:page-load', function() {
@@ -115,7 +115,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     {/* DNS prefetch for Clerk & R2 (reduces connection setup time) */}
-    <link rel="dns-prefetch" href="https://notable-raven-5844.clerk.accounts.dev" />
+    <link rel="dns-prefetch" href="https://clerk.govtpariksha.com" />
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -387,10 +387,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
     {/* Global Robust Interactive Script */}
     <script>
       import { markAllNotificationsRead, markNotificationRead, refreshNotifications, requestBrowserNotificationPermission, updateBrowserNotificationUI } from '../lib/notifications';
+      import { searchItems } from '../data/site';
 
       (function initApp() {
-        if ((window as any).__APP_INTERACTIVITY_INITIALIZED__) return;
-        (window as any).__APP_INTERACTIVITY_INITIALIZED__ = true;
 
         // --- Theme Management ---
         function updateAllThemeToggles(isLight: boolean) {
@@ -617,32 +616,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           }
         }
 
-        // Setup hover-peek triggers (Header button + Floating Sidebar)
-        const headerToggleWrapper = document.getElementById('header-sidebar-toggle-wrapper');
-        const desktopWrapper = document.getElementById('desktop-sidebar-wrapper');
-
-        if (headerToggleWrapper) {
-          headerToggleWrapper.addEventListener('mouseenter', startHoverPeek);
-          headerToggleWrapper.addEventListener('mouseleave', endHoverPeek);
-        }
-
-        if (desktopWrapper) {
-          desktopWrapper.addEventListener('mouseenter', cancelHoverPeekTimer);
-          desktopWrapper.addEventListener('mouseleave', () => {
-            if (desktopWrapper.classList.contains('hover-peek')) {
-              endHoverPeek();
-            }
-          });
-        }
-
-        // Restore Collapsed State on Start
-        const savedCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-        setSidebarCollapsed(savedCollapsed);
-
-        // Sync theme UI toggle knobs on start (Default is LIGHT)
-        const initialIsLight = !document.documentElement.classList.contains('theme-dark');
-        updateAllThemeToggles(initialIsLight);
-
         // --- Language Switcher Integration ---
         function setLanguage(lang: string, shouldNavigate: boolean = false) {
           const normalized = (lang === 'en' || lang === 'english' || lang === 'ENGLISH') ? 'en' : 'hinglish';
@@ -690,31 +663,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           }
         }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlLang = urlParams.get('lang');
-        const initialLang = (urlLang === 'en' || urlLang === 'english')
-          ? 'en'
-          : (localStorage.getItem('preferred_exam_lang') || localStorage.getItem('site_language') || 'hinglish');
-        setLanguage(initialLang, false);
-
-        window.addEventListener('exam:language-change', ((e: CustomEvent) => {
-          if (e.detail?.lang) setLanguage(e.detail.lang, false);
-        }) as EventListener);
-
-        // --- Global Spotlight Search Modal Management (Matching Image 1) ---
-        const SEARCH_ITEMS = [
-          { title: "UPSC", category: "exams", href: "https://www.upsc.gov.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "SSC", category: "exams", href: "https://ssc.gov.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "RRB", category: "exams", href: "https://rrb.indianrailways.gov.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "IBPS", category: "exams", href: "https://www.ibps.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "NTA", category: "exams", href: "https://nta.ac.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "BCECEB", category: "admissions", href: "https://bceceboard.bihar.gov.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "BPSC", category: "exams", href: "https://bpsc.bihar.gov.in/", tag: "Exam portal", icon: "🔗" },
-          { title: "National Portal of India", category: "all", href: "https://www.india.gov.in/", tag: "Gov portal", icon: "🏛️" },
-          { title: "DigiLocker", category: "all", href: "https://www.digilocker.gov.in/", tag: "Gov portal", icon: "🏛️" },
-          { title: "Site FAQs", category: "all", href: "/#faqs", tag: "Help", icon: "❓" },
-          { title: "Important official links", category: "all", href: "/#important-links", tag: "Links", icon: "📌" },
-        ];
+        // --- Global Spotlight Search Modal Items ---
+        const SEARCH_ITEMS = searchItems;
 
         let currentSearchCategory = 'all';
         let activeResultIndex = -1;
@@ -826,31 +776,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           });
         }
 
-        // Search Input & Tab Listeners
-        const globalSearchInput = document.getElementById('global-search-input') as HTMLInputElement | null;
-        if (globalSearchInput) {
-          globalSearchInput.addEventListener('input', (e) => {
-            renderSearchResults((e.target as HTMLInputElement).value);
-          });
-        }
-
-        document.querySelectorAll<HTMLElement>('.search-tab').forEach((tab) => {
-          tab.addEventListener('click', () => {
-            document.querySelectorAll('.search-tab').forEach(t => {
-              t.classList.remove('bg-surface-raised', 'text-accent', 'border', 'border-border', 'font-semibold');
-              t.classList.add('text-muted');
-            });
-            tab.classList.remove('text-muted');
-            tab.classList.add('bg-surface-raised', 'text-accent', 'border', 'border-border', 'font-semibold');
-            currentSearchCategory = tab.getAttribute('data-category') || 'all';
-            if (globalSearchInput) {
-              renderSearchResults(globalSearchInput.value);
-            }
-          });
-        });
-
         // --- Central Event Delegation on Document (Guarantees No Auto-Close or Duplicates) ---
-        document.addEventListener('click', (e) => {
+        function handleGlobalClick(e: MouseEvent) {
           const target = e.target as HTMLElement;
 
           // 1. Profile Trigger Clicked
@@ -1094,10 +1021,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
 
           // 11. Clicked Outside Everything: Close Dropdowns
           closeAllDropdowns();
-        });
+        }
 
-      // Keyboard Shortcuts
-      document.addEventListener('keydown', (e) => {
+        // Keyboard Shortcuts
+        function handleGlobalKeydown(e: KeyboardEvent) {
         const activeEl = document.activeElement;
         const isSearchModalOpen = !document.getElementById('global-search-modal')?.classList.contains('hidden');
 
@@ -1167,7 +1094,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
           wrapper?.classList.remove('hover-peek');
         }
-      });
+      }
 
         // --- Clerk User State Integration ---
         async function syncClerkProfile() {
@@ -1293,18 +1220,112 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID || 'G-7PL205BLQ
           }
         }
 
-        syncClerkProfile();
-        window.addEventListener('load', syncClerkProfile);
-        document.addEventListener('astro:page-load', syncClerkProfile);
+        function reinitPageElements() {
+          // Restore Collapsed State
+          const savedCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+          setSidebarCollapsed(savedCollapsed);
 
-        let clerkPollCount = 0;
-        const clerkInterval = setInterval(() => {
-          clerkPollCount++;
-          if ((window as any).Clerk?.loaded || clerkPollCount > 15) {
-            clearInterval(clerkInterval);
-            syncClerkProfile();
+          // Sync theme UI toggle knobs (Default is LIGHT)
+          const initialIsLight = !document.documentElement.classList.contains('theme-dark');
+          updateAllThemeToggles(initialIsLight);
+
+          // Sync Language
+          const urlParams = new URLSearchParams(window.location.search);
+          const urlLang = urlParams.get('lang');
+          const initialLang = (urlLang === 'en' || urlLang === 'english')
+            ? 'en'
+            : (localStorage.getItem('preferred_exam_lang') || localStorage.getItem('site_language') || 'hinglish');
+          setLanguage(initialLang, false);
+
+          // Setup hover-peek triggers
+          const headerToggleWrapper = document.getElementById('header-sidebar-toggle-wrapper');
+          const desktopWrapper = document.getElementById('desktop-sidebar-wrapper');
+
+          if (headerToggleWrapper) {
+            headerToggleWrapper.onmouseenter = startHoverPeek;
+            headerToggleWrapper.onmouseleave = endHoverPeek;
           }
-        }, 200);
+
+          if (desktopWrapper) {
+            desktopWrapper.onmouseenter = cancelHoverPeekTimer;
+            desktopWrapper.onmouseleave = () => {
+              if (desktopWrapper.classList.contains('hover-peek')) {
+                endHoverPeek();
+              }
+            };
+          }
+
+          // Search Input & Tab Listeners
+          const globalSearchInput = document.getElementById('global-search-input') as HTMLInputElement | null;
+          if (globalSearchInput) {
+            globalSearchInput.oninput = (e) => {
+              renderSearchResults((e.target as HTMLInputElement).value);
+            };
+          }
+
+          document.querySelectorAll<HTMLElement>('.search-tab').forEach((tab) => {
+            tab.onclick = () => {
+              document.querySelectorAll('.search-tab').forEach((t) => {
+                t.classList.remove('bg-surface-raised', 'text-accent', 'border', 'border-border', 'font-semibold');
+                t.classList.add('text-muted');
+              });
+              tab.classList.remove('text-muted');
+              tab.classList.add('bg-surface-raised', 'text-accent', 'border', 'border-border', 'font-semibold');
+              currentSearchCategory = tab.getAttribute('data-category') || 'all';
+              if (globalSearchInput) {
+                renderSearchResults(globalSearchInput.value);
+              }
+            };
+          });
+
+          // Sync Clerk Profile on the freshly rendered DOM
+          syncClerkProfile();
+        }
+
+        // --- Global One-Time Event Listeners & Lifecycles ---
+        if (!(window as any).__APP_GLOBAL_LISTENERS_INITIALIZED__) {
+          (window as any).__APP_GLOBAL_LISTENERS_INITIALIZED__ = true;
+
+          // Central Click Event Delegation
+          document.addEventListener('click', handleGlobalClick);
+
+          // Global Keyboard Shortcuts
+          document.addEventListener('keydown', handleGlobalKeydown);
+
+          // Window language change event
+          window.addEventListener('exam:language-change', ((e: CustomEvent) => {
+            if (e.detail?.lang) setLanguage(e.detail.lang, false);
+          }) as EventListener);
+
+          // Cleanup before page swap
+          document.addEventListener('astro:before-swap', () => {
+            closeAllDropdowns();
+            closeSearchModal();
+            closeMobileDrawer();
+            if (hoverPeekTimer) {
+              clearTimeout(hoverPeekTimer);
+              hoverPeekTimer = null;
+            }
+          });
+
+          // Re-initialize dynamic elements on every Astro ClientRouter navigation
+          document.addEventListener('astro:page-load', () => {
+            reinitPageElements();
+          });
+
+          // Single one-time Clerk readiness check
+          let clerkPollCount = 0;
+          const clerkInterval = setInterval(() => {
+            clerkPollCount++;
+            if ((window as any).Clerk?.loaded || clerkPollCount > 15) {
+              clearInterval(clerkInterval);
+              syncClerkProfile();
+            }
+          }, 200);
+        }
+
+        // Run immediately for initial page render
+        reinitPageElements();
       })();
     </script>
     <Analytics />

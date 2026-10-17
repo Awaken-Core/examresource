@@ -6,11 +6,38 @@ import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel } f
 const API_URL = (import.meta.env.PUBLIC_API_URL || 'https://govtpariksha.com/api/v1').replace(/\/$/, '');
 
 let livePosts: any[] = [];
+let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string; status?: number; durationMs: number } | null = null;
+
+const fetchStart = performance.now();
 try {
   const res = await fetch(`${API_URL}/blogs?limit=50`);
-  if (res.ok) livePosts = await res.json();
-} catch {
-  livePosts = [];
+  const durationMs = Math.round(performance.now() - fetchStart);
+
+  if (!res.ok) {
+    fetchError = { type: 'http', status: res.status, durationMs };
+    console.error(`[Index SSR] /blogs?limit=50 failed with HTTP ${res.status} in ${durationMs}ms`);
+  } else {
+    try {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        livePosts = data;
+        if (data.length === 0) {
+          fetchError = { type: 'empty', status: res.status, durationMs };
+        }
+        console.info(`[Index SSR] /blogs?limit=50 fetched ${data.length} articles in ${durationMs}ms`);
+      } else {
+        fetchError = { type: 'json', message: 'Payload is not an array', status: res.status, durationMs };
+        console.error(`[Index SSR] /blogs?limit=50 invalid JSON structure in ${durationMs}ms`);
+      }
+    } catch (parseErr: any) {
+      fetchError = { type: 'json', message: parseErr?.message, status: res.status, durationMs };
+      console.error(`[Index SSR] /blogs?limit=50 JSON parse error: ${parseErr?.message}`);
+    }
+  }
+} catch (netErr: any) {
+  const durationMs = Math.round(performance.now() - fetchStart);
+  fetchError = { type: 'network', message: netErr?.message, durationMs };
+  console.error(`[Index SSR] /blogs?limit=50 network fetch failed in ${durationMs}ms: ${netErr?.message}`);
 }
 
 const displayArticles = (livePosts || []).map(p => ({
@@ -425,6 +452,18 @@ const jsonLd = {
                     </div>
                   </a>
                 ))
+              ) : fetchError && fetchError.type !== 'empty' ? (
+                <div class="p-8 text-center bg-surface border border-border/80 rounded-lg space-y-2">
+                  <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 mb-1">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <h3 class="text-sm font-semibold text-white">Temporarily unable to load latest updates</h3>
+                  <p class="text-xs text-muted max-w-md mx-auto">
+                    We are experiencing a temporary connection issue. Please refresh the page or check our Telegram/WhatsApp channels for immediate notices.
+                  </p>
+                </div>
               ) : (
                 <div class="p-8 text-center bg-surface border border-border rounded-lg">
                   <p class="text-sm text-muted">No updates published yet. Please check back soon.</p>
