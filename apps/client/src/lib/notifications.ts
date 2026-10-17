@@ -27,6 +27,23 @@ function relativeTime(iso: string) {
   return new Date(iso).toLocaleDateString();
 }
 
+/** Same-origin / relative hrefs soft-navigate via ClientRouter; externals hard-navigate. */
+async function goToNotificationHref(href: string) {
+  try {
+    const url = new URL(href, window.location.origin);
+    const isSameOrigin = url.origin === window.location.origin;
+    if (isSameOrigin) {
+      const path = `${url.pathname}${url.search}${url.hash}`;
+      const { navigate } = await import('astro:transitions/client');
+      navigate(path);
+      return;
+    }
+  } catch {
+    // fall through
+  }
+  window.location.assign(href);
+}
+
 function iconFor(kind: AppNotification['kind']) {
   if (kind === 'blog') return '📰';
   if (kind === 'broadcast') return '🔔';
@@ -90,7 +107,7 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
       notif.onclick = () => {
         window.focus();
         if (item.href) {
-          window.location.assign(item.href);
+          void goToNotificationHref(item.href);
         }
       };
     } catch (err) {

@@ -5,7 +5,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, inArray, ilike, ne, or, sql, lte } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, ilike, isNull, ne, or, sql, lte } from 'drizzle-orm';
 import { db } from '../../core/config/db.js';
 import {
   blogBlocks,
@@ -31,6 +31,46 @@ import { htmlToBlocks, blocksToHtml, syncImageBlocks } from './blog-content.adap
 import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 import { GeminiService } from './gemini.service.js';
 
+interface CacheEntry<T> {
+  data: T;
+  expiresAt: number;
+}
+
+class MemoryCache {
+  private store = new Map<string, CacheEntry<any>>();
+
+  get<T>(key: string): T | undefined {
+    const entry = this.store.get(key);
+    if (!entry) return undefined;
+    if (Date.now() > entry.expiresAt) {
+      this.store.delete(key);
+      return undefined;
+    }
+    return entry.data;
+  }
+
+  set<T>(key: string, data: T, ttlMs: number): void {
+    if (this.store.size > 1000) {
+      const now = Date.now();
+      for (const [k, v] of this.store.entries()) {
+        if (now > v.expiresAt) this.store.delete(k);
+      }
+      if (this.store.size > 1000) {
+        let count = 0;
+        for (const k of this.store.keys()) {
+          this.store.delete(k);
+          if (++count >= 200) break;
+        }
+      }
+    }
+    this.store.set(key, { data, expiresAt: Date.now() + ttlMs });
+  }
+
+  clear(): void {
+    this.store.clear();
+  }
+}
+
 type CurrentUser = {
   id: string;
   role: 'student' | 'editor' | 'admin';
@@ -38,7 +78,13 @@ type CurrentUser = {
 
 @Injectable()
 export class BlogService {
-  constructor(private readonly gemini: GeminiService) {}
+  private cache = new MemoryCache();
+
+  constructor(private readonly gemini: GeminiService = {} as any) {}
+
+  public invalidateCache(): void {
+    this.cache.clear();
+  }
   // ==========================================
   // Public Blog Endpoints (SEO & SSR)
   // ==========================================
@@ -51,13 +97,16 @@ export class BlogService {
     limit?: number;
     offset?: number;
   }) {
+    const cacheKey = `list:${JSON.stringify(options || {})}`;
+    const cached = this.cache.get<any[]>(cacheKey);
+    if (cached) return cached;
+
     const now = new Date();
     const limit = Math.min(options?.limit ?? 20, 100);
     const offset = options?.offset ?? 0;
 
-    // When no language filter is specified, deduplicate by translationGroupId
-    // showing only one entry per article (prefer HINGLISH as default display).
-    // Both language versions share the same slug, so we only need one listing entry.
+    // Deduplicate by translationGroupId showing one entry per article.
+    // If an article exists in Hinglish, show Hinglish; if only English, show English.
     const conditions = [
       or(
         eq(blogs.status, 'PUBLISHED'),
@@ -66,13 +115,21 @@ export class BlogService {
     ];
 
     if (options?.categorySlug) {
+      const catSlug = options.categorySlug.toLowerCase().trim();
       conditions.push(
         or(
-          eq(categories.slug, options.categorySlug),
+          eq(categories.slug, catSlug),
           sql`EXISTS (
             SELECT 1 FROM blog_category bc
             JOIN category c ON bc."categoryId" = c.id
-            WHERE bc."blogId" = ${blogs.id} AND c.slug = ${options.categorySlug}
+            WHERE bc."blogId" = ${blogs.id} AND LOWER(c.slug) = ${catSlug}
+          )`,
+          sql`EXISTS (
+            SELECT 1 FROM blog sibling
+            JOIN blog_category bc ON bc."blogId" = sibling.id
+            JOIN category c ON bc."categoryId" = c.id
+            WHERE sibling."translationGroupId" = ${blogs.translationGroupId}
+              AND LOWER(c.slug) = ${catSlug}
           )`,
         ),
       );
@@ -86,10 +143,27 @@ export class BlogService {
       );
     }
 
-    // If a specific language is requested, filter by it.
-    // Otherwise default to showing HINGLISH to avoid duplicates (both versions share the same slug).
-    const displayLanguage = options?.language || 'HINGLISH';
-    conditions.push(eq(blogs.language, displayLanguage));
+    if (options?.language) {
+      conditions.push(eq(blogs.language, options.language));
+    } else {
+      conditions.push(
+        or(
+          eq(blogs.language, 'HINGLISH'),
+          and(
+            eq(blogs.language, 'ENGLISH'),
+            or(
+              isNull(blogs.translationGroupId),
+              sql`NOT EXISTS (
+                SELECT 1 FROM blog b2
+                WHERE b2."translationGroupId" = ${blogs.translationGroupId}
+                  AND b2.language = 'HINGLISH'
+                  AND (b2.status = 'PUBLISHED' OR (b2.status = 'SCHEDULED' AND b2."scheduledAt" <= ${now}))
+              )`,
+            ),
+          ),
+        ),
+      );
+    }
 
     let baseQuery = db
       .select({
@@ -219,7 +293,7 @@ export class BlogService {
       blogCategoryMap.set(cr.blogId, list);
     }
 
-    return rows.map((row) => {
+    const result = rows.map((row) => {
       const firstInlineImage =
         blogImageMap.get(row.id) ||
         (row.translationGroupId ? groupImageMap.get(row.translationGroupId) : null) ||
@@ -240,9 +314,16 @@ export class BlogService {
         coverImage: row.coverImage || firstInlineImage || null,
       };
     });
+
+    this.cache.set(cacheKey, result, 60_000);
+    return result;
   }
 
   async getPublished(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
+    const cacheKey = `published:${slug}:${language || 'default'}`;
+    const cached = this.cache.get<any>(cacheKey);
+    if (cached) return cached;
+
     const now = new Date();
     // Default to HINGLISH when no language specified (primary audience)
     const requestedLang = language || 'HINGLISH';
@@ -430,10 +511,24 @@ export class BlogService {
     // Check if alternate language version exists (both share the same slug)
     let hasAlternateLanguage = false;
     let effectiveBlocks = await this.getBlocks(blog.id);
+    let alternateArticle: any = null;
 
     if (blog.translationGroupId) {
       const [alt] = await db
-        .select({ id: blogs.id })
+        .select({
+          id: blogs.id,
+          title: blogs.title,
+          slug: blogs.slug,
+          language: blogs.language,
+          description: blogs.description,
+          coverImage: blogs.coverImage,
+          imageAlt: blogs.imageAlt,
+          imageCaption: blogs.imageCaption,
+          metaTitle: blogs.metaTitle,
+          metaDescription: blogs.metaDescription,
+          publishedAt: blogs.publishedAt,
+          updatedAt: blogs.updatedAt,
+        })
         .from(blogs)
         .where(
           and(
@@ -452,6 +547,21 @@ export class BlogService {
         // Sync any images from alternate language version into this language version
         const altBlocks = await this.getBlocks(alt.id);
         effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
+        alternateArticle = {
+          id: alt.id,
+          title: alt.title,
+          slug: alt.slug,
+          language: alt.language,
+          description: alt.description,
+          coverImage: alt.coverImage,
+          imageAlt: alt.imageAlt,
+          imageCaption: alt.imageCaption,
+          metaTitle: alt.metaTitle,
+          metaDescription: alt.metaDescription,
+          publishedAt: alt.publishedAt,
+          updatedAt: alt.updatedAt,
+          htmlContent: blocksToHtml(altBlocks as any),
+        };
       }
     }
 
@@ -460,7 +570,7 @@ export class BlogService {
     const primaryCategory = postCategories[0] || blog.category;
     const html = blocksToHtml(effectiveBlocks as any);
 
-    return {
+    const result = {
       ...blog,
       category: primaryCategory,
       categories: postCategories,
@@ -468,7 +578,11 @@ export class BlogService {
       tags: postTagsList,
       htmlContent: html,
       hasAlternateLanguage,
+      alternateArticle,
     };
+
+    this.cache.set(cacheKey, result, 120_000);
+    return result;
   }
 
   // Check redirect path directly
@@ -819,6 +933,7 @@ export class BlogService {
         return { ...blog, blocks, htmlContent: blocksToHtml(blocks as any) };
       });
       await this.announceIfNewlyPublished(created, false);
+      this.invalidateCache();
       return created;
     } catch (error) {
       this.rethrowSlugConflict(error);
@@ -1059,6 +1174,7 @@ export class BlogService {
         };
       });
       await this.announceIfNewlyPublished(updated, existing.status === 'PUBLISHED');
+      this.invalidateCache();
       return updated;
     } catch (error) {
       this.rethrowSlugConflict(error);
@@ -1149,6 +1265,7 @@ export class BlogService {
         await tx.delete(blogs).where(eq(blogs.id, blogId));
       }
     });
+    this.invalidateCache();
   }
 
   // Revision history list
@@ -1210,7 +1327,11 @@ export class BlogService {
   // ==========================================
 
   async listCategories() {
-    return db
+    const cacheKey = 'categories:all';
+    const cached = this.cache.get<any[]>(cacheKey);
+    if (cached) return cached;
+
+    const res = await db
       .select({
         id: categories.id,
         name: categories.name,
@@ -1223,6 +1344,9 @@ export class BlogService {
       .leftJoin(blogs, eq(blogs.categoryId, categories.id))
       .groupBy(categories.id)
       .orderBy(asc(categories.name));
+
+    this.cache.set(cacheKey, res, 300_000);
+    return res;
   }
 
   async createCategory(
@@ -1230,6 +1354,7 @@ export class BlogService {
     currentUser: CurrentUser,
   ) {
     this.assertAdmin(currentUser);
+    this.invalidateCache();
     const existing = await db
       .select({ id: categories.id })
       .from(categories)
@@ -1245,6 +1370,7 @@ export class BlogService {
         .insert(categories)
         .values(input)
         .returning();
+      this.invalidateCache();
       return cat;
     } catch (err: any) {
       if (err.code === '23505') {
@@ -1260,6 +1386,7 @@ export class BlogService {
     currentUser: CurrentUser,
   ) {
     this.assertAdmin(currentUser);
+    this.invalidateCache();
     if (input.slug) {
       const existing = await db
         .select({ id: categories.id })
@@ -1279,6 +1406,7 @@ export class BlogService {
         .where(eq(categories.id, id))
         .returning();
       if (!cat) throw new NotFoundException('Category not found');
+      this.invalidateCache();
       return cat;
     } catch (err: any) {
       if (err.code === '23505') {
@@ -1290,11 +1418,16 @@ export class BlogService {
 
   async deleteCategory(id: string, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
+    this.invalidateCache();
     await db.delete(categories).where(eq(categories.id, id));
   }
 
   async listTags() {
-    return db
+    const cacheKey = 'tags:all';
+    const cached = this.cache.get<any[]>(cacheKey);
+    if (cached) return cached;
+
+    const res = await db
       .select({
         id: tags.id,
         name: tags.name,
@@ -1305,16 +1438,21 @@ export class BlogService {
       .leftJoin(blogTags, eq(blogTags.tagId, tags.id))
       .groupBy(tags.id)
       .orderBy(asc(tags.name));
+
+    this.cache.set(cacheKey, res, 300_000);
+    return res;
   }
 
   async createTag(input: CreateTagInput, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
+    this.invalidateCache();
     const [t] = await db.insert(tags).values(input).returning();
     return t;
   }
 
   async deleteTag(id: string, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
+    this.invalidateCache();
     await db.delete(tags).where(eq(tags.id, id));
   }
 

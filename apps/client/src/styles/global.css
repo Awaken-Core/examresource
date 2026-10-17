@@ -5,9 +5,8 @@
    Reference: design.md
    ============================================================ */
 
-/* Google Fonts loaded via preconnect + link in Layout.astro for optimal performance.
-   Using display=swap ensures text renders immediately with fallback fonts. */
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap');
+/* Google Fonts loaded directly via <link rel="stylesheet"> with preconnect in Layout.astro
+   to eliminate render-blocking CSS network waterfall and improve FCP/LCP. */
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));

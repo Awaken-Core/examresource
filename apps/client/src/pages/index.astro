@@ -2,20 +2,33 @@
 import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
+import {
+  appLangToBlogLanguage,
+  articleHref,
+  preferredLangFromCookieHeader,
+} from '../lib/preferred-lang';
 
 const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
+const listLanguage = appLangToBlogLanguage(preferredAppLang);
+
+// Edge CDN caching: cache for 60s, serve stale up to 300s while revalidating in background
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
 
 let livePosts: any[] = [];
 let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string; status?: number; durationMs: number } | null = null;
 
 const fetchStart = performance.now();
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=50`);
+  const res = await fetch(`${API_URL}/blogs?limit=50&language=${listLanguage}`, {
+    signal: AbortSignal.timeout(6000),
+  });
   const durationMs = Math.round(performance.now() - fetchStart);
 
   if (!res.ok) {
     fetchError = { type: 'http', status: res.status, durationMs };
-    console.error(`[Index SSR] /blogs?limit=50 failed with HTTP ${res.status} in ${durationMs}ms`);
+    console.error(`[Index SSR] /blogs?limit=50&language=${listLanguage} failed with HTTP ${res.status} in ${durationMs}ms`);
   } else {
     try {
       const data = await res.json();
@@ -24,7 +37,7 @@ try {
         if (data.length === 0) {
           fetchError = { type: 'empty', status: res.status, durationMs };
         }
-        console.info(`[Index SSR] /blogs?limit=50 fetched ${data.length} articles in ${durationMs}ms`);
+        console.info(`[Index SSR] /blogs?limit=50&language=${listLanguage} fetched ${data.length} articles in ${durationMs}ms`);
       } else {
         fetchError = { type: 'json', message: 'Payload is not an array', status: res.status, durationMs };
         console.error(`[Index SSR] /blogs?limit=50 invalid JSON structure in ${durationMs}ms`);
@@ -42,7 +55,8 @@ try {
 
 const displayArticles = (livePosts || []).map(p => ({
   title: p.title,
-  slug: `/${p.slug}`,
+  slugKey: p.slug,
+  slug: articleHref(p.slug, preferredAppLang),
   category: p.category?.name || p.categories?.[0]?.name || 'Latest Updates',
   categories: p.categories || (p.category ? [p.category] : []),
   summary: p.description || p.metaDescription || 'Check complete official notification details and direct application links.',
@@ -173,6 +187,7 @@ const popularUpdates = displayArticles.slice(0, 5).map((item, idx) => ({
   rank: idx + 1,
   title: item.title,
   href: item.slug,
+  slugKey: item.slugKey,
 }));
 
 const pageTitle = `${siteName} — Verified Government Exam Updates, Sarkari Jobs & Results`;
@@ -247,10 +262,10 @@ const jsonLd = {
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
         
         {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7">
+        <div class="min-w-0 space-y-7" transition:name="main-content">
           
           {/* 1. Main Headline */}
-          <div>
+          <div transition:name="page-hero">
             <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-2.5">
               <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
               Verified Government Exam &amp; Sarkari Naukri Portal
@@ -379,12 +394,15 @@ const jsonLd = {
             </div>
           </div>
 
-          {/* 5. Latest Updates Section */}
+          {/* 5. Latest Updates — all articles, independent of category navigation */}
           <section id="latest-updates" class="space-y-3.5">
-            <div class="flex items-center justify-between">
-              <h2 class="text-base sm:text-lg font-bold text-white">
-                Latest updates
-              </h2>
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <h2 class="text-base sm:text-lg font-bold text-white">
+                  All Latest Articles
+                </h2>
+                <p class="mt-0.5 text-xs text-muted">Newest posts across every category</p>
+              </div>
             </div>
 
             <div class="space-y-3">
@@ -392,6 +410,7 @@ const jsonLd = {
                 displayArticles.map((article) => (
                   <a 
                     href={article.slug}
+                    data-article-link={article.slugKey}
                     class="flex flex-col sm:flex-row items-start gap-4 p-4 bg-surface border border-border rounded-lg shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 group cursor-pointer block"
                   >
                     {/* Thumbnail on Left (only if image exists) */}
@@ -431,11 +450,11 @@ const jsonLd = {
                           </span>
                         </div>
 
-                        <h3 class="mt-1.5 text-sm sm:text-base font-bold text-white group-hover:text-accent transition leading-snug">
+                        <h3 class="mt-1.5 text-sm sm:text-base font-bold text-white group-hover:text-accent transition leading-snug" data-article-title>
                           {article.title}
                         </h3>
 
-                        <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed">
+                        <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed" data-article-summary>
                           {article.summary}
                         </p>
                       </div>
@@ -545,13 +564,14 @@ const jsonLd = {
               <div class="space-y-2.5">
                 {popularUpdates.map((item) => (
                   <a 
-                    href={item.href} 
+                    href={item.href}
+                    data-article-link={item.slugKey}
                     class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
                   >
                     <span class="w-5 h-5 rounded-full bg-surface-raised text-muted group-hover:bg-accent/15 group-hover:text-accent flex items-center justify-center text-[10px] font-bold shrink-0 transition">
                       {item.rank}
                     </span>
-                    <p class="text-xs font-medium text-white/90 group-hover:text-accent transition leading-snug truncate">
+                    <p class="text-xs font-medium text-white/90 group-hover:text-accent transition leading-snug truncate" data-article-title>
                       {item.title}
                     </p>
                   </a>
