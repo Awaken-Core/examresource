@@ -2604,45 +2604,11 @@ import { siteUrl } from '../data/site';
   const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
   const SITE_URL = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
 
-  let clerkReady: Promise<any> | undefined;
-
-  function waitForClerk() {
-    clerkReady ??= (async () => {
-      for (let attempt = 0; attempt < 50; attempt += 1) {
-        const clerk = (window as any).Clerk;
-        if (clerk?.loaded) return clerk;
-        await new Promise((resolve) => setTimeout(resolve, 100));
-      }
-      return (window as any).Clerk;
-    })();
-    return clerkReady;
-  }
-
-  async function getAuthToken(forceRefresh = false): Promise<string | null> {
-    const clerk = await waitForClerk();
-    if (!clerk?.session) return null;
-    try {
-      return await clerk.session.getToken(forceRefresh ? { skipCache: true } : undefined);
-    } catch {
-      return null;
-    }
-  }
-
   async function apiFetch(endpoint: string, options: RequestInit = {}) {
-    const send = (token: string | null) => {
-      const headers = new Headers(options.headers || {});
-      if (token) headers.set('Authorization', `Bearer ${token}`);
-      if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) {
-        headers.set('Content-Type', 'application/json');
-      }
-      return fetch(`${API_URL}${endpoint}`, { ...options, headers });
-    };
-
-    let response = await send(await getAuthToken());
-    if (response.status === 401) {
-      response = await send(await getAuthToken(true));
-    }
-    return response;
+    const headers = new Headers(options.headers || {});
+    if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+    if (options.method && !['GET', 'HEAD'].includes(options.method.toUpperCase())) headers.set('X-CSRF-Protection', '1');
+    return fetch(`${API_URL}${endpoint}`, { ...options, headers, credentials: 'include' });
   }
 
   async function uploadImage(file: File): Promise<string> {

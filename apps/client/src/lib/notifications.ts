@@ -27,6 +27,23 @@ function relativeTime(iso: string) {
   return new Date(iso).toLocaleDateString();
 }
 
+/** Same-origin / relative hrefs soft-navigate via ClientRouter; externals hard-navigate. */
+async function goToNotificationHref(href: string) {
+  try {
+    const url = new URL(href, window.location.origin);
+    const isSameOrigin = url.origin === window.location.origin;
+    if (isSameOrigin) {
+      const path = `${url.pathname}${url.search}${url.hash}`;
+      const { navigate } = await import('astro:transitions/client');
+      navigate(path);
+      return;
+    }
+  } catch {
+    // fall through
+  }
+  window.location.assign(href);
+}
+
 function iconFor(kind: AppNotification['kind']) {
   if (kind === 'blog') return '📰';
   if (kind === 'broadcast') return '🔔';
@@ -90,7 +107,7 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
       notif.onclick = () => {
         window.focus();
         if (item.href) {
-          window.location.assign(item.href);
+          void goToNotificationHref(item.href);
         }
       };
     } catch (err) {
@@ -255,9 +272,7 @@ export async function refreshNotifications(token: string | null) {
   }
 
   try {
-    const response = await fetch(`${API_URL}/me/notifications`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(`${API_URL}/me/notifications`, { credentials: 'include' });
     if (!response.ok) return;
     const data = (await response.json()) as { items?: AppNotification[] };
     currentItems = data.items ?? [];
@@ -275,9 +290,10 @@ export async function markAllNotificationsRead() {
   await fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${currentToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Protection': '1',
     },
+    credentials: 'include',
     body: '{}',
     keepalive: true,
   }).catch(() => null);
@@ -291,9 +307,10 @@ export function markNotificationRead(id: string) {
   void fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${currentToken}`,
       'Content-Type': 'application/json',
+      'X-CSRF-Protection': '1',
     },
+    credentials: 'include',
     body: JSON.stringify({ ids: [id] }),
     keepalive: true,
   }).catch(() => null);

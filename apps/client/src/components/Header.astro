@@ -108,7 +108,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
           title="User Profile & Settings"
         >
           {/* Avatar Image (when user has an avatar uploaded) */}
-          <img class="user-avatar-img hidden w-full h-full object-cover" alt="Profile" />
+          <img class="user-avatar-img hidden w-full h-full object-cover" alt="Profile" width="40" height="40" decoding="async" loading="lazy" />
 
           {/* User Initials (when logged in without image) */}
           <span class="user-avatar-initials header-profile-initials hidden text-xs font-bold text-white uppercase">DW</span>

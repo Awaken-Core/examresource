@@ -24,7 +24,7 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-full bg-surface-raised border border-border flex items-center justify-center text-white font-bold text-caption-xs shrink-0 overflow-hidden">
         <span class="user-avatar-initials">DW</span>
-        <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" />
+        <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" width="40" height="40" decoding="async" loading="lazy" />
       </div>
       <div class="truncate flex-1">
         <p class="user-display-name text-body-sm font-bold text-white leading-tight truncate">Devil</p>
@@ -84,84 +84,80 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
       <span>Troubleshooting</span>
     </a>
 
-    {/* Language Toggle */}
-    <div class="flex items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition">
-      <div class="flex items-center gap-3">
-        <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-        </svg>
-        <span>Language</span>
+    {/* Language + Theme (side by side) */}
+    <div class="flex items-stretch gap-1 px-1.5 py-1">
+      <div class="flex-1 flex flex-col gap-1.5 px-1.5 py-1.5 rounded-xl hover:bg-surface-raised transition">
+        <div class="flex items-center gap-1.5 text-[11px] font-medium text-muted">
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>Language</span>
+        </div>
+        <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none w-full" role="group" aria-label="Language">
+          <button
+            type="button"
+            data-app-lang="hinglish"
+            class="app-lang-btn flex-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+            title="Switch to Hinglish"
+          >
+            HI
+          </button>
+          <button
+            type="button"
+            data-app-lang="en"
+            class="app-lang-btn flex-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+            title="Switch to English"
+          >
+            EN
+          </button>
+        </div>
       </div>
 
-      <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none">
-        <button 
+      <div class="flex-1 flex flex-col gap-1.5 px-1.5 py-1.5 rounded-xl hover:bg-surface-raised transition">
+        <div class="flex items-center gap-1.5 text-[11px] font-medium text-muted">
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 5 5 0 013-4.582V9a7 7 0 0114 0v3.418A5 5 0 0121 17a4 4 0 01-4 4H7z" />
+          </svg>
+          <span>Theme</span>
+        </div>
+        <button
           type="button"
-          data-app-lang="hinglish"
-          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
-          title="Switch to Hinglish"
+          class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none self-start"
+          aria-label="Toggle Dark and Light Mode"
         >
-          HI
-        </button>
-        <button 
-          type="button"
-          data-app-lang="en"
-          class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
-          title="Switch to English"
-        >
-          EN
+          <span
+            class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-sm transition-transform duration-200 translate-x-0.5"
+          >
+            <span class="light-icon">☀️</span>
+            <span class="dark-icon hidden">🌙</span>
+          </span>
         </button>
       </div>
     </div>
 
-    {/* Theme Toggle (Exact Match to Reference Images 4 & 5) */}
-    <div class="flex items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition">
-      <div class="flex items-center gap-3">
-        <svg class="w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4 5 5 0 013-4.582V9a7 7 0 0114 0v3.418A5 5 0 0121 17a4 4 0 01-4 4H7z" />
-        </svg>
-        <span>Theme</span>
-      </div>
-
-      {/* Pill Toggle Switch with Moon/Sun Icon */}
-      <button 
+    {/* Auth footer — one row at a time (guest vs signed-in) */}
+    <div class="border-t border-border/60 mt-1 pt-1">
+      <button
         type="button"
-        class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none"
-        aria-label="Toggle Dark and Light Mode"
+        data-auth-action="logout"
+        class="auth-logout-btn hidden w-full items-center gap-3 px-3 py-2.5 rounded-xl text-body-sm text-red-500 hover:bg-red-500/10 transition cursor-pointer text-left"
       >
-        <span 
-          class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-sm transition-transform duration-200 translate-x-0.5"
-        >
-          <span class="light-icon">☀️</span>
-          <span class="dark-icon hidden">🌙</span>
-        </span>
+        <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span class="font-medium">Logout</span>
       </button>
+
+      <a
+        href="/login"
+        data-auth-action="login"
+        class="auth-login-link flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-body-sm text-accent hover:bg-accent/10 transition font-medium"
+      >
+        <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+        </svg>
+        <span>Sign In / Register</span>
+      </a>
     </div>
-
-    {/* Divider */}
-    <div class="border-t border-border/60 my-1"></div>
-
-    {/* Logout Button (for authenticated users) */}
-    <button 
-      type="button"
-      data-auth-action="logout"
-      class="auth-logout-btn w-full flex items-center gap-3 px-3 py-2 rounded-xl text-body-sm text-red-500 hover:bg-red-500/10 transition cursor-pointer text-left"
-    >
-      <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-      </svg>
-      <span class="font-medium">Logout</span>
-    </button>
-
-    {/* Sign In Link (when unauthenticated) */}
-    <a 
-      href="/login"
-      data-auth-action="login"
-      class="auth-login-link hidden items-center gap-3 px-3 py-2 rounded-xl text-body-sm text-accent hover:bg-accent/10 transition font-medium"
-    >
-      <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-      </svg>
-      <span>Sign In / Register</span>
-    </a>
   </div>
 </div>

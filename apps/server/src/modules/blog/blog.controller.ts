@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import type { z } from 'zod';
-import { ClerkAuthService } from '../clerk-auth/clerk-auth.service.js';
+import { AuthService } from '../auth/auth.service.js';
 import { BlogService } from './blog.service.js';
 import {
   createBlockSchema,
@@ -30,7 +30,7 @@ import {
 export class BlogController {
   constructor(
     private readonly blogs: BlogService,
-    private readonly auth: ClerkAuthService,
+    private readonly auth: AuthService,
   ) {}
 
   // ==========================================
