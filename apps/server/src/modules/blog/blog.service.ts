@@ -134,30 +134,61 @@ export class BlogService {
       .filter((id): id is string => Boolean(id));
 
     let allRelatedBlogIds = [...blogIds];
+    const blogGroupIdMap = new Map<string, string>();
+    for (const r of rows) {
+      if (r.translationGroupId) {
+        blogGroupIdMap.set(r.id, r.translationGroupId);
+      }
+    }
+
     if (groupIds.length > 0) {
       const siblingBlogs = await db
-        .select({ id: blogs.id })
+        .select({ id: blogs.id, translationGroupId: blogs.translationGroupId })
         .from(blogs)
         .where(inArray(blogs.translationGroupId, groupIds));
+
+      for (const s of siblingBlogs) {
+        if (s.translationGroupId) {
+          blogGroupIdMap.set(s.id, s.translationGroupId);
+        }
+      }
+
       allRelatedBlogIds = [
         ...new Set([...allRelatedBlogIds, ...siblingBlogs.map((s) => s.id)]),
       ];
     }
 
-    const imageBlocks = await db
-      .select({
-        blogId: blogBlocks.blogId,
-        value: blogBlocks.value,
-        position: blogBlocks.position,
-      })
-      .from(blogBlocks)
-      .where(
-        and(
-          inArray(blogBlocks.blogId, allRelatedBlogIds),
-          eq(blogBlocks.type, 'IMAGE'),
-        ),
-      )
-      .orderBy(asc(blogBlocks.position));
+    // Parallelize image blocks and category queries for all related blogs
+    const [imageBlocks, catRows] = await Promise.all([
+      allRelatedBlogIds.length > 0
+        ? db
+            .select({
+              blogId: blogBlocks.blogId,
+              value: blogBlocks.value,
+              position: blogBlocks.position,
+            })
+            .from(blogBlocks)
+            .where(
+              and(
+                inArray(blogBlocks.blogId, allRelatedBlogIds),
+                eq(blogBlocks.type, 'IMAGE'),
+              ),
+            )
+            .orderBy(asc(blogBlocks.position))
+        : Promise.resolve([]),
+      allRelatedBlogIds.length > 0
+        ? db
+            .select({
+              blogId: blogCategories.blogId,
+              id: categories.id,
+              name: categories.name,
+              slug: categories.slug,
+            })
+            .from(blogCategories)
+            .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
+            .where(inArray(blogCategories.blogId, allRelatedBlogIds))
+        : Promise.resolve([]),
+    ]);
 
     const blogImageMap = new Map<string, string>();
     for (const img of imageBlocks) {
@@ -168,35 +199,16 @@ export class BlogService {
 
     const groupImageMap = new Map<string, string>();
     if (groupIds.length > 0) {
-      const blogsWithGroups = await db
-        .select({ id: blogs.id, translationGroupId: blogs.translationGroupId })
-        .from(blogs)
-        .where(inArray(blogs.id, allRelatedBlogIds));
-
-      for (const b of blogsWithGroups) {
+      for (const [bId, trGroupId] of blogGroupIdMap.entries()) {
         if (
-          b.translationGroupId &&
-          blogImageMap.has(b.id) &&
-          !groupImageMap.has(b.translationGroupId)
+          trGroupId &&
+          blogImageMap.has(bId) &&
+          !groupImageMap.has(trGroupId)
         ) {
-          groupImageMap.set(b.translationGroupId, blogImageMap.get(b.id)!);
+          groupImageMap.set(trGroupId, blogImageMap.get(bId)!);
         }
       }
     }
-
-    const catRows =
-      allRelatedBlogIds.length > 0
-        ? await db
-            .select({
-              blogId: blogCategories.blogId,
-              id: categories.id,
-              name: categories.name,
-              slug: categories.slug,
-            })
-            .from(blogCategories)
-            .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
-            .where(inArray(blogCategories.blogId, allRelatedBlogIds))
-        : [];
 
     const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
     for (const cr of catRows) {
