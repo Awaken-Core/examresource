@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { whatsappChannel, telegramChannel, contactEmail } from '../data/site';
+import { telegramChannel, contactEmail } from '../data/site';
 
-const pageTitle = "Contact Us — govtpariksha.com Support & Editorial Desk";
-const pageDescription = "Get in touch with the govtpariksha.com team for exam notification inquiries, corrections, technical assistance, or partnership proposals.";
+const pageTitle = "Contact Us | GovtPariksha Support";
+const pageDescription = "Get in touch with the GovtPariksha team. Report question errors, request new exam mock tests, report bugs, or send feedback.";
 const canonicalUrl = "https://govtpariksha.com/contact-us";
 
 const jsonLd = {
@@ -14,7 +14,7 @@ const jsonLd = {
   "description": pageDescription,
   "mainEntity": {
     "@type": "Organization",
-    "name": "govtpariksha.com",
+    "name": "GovtPariksha",
     "url": "https://govtpariksha.com",
     "logo": "https://govtpariksha.com/og-image.jpg",
     "contactPoint": {
@@ -54,7 +54,7 @@ const jsonLd = {
 >
   <div class="min-h-screen bg-canvas text-white">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-      
+
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted">
         <a href="/" class="hover:text-accent transition">Home</a>
@@ -69,29 +69,29 @@ const jsonLd = {
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
           </span>
-          Awaken Studios Support Desk
+          GovtPariksha Support Desk
         </div>
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">
-          Get in Touch with Us
+          Contact Us
         </h1>
         <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Have a question about an exam pattern, spotted a corrigendum that needs updating, or want to discuss collaboration? Our team is ready to help.
+          Welcome to <strong class="text-white">GovtPariksha</strong>! Have a suggestion for a new exam test series, found an error in a question, or facing a technical bug while taking a mock test? We would love to hear from you!
         </p>
         <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
-          <span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1.5">
+          <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            Response SLA: Within 24-48 Hours
+            Response Time: Within 24 to 48 Hours
           </span>
           <span>•</span>
-          <span>Mon – Sat, 9:00 AM – 6:00 PM IST</span>
+          <span>Mon to Sat, 9:00 AM to 6:00 PM IST</span>
         </div>
       </header>
 
       {/* Contact Channels */}
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        
+
         {/* Email */}
         <div class="rounded-xl border border-border bg-surface p-5 hover:border-accent/40 transition flex flex-col justify-between group">
           <div>
@@ -100,43 +100,17 @@ const jsonLd = {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
             </div>
-            <h3 class="text-sm font-bold text-white mb-1">Direct Email</h3>
-            <p class="text-xs text-muted leading-relaxed mb-4">Official Awaken Studios support desk for queries and corrections.</p>
+            <h3 class="text-sm font-bold text-white mb-1">Support &amp; Feedback Email</h3>
+            <p class="text-xs text-muted leading-relaxed mb-4">Email us directly for quick resolutions and question verification.</p>
           </div>
           <div class="pt-3 border-t border-border">
-            <a 
-              href={`mailto:${contactEmail}`} 
+            <a
+              href={`mailto:${contactEmail}`}
               class="text-xs font-semibold text-accent hover:underline flex items-center gap-1.5 truncate"
             >
               <span class="truncate">{contactEmail}</span>
               <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        {/* WhatsApp */}
-        <div class="rounded-xl border border-border bg-surface p-5 hover:border-[#25D366]/40 transition flex flex-col justify-between group">
-          <div>
-            <div class="w-10 h-10 rounded-lg bg-[#25D366]/10 text-[#25D366] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.07-1.782-.406-1.464-.608-2.42-2.126-2.493-2.224-.072-.098-.59-1.026-.59-1.956 0-.93.486-1.385.66-1.577.174-.192.38-.24.507-.24.127 0 .253.002.364.007.119.006.278-.045.435.334.162.392.553 1.35.602 1.448.049.098.082.213.016.344-.066.13-.099.213-.197.327-.098.115-.207.257-.295.344-.099.098-.202.205-.087.402.115.197.512.844 1.098 1.366.755.672 1.391.88 1.588.978.197.098.312.082.427-.049.115-.13.493-.574.624-.77.131-.197.262-.164.442-.098.18.066 1.144.539 1.341.637.197.098.328.147.377.23.049.082.049.475-.095.88zM12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.178L2 22l4.981-1.395A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
-              </svg>
-            </div>
-            <h3 class="text-sm font-bold text-white mb-1">WhatsApp Channel</h3>
-            <p class="text-xs text-muted leading-relaxed mb-4">Join candidates for instant exam alerts, admit cards, and notices.</p>
-          </div>
-          <div class="pt-3 border-t border-border">
-            <a 
-              href={whatsappChannel} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              class="text-xs font-semibold text-[#25D366] hover:underline flex items-center gap-1.5"
-            >
-              <span>Join WhatsApp Channel</span>
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
               </svg>
             </a>
           </div>
@@ -151,18 +125,42 @@ const jsonLd = {
               </svg>
             </div>
             <h3 class="text-sm font-bold text-white mb-1">Telegram Community</h3>
-            <p class="text-xs text-muted leading-relaxed mb-4">Official syllabus revisions, PDF notes, and discussion group.</p>
+            <p class="text-xs text-muted leading-relaxed mb-4">Join our channel for test updates, PDFs, and discussion.</p>
           </div>
           <div class="pt-3 border-t border-border">
-            <a 
-              href={telegramChannel} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={telegramChannel}
+              target="_blank"
+              rel="noopener noreferrer"
               class="text-xs font-semibold text-[#2AABEE] hover:underline flex items-center gap-1.5"
             >
-              <span>Join Telegram Group</span>
+              <span>Join Channel</span>
               <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Website / Portal */}
+        <div class="rounded-xl border border-border bg-surface p-5 hover:border-emerald-500/40 transition flex flex-col justify-between group">
+          <div>
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-1">Official Platform</h3>
+            <p class="text-xs text-muted leading-relaxed mb-4">Attempt free mock tests, track AIR, and practice PYQs anytime.</p>
+          </div>
+          <div class="pt-3 border-t border-border">
+            <a
+              href="https://govtpariksha.com/"
+              class="text-xs font-semibold text-emerald-400 hover:underline flex items-center gap-1.5"
+            >
+              <span>govtpariksha.com</span>
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
               </svg>
             </a>
           </div>
@@ -172,24 +170,37 @@ const jsonLd = {
 
       {/* Main Form & FAQs Grid */}
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         {/* Contact Form */}
         <div class="lg:col-span-7">
           <div class="rounded-xl border border-border bg-surface p-6 sm:p-8 shadow-xs">
             <h2 class="text-lg sm:text-xl font-bold text-white mb-1">Send a Message</h2>
             <p class="text-xs sm:text-sm text-muted mb-6 leading-relaxed">
-              We prioritize notification updates, dead link reports, and candidate inquiries.
+              Fill in your details below and we will get back to you promptly.
             </p>
 
             {/* Success Banner */}
-            <div id="contact-success-banner" class="hidden mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300">
+            <div id="contact-success-banner" class="hidden mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
               <div class="flex items-start gap-2.5">
-                <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div class="text-xs space-y-0.5">
-                  <p class="font-bold">Inquiry Received Successfully!</p>
-                  <p class="text-muted">Thank you for writing to us. Our Awaken Studios editorial desk will review and respond promptly.</p>
+                  <p class="font-bold">Message Received!</p>
+                  <p id="contact-success-text" class="text-muted">Thank you for writing to us. Our team will verify and reply within 24 to 48 hours.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Error Banner */}
+            <div id="contact-error-banner" class="hidden mb-6 p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+              <div class="flex items-start gap-2.5">
+                <svg class="w-5 h-5 text-rose-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                <div class="text-xs space-y-0.5">
+                  <p class="font-bold">Unable to Send Message</p>
+                  <p id="contact-error-text" class="text-muted">Something went wrong. Please check your connection or email us directly.</p>
                 </div>
               </div>
             </div>
@@ -200,12 +211,12 @@ const jsonLd = {
                   <label for="contact-name" class="block text-xs font-semibold text-white">
                     Your Full Name <span class="text-accent">*</span>
                   </label>
-                  <input 
-                    type="text" 
-                    id="contact-name" 
-                    name="name" 
+                  <input
+                    type="text"
+                    id="contact-name"
+                    name="name"
                     required
-                    placeholder="e.g. Rahul Sharma" 
+                    placeholder="e.g. Rahul Sharma"
                     class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
                   />
                 </div>
@@ -214,12 +225,12 @@ const jsonLd = {
                   <label for="contact-email" class="block text-xs font-semibold text-white">
                     Email Address <span class="text-accent">*</span>
                   </label>
-                  <input 
-                    type="email" 
-                    id="contact-email" 
-                    name="email" 
+                  <input
+                    type="email"
+                    id="contact-email"
+                    name="email"
                     required
-                    placeholder="e.g. rahul@example.com" 
+                    placeholder="e.g. rahul@example.com"
                     class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
                   />
                 </div>
@@ -227,32 +238,31 @@ const jsonLd = {
 
               <div class="space-y-1.5">
                 <label for="contact-subject" class="block text-xs font-semibold text-white">
-                  Topic / Query Nature <span class="text-accent">*</span>
+                  Topic or Query Nature <span class="text-accent">*</span>
                 </label>
-                <select 
-                  id="contact-subject" 
-                  name="subject" 
+                <select
+                  id="contact-subject"
+                  name="subject"
                   required
                   class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition cursor-pointer"
                 >
                   <option value="" disabled selected class="bg-surface text-white">Select a category...</option>
-                  <option value="correction" class="bg-surface text-white">Exam Notification Correction / Update</option>
-                  <option value="general" class="bg-surface text-white">General Candidate Question</option>
-                  <option value="broken-link" class="bg-surface text-white">Broken Link or Official URL Issue</option>
-                  <option value="advertisement" class="bg-surface text-white">Advertising & Partnerships</option>
-                  <option value="grievance" class="bg-surface text-white">Grievance / Feedback</option>
+                  <option value="question-error" class="bg-surface text-white">Report a Question / Answer Key Error</option>
+                  <option value="new-exam" class="bg-surface text-white">Request a New Exam / Test Series</option>
+                  <option value="bug-report" class="bg-surface text-white">Bug Report (Timer, Page Loading, Score)</option>
+                  <option value="general" class="bg-surface text-white">General Inquiry / Feedback</option>
                 </select>
               </div>
 
               <div class="space-y-1.5">
-                <label for="contact-article-url" class="block text-xs font-semibold text-white">
-                  Article or Exam URL <span class="text-muted font-normal">(Optional)</span>
+                <label for="contact-details" class="block text-xs font-semibold text-white">
+                  Test Name &amp; Question Number <span class="text-muted font-normal">(Optional)</span>
                 </label>
-                <input 
-                  type="url" 
-                  id="contact-article-url" 
-                  name="articleUrl" 
-                  placeholder="https://govtpariksha.com/rrb-ntpc-recruitment..." 
+                <input
+                  type="text"
+                  id="contact-details"
+                  name="testDetails"
+                  placeholder="e.g. SSC CGL Tier 1 Mock 2, Question #14"
                   class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
                 />
               </div>
@@ -261,24 +271,24 @@ const jsonLd = {
                 <label for="contact-message" class="block text-xs font-semibold text-white">
                   Your Message <span class="text-accent">*</span>
                 </label>
-                <textarea 
-                  id="contact-message" 
-                  name="message" 
-                  rows="5" 
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows="5"
                   required
-                  placeholder="Describe your query or specify the notice details that need attention..."
+                  placeholder="Describe your query, the question error with explanation, or the exam you want us to add..."
                   class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition resize-y"
                 ></textarea>
               </div>
 
               <div class="pt-2 flex items-center justify-between gap-4">
                 <p class="text-xs text-muted">
-                  We respect your privacy. No spam.
+                  We respect your privacy.
                 </p>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   id="contact-submit-btn"
-                  class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-on-accent font-semibold text-sm transition shadow-sm cursor-pointer disabled:opacity-50"
+                  class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white font-semibold text-sm transition shadow-sm cursor-pointer disabled:opacity-50"
                 >
                   <span>Send Message</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -290,35 +300,35 @@ const jsonLd = {
           </div>
         </div>
 
-        {/* FAQs & Desk Details */}
+        {/* How Can We Help Faster Sidebar */}
         <div class="lg:col-span-5 space-y-6">
           <div class="rounded-xl border border-border bg-surface p-6 shadow-xs space-y-4">
             <h3 class="text-base font-bold text-white flex items-center gap-2">
               <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
-              Quick Help
+              How Can We Help You Faster?
             </h3>
 
             <div class="space-y-3">
               <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                <h4 class="text-xs font-semibold text-white mb-1">Can I apply directly on this website?</h4>
+                <h4 class="text-xs font-semibold text-white mb-1">1. Report a Question / Answer Key Error</h4>
                 <p class="text-xs text-muted leading-relaxed">
-                  No. govtpariksha.com publishes educational guides. Applications and fees must be submitted only on official commission portals (e.g. ssc.gov.in, upsc.gov.in).
+                  If you think a question or its answer key in a mock test has a mistake, please click the <strong class="text-white">"Report"</strong> button directly on the test screen (or email us the Test Name and Question Number). Our team will verify and update it quickly.
                 </p>
               </div>
 
               <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                <h4 class="text-xs font-semibold text-white mb-1">How fast are exam updates posted?</h4>
+                <h4 class="text-xs font-semibold text-white mb-1">2. Request a New Exam / Test Series</h4>
                 <p class="text-xs text-muted leading-relaxed">
-                  Our team tracks official press releases and gazettes daily. Updates are typically published within 15–30 minutes of release.
+                  Preparing for an upcoming exam that isn't listed on GovtPariksha yet? Email us the exam name, and we will prioritize adding free mock tests for it!
                 </p>
               </div>
 
               <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                <h4 class="text-xs font-semibold text-white mb-1">Is there any subscription fee?</h4>
+                <h4 class="text-xs font-semibold text-white mb-1">3. Bug Reports</h4>
                 <p class="text-xs text-muted leading-relaxed">
-                  All notifications, syllabus guides, and exam resources are 100% free for all students and aspirants across India.
+                  If a test timer freezes or a page doesn't load properly on your phone or laptop, send us a screenshot at <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a> so we can fix the bug right away.
                 </p>
               </div>
             </div>
@@ -326,11 +336,11 @@ const jsonLd = {
 
           <div class="rounded-xl border border-border bg-surface p-5 text-xs text-muted space-y-2">
             <div class="flex items-center justify-between">
-              <span>Managed by: <strong class="text-white">Awaken Studios</strong></span>
+              <span>Platform: <strong class="text-white">GovtPariksha</strong></span>
               <span class="text-accent font-medium">India</span>
             </div>
             <p class="text-muted leading-relaxed">
-              For official editorial inquiries or content correction escalations, reach out at <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>.
+              Official email: <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>
             </p>
           </div>
         </div>
@@ -344,12 +354,20 @@ const jsonLd = {
     const form = document.getElementById('contact-form');
     const submitBtn = document.getElementById('contact-submit-btn');
     const successBanner = document.getElementById('contact-success-banner');
+    const successText = document.getElementById('contact-success-text');
+    const errorBanner = document.getElementById('contact-error-banner');
+    const errorText = document.getElementById('contact-error-text');
 
     if (form) {
-      form.addEventListener('submit', (e) => {
+      form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!form.checkValidity()) return;
 
+        // Hide previous banners
+        if (successBanner) successBanner.classList.add('hidden');
+        if (errorBanner) errorBanner.classList.add('hidden');
+
+        const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.innerHTML = `
@@ -361,30 +379,72 @@ const jsonLd = {
           `;
         }
 
-        setTimeout(() => {
-          if (successBanner) {
-            successBanner.classList.remove('hidden');
-            successBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-          form.reset();
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `
-              <span>Message Sent!</span>
-              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-            `;
-            setTimeout(() => {
+        const formData = new FormData(form);
+        const payload = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          subject: formData.get('subject'),
+          testDetails: formData.get('testDetails'),
+          message: formData.get('message'),
+        };
+
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json().catch(() => ({}));
+
+          if (res.ok && data.success) {
+            if (successText && data.message) {
+              successText.textContent = data.message;
+            }
+            if (successBanner) {
+              successBanner.classList.remove('hidden');
+              successBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            form.reset();
+
+            if (submitBtn) {
+              submitBtn.disabled = false;
               submitBtn.innerHTML = `
-                <span>Send Another Message</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                <span>Message Sent!</span>
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                 </svg>
               `;
-            }, 3000);
+              setTimeout(() => {
+                submitBtn.innerHTML = `
+                  <span>Send Another Message</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                  </svg>
+                `;
+              }, 3000);
+            }
+          } else {
+            throw new Error(data.error || 'Failed to send your message. Please try again or email us directly.');
           }
-        }, 500);
+        } catch (err) {
+          if (errorText) {
+            errorText.textContent = err.message || 'An error occurred while sending. Please email us directly.';
+          }
+          if (errorBanner) {
+            errorBanner.classList.remove('hidden');
+            errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnHtml || `
+              <span>Send Message</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+              </svg>
+            `;
+          }
+        }
       });
     }
   </script>
