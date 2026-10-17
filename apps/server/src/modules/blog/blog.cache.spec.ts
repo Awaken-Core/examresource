@@ -4,7 +4,7 @@ import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { BlogController } from './blog.controller.js';
 import { BlogService } from './blog.service.js';
-import { ClerkAuthService } from '../clerk-auth/clerk-auth.service.js';
+import { AuthService } from '../auth/auth.service.js';
 
 describe('BlogController Public Cache-Control & Security Headers', () => {
   let app: INestApplication;
@@ -19,7 +19,7 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
     listManageable: () => Promise.resolve({ data: [{ id: 'admin-1', title: 'Draft' }] }),
   };
 
-  const mockClerkAuthService = {
+  const mockAuthService = {
     requireUser: () => Promise.resolve({ id: 'user-1', email: 'admin@example.com', role: 'admin' }),
     getUser: () => Promise.resolve({ id: 'user-1', email: 'admin@example.com', role: 'admin' }),
   };
@@ -29,7 +29,7 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
       controllers: [BlogController],
       providers: [
         { provide: BlogService, useValue: mockBlogService },
-        { provide: ClerkAuthService, useValue: mockClerkAuthService },
+        { provide: AuthService, useValue: mockAuthService },
       ],
     }).compile();
 

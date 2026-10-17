@@ -4,6 +4,7 @@ import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
 import TrendingBanner from '../components/TrendingBanner.astro';
 import SearchModal from '../components/SearchModal.astro';
+import BrandLogo from '../components/BrandLogo.astro';
 import { whatsappChannel, telegramChannel, siteUrl, siteDomain, siteName } from '../data/site';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
@@ -29,7 +30,6 @@ const domainDotIndex = siteDomain.lastIndexOf('.');
 const domainPrefix = domainDotIndex !== -1 ? siteDomain.slice(0, domainDotIndex) : siteDomain;
 const domainSuffix = domainDotIndex !== -1 ? siteDomain.slice(domainDotIndex) : '';
 const twitterHandle = `@${siteName.toLowerCase().replace(/\s+/g, '')}`;
-const clerkHost = `clerk.${siteDomain}`;
 const defaultAvatarInitials = siteName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || 'GP';
 const currentPath = Astro.url.pathname;
 const cleanPath = currentPath === '/' ? '' : currentPath.replace(/\/$/, '');
@@ -119,8 +119,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    {/* DNS prefetch for Clerk & R2 (reduces connection setup time) */}
-    <link rel="dns-prefetch" href={`https://${clerkHost}`} />
+    {/* DNS prefetch for media storage */}
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -834,14 +833,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             if (target.closest('[data-auth-action="logout"]')) {
               e.preventDefault();
               e.stopPropagation();
-              const clerk = (window as any).Clerk;
-              if (clerk && typeof clerk.signOut === 'function') {
-                clerk.signOut().then(() => {
-                  window.location.assign('/login');
-                });
-              } else {
-                window.location.assign('/login');
-              }
+              const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+              void fetch(`${apiUrl}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'X-CSRF-Protection': '1' },
+              }).finally(() => window.location.assign('/login'));
               return;
             }
 
@@ -1101,40 +1098,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
       }
 
-        // --- Clerk User State Integration ---
-        async function syncClerkProfile() {
-          const clerk = (window as any).Clerk;
-          if (!clerk) return;
-
-          if (!clerk.loaded && typeof clerk.load === 'function') {
-            try {
-              await clerk.load();
-            } catch (_) {}
-          }
-
-          if (typeof clerk.addListener === 'function' && !(window as any).__clerkListenerAttached) {
-            (window as any).__clerkListenerAttached = true;
-            clerk.addListener(() => syncClerkProfile());
-          }
-
-          const user = clerk.user || clerk.session?.user;
-          const token = await clerk.session?.getToken?.().catch(() => null);
+        async function syncAuthProfile() {
           const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+          const response = await fetch(`${apiUrl}/me`, { credentials: 'include' }).catch(() => null);
+          const user = response?.ok ? await response.json().catch(() => null) : null;
 
-          if (token) {
-            fetch(`${apiUrl}/me`, {
-              headers: { Authorization: `Bearer ${token}` },
-            }).catch(() => null);
-            void refreshNotifications(token);
+          if (user) {
+            void refreshNotifications('session');
 
-            // Periodically refresh notifications & fire browser notifications
             if (!(window as any).__notifPollInterval) {
-              (window as any).__notifPollInterval = setInterval(async () => {
-                const refreshedToken = await clerk.session?.getToken?.().catch(() => null);
-                if (refreshedToken) {
-                  void refreshNotifications(refreshedToken);
-                }
-              }, 45000);
+              (window as any).__notifPollInterval = setInterval(() => void refreshNotifications('session'), 45000);
             }
           } else {
             void refreshNotifications(null);
@@ -1150,26 +1123,17 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const headerProfileInitials = document.querySelectorAll<HTMLElement>('.header-profile-initials');
 
           if (user) {
-            const fullName = user.fullName || [user.firstName, user.lastName].filter(Boolean).join(' ') || 'User';
-            const email = user.primaryEmailAddress?.emailAddress || user.emailAddresses?.[0]?.emailAddress || 'Account';
-            const initials = ((user.firstName?.[0] || fullName[0] || 'U') + (user.lastName?.[0] || '')).toUpperCase();
+            const fullName = user.name || 'User';
+            const email = user.email || 'Account';
+            const initials = fullName.split(/\s+/).map((part: string) => part[0]).join('').slice(0, 2).toUpperCase() || 'U';
 
             nameEls.forEach(el => el.textContent = fullName);
             emailEls.forEach(el => el.textContent = email);
             initialEls.forEach(el => el.textContent = initials);
 
-            if (user.imageUrl) {
-              imgEls.forEach(img => {
-                img.src = user.imageUrl;
-                img.classList.remove('hidden');
-              });
-              initialEls.forEach(el => el.classList.add('hidden'));
-              headerProfileIcons.forEach(el => el.classList.add('hidden'));
-            } else {
-              imgEls.forEach(img => img.classList.add('hidden'));
-              initialEls.forEach(el => el.classList.remove('hidden'));
-              headerProfileIcons.forEach(el => el.classList.add('hidden'));
-            }
+            imgEls.forEach(img => img.classList.add('hidden'));
+            initialEls.forEach(el => el.classList.remove('hidden'));
+            headerProfileIcons.forEach(el => el.classList.add('hidden'));
 
             logoutBtns.forEach(b => b.classList.remove('hidden'));
             loginLinks.forEach(l => l.classList.add('hidden'));
@@ -1283,8 +1247,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             };
           });
 
-          // Sync Clerk Profile on the freshly rendered DOM
-          syncClerkProfile();
+          syncAuthProfile();
         }
 
         // --- Global One-Time Event Listeners & Lifecycles ---
@@ -1318,15 +1281,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             reinitPageElements();
           });
 
-          // Single one-time Clerk readiness check
-          let clerkPollCount = 0;
-          const clerkInterval = setInterval(() => {
-            clerkPollCount++;
-            if ((window as any).Clerk?.loaded || clerkPollCount > 15) {
-              clearInterval(clerkInterval);
-              syncClerkProfile();
-            }
-          }, 200);
+          void syncAuthProfile();
         }
 
         // Run immediately for initial page render
