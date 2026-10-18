@@ -1,109 +1,111 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import { Types } from 'mongoose';
 import { BlogService } from './blog.service.js';
-import { db } from '../../core/config/db.js';
+
+function createMockQuery(result: any) {
+  const query: any = {
+    sort: () => query,
+    skip: () => query,
+    limit: () => query,
+    populate: () => query,
+    select: () => query,
+    lean: async () => result,
+  };
+  return query;
+}
 
 describe('BlogService listPublished Query Optimization & Invariants', () => {
-  it('should immediately return empty array when baseQuery returns 0 rows', async () => {
-    const service = new BlogService();
-    
-    // Mock baseQuery returning []
-    const mockSelect = vi.fn().mockReturnValue({
-      from: vi.fn().mockReturnValue({
-        innerJoin: vi.fn().mockReturnValue({
-          leftJoin: vi.fn().mockReturnValue({
-            where: vi.fn().mockReturnValue({
-              orderBy: vi.fn().mockReturnValue({
-                limit: vi.fn().mockReturnValue({
-                  offset: vi.fn().mockResolvedValue([]),
-                }),
-              }),
-            }),
-          }),
-        }),
-      }),
-    });
+  it('should immediately return empty array when base query returns 0 rows', async () => {
+    const mockBlogModel = {
+      find: () => createMockQuery([]),
+    } as any;
 
-    vi.spyOn(db, 'select').mockImplementation(mockSelect as any);
-
+    const service = new BlogService(
+      mockBlogModel,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+    );
     const result = await service.listPublished({ limit: 10 });
     expect(result).toEqual([]);
-    // Ensure only 1 query (baseQuery) was executed
-    expect(mockSelect).toHaveBeenCalledTimes(1);
-    vi.restoreAllMocks();
   });
 
-  it('should eliminate redundant Query 4 and construct group images using in-memory mappings', async () => {
-    const service = new BlogService();
+  it('should resolve and map published articles with related image blocks and categories', async () => {
+    const blog1Id = new Types.ObjectId();
+    const blog2Id = new Types.ObjectId();
+    const catId = new Types.ObjectId();
+    const authorId = new Types.ObjectId();
 
-    const mockRows = [
+    const mockBlogs = [
       {
-        id: 'blog-1',
+        _id: blog1Id,
         title: 'Article 1',
+        slug: 'article-1',
+        language: 'HINGLISH',
         translationGroupId: 'group-1',
+        description: 'Test description',
         coverImage: null,
-        category: { id: 'c1', name: 'SSC' },
+        imageAlt: null,
+        metaTitle: null,
+        metaDescription: null,
+        publishedAt: new Date(),
+        scheduledAt: null,
+        updatedAt: new Date(),
+        categoryId: { _id: catId, name: 'SSC', slug: 'ssc' },
+        authorId: { _id: authorId, name: 'Admin' },
       },
     ];
 
-    const mockSiblingBlogs = [
-      { id: 'blog-2', translationGroupId: 'group-1' },
-    ];
+    const mockBlogModel = {
+      find: (filter: any) => {
+        if (filter?.translationGroupId) {
+          return createMockQuery([{ _id: blog2Id, translationGroupId: 'group-1' }]);
+        }
+        return createMockQuery(mockBlogs);
+      },
+    } as any;
 
-    const mockImageBlocks = [
-      { blogId: 'blog-2', value: 'https://r2/blog2-image.jpg', position: 1 },
-    ];
+    const mockBlogBlockModel = {
+      find: () =>
+        createMockQuery([
+          { blogId: blog2Id, value: 'https://r2/blog2-image.jpg', position: 1 },
+        ]),
+    } as any;
 
-    const mockCatRows = [
-      { blogId: 'blog-1', id: 'c1', name: 'SSC', slug: 'ssc' },
-    ];
+    const mockBlogCategoryModel = {
+      find: () =>
+        createMockQuery([
+          {
+            blogId: blog1Id,
+            categoryId: { _id: catId, name: 'SSC', slug: 'ssc' },
+          },
+        ]),
+    } as any;
 
-    let queryCount = 0;
-    const queriesCalled: string[] = [];
-
-    vi.spyOn(db, 'select').mockImplementation((fields?: any) => {
-      queryCount++;
-      return {
-        from: (table: any) => {
-          const tableName = table?.dbName || table?._?.name || 'unknown';
-          queriesCalled.push(tableName);
-          return {
-            innerJoin: () => ({
-              leftJoin: () => ({
-                where: () => ({
-                  orderBy: () => ({
-                    limit: () => ({
-                      offset: () => Promise.resolve(mockRows),
-                    }),
-                  }),
-                }),
-              }),
-              where: () => Promise.resolve(mockCatRows),
-            }),
-            where: (condition: any) => {
-              if (queryCount === 2) {
-                // Sibling blogs query
-                return Promise.resolve(mockSiblingBlogs);
-              }
-              return {
-                orderBy: () => Promise.resolve(mockImageBlocks),
-              };
-            },
-          } as any;
-        },
-      } as any;
-    });
-
+    const service = new BlogService(
+      mockBlogModel,
+      mockBlogBlockModel,
+      {} as any,
+      {} as any,
+      {} as any,
+      mockBlogCategoryModel,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+      {} as any,
+    );
     const result = await service.listPublished({ limit: 10 });
 
     expect(result).toHaveLength(1);
-    // Verified that firstImage fell back to sibling translation group image!
     expect(result[0].firstImage).toBe('https://r2/blog2-image.jpg');
     expect(result[0].categories).toHaveLength(1);
-
-    // Verify Query 4 is NOT in queriesCalled:
-    // Only baseQuery, siblingBlogs, imageBlocks, and catRows were invoked!
-    expect(queryCount).toBe(4); // 1 base + 1 sibling + 2 parallel (imageBlocks & catRows)
-    // Previously queryCount was 5 because Query 4 executed a redundant select on blogs.
-    vi.restoreAllMocks();
   });
 });

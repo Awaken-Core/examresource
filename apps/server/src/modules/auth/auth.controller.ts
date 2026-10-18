@@ -56,7 +56,7 @@ export class AuthController {
       httpOnly: true,
       secure: this.isHostedEnvironment(),
       sameSite: 'lax',
-      path: '/api/v1/auth/google',
+      path: '/',
       maxAge: 10 * 60_000,
     });
     return res.redirect(url);
@@ -68,16 +68,20 @@ export class AuthController {
       typeof req.query.code === 'string' ? req.query.code : undefined;
     const state =
       typeof req.query.state === 'string' ? req.query.state : undefined;
-    if (
-      !code ||
-      !state ||
-      req.cookies?.[this.googleStateCookieName()] !== state
-    )
+    const cookieState = req.cookies?.[this.googleStateCookieName()];
+
+    if (!code || !state) {
       throw new BadRequestException(
         'Google sign-in request is invalid or has expired.',
       );
+    }
+    if (!cookieState || cookieState !== state) {
+      throw new BadRequestException(
+        'Google sign-in request is invalid or has expired.',
+      );
+    }
     res.clearCookie(this.googleStateCookieName(), {
-      path: '/api/v1/auth/google',
+      path: '/',
     });
     const result = await this.auth.loginWithGoogle(code, state);
     this.setSessionCookie(res, result.token);

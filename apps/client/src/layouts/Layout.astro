@@ -1203,6 +1203,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const loginLinks = document.querySelectorAll<HTMLElement>('.auth-login-link');
           const headerProfileIcons = document.querySelectorAll<HTMLElement>('.header-profile-icon');
           const headerProfileInitials = document.querySelectorAll<HTMLElement>('.header-profile-initials');
+          const adminPanelLinks = document.querySelectorAll<HTMLElement>('.admin-panel-link');
 
           if (user) {
             const fullName = user.name || 'User';
@@ -1216,6 +1217,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             imgEls.forEach(img => img.classList.add('hidden'));
             initialEls.forEach(el => el.classList.remove('hidden'));
             headerProfileIcons.forEach(el => el.classList.add('hidden'));
+
+            adminPanelLinks.forEach((link) => {
+              const isAdmin = user.role === 'admin';
+              link.classList.toggle('hidden', !isAdmin);
+              link.style.display = isAdmin ? 'flex' : 'none';
+            });
 
             logoutBtns.forEach((b) => {
               b.classList.remove('hidden');
@@ -1253,6 +1260,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             headerProfileIcons.forEach(el => el.classList.remove('hidden'));
             headerProfileInitials.forEach(el => el.classList.add('hidden'));
             document.querySelectorAll<HTMLElement>('.user-avatar-initials:not(.header-profile-initials)').forEach(el => el.classList.remove('hidden'));
+            adminPanelLinks.forEach((link) => {
+              link.classList.add('hidden');
+              link.style.display = 'none';
+            });
 
             logoutBtns.forEach((b) => {
               b.classList.add('hidden');
