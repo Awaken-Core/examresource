@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { telegramChannel, contactEmail, siteUrl, siteName, siteDomain } from '../data/site';
+import { contactEmail, siteUrl, siteName, whatsappChannel, telegramChannel } from '../data/site';
 
-const pageTitle = `Contact Us | ${siteName} Support`;
-const pageDescription = `Get in touch with the ${siteName} team. Report question errors, request new exam mock tests, report bugs, or send feedback.`;
+const pageTitle = `Contact Us | ${siteName}`;
+const pageDescription = `Get in touch with ${siteName} support team for questions, suggestions, or error reports regarding competitive exam notifications.`;
 const canonicalUrl = `${siteUrl}/contact-us`;
 
 const jsonLd = {
@@ -12,18 +12,11 @@ const jsonLd = {
   "name": "Contact Us",
   "url": canonicalUrl,
   "description": pageDescription,
-  "mainEntity": {
+  "publisher": {
     "@type": "Organization",
     "name": siteName,
     "url": siteUrl,
-    "logo": `${siteUrl}/og-image.jpg`,
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "email": contactEmail,
-      "contactType": "Customer Support",
-      "areaServed": "IN",
-      "availableLanguage": ["en", "hi"]
-    }
+    "logo": `${siteUrl}/og-image.jpg`
   },
   "breadcrumb": {
     "@context": "https://schema.org",
@@ -52,172 +45,74 @@ const jsonLd = {
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
 >
-  <div class="min-h-screen bg-canvas text-white">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
+    <div class="max-w-[1400px] mx-auto">
+      
+      {/* 2-Column Grid: Main Form (Left) + Direct Contact Channels (Right) */}
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+        
+        {/* MAIN FEED CONTENT */}
+        <div class="min-w-0 space-y-7" transition:name="main-content">
+          
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
+            <a href="/" class="hover:text-accent transition">Home</a>
+            <span>/</span>
+            <span class="text-white font-medium">Contact Us</span>
+          </nav>
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-        <a href="/" class="hover:text-accent transition">Home</a>
-        <span>/</span>
-        <span class="font-medium text-white">Contact Us</span>
-      </nav>
-
-      {/* Header Banner */}
-      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-8 shadow-xs">
-        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs font-semibold mb-3">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-          </span>
-          {siteName} Support Desk
-        </div>
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">
-          Contact Us
-        </h1>
-        <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Welcome to <strong class="text-white">{siteName}</strong>! Have a suggestion for a new exam test series, found an error in a question, or facing a technical bug while taking a mock test? We would love to hear from you!
-        </p>
-        <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
-          <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Response Time: Within 24 to 48 Hours
-          </span>
-          <span>•</span>
-          <span>Mon to Sat, 9:00 AM to 6:00 PM IST</span>
-        </div>
-      </header>
-
-      {/* Contact Channels */}
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-
-        {/* Email */}
-        <div class="rounded-xl border border-border bg-surface p-5 hover:border-accent/40 transition flex flex-col justify-between group">
-          <div>
-            <div class="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-              </svg>
-            </div>
-            <h3 class="text-sm font-bold text-white mb-1">Support &amp; Feedback Email</h3>
-            <p class="text-xs text-muted leading-relaxed mb-4">Email us directly for quick resolutions and question verification.</p>
-          </div>
-          <div class="pt-3 border-t border-border">
-            <a
-              href={`mailto:${contactEmail}`}
-              class="text-xs font-semibold text-accent hover:underline flex items-center gap-1.5 truncate"
-            >
-              <span class="truncate">{contactEmail}</span>
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        {/* Telegram */}
-        <div class="rounded-xl border border-border bg-surface p-5 hover:border-[#2AABEE]/40 transition flex flex-col justify-between group">
-          <div>
-            <div class="w-10 h-10 rounded-lg bg-[#2AABEE]/10 text-[#2AABEE] flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .36z"/>
-              </svg>
-            </div>
-            <h3 class="text-sm font-bold text-white mb-1">Telegram Community</h3>
-            <p class="text-xs text-muted leading-relaxed mb-4">Join our channel for test updates, PDFs, and discussion.</p>
-          </div>
-          <div class="pt-3 border-t border-border">
-            <a
-              href={telegramChannel}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-xs font-semibold text-[#2AABEE] hover:underline flex items-center gap-1.5"
-            >
-              <span>Join Channel</span>
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        {/* Website / Portal */}
-        <div class="rounded-xl border border-border bg-surface p-5 hover:border-emerald-500/40 transition flex flex-col justify-between group">
-          <div>
-            <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-              </svg>
-            </div>
-            <h3 class="text-sm font-bold text-white mb-1">Official Platform</h3>
-            <p class="text-xs text-muted leading-relaxed mb-4">Attempt free mock tests, track AIR, and practice PYQs anytime.</p>
-          </div>
-          <div class="pt-3 border-t border-border">
-            <a
-              href={`${siteUrl}/`}
-              class="text-xs font-semibold text-emerald-400 hover:underline flex items-center gap-1.5"
-            >
-              <span>{siteDomain}</span>
-              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Main Form & FAQs Grid */}
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-        {/* Contact Form */}
-        <div class="lg:col-span-7">
-          <div class="rounded-xl border border-border bg-surface p-6 sm:p-8 shadow-xs">
-            <h2 class="text-lg sm:text-xl font-bold text-white mb-1">Send a Message</h2>
-            <p class="text-xs sm:text-sm text-muted mb-6 leading-relaxed">
-              Fill in your details below and we will get back to you promptly.
-            </p>
-
-            {/* Success Banner */}
-            <div id="contact-success-banner" class="hidden mb-6 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-              <div class="flex items-start gap-2.5">
-                <svg class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div class="text-xs space-y-0.5">
-                  <p class="font-bold">Message Received!</p>
-                  <p id="contact-success-text" class="text-muted">Thank you for writing to us. Our team will verify and reply within 24 to 48 hours.</p>
-                </div>
+          {/* Hero Banner */}
+          <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs relative overflow-hidden">
+            <div class="relative z-10 space-y-3">
+              <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-raised border border-border text-white text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Editorial Support Desk</span>
               </div>
+
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                Contact Us
+              </h1>
+
+              <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-2xl">
+                Have a question regarding an exam notice, spotted a discrepancy in dates, or want to suggest new features? Fill out the form below and our team will get back to you.
+              </p>
+            </div>
+          </section>
+
+          {/* Contact Form Section */}
+          <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs space-y-6">
+            <div class="flex items-center justify-between pb-2 border-b border-border/50">
+              <h2 class="text-sm font-bold text-white">
+                Send a Message
+              </h2>
+              <span class="text-xs text-muted">Average reply: 24-48 hrs</span>
             </div>
 
-            {/* Error Banner */}
-            <div id="contact-error-banner" class="hidden mb-6 p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
-              <div class="flex items-start gap-2.5">
-                <svg class="w-5 h-5 text-rose-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                <div class="text-xs space-y-0.5">
-                  <p class="font-bold">Unable to Send Message</p>
-                  <p id="contact-error-text" class="text-muted">Something went wrong. Please check your connection or email us directly.</p>
-                </div>
-              </div>
+            <!-- Success Banner -->
+            <div id="contact-success-banner" class="hidden p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+              <p class="font-semibold text-sm">Message received!</p>
+              <p id="contact-success-text" class="text-xs text-muted mt-1">Thank you for writing to us. We will get back to you soon.</p>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="contact-error-banner" class="hidden p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300">
+              <p class="font-semibold text-sm">Unable to send message</p>
+              <p id="contact-error-text" class="text-xs text-muted mt-1">Please try again or email us directly at {contactEmail}.</p>
             </div>
 
             <form id="contact-form" class="space-y-4">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1.5">
                   <label for="contact-name" class="block text-xs font-semibold text-white">
-                    Your Full Name <span class="text-accent">*</span>
+                    Your Name <span class="text-accent">*</span>
                   </label>
                   <input
                     type="text"
                     id="contact-name"
                     name="name"
                     required
-                    placeholder="e.g. Rahul Sharma"
-                    class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
+                    placeholder="Rahul Sharma"
+                    class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent transition"
                   />
                 </div>
 
@@ -230,41 +125,29 @@ const jsonLd = {
                     id="contact-email"
                     name="email"
                     required
-                    placeholder="e.g. rahul@example.com"
-                    class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
+                    placeholder="rahul@example.com"
+                    class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent transition"
                   />
                 </div>
               </div>
 
               <div class="space-y-1.5">
                 <label for="contact-subject" class="block text-xs font-semibold text-white">
-                  Topic or Query Nature <span class="text-accent">*</span>
+                  Topic / Query Nature <span class="text-accent">*</span>
                 </label>
                 <select
                   id="contact-subject"
                   name="subject"
                   required
-                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition cursor-pointer"
+                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white text-sm focus:outline-none focus:border-accent transition cursor-pointer"
                 >
-                  <option value="" disabled selected class="bg-surface text-white">Select a category...</option>
-                  <option value="question-error" class="bg-surface text-white">Report a Question / Answer Key Error</option>
-                  <option value="new-exam" class="bg-surface text-white">Request a New Exam / Test Series</option>
-                  <option value="bug-report" class="bg-surface text-white">Bug Report (Timer, Page Loading, Score)</option>
-                  <option value="general" class="bg-surface text-white">General Inquiry / Feedback</option>
+                  <option value="" disabled selected class="bg-surface text-white">Select a query topic...</option>
+                  <option value="content-error" class="bg-surface text-white">Report Content Error / Exam Date Typo</option>
+                  <option value="feature-suggestion" class="bg-surface text-white">Feature Request or Suggestion</option>
+                  <option value="technical-bug" class="bg-surface text-white">Website Bug / Technical Issue</option>
+                  <option value="privacy-legal" class="bg-surface text-white">Privacy / DPDP Act / Legal Query</option>
+                  <option value="general" class="bg-surface text-white">General Inquiry</option>
                 </select>
-              </div>
-
-              <div class="space-y-1.5">
-                <label for="contact-details" class="block text-xs font-semibold text-white">
-                  Test Name &amp; Question Number <span class="text-muted font-normal">(Optional)</span>
-                </label>
-                <input
-                  type="text"
-                  id="contact-details"
-                  name="testDetails"
-                  placeholder="e.g. SSC CGL Tier 1 Mock 2, Question #14"
-                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
-                />
               </div>
 
               <div class="space-y-1.5">
@@ -274,109 +157,124 @@ const jsonLd = {
                 <textarea
                   id="contact-message"
                   name="message"
-                  rows="5"
                   required
-                  placeholder="Describe your query, the question error with explanation, or the exam you want us to add..."
-                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition resize-y"
+                  rows="5"
+                  placeholder="Explain your query, provide the article link, or describe the exam notification..."
+                  class="w-full px-3.5 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent transition resize-y"
                 ></textarea>
               </div>
 
-              <div class="pt-2 flex items-center justify-between gap-4">
-                <p class="text-xs text-muted">
-                  We respect your privacy.
-                </p>
+              <div class="pt-2">
                 <button
                   type="submit"
                   id="contact-submit-btn"
-                  class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent/90 text-white font-semibold text-sm transition shadow-sm cursor-pointer disabled:opacity-50"
+                  class="px-5 py-2.5 rounded-lg bg-surface-raised border border-border hover:border-accent text-white font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
                 >
                   <span>Send Message</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                  </svg>
+                  <span>&rarr;</span>
                 </button>
               </div>
             </form>
-          </div>
+          </section>
+
         </div>
 
-        {/* How Can We Help Faster Sidebar */}
-        <div class="lg:col-span-5 space-y-6">
-          <div class="rounded-xl border border-border bg-surface p-6 shadow-xs space-y-4">
-            <h3 class="text-base font-bold text-white flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              How Can We Help You Faster?
+        {/* RIGHT SIDEBAR (Sticky Direct Channels & FAQ Links) */}
+        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
+          
+          {/* Direct Email Card */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3 transition-colors">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-muted pb-1 border-b border-border/50">
+              Direct Contact
             </h3>
-
-            <div class="space-y-3">
-              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                <h4 class="text-xs font-semibold text-white mb-1">1. Report a Question / Answer Key Error</h4>
-                <p class="text-xs text-muted leading-relaxed">
-                  If you think a question or its answer key in a mock test has a mistake, please click the <strong class="text-white">"Report"</strong> button directly on the test screen (or email us the Test Name and Question Number). Our team will verify and update it quickly.
-                </p>
-              </div>
-
-              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                <h4 class="text-xs font-semibold text-white mb-1">2. Request a New Exam / Test Series</h4>
-                <p class="text-xs text-muted leading-relaxed">
-                  Preparing for an upcoming exam that isn't listed on {siteName} yet? Email us the exam name, and we will prioritize adding free mock tests for it!
-                </p>
-              </div>
-
-              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                <h4 class="text-xs font-semibold text-white mb-1">3. Bug Reports</h4>
-                <p class="text-xs text-muted leading-relaxed">
-                  If a test timer freezes or a page doesn't load properly on your phone or laptop, send us a screenshot at <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a> so we can fix the bug right away.
-                </p>
-              </div>
-            </div>
+            <p class="text-xs text-muted leading-relaxed">
+              Prefer writing directly from your email client? Reach us here:
+            </p>
+            <a
+              href={`mailto:${contactEmail}`}
+              class="flex items-center gap-2 p-2 rounded bg-surface-raised border border-border hover:border-accent text-white text-xs font-medium transition truncate"
+            >
+              <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <span class="truncate">{contactEmail}</span>
+            </a>
           </div>
 
-          <div class="rounded-xl border border-border bg-surface p-5 text-xs text-muted space-y-2">
-            <div class="flex items-center justify-between">
-              <span>Platform: <strong class="text-white">{siteName}</strong></span>
-              <span class="text-accent font-medium">India</span>
+          {/* Social / Alert Channels */}
+          {(whatsappChannel || telegramChannel) && (
+            <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3 transition-colors">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-muted pb-1 border-b border-border/50">
+                Official Channels
+              </h3>
+              <p class="text-xs text-muted leading-relaxed">
+                Join our verified alert feeds for instant notifications:
+              </p>
+              <div class="space-y-2">
+                {whatsappChannel && (
+                  <a
+                    href={whatsappChannel}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-between p-2 rounded bg-surface-raised border border-border hover:border-[#25D366]/60 text-white text-xs font-medium transition group"
+                  >
+                    <span class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-[#25D366]"></span>
+                      <span>WhatsApp Channel</span>
+                    </span>
+                    <span class="text-muted group-hover:text-white transition">&rarr;</span>
+                  </a>
+                )}
+                {telegramChannel && (
+                  <a
+                    href={telegramChannel}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-between p-2 rounded bg-surface-raised border border-border hover:border-sky-500/60 text-white text-xs font-medium transition group"
+                  >
+                    <span class="flex items-center gap-2">
+                      <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                      <span>Telegram Channel</span>
+                    </span>
+                    <span class="text-muted group-hover:text-white transition">&rarr;</span>
+                  </a>
+                )}
+              </div>
             </div>
-            <p class="text-muted leading-relaxed">
-              Official email: <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>
+          )}
+
+          {/* Verification Reminder */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-2 text-xs text-muted">
+            <p class="font-bold text-white text-sm">Response Time</p>
+            <p class="leading-relaxed">
+              We review submissions Monday through Saturday between 9:00 AM and 6:00 PM IST.
             </p>
           </div>
-        </div>
+
+        </aside>
 
       </div>
     </div>
   </div>
 
-  {/* Client-side form handler */}
   <script is:inline>
     const form = document.getElementById('contact-form');
     const submitBtn = document.getElementById('contact-submit-btn');
     const successBanner = document.getElementById('contact-success-banner');
-    const successText = document.getElementById('contact-success-text');
     const errorBanner = document.getElementById('contact-error-banner');
+    const successText = document.getElementById('contact-success-text');
     const errorText = document.getElementById('contact-error-text');
 
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (!form.checkValidity()) return;
 
-        // Hide previous banners
         if (successBanner) successBanner.classList.add('hidden');
         if (errorBanner) errorBanner.classList.add('hidden');
 
-        const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
         if (submitBtn) {
           submitBtn.disabled = true;
-          submitBtn.innerHTML = `
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
-            Sending...
-          `;
+          submitBtn.innerHTML = '<span>Sending...</span>';
         }
 
         const formData = new FormData(form);
@@ -384,7 +282,6 @@ const jsonLd = {
           name: formData.get('name'),
           email: formData.get('email'),
           subject: formData.get('subject'),
-          testDetails: formData.get('testDetails'),
           message: formData.get('message'),
         };
 
@@ -398,51 +295,23 @@ const jsonLd = {
           const data = await res.json().catch(() => ({}));
 
           if (res.ok && data.success) {
-            if (successText && data.message) {
-              successText.textContent = data.message;
-            }
-            if (successBanner) {
-              successBanner.classList.remove('hidden');
-              successBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if (successText && data.message) successText.textContent = data.message;
+            if (successBanner) successBanner.classList.remove('hidden');
             form.reset();
-
             if (submitBtn) {
               submitBtn.disabled = false;
-              submitBtn.innerHTML = `
-                <span>Message Sent!</span>
-                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-              `;
-              setTimeout(() => {
-                submitBtn.innerHTML = `
-                  <span>Send Another Message</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                  </svg>
-                `;
-              }, 3000);
+              submitBtn.innerHTML = '<span>Message Sent! ✓</span>';
+              setTimeout(() => { submitBtn.innerHTML = '<span>Send Another Message &rarr;</span>'; }, 3000);
             }
           } else {
-            throw new Error(data.error || 'Failed to send your message. Please try again or email us directly.');
+            throw new Error(data.error || 'Failed to send message. Please try again or email us.');
           }
         } catch (err) {
-          if (errorText) {
-            errorText.textContent = err.message || 'An error occurred while sending. Please email us directly.';
-          }
-          if (errorBanner) {
-            errorBanner.classList.remove('hidden');
-            errorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+          if (errorText) errorText.textContent = err.message || 'Error sending message. Please try again.';
+          if (errorBanner) errorBanner.classList.remove('hidden');
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = originalBtnHtml || `
-              <span>Send Message</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-              </svg>
-            `;
+            submitBtn.innerHTML = '<span>Send Message &rarr;</span>';
           }
         }
       });
