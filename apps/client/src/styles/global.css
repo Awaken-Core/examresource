@@ -47,7 +47,7 @@
   --color-border: var(--color-border);
   --color-subtle: var(--color-subtle);
   --color-primary: #292418;
-  --color-accent: #327CF6;
+  --color-accent: #2563EB;
   --color-on-accent: #FFFFFF;
   --color-black: #000000;
 
@@ -1110,38 +1110,34 @@ html.admin-theme.theme-dark .ProseMirror hr {
   color-scheme: dark;
 }
 
-/* ── Desktop Sidebar Collapse (Smooth slide matching screenshot) ── */
+/* ── Desktop Sidebar Sticky & Collapse ── */
 #desktop-sidebar-wrapper {
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, transform 0.25s ease;
+  position: sticky !important;
+  top: 0 !important;
+  height: 100vh !important;
   width: 16rem;
-  overflow: visible;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  will-change: width;
+}
+
+#desktop-sidebar-wrapper > aside {
+  width: 16rem !important;
+  min-width: 16rem !important;
+  height: 100vh !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 #desktop-sidebar-wrapper.collapsed {
-  display: none !important;
   width: 0 !important;
   min-width: 0 !important;
   opacity: 0 !important;
-  overflow: hidden !important;
   pointer-events: none !important;
-  transform: translateX(-1rem);
+  overflow: hidden !important;
 }
 
-/* ── Sidebar Hover-Peek (Temporarily floats over layout on hover without settling until clicked) ── */
-#desktop-sidebar-wrapper.collapsed.hover-peek {
-  display: block !important;
-  width: 16rem !important;
-  opacity: 1 !important;
-  overflow: visible !important;
-  pointer-events: auto !important;
-  transform: translateX(0) !important;
-  position: fixed !important;
-  left: 0 !important;
-  top: 0 !important;
-  height: 100vh !important;
-  z-index: 1050 !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--color-border) !important;
-  transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+#desktop-sidebar-wrapper.collapsed > aside {
+  transform: translateX(-100%);
 }
 
 /* ── Auth Toggle Display Guarantees ── */

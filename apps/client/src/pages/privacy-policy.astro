@@ -1,10 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactEmail, siteUrl, siteName, siteDomain } from '../data/site';
+import { contactEmail, siteUrl, siteName } from '../data/site';
 
 const lastUpdated = "October 17, 2026";
 const pageTitle = `Privacy Policy | ${siteName}`;
-const pageDescription = `Learn how ${siteName} collects, uses, and protects your personal data on our free mock test platform. Compliant with the IT Act 2000 and DPDP Act 2023.`;
+const pageDescription = `Learn how ${siteName} collects, uses, and protects your personal data. Compliant with the IT Act 2000 and DPDP Act 2023.`;
 const canonicalUrl = `${siteUrl}/privacy-policy`;
 
 const jsonLd = {
@@ -38,6 +38,16 @@ const jsonLd = {
     ]
   }
 };
+
+const sections = [
+  { id: "information-we-collect", title: "Information We Collect" },
+  { id: "how-we-use", title: "How We Use Information" },
+  { id: "data-security", title: "Data Security & Storage" },
+  { id: "cookies", title: "Cookies & Local Storage" },
+  { id: "third-party", title: "Third-Party Portals" },
+  { id: "user-rights", title: "Your Privacy Rights" },
+  { id: "grievance", title: "Grievance Redressal" }
+];
 ---
 
 <Layout
@@ -46,296 +56,211 @@ const jsonLd = {
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
 >
-  <div class="min-h-screen bg-canvas text-white">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
+    <div class="max-w-[1400px] mx-auto">
+      
+      {/* 2-Column Grid: Main Reading Stream (Left) + Sticky ToC Rail (Right) */}
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+        
+        {/* MAIN EDITORIAL BODY */}
+        <div class="min-w-0 space-y-7" transition:name="main-content">
+          
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
+            <a href="/" class="hover:text-accent transition">Home</a>
+            <span>/</span>
+            <span class="text-white font-medium">Privacy Policy</span>
+          </nav>
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-        <a href="/" class="hover:text-accent transition">Home</a>
-        <span>/</span>
-        <span class="font-medium text-white">Privacy Policy</span>
-      </nav>
+          {/* Hero Banner */}
+          <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs relative overflow-hidden">
+            <div class="relative z-10 space-y-3">
+              <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-raised border border-border text-white text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>DPDP Act 2023 Compliant</span>
+              </div>
 
-      {/* Header Banner */}
-      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-8 shadow-xs">
-        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs font-semibold mb-3">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-          Transparency &amp; Data Protection
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                Privacy Policy
+              </h1>
+
+              <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
+                This Privacy Policy explains how <strong class="text-white">{siteName}</strong> ("we", "us", or "our") collects, uses, and safeguards your data in full compliance with India's <strong class="text-white">Digital Personal Data Protection (DPDP) Act, 2023</strong> and the <strong class="text-white">Information Technology Act, 2000</strong>.
+              </p>
+
+              <div class="pt-3 border-t border-border/50 flex flex-wrap items-center gap-4 text-xs text-muted">
+                <span>Last Updated: <strong class="text-white">{lastUpdated}</strong></span>
+                <span>•</span>
+                <span>Reading Time: <strong class="text-white">4 min</strong></span>
+                <span>•</span>
+                <span>Region: <strong class="text-white">India</strong></span>
+              </div>
+            </div>
+          </section>
+
+          {/* Main Legal Sections Feed */}
+          <main class="space-y-6 text-sm text-muted leading-relaxed">
+            
+            {/* 1. Information We Collect */}
+            <section id="information-we-collect" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">1</span>
+                  <span>Information We Collect</span>
+                </h2>
+              </div>
+              <p>
+                We collect only the minimal data essential for delivering exam notifications and maintaining personal study preferences:
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div class="p-3.5 rounded-lg bg-surface-raised border border-border/60">
+                  <p class="font-semibold text-white text-xs mb-1">Account &amp; Auth Details</p>
+                  <p class="text-xs text-muted leading-relaxed">Name, email address, and profile avatar received via Google Sign-In or manual registration.</p>
+                </div>
+                <div class="p-3.5 rounded-lg bg-surface-raised border border-border/60">
+                  <p class="font-semibold text-white text-xs mb-1">Preferences &amp; History</p>
+                  <p class="text-xs text-muted leading-relaxed">Target exams (e.g. UPSC, SSC, Banking), language selection (English/Hindi), and saved notices.</p>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-xs leading-relaxed">
+                <span class="font-bold text-emerald-800 dark:text-emerald-300">✓ 100% Free Service:</span> We never ask for or store payment credentials, UPI PINs, or bank account information.
+              </div>
+            </section>
+
+            {/* 2. How We Use Information */}
+            <section id="how-we-use" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">2</span>
+                  <span>How We Use Information</span>
+                </h2>
+              </div>
+              <p>We process collected information strictly for genuine platform purposes:</p>
+              <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+                <li>To deliver instant exam notifications, syllabi updates, and admit card download links.</li>
+                <li>To remember your viewing preferences across sessions (such as theme and language).</li>
+                <li>To protect our infrastructure from DDoS attacks, scrapers, and malicious bot activity.</li>
+              </ul>
+            </section>
+
+            {/* 3. Data Security & Storage */}
+            <section id="data-security" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">3</span>
+                  <span>Data Security &amp; Storage</span>
+                </h2>
+              </div>
+              <p>
+                All data transmission between your browser and our servers is secured using modern TLS 1.3 encryption. Backend databases are stored in compliant cloud facilities with restricted access controls.
+              </p>
+              <p class="text-xs">
+                Your data is retained strictly while your account remains active and will be purged upon deletion request.
+              </p>
+            </section>
+
+            {/* 4. Cookies & Local Storage */}
+            <section id="cookies" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">4</span>
+                  <span>Cookies &amp; Local Storage</span>
+                </h2>
+              </div>
+              <p>We use minimal first-party cookies and browser local storage for essential features:</p>
+              <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+                <li><strong class="text-white">Preferences:</strong> Storing your chosen theme (Dark / Light) and article language toggle.</li>
+                <li><strong class="text-white">Sessions:</strong> Maintaining authenticated state securely without storing plain credentials.</li>
+              </ul>
+            </section>
+
+            {/* 5. Third-Party Portals */}
+            <section id="third-party" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">5</span>
+                  <span>Third-Party Government Portals</span>
+                </h2>
+              </div>
+              <p>
+                Our notices include verified external links to official commission portals (e.g., UPSC, SSC, RRB). We are not responsible for the privacy policies or practices of external government portals. Always review their respective policies when submitting official exam forms.
+              </p>
+            </section>
+
+            {/* 6. Your Privacy Rights */}
+            <section id="user-rights" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">6</span>
+                  <span>Your Privacy Rights (DPDP Act)</span>
+                </h2>
+              </div>
+              <p>
+                Under the DPDP Act 2023, you hold full rights to access, rectify, or request complete deletion of your personal account data at any time.
+              </p>
+              <p class="text-xs">
+                To exercise any of these rights, contact us at <a href={`mailto:${contactEmail}`} class="text-accent hover:underline font-semibold">{contactEmail}</a> or submit a message via our support portal.
+              </p>
+            </section>
+
+            {/* 7. Grievance Redressal */}
+            <section id="grievance" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">7</span>
+                  <span>Grievance Redressal Officer</span>
+                </h2>
+              </div>
+              <p>For inquiries, privacy concerns, or grievance redressal, reach out to our desk:</p>
+              <div class="p-4 rounded-lg bg-surface-raised border border-border/80 text-xs space-y-1.5 text-white">
+                <p><span class="text-muted">Platform:</span> <strong>{siteName}</strong></p>
+                <p><span class="text-muted">Website:</span> <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a></p>
+                <p><span class="text-muted">Email:</span> <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a></p>
+              </div>
+            </section>
+
+          </main>
+
         </div>
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">
-          Privacy Policy
-        </h1>
-        <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Welcome to <strong class="text-white">{siteName}</strong> ("we," "our," or "us"). We operate the website <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a> (the "Platform"), a free online exam preparation platform. We respect your privacy and are committed to protecting your personal data in accordance with the <strong class="text-white">Information Technology Act, 2000</strong> and the <strong class="text-white">Digital Personal Data Protection (DPDP) Act, 2023</strong> of India.
-        </p>
-        <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
-          <span>Last Updated: <strong class="text-white">{lastUpdated}</strong></span>
-          <span>•</span>
-          <span>Reading time: <strong class="text-white">4 min</strong></span>
-          <span>•</span>
-          <span>Applicable Region: <strong class="text-white">India</strong></span>
-        </div>
-      </header>
 
-      {/* Highlight Cards */}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        <div class="rounded-xl border border-border bg-surface p-4">
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <h3 class="text-sm font-semibold text-white mb-1">100% Free Platform</h3>
-          <p class="text-xs text-muted leading-relaxed">No financial data or payment details are ever asked for or stored.</p>
-        </div>
-
-        <div class="rounded-xl border border-border bg-surface p-4">
-          <div class="w-8 h-8 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-2.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
-          </div>
-          <h3 class="text-sm font-semibold text-white mb-1">Leaderboard Aware</h3>
-          <p class="text-xs text-muted leading-relaxed">Your Name, Score &amp; Rank are displayed on test leaderboards.</p>
-        </div>
-
-        <div class="rounded-xl border border-border bg-surface p-4">
-          <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-            </svg>
-          </div>
-          <h3 class="text-sm font-semibold text-white mb-1">No Data Selling</h3>
-          <p class="text-xs text-muted leading-relaxed">We never sell, rent, or trade your personal information to third parties.</p>
-        </div>
-
-        <div class="rounded-xl border border-border bg-surface p-4">
-          <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center mb-2.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-          </div>
-          <h3 class="text-sm font-semibold text-white mb-1">Indian Law Aligned</h3>
-          <p class="text-xs text-muted leading-relaxed">In accordance with the IT Act 2000 &amp; DPDP Act 2023 principles.</p>
-        </div>
-      </div>
-
-      {/* Main Two-Column Layout */}
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-        {/* Sticky Table of Contents */}
-        <aside class="hidden lg:block lg:col-span-4 sticky top-24 space-y-4">
-          <div class="rounded-xl border border-border bg-surface p-4 shadow-xs">
-            <h2 class="text-xs uppercase tracking-wider font-bold text-muted mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
-              </svg>
-              Table of Contents
-            </h2>
-            <nav class="space-y-1 text-xs font-medium text-muted">
-              <a href="#information-we-collect" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">1. Information We Collect</a>
-              <a href="#how-we-use" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">2. How We Use Your Information</a>
-              <a href="#leaderboards" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">3. Leaderboards &amp; Public Profile</a>
-              <a href="#cookies" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">4. Cookies and Local Storage</a>
-              <a href="#data-sharing" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">5. Data Sharing and Third-Party Services</a>
-              <a href="#data-security" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">6. Data Security &amp; Account Deletion</a>
-              <a href="#contact" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">7. Contact Us</a>
+        {/* RIGHT SIDEBAR (Sticky Quick ToC & Contact Card) */}
+        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
+          
+          {/* Table of Contents Box */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3 transition-colors">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-muted pb-1 border-b border-border/50">
+              Page Contents
+            </h3>
+            <nav class="space-y-1 text-xs">
+              {sections.map((s, idx) => (
+                <a
+                  href={`#${s.id}`}
+                  class="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-surface-raised text-muted hover:text-white transition group"
+                >
+                  <span class="w-4 text-[10px] text-muted group-hover:text-accent font-mono">{idx + 1}.</span>
+                  <span class="truncate">{s.title}</span>
+                </a>
+              ))}
             </nav>
           </div>
 
-          <div class="rounded-xl border border-border bg-surface p-4">
-            <h4 class="text-xs font-bold text-white mb-1">Questions about your data?</h4>
-            <p class="text-xs text-muted mb-2.5 leading-relaxed">
-              If you have any questions about our privacy practices or wish to request data removal, reach out to us.
-            </p>
-            <a href="/contact-us" class="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline">
-              <span>Contact Support Desk</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
+          {/* Quick Help Card */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-2.5 transition-colors text-xs text-muted">
+            <p class="font-bold text-white text-sm">Need Help?</p>
+            <p class="leading-relaxed">Have questions regarding your personal data or wish to request data erasure?</p>
+            <div class="pt-2">
+              <a
+                href="/contact-us"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-raised border border-border hover:border-accent text-white font-medium text-xs transition"
+              >
+                <span>Contact Desk</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
           </div>
+
         </aside>
 
-        {/* Content Body */}
-        <div class="lg:col-span-8 space-y-6">
-
-          {/* Section 1 */}
-          <section id="information-we-collect" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">1</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Information We Collect</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p>
-                When you register or attempt mock tests on {siteName}, we collect only the minimum information required to track your progress:
-              </p>
-
-              <div class="space-y-3">
-                <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                  <h4 class="font-semibold text-white text-sm mb-1.5 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                    Personal Identification Information
-                  </h4>
-                  <p class="text-xs text-muted leading-relaxed">
-                    Name, email address, mobile number (if provided), and profile picture (including data received via Google OAuth login).
-                  </p>
-                </div>
-
-                <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                  <h4 class="font-semibold text-white text-sm mb-1.5 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
-                    Academic &amp; Performance Data
-                  </h4>
-                  <p class="text-xs text-muted leading-relaxed">
-                    Target examinations (e.g., SSC, Banking, Railways, State PCS, Police exams), mock test scores, time spent per question, accuracy metrics, All-India Rank (AIR), and study activity logs.
-                  </p>
-                </div>
-
-                <div class="rounded-lg bg-emerald-500/5 border border-emerald-500/20 p-3.5">
-                  <h4 class="font-semibold text-emerald-400 text-sm mb-1.5 flex items-center gap-2">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    No Financial Data Collected
-                  </h4>
-                  <p class="text-xs text-muted leading-relaxed">
-                    {siteName} is a <strong class="text-white">100% free platform</strong>. We do not charge users for access to mock tests or study materials, and we never ask for or store any bank account, UPI, or credit/debit card details.
-                  </p>
-                </div>
-
-                <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                  <h4 class="font-semibold text-white text-sm mb-1.5 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                    Device &amp; Technical Data
-                  </h4>
-                  <p class="text-xs text-muted leading-relaxed">
-                    IP address, browser type, session cookies, and local storage data to keep you logged in and prevent automated bot attacks or scraping.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section 2 */}
-          <section id="how-we-use" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">2</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">How We Use Your Information</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
-              <p>We use the collected data strictly to:</p>
-              <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-muted">
-                <li>Provide, personalize, and improve our free mock tests, live quizzes, and performance analytics.</li>
-                <li>Generate leaderboards and comparative rankings among aspirants across the Platform.</li>
-                <li>Send important exam notifications, new test alerts, and syllabus updates (you may opt out at any time).</li>
-                <li>Protect the Platform from spam, DDoS attacks, and unauthorized scraping of our question bank.</li>
-              </ul>
-            </div>
-          </section>
-
-          {/* Section 3 */}
-          <section id="leaderboards" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">3</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Leaderboards &amp; Public Profile</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p>
-                When you attempt a mock test or live quiz on {siteName}, your <strong class="text-white">Name</strong>, <strong class="text-white">Score</strong>, and <strong class="text-white">Rank</strong> may be displayed on the test leaderboard to give all students a real competitive exam experience.
-              </p>
-            </div>
-          </section>
-
-          {/* Section 4 */}
-          <section id="cookies" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">4</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Cookies and Local Storage</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p>
-                We use cookies and browser local storage to maintain your login session, remember your theme preferences (dark/light mode), and save your ongoing mock test progress in case of an accidental page refresh or internet disconnection.
-              </p>
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                  <h4 class="font-semibold text-white text-xs mb-1">Login Session</h4>
-                  <p class="text-xs text-muted leading-relaxed">Keeps you signed in smoothly across sessions.</p>
-                </div>
-                <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                  <h4 class="font-semibold text-white text-xs mb-1">Theme Preferences</h4>
-                  <p class="text-xs text-muted leading-relaxed">Preserves dark/light appearance settings.</p>
-                </div>
-                <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60">
-                  <h4 class="font-semibold text-white text-xs mb-1">Test State</h4>
-                  <p class="text-xs text-muted leading-relaxed">Protects against loss of answers on unexpected reloads.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Section 5 */}
-          <section id="data-sharing" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">5</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Data Sharing and Third-Party Services</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
-              <p>
-                We <strong class="text-white">never sell, rent, or trade</strong> your personal information to any third party. Your data is only processed by trusted infrastructure providers (such as cloud hosting, databases, and authentication services) necessary to keep the website running smoothly.
-              </p>
-            </div>
-          </section>
-
-          {/* Section 6 */}
-          <section id="data-security" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">6</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Data Security &amp; Account Deletion</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p>
-                We use industry-standard encryption (HTTPS/SSL) to protect your data. If you wish to permanently delete your account and test history, simply email us at <a href={`mailto:${contactEmail}`} class="text-accent hover:underline font-semibold">{contactEmail}</a>, and we will remove your data promptly.
-              </p>
-            </div>
-          </section>
-
-          {/* Section 7 */}
-          <section id="contact" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">7</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Contact Us</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p>
-                If you have any questions or concerns regarding your privacy, please reach out to us at:
-              </p>
-              <div class="rounded-lg bg-surface-raised p-4 border border-border/80 space-y-2.5 text-xs">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <span class="text-muted">Platform Name:</span>
-                  <span class="font-medium text-white">{siteName}</span>
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <span class="text-muted">Website:</span>
-                  <a href={`${siteUrl}/`} class="font-medium text-accent hover:underline">{siteUrl}/</a>
-                </div>
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <span class="text-muted">Email:</span>
-                  <a href={`mailto:${contactEmail}`} class="font-medium text-accent hover:underline">{contactEmail}</a>
-                </div>
-              </div>
-            </div>
-          </section>
-
-        </div>
       </div>
     </div>
   </div>

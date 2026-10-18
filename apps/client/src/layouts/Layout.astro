@@ -1316,23 +1316,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             setLanguage(preferred, false);
           }
 
-          // Setup hover-peek triggers
-          const headerToggleWrapper = document.getElementById('header-sidebar-toggle-wrapper');
-          const desktopWrapper = document.getElementById('desktop-sidebar-wrapper');
 
-          if (headerToggleWrapper) {
-            headerToggleWrapper.onmouseenter = startHoverPeek;
-            headerToggleWrapper.onmouseleave = endHoverPeek;
-          }
-
-          if (desktopWrapper) {
-            desktopWrapper.onmouseenter = cancelHoverPeekTimer;
-            desktopWrapper.onmouseleave = () => {
-              if (desktopWrapper.classList.contains('hover-peek')) {
-                endHoverPeek();
-              }
-            };
-          }
 
           // Search Input & Tab Listeners
           const globalSearchInput = document.getElementById('global-search-input') as HTMLInputElement | null;
