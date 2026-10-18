@@ -24,7 +24,7 @@ export const blockTypes = [
 ] as const;
 
 export const createBlockSchema = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().trim().min(1).max(80).optional(),
   type: z.enum(blockTypes),
   value: z.string().max(200_000),
   metadata: z.record(z.string(), z.unknown()).nullable().optional(),
@@ -38,7 +38,7 @@ export const updateBlockSchema = createBlockSchema
 
 export const reorderBlocksSchema = z.object({
   blockIds: z
-    .array(z.string().uuid())
+    .array(z.string().trim().min(1).max(80))
     .max(1_000)
     .refine((ids) => new Set(ids).size === ids.length, {
       message: 'Block IDs must be unique.',
@@ -53,15 +53,17 @@ export const createBlogSchema = z.object({
     .toLowerCase()
     .min(1)
     .max(250)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    .regex(/^[\p{L}\p{N}a-z0-9._-]+$/u, {
+      message: 'Slug must contain only letters, numbers, hyphens, dots, or underscores.',
+    }),
   description: z.string().trim().max(2_000).nullable().optional(),
   coverImage: z.string().trim().max(2_000).nullable().optional(),
   status: z.enum(blogStatuses).optional(),
   scheduledAt: z.string().datetime().nullable().optional(),
-  categoryId: z.string().uuid().nullable().optional(),
-  categoryIds: z.array(z.string().uuid()).optional(),
+  categoryId: z.string().trim().min(1).max(80).nullable().optional().or(z.literal('')),
+  categoryIds: z.array(z.string().trim().min(1).max(80)).optional(),
   authorId: z.string().trim().min(1).max(80).nullable().optional(),
-  tagIds: z.array(z.string().uuid()).optional(),
+  tagIds: z.array(z.string().trim().min(1).max(80)).optional(),
   metaTitle: z.string().trim().max(300).nullable().optional(),
   metaDescription: z.string().trim().max(1_000).nullable().optional(),
   canonicalUrl: z.string().trim().url().nullable().optional().or(z.literal('')),
@@ -69,7 +71,7 @@ export const createBlogSchema = z.object({
   imageCaption: z.string().trim().max(500).nullable().optional(),
   noindex: z.boolean().optional(),
   language: z.enum(blogLanguages).optional(),
-  translationGroupId: z.string().uuid().nullable().optional(),
+  translationGroupId: z.string().trim().min(1).max(80).nullable().optional().or(z.literal('')),
   version: z.number().int().positive().optional(),
   htmlContent: z.string().optional(), // Raw editor HTML to be parsed to blocks if blocks not provided directly
   blocks: z.array(createBlockSchema).max(1_000).optional(),
@@ -95,7 +97,7 @@ export const createCategorySchema = z.object({
     .toLowerCase()
     .min(1)
     .max(100)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    .regex(/^[\p{L}\p{N}a-z0-9._-]+$/u),
   description: z.string().trim().max(500).nullable().optional(),
 });
 
@@ -110,7 +112,7 @@ export const createTagSchema = z.object({
     .toLowerCase()
     .min(1)
     .max(50)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    .regex(/^[\p{L}\p{N}a-z0-9._-]+$/u),
 });
 
 export type CreateBlogInput = z.infer<typeof createBlogSchema>;
