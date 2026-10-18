@@ -1,0 +1,4 @@
+[install]
+# Astro's Vercel adapter repackages traced dependencies. A hoisted install keeps
+# that process from trying to recreate Bun's isolated-store symlinks on Windows.
+linker = "hoisted"

@@ -1116,7 +1116,7 @@ html.admin-theme.theme-dark .ProseMirror hr {
   top: 0 !important;
   height: 100vh !important;
   width: 16rem;
-  overflow: hidden;
+  overflow: visible;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
   will-change: width;
 }

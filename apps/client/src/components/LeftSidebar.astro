@@ -191,8 +191,8 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 
   {/* BOTTOM PROFILE / AUTH SECTION (Exact match to Image 2) */}
   <div class="p-3 border-t border-border/60 relative overflow-visible space-y-2">
-    {/* Popover Dropdown (Positioned Bottom-Up) */}
-    <ProfileDropdown id={`${prefix}-profile-dropdown`} position="bottom" />
+    {/* Popover Dropdown (Positioned Bottom-Up on Desktop or Mobile) */}
+    <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} />
 
     {/* Contact support & See plans and pricing links (Matches Image 2) */}
     <div class="space-y-0.5">
@@ -266,9 +266,8 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
       >
         <div class="flex items-center gap-2.5 min-w-0">
           {/* Avatar Circle */}
-          <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-caption-xs shrink-0 group-hover:scale-105 transition-transform overflow-hidden">
-            <span class="user-avatar-initials">DW</span>
-            <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" width="40" height="40" decoding="async" loading="lazy" />
+          <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform overflow-hidden shadow-xs select-none">
+            <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">DW</span>
           </div>
           <div class="sidebar-text truncate">
             <p class="user-display-name text-body-sm font-bold text-white truncate leading-tight">Devil</p>

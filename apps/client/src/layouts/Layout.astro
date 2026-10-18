@@ -374,9 +374,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           <button
             class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer"
           >
-            <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden">
-              <span class="user-avatar-initials">{defaultAvatarInitials}</span>
-              <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" width="40" height="40" decoding="async" loading="lazy" />
+            <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-xs select-none">
+              <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">{defaultAvatarInitials}</span>
             </div>
             <div class="flex-1 min-w-0 text-left">
               <p class="user-display-name text-sm font-bold text-white truncate leading-tight">User</p>
@@ -488,12 +487,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               trigger.setAttribute('aria-expanded', 'false');
             }
           });
-          // Close notifications popup
-          const notifPopup = document.querySelector<HTMLElement>('[data-notification-popup]');
-          if (notifPopup && notifPopup !== exceptMenu) {
-            notifPopup.classList.add('hidden', 'scale-95', 'opacity-0');
-            notifPopup.classList.remove('scale-100', 'opacity-100');
-          }
+          // Close all notification popups
+          document.querySelectorAll<HTMLElement>('[data-notification-popup]').forEach((notifPopup) => {
+            if (notifPopup !== exceptMenu) {
+              notifPopup.classList.add('hidden', 'scale-95', 'opacity-0');
+              notifPopup.classList.remove('scale-100', 'opacity-100');
+            }
+          });
           // Close language dropdown
           const langDropdown = document.getElementById('header-language-dropdown');
           if (langDropdown && langDropdown !== exceptMenu) {
@@ -1198,30 +1198,29 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const nameEls = document.querySelectorAll('.user-display-name');
           const emailEls = document.querySelectorAll('.user-display-email');
           const initialEls = document.querySelectorAll('.user-avatar-initials');
-          const imgEls = document.querySelectorAll<HTMLImageElement>('.user-avatar-img');
           const logoutBtns = document.querySelectorAll<HTMLElement>('.auth-logout-btn');
           const loginLinks = document.querySelectorAll<HTMLElement>('.auth-login-link');
-          const headerProfileIcons = document.querySelectorAll<HTMLElement>('.header-profile-icon');
-          const headerProfileInitials = document.querySelectorAll<HTMLElement>('.header-profile-initials');
           const adminPanelLinks = document.querySelectorAll<HTMLElement>('.admin-panel-link');
 
           if (user) {
-            const fullName = user.name || 'User';
+            const fullName = (user.name || 'User').trim();
             const email = user.email || 'Account';
-            const initials = fullName.split(/\s+/).map((part: string) => part[0]).join('').slice(0, 2).toUpperCase() || 'U';
+            const parts = fullName.split(/\s+/).filter(Boolean);
+            const initials = parts.length > 1
+              ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+              : (fullName.slice(0, 2)).toUpperCase() || 'U';
 
             nameEls.forEach(el => el.textContent = fullName);
             emailEls.forEach(el => el.textContent = email);
-            initialEls.forEach(el => el.textContent = initials);
-
-            imgEls.forEach(img => img.classList.add('hidden'));
-            initialEls.forEach(el => el.classList.remove('hidden'));
-            headerProfileIcons.forEach(el => el.classList.add('hidden'));
+            initialEls.forEach(el => {
+              el.textContent = initials;
+              el.classList.remove('hidden');
+            });
 
             adminPanelLinks.forEach((link) => {
-              const isAdmin = user.role === 'admin';
-              link.classList.toggle('hidden', !isAdmin);
-              link.style.display = isAdmin ? 'flex' : 'none';
+              const canAccess = user.role === 'admin' || user.role === 'editor';
+              link.classList.toggle('hidden', !canAccess);
+              link.style.display = canAccess ? 'flex' : 'none';
             });
 
             logoutBtns.forEach((b) => {
@@ -1253,13 +1252,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           } else {
             nameEls.forEach(el => el.textContent = 'Guest User');
             emailEls.forEach(el => el.textContent = 'Sign in to access your profile');
-            initialEls.forEach(el => el.textContent = 'GP');
-            imgEls.forEach(img => img.classList.add('hidden'));
-            
-            // In header profile button, show clean profile SVG icon and hide initials
-            headerProfileIcons.forEach(el => el.classList.remove('hidden'));
-            headerProfileInitials.forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll<HTMLElement>('.user-avatar-initials:not(.header-profile-initials)').forEach(el => el.classList.remove('hidden'));
+            initialEls.forEach(el => {
+              el.textContent = 'GU';
+              el.classList.remove('hidden');
+            });
             adminPanelLinks.forEach((link) => {
               link.classList.add('hidden');
               link.style.display = 'none';
