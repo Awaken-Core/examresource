@@ -11,7 +11,6 @@ interface __BaseEnv_Env {
 	GOOGLE_CALLBACK_URL: string;
 	PUBLIC_API_URL: string;
 	PORT: string;
-	CLERK_SECRET_KEY: string;
 	R2_ACCOUNT_ID: string;
 	R2_ACCESS_KEY_ID: string;
 	R2_SECRET_ACCESS_KEY: string;
@@ -29,7 +28,7 @@ type StringifyValues<EnvType extends Record<string, unknown>> = {
 	[Binding in keyof EnvType]: EnvType[Binding] extends string ? EnvType[Binding] : string;
 };
 declare namespace NodeJS {
-	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "DATABASE_URL" | "CLIENT_URL" | "NODE_ENV" | "SESSION_TTL_DAYS" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET" | "GOOGLE_CALLBACK_URL" | "PUBLIC_API_URL" | "PORT" | "CLERK_SECRET_KEY" | "R2_ACCOUNT_ID" | "R2_ACCESS_KEY_ID" | "R2_SECRET_ACCESS_KEY" | "R2_BUCKET" | "R2_PUBLIC_BASE_URL">> {}
+	interface ProcessEnv extends StringifyValues<Pick<Cloudflare.Env, "DATABASE_URL" | "CLIENT_URL" | "NODE_ENV" | "SESSION_TTL_DAYS" | "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET" | "GOOGLE_CALLBACK_URL" | "PUBLIC_API_URL" | "PORT" | "R2_ACCOUNT_ID" | "R2_ACCESS_KEY_ID" | "R2_SECRET_ACCESS_KEY" | "R2_BUCKET" | "R2_PUBLIC_BASE_URL">> {}
 }
 declare module "*.txt" {
 	const value: string;

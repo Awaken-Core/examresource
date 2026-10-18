@@ -61,7 +61,10 @@ export class AuthService {
   }
 
   private newToken() {
-    return randomBytes(48).toString('base64url');
+    const bytes = crypto.getRandomValues(new Uint8Array(48));
+    let binary = '';
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
   }
 
   private publicUser(user: any): CurrentUser {
