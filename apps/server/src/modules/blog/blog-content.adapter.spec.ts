@@ -61,4 +61,15 @@ describe('blog-content.adapter', () => {
     expect(rendered).not.toContain('<script>');
     expect(rendered).not.toContain('onerror=');
   });
+
+  it('should parse hr into DIVIDER blocks with empty value and render back to semantic HTML', () => {
+    const htmlWithDivider = '<p>First section</p><hr /><p>Second section</p>';
+    const blocks = htmlToBlocks(htmlWithDivider);
+    expect(blocks).toHaveLength(3);
+    expect(blocks[1].type).toBe('DIVIDER');
+    expect(blocks[1].value).toBe('');
+
+    const rendered = blocksToHtml(blocks);
+    expect(rendered).toContain('<hr class="my-6 border-border" />');
+  });
 });

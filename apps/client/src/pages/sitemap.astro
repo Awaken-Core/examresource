@@ -1,11 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { API_URL } from '../lib/api';
 import { siteUrl, siteName } from '../data/site';
+import { API_URL } from '../lib/api';
 
-let livePosts: any[] = [];
+interface LivePost {
+  title: string;
+  slug: string;
+  category?: { name: string };
+  categories?: { name: string }[];
+  publishedAt?: string;
+  updatedAt?: string;
+}
+
+let livePosts: LivePost[] = [];
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=100`);
+  const res = await fetch(`${API_URL}/blogs?limit=100`, { credentials: 'omit' });
   if (res.ok) {
     livePosts = await res.json();
   }
@@ -15,22 +24,19 @@ try {
 
 const fallbackArticles = [
   {
-    title: 'MP Police Constable Driver Recruitment 2026',
-    slug: 'mp-police-constable-driver-recruitment-2026',
-    category: 'State Exams',
-    date: 'Oct 2026'
+    title: 'SSC CGL Notification 2026',
+    slug: 'ssc-cgl-notification-2026',
+    category: 'SSC & Railways',
   },
   {
-    title: 'UPESSC PRT Assistant Teacher Recruitment 2026',
-    slug: 'upessc-prt-assistant-teacher-recruitment-2026-english',
-    category: 'Teaching',
-    date: 'Oct 2026'
+    title: 'IBPS PO Prelims Exam Schedule 2026',
+    slug: 'ibps-po-prelims-exam-schedule-2026',
+    category: 'Banking',
   },
   {
     title: 'RRB NTPC Graduate Recruitment 2026',
     slug: 'rrb-ntpc-graduate-recruitment-2026-english',
-    category: 'SSC & Railways',
-    date: 'Oct 2026'
+    category: 'Railways',
   }
 ];
 
@@ -39,39 +45,44 @@ const articlesList = (livePosts && livePosts.length > 0)
       title: p.title,
       slug: p.slug?.replace(/^\//, ''),
       category: p.category?.name || p.categories?.[0]?.name || 'Exam Guide',
-      date: new Date(p.publishedAt || p.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
     }))
   : fallbackArticles;
 
 const examCategories = [
-  { name: 'SSC Exams', path: '/category/ssc', desc: 'CGL, CHSL, MTS, GD Constable free mock tests' },
-  { name: 'Banking & IBPS', path: '/category/banking', desc: 'PO, Clerk, SBI, RBI Grade B practice sets' },
-  { name: 'Railways (RRB)', path: '/category/railways', desc: 'NTPC, Group D, ALP, JE free mock tests' },
-  { name: 'State PCS', path: '/category/state-pcs', desc: 'UPPSC, MPPSC, BPSC and other State PSC mocks' },
-  { name: 'Police Exams', path: '/category/police', desc: 'UP Police, SSC GD, CISF, CRPF mock tests' },
-  { name: 'Teaching Eligibility', path: '/category/teaching', desc: 'CTET, UPTET, DSSSB, KVS free practice sets' }
+  { name: 'SSC Exams', path: '/category/ssc', desc: 'CGL, CHSL, MTS, GD Constable guides' },
+  { name: 'Banking & IBPS', path: '/category/banking', desc: 'PO, Clerk, SBI, RBI Grade B updates' },
+  { name: 'Railways (RRB)', path: '/category/railways', desc: 'NTPC, Group D, ALP, JE notices' },
+  { name: 'State PCS', path: '/category/state-pcs', desc: 'UPPSC, MPPSC, BPSC exam guides' },
+  { name: 'Police Exams', path: '/category/police', desc: 'UP Police, SSC GD, CISF notices' },
+  { name: 'Teaching Eligibility', path: '/category/teaching', desc: 'CTET, UPTET, DSSSB syllabus' }
 ];
 
+const corePages = [
+  { name: 'Home', path: '/', desc: 'Exam notifications, notices, and guides' },
+  { name: 'Important Official Links', path: '/#important-links', desc: 'Direct portal directory' },
+  { name: 'Frequently Asked Questions', path: '/#faqs', desc: 'Platform answers & help' },
+  { name: 'Privacy Policy', path: '/privacy-policy', desc: 'DPDP Act 2023 compliance' },
+  { name: 'Terms of Service', path: '/terms-of-service', desc: 'Platform rules and terms' },
+  { name: 'Contact Us', path: '/contact-us', desc: 'Support desk and feedback' },
+  { name: 'XML Sitemap', path: '/sitemap.xml', desc: 'Search engine index file' }
+];
+
+const R2_PORTAL_BASE = 'https://pub-68568854a58845bc975b176de76b1ad5.r2.dev/portals';
 const officialPortals = [
-  { name: 'Staff Selection Commission (SSC)', url: 'https://ssc.gov.in/' },
-  { name: 'Union Public Service Commission (UPSC)', url: 'https://www.upsc.gov.in/' },
-  { name: 'Railway Recruitment Control Board (RRB)', url: 'https://rrb.indianrailways.gov.in/' },
-  { name: 'Institute of Banking Personnel Selection (IBPS)', url: 'https://www.ibps.in/' },
-  { name: 'National Testing Agency (NTA)', url: 'https://nta.ac.in/' },
-  { name: 'National Portal of India', url: 'https://www.india.gov.in/' },
-  { name: 'DigiLocker India', url: 'https://www.digilocker.gov.in/' },
-  { name: 'Unique Identification Authority of India (UIDAI)', url: 'https://www.uidai.gov.in/' },
-  { name: 'National Career Service (NCS)', url: 'https://www.ncs.gov.in/' }
+  { name: 'Staff Selection Commission (SSC)', url: 'ssc.gov.in', href: 'https://ssc.gov.in/', logo: `${R2_PORTAL_BASE}/ssc.svg`, initial: 'S', bg: 'bg-[#8B0000]', textColor: 'text-[#FFD700]' },
+  { name: 'Union Public Service Commission (UPSC)', url: 'upsc.gov.in', href: 'https://www.upsc.gov.in/', logo: `${R2_PORTAL_BASE}/upsc.svg`, initial: 'U', bg: 'bg-[#0C2340]', textColor: 'text-[#E2B13C]' },
+  { name: 'Railway Recruitment Control Board (RRB)', url: 'rrb.indianrailways.gov.in', href: 'https://rrb.indianrailways.gov.in/', logo: `${R2_PORTAL_BASE}/railways.svg`, initial: 'R', bg: 'bg-[#003366]', textColor: 'text-[#E5A823]' },
+  { name: 'Institute of Banking Personnel Selection', url: 'ibps.in', href: 'https://www.ibps.in/', logo: `${R2_PORTAL_BASE}/ibps.svg`, initial: 'I', bg: 'bg-[#312E81]', textColor: 'text-white' },
 ];
 
-const pageTitle = `Sitemap & Mock Test Directory | ${siteName}`;
-const pageDescription = `Browse the complete directory of free mock tests, exam categories, previous year questions (PYQs), official commission portals, and legal resources on ${siteName}.`;
+const pageTitle = `Sitemap | ${siteName}`;
+const pageDescription = `Complete directory of exam categories, latest recruitment guides, official commission portals, and platform policies on ${siteName}.`;
 const canonicalUrl = `${siteUrl}/sitemap`;
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Sitemap & Portal Directory",
+  "name": "Sitemap",
   "url": canonicalUrl,
   "description": pageDescription,
   "breadcrumb": {
@@ -101,223 +112,196 @@ const jsonLd = {
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
 >
-  <div class="min-h-screen bg-canvas text-white">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
+    <div class="max-w-[1400px] mx-auto">
+      
+      {/* 2-Column Grid: Main Directory (Left) + Sticky Quick Index (Right) */}
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+        
+        {/* MAIN FEED CONTENT */}
+        <div class="min-w-0 space-y-7" transition:name="main-content">
+          
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
+            <a href="/" class="hover:text-accent transition">Home</a>
+            <span>/</span>
+            <span class="text-white font-medium">Sitemap</span>
+          </nav>
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-        <a href="/" class="hover:text-accent transition">Home</a>
-        <span>/</span>
-        <span class="font-medium text-white">Sitemap</span>
-      </nav>
+          {/* Hero Banner */}
+          <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs relative overflow-hidden">
+            <div class="relative z-10 space-y-3">
+              <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-raised border border-border text-white text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+                <span>Portal Directory</span>
+              </div>
 
-      {/* Header Banner */}
-      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-6 shadow-xs">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs font-semibold">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-            Complete Directory
+              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                  Sitemap &amp; Directory
+                </h1>
+                <a
+                  href="/sitemap.xml"
+                  target="_blank"
+                  class="text-xs text-muted hover:text-white transition flex items-center gap-1 font-medium"
+                >
+                  <span>Raw XML Feed</span>
+                  <span>&rarr;</span>
+                </a>
+              </div>
+
+              <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-2xl">
+                Quick index of all exam streams, latest recruitment summaries, official commission portals, and platform policies.
+              </p>
+
+              <!-- Live Filter -->
+              <div class="pt-3 border-t border-border/50">
+                <input
+                  type="text"
+                  id="sitemap-search-input"
+                  placeholder="Filter links (e.g. SSC, UPSC, Banking, Terms)..."
+                  class="w-full max-w-md px-3.5 py-2 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-xs focus:outline-none focus:border-accent transition"
+                />
+              </div>
+            </div>
+          </section>
+
+          <!-- 1. Core Pages -->
+          <section class="sitemap-section p-6 bg-surface border border-border rounded-xl shadow-2xs space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-border/50">
+              <h2 class="text-sm font-bold text-white">Core Platform Pages</h2>
+              <span class="text-xs text-muted">{corePages.length} routes</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {corePages.map((page) => (
+                <a
+                  href={page.path}
+                  class="sitemap-link p-3 rounded-lg bg-surface-raised border border-border/60 hover:border-accent/40 transition block group"
+                >
+                  <div class="text-xs font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
+                    <span>{page.name}</span>
+                    <span class="text-muted text-xs group-hover:text-accent transition">&rarr;</span>
+                  </div>
+                  <p class="text-[11px] text-muted mt-0.5">{page.desc}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <!-- 2. Exam Streams -->
+          <section class="sitemap-section p-6 bg-surface border border-border rounded-xl shadow-2xs space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-border/50">
+              <h2 class="text-sm font-bold text-white">Exam Streams &amp; Categories</h2>
+              <span class="text-xs text-muted">{examCategories.length} categories</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {examCategories.map((cat) => (
+                <a
+                  href={cat.path}
+                  class="sitemap-link p-3 rounded-lg bg-surface-raised border border-border/60 hover:border-accent/40 transition block group"
+                >
+                  <div class="text-xs font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
+                    <span>{cat.name}</span>
+                    <span class="text-muted text-xs group-hover:text-accent transition">&rarr;</span>
+                  </div>
+                  <p class="text-[11px] text-muted mt-0.5">{cat.desc}</p>
+                </a>
+              ))}
+            </div>
+          </section>
+
+          <!-- 3. Latest Articles -->
+          {articlesList.length > 0 && (
+            <section class="sitemap-section p-6 bg-surface border border-border rounded-xl shadow-2xs space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-sm font-bold text-white">Recent Recruitment Summaries</h2>
+                <span class="text-xs text-muted">{articlesList.length} articles</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {articlesList.map((art) => (
+                  <a
+                    href={`/${art.slug}`}
+                    class="sitemap-link p-3 rounded-lg bg-surface-raised border border-border/60 hover:border-accent/40 transition block group"
+                  >
+                    <span class="text-[10px] text-accent font-semibold block uppercase tracking-wider mb-0.5">
+                      {art.category}
+                    </span>
+                    <p class="text-xs font-semibold text-white group-hover:text-accent transition line-clamp-1 leading-snug">
+                      {art.title}
+                    </p>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <!-- No Results Indicator -->
+          <div id="sitemap-no-results" class="hidden p-8 text-center text-muted text-xs bg-surface border border-border rounded-xl">
+            No routes or articles match your query.
           </div>
 
-          <a
-            href="/sitemap.xml"
-            target="_blank"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-raised border border-border hover:border-accent text-white text-xs font-semibold transition group shadow-xs self-start"
-          >
-            <span>XML Sitemap (for Crawlers)</span>
-            <svg class="w-3.5 h-3.5 text-muted group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-            </svg>
-          </a>
         </div>
 
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">
-          Mock Test &amp; Resource Directory
-        </h1>
-        <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Explore all free mock test categories, previous year papers (PYQs), official government recruiting commissions, and legal policies on <strong class="text-white">{siteName}</strong>.
-        </p>
-      </header>
-
-      {/* Search / Filter Bar */}
-      <div class="rounded-xl border border-border bg-surface p-4 mb-8">
-        <div class="relative w-full">
-          <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input
-            type="text"
-            id="sitemap-search-input"
-            placeholder="Type to filter links (e.g. SSC, Banking, Railways, Privacy)..."
-            class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-surface-raised border border-border text-white placeholder:text-muted text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"
-          />
-        </div>
-      </div>
-
-      {/* Main Sitemap Content Grid */}
-      <div class="space-y-8">
-
-        {/* 1. Core Platform Pages */}
-        <section class="sitemap-section space-y-3">
-          <div class="flex items-center gap-2">
-            <h2 class="text-base sm:text-lg font-bold text-white">Core Pages</h2>
-            <span class="text-xs text-muted">• Main routes and legal policies</span>
+        {/* RIGHT SIDEBAR (Sticky Official Portals) */}
+        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
+          
+          {/* Important Portals Box */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
+            <h3 class="text-sm font-bold text-white pb-1 border-b border-border/50">
+              Government Commission Portals
+            </h3>
+            <div class="divide-y divide-border/50">
+              {officialPortals.map((portal) => (
+                <a 
+                  href={portal.href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="flex items-center justify-between py-2 px-1 hover:bg-surface-raised rounded transition group cursor-pointer"
+                  title={`Open official ${portal.name} portal`}
+                >
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-7 h-7 rounded-full bg-surface-raised border border-border flex items-center justify-center p-0.5 shrink-0 overflow-hidden relative">
+                      <img 
+                        src={portal.logo} 
+                        alt={`${portal.name} emblem logo`} 
+                        class="w-full h-full object-contain" 
+                        loading="lazy"
+                        decoding="async"
+                        width="28"
+                        height="28"
+                        onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                      />
+                      <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[9px] select-none tracking-tight`}>
+                        {portal.initial}
+                      </div>
+                    </div>
+                    <div class="min-w-0">
+                      <p class="text-xs font-semibold text-white group-hover:text-accent transition truncate leading-tight">
+                        {portal.name}
+                      </p>
+                      <p class="text-[10px] text-muted truncate leading-tight mt-0.5">
+                        {portal.url}
+                      </p>
+                    </div>
+                  </div>
+                  <span class="text-muted group-hover:text-accent transition text-xs shrink-0 ml-1">&#8599;</span>
+                </a>
+              ))}
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <a href="/" class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-              <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                Home
-                <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </span>
-              <span class="text-xs text-muted block mt-1">Free mock tests, quizzes &amp; exam updates</span>
-            </a>
-
-            <a href="/#latest-updates" class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-              <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                Latest Updates Feed
-                <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </span>
-              <span class="text-xs text-muted block mt-1">Real-time alerts, admit cards, and results</span>
-            </a>
-
-            <a href="/privacy-policy" class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-              <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                Privacy Policy
-                <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </span>
-              <span class="text-xs text-muted block mt-1">Data protection, DPDP Act 2023 &amp; privacy practices</span>
-            </a>
-
-            <a href="/terms-of-service" class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-              <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                Terms of Service
-                <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </span>
-              <span class="text-xs text-muted block mt-1">Non-government disclaimer, fair play &amp; terms</span>
-            </a>
-
-            <a href="/contact-us" class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-              <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                Contact Us
-                <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </span>
-              <span class="text-xs text-muted block mt-1">Support desk, question error reports &amp; queries</span>
-            </a>
-
-            <a href="/sitemap.xml" target="_blank" class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-              <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                XML Sitemap
-                <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                </svg>
-              </span>
-              <span class="text-xs text-muted block mt-1">Machine-readable index for search crawlers</span>
-            </a>
-          </div>
-        </section>
-
-        {/* 2. Exam Streams & Categories */}
-        <section class="sitemap-section space-y-3">
-          <div class="flex items-center gap-2">
-            <h2 class="text-base sm:text-lg font-bold text-white">Exam Categories &amp; Mock Test Streams</h2>
-            <span class="text-xs text-muted">• Free mock tests by exam type</span>
+          <!-- Policy Quick Links -->
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-2 text-xs text-muted">
+            <p class="font-bold text-white text-sm">Transparency</p>
+            <p class="leading-relaxed">All mock tests and recruitment guides are verified against official commission gazettes.</p>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {examCategories.map((cat) => (
-              <a href={cat.path} class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group">
-                <span class="text-sm font-semibold text-white group-hover:text-accent transition flex items-center justify-between">
-                  {cat.name}
-                  <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                  </svg>
-                </span>
-                <span class="text-xs text-muted block mt-1">{cat.desc}</span>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* 3. Official Government Recruitment Portals */}
-        <section class="sitemap-section space-y-3">
-          <div class="flex items-center gap-2">
-            <h2 class="text-base sm:text-lg font-bold text-white">Official Government Recruitment Portals</h2>
-            <span class="text-xs text-muted">• Direct links to official boards</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {officialPortals.map((p) => (
-              <a
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group"
-              >
-                <div class="flex items-start justify-between gap-2">
-                  <span class="text-sm font-semibold text-white group-hover:text-accent transition">
-                    {p.name}
-                  </span>
-                  <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent shrink-0 mt-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                  </svg>
-                </div>
-                <span class="text-xs text-muted block mt-1 font-mono truncate">{p.url}</span>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* 4. Latest Mock Tests & Practice Sets */}
-        <section class="sitemap-section space-y-3">
-          <div class="flex items-center gap-2">
-            <h2 class="text-base sm:text-lg font-bold text-white">Latest Mock Tests &amp; Practice Sets</h2>
-            <span class="text-xs text-muted">• Recently published free tests</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {articlesList.map((art) => (
-              <a
-                href={`/${art.slug}`}
-                class="sitemap-link rounded-xl border border-border bg-surface p-4 hover:bg-surface-raised transition block group"
-              >
-                <div class="flex items-center justify-between gap-2 mb-2">
-                  <span class="px-2 py-0.5 rounded bg-accent/10 text-accent text-[11px] font-semibold">
-                    {art.category}
-                  </span>
-                  <span class="text-xs text-muted">{art.date}</span>
-                </div>
-                <h3 class="text-sm font-semibold text-white group-hover:text-accent transition line-clamp-2">
-                  {art.title}
-                </h3>
-              </a>
-            ))}
-          </div>
-        </section>
-
-        {/* No Results Indicator */}
-        <div id="sitemap-no-results" class="hidden text-center py-10 rounded-xl border border-border bg-surface p-6">
-          <p class="text-sm font-semibold text-white">No matching links found</p>
-          <p class="text-xs text-muted mt-1">Try another keyword.</p>
-        </div>
+        </aside>
 
       </div>
     </div>
   </div>
 
-  {/* Live Search Script */}
   <script is:inline>
     const searchInput = document.getElementById('sitemap-search-input');
     const links = document.querySelectorAll('.sitemap-link');

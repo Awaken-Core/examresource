@@ -1,10 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactEmail, siteUrl, siteName, siteDomain } from '../data/site';
+import { contactEmail, siteUrl, siteName } from '../data/site';
 
 const lastUpdated = "October 17, 2026";
 const pageTitle = `Terms of Service | ${siteName}`;
-const pageDescription = `Read the Terms and Conditions for ${siteName}. Learn about our 100% free educational platform, anti-scraping policy, user conduct, disclaimer, and governing law.`;
+const pageDescription = `Terms and conditions for using ${siteName}. Understand user guidelines, disclaimer of warranties, and non-affiliation notice.`;
 const canonicalUrl = `${siteUrl}/terms-of-service`;
 
 const jsonLd = {
@@ -38,6 +38,16 @@ const jsonLd = {
     ]
   }
 };
+
+const sections = [
+  { id: "free-service", title: "Free Educational Resource" },
+  { id: "disclaimer", title: "Non-Government Disclaimer" },
+  { id: "intellectual-property", title: "Intellectual Property" },
+  { id: "user-conduct", title: "User Conduct & Fair Play" },
+  { id: "limitation", title: "Limitation of Liability" },
+  { id: "governing-law", title: "Governing Law" },
+  { id: "contact-info", title: "Contact Information" }
+];
 ---
 
 <Layout
@@ -46,224 +56,201 @@ const jsonLd = {
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
 >
-  <div class="min-h-screen bg-canvas text-white">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
+    <div class="max-w-[1400px] mx-auto">
+      
+      {/* 2-Column Grid: Main Terms (Left) + Sticky ToC Rail (Right) */}
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+        
+        {/* MAIN EDITORIAL BODY */}
+        <div class="min-w-0 space-y-7" transition:name="main-content">
+          
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
+            <a href="/" class="hover:text-accent transition">Home</a>
+            <span>/</span>
+            <span class="text-white font-medium">Terms of Service</span>
+          </nav>
 
-      {/* Breadcrumb */}
-      <nav aria-label="Breadcrumb" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-        <a href="/" class="hover:text-accent transition">Home</a>
-        <span>/</span>
-        <span class="font-medium text-white">Terms of Service</span>
-      </nav>
+          {/* Hero Banner */}
+          <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs relative overflow-hidden">
+            <div class="relative z-10 space-y-3">
+              <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-raised border border-border text-white text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                <span>User Agreement</span>
+              </div>
 
-      {/* Header Banner */}
-      <header class="rounded-xl border border-border bg-surface p-6 sm:p-8 mb-6 shadow-xs">
-        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 text-xs font-semibold mb-3">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-          Legal Agreement &amp; Terms of Use
-        </div>
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white mb-3">
-          Terms and Conditions
-        </h1>
-        <p class="text-sm sm:text-base text-muted leading-relaxed max-w-3xl">
-          Please read these Terms and Conditions ("Terms") carefully before using <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a> ("Platform"), operated by <strong class="text-white">{siteName}</strong> ("we," "us," or "our"). By accessing or using the Platform, you agree to comply with and be bound by these Terms.
-        </p>
-        <div class="flex flex-wrap items-center gap-4 text-xs text-muted mt-5 pt-4 border-t border-border">
-          <span>Last Updated: <strong class="text-white">{lastUpdated}</strong></span>
-          <span>•</span>
-          <span>Applicable Region: <strong class="text-white">India</strong></span>
-        </div>
-      </header>
+              <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                Terms of Service
+              </h1>
 
-      {/* Fraud Alert Banner */}
-      <div class="rounded-xl border border-rose-500/40 bg-rose-500/10 p-5 sm:p-6 mb-8">
-        <div class="flex items-start gap-3">
-          <div class="w-9 h-9 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 mt-0.5">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-            </svg>
-          </div>
-          <div class="space-y-1">
-            <h3 class="font-bold text-rose-400 text-sm sm:text-base">Fraud Alert</h3>
-            <p class="text-xs sm:text-sm text-white/90 leading-relaxed">
-              {siteName} does not charge any fee for registration or attempting mock tests. If anyone demands money in the name of {siteName}, please do not pay and report it immediately to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline font-semibold">{contactEmail}</a>.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Two-Column Layout */}
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-        {/* Sticky Table of Contents */}
-        <aside class="hidden lg:block lg:col-span-4 sticky top-24 space-y-4">
-          <div class="rounded-xl border border-border bg-surface p-4 shadow-xs">
-            <h2 class="text-xs uppercase tracking-wider font-bold text-muted mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
-              </svg>
-              Table of Contents
-            </h2>
-            <nav class="space-y-1 text-xs font-medium text-muted">
-              <a href="#free-service" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">1. 100% Free Educational Service</a>
-              <a href="#user-accounts" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">2. User Accounts</a>
-              <a href="#intellectual-property" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">3. Intellectual Property &amp; Anti-Scraping</a>
-              <a href="#fair-play" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">4. User Conduct &amp; Fair Play</a>
-              <a href="#disclaimer" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">5. Disclaimer &amp; Non-Affiliation</a>
-              <a href="#governing-law" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">6. Governing Law &amp; Jurisdiction</a>
-              <a href="#contact-info" class="block py-1.5 px-2.5 rounded-lg hover:text-white hover:bg-surface-raised transition">7. Contact Information</a>
-            </nav>
-          </div>
-
-          <div class="rounded-xl border border-border bg-surface p-4">
-            <h4 class="text-xs font-bold text-white mb-1">Found an error or typo?</h4>
-            <p class="text-xs text-muted mb-2.5 leading-relaxed">
-              Use the "Report Question" option inside the test portal or email us so we can fix it immediately for everyone.
-            </p>
-            <a href="/contact-us" class="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline">
-              <span>Contact Support</span>
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
-            </a>
-          </div>
-        </aside>
-
-        {/* Content Body */}
-        <div class="lg:col-span-8 space-y-6">
-
-          {/* Section 1 */}
-          <section id="free-service" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">1</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">100% Free Educational Service</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
-              <p>
-                {siteName} is a free educational initiative built to help students prepare for competitive government examinations. All mock tests, previous year questions (PYQs), quizzes, and performance analytics currently available on the Platform are provided <strong class="text-white">free of cost</strong>.
+              <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
+                Please read these Terms of Service carefully before browsing or using <strong class="text-white">{siteName}</strong> ("Platform", "we", or "us"). By accessing or using our services, you agree to comply with and be bound by these terms.
               </p>
-              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60 text-xs text-muted leading-relaxed">
-                <strong class="text-white">Fraud Alert:</strong> {siteName} does not charge any fee for registration or attempting mock tests. If anyone demands money in the name of {siteName}, please do not pay and report it immediately to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a>.
+
+              <div class="pt-3 border-t border-border/50 flex flex-wrap items-center gap-4 text-xs text-muted">
+                <span>Last Updated: <strong class="text-white">{lastUpdated}</strong></span>
+                <span>•</span>
+                <span>Jurisdiction: <strong class="text-white">India</strong></span>
               </div>
             </div>
           </section>
 
-          {/* Section 2 */}
-          <section id="user-accounts" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">2</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">User Accounts</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
-              <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm text-muted">
-                <li>You are responsible for maintaining the confidentiality of your account login credentials.</li>
-                <li>You agree to provide accurate registration details so that leaderboard rankings and test analytics remain fair and authentic for all aspirants.</li>
+          {/* Main Legal Sections Feed */}
+          <main class="space-y-6 text-sm text-muted leading-relaxed">
+            
+            {/* 1. Free Educational Resource */}
+            <section id="free-service" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">1</span>
+                  <span>100% Free Educational Resource</span>
+                </h2>
+              </div>
+              <p>
+                {siteName} is a public informational platform built to assist aspirants preparing for Indian government examinations. All syllabus outlines, dates, notices, and test patterns on the platform are provided entirely free of cost.
+              </p>
+              <div class="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs leading-relaxed">
+                <span class="font-bold text-amber-800 dark:text-amber-300">⚠️ Fraud Warning:</span> {siteName} never charges any fee or asks for payments. If anyone demands money claiming to represent {siteName}, please do not pay and notify us immediately at <a href={`mailto:${contactEmail}`} class="underline font-semibold hover:text-amber-700 dark:hover:text-amber-100">{contactEmail}</a>.
+              </div>
+            </section>
+
+            {/* 2. Non-Government Disclaimer */}
+            <section id="disclaimer" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">2</span>
+                  <span>Non-Government Disclaimer (Important Notice)</span>
+                </h2>
+              </div>
+              <p>
+                <strong class="text-white">{siteName} is an independent educational portal.</strong> We are not affiliated with, authorized by, endorsed by, or in any way officially associated with the Government of India, any State Government, or any recruitment commission (such as UPSC, SSC, IBPS, RRB, NTA, or State PSCs).
+              </p>
+              <p class="text-xs">
+                All official recruitment notifications, exam schedules, admit cards, and results are issued exclusively by the respective recruiting bodies on their official web domains. Always verify all dates and instructions with the official government PDFs.
+              </p>
+            </section>
+
+            {/* 3. Intellectual Property */}
+            <section id="intellectual-property" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">3</span>
+                  <span>Intellectual Property &amp; Acceptable Use</span>
+                </h2>
+              </div>
+              <p>
+                All platform styling, curated summaries, visual assets, and application software are the intellectual property of {siteName}.
+              </p>
+              <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+                <li>You are permitted to access and read the platform solely for your personal, non-commercial exam preparation.</li>
+                <li>You may not run automated scrapers, crawlers, or harvesting bots against our servers without prior written authorization.</li>
               </ul>
-            </div>
-          </section>
+            </section>
 
-          {/* Section 3 */}
-          <section id="intellectual-property" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">3</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Intellectual Property &amp; Anti-Scraping Policy</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p>
-                Even though {siteName} is free to use for students, all content on the Platform (including compiled question banks, detailed solutions, UI design, logos, and source code) is the intellectual property of {siteName}.
-              </p>
-              <div class="rounded-lg bg-surface-raised p-3.5 border border-border/60 text-xs text-muted leading-relaxed">
-                <strong class="text-white">Personal Use:</strong> You are permitted to use the Platform strictly for your personal, non-commercial exam preparation.
+            {/* 4. User Conduct */}
+            <section id="user-conduct" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">4</span>
+                  <span>User Conduct &amp; Community Standards</span>
+                </h2>
               </div>
-              <div class="rounded-lg bg-rose-500/10 border border-rose-500/30 p-3.5 text-xs text-white/90 leading-relaxed">
-                <strong class="text-rose-400">Strict Prohibition:</strong> You shall NOT use automated bots, scripts, crawlers, or scrapers to extract our question database, nor shall you copy, repackage, or sell our test series on other websites, apps, or Telegram channels. Any commercial exploitation of our free resources will result in an immediate IP ban and legal action under the Indian Copyright Act, 1957.
-              </div>
-            </div>
-          </section>
-
-          {/* Section 4 */}
-          <section id="fair-play" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">4</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">User Conduct &amp; Fair Play</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
-              <p>To maintain a healthy competitive environment for all students, you agree not to:</p>
-              <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-muted">
-                <li>Manipulate mock test timers, inspect/modify client-side code to alter scores, or create fake accounts to spam the leaderboards.</li>
-                <li>Post abusive, defamatory, political, or inappropriate content in doubt sections or community discussions.</li>
-                <li>Attempt to overload, hack, or disrupt the Platform's servers.</li>
+              <p>When using our site or submitting feedback via our contact channels, you agree:</p>
+              <ul class="list-disc pl-5 space-y-2 text-xs sm:text-sm">
+                <li>To provide accurate details and communicate respectfully with our support staff.</li>
+                <li>Not to transmit spam, unsolicited commercial messages, or malicious payloads.</li>
+                <li>Not to attempt penetration testing, service interruption, or unauthorized access to platform databases.</li>
               </ul>
-            </div>
-          </section>
+            </section>
 
-          {/* Section 5 */}
-          <section id="disclaimer" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-4">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">5</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Disclaimer of Warranties &amp; Non-Affiliation</h2>
-            </div>
-
-            <div class="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 space-y-2 text-xs leading-relaxed text-white/95">
-              <h4 class="font-bold text-amber-400 text-sm">Non-Affiliation with the Government (Important Notice)</h4>
-              <p>
-                {siteName} ({siteUrl}/) is an independent, private educational platform and is NOT affiliated with, endorsed by, authorized by, or associated with the Government of India, any State Government, or any official examination conducting body (including but not limited to UPSC, SSC, IBPS, RRB, UPPSC, UPPRPB, or any other government commission).
-              </p>
-              <p class="text-muted">
-                The name "{siteName}" is used solely to signify that our platform provides free practice mock tests and educational resources for students preparing for competitive government examinations.
-              </p>
-            </div>
-
-            <div class="text-sm text-white/90 leading-relaxed space-y-3">
-              <p class="text-xs sm:text-sm text-muted">
-                {siteName} provides all mock tests and study materials on an "as-is" and "as-available" basis. While we work hard to keep our questions, answer keys, and explanations 100% accurate and aligned with the latest exam patterns, we do not warrant that the Platform will always be error-free or uninterrupted. {siteName} shall not be liable for any direct or indirect damages arising from your use of the Platform.
-              </p>
-
-              <div class="space-y-2 text-xs text-muted">
-                <p>
-                  <strong class="text-white">Mock Tests &amp; Answer Keys:</strong> In case of any discrepancy between an answer key or explanation on {siteName} and the official answer key released by an examination commission, the official commission's decision will always be final. If you spot a typo or error, please use the "Report Question" option inside the test portal or email us.
-                </p>
-                <p>
-                  <strong class="text-white">No Guarantee of Selection:</strong> Success in competitive exams depends entirely on a candidate's hard work, consistency, and preparation. Attempting mock tests on {siteName} is meant to boost your practice and does not guarantee selection or rank in any actual government examination.
-                </p>
+            {/* 5. Limitation of Liability */}
+            <section id="limitation" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">5</span>
+                  <span>Disclaimer of Warranties &amp; Limitation of Liability</span>
+                </h2>
               </div>
-            </div>
-          </section>
-
-          {/* Section 6 */}
-          <section id="governing-law" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">6</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Governing Law and Jurisdiction</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
               <p>
-                These Terms are governed by the laws of India. Any disputes relating to the use of the Platform shall be subject to the exclusive jurisdiction of the courts in <strong class="text-white">Uttar Pradesh, India</strong>.
+                Content on this website is provided on an "as-is" and "as-available" basis for general guidance. While our team works continuously to verify every notification against official commission gazettes, official exam dates or eligibility rules can change at short notice.
               </p>
-            </div>
-          </section>
+              <p class="text-xs">
+                {siteName} shall not be held liable for any damages, errors, or losses arising from reliance on information published on the site.
+              </p>
+            </section>
 
-          {/* Section 7 */}
-          <section id="contact-info" class="rounded-xl border border-border bg-surface p-6 scroll-mt-24 space-y-3">
-            <div class="flex items-center gap-2.5">
-              <span class="w-7 h-7 rounded-md bg-accent/10 text-accent font-bold text-xs flex items-center justify-center">7</span>
-              <h2 class="text-base sm:text-lg font-bold text-white">Contact Information</h2>
-            </div>
-            <div class="text-sm text-white/90 leading-relaxed space-y-2.5">
+            {/* 6. Governing Law */}
+            <section id="governing-law" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">6</span>
+                  <span>Governing Law &amp; Jurisdiction</span>
+                </h2>
+              </div>
               <p>
-                For any queries regarding these Terms, please contact us at:
+                These Terms of Service are governed by and construed under the laws of India. Any legal dispute or claim arising out of your use of the website shall be subject to the exclusive jurisdiction of the competent courts in India.
               </p>
-              <div class="rounded-lg bg-surface-raised p-4 border border-border/80 text-xs space-y-2">
-                <p><span class="text-muted">Platform:</span> <strong class="text-white">{siteName}</strong></p>
+            </section>
+
+            {/* 7. Contact Info */}
+            <section id="contact-info" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <div class="flex items-center justify-between pb-2 border-b border-border/50">
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">7</span>
+                  <span>Contact Information</span>
+                </h2>
+              </div>
+              <p>For questions or notices regarding these Terms, contact our legal desk:</p>
+              <div class="p-4 rounded-lg bg-surface-raised border border-border/80 text-xs space-y-1.5 text-white">
+                <p><span class="text-muted">Platform:</span> <strong>{siteName}</strong></p>
                 <p><span class="text-muted">Website:</span> <a href={`${siteUrl}/`} class="text-accent hover:underline">{siteUrl}/</a></p>
                 <p><span class="text-muted">Email:</span> <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a></p>
               </div>
-            </div>
-          </section>
+            </section>
+
+          </main>
 
         </div>
+
+        {/* RIGHT SIDEBAR (Sticky Quick ToC & Contact Card) */}
+        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
+          
+          {/* Table of Contents Box */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3 transition-colors">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-muted pb-1 border-b border-border/50">
+              Terms Navigation
+            </h3>
+            <nav class="space-y-1 text-xs">
+              {sections.map((s, idx) => (
+                <a
+                  href={`#${s.id}`}
+                  class="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-surface-raised text-muted hover:text-white transition group"
+                >
+                  <span class="w-4 text-[10px] text-muted group-hover:text-accent font-mono">{idx + 1}.</span>
+                  <span class="truncate">{s.title}</span>
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          {/* Contact Support */}
+          <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-2.5 transition-colors text-xs text-muted">
+            <p class="font-bold text-white text-sm">Have Questions?</p>
+            <p class="leading-relaxed">Need clarification on any part of our terms and policies?</p>
+            <div class="pt-2">
+              <a
+                href="/contact-us"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-raised border border-border hover:border-accent text-white font-medium text-xs transition"
+              >
+                <span>Write to Us</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+          </div>
+
+        </aside>
+
       </div>
     </div>
   </div>

@@ -1,12 +1,13 @@
 import 'dotenv/config';
 import { z } from 'zod';
-
 export const EnvSchema = z.object({
-  DATABASE_URL: z.string().url(),
+  DATABASE_URL: z
+    .string()
+    .regex(/^mongodb(?:\+srv)?:\/\//, 'DATABASE_URL must be a MongoDB connection URI'),
   NODE_ENV: z.enum(['development', 'test', 'production', 'preview']),
   CLIENT_URL: z.string().url(),
-  PORT: z.coerce.number().int().min(1).max(65535).optional().default(5000),
-  SESSION_TTL_DAYS: z.coerce.number().int().min(1).max(90),
+  PORT: z.coerce.number().int().min(1).max(65535),
+  SESSION_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(30),
   R2_ACCOUNT_ID: z.string().min(1).optional(),
   R2_ACCESS_KEY_ID: z.string().min(1).optional(),
   R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),

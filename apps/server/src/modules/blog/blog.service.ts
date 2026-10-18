@@ -5,19 +5,32 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, inArray, ilike, isNull, ne, or, sql, lte } from 'drizzle-orm';
-import { db } from '../../core/config/db.js';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import type { ClientSession, Connection, Model } from 'mongoose';
+import { Types } from 'mongoose';
 import {
-  blogBlocks,
-  blogs,
-  categories,
-  tags,
-  blogTags,
-  blogCategories,
-  blogRevisions,
-  urlRedirects,
-  users,
+  type BlogBlockDocument,
+  type BlogCategoryDocument,
+  type BlogDocument,
+  type BlogRevisionDocument,
+  type BlogTagDocument,
+  type CategoryDocument,
+  type NotificationDocument,
+  type TagDocument,
+  type UrlRedirectDocument,
+  type UserDocument,
+  Blog,
+  BlogBlock,
+  BlogCategory,
+  BlogRevision,
+  BlogTag,
+  Category,
+  Notification,
+  Tag,
+  UrlRedirect,
+  User,
 } from '../../core/schema/index.js';
+import { blocksToHtml, htmlToBlocks, syncImageBlocks } from './blog-content.adapter.js';
 import type {
   CreateBlockInput,
   CreateBlogInput,
@@ -27,9 +40,8 @@ import type {
   UpdateBlogInput,
   UpdateCategoryInput,
 } from './dto/blog.dto.js';
-import { htmlToBlocks, blocksToHtml, syncImageBlocks } from './blog-content.adapter.js';
-import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 import { GeminiService } from './gemini.service.js';
+import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 
 interface CacheEntry<T> {
   data: T;
@@ -76,15 +88,72 @@ type CurrentUser = {
   role: 'student' | 'editor' | 'admin';
 };
 
+function escapeRegex(text: string): string {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
 @Injectable()
 export class BlogService {
   private cache = new MemoryCache();
 
-  constructor(private readonly gemini: GeminiService = {} as any) {}
+  constructor(
+    @InjectModel(Blog.name)
+    private readonly blogModel: Model<BlogDocument>,
+    @InjectModel(BlogBlock.name)
+    private readonly blogBlockModel: Model<BlogBlockDocument>,
+    @InjectModel(BlogRevision.name)
+    private readonly blogRevisionModel: Model<BlogRevisionDocument>,
+    @InjectModel(Category.name)
+    private readonly categoryModel: Model<CategoryDocument>,
+    @InjectModel(Tag.name)
+    private readonly tagModel: Model<TagDocument>,
+    @InjectModel(BlogCategory.name)
+    private readonly blogCategoryModel: Model<BlogCategoryDocument>,
+    @InjectModel(BlogTag.name)
+    private readonly blogTagModel: Model<BlogTagDocument>,
+    @InjectModel(UrlRedirect.name)
+    private readonly urlRedirectModel: Model<UrlRedirectDocument>,
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
+    @InjectModel(Notification.name)
+    private readonly notificationModel: Model<NotificationDocument>,
+    @InjectConnection()
+    private readonly connection: Connection,
+    private readonly gemini: GeminiService = {} as any,
+  ) {}
 
   public invalidateCache(): void {
     this.cache.clear();
   }
+
+  private async runInTransaction<T>(
+    fn: (session?: ClientSession) => Promise<T>,
+  ): Promise<T> {
+    let session: ClientSession | null = null;
+    try {
+      session = await this.connection.startSession();
+      session.startTransaction();
+      const result = await fn(session);
+      await session.commitTransaction();
+      return result;
+    } catch (err: any) {
+      if (session?.inTransaction()) {
+        await session.abortTransaction();
+      }
+      if (
+        err?.message?.includes('Transactions are not supported') ||
+        err?.message?.includes('replica set')
+      ) {
+        return fn(undefined);
+      }
+      throw err;
+    } finally {
+      if (session) {
+        await session.endSession();
+      }
+    }
+  }
+
   // ==========================================
   // Public Blog Endpoints (SEO & SSR)
   // ==========================================
@@ -105,103 +174,101 @@ export class BlogService {
     const limit = Math.min(options?.limit ?? 20, 100);
     const offset = options?.offset ?? 0;
 
-    // Deduplicate by translationGroupId showing one entry per article.
-    // If an article exists in Hinglish, show Hinglish; if only English, show English.
-    const conditions = [
-      or(
-        eq(blogs.status, 'PUBLISHED'),
-        and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-      ),
+    const andConditions: any[] = [
+      {
+        $or: [
+          { status: 'PUBLISHED' },
+          { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+        ],
+      },
     ];
 
     if (options?.categorySlug) {
       const catSlug = options.categorySlug.toLowerCase().trim();
-      conditions.push(
-        or(
-          eq(categories.slug, catSlug),
-          sql`EXISTS (
-            SELECT 1 FROM blog_category bc
-            JOIN category c ON bc."categoryId" = c.id
-            WHERE bc."blogId" = ${blogs.id} AND LOWER(c.slug) = ${catSlug}
-          )`,
-          sql`EXISTS (
-            SELECT 1 FROM blog sibling
-            JOIN blog_category bc ON bc."blogId" = sibling.id
-            JOIN category c ON bc."categoryId" = c.id
-            WHERE sibling."translationGroupId" = ${blogs.translationGroupId}
-              AND LOWER(c.slug) = ${catSlug}
-          )`,
-        ),
-      );
+      const cat = await this.categoryModel.findOne({ slug: catSlug }).lean();
+      if (!cat) return [];
+
+      const blogCatRows = await this.blogCategoryModel
+        .find({ categoryId: cat._id })
+        .select({ blogId: 1 })
+        .lean();
+      const matchedBlogIds = blogCatRows.map((r) => r.blogId);
+
+      andConditions.push({
+        $or: [
+          { categoryId: cat._id },
+          { _id: { $in: matchedBlogIds } },
+        ],
+      });
     }
+
+    if (options?.tagSlug) {
+      const tagSlug = options.tagSlug.toLowerCase().trim();
+      const tag = await this.tagModel.findOne({ slug: tagSlug }).lean();
+      if (!tag) return [];
+
+      const blogTagRows = await this.blogTagModel
+        .find({ tagId: tag._id })
+        .select({ blogId: 1 })
+        .lean();
+      const matchedBlogIds = blogTagRows.map((r) => r.blogId);
+
+      andConditions.push({ _id: { $in: matchedBlogIds } });
+    }
+
     if (options?.search) {
-      conditions.push(
-        or(
-          ilike(blogs.title, `%${options.search}%`),
-          ilike(blogs.description, `%${options.search}%`),
-        ),
-      );
+      const regex = new RegExp(escapeRegex(options.search), 'i');
+      andConditions.push({
+        $or: [{ title: regex }, { description: regex }],
+      });
     }
 
     if (options?.language) {
-      conditions.push(eq(blogs.language, options.language));
-    } else {
-      conditions.push(
-        or(
-          eq(blogs.language, 'HINGLISH'),
-          and(
-            eq(blogs.language, 'ENGLISH'),
-            or(
-              isNull(blogs.translationGroupId),
-              sql`NOT EXISTS (
-                SELECT 1 FROM blog b2
-                WHERE b2."translationGroupId" = ${blogs.translationGroupId}
-                  AND b2.language = 'HINGLISH'
-                  AND (b2.status = 'PUBLISHED' OR (b2.status = 'SCHEDULED' AND b2."scheduledAt" <= ${now}))
-              )`,
-            ),
-          ),
-        ),
-      );
+      andConditions.push({ language: options.language });
     }
 
-    let baseQuery = db
-      .select({
-        id: blogs.id,
-        title: blogs.title,
-        slug: blogs.slug,
-        language: blogs.language,
-        translationGroupId: blogs.translationGroupId,
-        description: blogs.description,
-        coverImage: blogs.coverImage,
-        imageAlt: blogs.imageAlt,
-        metaTitle: blogs.metaTitle,
-        metaDescription: blogs.metaDescription,
-        publishedAt: blogs.publishedAt,
-        scheduledAt: blogs.scheduledAt,
-        updatedAt: blogs.updatedAt,
-        category: {
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-        },
-        author: {
-          id: users.id,
-          name: users.name,
-        },
-      })
-      .from(blogs)
-      .innerJoin(users, eq(blogs.authorId, users.id))
-      .leftJoin(categories, eq(blogs.categoryId, categories.id))
-      .where(and(...conditions))
-      .orderBy(desc(blogs.publishedAt), desc(blogs.createdAt))
+    const query = andConditions.length > 0 ? { $and: andConditions } : {};
+
+    const rawRows = await this.blogModel
+      .find(query)
+      .sort({ publishedAt: -1, createdAt: -1 })
+      .skip(offset)
       .limit(limit)
-      .offset(offset);
+      .populate<{ categoryId: CategoryDocument }>('categoryId')
+      .populate<{ authorId: UserDocument }>('authorId')
+      .lean();
 
-    const rows = await baseQuery;
-    if (rows.length === 0) return [];
+    if (rawRows.length === 0) return [];
 
-    // Find the first inline image block for each blog or its translation group
+    const rows = rawRows.map((r: any) => ({
+      id: r._id.toString(),
+      title: r.title,
+      slug: r.slug,
+      language: r.language,
+      translationGroupId: r.translationGroupId ?? null,
+      description: r.description ?? null,
+      coverImage: r.coverImage ?? null,
+      imageAlt: r.imageAlt ?? null,
+      metaTitle: r.metaTitle ?? null,
+      metaDescription: r.metaDescription ?? null,
+      publishedAt: r.publishedAt ?? null,
+      scheduledAt: r.scheduledAt ?? null,
+      updatedAt: r.updatedAt,
+      category: r.categoryId
+        ? {
+            id: r.categoryId._id.toString(),
+            name: r.categoryId.name,
+            slug: r.categoryId.slug,
+          }
+        : null,
+      author: r.authorId
+        ? {
+            id: r.authorId._id.toString(),
+            name: r.authorId.name,
+          }
+        : null,
+    }));
+
     const blogIds = rows.map((r) => r.id);
     const groupIds = rows
       .map((r) => r.translationGroupId)
@@ -216,58 +283,51 @@ export class BlogService {
     }
 
     if (groupIds.length > 0) {
-      const siblingBlogs = await db
-        .select({ id: blogs.id, translationGroupId: blogs.translationGroupId })
-        .from(blogs)
-        .where(inArray(blogs.translationGroupId, groupIds));
+      const siblingBlogs = await this.blogModel
+        .find({ translationGroupId: { $in: groupIds } })
+        .select({ _id: 1, translationGroupId: 1 })
+        .lean();
 
       for (const s of siblingBlogs) {
+        const sId = s._id.toString();
         if (s.translationGroupId) {
-          blogGroupIdMap.set(s.id, s.translationGroupId);
+          blogGroupIdMap.set(sId, s.translationGroupId);
         }
       }
 
       allRelatedBlogIds = [
-        ...new Set([...allRelatedBlogIds, ...siblingBlogs.map((s) => s.id)]),
+        ...new Set([...allRelatedBlogIds, ...siblingBlogs.map((s) => s._id.toString())]),
       ];
     }
 
-    // Parallelize image blocks and category queries for all related blogs
+    const relatedObjectIds = allRelatedBlogIds
+      .filter((id) => Types.ObjectId.isValid(id))
+      .map((id) => new Types.ObjectId(id));
+
     const [imageBlocks, catRows] = await Promise.all([
-      allRelatedBlogIds.length > 0
-        ? db
-            .select({
-              blogId: blogBlocks.blogId,
-              value: blogBlocks.value,
-              position: blogBlocks.position,
+      relatedObjectIds.length > 0
+        ? this.blogBlockModel
+            .find({
+              blogId: { $in: relatedObjectIds },
+              type: 'IMAGE',
             })
-            .from(blogBlocks)
-            .where(
-              and(
-                inArray(blogBlocks.blogId, allRelatedBlogIds),
-                eq(blogBlocks.type, 'IMAGE'),
-              ),
-            )
-            .orderBy(asc(blogBlocks.position))
+            .sort({ position: 1 })
+            .select({ blogId: 1, value: 1, position: 1 })
+            .lean()
         : Promise.resolve([]),
-      allRelatedBlogIds.length > 0
-        ? db
-            .select({
-              blogId: blogCategories.blogId,
-              id: categories.id,
-              name: categories.name,
-              slug: categories.slug,
-            })
-            .from(blogCategories)
-            .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
-            .where(inArray(blogCategories.blogId, allRelatedBlogIds))
+      relatedObjectIds.length > 0
+        ? this.blogCategoryModel
+            .find({ blogId: { $in: relatedObjectIds } })
+            .populate<{ categoryId: CategoryDocument }>('categoryId')
+            .lean()
         : Promise.resolve([]),
     ]);
 
     const blogImageMap = new Map<string, string>();
-    for (const img of imageBlocks) {
-      if (!blogImageMap.has(img.blogId)) {
-        blogImageMap.set(img.blogId, img.value);
+    for (const img of imageBlocks as any[]) {
+      const bId = img.blogId.toString();
+      if (!blogImageMap.has(bId)) {
+        blogImageMap.set(bId, img.value);
       }
     }
 
@@ -285,12 +345,19 @@ export class BlogService {
     }
 
     const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
-    for (const cr of catRows) {
-      const list = blogCategoryMap.get(cr.blogId) || [];
-      if (!list.some((c) => c.id === cr.id)) {
-        list.push({ id: cr.id, name: cr.name, slug: cr.slug });
+    for (const cr of catRows as any[]) {
+      if (!cr.categoryId) continue;
+      const bId = cr.blogId.toString();
+      const list = blogCategoryMap.get(bId) || [];
+      const catId = cr.categoryId._id.toString();
+      if (!list.some((c) => c.id === catId)) {
+        list.push({
+          id: catId,
+          name: cr.categoryId.name,
+          slug: cr.categoryId.slug,
+        });
       }
-      blogCategoryMap.set(cr.blogId, list);
+      blogCategoryMap.set(bId, list);
     }
 
     const result = rows.map((row) => {
@@ -325,177 +392,74 @@ export class BlogService {
     if (cached) return cached;
 
     const now = new Date();
-    // Default to HINGLISH when no language specified (primary audience)
     const requestedLang = language || 'HINGLISH';
-    const conditions = [
-      eq(blogs.slug, slug),
-      eq(blogs.language, requestedLang),
-      or(
-        eq(blogs.status, 'PUBLISHED'),
-        and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-      ),
-    ];
 
-    let [blog] = await db
-      .select({
-        id: blogs.id,
-        title: blogs.title,
-        slug: blogs.slug,
-        language: blogs.language,
-        translationGroupId: blogs.translationGroupId,
-        description: blogs.description,
-        coverImage: blogs.coverImage,
-        imageAlt: blogs.imageAlt,
-        imageCaption: blogs.imageCaption,
-        metaTitle: blogs.metaTitle,
-        metaDescription: blogs.metaDescription,
-        canonicalUrl: blogs.canonicalUrl,
-        noindex: blogs.noindex,
-        publishedAt: blogs.publishedAt,
-        updatedAt: blogs.updatedAt,
-        version: blogs.version,
-        category: {
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-        },
-        author: {
-          id: users.id,
-          name: users.name,
-        },
-      })
-      .from(blogs)
-      .innerJoin(users, eq(blogs.authorId, users.id))
-      .leftJoin(categories, eq(blogs.categoryId, categories.id))
-      .where(and(...conditions))
-      .limit(1);
+    const baseCondition: any = {
+      slug,
+      language: requestedLang,
+      $or: [
+        { status: 'PUBLISHED' },
+        { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+      ],
+    };
 
-    // If requested language not found directly by slug, check if a sibling in the translation group matches requested language
-    if (!blog) {
-      const [anyBlogWithSlug] = await db
-        .select({
-          id: blogs.id,
-          translationGroupId: blogs.translationGroupId,
+    let rawBlog = await this.blogModel
+      .findOne(baseCondition)
+      .populate<{ categoryId: CategoryDocument }>('categoryId')
+      .populate<{ authorId: UserDocument }>('authorId')
+      .lean();
+
+    if (!rawBlog) {
+      const anyBlogWithSlug = await this.blogModel
+        .findOne({
+          slug,
+          $or: [
+            { status: 'PUBLISHED' },
+            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+          ],
         })
-        .from(blogs)
-        .where(
-          and(
-            eq(blogs.slug, slug),
-            or(
-              eq(blogs.status, 'PUBLISHED'),
-              and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-            ),
-          ),
-        )
-        .limit(1);
+        .select({ _id: 1, translationGroupId: 1 })
+        .lean();
 
       if (anyBlogWithSlug?.translationGroupId) {
-        const [groupMatch] = await db
-          .select({
-            id: blogs.id,
-            title: blogs.title,
-            slug: blogs.slug,
-            language: blogs.language,
-            translationGroupId: blogs.translationGroupId,
-            description: blogs.description,
-            coverImage: blogs.coverImage,
-            imageAlt: blogs.imageAlt,
-            imageCaption: blogs.imageCaption,
-            metaTitle: blogs.metaTitle,
-            metaDescription: blogs.metaDescription,
-            canonicalUrl: blogs.canonicalUrl,
-            noindex: blogs.noindex,
-            publishedAt: blogs.publishedAt,
-            updatedAt: blogs.updatedAt,
-            version: blogs.version,
-            category: {
-              id: categories.id,
-              name: categories.name,
-              slug: categories.slug,
-            },
-            author: {
-              id: users.id,
-              name: users.name,
-            },
+        const groupMatch = await this.blogModel
+          .findOne({
+            translationGroupId: anyBlogWithSlug.translationGroupId,
+            language: requestedLang,
+            $or: [
+              { status: 'PUBLISHED' },
+              { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+            ],
           })
-          .from(blogs)
-          .innerJoin(users, eq(blogs.authorId, users.id))
-          .leftJoin(categories, eq(blogs.categoryId, categories.id))
-          .where(
-            and(
-              eq(blogs.translationGroupId, anyBlogWithSlug.translationGroupId),
-              eq(blogs.language, requestedLang),
-              or(
-                eq(blogs.status, 'PUBLISHED'),
-                and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-              ),
-            ),
-          )
-          .limit(1);
+          .populate<{ categoryId: CategoryDocument }>('categoryId')
+          .populate<{ authorId: UserDocument }>('authorId')
+          .lean();
 
-        if (groupMatch) blog = groupMatch;
+        if (groupMatch) rawBlog = groupMatch;
       }
     }
 
-    // If still not found, fallback to whichever language is available for this slug
-    if (!blog) {
-      const [fallback] = await db
-        .select({
-          id: blogs.id,
-          title: blogs.title,
-          slug: blogs.slug,
-          language: blogs.language,
-          translationGroupId: blogs.translationGroupId,
-          description: blogs.description,
-          coverImage: blogs.coverImage,
-          imageAlt: blogs.imageAlt,
-          imageCaption: blogs.imageCaption,
-          metaTitle: blogs.metaTitle,
-          metaDescription: blogs.metaDescription,
-          canonicalUrl: blogs.canonicalUrl,
-          noindex: blogs.noindex,
-          publishedAt: blogs.publishedAt,
-          updatedAt: blogs.updatedAt,
-          version: blogs.version,
-          category: {
-            id: categories.id,
-            name: categories.name,
-            slug: categories.slug,
-          },
-          author: {
-            id: users.id,
-            name: users.name,
-          },
+    if (!rawBlog) {
+      const fallback = await this.blogModel
+        .findOne({
+          slug,
+          $or: [
+            { status: 'PUBLISHED' },
+            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+          ],
         })
-        .from(blogs)
-        .innerJoin(users, eq(blogs.authorId, users.id))
-        .leftJoin(categories, eq(blogs.categoryId, categories.id))
-        .where(
-          and(
-            eq(blogs.slug, slug),
-            or(
-              eq(blogs.status, 'PUBLISHED'),
-              and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-            ),
-          ),
-        )
-        .limit(1);
-      if (fallback) blog = fallback;
+        .populate<{ categoryId: CategoryDocument }>('categoryId')
+        .populate<{ authorId: UserDocument }>('authorId')
+        .lean();
+      if (fallback) rawBlog = fallback;
     }
 
-    if (!blog) {
-      // Check if there is an active 301 redirect for this slug
-      const [redirect] = await db
-        .select()
-        .from(urlRedirects)
-        .where(
-          or(
-            eq(urlRedirects.sourcePath, slug),
-            eq(urlRedirects.sourcePath, `/${slug}`),
-            eq(urlRedirects.sourcePath, `/blog/${slug}`),
-          ),
-        )
-        .limit(1);
+    if (!rawBlog) {
+      const redirect = await this.urlRedirectModel
+        .findOne({
+          sourcePath: { $in: [slug, `/${slug}`, `/blog/${slug}`] },
+        })
+        .lean();
 
       if (redirect) {
         throw new NotFoundException({
@@ -508,58 +472,72 @@ export class BlogService {
       throw new NotFoundException('Blog was not found.');
     }
 
-    // Check if alternate language version exists (both share the same slug)
+    const blog: any = {
+      id: rawBlog._id.toString(),
+      title: rawBlog.title,
+      slug: rawBlog.slug,
+      language: rawBlog.language,
+      translationGroupId: rawBlog.translationGroupId ?? null,
+      description: rawBlog.description ?? null,
+      coverImage: rawBlog.coverImage ?? null,
+      imageAlt: rawBlog.imageAlt ?? null,
+      imageCaption: rawBlog.imageCaption ?? null,
+      metaTitle: rawBlog.metaTitle ?? null,
+      metaDescription: rawBlog.metaDescription ?? null,
+      canonicalUrl: rawBlog.canonicalUrl ?? null,
+      noindex: rawBlog.noindex ?? false,
+      publishedAt: rawBlog.publishedAt ?? null,
+      updatedAt: (rawBlog as any).updatedAt,
+      version: rawBlog.version,
+      category: rawBlog.categoryId
+        ? {
+            id: (rawBlog.categoryId as any)._id.toString(),
+            name: (rawBlog.categoryId as any).name,
+            slug: (rawBlog.categoryId as any).slug,
+          }
+        : null,
+      author: rawBlog.authorId
+        ? {
+            id: (rawBlog.authorId as any)._id.toString(),
+            name: (rawBlog.authorId as any).name,
+          }
+        : null,
+    };
+
     let hasAlternateLanguage = false;
     let effectiveBlocks = await this.getBlocks(blog.id);
     let alternateArticle: any = null;
 
     if (blog.translationGroupId) {
-      const [alt] = await db
-        .select({
-          id: blogs.id,
-          title: blogs.title,
-          slug: blogs.slug,
-          language: blogs.language,
-          description: blogs.description,
-          coverImage: blogs.coverImage,
-          imageAlt: blogs.imageAlt,
-          imageCaption: blogs.imageCaption,
-          metaTitle: blogs.metaTitle,
-          metaDescription: blogs.metaDescription,
-          publishedAt: blogs.publishedAt,
-          updatedAt: blogs.updatedAt,
+      const alt = await this.blogModel
+        .findOne({
+          translationGroupId: blog.translationGroupId,
+          _id: { $ne: rawBlog._id },
+          $or: [
+            { status: 'PUBLISHED' },
+            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+          ],
         })
-        .from(blogs)
-        .where(
-          and(
-            eq(blogs.translationGroupId, blog.translationGroupId),
-            ne(blogs.id, blog.id),
-            or(
-              eq(blogs.status, 'PUBLISHED'),
-              and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-            ),
-          ),
-        )
-        .limit(1);
+        .lean();
       hasAlternateLanguage = !!alt;
 
       if (alt) {
-        // Sync any images from alternate language version into this language version
-        const altBlocks = await this.getBlocks(alt.id);
+        const altId = alt._id.toString();
+        const altBlocks = await this.getBlocks(altId);
         effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
         alternateArticle = {
-          id: alt.id,
+          id: altId,
           title: alt.title,
           slug: alt.slug,
           language: alt.language,
-          description: alt.description,
-          coverImage: alt.coverImage,
-          imageAlt: alt.imageAlt,
-          imageCaption: alt.imageCaption,
-          metaTitle: alt.metaTitle,
-          metaDescription: alt.metaDescription,
-          publishedAt: alt.publishedAt,
-          updatedAt: alt.updatedAt,
+          description: alt.description ?? null,
+          coverImage: alt.coverImage ?? null,
+          imageAlt: alt.imageAlt ?? null,
+          imageCaption: alt.imageCaption ?? null,
+          metaTitle: alt.metaTitle ?? null,
+          metaDescription: alt.metaDescription ?? null,
+          publishedAt: alt.publishedAt ?? null,
+          updatedAt: (alt as any).updatedAt,
           htmlContent: blocksToHtml(altBlocks as any),
         };
       }
@@ -585,40 +563,32 @@ export class BlogService {
     return result;
   }
 
-  // Check redirect path directly
   async checkRedirect(path: string) {
-    const [redirect] = await db
-      .select()
-      .from(urlRedirects)
-      .where(eq(urlRedirects.sourcePath, path))
-      .limit(1);
-    return redirect ?? null;
+    return this.urlRedirectModel.findOne({ sourcePath: path }).lean();
   }
 
-  // Sitemap generator list
   async getSitemapEntries() {
     const now = new Date();
-    return db
-      .select({
-        slug: blogs.slug,
-        language: blogs.language,
-        categorySlug: categories.slug,
-        updatedAt: blogs.updatedAt,
-        publishedAt: blogs.publishedAt,
-        noindex: blogs.noindex,
+    const items = await this.blogModel
+      .find({
+        noindex: false,
+        $or: [
+          { status: 'PUBLISHED' },
+          { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+        ],
       })
-      .from(blogs)
-      .leftJoin(categories, eq(blogs.categoryId, categories.id))
-      .where(
-        and(
-          eq(blogs.noindex, false),
-          or(
-            eq(blogs.status, 'PUBLISHED'),
-            and(eq(blogs.status, 'SCHEDULED'), lte(blogs.scheduledAt, now)),
-          ),
-        ),
-      )
-      .orderBy(desc(blogs.updatedAt));
+      .populate<{ categoryId: CategoryDocument }>('categoryId', 'slug')
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    return items.map((i: any) => ({
+      slug: i.slug,
+      language: i.language,
+      categorySlug: i.categoryId?.slug ?? null,
+      updatedAt: i.updatedAt,
+      publishedAt: i.publishedAt,
+      noindex: i.noindex,
+    }));
   }
 
   // ==========================================
@@ -640,105 +610,115 @@ export class BlogService {
     const limit = Math.min(filters?.limit ?? 50, 200);
     const offset = filters?.offset ?? 0;
 
-    const conditions = [];
+    const conditions: any[] = [];
 
     if (currentUser.role !== 'admin') {
-      conditions.push(eq(blogs.authorId, currentUser.id));
+      conditions.push({ authorId: new Types.ObjectId(currentUser.id) });
     }
 
     if (filters?.status && filters.status !== 'ALL') {
-      conditions.push(eq(blogs.status, filters.status as any));
+      conditions.push({ status: filters.status });
     }
 
     if (filters?.categoryId && filters.categoryId !== 'ALL') {
-      conditions.push(
-        or(
-          eq(blogs.categoryId, filters.categoryId),
-          sql`EXISTS (
-            SELECT 1 FROM blog_category bc
-            WHERE bc."blogId" = ${blogs.id} AND bc."categoryId" = ${filters.categoryId}::uuid
-          )`,
-        ),
-      );
+      if (Types.ObjectId.isValid(filters.categoryId)) {
+        const catObjectId = new Types.ObjectId(filters.categoryId);
+        const pivotRows = await this.blogCategoryModel
+          .find({ categoryId: catObjectId })
+          .select({ blogId: 1 })
+          .lean();
+        const pivotBlogIds = pivotRows.map((r) => r.blogId);
+        conditions.push({
+          $or: [
+            { categoryId: catObjectId },
+            { _id: { $in: pivotBlogIds } },
+          ],
+        });
+      }
     }
 
     if (filters?.search) {
-      conditions.push(
-        or(
-          ilike(blogs.title, `%${filters.search}%`),
-          ilike(blogs.slug, `%${filters.search}%`),
-          ilike(blogs.description, `%${filters.search}%`),
-        ),
-      );
+      const regex = new RegExp(escapeRegex(filters.search), 'i');
+      conditions.push({
+        $or: [{ title: regex }, { slug: regex }, { description: regex }],
+      });
     }
 
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+    const query = conditions.length > 0 ? { $and: conditions } : {};
 
-    const rows = await db
-      .select({
-        id: blogs.id,
-        title: blogs.title,
-        slug: blogs.slug,
-        description: blogs.description,
-        coverImage: blogs.coverImage,
-        imageAlt: blogs.imageAlt,
-        status: blogs.status,
-        language: blogs.language,
-        translationGroupId: blogs.translationGroupId,
-        publishedAt: blogs.publishedAt,
-        scheduledAt: blogs.scheduledAt,
-        version: blogs.version,
-        metaTitle: blogs.metaTitle,
-        metaDescription: blogs.metaDescription,
-        canonicalUrl: blogs.canonicalUrl,
-        noindex: blogs.noindex,
-        createdAt: blogs.createdAt,
-        updatedAt: blogs.updatedAt,
-        categoryId: blogs.categoryId,
-        category: {
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-        },
-        author: {
-          id: users.id,
-          name: users.name,
-          email: users.email,
-        },
-      })
-      .from(blogs)
-      .innerJoin(users, eq(blogs.authorId, users.id))
-      .leftJoin(categories, eq(blogs.categoryId, categories.id))
-      .where(whereClause)
-      .orderBy(desc(blogs.updatedAt))
+    const rawRows = await this.blogModel
+      .find(query)
+      .sort({ updatedAt: -1 })
+      .skip(offset)
       .limit(limit)
-      .offset(offset);
+      .populate<{ categoryId: CategoryDocument }>('categoryId')
+      .populate<{ authorId: UserDocument }>('authorId')
+      .lean();
 
-    const allBlogIds = rows.map((r) => r.id);
+    const rows = rawRows.map((r: any) => ({
+      id: r._id.toString(),
+      title: r.title,
+      slug: r.slug,
+      description: r.description ?? null,
+      coverImage: r.coverImage ?? null,
+      imageAlt: r.imageAlt ?? null,
+      status: r.status,
+      language: r.language,
+      translationGroupId: r.translationGroupId ?? null,
+      publishedAt: r.publishedAt ?? null,
+      scheduledAt: r.scheduledAt ?? null,
+      version: r.version,
+      metaTitle: r.metaTitle ?? null,
+      metaDescription: r.metaDescription ?? null,
+      canonicalUrl: r.canonicalUrl ?? null,
+      noindex: r.noindex ?? false,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      categoryId: r.categoryId ? (r.categoryId as any)._id.toString() : null,
+      category: r.categoryId
+        ? {
+            id: (r.categoryId as any)._id.toString(),
+            name: (r.categoryId as any).name,
+            slug: (r.categoryId as any).slug,
+          }
+        : null,
+      author: r.authorId
+        ? {
+            id: (r.authorId as any)._id.toString(),
+            name: (r.authorId as any).name,
+            email: (r.authorId as any).email,
+          }
+        : null,
+    }));
+
+    const allBlogObjectIds = rows
+      .filter((r) => Types.ObjectId.isValid(r.id))
+      .map((r) => new Types.ObjectId(r.id));
+
     const catRows =
-      allBlogIds.length > 0
-        ? await db
-            .select({
-              blogId: blogCategories.blogId,
-              id: categories.id,
-              name: categories.name,
-              slug: categories.slug,
-            })
-            .from(blogCategories)
-            .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
-            .where(inArray(blogCategories.blogId, allBlogIds))
+      allBlogObjectIds.length > 0
+        ? await this.blogCategoryModel
+            .find({ blogId: { $in: allBlogObjectIds } })
+            .populate<{ categoryId: CategoryDocument }>('categoryId')
+            .lean()
         : [];
 
     const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
-    for (const cr of catRows) {
-      const list = blogCategoryMap.get(cr.blogId) || [];
-      if (!list.some((c) => c.id === cr.id)) {
-        list.push({ id: cr.id, name: cr.name, slug: cr.slug });
+    for (const cr of catRows as any[]) {
+      if (!cr.categoryId) continue;
+      const bId = cr.blogId.toString();
+      const list = blogCategoryMap.get(bId) || [];
+      const cId = cr.categoryId._id.toString();
+      if (!list.some((c) => c.id === cId)) {
+        list.push({
+          id: cId,
+          name: cr.categoryId.name,
+          slug: cr.categoryId.slug,
+        });
       }
-      blogCategoryMap.set(cr.blogId, list);
+      blogCategoryMap.set(bId, list);
     }
 
-    // Group articles by translation group so bilingual versions are treated as 1 single article
     const groupedMap = new Map<string, any>();
     for (const row of rows) {
       const groupKey = row.translationGroupId || row.slug || row.id;
@@ -773,7 +753,6 @@ export class BlogService {
         });
         if (row.language === 'HINGLISH') {
           existing.hinglishId = row.id;
-          // Prefer Hinglish title as primary default
           existing.title = row.title;
           existing.id = row.id;
           existing.categoryId = primaryCategoryId || existing.categoryId;
@@ -799,26 +778,30 @@ export class BlogService {
 
     let linkedBlog: any = null;
     if (blog.translationGroupId) {
-      const [alt] = await db
-        .select()
-        .from(blogs)
-        .where(
-          and(
-            eq(blogs.translationGroupId, blog.translationGroupId),
-            ne(blogs.id, blog.id),
-          ),
-        )
-        .limit(1);
+      const alt = await this.blogModel
+        .findOne({
+          translationGroupId: blog.translationGroupId,
+          _id: { $ne: new Types.ObjectId(blog.id) },
+        })
+        .lean();
       if (alt) {
-        let altBlocks = await this.getBlocks(alt.id);
-        // Bidirectional image sync so opening either blog in editor has all images synchronized
+        const altId = alt._id.toString();
+        let altBlocks = await this.getBlocks(altId);
         const syncedBlocks = syncImageBlocks(blocks as any, altBlocks as any);
         const syncedAltBlocks = syncImageBlocks(altBlocks as any, blocks as any);
         blocks = syncedBlocks as any;
         altBlocks = syncedAltBlocks as any;
 
         linkedBlog = {
-          ...alt,
+          id: altId,
+          title: alt.title,
+          slug: alt.slug,
+          description: alt.description ?? null,
+          coverImage: alt.coverImage ?? null,
+          status: alt.status,
+          language: alt.language,
+          translationGroupId: alt.translationGroupId,
+          version: alt.version,
           blocks: altBlocks,
           htmlContent: blocksToHtml(altBlocks as any),
         };
@@ -830,7 +813,7 @@ export class BlogService {
 
     return {
       ...blog,
-      category: postCategories[0] || blog.categoryId ? { id: blog.categoryId } : null,
+      category: postCategories[0] || (blog.categoryId ? { id: blog.categoryId } : null),
       categories: postCategories,
       blocks,
       tags: postTagsList,
@@ -843,23 +826,24 @@ export class BlogService {
     this.assertCanWrite(currentUser);
     const authorId = await this.resolveAuthorId(input.authorId, currentUser);
 
-    // If an existing draft with this slug + language already exists for this author, update it instead of duplicating
     const language = input.language ?? 'HINGLISH';
-    const [existingDraft] = await db
-      .select({ id: blogs.id, status: blogs.status })
-      .from(blogs)
-      .where(and(eq(blogs.slug, input.slug), eq(blogs.language, language), eq(blogs.authorId, authorId)))
-      .limit(1);
+    const existingDraft = await this.blogModel
+      .findOne({
+        slug: input.slug,
+        language,
+        authorId: new Types.ObjectId(authorId),
+      })
+      .select({ _id: 1, status: 1 })
+      .lean();
 
     if (existingDraft && existingDraft.status === 'DRAFT') {
-      return this.update(existingDraft.id, input, currentUser);
+      return this.update(existingDraft._id.toString(), input, currentUser);
     }
 
-    // Validate slug uniqueness proactively (per-language)
     await this.assertSlugAvailable(input.slug, undefined, language);
 
     try {
-      const created = await db.transaction(async (tx) => {
+      const created = await this.runInTransaction(async (session) => {
         const now = new Date();
         const status = input.status ?? 'DRAFT';
         const publishedAt = status === 'PUBLISHED' ? now : null;
@@ -876,63 +860,92 @@ export class BlogService {
               : [];
         const primaryCategoryId = initialCategoryIds[0] || null;
 
-        const [blog] = await tx
-          .insert(blogs)
-          .values({
-            title: input.title,
-            slug: input.slug,
-            description: input.description,
-            coverImage: input.coverImage,
-            imageAlt: input.imageAlt,
-            imageCaption: input.imageCaption,
-            categoryId: primaryCategoryId,
-            metaTitle: input.metaTitle,
-            metaDescription: input.metaDescription,
-            canonicalUrl: input.canonicalUrl || null,
-            noindex: input.noindex ?? false,
-            language: input.language ?? 'HINGLISH',
-            translationGroupId: input.translationGroupId || null,
-            status,
-            publishedAt,
-            scheduledAt,
-            version: 1,
-            authorId,
-          })
-          .returning();
+        const [blog] = await this.blogModel.create(
+          [
+            {
+              title: input.title,
+              slug: input.slug,
+              description: input.description,
+              coverImage: input.coverImage,
+              imageAlt: input.imageAlt,
+              imageCaption: input.imageCaption,
+              categoryId:
+                primaryCategoryId && Types.ObjectId.isValid(primaryCategoryId)
+                  ? new Types.ObjectId(primaryCategoryId)
+                  : null,
+              metaTitle: input.metaTitle,
+              metaDescription: input.metaDescription,
+              canonicalUrl: input.canonicalUrl || null,
+              noindex: input.noindex ?? false,
+              language,
+              translationGroupId: input.translationGroupId || null,
+              status,
+              publishedAt,
+              scheduledAt,
+              version: 1,
+              authorId: new Types.ObjectId(authorId),
+            },
+          ],
+          { session },
+        );
 
-        if (!blog) throw new Error('Blog creation did not return a row.');
+        const blogId = blog._id.toString();
 
-        // Content: either parsed from htmlContent or direct blocks
         let blocksToInsert: CreateBlockInput[] = input.blocks ?? [];
         if (blocksToInsert.length === 0 && input.htmlContent) {
           blocksToInsert = htmlToBlocks(input.htmlContent) as any;
         }
 
-        const blocks = await this.insertBlocks(tx, blog.id, blocksToInsert);
+        const blocks = await this.insertBlocks(blogId, blocksToInsert, session);
 
-        // Tags
         if (input.tagIds && input.tagIds.length > 0) {
-          await this.syncTags(tx, blog.id, input.tagIds);
+          await this.syncTags(blogId, input.tagIds, session);
         }
 
-        // Categories (multi-category support)
         if (initialCategoryIds.length > 0) {
-          await this.syncCategories(tx, blog.id, initialCategoryIds);
+          await this.syncCategories(blogId, initialCategoryIds, session);
         }
 
-        // Create initial revision
-        await tx.insert(blogRevisions).values({
-          blogId: blog.id,
-          authorId: currentUser.id,
-          title: blog.title,
-          description: blog.description,
-          version: 1,
-          snapshot: { blog, blocks },
-        });
+        await this.blogRevisionModel.create(
+          [
+            {
+              blogId: blog._id,
+              authorId: new Types.ObjectId(currentUser.id),
+              title: blog.title,
+              description: blog.description,
+              version: 1,
+              snapshot: { blog: blog.toObject(), blocks },
+            },
+          ],
+          { session },
+        );
 
-        return { ...blog, blocks, htmlContent: blocksToHtml(blocks as any) };
+        return {
+          id: blogId,
+          title: blog.title,
+          slug: blog.slug,
+          description: blog.description,
+          coverImage: blog.coverImage,
+          imageAlt: blog.imageAlt,
+          imageCaption: blog.imageCaption,
+          categoryId: primaryCategoryId,
+          metaTitle: blog.metaTitle,
+          metaDescription: blog.metaDescription,
+          canonicalUrl: blog.canonicalUrl,
+          noindex: blog.noindex,
+          language: blog.language,
+          translationGroupId: blog.translationGroupId,
+          status: blog.status,
+          publishedAt: blog.publishedAt,
+          scheduledAt: blog.scheduledAt,
+          version: blog.version,
+          authorId,
+          blocks,
+          htmlContent: blocksToHtml(blocks as any),
+        };
       });
-      await this.announceIfNewlyPublished(created, false);
+
+      await this.announceIfNewlyPublished(created as any, false);
       this.invalidateCache();
       return created;
     } catch (error) {
@@ -943,7 +956,6 @@ export class BlogService {
   async update(id: string, input: UpdateBlogInput, currentUser: CurrentUser) {
     const existing = await this.findManageable(id, currentUser);
 
-    // Optimistic Concurrency check
     if (
       input.currentVersion !== undefined &&
       input.currentVersion !== existing.version
@@ -955,7 +967,6 @@ export class BlogService {
       });
     }
 
-    // Slug collision & 301 redirect management
     if (input.slug && input.slug !== existing.slug) {
       await this.assertSlugAvailable(input.slug, existing.id, existing.language);
     }
@@ -966,7 +977,7 @@ export class BlogService {
         : existing.authorId;
 
     try {
-      const updated = await db.transaction(async (tx) => {
+      const updated = await this.runInTransaction(async (session) => {
         const nextVersion = existing.version + 1;
         const status = input.status ?? existing.status;
         let publishedAt = existing.publishedAt;
@@ -982,35 +993,35 @@ export class BlogService {
             ? new Date(input.scheduledAt)
             : existing.scheduledAt;
 
-        // If published URL changed, record automatic 301 redirect (no /blog/ prefix)
         if (
           input.slug &&
           input.slug !== existing.slug &&
           existing.status === 'PUBLISHED'
         ) {
-          await tx
-            .insert(urlRedirects)
-            .values({
-              sourcePath: `/${existing.slug}`,
-              targetPath: `/${input.slug}`,
-              statusCode: 301,
-            })
-            .onConflictDoUpdate({
-              target: urlRedirects.sourcePath,
-              set: { targetPath: `/${input.slug}`, createdAt: new Date() },
-            });
-          // Also redirect old /blog/ paths for backwards compatibility
-          await tx
-            .insert(urlRedirects)
-            .values({
-              sourcePath: `/blog/${existing.slug}`,
-              targetPath: `/${input.slug}`,
-              statusCode: 301,
-            })
-            .onConflictDoUpdate({
-              target: urlRedirects.sourcePath,
-              set: { targetPath: `/${input.slug}`, createdAt: new Date() },
-            });
+          await this.urlRedirectModel.updateOne(
+            { sourcePath: `/${existing.slug}` },
+            {
+              $set: {
+                targetPath: `/${input.slug}`,
+                statusCode: 301,
+                createdAt: new Date(),
+              },
+              $setOnInsert: { sourcePath: `/${existing.slug}` },
+            },
+            { upsert: true, session },
+          );
+          await this.urlRedirectModel.updateOne(
+            { sourcePath: `/blog/${existing.slug}` },
+            {
+              $set: {
+                targetPath: `/${input.slug}`,
+                statusCode: 301,
+                createdAt: new Date(),
+              },
+              $setOnInsert: { sourcePath: `/blog/${existing.slug}` },
+            },
+            { upsert: true, session },
+          );
         }
 
         const updatedCategoryIds =
@@ -1025,41 +1036,42 @@ export class BlogService {
             ? (updatedCategoryIds[0] || null)
             : existing.categoryId;
 
-        const [blog] = await tx
-          .update(blogs)
-          .set({
-            title: input.title ?? existing.title,
-            slug: input.slug ?? existing.slug,
-            description: input.description ?? existing.description,
-            coverImage: input.coverImage ?? existing.coverImage,
-            imageAlt: input.imageAlt ?? existing.imageAlt,
-            imageCaption: input.imageCaption ?? existing.imageCaption,
-            categoryId: updatedPrimaryCategoryId,
-            metaTitle: input.metaTitle ?? existing.metaTitle,
-            metaDescription: input.metaDescription ?? existing.metaDescription,
-            canonicalUrl:
-              input.canonicalUrl !== undefined
-                ? input.canonicalUrl
-                : existing.canonicalUrl,
-            noindex: input.noindex ?? existing.noindex,
-            language: input.language ?? existing.language,
-            translationGroupId:
-              input.translationGroupId !== undefined
-                ? input.translationGroupId
-                : existing.translationGroupId,
-            status,
-            publishedAt,
-            scheduledAt,
-            version: nextVersion,
-            authorId,
-            updatedAt: new Date(),
-          })
-          .where(eq(blogs.id, existing.id))
-          .returning();
+        const updateFields: any = {
+          version: nextVersion,
+          authorId: new Types.ObjectId(authorId),
+          updatedAt: new Date(),
+        };
+        if (input.title !== undefined) updateFields.title = input.title;
+        if (input.slug !== undefined) updateFields.slug = input.slug;
+        if (input.description !== undefined) updateFields.description = input.description;
+        if (input.coverImage !== undefined) updateFields.coverImage = input.coverImage;
+        if (input.imageAlt !== undefined) updateFields.imageAlt = input.imageAlt;
+        if (input.imageCaption !== undefined) updateFields.imageCaption = input.imageCaption;
+        if (updatedPrimaryCategoryId !== undefined) {
+          updateFields.categoryId =
+            updatedPrimaryCategoryId && Types.ObjectId.isValid(updatedPrimaryCategoryId)
+              ? new Types.ObjectId(updatedPrimaryCategoryId)
+              : null;
+        }
+        if (input.metaTitle !== undefined) updateFields.metaTitle = input.metaTitle;
+        if (input.metaDescription !== undefined) updateFields.metaDescription = input.metaDescription;
+        if (input.canonicalUrl !== undefined) updateFields.canonicalUrl = input.canonicalUrl;
+        if (input.noindex !== undefined) updateFields.noindex = input.noindex;
+        if (input.language !== undefined) updateFields.language = input.language;
+        if (input.translationGroupId !== undefined) updateFields.translationGroupId = input.translationGroupId;
+        if (input.status !== undefined) {
+          updateFields.status = status;
+          updateFields.publishedAt = publishedAt;
+          updateFields.scheduledAt = scheduledAt;
+        }
 
-        if (!blog) throw new NotFoundException('Blog was not found.');
+        const blogDoc = await this.blogModel.findByIdAndUpdate(
+          existing.id,
+          { $set: updateFields },
+          { new: true, session },
+        );
+        if (!blogDoc) throw new NotFoundException('Blog was not found.');
 
-        // Update blocks if provided either as htmlContent or blocks array
         let blocksToPersist: CreateBlockInput[] | null = null;
         if (input.blocks && input.blocks.length > 0) {
           blocksToPersist = input.blocks;
@@ -1067,113 +1079,126 @@ export class BlogService {
           blocksToPersist = htmlToBlocks(input.htmlContent) as any;
         }
 
-        let blocks = await tx
-          .select()
-          .from(blogBlocks)
-          .where(eq(blogBlocks.blogId, blog.id))
-          .orderBy(asc(blogBlocks.position));
+        let blocks = await this.getBlocks(existing.id);
 
         if (blocksToPersist !== null) {
-          // Replace all blocks with newly adapted blocks
-          await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, blog.id));
-          blocks = await this.insertBlocks(tx, blog.id, blocksToPersist);
+          await this.blogBlockModel.deleteMany(
+            { blogId: new Types.ObjectId(existing.id) },
+            { session },
+          );
+          blocks = await this.insertBlocks(existing.id, blocksToPersist, session);
         }
 
-        // Sync tags if provided
         if (input.tagIds) {
-          await this.syncTags(tx, blog.id, input.tagIds);
+          await this.syncTags(existing.id, input.tagIds, session);
         }
 
-        // Sync categories if provided
         if (updatedCategoryIds !== undefined) {
-          await this.syncCategories(tx, blog.id, updatedCategoryIds);
+          await this.syncCategories(existing.id, updatedCategoryIds, session);
         }
 
-        // Sync shared fields to sibling language version (coverImage, imageAlt, imageCaption, categoryId, tags)
-        if (blog.translationGroupId) {
-          const [sibling] = await tx
-            .select({ id: blogs.id })
-            .from(blogs)
-            .where(
-              and(
-                eq(blogs.translationGroupId, blog.translationGroupId),
-                ne(blogs.id, blog.id),
-              ),
-            )
-            .limit(1);
+        if (blogDoc.translationGroupId) {
+          const sibling = await this.blogModel
+            .findOne({
+              translationGroupId: blogDoc.translationGroupId,
+              _id: { $ne: blogDoc._id },
+            })
+            .select({ _id: 1 })
+            .lean();
 
-          const sharedFieldsToSync: Record<string, any> = {};
+          const sharedFieldsToSync: any = {};
           if (input.status !== undefined) {
             sharedFieldsToSync.status = status;
             sharedFieldsToSync.publishedAt = publishedAt;
             sharedFieldsToSync.scheduledAt = scheduledAt;
           }
-          if (input.coverImage !== undefined) sharedFieldsToSync.coverImage = blog.coverImage;
-          if (input.imageAlt !== undefined) sharedFieldsToSync.imageAlt = blog.imageAlt;
-          if (input.imageCaption !== undefined) sharedFieldsToSync.imageCaption = blog.imageCaption;
-          if (updatedPrimaryCategoryId !== undefined) sharedFieldsToSync.categoryId = updatedPrimaryCategoryId;
-          if (input.noindex !== undefined) sharedFieldsToSync.noindex = blog.noindex;
+          if (input.coverImage !== undefined) sharedFieldsToSync.coverImage = blogDoc.coverImage;
+          if (input.imageAlt !== undefined) sharedFieldsToSync.imageAlt = blogDoc.imageAlt;
+          if (input.imageCaption !== undefined) sharedFieldsToSync.imageCaption = blogDoc.imageCaption;
+          if (updatedPrimaryCategoryId !== undefined) {
+            sharedFieldsToSync.categoryId = updateFields.categoryId;
+          }
+          if (input.noindex !== undefined) sharedFieldsToSync.noindex = blogDoc.noindex;
 
           if (Object.keys(sharedFieldsToSync).length > 0) {
-            sharedFieldsToSync.updatedAt = new Date();
-            await tx
-              .update(blogs)
-              .set(sharedFieldsToSync)
-              .where(
-                and(
-                  eq(blogs.translationGroupId, blog.translationGroupId),
-                  ne(blogs.id, blog.id),
-                ),
-              );
+            await this.blogModel.updateMany(
+              {
+                translationGroupId: blogDoc.translationGroupId,
+                _id: { $ne: blogDoc._id },
+              },
+              { $set: sharedFieldsToSync },
+              { session },
+            );
           }
 
-          // Sync tags to sibling
-          if (input.tagIds && sibling) {
-            await this.syncTags(tx, sibling.id, input.tagIds);
-          }
-
-          // Sync categories to sibling
-          if (updatedCategoryIds !== undefined && sibling) {
-            await this.syncCategories(tx, sibling.id, updatedCategoryIds);
-          }
-
-          // Sync inline image blocks to sibling language version
-          if (sibling && blocksToPersist !== null) {
-            const siblingBlocks = await tx
-              .select()
-              .from(blogBlocks)
-              .where(eq(blogBlocks.blogId, sibling.id))
-              .orderBy(asc(blogBlocks.position));
-
-            const syncedSiblingBlocks = syncImageBlocks(siblingBlocks as any, blocks as any);
-            if (syncedSiblingBlocks.length !== siblingBlocks.length) {
-              await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, sibling.id));
-              await this.insertBlocks(tx, sibling.id, syncedSiblingBlocks as any);
-              await tx
-                .update(blogs)
-                .set({ updatedAt: new Date() })
-                .where(eq(blogs.id, sibling.id));
+          if (sibling) {
+            const siblingId = sibling._id.toString();
+            if (input.tagIds) {
+              await this.syncTags(siblingId, input.tagIds, session);
+            }
+            if (updatedCategoryIds !== undefined) {
+              await this.syncCategories(siblingId, updatedCategoryIds, session);
+            }
+            if (blocksToPersist !== null) {
+              const siblingBlocks = await this.getBlocks(siblingId);
+              const syncedSiblingBlocks = syncImageBlocks(siblingBlocks as any, blocks as any);
+              if (syncedSiblingBlocks.length !== siblingBlocks.length) {
+                await this.blogBlockModel.deleteMany(
+                  { blogId: sibling._id },
+                  { session },
+                );
+                await this.insertBlocks(siblingId, syncedSiblingBlocks as any, session);
+                await this.blogModel.updateOne(
+                  { _id: sibling._id },
+                  { $set: { updatedAt: new Date() } },
+                  { session },
+                );
+              }
             }
           }
         }
 
-        // Record revision snapshot
-        await tx.insert(blogRevisions).values({
-          blogId: blog.id,
-          authorId: currentUser.id,
-          title: blog.title,
-          description: blog.description,
-          version: nextVersion,
-          snapshot: { blog, blocks },
-        });
+        await this.blogRevisionModel.create(
+          [
+            {
+              blogId: blogDoc._id,
+              authorId: new Types.ObjectId(currentUser.id),
+              title: blogDoc.title,
+              description: blogDoc.description,
+              version: nextVersion,
+              snapshot: { blog: blogDoc.toObject(), blocks },
+            },
+          ],
+          { session },
+        );
 
         return {
-          ...blog,
+          id: blogDoc._id.toString(),
+          title: blogDoc.title,
+          slug: blogDoc.slug,
+          description: blogDoc.description,
+          coverImage: blogDoc.coverImage,
+          imageAlt: blogDoc.imageAlt,
+          imageCaption: blogDoc.imageCaption,
+          categoryId: blogDoc.categoryId ? blogDoc.categoryId.toString() : null,
+          metaTitle: blogDoc.metaTitle,
+          metaDescription: blogDoc.metaDescription,
+          canonicalUrl: blogDoc.canonicalUrl,
+          noindex: blogDoc.noindex,
+          language: blogDoc.language,
+          translationGroupId: blogDoc.translationGroupId,
+          status: blogDoc.status,
+          publishedAt: blogDoc.publishedAt,
+          scheduledAt: blogDoc.scheduledAt,
+          version: blogDoc.version,
+          authorId: blogDoc.authorId.toString(),
+          updatedAt: (blogDoc as any).updatedAt,
           blocks,
           htmlContent: blocksToHtml(blocks as any),
         };
       });
-      await this.announceIfNewlyPublished(updated, existing.status === 'PUBLISHED');
+
+      await this.announceIfNewlyPublished(updated as any, existing.status === 'PUBLISHED');
       this.invalidateCache();
       return updated;
     } catch (error) {
@@ -1181,7 +1206,6 @@ export class BlogService {
     }
   }
 
-  // Duplicate an existing article as a draft
   async duplicate(id: string, currentUser: CurrentUser) {
     const source = await this.findManageable(id, currentUser);
     const sourceBlocks = await this.getBlocks(source.id);
@@ -1194,50 +1218,70 @@ export class BlogService {
       slug = `${baseSlug}-${counter++}`;
     }
 
-    return db.transaction(async (tx) => {
-      const [newBlog] = await tx
-        .insert(blogs)
-        .values({
-          title: `${source.title} (Copy)`,
-          slug,
-          description: source.description,
-          coverImage: source.coverImage,
-          imageAlt: source.imageAlt,
-          imageCaption: source.imageCaption,
-          categoryId: source.categoryId,
-          metaTitle: source.metaTitle,
-          metaDescription: source.metaDescription,
-          canonicalUrl: null,
-          noindex: true,
-          status: 'DRAFT',
-          publishedAt: null,
-          authorId: currentUser.id,
-          version: 1,
-        })
-        .returning();
+    return this.runInTransaction(async (session) => {
+      const [newBlog] = await this.blogModel.create(
+        [
+          {
+            title: `${source.title} (Copy)`,
+            slug,
+            description: source.description,
+            coverImage: source.coverImage,
+            imageAlt: source.imageAlt,
+            imageCaption: source.imageCaption,
+            categoryId:
+              source.categoryId && Types.ObjectId.isValid(source.categoryId)
+                ? new Types.ObjectId(source.categoryId)
+                : null,
+            metaTitle: source.metaTitle,
+            metaDescription: source.metaDescription,
+            canonicalUrl: null,
+            noindex: true,
+            status: 'DRAFT',
+            publishedAt: null,
+            authorId: new Types.ObjectId(currentUser.id),
+            version: 1,
+          },
+        ],
+        { session },
+      );
 
-      if (!newBlog) throw new Error('Duplication failed');
+      const newBlogId = newBlog._id.toString();
 
       const blocks = await this.insertBlocks(
-        tx,
-        newBlog.id,
+        newBlogId,
         sourceBlocks.map((b) => ({
           type: b.type,
           value: b.value,
           metadata: b.metadata as any,
         })),
+        session,
       );
 
       if (sourceTags.length > 0) {
         await this.syncTags(
-          tx,
-          newBlog.id,
+          newBlogId,
           sourceTags.map((t) => t.id),
+          session,
         );
       }
 
       return {
-        ...newBlog,
+        id: newBlogId,
+        title: newBlog.title,
+        slug: newBlog.slug,
+        description: newBlog.description,
+        coverImage: newBlog.coverImage,
+        imageAlt: newBlog.imageAlt,
+        imageCaption: newBlog.imageCaption,
+        categoryId: source.categoryId,
+        metaTitle: newBlog.metaTitle,
+        metaDescription: newBlog.metaDescription,
+        canonicalUrl: null,
+        noindex: true,
+        status: 'DRAFT',
+        publishedAt: null,
+        authorId: currentUser.id,
+        version: 1,
         blocks,
         htmlContent: blocksToHtml(blocks as any),
       };
@@ -1246,65 +1290,65 @@ export class BlogService {
 
   async remove(id: string, currentUser: CurrentUser) {
     const existing = await this.findManageable(id, currentUser);
-    await db.transaction(async (tx) => {
+    await this.runInTransaction(async (session) => {
       const idsToDelete = [existing.id];
       if (existing.translationGroupId) {
-        const siblings = await tx
-          .select({ id: blogs.id })
-          .from(blogs)
-          .where(eq(blogs.translationGroupId, existing.translationGroupId));
+        const siblings = await this.blogModel
+          .find({ translationGroupId: existing.translationGroupId })
+          .select({ _id: 1 })
+          .lean();
         for (const s of siblings) {
-          if (!idsToDelete.includes(s.id)) idsToDelete.push(s.id);
+          const sId = s._id.toString();
+          if (!idsToDelete.includes(sId)) idsToDelete.push(sId);
         }
       }
 
       for (const blogId of idsToDelete) {
-        await tx.delete(blogBlocks).where(eq(blogBlocks.blogId, blogId));
-        await tx.delete(blogTags).where(eq(blogTags.blogId, blogId));
-        await tx.delete(blogRevisions).where(eq(blogRevisions.blogId, blogId));
-        await tx.delete(blogs).where(eq(blogs.id, blogId));
+        const bObjectId = new Types.ObjectId(blogId);
+        await this.blogBlockModel.deleteMany({ blogId: bObjectId }, { session });
+        await this.blogTagModel.deleteMany({ blogId: bObjectId }, { session });
+        await this.blogCategoryModel.deleteMany({ blogId: bObjectId }, { session });
+        await this.blogRevisionModel.deleteMany({ blogId: bObjectId }, { session });
+        await this.blogModel.deleteOne({ _id: bObjectId }, { session });
       }
     });
     this.invalidateCache();
   }
 
-  // Revision history list
   async listRevisions(blogId: string, currentUser: CurrentUser) {
     await this.findManageable(blogId, currentUser);
-    return db
-      .select({
-        id: blogRevisions.id,
-        version: blogRevisions.version,
-        title: blogRevisions.title,
-        createdAt: blogRevisions.createdAt,
-        author: {
-          id: users.id,
-          name: users.name,
-        },
-      })
-      .from(blogRevisions)
-      .innerJoin(users, eq(blogRevisions.authorId, users.id))
-      .where(eq(blogRevisions.blogId, blogId))
-      .orderBy(desc(blogRevisions.version));
+    const rows = await this.blogRevisionModel
+      .find({ blogId: new Types.ObjectId(blogId) })
+      .populate<{ authorId: UserDocument }>('authorId', 'name')
+      .sort({ version: -1 })
+      .lean();
+
+    return rows.map((r: any) => ({
+      id: r._id.toString(),
+      version: r.version,
+      title: r.title,
+      createdAt: r.createdAt,
+      author: r.authorId
+        ? { id: r.authorId._id.toString(), name: r.authorId.name }
+        : null,
+    }));
   }
 
-  // Restore a revision
   async restoreRevision(
     blogId: string,
     revisionId: string,
     currentUser: CurrentUser,
   ) {
     const blog = await this.findManageable(blogId, currentUser);
-    const [rev] = await db
-      .select()
-      .from(blogRevisions)
-      .where(
-        and(
-          eq(blogRevisions.id, revisionId),
-          eq(blogRevisions.blogId, blog.id),
-        ),
-      )
-      .limit(1);
+    if (!Types.ObjectId.isValid(revisionId)) {
+      throw new NotFoundException('Revision not found.');
+    }
+    const rev = await this.blogRevisionModel
+      .findOne({
+        _id: new Types.ObjectId(revisionId),
+        blogId: new Types.ObjectId(blog.id),
+      })
+      .lean();
 
     if (!rev) throw new NotFoundException('Revision not found.');
 
@@ -1331,19 +1375,36 @@ export class BlogService {
     const cached = this.cache.get<any[]>(cacheKey);
     if (cached) return cached;
 
-    const res = await db
-      .select({
-        id: categories.id,
-        name: categories.name,
-        slug: categories.slug,
-        description: categories.description,
-        createdAt: categories.createdAt,
-        postCount: sql<number>`count(${blogs.id})::int`,
-      })
-      .from(categories)
-      .leftJoin(blogs, eq(blogs.categoryId, categories.id))
-      .groupBy(categories.id)
-      .orderBy(asc(categories.name));
+    const [categoriesList, blogCatCounts, directBlogCounts] = await Promise.all([
+      this.categoryModel.find().sort({ name: 1 }).lean(),
+      this.blogCategoryModel.aggregate([
+        { $group: { _id: '$categoryId', count: { $sum: 1 } } },
+      ]),
+      this.blogModel.aggregate([
+        { $match: { categoryId: { $ne: null } } },
+        { $group: { _id: '$categoryId', count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    const countMap = new Map<string, number>();
+    for (const row of blogCatCounts) {
+      if (row._id) countMap.set(row._id.toString(), row.count);
+    }
+    for (const row of directBlogCounts) {
+      if (row._id) {
+        const id = row._id.toString();
+        countMap.set(id, Math.max(countMap.get(id) || 0, row.count));
+      }
+    }
+
+    const res = categoriesList.map((c: any) => ({
+      id: c._id.toString(),
+      name: c.name,
+      slug: c.slug,
+      description: c.description ?? null,
+      createdAt: c.createdAt,
+      postCount: countMap.get(c._id.toString()) || 0,
+    }));
 
     this.cache.set(cacheKey, res, 300_000);
     return res;
@@ -1355,26 +1416,28 @@ export class BlogService {
   ) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
-    const existing = await db
-      .select({ id: categories.id })
-      .from(categories)
-      .where(eq(categories.slug, input.slug))
-      .limit(1);
+    const existing = await this.categoryModel.findOne({ slug: input.slug }).lean();
 
-    if (existing.length > 0) {
-      throw new ConflictException(`A category with slug "${input.slug}" already exists. Please choose a different name or slug.`);
+    if (existing) {
+      throw new ConflictException(
+        `A category with slug "${input.slug}" already exists. Please choose a different name or slug.`,
+      );
     }
 
     try {
-      const [cat] = await db
-        .insert(categories)
-        .values(input)
-        .returning();
+      const cat = await this.categoryModel.create(input);
       this.invalidateCache();
-      return cat;
+      return {
+        id: cat._id.toString(),
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description ?? null,
+      };
     } catch (err: any) {
-      if (err.code === '23505') {
-        throw new ConflictException(`A category with this name or slug already exists.`);
+      if (err.code === 11000) {
+        throw new ConflictException(
+          `A category with this name or slug already exists.`,
+        );
       }
       throw err;
     }
@@ -1387,30 +1450,33 @@ export class BlogService {
   ) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
+    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Category not found.');
     if (input.slug) {
-      const existing = await db
-        .select({ id: categories.id })
-        .from(categories)
-        .where(eq(categories.slug, input.slug))
-        .limit(1);
-
-      if (existing.length > 0 && existing[0].id !== id) {
-        throw new ConflictException(`A category with slug "${input.slug}" already exists.`);
+      const existing = await this.categoryModel.findOne({ slug: input.slug }).lean();
+      if (existing && existing._id.toString() !== id) {
+        throw new ConflictException(
+          `A category with slug "${input.slug}" already exists.`,
+        );
       }
     }
 
     try {
-      const [cat] = await db
-        .update(categories)
-        .set({ ...input, updatedAt: new Date() })
-        .where(eq(categories.id, id))
-        .returning();
-      if (!cat) throw new NotFoundException('Category not found');
+      const cat = await this.categoryModel
+        .findByIdAndUpdate(id, { $set: input }, { new: true })
+        .lean();
+      if (!cat) throw new NotFoundException('Category not found.');
       this.invalidateCache();
-      return cat;
+      return {
+        id: cat._id.toString(),
+        name: cat.name,
+        slug: cat.slug,
+        description: cat.description ?? null,
+      };
     } catch (err: any) {
-      if (err.code === '23505') {
-        throw new ConflictException(`A category with this name or slug already exists.`);
+      if (err.code === 11000) {
+        throw new ConflictException(
+          `A category with this name or slug already exists.`,
+        );
       }
       throw err;
     }
@@ -1419,7 +1485,9 @@ export class BlogService {
   async deleteCategory(id: string, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
-    await db.delete(categories).where(eq(categories.id, id));
+    if (!Types.ObjectId.isValid(id)) return;
+    await this.categoryModel.deleteOne({ _id: new Types.ObjectId(id) });
+    await this.blogCategoryModel.deleteMany({ categoryId: new Types.ObjectId(id) });
   }
 
   async listTags() {
@@ -1427,17 +1495,24 @@ export class BlogService {
     const cached = this.cache.get<any[]>(cacheKey);
     if (cached) return cached;
 
-    const res = await db
-      .select({
-        id: tags.id,
-        name: tags.name,
-        slug: tags.slug,
-        postCount: sql<number>`count(${blogTags.blogId})::int`,
-      })
-      .from(tags)
-      .leftJoin(blogTags, eq(blogTags.tagId, tags.id))
-      .groupBy(tags.id)
-      .orderBy(asc(tags.name));
+    const [tagsList, blogTagCounts] = await Promise.all([
+      this.tagModel.find().sort({ name: 1 }).lean(),
+      this.blogTagModel.aggregate([
+        { $group: { _id: '$tagId', count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    const countMap = new Map<string, number>();
+    for (const row of blogTagCounts) {
+      if (row._id) countMap.set(row._id.toString(), row.count);
+    }
+
+    const res = tagsList.map((t: any) => ({
+      id: t._id.toString(),
+      name: t.name,
+      slug: t.slug,
+      postCount: countMap.get(t._id.toString()) || 0,
+    }));
 
     this.cache.set(cacheKey, res, 300_000);
     return res;
@@ -1446,14 +1521,20 @@ export class BlogService {
   async createTag(input: CreateTagInput, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
-    const [t] = await db.insert(tags).values(input).returning();
-    return t;
+    const tag = await this.tagModel.create(input);
+    return {
+      id: tag._id.toString(),
+      name: tag.name,
+      slug: tag.slug,
+    };
   }
 
   async deleteTag(id: string, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
-    await db.delete(tags).where(eq(tags.id, id));
+    if (!Types.ObjectId.isValid(id)) return;
+    await this.tagModel.deleteOne({ _id: new Types.ObjectId(id) });
+    await this.blogTagModel.deleteMany({ tagId: new Types.ObjectId(id) });
   }
 
   // Block management
@@ -1464,25 +1545,30 @@ export class BlogService {
   ) {
     await this.findManageable(blogId, currentUser);
 
-    return db.transaction(async (tx) => {
-      const [lastBlock] = await tx
-        .select({ position: blogBlocks.position })
-        .from(blogBlocks)
-        .where(eq(blogBlocks.blogId, blogId))
-        .orderBy(desc(blogBlocks.position))
-        .limit(1);
+    const lastBlock = await this.blogBlockModel
+      .findOne({ blogId: new Types.ObjectId(blogId) })
+      .sort({ position: -1 })
+      .select({ position: 1 })
+      .lean();
 
-      const [block] = await tx
-        .insert(blogBlocks)
-        .values({
-          blogId,
-          ...input,
-          position: (lastBlock?.position ?? -1) + 1,
-        })
-        .returning();
-
-      return block;
+    const block = await this.blogBlockModel.create({
+      blogId: new Types.ObjectId(blogId),
+      type: input.type,
+      value: input.value ?? '',
+      position: (lastBlock?.position ?? -1) + 1,
+      metadata: input.metadata ? (input.metadata as any) : null,
     });
+
+    return {
+      id: block._id.toString(),
+      blogId: block.blogId.toString(),
+      type: block.type,
+      value: block.value,
+      position: block.position,
+      metadata: block.metadata,
+      createdAt: (block as any).createdAt,
+      updatedAt: (block as any).updatedAt,
+    };
   }
 
   async updateBlock(
@@ -1492,15 +1578,36 @@ export class BlogService {
     currentUser: CurrentUser,
   ) {
     await this.findManageable(blogId, currentUser);
+    if (!Types.ObjectId.isValid(blockId)) {
+      throw new NotFoundException('Block was not found.');
+    }
 
-    const [block] = await db
-      .update(blogBlocks)
-      .set({ ...input, updatedAt: new Date() })
-      .where(and(eq(blogBlocks.id, blockId), eq(blogBlocks.blogId, blogId)))
-      .returning();
+    const updateData: any = {};
+    if (input.type !== undefined) updateData.type = input.type;
+    if (input.value !== undefined) updateData.value = input.value;
+    if ((input as any).position !== undefined) updateData.position = (input as any).position;
+    if (input.metadata !== undefined) updateData.metadata = input.metadata as any;
+
+    const block = await this.blogBlockModel
+      .findOneAndUpdate(
+        { _id: new Types.ObjectId(blockId), blogId: new Types.ObjectId(blogId) },
+        { $set: updateData },
+        { new: true },
+      )
+      .lean();
 
     if (!block) throw new NotFoundException('Block was not found.');
-    return block;
+
+    return {
+      id: block._id.toString(),
+      blogId: block.blogId.toString(),
+      type: block.type,
+      value: block.value,
+      position: block.position,
+      metadata: block.metadata,
+      createdAt: (block as any).createdAt,
+      updatedAt: (block as any).updatedAt,
+    };
   }
 
   async removeBlock(
@@ -1509,13 +1616,18 @@ export class BlogService {
     currentUser: CurrentUser,
   ) {
     await this.findManageable(blogId, currentUser);
+    if (!Types.ObjectId.isValid(blockId)) {
+      throw new NotFoundException('Block was not found.');
+    }
 
-    const deleted = await db
-      .delete(blogBlocks)
-      .where(and(eq(blogBlocks.id, blockId), eq(blogBlocks.blogId, blogId)))
-      .returning({ id: blogBlocks.id });
+    const deleted = await this.blogBlockModel.deleteOne({
+      _id: new Types.ObjectId(blockId),
+      blogId: new Types.ObjectId(blogId),
+    });
 
-    if (!deleted.length) throw new NotFoundException('Block was not found.');
+    if (deleted.deletedCount === 0) {
+      throw new NotFoundException('Block was not found.');
+    }
   }
 
   async reorderBlocks(
@@ -1525,44 +1637,27 @@ export class BlogService {
   ) {
     await this.findManageable(blogId, currentUser);
 
-    return db.transaction(async (tx) => {
-      const existing = await tx
-        .select({ id: blogBlocks.id })
-        .from(blogBlocks)
-        .where(eq(blogBlocks.blogId, blogId));
+    const existing = await this.blogBlockModel
+      .find({ blogId: new Types.ObjectId(blogId) })
+      .select({ _id: 1 })
+      .lean();
 
-      const existingIds = new Set(existing.map((block) => block.id));
-      if (
-        existingIds.size !== blockIds.length ||
-        blockIds.some((id) => !existingIds.has(id))
-      ) {
-        throw new ConflictException('Stale blocks list. Please refresh.');
-      }
+    const existingIds = new Set(existing.map((block) => block._id.toString()));
+    if (
+      existingIds.size !== blockIds.length ||
+      blockIds.some((id) => !existingIds.has(id))
+    ) {
+      throw new ConflictException('Stale blocks list. Please refresh.');
+    }
 
-      for (const [index, blockId] of blockIds.entries()) {
-        await tx
-          .update(blogBlocks)
-          .set({ position: -(index + 1) })
-          .where(
-            and(eq(blogBlocks.id, blockId), eq(blogBlocks.blogId, blogId)),
-          );
-      }
+    for (const [position, blockId] of blockIds.entries()) {
+      await this.blogBlockModel.updateOne(
+        { _id: new Types.ObjectId(blockId) },
+        { $set: { position } },
+      );
+    }
 
-      for (const [position, blockId] of blockIds.entries()) {
-        await tx
-          .update(blogBlocks)
-          .set({ position, updatedAt: new Date() })
-          .where(
-            and(eq(blogBlocks.id, blockId), eq(blogBlocks.blogId, blogId)),
-          );
-      }
-
-      return tx
-        .select()
-        .from(blogBlocks)
-        .where(eq(blogBlocks.blogId, blogId))
-        .orderBy(asc(blogBlocks.position));
-    });
+    return this.getBlocks(blogId);
   }
 
   // ==========================================
@@ -1574,118 +1669,163 @@ export class BlogService {
     currentUser: CurrentUser,
   ) {
     if (!requested || requested === currentUser.id) return currentUser.id;
-    const [author] = await db
-      .select({ id: users.id, role: users.role })
-      .from(users)
-      .where(eq(users.id, requested))
-      .limit(1);
+    if (!Types.ObjectId.isValid(requested)) return currentUser.id;
+    const author = await this.userModel
+      .findById(requested)
+      .select({ _id: 1, role: 1 })
+      .lean();
     if (!author || (author.role !== 'admin' && author.role !== 'editor')) {
       return currentUser.id;
     }
-    return author.id;
+    return author._id.toString();
   }
 
   private async findManageable(id: string, currentUser: CurrentUser) {
     this.assertCanWrite(currentUser);
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Blog was not found.');
+    }
 
-    const [blog] = await db
-      .select()
-      .from(blogs)
-      .where(eq(blogs.id, id))
-      .limit(1);
+    const blog = await this.blogModel.findById(id).lean();
 
     if (!blog) throw new NotFoundException('Blog was not found.');
-    if (currentUser.role !== 'admin' && blog.authorId !== currentUser.id) {
+    const authorIdStr = blog.authorId.toString();
+    if (currentUser.role !== 'admin' && authorIdStr !== currentUser.id) {
       throw new ForbiddenException('You cannot manage this blog.');
     }
 
-    return blog;
+    return {
+      id: blog._id.toString(),
+      title: blog.title,
+      slug: blog.slug,
+      description: blog.description ?? null,
+      coverImage: blog.coverImage ?? null,
+      imageAlt: blog.imageAlt ?? null,
+      imageCaption: blog.imageCaption ?? null,
+      categoryId: blog.categoryId ? blog.categoryId.toString() : null,
+      metaTitle: blog.metaTitle ?? null,
+      metaDescription: blog.metaDescription ?? null,
+      canonicalUrl: blog.canonicalUrl ?? null,
+      noindex: blog.noindex ?? false,
+      language: blog.language,
+      translationGroupId: blog.translationGroupId ?? null,
+      status: blog.status,
+      publishedAt: blog.publishedAt ?? null,
+      scheduledAt: blog.scheduledAt ?? null,
+      version: blog.version,
+      authorId: authorIdStr,
+      createdAt: (blog as any).createdAt,
+      updatedAt: (blog as any).updatedAt,
+    };
   }
 
   private async getBlocks(blogId: string) {
-    return db
-      .select()
-      .from(blogBlocks)
-      .where(eq(blogBlocks.blogId, blogId))
-      .orderBy(asc(blogBlocks.position));
+    const blocks = await this.blogBlockModel
+      .find({ blogId: new Types.ObjectId(blogId) })
+      .sort({ position: 1 })
+      .lean();
+    return blocks.map((b: any) => ({
+      id: b._id.toString(),
+      blogId: b.blogId.toString(),
+      type: b.type,
+      value: b.value,
+      position: b.position,
+      metadata: b.metadata ?? null,
+    }));
   }
 
   private async getBlogTags(blogId: string) {
-    return db
-      .select({
-        id: tags.id,
-        name: tags.name,
-        slug: tags.slug,
-      })
-      .from(blogTags)
-      .innerJoin(tags, eq(blogTags.tagId, tags.id))
-      .where(eq(blogTags.blogId, blogId));
+    const list = await this.blogTagModel
+      .find({ blogId: new Types.ObjectId(blogId) })
+      .populate<{ tagId: TagDocument }>('tagId')
+      .lean();
+    return (list as any[])
+      .filter((item) => item.tagId)
+      .map((item) => ({
+        id: item.tagId._id.toString(),
+        name: item.tagId.name,
+        slug: item.tagId.slug,
+      }));
   }
 
   private async getBlogCategories(blogId: string) {
-    return db
-      .select({
-        id: categories.id,
-        name: categories.name,
-        slug: categories.slug,
-        description: categories.description,
-      })
-      .from(blogCategories)
-      .innerJoin(categories, eq(blogCategories.categoryId, categories.id))
-      .where(eq(blogCategories.blogId, blogId));
+    const list = await this.blogCategoryModel
+      .find({ blogId: new Types.ObjectId(blogId) })
+      .populate<{ categoryId: CategoryDocument }>('categoryId')
+      .lean();
+    return (list as any[])
+      .filter((item) => item.categoryId)
+      .map((item) => ({
+        id: item.categoryId._id.toString(),
+        name: item.categoryId.name,
+        slug: item.categoryId.slug,
+        description: item.categoryId.description ?? null,
+      }));
   }
 
   private async syncTags(
-    tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
     blogId: string,
     tagIds: string[],
+    session?: ClientSession,
   ) {
-    await tx.delete(blogTags).where(eq(blogTags.blogId, blogId));
+    const blogObjectId = new Types.ObjectId(blogId);
+    await this.blogTagModel.deleteMany({ blogId: blogObjectId }, { session });
     if (tagIds.length > 0) {
-      await tx.insert(blogTags).values(
-        tagIds.map((tagId) => ({
-          blogId,
-          tagId,
-        })),
-      );
+      const docs = tagIds
+        .filter((tid) => Types.ObjectId.isValid(tid))
+        .map((tid) => ({
+          blogId: blogObjectId,
+          tagId: new Types.ObjectId(tid),
+        }));
+      if (docs.length > 0) {
+        await this.blogTagModel.insertMany(docs, { session });
+      }
     }
   }
 
   private async syncCategories(
-    tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
     blogId: string,
     categoryIds: string[],
+    session?: ClientSession,
   ) {
-    await tx.delete(blogCategories).where(eq(blogCategories.blogId, blogId));
+    const blogObjectId = new Types.ObjectId(blogId);
+    await this.blogCategoryModel.deleteMany({ blogId: blogObjectId }, { session });
     if (categoryIds.length > 0) {
-      await tx.insert(blogCategories).values(
-        categoryIds.map((categoryId) => ({
-          blogId,
-          categoryId,
-        })),
-      );
+      const docs = categoryIds
+        .filter((cid) => Types.ObjectId.isValid(cid))
+        .map((cid) => ({
+          blogId: blogObjectId,
+          categoryId: new Types.ObjectId(cid),
+        }));
+      if (docs.length > 0) {
+        await this.blogCategoryModel.insertMany(docs, { session });
+      }
     }
   }
 
   private async insertBlocks(
-    tx: Parameters<Parameters<typeof db.transaction>[0]>[0],
     blogId: string,
     blocks: CreateBlockInput[],
+    session?: ClientSession,
   ) {
     if (blocks.length === 0) return [];
-
-    return tx
-      .insert(blogBlocks)
-      .values(
-        blocks.map((block, position) => ({
-          blogId,
-          type: block.type,
-          value: block.value,
-          position,
-          metadata: block.metadata,
-        })),
-      )
-      .returning();
+    const blogObjectId = new Types.ObjectId(blogId);
+    const docs = blocks.map((b, position) => ({
+      blogId: blogObjectId,
+      type: b.type,
+      value: b.value ?? '',
+      position,
+      metadata: b.metadata ?? null,
+    }));
+    const created = await this.blogBlockModel.insertMany(docs, { session });
+    return created.map((b: any) => ({
+      id: b._id.toString(),
+      blogId: b.blogId.toString(),
+      type: b.type,
+      value: b.value,
+      position: b.position,
+      metadata: b.metadata ?? null,
+    }));
   }
 
   private async announceIfNewlyPublished(
@@ -1700,16 +1840,7 @@ export class BlogService {
   ) {
     if (blog.status !== 'PUBLISHED' || previouslyPublished) return;
     try {
-      let categorySlug = 'general';
-      if (blog.categoryId) {
-        const [category] = await db
-          .select({ slug: categories.slug })
-          .from(categories)
-          .where(eq(categories.id, blog.categoryId))
-          .limit(1);
-        if (category?.slug) categorySlug = category.slug;
-      }
-      await createBlogPublishedNotification({
+      await createBlogPublishedNotification(this.notificationModel, {
         blogId: blog.id,
         title: blog.title,
         href: `/${blog.slug}`,
@@ -1720,20 +1851,14 @@ export class BlogService {
   }
 
   private async isSlugAvailable(slug: string, excludeId?: string, language?: string) {
-    const conditions = [eq(blogs.slug, slug)];
-    if (excludeId) {
-      conditions.push(sql`${blogs.id} != ${excludeId}`);
+    const where: any = { slug };
+    if (excludeId && Types.ObjectId.isValid(excludeId)) {
+      where._id = { $ne: new Types.ObjectId(excludeId) };
     }
-    // With unified slugs, allow the same slug for different languages within the same translationGroup.
-    // Only block if a different article (different translationGroup) uses the same slug.
     if (language) {
-      conditions.push(eq(blogs.language, language as any));
+      where.language = language;
     }
-    const [existing] = await db
-      .select({ id: blogs.id })
-      .from(blogs)
-      .where(and(...conditions))
-      .limit(1);
+    const existing = await this.blogModel.findOne(where).select({ _id: 1 }).lean();
     return !existing;
   }
 
@@ -1752,27 +1877,22 @@ export class BlogService {
     this.assertCanWrite(currentUser);
     const source = await this.getManageable(id, currentUser);
 
-    // Ensure source has a translationGroupId
     let translationGroupId = source.translationGroupId;
     if (!translationGroupId) {
       translationGroupId = crypto.randomUUID();
-      await db
-        .update(blogs)
-        .set({ translationGroupId })
-        .where(eq(blogs.id, source.id));
+      await this.blogModel.updateOne(
+        { _id: new Types.ObjectId(source.id) },
+        { $set: { translationGroupId } },
+      );
     }
 
-    // Check if translation already exists for targetLanguage in this group
-    const [existingTranslation] = await db
-      .select({ id: blogs.id, slug: blogs.slug })
-      .from(blogs)
-      .where(
-        and(
-          eq(blogs.translationGroupId, translationGroupId),
-          eq(blogs.language, targetLanguage),
-        ),
-      )
-      .limit(1);
+    const existingTranslation = await this.blogModel
+      .findOne({
+        translationGroupId,
+        language: targetLanguage,
+      })
+      .select({ _id: 1, slug: 1 })
+      .lean();
 
     if (existingTranslation) {
       throw new BadRequestException(
@@ -1788,21 +1908,19 @@ export class BlogService {
 
     const translated = await this.gemini.translateArticle({
       title: source.title,
-      description: source.description,
+      description: source.description || undefined,
       targetLanguage,
       blocks: sourceBlocks,
       htmlContent: source.htmlContent,
-      metaTitle: source.metaTitle,
-      metaDescription: source.metaDescription,
-      imageAlt: source.imageAlt,
+      metaTitle: source.metaTitle || undefined,
+      metaDescription: source.metaDescription || undefined,
+      imageAlt: source.imageAlt || undefined,
     });
 
-    // Use the SAME slug as the source article — both language versions share one URL
     const sharedSlug = source.slug;
-
-    // Create new translation draft with the same slug
     const tagIds = (source.tags || []).map((t: any) => t.id);
-    const created = await this.create(
+
+    return this.create(
       {
         title: translated.title,
         slug: sharedSlug,
@@ -1823,8 +1941,6 @@ export class BlogService {
       },
       currentUser,
     );
-
-    return created;
   }
 
   async getSeoSuggestions(
@@ -1921,7 +2037,6 @@ export class BlogService {
     const translationGroupId = input.translationGroupId || crypto.randomUUID();
     const status = input.status || 'DRAFT';
 
-    // Both language versions share the same slug (use the English slug as canonical)
     const sharedSlug = input.english.slug || input.hinglish.slug;
     input.hinglish.slug = sharedSlug;
     input.english.slug = sharedSlug;
@@ -1931,7 +2046,6 @@ export class BlogService {
     let englishHtml = input.english.htmlContent || input.english.markdown || '';
     if (englishHtml === '[object Promise]') englishHtml = input.english.markdown || '';
 
-    // Bidirectional inline image synchronization between Hinglish and English versions
     let hBlocks = htmlToBlocks(hinglishHtml);
     let eBlocks = htmlToBlocks(englishHtml);
     hBlocks = syncImageBlocks(hBlocks, eBlocks);
@@ -1939,46 +2053,50 @@ export class BlogService {
     hinglishHtml = blocksToHtml(hBlocks);
     englishHtml = blocksToHtml(eBlocks);
 
-    // 0. Auto-resolve existing draft IDs to guarantee update instead of duplicate draft copies
     if (translationGroupId) {
-      const existingInGroup = await db
-        .select({ id: blogs.id, language: blogs.language })
-        .from(blogs)
-        .where(eq(blogs.translationGroupId, translationGroupId));
+      const existingInGroup = await this.blogModel
+        .find({ translationGroupId })
+        .select({ _id: 1, language: 1 })
+        .lean();
 
       for (const item of existingInGroup) {
         if (item.language === 'HINGLISH' && !input.hinglish.id) {
-          input.hinglish.id = item.id;
+          input.hinglish.id = item._id.toString();
         }
         if (item.language === 'ENGLISH' && !input.english.id) {
-          input.english.id = item.id;
+          input.english.id = item._id.toString();
         }
       }
     }
 
     if (!input.hinglish.id && sharedSlug) {
-      const [existingHinglish] = await db
-        .select({ id: blogs.id })
-        .from(blogs)
-        .where(and(eq(blogs.slug, sharedSlug), eq(blogs.language, 'HINGLISH'), eq(blogs.authorId, currentUser.id)))
-        .limit(1);
+      const existingHinglish = await this.blogModel
+        .findOne({
+          slug: sharedSlug,
+          language: 'HINGLISH',
+          authorId: new Types.ObjectId(currentUser.id),
+        })
+        .select({ _id: 1 })
+        .lean();
       if (existingHinglish) {
-        input.hinglish.id = existingHinglish.id;
+        input.hinglish.id = existingHinglish._id.toString();
       }
     }
 
     if (!input.english.id && sharedSlug) {
-      const [existingEnglish] = await db
-        .select({ id: blogs.id })
-        .from(blogs)
-        .where(and(eq(blogs.slug, sharedSlug), eq(blogs.language, 'ENGLISH'), eq(blogs.authorId, currentUser.id)))
-        .limit(1);
+      const existingEnglish = await this.blogModel
+        .findOne({
+          slug: sharedSlug,
+          language: 'ENGLISH',
+          authorId: new Types.ObjectId(currentUser.id),
+        })
+        .select({ _id: 1 })
+        .lean();
       if (existingEnglish) {
-        input.english.id = existingEnglish.id;
+        input.english.id = existingEnglish._id.toString();
       }
     }
 
-    // 1. Save or update Hinglish article
     let hinglishPost;
     if (input.hinglish.id) {
       hinglishPost = await this.update(
@@ -2021,7 +2139,6 @@ export class BlogService {
       );
     }
 
-    // 2. Save or update English article (same slug)
     let englishPost;
     if (input.english.id) {
       englishPost = await this.update(
@@ -2071,7 +2188,6 @@ export class BlogService {
     };
   }
 
-  /** Delegate generate-from-reference to GeminiService */
   async generateBilingualFromReference(
     input: { referenceContent: string; category?: string; additionalInstructions?: string },
     currentUser?: CurrentUser,
@@ -2093,7 +2209,10 @@ export class BlogService {
   }
 
   private rethrowSlugConflict(error: unknown): never {
-    if ((error as { code?: string }).code === '23505') {
+    if (
+      (error as { code?: number | string })?.code === 11000 ||
+      (error as { code?: number | string })?.code === 'P2002'
+    ) {
       throw new ConflictException('This blog slug is already in use.');
     }
     throw error;

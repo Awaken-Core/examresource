@@ -1,12 +1,11 @@
 import { BadRequestException } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
-import { and, desc, eq, gte, isNull, or } from 'drizzle-orm';
-import { db } from '../../core/config/db.js';
+import type { Model } from 'mongoose';
+import { Types } from 'mongoose';
 import { env } from '../../core/config/env.js';
-import {
-  notificationReads,
-  notifications,
-  users,
+import type {
+  NotificationDocument,
+  NotificationReadDocument,
+  UserDocument,
 } from '../../core/schema/index.js';
 
 export type NotificationView = {
@@ -55,147 +54,206 @@ function requireText(value: unknown, label: string, limit: number) {
   return text;
 }
 
-export async function ensureWelcomeNotification(user: { id: string; name: string }) {
+export async function ensureWelcomeNotification(
+  notificationModel: Model<NotificationDocument>,
+  user: { id: string; name: string },
+) {
   const name = user.name.trim() || 'there';
   const siteHost = new URL(env.CLIENT_URL).host;
-  await db
-    .insert(notifications)
-    .values({
-      id: randomUUID(),
-      kind: 'welcome',
-      title: 'Welcome',
-      body: `Hi ${name}, your account is ready. Start preparing on ${siteHost}.`,
-      audienceUserId: user.id,
-      sourceKey: `welcome:${user.id}`,
-    })
-    .onConflictDoNothing({ target: notifications.sourceKey });
+  const sourceKey = `welcome:${user.id}`;
+
+  try {
+    await notificationModel.updateOne(
+      { sourceKey },
+      {
+        $setOnInsert: {
+          kind: 'welcome',
+          title: 'Welcome',
+          body: `Hi ${name}, your account is ready. Start preparing on ${siteHost}.`,
+          audienceUserId: new Types.ObjectId(user.id),
+          sourceKey,
+        },
+      },
+      { upsert: true },
+    );
+  } catch (error) {
+    console.error('Failed to ensure welcome notification', error);
+  }
 }
 
-export async function createBlogPublishedNotification(input: {
-  blogId: string;
-  title: string;
-  href: string;
-}) {
-  await db
-    .insert(notifications)
-    .values({
-      id: randomUUID(),
-      kind: 'blog',
-      title: 'New article',
-      body: `New article published: ${input.title.trim()}`.slice(0, BODY_LIMIT),
-      href: input.href,
-      sourceKey: `blog:${input.blogId}`,
-    })
-    .onConflictDoNothing({ target: notifications.sourceKey });
+export async function createBlogPublishedNotification(
+  notificationModel: Model<NotificationDocument>,
+  input: {
+    blogId: string;
+    title: string;
+    href: string;
+  },
+) {
+  const sourceKey = `blog:${input.blogId}`;
+  try {
+    await notificationModel.updateOne(
+      { sourceKey },
+      {
+        $setOnInsert: {
+          kind: 'blog',
+          title: 'New article',
+          body: `New article published: ${input.title.trim()}`.slice(0, BODY_LIMIT),
+          href: input.href,
+          sourceKey,
+        },
+      },
+      { upsert: true },
+    );
+  } catch (error) {
+    console.error('Failed to create blog published notification', error);
+  }
 }
 
 export async function createBroadcastNotification(
+  notificationModel: Model<NotificationDocument>,
   adminId: string,
   input: { title: unknown; body: unknown; href?: unknown },
 ) {
   const title = requireText(input.title, 'Title', TITLE_LIMIT);
   const body = requireText(input.body, 'Message', BODY_LIMIT);
   const href = normalizeNotificationHref(input.href);
-  const [created] = await db
-    .insert(notifications)
-    .values({
-      id: randomUUID(),
-      kind: 'broadcast',
-      title,
-      body,
-      href,
-      createdById: adminId,
-    })
-    .returning({
-      id: notifications.id,
-      kind: notifications.kind,
-      title: notifications.title,
-      body: notifications.body,
-      href: notifications.href,
-      createdAt: notifications.createdAt,
-    });
-  return created;
+
+  const doc = await notificationModel.create({
+    kind: 'broadcast',
+    title,
+    body,
+    href,
+    createdById: new Types.ObjectId(adminId),
+  });
+  return {
+    id: doc._id.toString(),
+    kind: doc.kind,
+    title: doc.title,
+    body: doc.body,
+    href: doc.href ?? null,
+    createdAt: (doc as any).createdAt,
+  };
 }
 
-export async function listNotificationsForUser(userId: string): Promise<NotificationView[]> {
-  const [account] = await db
-    .select({ createdAt: users.createdAt, name: users.name })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+export async function listNotificationsForUser(
+  notificationModel: Model<NotificationDocument>,
+  notificationReadModel: Model<NotificationReadDocument>,
+  userModel: Model<UserDocument>,
+  userId: string,
+): Promise<NotificationView[]> {
+  const account = await userModel.findById(userId).select({ createdAt: 1, name: 1 });
   if (!account) return [];
 
   try {
-    await ensureWelcomeNotification({ id: userId, name: account.name });
+    await ensureWelcomeNotification(notificationModel, { id: userId, name: account.name });
   } catch (error) {
     console.error('Failed to create welcome notification', error);
   }
 
-  const rows = await db
-    .select({
-      id: notifications.id,
-      kind: notifications.kind,
-      title: notifications.title,
-      body: notifications.body,
-      href: notifications.href,
-      createdAt: notifications.createdAt,
-      readAt: notificationReads.readAt,
+  const userObjectId = new Types.ObjectId(userId);
+  const items = await notificationModel
+    .find({
+      $or: [
+        { audienceUserId: userObjectId },
+        {
+          audienceUserId: null,
+          createdAt: { $gte: (account as any).createdAt },
+        },
+      ],
     })
-    .from(notifications)
-    .leftJoin(
-      notificationReads,
-      and(
-        eq(notificationReads.notificationId, notifications.id),
-        eq(notificationReads.userId, userId),
-      ),
-    )
-    .where(
-      or(
-        eq(notifications.audienceUserId, userId),
-        and(isNull(notifications.audienceUserId), gte(notifications.createdAt, account.createdAt)),
-      ),
-    )
-    .orderBy(desc(notifications.createdAt))
-    .limit(40);
+    .sort({ createdAt: -1 })
+    .limit(40)
+    .lean();
 
-  return rows.map((row) => ({
-    id: row.id,
+  if (items.length === 0) return [];
+
+  const notificationIds = items.map((i) => i._id);
+  const reads = await notificationReadModel
+    .find({
+      userId: userObjectId,
+      notificationId: { $in: notificationIds },
+    })
+    .select({ notificationId: 1 })
+    .lean();
+
+  const readSet = new Set(reads.map((r) => r.notificationId.toString()));
+
+  return items.map((row) => ({
+    id: row._id.toString(),
     kind: row.kind,
     title: row.title,
     body: row.body,
-    href: row.href,
-    createdAt: row.createdAt,
-    read: Boolean(row.readAt),
+    href: row.href || null,
+    createdAt: (row as any).createdAt,
+    read: readSet.has(row._id.toString()),
   }));
 }
 
-export async function markNotificationsRead(userId: string, ids?: string[]) {
-  const visible = await listNotificationsForUser(userId);
+export async function markNotificationsRead(
+  notificationModel: Model<NotificationDocument>,
+  notificationReadModel: Model<NotificationReadDocument>,
+  userModel: Model<UserDocument>,
+  userId: string,
+  ids?: string[],
+) {
+  const visible = await listNotificationsForUser(
+    notificationModel,
+    notificationReadModel,
+    userModel,
+    userId,
+  );
   const allowed = new Set(visible.map((item) => item.id));
-  const targetIds = (ids?.length ? ids : visible.filter((item) => !item.read).map((item) => item.id))
-    .filter((id) => allowed.has(id));
+  const targetIds = (
+    ids?.length ? ids : visible.filter((item) => !item.read).map((item) => item.id)
+  ).filter((id) => allowed.has(id));
+
   if (!targetIds.length) return { updated: 0 };
 
-  await db
-    .insert(notificationReads)
-    .values(targetIds.map((notificationId) => ({ notificationId, userId })))
-    .onConflictDoNothing();
-  return { updated: targetIds.length };
+  let count = 0;
+  const userObjectId = new Types.ObjectId(userId);
+  for (const notificationId of targetIds) {
+    try {
+      await notificationReadModel.updateOne(
+        {
+          notificationId: new Types.ObjectId(notificationId),
+          userId: userObjectId,
+        },
+        {
+          $setOnInsert: {
+            notificationId: new Types.ObjectId(notificationId),
+            userId: userObjectId,
+            readAt: new Date(),
+          },
+        },
+        { upsert: true },
+      );
+      count++;
+    } catch (e) {
+      console.error('Error marking notification as read', e);
+    }
+  }
+
+  return { updated: count };
 }
 
-export async function listRecentNotifications(limit = 40) {
-  return db
-    .select({
-      id: notifications.id,
-      kind: notifications.kind,
-      title: notifications.title,
-      body: notifications.body,
-      href: notifications.href,
-      createdAt: notifications.createdAt,
-      authorName: users.name,
-    })
-    .from(notifications)
-    .leftJoin(users, eq(notifications.createdById, users.id))
-    .orderBy(desc(notifications.createdAt))
-    .limit(limit);
+export async function listRecentNotifications(
+  notificationModel: Model<NotificationDocument>,
+  limit = 40,
+) {
+  const rows = await notificationModel
+    .find({})
+    .populate<{ createdById: UserDocument }>('createdById', 'name')
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .lean();
+
+  return rows.map((r: any) => ({
+    id: r._id.toString(),
+    kind: r.kind,
+    title: r.title,
+    body: r.body,
+    href: r.href || null,
+    createdAt: r.createdAt,
+    authorName: r.createdById?.name ?? null,
+  }));
 }

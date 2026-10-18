@@ -2612,24 +2612,19 @@ import { siteUrl } from '../data/site';
   }
 
   async function uploadImage(file: File): Promise<string> {
-    const signResponse = await apiFetch('/uploads/images/sign', {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const uploadResponse = await apiFetch('/uploads/images', {
       method: 'POST',
-      body: JSON.stringify({ contentType: file.type, size: file.size }),
+      body: formData,
     });
-    const signed = await signResponse.json().catch(() => null);
-    if (!signResponse.ok || !signed?.uploadUrl || !signed?.publicUrl) {
-      throw new Error(signed?.message || 'Unable to prepare the image upload.');
+
+    const result = await uploadResponse.json().catch(() => null);
+    if (!uploadResponse.ok || !result?.publicUrl) {
+      throw new Error(result?.message || 'Unable to compress or upload image.');
     }
-    let uploadResponse: Response;
-    try {
-      uploadResponse = await fetch(signed.uploadUrl, {
-        method: 'PUT', headers: { 'Content-Type': file.type }, body: file,
-      });
-    } catch {
-      throw new Error('Could not reach Cloudflare R2. Add this site to the bucket CORS allowed origins and try again.');
-    }
-    if (!uploadResponse.ok) throw new Error('R2 rejected the upload. Check the bucket CORS policy and try again.');
-    return signed.publicUrl;
+    return result.publicUrl;
   }
 
   const acceptedImageTypes: Record<string, string> = {
@@ -6827,8 +6822,9 @@ ${mdContent}
         const err = await res.json();
         alert(`Version Conflict: ${err.message}`);
       } else {
-        const err = await res.json();
-        alert(`Error saving article: ${err.message || 'Validation error'}`);
+        const err = await res.json().catch(() => ({}));
+        const details = err.errors ? Object.entries(err.errors).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('; ') : '';
+        alert(`Error saving article: ${err.message || 'Validation error'}${details ? ` (${details})` : ''}`);
       }
     } catch (e: any) {
       console.error(e);

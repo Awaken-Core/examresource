@@ -6,18 +6,26 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { OAuth2Client } from 'google-auth-library';
-import { randomUUID } from 'node:crypto';
-import { and, asc, desc, eq, gt, isNull, or } from 'drizzle-orm';
+import { InjectModel } from '@nestjs/mongoose';
 import type { Request } from 'express';
-import { db } from '../../core/config/db.js';
+import { OAuth2Client } from 'google-auth-library';
+import type { Model } from 'mongoose';
+import { Types } from 'mongoose';
+import { createHash, randomBytes } from 'node:crypto';
 import { env } from '../../core/config/env.js';
 import {
-  emailVerificationTokens,
-  oauthStates,
-  passwordResetTokens,
-  sessions,
-  users,
+  type EmailVerificationTokenDocument,
+  EmailVerificationToken,
+  type NotificationDocument,
+  Notification,
+  type OauthStateDocument,
+  OauthState,
+  type PasswordResetTokenDocument,
+  PasswordResetToken,
+  type SessionDocument,
+  Session,
+  type UserDocument,
+  User,
 } from '../../core/schema/index.js';
 import { ensureWelcomeNotification } from '../notifications/notification.store.js';
 import { hashPassword, verifyPassword } from './password-hash.js';
@@ -33,24 +41,38 @@ export type CurrentUser = {
 
 @Injectable()
 export class AuthService {
-  private async tokenHash(token: string) {
-    const data = new TextEncoder().encode(token);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = new Uint8Array(hashBuffer);
-    return Array.from(hashArray, (b) => b.toString(16).padStart(2, '0')).join('');
+  constructor(
+    @InjectModel(User.name)
+    private readonly userModel: Model<UserDocument>,
+    @InjectModel(Session.name)
+    private readonly sessionModel: Model<SessionDocument>,
+    @InjectModel(OauthState.name)
+    private readonly oauthStateModel: Model<OauthStateDocument>,
+    @InjectModel(PasswordResetToken.name)
+    private readonly passwordResetTokenModel: Model<PasswordResetTokenDocument>,
+    @InjectModel(EmailVerificationToken.name)
+    private readonly emailVerificationTokenModel: Model<EmailVerificationTokenDocument>,
+    @InjectModel(Notification.name)
+    private readonly notificationModel: Model<NotificationDocument>,
+  ) {}
+
+  private tokenHash(token: string) {
+    return createHash('sha256').update(token).digest('hex');
   }
+
   private newToken() {
     const bytes = crypto.getRandomValues(new Uint8Array(48));
     let binary = '';
     for (const byte of bytes) binary += String.fromCharCode(byte);
     return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
   }
-  private publicUser(user: typeof users.$inferSelect): CurrentUser {
+
+  private publicUser(user: any): CurrentUser {
     return {
-      id: user.id,
+      id: user._id ? user._id.toString() : user.id,
       name: user.name,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone ?? null,
       role: user.role,
       emailVerified: Boolean(user.emailVerifiedAt),
     };
@@ -62,73 +84,62 @@ export class AuthService {
     password: string;
     phone?: string;
   }) {
-    const [existing] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, input.email))
-      .limit(1);
-    if (existing)
+    const email = input.email.toLowerCase().trim();
+    const existing = await this.userModel.findOne({ email });
+    if (existing) {
       throw new ConflictException(
         'An account already exists for this email address.',
       );
+    }
     try {
-      const [user] = await db
-        .insert(users)
-        .values({
-          id: randomUUID(),
-          name: input.name,
-          email: input.email,
-          phone: input.phone,
-          passwordHash: await hashPassword(input.password),
-        })
-        .returning();
-      if (!user) throw new Error('User creation did not return a row.');
-      await this.createEmailVerificationToken(user.id);
+      const user = await this.userModel.create({
+        name: input.name.trim(),
+        email,
+        phone: input.phone || null,
+        passwordHash: await hashPassword(input.password),
+        role: 'student',
+        status: 'active',
+      });
+      await this.createEmailVerificationToken(user._id.toString());
       return { user: this.publicUser(user) };
-    } catch (error) {
-      if ((error as { code?: string }).code === '23505')
+    } catch (error: any) {
+      if (error?.code === 11000) {
         throw new ConflictException(
           'An account already exists for this email address.',
         );
+      }
       throw error;
     }
   }
 
   async login(email: string, password: string) {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    const user = await this.userModel.findOne({
+      email: email.toLowerCase().trim(),
+    });
     if (
       !user ||
       user.status !== 'active' ||
       !user.passwordHash ||
       !(await verifyPassword(user.passwordHash, password))
-    )
+    ) {
       throw new UnauthorizedException('Invalid email or password.');
+    }
     const token = this.newToken();
-    await db
-      .insert(sessions)
-      .values({
-        id: randomUUID(),
-        userId: user.id,
-        tokenHash: await this.tokenHash(token),
-        expiresAt: new Date(Date.now() + env.SESSION_TTL_DAYS * 86_400_000),
-      });
+    await this.sessionModel.create({
+      userId: user._id,
+      tokenHash: this.tokenHash(token),
+      expiresAt: new Date(Date.now() + env.SESSION_TTL_DAYS * 86_400_000),
+    });
     return { user: this.publicUser(user), token };
   }
 
   async createGoogleAuthorizationUrl() {
     const client = this.googleClient();
     const state = this.newToken();
-    await db
-      .insert(oauthStates)
-      .values({
-        id: randomUUID(),
-        stateHash: await this.tokenHash(state),
-        expiresAt: new Date(Date.now() + 10 * 60_000),
-      });
+    await this.oauthStateModel.create({
+      stateHash: this.tokenHash(state),
+      expiresAt: new Date(Date.now() + 10 * 60_000),
+    });
     return {
       state,
       url: client.generateAuthUrl({
@@ -141,129 +152,121 @@ export class AuthService {
   }
 
   async loginWithGoogle(code: string, state: string) {
-    const stateHash = await this.tokenHash(state);
-    const [oauthState] = await db
-      .select()
-      .from(oauthStates)
-      .where(
-        and(
-          eq(oauthStates.stateHash, stateHash),
-          isNull(oauthStates.usedAt),
-          gt(oauthStates.expiresAt, new Date()),
-        ),
-      )
-      .limit(1);
-    if (!oauthState)
+    const stateHash = this.tokenHash(state);
+    const oauthState = await this.oauthStateModel.findOneAndUpdate(
+      {
+        stateHash,
+        usedAt: null,
+        expiresAt: { $gt: new Date() },
+      },
+      {
+        $set: { usedAt: new Date() },
+      },
+      { new: true },
+    );
+    if (!oauthState) {
       throw new BadRequestException(
         'Google sign-in request is invalid or has expired.',
       );
-    const consumed = await db
-      .update(oauthStates)
-      .set({ usedAt: new Date() })
-      .where(and(eq(oauthStates.id, oauthState.id), isNull(oauthStates.usedAt)))
-      .returning({ id: oauthStates.id });
-    if (!consumed.length)
-      throw new BadRequestException(
-        'Google sign-in request has already been used.',
-      );
+    }
 
     const client = this.googleClient();
     const tokenResult = await client.getToken(code);
-    if (!tokenResult.tokens.id_token)
+    if (!tokenResult.tokens.id_token) {
       throw new UnauthorizedException(
         'Google did not return an identity token.',
       );
+    }
     const ticket = await client.verifyIdToken({
       idToken: tokenResult.tokens.id_token,
       audience: env.GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
-    if (!payload?.sub || !payload.email || payload.email_verified !== true)
+    if (!payload?.sub || !payload.email || payload.email_verified !== true) {
       throw new UnauthorizedException(
         'A verified Google email address is required.',
       );
+    }
 
-    let [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.googleSubject, payload.sub))
-      .limit(1);
+    let user = await this.userModel.findOne({ googleSubject: payload.sub });
+
     if (!user) {
-      const [emailOwner] = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, payload.email.toLowerCase()))
-        .limit(1);
+      const email = payload.email.toLowerCase();
+      const emailOwner = await this.userModel.findOne({ email });
+
       if (emailOwner) {
-        [user] = await db
-          .update(users)
-          .set({
-            googleSubject: payload.sub,
-            emailVerifiedAt: emailOwner.emailVerifiedAt ?? new Date(),
-            updatedAt: new Date(),
-          })
-          .where(eq(users.id, emailOwner.id))
-          .returning();
+        user = await this.userModel.findByIdAndUpdate(
+          emailOwner._id,
+          {
+            $set: {
+              googleSubject: payload.sub,
+              emailVerifiedAt: emailOwner.emailVerifiedAt ?? new Date(),
+            },
+          },
+          { new: true },
+        );
       } else {
-        [user] = await db
-          .insert(users)
-          .values({
-            id: randomUUID(),
-            name: payload.name?.slice(0, 100) || payload.email.split('@')[0]!,
-            email: payload.email.toLowerCase(),
-            googleSubject: payload.sub,
-            passwordHash: null,
-            emailVerifiedAt: new Date(),
-          })
-          .returning();
+        user = await this.userModel.create({
+          name: payload.name?.slice(0, 100) || payload.email.split('@')[0]!,
+          email,
+          googleSubject: payload.sub,
+          passwordHash: null,
+          emailVerifiedAt: new Date(),
+          role: 'student',
+          status: 'active',
+        });
         if (user) {
           try {
-            await ensureWelcomeNotification({ id: user.id, name: user.name });
+            await ensureWelcomeNotification(this.notificationModel, {
+              id: user._id.toString(),
+              name: user.name,
+            });
           } catch (error) {
             console.error('Failed to create welcome notification', error);
           }
         }
       }
     }
-    if (!user || user.status !== 'active')
+
+    if (!user || user.status !== 'active') {
       throw new UnauthorizedException('This account is unavailable.');
+    }
+
     const token = this.newToken();
-    await db
-      .insert(sessions)
-      .values({
-        id: randomUUID(),
-        userId: user.id,
-        tokenHash: await this.tokenHash(token),
-        expiresAt: new Date(Date.now() + env.SESSION_TTL_DAYS * 86_400_000),
-      });
+    await this.sessionModel.create({
+      userId: user._id,
+      tokenHash: this.tokenHash(token),
+      expiresAt: new Date(Date.now() + env.SESSION_TTL_DAYS * 86_400_000),
+    });
     return { user: this.publicUser(user), token };
   }
 
   async getSession(token: string | undefined) {
     if (!token) return null;
-    const [session] = await db
-      .select()
-      .from(sessions)
-      .where(
-        and(
-          eq(sessions.tokenHash, await this.tokenHash(token)),
-          isNull(sessions.revokedAt),
-          gt(sessions.expiresAt, new Date()),
-        ),
-      )
-      .limit(1);
+    const session = await this.sessionModel.findOne({
+      tokenHash: this.tokenHash(token),
+      revokedAt: null,
+      expiresAt: { $gt: new Date() },
+    });
     if (!session) return null;
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, session.userId))
-      .limit(1);
+
+    const user = await this.userModel.findById(session.userId);
     if (!user || user.status !== 'active') return null;
-    await db
-      .update(sessions)
-      .set({ lastUsedAt: new Date() })
-      .where(eq(sessions.id, session.id));
-    return { session, user: this.publicUser(user) };
+
+    await this.sessionModel.updateOne(
+      { _id: session._id },
+      { $set: { lastUsedAt: new Date() } },
+    );
+
+    return {
+      session: {
+        id: session._id.toString(),
+        userId: session.userId.toString(),
+        expiresAt: session.expiresAt,
+        createdAt: (session as any).createdAt,
+      },
+      user: this.publicUser(user),
+    };
   }
 
   async requireUser(req: Request): Promise<CurrentUser> {
@@ -277,52 +280,66 @@ export class AuthService {
     if (user.role !== 'admin' && user.role !== 'editor') {
       throw new ForbiddenException('Editor access is required.');
     }
-    return db
-      .select({ id: users.id, name: users.name, role: users.role })
-      .from(users)
-      .where(or(eq(users.role, 'admin'), eq(users.role, 'editor')))
-      .orderBy(asc(users.name));
+    const docs = await this.userModel
+      .find({ role: { $in: ['admin', 'editor'] } })
+      .select({ _id: 1, name: 1, role: 1 })
+      .sort({ name: 1 })
+      .lean();
+    return docs.map((u) => ({
+      id: u._id.toString(),
+      name: u.name,
+      role: u.role,
+    }));
   }
 
   async listUsers(req: Request) {
     await this.requireAdmin(req);
-    return db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        status: users.status,
-        createdAt: users.createdAt,
-      })
-      .from(users)
-      .orderBy(desc(users.createdAt));
+    const docs = await this.userModel
+      .find({})
+      .select({ _id: 1, name: 1, email: 1, role: 1, status: 1, createdAt: 1 })
+      .sort({ createdAt: -1 })
+      .lean();
+    return docs.map((u: any) => ({
+      id: u._id.toString(),
+      name: u.name,
+      email: u.email,
+      role: u.role,
+      status: u.status,
+      createdAt: u.createdAt,
+    }));
   }
 
   async updateUserRole(req: Request, userId: string, role: CurrentUser['role']) {
     const currentUser = await this.requireAdmin(req);
     if (currentUser.id === userId && role !== 'admin') {
-      throw new ForbiddenException('You cannot remove your own administrator access.');
+      throw new ForbiddenException(
+        'You cannot remove your own administrator access.',
+      );
     }
-    const [updatedUser] = await db
-      .update(users)
-      .set({ role, updatedAt: new Date() })
-      .where(eq(users.id, userId))
-      .returning({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        status: users.status,
-        createdAt: users.createdAt,
-      });
-    if (!updatedUser) throw new NotFoundException('User not found.');
-    return updatedUser;
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new NotFoundException('User not found.');
+    }
+    const user = await this.userModel
+      .findByIdAndUpdate(userId, { $set: { role } }, { new: true })
+      .select({ _id: 1, name: 1, email: 1, role: 1, status: 1, createdAt: 1 })
+      .lean();
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    return {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      createdAt: (user as any).createdAt,
+    };
   }
 
   private async requireAdmin(req: Request) {
     const user = await this.requireUser(req);
-    if (user.role !== 'admin') throw new ForbiddenException('Administrator access is required.');
+    if (user.role !== 'admin')
+      throw new ForbiddenException('Administrator access is required.');
     return user;
   }
 
@@ -333,176 +350,157 @@ export class AuthService {
   }
 
   async logout(token: string | undefined) {
-    if (token)
-      await db
-        .update(sessions)
-        .set({ revokedAt: new Date() })
-        .where(
-          and(
-            eq(sessions.tokenHash, await this.tokenHash(token)),
-            isNull(sessions.revokedAt),
-          ),
-        );
+    if (token) {
+      await this.sessionModel.updateMany(
+        {
+          tokenHash: this.tokenHash(token),
+          revokedAt: null,
+        },
+        {
+          $set: { revokedAt: new Date() },
+        },
+      );
+    }
   }
 
   async listSessions(userId: string, currentToken?: string) {
-    const rows = await db
-      .select({
-        id: sessions.id,
-        createdAt: sessions.createdAt,
-        lastUsedAt: sessions.lastUsedAt,
-        expiresAt: sessions.expiresAt,
-        tokenHash: sessions.tokenHash,
+    const userObjectId = new Types.ObjectId(userId);
+    const rows = await this.sessionModel
+      .find({
+        userId: userObjectId,
+        revokedAt: null,
+        expiresAt: { $gt: new Date() },
       })
-      .from(sessions)
-      .where(
-        and(
-          eq(sessions.userId, userId),
-          isNull(sessions.revokedAt),
-          gt(sessions.expiresAt, new Date()),
-        ),
-      );
-    const currentHash = currentToken ? await this.tokenHash(currentToken) : undefined;
-    return rows.map(({ tokenHash, ...session }) => ({
-      ...session,
-      current: tokenHash === currentHash,
+      .select({ _id: 1, createdAt: 1, lastUsedAt: 1, expiresAt: 1, tokenHash: 1 })
+      .lean();
+    const currentHash = currentToken ? this.tokenHash(currentToken) : undefined;
+    return rows.map((s: any) => ({
+      id: s._id.toString(),
+      createdAt: s.createdAt,
+      lastUsedAt: s.lastUsedAt,
+      expiresAt: s.expiresAt,
+      current: s.tokenHash === currentHash,
     }));
   }
 
   async revokeSession(userId: string, sessionId: string) {
-    const result = await db
-      .update(sessions)
-      .set({ revokedAt: new Date() })
-      .where(
-        and(
-          eq(sessions.id, sessionId),
-          eq(sessions.userId, userId),
-          isNull(sessions.revokedAt),
-        ),
-      )
-      .returning({ id: sessions.id });
-    if (!result.length) throw new BadRequestException('Session was not found.');
+    if (!Types.ObjectId.isValid(sessionId)) {
+      throw new BadRequestException('Session was not found.');
+    }
+    const result = await this.sessionModel.updateMany(
+      {
+        _id: new Types.ObjectId(sessionId),
+        userId: new Types.ObjectId(userId),
+        revokedAt: null,
+      },
+      {
+        $set: { revokedAt: new Date() },
+      },
+    );
+    if (result.matchedCount === 0)
+      throw new BadRequestException('Session was not found.');
   }
 
   async updateProfile(
     userId: string,
     input: { name?: string; phone?: string | null },
   ) {
-    const [user] = await db
-      .update(users)
-      .set({ ...input, updatedAt: new Date() })
-      .where(eq(users.id, userId))
-      .returning();
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new BadRequestException('Account was not found.');
+    }
+    const user = await this.userModel.findByIdAndUpdate(
+      userId,
+      { $set: input },
+      { new: true },
+    );
     if (!user) throw new BadRequestException('Account was not found.');
     return this.publicUser(user);
   }
 
   async createPasswordResetToken(email: string) {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
+    const user = await this.userModel.findOne({
+      email: email.toLowerCase().trim(),
+    });
     if (!user || user.status !== 'active') return null;
     const token = this.newToken();
-    await db
-      .insert(passwordResetTokens)
-      .values({
-        id: randomUUID(),
-        userId: user.id,
-        tokenHash: await this.tokenHash(token),
-        expiresAt: new Date(Date.now() + 60 * 60_000),
-      });
+    await this.passwordResetTokenModel.create({
+      userId: user._id,
+      tokenHash: this.tokenHash(token),
+      expiresAt: new Date(Date.now() + 60 * 60_000),
+    });
     return token;
   }
 
   async resetPassword(token: string, password: string) {
-    const tokenHash = await this.tokenHash(token);
-    const [row] = await db
-      .select()
-      .from(passwordResetTokens)
-      .where(
-        and(
-          eq(passwordResetTokens.tokenHash, tokenHash),
-          isNull(passwordResetTokens.usedAt),
-          gt(passwordResetTokens.expiresAt, new Date()),
-        ),
-      )
-      .limit(1);
-    if (!row)
+    const tokenHash = this.tokenHash(token);
+    const row = await this.passwordResetTokenModel.findOneAndUpdate(
+      {
+        tokenHash,
+        usedAt: null,
+        expiresAt: { $gt: new Date() },
+      },
+      {
+        $set: { usedAt: new Date() },
+      },
+      { new: true },
+    );
+    if (!row) {
       throw new BadRequestException(
         'This password reset link is invalid or has expired.',
       );
-    await db.transaction(async (tx) => {
-      const used = await tx
-        .update(passwordResetTokens)
-        .set({ usedAt: new Date() })
-        .where(
-          and(
-            eq(passwordResetTokens.id, row.id),
-            isNull(passwordResetTokens.usedAt),
-          ),
-        )
-        .returning({ id: passwordResetTokens.id });
-      if (!used.length)
-        throw new BadRequestException(
-          'This password reset link has already been used.',
-        );
-      await tx
-        .update(users)
-        .set({
+    }
+    await this.userModel.updateOne(
+      { _id: row.userId },
+      {
+        $set: {
           passwordHash: await hashPassword(password),
-          updatedAt: new Date(),
-        })
-        .where(eq(users.id, row.userId));
-      await tx
-        .update(sessions)
-        .set({ revokedAt: new Date() })
-        .where(
-          and(eq(sessions.userId, row.userId), isNull(sessions.revokedAt)),
-        );
-    });
+        },
+      },
+    );
+    await this.sessionModel.updateMany(
+      {
+        userId: row.userId,
+        revokedAt: null,
+      },
+      {
+        $set: { revokedAt: new Date() },
+      },
+    );
   }
 
   async verifyEmail(token: string) {
-    const hash = await this.tokenHash(token);
-    const [row] = await db
-      .select()
-      .from(emailVerificationTokens)
-      .where(
-        and(
-          eq(emailVerificationTokens.tokenHash, hash),
-          isNull(emailVerificationTokens.usedAt),
-          gt(emailVerificationTokens.expiresAt, new Date()),
-        ),
-      )
-      .limit(1);
-    if (!row)
+    const hash = this.tokenHash(token);
+    const row = await this.emailVerificationTokenModel.findOneAndUpdate(
+      {
+        tokenHash: hash,
+        usedAt: null,
+        expiresAt: { $gt: new Date() },
+      },
+      {
+        $set: { usedAt: new Date() },
+      },
+      { new: true },
+    );
+    if (!row) {
       throw new BadRequestException(
         'This verification link is invalid or has expired.',
       );
-    await db.transaction(async (tx) => {
-      await tx
-        .update(emailVerificationTokens)
-        .set({ usedAt: new Date() })
-        .where(eq(emailVerificationTokens.id, row.id));
-      await tx
-        .update(users)
-        .set({ emailVerifiedAt: new Date(), updatedAt: new Date() })
-        .where(eq(users.id, row.userId));
-    });
+    }
+    await this.userModel.updateOne(
+      { _id: row.userId },
+      {
+        $set: { emailVerifiedAt: new Date() },
+      },
+    );
   }
 
   private async createEmailVerificationToken(userId: string) {
     const token = this.newToken();
-    await db
-      .insert(emailVerificationTokens)
-      .values({
-        id: randomUUID(),
-        userId,
-        tokenHash: await this.tokenHash(token),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60_000),
-      });
+    await this.emailVerificationTokenModel.create({
+      userId: new Types.ObjectId(userId),
+      tokenHash: this.tokenHash(token),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60_000),
+    });
     return token;
   }
 
@@ -511,8 +509,9 @@ export class AuthService {
       !env.GOOGLE_CLIENT_ID ||
       !env.GOOGLE_CLIENT_SECRET ||
       !env.GOOGLE_CALLBACK_URL
-    )
+    ) {
       throw new BadRequestException('Google sign-in is not configured.');
+    }
     return new OAuth2Client(
       env.GOOGLE_CLIENT_ID,
       env.GOOGLE_CLIENT_SECRET,

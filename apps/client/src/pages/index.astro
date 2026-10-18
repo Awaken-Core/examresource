@@ -498,8 +498,8 @@ const jsonLd = {
 
         </div>
 
-        {/* RIGHT SIDEBAR (Important Portals + Popular this week) */}
-        <aside class="space-y-6">
+        {/* RIGHT SIDEBAR (Important Portals + Popular this week) - Sticky to viewport */}
+        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
           
           {/* Important Portals Box */}
           <div id="important-links" class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
@@ -564,7 +564,7 @@ const jsonLd = {
               <div class="space-y-2.5">
                 {popularUpdates.map((item) => (
                   <a 
-                    href={item.href}
+                    href={item.href} 
                     data-article-link={item.slugKey}
                     class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
                   >
@@ -579,16 +579,6 @@ const jsonLd = {
               </div>
             </div>
           )}
-
-          {/* Official Verification Notice Card */}
-          <div class="bg-accent/10 border border-accent/30 rounded-lg p-3.5 text-xs text-accent">
-            <p class="font-bold flex items-center gap-1.5 text-white">
-              <span>ℹ️</span> Official Notice Verification
-            </p>
-            <p class="mt-1 text-[11px] leading-relaxed text-muted">
-              Always cross-check dates, criteria, and payment information with the recruiting authority's official notification PDF before submitting applications.
-            </p>
-          </div>
 
         </aside>
 
