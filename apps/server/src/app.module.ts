@@ -10,7 +10,12 @@ import { NotificationModule } from './modules/notifications/notification.module.
 
 @Module({
   imports: [
-    MongooseModule.forRoot(env.DATABASE_URL),
+    MongooseModule.forRoot(env.DATABASE_URL, {
+      maxPoolSize: 2,
+      minPoolSize: 0,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 30000,
+    }),
     AuthModule,
     BlogModule,
     MediaModule,
