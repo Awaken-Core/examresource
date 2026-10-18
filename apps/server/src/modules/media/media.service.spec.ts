@@ -7,8 +7,11 @@ describe('MediaService image compression', () => {
   let service: MediaService;
   const mockUser: CurrentUser = {
     id: 'user-123',
+    name: 'Admin User',
     email: 'admin@example.com',
+    phone: null,
     role: 'admin',
+    emailVerified: true,
   };
 
   beforeEach(() => {

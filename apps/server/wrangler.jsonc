@@ -15,6 +15,20 @@
     "@nestjs/microservices/microservices-module.js": "./dist/worker-shims/nest-optional.js",
     "@nestjs/websockets/socket-module.js": "./dist/worker-shims/nest-optional.js"
   },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MONGO_DO",
+        "class_name": "MongoDurableObject"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["MongoDurableObject"]
+    }
+  ],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1

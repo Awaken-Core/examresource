@@ -16,6 +16,7 @@ interface __BaseEnv_Env {
 	R2_SECRET_ACCESS_KEY: string;
 	R2_BUCKET: string;
 	R2_PUBLIC_BASE_URL: string;
+	MONGO_DO: DurableObjectNamespace;
 }
 declare namespace Cloudflare {
 	interface GlobalProps {
