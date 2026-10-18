@@ -12,7 +12,11 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
   id={id} 
   data-notification-popup
   data-notification-prefix={prefix}
-  class="hidden absolute left-[calc(100%+14px)] bottom-0 w-84 sm:w-90 bg-surface border border-border rounded-2xl shadow-elevated p-4 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none"
+  class={`hidden absolute ${
+    prefix === 'mobile'
+      ? 'left-0 bottom-full mb-2 w-full max-w-[280px]'
+      : 'left-[calc(100%+14px)] bottom-0 w-84 sm:w-90'
+  } bg-surface border border-border rounded-2xl shadow-elevated p-4 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none`}
   role="dialog"
   aria-label="Notifications"
 >
