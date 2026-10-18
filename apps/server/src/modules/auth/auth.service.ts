@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
-import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { and, asc, desc, eq, gt, isNull, or } from 'drizzle-orm';
 import type { Request } from 'express';
 import { db } from '../../core/config/db.js';
@@ -33,11 +33,17 @@ export type CurrentUser = {
 
 @Injectable()
 export class AuthService {
-  private tokenHash(token: string) {
-    return createHash('sha256').update(token).digest('hex');
+  private async tokenHash(token: string) {
+    const data = new TextEncoder().encode(token);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = new Uint8Array(hashBuffer);
+    return Array.from(hashArray, (b) => b.toString(16).padStart(2, '0')).join('');
   }
   private newToken() {
-    return randomBytes(48).toString('base64url');
+    const bytes = crypto.getRandomValues(new Uint8Array(48));
+    let binary = '';
+    for (const byte of bytes) binary += String.fromCharCode(byte);
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
   }
   private publicUser(user: typeof users.$inferSelect): CurrentUser {
     return {
@@ -107,7 +113,7 @@ export class AuthService {
       .values({
         id: randomUUID(),
         userId: user.id,
-        tokenHash: this.tokenHash(token),
+        tokenHash: await this.tokenHash(token),
         expiresAt: new Date(Date.now() + env.SESSION_TTL_DAYS * 86_400_000),
       });
     return { user: this.publicUser(user), token };
@@ -120,7 +126,7 @@ export class AuthService {
       .insert(oauthStates)
       .values({
         id: randomUUID(),
-        stateHash: this.tokenHash(state),
+        stateHash: await this.tokenHash(state),
         expiresAt: new Date(Date.now() + 10 * 60_000),
       });
     return {
@@ -135,7 +141,7 @@ export class AuthService {
   }
 
   async loginWithGoogle(code: string, state: string) {
-    const stateHash = this.tokenHash(state);
+    const stateHash = await this.tokenHash(state);
     const [oauthState] = await db
       .select()
       .from(oauthStates)
@@ -227,7 +233,7 @@ export class AuthService {
       .values({
         id: randomUUID(),
         userId: user.id,
-        tokenHash: this.tokenHash(token),
+        tokenHash: await this.tokenHash(token),
         expiresAt: new Date(Date.now() + env.SESSION_TTL_DAYS * 86_400_000),
       });
     return { user: this.publicUser(user), token };
@@ -240,7 +246,7 @@ export class AuthService {
       .from(sessions)
       .where(
         and(
-          eq(sessions.tokenHash, this.tokenHash(token)),
+          eq(sessions.tokenHash, await this.tokenHash(token)),
           isNull(sessions.revokedAt),
           gt(sessions.expiresAt, new Date()),
         ),
@@ -333,7 +339,7 @@ export class AuthService {
         .set({ revokedAt: new Date() })
         .where(
           and(
-            eq(sessions.tokenHash, this.tokenHash(token)),
+            eq(sessions.tokenHash, await this.tokenHash(token)),
             isNull(sessions.revokedAt),
           ),
         );
@@ -356,7 +362,7 @@ export class AuthService {
           gt(sessions.expiresAt, new Date()),
         ),
       );
-    const currentHash = currentToken ? this.tokenHash(currentToken) : undefined;
+    const currentHash = currentToken ? await this.tokenHash(currentToken) : undefined;
     return rows.map(({ tokenHash, ...session }) => ({
       ...session,
       current: tokenHash === currentHash,
@@ -404,14 +410,14 @@ export class AuthService {
       .values({
         id: randomUUID(),
         userId: user.id,
-        tokenHash: this.tokenHash(token),
+        tokenHash: await this.tokenHash(token),
         expiresAt: new Date(Date.now() + 60 * 60_000),
       });
     return token;
   }
 
   async resetPassword(token: string, password: string) {
-    const tokenHash = this.tokenHash(token);
+    const tokenHash = await this.tokenHash(token);
     const [row] = await db
       .select()
       .from(passwordResetTokens)
@@ -459,7 +465,7 @@ export class AuthService {
   }
 
   async verifyEmail(token: string) {
-    const hash = this.tokenHash(token);
+    const hash = await this.tokenHash(token);
     const [row] = await db
       .select()
       .from(emailVerificationTokens)
@@ -494,7 +500,7 @@ export class AuthService {
       .values({
         id: randomUUID(),
         userId,
-        tokenHash: this.tokenHash(token),
+        tokenHash: await this.tokenHash(token),
         expiresAt: new Date(Date.now() + 24 * 60 * 60_000),
       });
     return token;
