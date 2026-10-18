@@ -129,6 +129,14 @@ export class BlogService {
   private async runInTransaction<T>(
     fn: (session?: ClientSession) => Promise<T>,
   ): Promise<T> {
+    // A ClientSession is connection-bound. Model calls made through the
+    // Durable Object are separate RPCs, so forwarding a Worker-created shim as
+    // `options.session` would make Mongoose reject it. Complex atomic commands
+    // must be implemented as one Durable Object operation.
+    if ((this.connection as any).supportsTransactions === false) {
+      return fn(undefined);
+    }
+
     let session: ClientSession | null = null;
     try {
       session = await this.connection.startSession();

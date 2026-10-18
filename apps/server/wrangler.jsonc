@@ -19,6 +19,20 @@
   "images": {
     "binding": "IMAGES"
   },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MONGO_DO",
+        "class_name": "MongoDurableObject"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["MongoDurableObject"]
+    }
+  ],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1

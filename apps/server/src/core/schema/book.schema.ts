@@ -50,4 +50,3 @@ export class Book {
 
 export const BookSchema = SchemaFactory.createForClass(Book);
 BookSchema.index({ isArchived: 1, publishedAt: -1, createdAt: -1 });
-BookSchema.index({ entryBy: 1 });

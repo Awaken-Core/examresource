@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-import { env } from './core/config/env.js';
+import { DatabaseModule } from './core/database/database.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { BlogModule } from './modules/blog/blog.module.js';
 import { BookModule } from './modules/book/book.module.js';
@@ -13,12 +12,7 @@ import { QuestionModule } from './modules/question/question.module.js';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(env.DATABASE_URL, {
-      maxPoolSize: 2,
-      minPoolSize: 0,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 30000,
-    }),
+    DatabaseModule.forRoot(),
     AuthModule,
     BlogModule,
     BookModule,
