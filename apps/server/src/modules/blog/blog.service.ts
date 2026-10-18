@@ -1554,7 +1554,7 @@ export class BlogService {
     const block = await this.blogBlockModel.create({
       blogId: new Types.ObjectId(blogId),
       type: input.type,
-      value: input.value,
+      value: input.value ?? '',
       position: (lastBlock?.position ?? -1) + 1,
       metadata: input.metadata ? (input.metadata as any) : null,
     });
@@ -1813,7 +1813,7 @@ export class BlogService {
     const docs = blocks.map((b, position) => ({
       blogId: blogObjectId,
       type: b.type,
-      value: b.value,
+      value: b.value ?? '',
       position,
       metadata: b.metadata ?? null,
     }));

@@ -84,7 +84,7 @@ export class BlogBlock {
   })
   type: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, default: '' })
   value: string;
 
   @Prop({ required: true, type: Number })
