@@ -75,7 +75,7 @@ export class AuthController {
         'Google sign-in request is invalid or has expired.',
       );
     }
-    if (cookieState && cookieState !== state) {
+    if (!cookieState || cookieState !== state) {
       throw new BadRequestException(
         'Google sign-in request is invalid or has expired.',
       );
