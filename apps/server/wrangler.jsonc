@@ -13,7 +13,11 @@
     "class-transformer": "./dist/worker-shims/nest-optional.js",
     "@nestjs/microservices": "./dist/worker-shims/nest-optional.js",
     "@nestjs/microservices/microservices-module.js": "./dist/worker-shims/nest-optional.js",
-    "@nestjs/websockets/socket-module.js": "./dist/worker-shims/nest-optional.js"
+    "@nestjs/websockets/socket-module.js": "./dist/worker-shims/nest-optional.js",
+    "sharp": "./dist/worker-shims/sharp.js"
+  },
+  "images": {
+    "binding": "IMAGES"
   },
   "observability": {
     "enabled": true,
