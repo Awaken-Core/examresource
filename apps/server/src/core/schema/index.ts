@@ -5,3 +5,6 @@ export * from './notification.schema.js';
 export * from './taxonomy.schema.js';
 export * from './blog.schema.js';
 export * from './url-redirect.schema.js';
+export * from './book.schema.js';
+export * from './question.schema.js';
+export * from './exam.schema.js';
