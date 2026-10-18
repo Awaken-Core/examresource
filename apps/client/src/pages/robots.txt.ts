@@ -11,7 +11,6 @@ Disallow: /editor
 Disallow: /editor/
 Disallow: /login
 Disallow: /signup
-Disallow: /sso-callback
 
 # Explicit permissions for AI Search Engines & Grounding Bots (OpenAI ChatGPT, Anthropic Claude, Grok, Gemini, Perplexity)
 User-agent: GPTBot
