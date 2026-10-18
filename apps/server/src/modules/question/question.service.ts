@@ -14,6 +14,8 @@ import {
   type ReportedQuestionDocument,
   SavedQuestion,
   type SavedQuestionDocument,
+  Exam,
+  type ExamDocument,
 } from '../../core/schema/index.js';
 import type { CurrentUser } from '../auth/auth.service.js';
 import type {
@@ -31,6 +33,8 @@ export class QuestionService {
     private readonly savedQuestionModel: Model<SavedQuestionDocument>,
     @InjectModel(ReportedQuestion.name)
     private readonly reportedQuestionModel: Model<ReportedQuestionDocument>,
+    @InjectModel(Exam.name)
+    private readonly examModel: Model<ExamDocument>,
   ) {}
 
   async listPublished() {
@@ -138,6 +142,14 @@ export class QuestionService {
   async remove(id: string, user: CurrentUser) {
     await this.findManageable(id, user);
     const questionObjectId = new Types.ObjectId(id);
+    const referencedByExam = await this.examModel.exists({
+      'questions.questionId': questionObjectId,
+    });
+    if (referencedByExam) {
+      throw new ConflictException(
+        'This question is used in an exam. Archive it instead of deleting it.',
+      );
+    }
     await this.questionModel.findByIdAndDelete(questionObjectId);
     await this.savedQuestionModel.deleteMany({ questionId: questionObjectId });
     await this.reportedQuestionModel.deleteMany({ questionId: questionObjectId });
@@ -152,7 +164,7 @@ export class QuestionService {
       .lean();
 
     return saved
-      .filter((item: any) => item.questionId)
+      .filter((item: any) => item.questionId?.status === 'published')
       .map((item: any) => ({
         id: item._id.toString(),
         _id: item._id.toString(),
@@ -162,7 +174,7 @@ export class QuestionService {
   }
 
   async save(questionId: string, user: CurrentUser) {
-    await this.requireQuestion(questionId);
+    await this.requirePublishedQuestion(questionId);
     try {
       const saved = await this.savedQuestionModel.create({
         userId: new Types.ObjectId(user.id),
@@ -196,7 +208,7 @@ export class QuestionService {
     input: ReportQuestionInput,
     user: CurrentUser,
   ) {
-    await this.requireQuestion(questionId);
+    await this.requirePublishedQuestion(questionId);
     try {
       const report = await this.reportedQuestionModel.create({
         ...input,
@@ -227,6 +239,14 @@ export class QuestionService {
     }
     const doc = await this.questionModel.findById(new Types.ObjectId(id)).lean();
     if (!doc) throw new NotFoundException('Question was not found.');
+    return doc;
+  }
+
+  private async requirePublishedQuestion(id: string) {
+    const doc = await this.requireQuestion(id);
+    if (doc.status !== 'published') {
+      throw new NotFoundException('Question was not found.');
+    }
     return doc;
   }
 

@@ -126,6 +126,11 @@ export class TestAttempt {
   @Prop({ type: Date, default: null })
   endedAt?: Date | null;
 
+  // Snapshot the deadline at attempt creation so later exam edits cannot extend
+  // an already-running attempt.
+  @Prop({ type: Date, default: null, index: true })
+  expiresAt?: Date | null;
+
   @Prop({ type: Number, default: null })
   timeSpentSeconds?: number | null;
 

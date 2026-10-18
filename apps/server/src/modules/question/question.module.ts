@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
+  Exam,
+  ExamSchema,
   Question,
   QuestionSchema,
   ReportedQuestion,
@@ -17,6 +19,7 @@ import { QuestionService } from './question.service.js';
     AuthModule,
     MongooseModule.forFeature([
       { name: Question.name, schema: QuestionSchema },
+      { name: Exam.name, schema: ExamSchema },
       { name: SavedQuestion.name, schema: SavedQuestionSchema },
       { name: ReportedQuestion.name, schema: ReportedQuestionSchema },
     ]),

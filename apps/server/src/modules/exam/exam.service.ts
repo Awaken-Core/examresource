@@ -70,7 +70,7 @@ export class ExamService {
   async create(input: CreateExamInput, user: CurrentUser) {
     this.assertEditor(user);
     const questionIds = input.questions.map((q) => q.questionId);
-    await this.validateQuestionIds(questionIds);
+    await this.validateQuestionIds(questionIds, input.status === 'published');
 
     const questionsPayload = input.questions.map((item, position) => ({
       questionId: new Types.ObjectId(item.questionId),
@@ -96,7 +96,7 @@ export class ExamService {
   }
 
   async update(id: string, input: UpdateExamInput, user: CurrentUser) {
-    await this.findManageable(id, user);
+    const existing = await this.findManageable(id, user);
 
     const updatePayload: Record<string, any> = {};
     if (input.title !== undefined) updatePayload.title = input.title;
@@ -108,13 +108,23 @@ export class ExamService {
 
     if (input.questions !== undefined) {
       const questionIds = input.questions.map((q) => q.questionId);
-      await this.validateQuestionIds(questionIds);
+      await this.validateQuestionIds(
+        questionIds,
+        (input.status ?? existing.status) === 'published',
+      );
       updatePayload.questions = input.questions.map((item, position) => ({
         questionId: new Types.ObjectId(item.questionId),
         position,
         marks: item.marks ?? null,
         negativeMarks: item.negativeMarks ?? null,
       }));
+    }
+
+    if (input.questions === undefined && (input.status ?? existing.status) === 'published') {
+      await this.validateQuestionIds(
+        existing.questions.map((item: any) => item.questionId.toString()),
+        true,
+      );
     }
 
     const updated = await this.examModel
@@ -144,7 +154,9 @@ export class ExamService {
       throw new NotFoundException('Exam was not found.');
     }
     const examObjectId = new Types.ObjectId(id);
-    const exam = await this.examModel.findById(examObjectId).lean();
+    const exam = await this.examModel
+      .findOne({ _id: examObjectId, status: 'published' })
+      .lean();
     if (!exam) throw new NotFoundException('Exam was not found.');
 
     const userObjectId = new Types.ObjectId(user.id);
@@ -167,6 +179,9 @@ export class ExamService {
 
     // Hydrate questions to calculate maximumMarks and prepare answer slots
     const examQuestions = await this.getExamQuestions(exam, false);
+    if (examQuestions.length !== exam.questions.length) {
+      throw new ConflictException('This exam has unavailable questions.');
+    }
     const totalMaxMarks = examQuestions.reduce(
       (sum: number, q: any) => sum + (q.marks || 1),
       0,
@@ -192,6 +207,9 @@ export class ExamService {
       marksAwarded: 0,
       maximumMarks: totalMaxMarks,
       startedAt: new Date(),
+      expiresAt: exam.durationMinutes
+        ? new Date(Date.now() + exam.durationMinutes * 60_000)
+        : null,
       answers: initialAnswers,
     });
 
@@ -390,13 +408,14 @@ export class ExamService {
       .filter(Boolean);
   }
 
-  private async validateQuestionIds(ids: string[]) {
+  private async validateQuestionIds(ids: string[], requirePublished = false) {
     const validIds = ids.filter((id) => Types.ObjectId.isValid(id));
     if (validIds.length !== ids.length) {
       throw new BadRequestException('One or more question IDs are invalid.');
     }
     const count = await this.questionModel.countDocuments({
       _id: { $in: validIds.map((id) => new Types.ObjectId(id)) },
+      ...(requirePublished ? { status: 'published' } : {}),
     });
     if (count !== ids.length) {
       throw new BadRequestException('One or more questions do not exist.');
@@ -429,6 +448,12 @@ export class ExamService {
     if (!doc) throw new NotFoundException('Exam attempt was not found.');
     if (doc.status !== 'in_progress') {
       throw new ConflictException('This exam attempt has already ended.');
+    }
+    if (doc.expiresAt && new Date(doc.expiresAt).getTime() <= Date.now()) {
+      await this.testAttemptModel.findByIdAndUpdate(doc._id, {
+        $set: { status: 'abandoned', endedAt: new Date() },
+      });
+      throw new ConflictException('This exam attempt has expired.');
     }
     return doc;
   }
@@ -466,6 +491,7 @@ export class ExamService {
       status: doc.status,
       startedAt: doc.startedAt,
       endedAt: doc.endedAt || null,
+      expiresAt: doc.expiresAt || null,
       timeSpentSeconds: doc.timeSpentSeconds || null,
       ...(exposeScore
         ? {
