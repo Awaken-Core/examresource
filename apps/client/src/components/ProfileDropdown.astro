@@ -1,7 +1,7 @@
 ---
 interface Props {
   id?: string;
-  position?: 'top' | 'bottom';
+  position?: 'top' | 'bottom' | 'mobile';
 }
 
 const { id = "profile-dropdown", position = "top" } = Astro.props;
@@ -10,7 +10,13 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
 <div 
   id={id} 
   data-profile-dropdown={id}
-  class={`hidden absolute ${position === 'bottom' ? 'left-[calc(100%+12px)] bottom-0' : 'top-full right-0 mt-2'} w-64 bg-surface border border-border rounded-2xl shadow-elevated p-2 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none`}
+  class={`hidden absolute ${
+    position === 'bottom'
+      ? 'left-[calc(100%+12px)] bottom-0 w-64'
+      : position === 'mobile'
+      ? 'left-0 bottom-full mb-2 w-full max-w-[260px]'
+      : 'top-full right-0 mt-2 w-64'
+  } bg-surface border border-border rounded-2xl shadow-elevated p-2 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none`}
   role="menu"
   aria-orientation="vertical"
 >
@@ -22,9 +28,8 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
   {/* User summary header */}
   <div class="px-3 py-2 border-b border-border/50 mb-1">
     <div class="flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-full bg-surface-raised border border-border flex items-center justify-center text-white font-bold text-caption-xs shrink-0 overflow-hidden">
-        <span class="user-avatar-initials">DW</span>
-        <img class="user-avatar-img hidden w-full h-full object-cover" alt="Avatar" width="40" height="40" decoding="async" loading="lazy" />
+      <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-xs select-none">
+        <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">DW</span>
       </div>
       <div class="truncate flex-1">
         <p class="user-display-name text-body-sm font-bold text-white leading-tight truncate">Devil</p>

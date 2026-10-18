@@ -1,6 +1,7 @@
 ---
 import Tooltip from './Tooltip.astro';
 import BrandLogo from './BrandLogo.astro';
+import ProfileDropdown from './ProfileDropdown.astro';
 import { siteDomain } from '../data/site';
 
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
@@ -52,6 +53,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
         </button>
       </div>
     </div>
+
     {/* Center: Search Section — visible on ALL screen sizes */}
     <div class="flex flex-1 items-center justify-center px-2 sm:px-6 min-w-0">
       <div class="w-full max-w-xl">
@@ -78,5 +80,51 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
       </div>
     </div>
 
+    {/* Right Toolbar Items: Profile & Log in */}
+    <div class="flex items-center gap-2.5 sm:gap-3.5 shrink-0 px-3 sm:px-5">
+
+      {/* TOP RIGHT PROFILE SECTION & DROPDOWN (Shown when user is logged in) */}
+      <div id="header-profile-section" class="header-auth-logged-in hidden relative z-[1100]">
+        <button 
+          id="header-profile-trigger"
+          data-profile-trigger="header-profile-dropdown"
+          type="button"
+          class="header-profile-avatar-btn w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center transition cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-accent/40 select-none overflow-hidden shrink-0 hover:border-accent/40"
+          aria-label="Open User Profile Menu"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <span class="user-avatar-initials header-profile-initials inline-flex items-center justify-center text-center text-xs sm:text-[13px] font-bold leading-none uppercase">U</span>
+        </button>
+
+        {/* Mount Dropdown at Top */}
+        <ProfileDropdown id="header-profile-dropdown" position="top" />
+      </div>
+
+      {/* Modern "Log in" / "Get Started" Button (Shown when user is NOT logged in) */}
+      <div class="header-auth-logged-out flex items-center">
+        <a 
+          href="/login"
+          id="header-login-btn"
+          class="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-xl bg-accent hover:bg-accent/90 text-[#ffffff] font-semibold text-xs shadow-xs hover:shadow-sm transition-all duration-150 shrink-0 cursor-pointer"
+          title="Log in / Get Started"
+        >
+          <span class="tracking-tight sm:hidden">Log in</span>
+          <span class="tracking-tight hidden sm:inline">Get Started</span>
+          <svg 
+            class="w-3.5 h-3.5 text-[#ffffff] transition-transform duration-200 ease-out group-hover:translate-x-1" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            stroke-width="2.5" 
+            stroke-linecap="round" 
+            stroke-linejoin="round"
+          >
+            <path d="M5 12h14"/>
+            <path d="m12 5 7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
   </div>
 </header>
