@@ -46,6 +46,7 @@ export class BlogController {
     @Query('language') language?: 'HINGLISH' | 'ENGLISH',
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
+    @Query('includeImages') includeImages?: string,
   ) {
     return this.blogs.listPublished({
       categorySlug,
@@ -54,6 +55,7 @@ export class BlogController {
       language,
       limit: limit ? parseInt(limit, 10) : undefined,
       offset: offset ? parseInt(offset, 10) : undefined,
+      includeImages: includeImages === 'false' ? false : includeImages === 'true' ? true : undefined,
     });
   }
 

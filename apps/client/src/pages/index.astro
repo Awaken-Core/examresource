@@ -23,7 +23,7 @@ let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string;
 
 const fetchStart = performance.now();
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=50&language=${listLanguage}`, {
+  const res = await fetch(`${API_URL}/blogs?limit=50&language=${listLanguage}&includeImages=false`, {
     signal: AbortSignal.timeout(6000),
   });
   const durationMs = Math.round(performance.now() - fetchStart);

@@ -173,6 +173,7 @@ export class BlogService {
     language?: 'HINGLISH' | 'ENGLISH';
     limit?: number;
     offset?: number;
+    includeImages?: boolean;
   }) {
     const cacheKey = `list:${JSON.stringify(options || {})}`;
     const cached = this.cache.get<any[]>(cacheKey);
@@ -290,7 +291,9 @@ export class BlogService {
       }
     }
 
-    if (groupIds.length > 0) {
+    const shouldFetchImages = options?.includeImages !== false;
+
+    if (shouldFetchImages && groupIds.length > 0) {
       const siblingBlogs = await this.blogModel
         .find({ translationGroupId: { $in: groupIds } })
         .select({ _id: 1, translationGroupId: 1 })
@@ -312,35 +315,42 @@ export class BlogService {
       .filter((id) => Types.ObjectId.isValid(id))
       .map((id) => new Types.ObjectId(id));
 
-    const [imageBlocks, catRows] = await Promise.all([
-      relatedObjectIds.length > 0
-        ? this.blogBlockModel
-            .find({
-              blogId: { $in: relatedObjectIds },
-              type: 'IMAGE',
-            })
-            .sort({ position: 1 })
-            .select({ blogId: 1, value: 1, position: 1 })
-            .lean()
-        : Promise.resolve([]),
+    const promises: Promise<any>[] = [
       relatedObjectIds.length > 0
         ? this.blogCategoryModel
             .find({ blogId: { $in: relatedObjectIds } })
             .populate<{ categoryId: CategoryDocument }>('categoryId')
             .lean()
         : Promise.resolve([]),
-    ]);
+    ];
+
+    if (shouldFetchImages && relatedObjectIds.length > 0) {
+      promises.push(
+        this.blogBlockModel
+          .find({
+            blogId: { $in: relatedObjectIds },
+            type: 'IMAGE',
+          })
+          .sort({ position: 1 })
+          .select({ blogId: 1, value: 1, position: 1 })
+          .lean(),
+      );
+    }
+
+    const [catRows, imageBlocks = []] = await Promise.all(promises);
 
     const blogImageMap = new Map<string, string>();
-    for (const img of imageBlocks as any[]) {
-      const bId = img.blogId.toString();
-      if (!blogImageMap.has(bId)) {
-        blogImageMap.set(bId, img.value);
+    if (shouldFetchImages) {
+      for (const img of imageBlocks as any[]) {
+        const bId = img.blogId.toString();
+        if (!blogImageMap.has(bId)) {
+          blogImageMap.set(bId, img.value);
+        }
       }
     }
 
     const groupImageMap = new Map<string, string>();
-    if (groupIds.length > 0) {
+    if (shouldFetchImages && groupIds.length > 0) {
       for (const [bId, trGroupId] of blogGroupIdMap.entries()) {
         if (
           trGroupId &&
@@ -369,12 +379,14 @@ export class BlogService {
     }
 
     const result = rows.map((row) => {
-      const firstInlineImage =
-        blogImageMap.get(row.id) ||
-        (row.translationGroupId ? groupImageMap.get(row.translationGroupId) : null) ||
-        null;
+      const firstInlineImage = shouldFetchImages
+        ? (blogImageMap.get(row.id) ||
+          (row.translationGroupId ? groupImageMap.get(row.translationGroupId) : null) ||
+          null)
+        : null;
 
-      const firstImage = firstInlineImage || row.coverImage || null;
+      const firstImage = shouldFetchImages ? (firstInlineImage || row.coverImage || null) : null;
+      const coverImage = shouldFetchImages ? (row.coverImage || firstInlineImage || null) : null;
 
       const attachedCats =
         blogCategoryMap.get(row.id) ||
@@ -386,7 +398,7 @@ export class BlogService {
         category: primaryCategory,
         categories: attachedCats,
         firstImage,
-        coverImage: row.coverImage || firstInlineImage || null,
+        coverImage,
       };
     });
 
