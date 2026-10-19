@@ -23,14 +23,12 @@
 
 ## Authentication backend
 
-The API uses PostgreSQL-backed opaque sessions; no bearer token is exposed to browser JavaScript. Passwords use Argon2id and session, reset, and email-verification tokens are stored only as SHA-256 hashes.
+The API uses MongoDB-backed opaque sessions; no bearer token is exposed to browser JavaScript. Passwords use PBKDF2 (Web Crypto) and session, reset, and email-verification tokens are stored only as SHA-256 hashes.
 
-Start PostgreSQL from the repository root, then configure and migrate the API:
+Configure and run the API:
 
 ```bash
-docker compose up -d postgres
 copy .env.example .env
-bun run drizzle:migrate
 bun run start:dev
 ```
 
