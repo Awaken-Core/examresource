@@ -132,13 +132,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       });
     </script>
 
-    {/* Google Fonts: Preconnect & Asynchronous Non-blocking Stylesheet */}
+    {/* Google Fonts: Asynchronous Non-blocking Geist Sans (Newsreader removed to eliminate 130 KiB unused font weight) */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" />
     </noscript>
 
     {/* DNS prefetch for the media CDN without holding an unused TLS socket */}
@@ -372,16 +371,18 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <button
                 type="button"
                 data-app-lang="hinglish"
-                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors duration-150 cursor-pointer text-muted hover:text-white"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer bg-accent !text-white"
                 title="Switch to Hinglish"
+                aria-pressed="true"
               >
                 HI
               </button>
               <button
                 type="button"
                 data-app-lang="en"
-                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors duration-150 cursor-pointer text-muted hover:text-white"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer text-muted hover:text-white"
                 title="Switch to English"
+                aria-pressed="false"
               >
                 EN
               </button>
@@ -677,27 +678,29 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         function setSidebarCollapsed(isCollapsed: boolean) {
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
+          if (!wrapper) return;
+          const isCurrentlyCollapsed = wrapper.classList.contains('collapsed');
+          if (isCurrentlyCollapsed === isCollapsed) return; // Early return prevents forced layout reflow
+
           const headerBrand = document.getElementById('header-brand-collapsed');
           const tooltipText = document.getElementById('sidebar-toggle-tooltip-text');
-          if (wrapper) {
-            wrapper.classList.remove('hover-peek');
-            if (isCollapsed) {
-              wrapper.classList.add('collapsed');
-              if (headerBrand) {
-                headerBrand.classList.remove('hidden');
-                headerBrand.classList.add('flex');
-              }
-              if (tooltipText) tooltipText.textContent = 'Expand sidebar';
-            } else {
-              wrapper.classList.remove('collapsed');
-              if (headerBrand) {
-                headerBrand.classList.add('hidden');
-                headerBrand.classList.remove('flex');
-              }
-              if (tooltipText) tooltipText.textContent = 'Collapse sidebar';
+          wrapper.classList.remove('hover-peek');
+          if (isCollapsed) {
+            wrapper.classList.add('collapsed');
+            if (headerBrand) {
+              headerBrand.classList.remove('hidden');
+              headerBrand.classList.add('flex');
             }
-            localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
+            if (tooltipText) tooltipText.textContent = 'Expand sidebar';
+          } else {
+            wrapper.classList.remove('collapsed');
+            if (headerBrand) {
+              headerBrand.classList.add('hidden');
+              headerBrand.classList.remove('flex');
+            }
+            if (tooltipText) tooltipText.textContent = 'Collapse sidebar';
           }
+          localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
         }
 
         function toggleDesktopSidebar() {
@@ -822,11 +825,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const btnLang = btn.getAttribute('data-app-lang') || btn.getAttribute('data-global-lang');
             const isBtnActive = (btnLang === normalized);
             if (isBtnActive) {
-              btn.classList.add('bg-accent', '!text-white', 'text-on-accent', 'font-bold', 'shadow-2xs');
-              btn.classList.remove('text-muted', 'bg-accent/20', 'text-accent');
+              btn.classList.add('bg-accent', '!text-[#ffffff]', 'font-bold', 'shadow-2xs');
+              btn.classList.remove('text-muted', 'bg-accent/20', 'text-accent', '!text-white');
               btn.setAttribute('aria-pressed', 'true');
             } else {
-              btn.classList.remove('bg-accent', '!text-white', 'text-on-accent', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
+              btn.classList.remove('bg-accent', '!text-[#ffffff]', '!text-white', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
               btn.classList.add('text-muted');
               btn.setAttribute('aria-pressed', 'false');
             }
@@ -1644,7 +1647,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             };
           });
 
-          updateFavoritesUI();
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => updateFavoritesUI(), { timeout: 1500 });
+          } else {
+            setTimeout(updateFavoritesUI, 100);
+          }
           queueSyncAuthProfile();
         }
 

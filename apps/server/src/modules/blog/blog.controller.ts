@@ -157,6 +157,20 @@ export class BlogController {
     );
   }
 
+  @Post('blogs/ai-image-meta')
+  async getImageMeta(@Req() req: Request) {
+    const body = (req.body as any) || {};
+    return this.blogs.generateImageMeta(
+      {
+        articleTitle: body.articleTitle,
+        sectionHeading: body.sectionHeading,
+        contextText: body.contextText,
+        language: body.language,
+      },
+      await this.currentUser(req),
+    );
+  }
+
   @Post('blogs/translate-content')
   async translateMarkdownContent(@Req() req: Request) {
     const body = (req.body as any) || {};

@@ -340,6 +340,41 @@ Output must be valid JSON matching this schema:
   }
 
   /**
+   * Generate accessible, high-CTR image alt text and caption for blog articles.
+   */
+  async generateImageMeta(input: {
+    articleTitle?: string;
+    sectionHeading?: string;
+    contextText?: string;
+    language?: string;
+  }): Promise<{ alt: string; caption: string }> {
+    const systemPrompt = `You are an elite accessibility (WCAG 2.1 AAA) and SEO metadata specialist for educational and government exam publications.
+Generate a concise, highly descriptive image alt text (for screen readers and Google Image search) and a clean, informative caption.
+Rules:
+1. "alt": 60-110 characters. Accurately convey the visual subject matter in context of the article (e.g. "BHEL Artisan Recruitment 2026 Official Notice Banner showing 660 Vacancies"). NEVER use "image of" or "pasted image".
+2. "caption": 40-90 characters. A helpful reader-facing caption summarizing the image context.
+Return ONLY valid JSON:
+{
+  "alt": "...",
+  "caption": "..."
+}`;
+    const userPrompt = JSON.stringify(input);
+    try {
+      const rawJson = await this.callGemini(systemPrompt, userPrompt);
+      const parsed = JSON.parse(rawJson);
+      return {
+        alt: typeof parsed.alt === 'string' && parsed.alt.trim() ? parsed.alt.trim() : (input.articleTitle ? `${input.articleTitle} Official Notice` : 'Official recruitment notice details'),
+        caption: typeof parsed.caption === 'string' && parsed.caption.trim() ? parsed.caption.trim() : (input.articleTitle ? `${input.articleTitle} Details` : ''),
+      };
+    } catch {
+      return {
+        alt: input.articleTitle ? `${input.articleTitle} Official Notice` : 'Official recruitment notice details',
+        caption: input.articleTitle ? `${input.articleTitle} Details` : '',
+      };
+    }
+  }
+
+  /**
    * Generate complete bilingual blog (Hinglish + English) + SEO from a reference article.
    * Input can be raw text, Markdown, or HTML — Gemini normalises and rewrites fresh content.
    */
@@ -388,7 +423,7 @@ Your task: Read the REFERENCE article (notification PDF, syllabus, or competitor
 - Mandatory Sections & GFM Markdown Tables for Hindi version:
   1. Title: Catchy bilingual title (e.g. "RRB NTPC New Vacancy 2026: 11,558 पदों पर नोटिफिकेशन जारी, जानें योग्यता, उम्र सीमा और आवेदन प्रक्रिया")
   2. Friendly intro paragraph in Hindi
-  3. "जाने इस पोस्ट में क्या क्या है:" (Quick overview list)
+  3. ## जाने इस पोस्ट में क्या क्या है: (Table of contents / quick overview list)
   4. ## [Exam Name] : Overview (Must include Markdown Table)
      | Organization | Railway Recruitment Board (RRB) |
      | Post Name | Non-Technical Popular Categories (NTPC) |

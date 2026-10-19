@@ -200,16 +200,18 @@ const isHome = currentPath === '/';
           <button
             type="button"
             data-app-lang="hinglish"
-            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold transition-colors duration-150 cursor-pointer text-muted hover:text-white"
+            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer bg-accent !text-white"
             title="Switch to Hinglish"
+            aria-pressed="true"
           >
             HI
           </button>
           <button
             type="button"
             data-app-lang="en"
-            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold transition-colors duration-150 cursor-pointer text-muted hover:text-white"
+            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer text-muted hover:text-white"
             title="Switch to English"
+            aria-pressed="false"
           >
             EN
           </button>

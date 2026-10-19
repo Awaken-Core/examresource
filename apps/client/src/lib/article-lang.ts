@@ -37,30 +37,100 @@ export function processArticleHtml(rawHtml: string, title: string) {
   const tocItems: { id: string; text: string; level: number }[] = [];
   tocItems.push({ id: 'overview-top', text: title, level: 2 });
 
-  const headingRegex = /<h([2-4])(?:\s+([^>]*))>([\s\S]*?)<\/h\1>/gi;
-  let match;
+  // 1. Normalize Heading Hierarchy (prevents Lighthouse "Headings not sequentially descending" error)
+  // Ensure that no H3 or H4 appears before at least one H2 has been declared.
+  let hasEncounteredH2 = false;
   let hIdx = 0;
-  while ((match = headingRegex.exec(htmlBody)) !== null) {
-    const level = parseInt(match[1], 10);
-    const attrs = match[2] || '';
-    const innerContent = match[3] || '';
-    const cleanText = innerContent.replace(/<[^>]*>/g, '').replace(/\\+/g, '').trim();
-    if (!cleanText) continue;
-    const idMatch = attrs.match(/id=["']([^"']+)["']/i);
-    const id = idMatch ? idMatch[1] : toHeadingSlug(cleanText) || `heading-${++hIdx}`;
-    tocItems.push({ level, id, text: cleanText });
-  }
 
   htmlBody = htmlBody.replace(
     /<h([2-4])(?:\s+([^>]*))?>([\s\S]*?)<\/h\1>/gi,
-    (_full, lvl, attrs = '', content = '') => {
+    (_full, rawLvl, attrs = '', content = '') => {
+      let lvl = parseInt(rawLvl, 10);
+      if (lvl >= 3 && !hasEncounteredH2) {
+        // Promote early H3/H4 to H2 to preserve sequentially-descending hierarchy (H1 -> H2)
+        lvl = 2;
+      }
+      if (lvl === 2) hasEncounteredH2 = true;
+
       const cleanText = content.replace(/<[^>]*>/g, '').replace(/\\+/g, '').trim();
       const idMatch = attrs.match(/id=["']([^"']+)["']/i);
       const id = idMatch ? idMatch[1] : toHeadingSlug(cleanText) || `heading-${++hIdx}`;
       const cleanAttrs = attrs.replace(/id=["'][^"']*["']/i, '').trim();
+
+      if (cleanText) {
+        tocItems.push({ level: lvl, id, text: cleanText });
+      }
+
       return `<h${lvl} id="${id}"${cleanAttrs ? ` ${cleanAttrs}` : ''}>${content.replace(/\\+/g, '')}</h${lvl}>`;
     },
   );
+
+  // 2. Optimize Images (Guarantees zero CLS, eager LCP discovery, and accessibility alt text)
+  let imageCounter = 0;
+  htmlBody = htmlBody.replace(/<img\b([^>]*)>/gi, (_full, attrs = '') => {
+    imageCounter += 1;
+    let newAttrs = attrs;
+
+    // A. Sanitize Alt text (replace generic "pasted image" with article context)
+    const altMatch = newAttrs.match(/alt=["']([^"']*)["']/i);
+    const currentAlt = altMatch ? altMatch[1].trim() : '';
+    if (!currentAlt || currentAlt.toLowerCase().includes('pasted image') || currentAlt.toLowerCase() === 'image') {
+      const safeTitle = title.replace(/"/g, '&quot;');
+      const contextualAlt = `${safeTitle} - Official Notice & Guide Details`;
+      if (altMatch) {
+        newAttrs = newAttrs.replace(/alt=["'][^"']*["']/i, `alt="${contextualAlt}"`);
+      } else {
+        newAttrs += ` alt="${contextualAlt}"`;
+      }
+    }
+
+    // B. Explicit Dimensions & Aspect-Ratio (Fixes "Unsized image element" & eliminates CLS)
+    const widthMatch = newAttrs.match(/\bwidth=["'](\d+)["']/i);
+    const heightMatch = newAttrs.match(/\bheight=["'](\d+)["']/i);
+    let widthVal = widthMatch ? parseInt(widthMatch[1], 10) : 0;
+    let heightVal = heightMatch ? parseInt(heightMatch[1], 10) : 0;
+
+    if (widthVal > 0 && (!heightVal || heightVal <= 0)) {
+      // Calculate 16:9 proportional height if height is missing
+      heightVal = Math.round((widthVal * 9) / 16);
+      newAttrs += ` height="${heightVal}"`;
+    } else if (!widthVal && !heightVal) {
+      widthVal = 800;
+      heightVal = 450;
+      newAttrs += ` width="${widthVal}" height="${heightVal}"`;
+    }
+
+    // Ensure style contains aspect-ratio reservation
+    if (widthVal > 0 && heightVal > 0) {
+      if (!newAttrs.includes('aspect-ratio')) {
+        const styleMatch = newAttrs.match(/\bstyle=["']([^"']*)["']/i);
+        if (styleMatch) {
+          const currentStyle = styleMatch[1].trim();
+          const separator = currentStyle && !currentStyle.endsWith(';') ? ';' : '';
+          newAttrs = newAttrs.replace(
+            /\bstyle=["'][^"']*["']/i,
+            `style="${currentStyle}${separator} aspect-ratio: ${widthVal} / ${heightVal};"`,
+          );
+        } else {
+          newAttrs += ` style="aspect-ratio: ${widthVal} / ${heightVal};"`;
+        }
+      }
+    }
+
+    // C. First image is LCP hero: MUST NOT be loading="lazy", MUST be fetchpriority="high"
+    if (imageCounter === 1) {
+      newAttrs = newAttrs.replace(/\bloading=["'][^"']*["']/gi, '');
+      newAttrs = newAttrs.replace(/\bfetchpriority=["'][^"']*["']/gi, '');
+      newAttrs = newAttrs.replace(/\bdecoding=["'][^"']*["']/gi, '');
+      newAttrs += ' loading="eager" fetchpriority="high" decoding="async"';
+    } else {
+      // Subsequent images: ensure lazy loading
+      if (!newAttrs.includes('loading=')) newAttrs += ' loading="lazy"';
+      if (!newAttrs.includes('decoding=')) newAttrs += ' decoding="async"';
+    }
+
+    return `<img ${newAttrs.replace(/\s+/g, ' ').trim()}>`;
+  });
 
   return { htmlBody, tocItems };
 }

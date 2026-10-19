@@ -49,6 +49,33 @@ export const ArticleImage = Image.extend({
           return { 'data-layout': layout };
         },
       },
+      width: {
+        default: null,
+        parseHTML: (element) => {
+          const w = element.getAttribute('width');
+          return w ? parseInt(w, 10) : null;
+        },
+        renderHTML: (attributes) => {
+          return attributes.width ? { width: Math.round(attributes.width) } : {};
+        },
+      },
+      height: {
+        default: null,
+        parseHTML: (element) => {
+          const h = element.getAttribute('height');
+          return h ? parseInt(h, 10) : null;
+        },
+        renderHTML: (attributes) => {
+          return attributes.height ? { height: Math.round(attributes.height) } : {};
+        },
+      },
+      caption: {
+        default: '',
+        parseHTML: (element) => element.getAttribute('data-caption') || element.getAttribute('title') || '',
+        renderHTML: (attributes) => {
+          return attributes.caption ? { 'data-caption': attributes.caption, title: attributes.caption } : {};
+        },
+      },
     };
   },
 }).configure({
