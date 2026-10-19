@@ -1,0 +1,599 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { siteName, siteDomain } from '../../data/site';
+import {
+  mockTestSeriesData,
+  heroStats,
+  featureShortcuts,
+  type MockExamCard,
+} from '../../data/test-series';
+
+// Edge CDN caching: 60s
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+
+const displayedSeries: MockExamCard[] = mockTestSeriesData;
+
+const categories = [
+  { id: 'all', label: 'All Exams' },
+  { id: 'central-government', label: 'Central Govt' },
+  { id: 'state-exams', label: 'State Exams' },
+  { id: 'banking', label: 'Banking' },
+  { id: 'ssc-railways', label: 'SSC & Railways' },
+  { id: 'teaching', label: 'Teaching' },
+  { id: 'defence', label: 'Defence' },
+  { id: 'others', label: 'Others' },
+];
+
+const pageTitle = `Test Series - Practice Smarter | ${siteName}`;
+const pageDescription = `Get exam-ready with structured mock tests, previous year papers and chapter-wise practice for all major government exams on ${siteDomain}.`;
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={`${Astro.url.origin}/test-series`}
+>
+  {/* Common Hero Wrapper: light and dark mode images and seamless matching backgrounds */}
+  <section class="test-series-hero-wrapper relative overflow-hidden bg-[#EEF5FF] dark:bg-[#182648] border-b border-[#DBEAFE] dark:border-blue-900/40 w-full shadow-xs">
+    {/* Light Mode Illustration */}
+    <div 
+      class="hero-illustration-light absolute right-0 top-0 bottom-0 h-full w-full md:w-[65%] lg:w-[60%] pointer-events-none select-none bg-no-repeat bg-right bg-cover md:bg-contain opacity-100"
+      style="background-image: url('/testimage.png'); background-position: right top;"
+      aria-hidden="true"
+    >
+      <div class="absolute inset-0 bg-gradient-to-r from-[#EEF5FF] via-[#EEF5FF]/40 to-transparent"></div>
+    </div>
+
+    {/* Dark Mode Illustration */}
+    <div 
+      class="hero-illustration-dark absolute right-0 top-0 bottom-0 h-full w-full md:w-[65%] lg:w-[60%] pointer-events-none select-none bg-no-repeat bg-right bg-cover md:bg-contain opacity-100"
+      style="background-image: url('/testimage-dark.png'); background-position: right top;"
+      aria-hidden="true"
+    >
+      <div class="absolute inset-0 bg-gradient-to-r from-[#182648] via-[#182648]/40 to-transparent"></div>
+    </div>
+
+    {/* Content Container constrained to max-w-[1360px] */}
+    <div class="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5 space-y-2.5">
+      {/* Breadcrumbs covered by the continuous background */}
+      <nav class="flex items-center gap-1.5 text-xs" aria-label="Breadcrumb">
+        <a href="/" class="text-[#2563EB] dark:text-[#60A5FA] font-medium hover:underline">Home</a>
+        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+        <span class="text-slate-600 dark:text-slate-300 font-medium">Test Series</span>
+      </nav>
+
+      {/* Hero Content Left */}
+      <div class="w-full max-w-2xl lg:max-w-3xl space-y-2 pt-0.5 pb-1.5">
+        <span class="inline-block text-[11px] font-bold tracking-wider uppercase text-[#2563EB] dark:text-[#60A5FA]">
+          PRACTICE SMARTER
+        </span>
+
+        <h1 class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-[#0F172A] dark:text-white leading-tight">
+          Test Series
+        </h1>
+
+        <p class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed max-w-lg">
+          Get exam-ready with structured mock tests, previous year papers and chapter-wise practice for all major government exams.
+        </p>
+
+        {/* 4 Compact Stats - Single Row Desktop */}
+        <div class="pt-2.5 flex items-center gap-x-5 gap-y-2 overflow-x-auto scrollbar-none">
+          {heroStats.map((st) => (
+            <div class="flex items-center gap-2 shrink-0">
+              <div class="w-7 h-7 rounded-lg bg-[#DBEAFE]/70 dark:bg-blue-950/70 border border-[#BFDBFE] dark:border-blue-800 flex items-center justify-center shrink-0 text-[#2563EB] dark:text-[#60A5FA]">
+                {st.icon === 'categories' && (
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                )}
+                {st.icon === 'tests' && (
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                )}
+                {st.icon === 'students' && (
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                )}
+                {st.icon === 'language' && (
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                )}
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class="text-xs sm:text-[13px] font-bold text-[#0F172A] dark:text-white leading-none">{st.value}</span>
+                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-none">{st.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Main content below the hero section */}
+  <div class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 space-y-4">
+
+    {/* Feature Shortcut Row (4 Horizontal Cards) */}
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {featureShortcuts.map((item) => (
+        <a
+          href={item.href}
+          class="group flex items-center justify-between p-3.5 rounded-xl bg-surface border border-border hover:border-[#2563EB]/40 hover:shadow-xs transition duration-150 shadow-2xs"
+        >
+          <div class="flex items-center gap-3 min-w-0">
+            <div class={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+              item.id === 'mock-tests' ? 'bg-[#EFF6FF] text-[#2563EB]' :
+              item.id === 'chapter-tests' ? 'bg-[#ECFDF5] text-[#059669]' :
+              item.id === 'ai-generator' ? 'bg-[#F5F3FF] text-[#7C3AED]' :
+              'bg-[#FFFBEB] text-[#D97706]'
+            }`}>
+              {item.icon === 'doc' && (
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              )}
+              {item.icon === 'list' && (
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+              )}
+              {item.icon === 'ai' && (
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              )}
+              {item.icon === 'note' && (
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              )}
+            </div>
+            <div class="min-w-0">
+              <h2 class="text-xs sm:text-[13px] font-bold text-white group-hover:text-[#2563EB] transition-colors truncate">
+                {item.title}
+              </h2>
+              <p class="text-[11px] text-muted truncate">{item.description}</p>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-muted group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      ))}
+    </section>
+
+    {/* Exam Category Tabs */}
+    <section class="space-y-2.5 pt-1">
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="tablist" aria-label="Exam Categories">
+        {categories.map((cat) => (
+          <button
+            type="button"
+            data-category-tab={cat.id}
+            class={`category-tab-btn shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer select-none ${
+              cat.id === 'all'
+                ? 'bg-[#2563EB] text-white shadow-2xs active-tab'
+                : 'bg-surface border border-slate-200 dark:border-border text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-surface-raised'
+            }`}
+            style={cat.id === 'all' ? 'color: #FFFFFF !important;' : ''}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Horizontal Search & Filter Row */}
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        {/* Search input with search icon */}
+        <div class="relative flex-1 min-w-0">
+          <svg class="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            id="test-series-search-bar"
+            type="search"
+            placeholder="Search test series by exam name..."
+            class="w-full bg-surface border border-border rounded-xl pl-9 pr-3.5 py-2 text-xs text-white placeholder:text-muted focus:border-[#2563EB] focus:outline-none focus:ring-1 focus:ring-[#2563EB] transition shadow-2xs"
+          />
+        </div>
+
+        {/* Free / Premium Filter */}
+        <div class="shrink-0">
+          <select
+            id="access-filter-select"
+            class="w-full sm:w-auto bg-surface border border-border text-white rounded-xl px-3 py-2 text-xs font-medium focus:border-[#2563EB] focus:outline-none cursor-pointer shadow-2xs"
+          >
+            <option value="all">Free / Premium</option>
+            <option value="Free Tests">Free Tests</option>
+            <option value="Premium">Premium</option>
+          </select>
+        </div>
+
+        {/* Language Filter */}
+        <div class="shrink-0">
+          <select
+            id="language-filter-select"
+            class="w-full sm:w-auto bg-surface border border-border text-white rounded-xl px-3 py-2 text-xs font-medium focus:border-[#2563EB] focus:outline-none cursor-pointer shadow-2xs"
+          >
+            <option value="all">Language</option>
+            <option value="Hindi">Hindi</option>
+            <option value="English">English</option>
+          </select>
+        </div>
+
+        {/* Sort: Recommended */}
+        <div class="shrink-0">
+          <select
+            id="sorting-select"
+            class="w-full sm:w-auto bg-surface border border-border text-white rounded-xl px-3 py-2 text-xs font-medium focus:border-[#2563EB] focus:outline-none cursor-pointer shadow-2xs"
+          >
+            <option value="recommended">Sort: Recommended</option>
+            <option value="az">Name A-Z</option>
+            <option value="za">Name Z-A</option>
+            <option value="tests">Most Tests</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    {/* Popular Test Series Section Header */}
+    <section id="popular-test-series" class="space-y-3.5 pt-2">
+      <div class="flex items-center justify-between">
+        <div class="space-y-0.5">
+          <div class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-[#F59E0B] fill-[#F59E0B]" viewBox="0 0 24 24">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            </svg>
+            <h2 class="text-base sm:text-lg font-bold tracking-tight text-white">
+              Popular Test Series
+            </h2>
+          </div>
+          <p class="text-xs text-muted">
+            Most attempted test series by students
+          </p>
+        </div>
+
+        <a 
+          href="#popular-test-series" 
+          class="inline-flex items-center gap-1 text-xs font-semibold text-[#2563EB] hover:underline"
+        >
+          <span>View All</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+
+      {/* 3-Column Desktop Grid of Exam Cards (Matching reference card layout) */}
+      <div
+        id="exam-cards-grid"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      >
+        {displayedSeries.map((card) => (
+          <div
+            class="exam-card group bg-surface border border-border hover:border-[#2563EB]/40 rounded-xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-150 shadow-2xs hover:shadow-xs"
+            data-id={card.id}
+            data-title={card.title.toLowerCase()}
+            data-org={card.organization.toLowerCase()}
+            data-category={card.category}
+            data-access={card.access}
+            data-languages={card.languages.join(',').toLowerCase()}
+            data-tests={card.totalTests}
+          >
+            <div>
+              {/* Header: Logo, Badges */}
+              <div class="flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  {/* Clean circular logo container */}
+                  <div class="w-9 h-9 rounded-full border border-border p-1 bg-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <img 
+                      src={card.logoUrl} 
+                      alt="" 
+                      class="w-7 h-7 object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  {/* Tag badge with reference specific color */}
+                  <span class={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${card.badgeColor || 'bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE]'} truncate`}>
+                    {card.badge}
+                  </span>
+                </div>
+
+                {/* Free vs Premium pill */}
+                {card.access === 'Free Tests' ? (
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#ECFDF5] text-[#059669] border border-[#D1FAE5] shrink-0">
+                    Free Tests
+                  </span>
+                ) : (
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#FFFBEB] text-[#D97706] border border-[#FEF3C7] shrink-0">
+                    <svg class="w-3 h-3 text-[#D97706] fill-[#D97706]" viewBox="0 0 24 24">
+                      <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5m14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
+                    </svg>
+                    <span>Premium</span>
+                  </span>
+                )}
+              </div>
+
+              {/* Title & Organization */}
+              <div class="mt-3 space-y-0.5">
+                <h3 class="text-sm sm:text-base font-bold text-white group-hover:text-[#2563EB] transition-colors line-clamp-1">
+                  {card.title}
+                </h3>
+                <p class="text-xs text-muted truncate">
+                  {card.organization}
+                </p>
+              </div>
+
+              {/* Key metadata row: Tests count, Free count, Languages */}
+              <div class="mt-3 flex items-center gap-3 text-[11px] text-muted">
+                <div class="flex items-center gap-1 shrink-0" title="Total mock tests">
+                  <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>{card.totalTests} Tests</span>
+                </div>
+
+                <div class="flex items-center gap-1 shrink-0 text-[#059669] font-medium" title="Free mock tests included">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  </svg>
+                  <span>{card.freeTests} Free</span>
+                </div>
+
+                <div class="flex items-center gap-1 shrink-0" title="Languages">
+                  <svg class="w-3.5 h-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                    <line x1="2" y1="12" x2="22" y2="12" stroke-width="2"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+                  </svg>
+                  <span>{card.languages.length} Languages</span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <p class="mt-2.5 text-xs text-muted line-clamp-2 leading-relaxed">
+                {card.description}
+              </p>
+            </div>
+
+            {/* Bottom Button: Wide soft-blue View Test Series */}
+            <div class="mt-4 pt-1">
+              <a
+                href={`/test-series/${card.id}`}
+                class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-[#EFF6FF] dark:bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#2563EB] hover:text-white dark:hover:bg-[#2563EB] dark:hover:text-white transition duration-150 cursor-pointer"
+              >
+                <span>View Test Series</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Empty Search/Filter State */}
+      <div
+        id="no-match-state"
+        class="hidden text-center py-12 px-4 border border-dashed border-border rounded-xl bg-surface/50"
+      >
+        <p class="text-sm font-semibold text-white">No test series match your filters</p>
+        <p class="text-xs text-muted mt-1">Try resetting search keywords or category filters.</p>
+        <button
+          id="reset-match-btn"
+          type="button"
+          class="mt-3 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-surface-raised border border-border text-white hover:border-[#2563EB] cursor-pointer"
+        >
+          Reset all filters
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  {/* Client-side search, category filter, access filter, and sorting */}
+  <script is:inline>
+    (function () {
+      function setupTestSeriesInteractive() {
+        const searchInput = document.getElementById('test-series-search-bar');
+        const accessSelect = document.getElementById('access-filter-select');
+        const langSelect = document.getElementById('language-filter-select');
+        const sortSelect = document.getElementById('sorting-select');
+        const tabBtns = document.querySelectorAll('[data-category-tab]');
+        const cardsGrid = document.getElementById('exam-cards-grid');
+        const emptyState = document.getElementById('no-match-state');
+        const resetBtn = document.getElementById('reset-match-btn');
+
+        if (!cardsGrid) return;
+
+        let activeCategory = 'all';
+        let searchQuery = '';
+        let activeAccess = 'all';
+        let activeLang = 'all';
+        let activeSort = 'recommended';
+
+        const categoryKeywords = {
+          'central-government': ['upsc', 'central', 'union'],
+          'state-exams': ['bpsc', 'state', 'bihar'],
+          'banking': ['ibps', 'bank', 'po'],
+          'ssc-railways': ['ssc', 'rrb', 'railway'],
+          'teaching': ['teaching', 'ctet', 'tet'],
+          'defence': ['defence', 'nda', 'cds'],
+          'others': ['other'],
+        };
+
+        function applyFilters() {
+          const cards = Array.from(cardsGrid.querySelectorAll('.exam-card'));
+          let matchedCount = 0;
+
+          cards.forEach((card) => {
+            const title = card.getAttribute('data-title') || '';
+            const org = card.getAttribute('data-org') || '';
+            const cardCat = card.getAttribute('data-category') || '';
+            const cardAccess = card.getAttribute('data-access') || '';
+            const cardLangs = card.getAttribute('data-languages') || '';
+
+            const haystack = `${title} ${org}`;
+
+            // Search query match
+            const matchesSearch = !searchQuery || haystack.includes(searchQuery);
+
+            // Category match
+            let matchesCategory = true;
+            if (activeCategory !== 'all') {
+              if (cardCat === activeCategory) {
+                matchesCategory = true;
+              } else {
+                const kws = categoryKeywords[activeCategory] || [];
+                matchesCategory = kws.some((kw) => haystack.includes(kw));
+              }
+            }
+
+            // Access match
+            let matchesAccess = true;
+            if (activeAccess !== 'all') {
+              matchesAccess = cardAccess === activeAccess;
+            }
+
+            // Language match
+            let matchesLang = true;
+            if (activeLang !== 'all') {
+              matchesLang = cardLangs.includes(activeLang.toLowerCase());
+            }
+
+            const visible = matchesSearch && matchesCategory && matchesAccess && matchesLang;
+            card.style.display = visible ? '' : 'none';
+            if (visible) matchedCount++;
+          });
+
+          // Sorting
+          const visibleCards = cards.filter((c) => c.style.display !== 'none');
+          visibleCards.sort((a, b) => {
+            const titleA = a.getAttribute('data-title') || '';
+            const titleB = b.getAttribute('data-title') || '';
+            const testsA = Number(a.getAttribute('data-tests')) || 0;
+            const testsB = Number(b.getAttribute('data-tests')) || 0;
+
+            if (activeSort === 'az') return titleA.localeCompare(titleB);
+            if (activeSort === 'za') return titleB.localeCompare(titleA);
+            if (activeSort === 'tests') return testsB - testsA;
+            // recommended default: keep initial order
+            return 0;
+          });
+
+          visibleCards.forEach((card) => cardsGrid.appendChild(card));
+
+          if (emptyState) {
+            emptyState.classList.toggle('hidden', matchedCount > 0);
+          }
+        }
+
+        // Category Tab Handler
+        tabBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const cat = btn.getAttribute('data-category-tab') || 'all';
+            activeCategory = cat;
+
+            tabBtns.forEach((b) => {
+              const isSelected = b === btn;
+              b.classList.toggle('bg-[#2563EB]', isSelected);
+              b.classList.toggle('shadow-2xs', isSelected);
+              b.classList.toggle('active-tab', isSelected);
+
+              if (isSelected) {
+                b.style.color = '#FFFFFF';
+                b.classList.remove('bg-surface', 'border', 'border-slate-200', 'dark:border-border', 'text-slate-700', 'dark:text-slate-200');
+              } else {
+                b.style.color = '';
+                b.classList.add('bg-surface', 'border', 'border-slate-200', 'text-slate-700');
+              }
+            });
+
+            applyFilters();
+          });
+        });
+
+        // Search input
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            searchQuery = (e.target.value || '').trim().toLowerCase();
+            applyFilters();
+          });
+        }
+
+        // Access filter
+        if (accessSelect) {
+          accessSelect.addEventListener('change', (e) => {
+            activeAccess = e.target.value;
+            applyFilters();
+          });
+        }
+
+        // Language filter
+        if (langSelect) {
+          langSelect.addEventListener('change', (e) => {
+            activeLang = e.target.value;
+            applyFilters();
+          });
+        }
+
+        // Sort filter
+        if (sortSelect) {
+          sortSelect.addEventListener('change', (e) => {
+            activeSort = e.target.value;
+            applyFilters();
+          });
+        }
+
+        // Reset
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            activeCategory = 'all';
+            searchQuery = '';
+            activeAccess = 'all';
+            activeLang = 'all';
+            activeSort = 'recommended';
+
+            if (searchInput) searchInput.value = '';
+            if (accessSelect) accessSelect.value = 'all';
+            if (langSelect) langSelect.value = 'all';
+            if (sortSelect) sortSelect.value = 'recommended';
+
+            const firstTab = document.querySelector('[data-category-tab="all"]');
+            if (firstTab) firstTab.click();
+            applyFilters();
+          });
+        }
+      }
+
+      setupTestSeriesInteractive();
+      document.addEventListener('astro:page-load', setupTestSeriesInteractive);
+    })();
+  </script>
+
+  <style is:global>
+    /* Default / Light Mode */
+    .hero-illustration-light {
+      display: block !important;
+    }
+    .hero-illustration-dark {
+      display: none !important;
+    }
+
+    /* Dark Mode */
+    html.theme-dark .test-series-hero-wrapper {
+      background-color: #182648 !important;
+    }
+    html.theme-dark .hero-illustration-light {
+      display: none !important;
+    }
+    html.theme-dark .hero-illustration-dark {
+      display: block !important;
+    }
+  </style>
+</Layout>

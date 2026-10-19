@@ -15,6 +15,7 @@ const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHome = currentPath === '/';
+const isTestSeries = currentPath.startsWith('/test-series');
 ---
 
 <aside 
@@ -113,6 +114,33 @@ const isHome = currentPath === '/';
         </svg>
       </a>
 
+      {/* 3b. Test Series */}
+      <a 
+        href="/test-series" 
+        class={`sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition ${
+          isTestSeries 
+            ? 'bg-[#EBF2FE] text-[#2563EB] font-semibold dark:bg-[#2563EB]/20 dark:text-[#60A5FA]' 
+            : 'text-muted hover:text-white hover:bg-surface-raised font-medium'
+        }`}
+        title="Test Series & Mock Tests"
+      >
+        <svg class={`w-4 h-4 shrink-0 ${isTestSeries ? 'text-[#2563EB] dark:text-[#60A5FA]' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+        <span class="sidebar-text truncate">Test Series</span>
+      </a>
+
+      {/* 4. Results */}
+      <a 
+        href="/#latest-updates" 
+        class="sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium" 
+        title="Exam results"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <span class="sidebar-text truncate">Results</span>
+      </a>
 
 
       {/* Channels Section */}
