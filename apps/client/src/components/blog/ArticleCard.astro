@@ -1,0 +1,120 @@
+---
+interface Props {
+  title: string;
+  slug: string;
+  href?: string;
+  category?: string;
+  categories?: Array<{ name: string; slug?: string }>;
+  date?: string;
+  publishedAt?: string | null;
+  summary?: string | null;
+  variant?: 'standard' | 'compact';
+  headingLevel?: 'h2' | 'h3' | 'h4';
+  class?: string;
+}
+
+const {
+  title,
+  slug,
+  href,
+  category,
+  categories,
+  date,
+  publishedAt,
+  summary,
+  variant = 'standard',
+  headingLevel = 'h3',
+  class: className = '',
+} = Astro.props;
+
+// Determine target URL: use provided href or fallback to relative slug
+const targetUrl = href || `/${slug.replace(/^\//, '')}`;
+
+// Clean date formatting
+const formattedDate = date || (publishedAt ? new Date(publishedAt).toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: variant === 'compact' ? undefined : 'numeric',
+}) : null);
+
+const HeadingTag = headingLevel;
+const allCategories = categories && categories.length > 0
+  ? categories
+  : category
+  ? [{ name: category }]
+  : [];
+---
+
+{variant === 'compact' ? (
+  <a
+    href={targetUrl}
+    data-article-link={slug}
+    data-astro-prefetch="hover"
+    class={`group flex items-start p-2.5 rounded-lg hover:bg-surface-raised transition border border-transparent hover:border-border/60 ${className}`}
+  >
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center justify-between gap-2 mb-1">
+        {allCategories.length > 0 && (
+          <span class="inline-block text-[10px] font-semibold text-accent leading-none truncate max-w-[140px]">
+            {allCategories[0].name}
+          </span>
+        )}
+        {formattedDate && (
+          <span class="text-[10px] text-muted shrink-0">
+            {formattedDate}
+          </span>
+        )}
+      </div>
+
+      <HeadingTag
+        class="text-xs font-semibold text-white group-hover:text-accent line-clamp-2 leading-snug transition-colors"
+        data-article-title
+      >
+        {title}
+      </HeadingTag>
+    </div>
+  </a>
+) : (
+  <a
+    href={targetUrl}
+    data-article-link={slug}
+    data-astro-prefetch="hover"
+    class={`group block p-4 bg-surface border border-border rounded-xl shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 cursor-pointer ${className}`}
+  >
+    <div>
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-1.5">
+          {allCategories.length > 0 ? (
+            allCategories.map((c) => (
+              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-accent/10 text-accent border border-accent/20">
+                {c.name}
+              </span>
+            ))
+          ) : (
+            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-accent/10 text-accent border border-accent/20">
+              Latest Updates
+            </span>
+          )}
+        </div>
+        {formattedDate && (
+          <span class="text-[11px] text-muted font-medium inline-block shrink-0">
+            {formattedDate}
+          </span>
+        )}
+      </div>
+
+      <HeadingTag
+        class="mt-1.5 text-sm sm:text-base font-bold text-white group-hover:text-accent transition leading-snug"
+        data-article-title
+      >
+        {title}
+      </HeadingTag>
+
+      {summary && (
+        <p class="mt-1 text-xs text-muted line-clamp-2 leading-relaxed" data-article-summary>
+          {summary}
+        </p>
+      )}
+    </div>
+  </a>
+)}

@@ -1,0 +1,56 @@
+---
+interface Props {
+  id?: string;
+}
+
+const { id = "header-favorites-dropdown" } = Astro.props;
+---
+
+<div 
+  id={id} 
+  data-favorites-dropdown
+  class="hidden absolute top-full right-0 mt-2 w-80 sm:w-88 max-w-[calc(100vw-24px)] bg-surface border border-border rounded-2xl shadow-elevated p-3 sm:p-4 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none"
+  role="dialog"
+  aria-label="Bookmarked Articles"
+>
+  <div class="flex items-center justify-between pb-2.5 border-b border-border/50">
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-lg bg-accent/15 text-accent flex items-center justify-center shrink-0">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+          <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+        </svg>
+      </div>
+      <h3 class="text-sm font-semibold text-white tracking-tight">Saved Articles</h3>
+      <span class="favorites-count-badge hidden px-1.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/30 leading-none">
+        0
+      </span>
+    </div>
+
+    <div class="flex items-center gap-1">
+      <button 
+        type="button" 
+        data-clear-bookmarks
+        class="hidden text-[11px] text-muted hover:text-red-400 hover:underline px-1.5 py-0.5 rounded transition cursor-pointer"
+        title="Clear all saved articles"
+      >
+        Clear all
+      </button>
+      <button 
+        type="button" 
+        data-close-favorites
+        class="text-muted hover:text-white p-1 rounded-lg hover:bg-surface-raised transition cursor-pointer"
+        title="Close saved articles"
+        aria-label="Close saved articles"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  {/* Container for rendered list or empty state */}
+  <div data-favorites-list class="mt-2">
+    <div class="py-6 text-center text-xs text-muted">Loading saved articles...</div>
+  </div>
+</div>

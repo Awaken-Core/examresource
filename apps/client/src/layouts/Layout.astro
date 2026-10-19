@@ -224,14 +224,18 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <div class="flex-1 flex min-h-screen relative">
       {/* Desktop Left Navigation Sidebar (Full height on left) */}
       {!hideHeaderFooter && (
-        <div id="desktop-sidebar-wrapper" class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300">
+        <div 
+          id="desktop-sidebar-wrapper" 
+          class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300"
+          transition:persist="desktop-sidebar"
+        >
           <LeftSidebar prefix="desktop" />
         </div>
       )}
 
       {/* Main Area: Header (Header width decreases when sidebar is open!) + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
-        {!hideHeaderFooter && <Header />}
+        {!hideHeaderFooter && <Header transition:persist="main-header" />}
         <main class="flex-grow">
           <slot />
         </main>
@@ -245,6 +249,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       id="mobile-sidebar-backdrop" 
       class="fixed inset-0 z-[9998] hidden"
       aria-hidden="true"
+      transition:persist="mobile-sidebar-backdrop"
     >
       {/* Dark translucent overlay */}
       <div 
@@ -260,6 +265,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       aria-label="Navigation menu"
       role="dialog"
       aria-modal="true"
+      transition:persist="mobile-sidebar-container"
     >
       {/* ── Drawer Header ── */}
       <div class="flex items-center justify-between h-14 px-4 border-b border-border/60 shrink-0 bg-canvas">
@@ -327,31 +333,63 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               </svg>
               <span>Important links</span>
             </a>
-            <a href="/#faqs" data-mobile-sidebar-close
-              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition-all text-sm font-medium"
-            >
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>FAQs</span>
-            </a>
           </div>
         </div>
 
-        {/* Divider */}
-        <div class="border-t border-border/50 mx-3"></div>
+        {/* Mobile Sidebar Preferences (Language & Theme Toggles for Mobile & Tablet) */}
+        <div class="pt-3 pb-1 border-t border-border/50 space-y-2.5">
+          <p class="px-1 text-[10px] font-bold uppercase tracking-widest text-muted/70">Preferences</p>
 
-        {/* Help */}
-        <div class="space-y-0.5">
-          <a href="/#important-links" data-mobile-sidebar-close
-            class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised transition-all text-sm font-medium"
-          >
-            <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" stroke-width="2"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3m.08 4h.01"/>
-            </svg>
-            <span>Help and resources</span>
-          </a>
+          {/* Language Toggle Row */}
+          <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-surface-raised/50 border border-border/60">
+            <span class="text-xs font-semibold text-white/90 flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+              </svg>
+              <span>Language</span>
+            </span>
+            <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none" role="group" aria-label="Language selection">
+              <button
+                type="button"
+                data-app-lang="hinglish"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+                title="Switch to Hinglish"
+              >
+                HI
+              </button>
+              <button
+                type="button"
+                data-app-lang="en"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+                title="Switch to English"
+              >
+                EN
+              </button>
+            </div>
+          </div>
+
+          {/* Theme Toggle Row */}
+          <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-surface-raised/50 border border-border/60">
+            <span class="text-xs font-semibold text-white/90 flex items-center gap-2">
+              <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <span>Theme</span>
+            </span>
+            <button
+              type="button"
+              class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0"
+              title="Toggle Dark and Light Mode"
+              aria-label="Toggle Dark and Light Mode"
+            >
+              <span
+                class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-sm transition-transform duration-200 translate-x-0.5"
+              >
+                <span class="light-icon text-[11px] select-none leading-none">☀️</span>
+                <span class="dark-icon text-[11px] select-none leading-none hidden">🌙</span>
+              </span>
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -370,8 +408,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         </div>
 
         {/* Logged In */}
-        <div class="sidebar-auth-logged-in hidden">
+        <div class="sidebar-auth-logged-in hidden space-y-2">
           <button
+            type="button"
             class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer"
           >
             <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-xs select-none">
@@ -382,13 +421,61 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <p class="user-display-email text-xs text-muted leading-none mt-0.5 truncate">Free</p>
             </div>
           </button>
+
+          {/* Mobile Drawer Quick Actions: Bookmarks & Notifications */}
+          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+            <button
+              type="button"
+              data-open-favorites
+              data-mobile-sidebar-close
+              class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl bg-surface-raised/60 hover:bg-surface-raised border border-border/60 text-xs font-semibold text-white transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <span>Bookmarks</span>
+              <span class="favorites-count-badge hidden px-1.5 py-0.2 rounded-full bg-accent/20 text-accent text-[9px] font-bold">0</span>
+            </button>
+
+            <button
+              type="button"
+              data-notification-trigger="header-notification-popup"
+              data-mobile-sidebar-close
+              class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl bg-surface-raised/60 hover:bg-surface-raised border border-border/60 text-xs font-semibold text-white transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span>Notifications</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
 
-    {/* Global Search Modal (Matching Image 1) */}
+    {/* Global Search Modal */}
     <SearchModal />
+
+    {/* Global Non-intrusive Toast Notification (For Sign-in prompts, status feedback) */}
+    <div 
+      id="global-toast" 
+      class="fixed bottom-5 right-5 z-[10000] max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto bg-surface-raised border border-border/80 shadow-2xl rounded-2xl p-3.5 flex items-center justify-between gap-3 text-white text-xs transition-all duration-300 transform translate-y-12 opacity-0 pointer-events-none backdrop-blur-md"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span id="global-toast-icon" class="w-6 h-6 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </span>
+        <p id="global-toast-msg" class="truncate font-medium text-white/95">Message</p>
+      </div>
+      <a id="global-toast-action" href="/login" class="hidden px-2.5 py-1 rounded-lg bg-accent text-white font-semibold text-[11px] shrink-0 hover:bg-accent/90 transition shadow-2xs">
+        Sign in
+      </a>
+    </div>
 
     {/* Global Robust Interactive Script */}
     <script>
@@ -397,6 +484,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
       import { API_URL } from '../lib/api';
       import { searchItems, siteDomain } from '../data/site';
+      import { updateFavoritesUI, toggleBookmark, removeBookmark, clearAllBookmarks } from '../lib/bookmarks';
 
       (function initApp() {
 
@@ -424,6 +512,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           lightIcons.forEach((icon) => {
             if (isLight) icon.classList.remove('hidden');
             else icon.classList.add('hidden');
+          });
+
+          document.querySelectorAll('.theme-toggle-btn').forEach((btn) => {
+            btn.setAttribute('title', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+            btn.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
           });
         }
 
@@ -648,7 +741,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const blogLang = appLangToBlogLanguage(normalized);
           const path = window.location.pathname;
           const categoryMatch = path.match(/^\/category\/([^/]+)\/?$/);
-          const params = new URLSearchParams({ limit: '50', language: blogLang });
+          const params = new URLSearchParams({ limit: '50', language: blogLang, includeImages: 'false' });
           if (categoryMatch?.[1]) params.set('category', categoryMatch[1]);
 
           try {
@@ -709,10 +802,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const btnLang = btn.getAttribute('data-app-lang') || btn.getAttribute('data-global-lang');
             const isBtnActive = (btnLang === normalized);
             if (isBtnActive) {
-              btn.classList.add('bg-accent/20', 'text-accent', 'font-bold', 'border-accent/40', 'shadow-2xs');
-              btn.classList.remove('text-muted');
+              btn.classList.add('bg-accent', 'text-white', 'font-bold', 'shadow-2xs');
+              btn.classList.remove('text-muted', 'bg-accent/20', 'text-accent');
             } else {
-              btn.classList.remove('bg-accent/20', 'text-accent', 'font-bold', 'border-accent/40', 'shadow-2xs');
+              btn.classList.remove('bg-accent', 'text-white', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
               btn.classList.add('text-muted');
             }
           });
@@ -890,7 +983,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             return;
           }
 
-          // Language button clicked anywhere (profile dropdown, sidebar slider, etc.)
+          // Language button clicked anywhere (header, mobile drawer, profile dropdown)
           const appLangBtn = target.closest('[data-app-lang]');
           if (appLangBtn) {
             e.preventDefault();
@@ -900,16 +993,18 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             return;
           }
 
+          // Theme toggle button clicked anywhere (header, mobile drawer, profile dropdown)
+          const themeBtn = target.closest('.theme-toggle-btn');
+          if (themeBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleTheme();
+            return;
+          }
+
           // 2. Clicked Inside Profile Dropdown
           const dropdownMenu = target.closest('[role="menu"]');
           if (dropdownMenu) {
-            // Theme toggle clicked
-            if (target.closest('.theme-toggle-btn')) {
-              e.preventDefault();
-              e.stopPropagation();
-              toggleTheme();
-              return;
-            }
 
             // Logout action clicked
             if (target.closest('[data-auth-action="logout"]')) {
@@ -1036,8 +1131,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             return;
           }
 
-          // 6. Favorites Button Trigger
-          const favBtn = target.closest('#header-favorites-btn');
+          // 6. Favorites Button Trigger & Bookmarks Actions
+          const favBtn = target.closest('#header-favorites-btn, [data-open-favorites]');
           if (favBtn) {
             e.preventDefault();
             e.stopPropagation();
@@ -1046,12 +1141,62 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               const isOpen = !dropdown.classList.contains('hidden');
               closeAllDropdowns();
               if (!isOpen) {
+                updateFavoritesUI();
                 dropdown.classList.remove('hidden');
                 requestAnimationFrame(() => {
                   dropdown.classList.remove('scale-95', 'opacity-0');
                   dropdown.classList.add('scale-100', 'opacity-100');
                 });
               }
+            }
+            return;
+          }
+
+          const closeFavBtn = target.closest('[data-close-favorites]');
+          if (closeFavBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeAllDropdowns();
+            return;
+          }
+
+          const removeFavBtn = target.closest('[data-remove-bookmark]') as HTMLElement | null;
+          if (removeFavBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const slug = removeFavBtn.getAttribute('data-remove-bookmark');
+            if (slug) removeBookmark(slug);
+            return;
+          }
+
+          const clearFavBtn = target.closest('[data-clear-bookmarks]');
+          if (clearFavBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            clearAllBookmarks();
+            return;
+          }
+
+          const bookmarkBtn = target.closest('[data-bookmark-slug]') as HTMLElement | null;
+          if (bookmarkBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const isAuthenticated = document.documentElement.getAttribute('data-authenticated') === 'true' || Boolean((window as any).__currentUser);
+            if (!isAuthenticated) {
+              if (typeof (window as any).showGlobalToast === 'function') {
+                (window as any).showGlobalToast('Please sign in to save articles to your bookmarks', 'Sign in', '/login');
+              }
+              return;
+            }
+
+            const slug = bookmarkBtn.getAttribute('data-bookmark-slug') || '';
+            const title = bookmarkBtn.getAttribute('data-bookmark-title') || '';
+            const category = bookmarkBtn.getAttribute('data-bookmark-category') || '';
+            const url = bookmarkBtn.getAttribute('data-bookmark-url') || `/${slug}`;
+            const isSaved = toggleBookmark({ slug, title, category, url });
+            if (typeof (window as any).showGlobalToast === 'function') {
+              (window as any).showGlobalToast(isSaved ? 'Article saved to your bookmarks' : 'Article removed from bookmarks');
             }
             return;
           }
@@ -1232,6 +1377,15 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               l.style.display = 'none';
             });
 
+            // Set authenticated attribute and expose global user state
+            document.documentElement.setAttribute('data-authenticated', 'true');
+            (window as any).__currentUser = user;
+
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+
             // Show Logged In Profile UI in Sidebar & Header, HIDE Logged Out CTA (Get Started button)
             document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
               el.classList.remove('hidden');
@@ -1250,6 +1404,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               el.style.display = 'none';
             });
           } else {
+            document.documentElement.removeAttribute('data-authenticated');
+            (window as any).__currentUser = null;
+
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+
             nameEls.forEach(el => el.textContent = 'Guest User');
             emailEls.forEach(el => el.textContent = 'Sign in to access your profile');
             initialEls.forEach(el => {
@@ -1290,7 +1452,82 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }
         }
 
+        let toastTimer: any = null;
+        function showGlobalToast(message: string, actionLabel?: string, actionHref?: string) {
+          const toast = document.getElementById('global-toast');
+          const msgEl = document.getElementById('global-toast-msg');
+          const actionEl = document.getElementById('global-toast-action') as HTMLAnchorElement | null;
+          if (!toast || !msgEl) return;
+
+          msgEl.textContent = message;
+          if (actionEl && actionLabel && actionHref) {
+            actionEl.textContent = actionLabel;
+            actionEl.href = actionHref;
+            actionEl.classList.remove('hidden');
+            actionEl.style.display = 'inline-flex';
+          } else if (actionEl) {
+            actionEl.classList.add('hidden');
+            actionEl.style.display = 'none';
+          }
+
+          toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+          toast.classList.add('translate-y-0', 'opacity-100');
+
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => {
+            toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+          }, 4500);
+        }
+
+        (window as any).showGlobalToast = showGlobalToast;
+
+        function updateSidebarActiveLinks() {
+          const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+          const navItems = document.querySelectorAll<HTMLAnchorElement>('.sidebar-nav-item');
+
+          navItems.forEach((link) => {
+            const rawHref = (link.getAttribute('href') || '').trim();
+            const isAnchor = rawHref.includes('#');
+            const isExternal = link.getAttribute('target') === '_blank' || rawHref.startsWith('http://') || rawHref.startsWith('https://');
+            const isSocial = isExternal || rawHref.includes('wa.me') || rawHref.includes('t.me');
+
+            if (isSocial || !rawHref) {
+              return;
+            }
+
+            const linkPath = rawHref.split('#')[0].replace(/\/$/, '') || '/';
+
+            let isActive = false;
+            if (rawHref === '/') {
+              isActive = currentPath === '/';
+            } else if (!isAnchor && linkPath !== '/') {
+              isActive = currentPath === linkPath || currentPath.startsWith(linkPath + '/');
+            }
+
+            const svg = link.querySelector('svg');
+
+            if (isActive) {
+              link.classList.add('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
+              link.classList.remove('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
+              if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
+                svg.classList.add('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
+                svg.classList.remove('text-muted');
+              }
+            } else {
+              link.classList.remove('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
+              link.classList.add('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
+              if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
+                svg.classList.remove('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
+              }
+            }
+          });
+        }
+
         function reinitPageElements() {
+          // Sync sidebar active links
+          updateSidebarActiveLinks();
+
           // Restore Collapsed State
           const savedCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
           setSidebarCollapsed(savedCollapsed);
@@ -1348,6 +1585,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             };
           });
 
+          updateFavoritesUI();
           syncAuthProfile();
         }
 
@@ -1360,6 +1598,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           // Global Keyboard Shortcuts
           document.addEventListener('keydown', handleGlobalKeydown);
+
+          // Reactive bookmarks event
+          window.addEventListener('bookmarks-updated', () => updateFavoritesUI());
 
           // Window language change event
           window.addEventListener('exam:language-change', ((e: CustomEvent) => {

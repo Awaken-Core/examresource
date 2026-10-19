@@ -44,7 +44,7 @@ export const GET: APIRoute = async () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>${siteName} — Verified Government Exam Updates &amp; Sarkari Naukri Alerts</title>
+    <title>${siteName} | Government Exam Updates &amp; Sarkari Jobs</title>
     <link>${siteUrl}/</link>
     <description>Latest verified government exam notifications, Sarkari job alerts, admit cards, answer keys, and results from ${siteName} (${siteDomain}).</description>
     <language>en-IN</language>

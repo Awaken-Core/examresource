@@ -8,13 +8,24 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
 	site: process.env.PUBLIC_SITE_URL,
+	image: {
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: '**.r2.dev',
+			},
+			{
+				protocol: 'https',
+				hostname: '**.googleusercontent.com',
+			},
+		],
+	},
 	devToolbar: {
 		enabled: process.env.NODE_ENV !== 'production',
 	},
 	output: 'server',
 	compressHTML: true,
 	prefetch: {
-		prefetchAll: true,
 		defaultStrategy: 'hover',
 	},
 	server: { port: Number(process.env.PORT || 3000), host: true },

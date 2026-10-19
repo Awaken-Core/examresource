@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import { siteUrl, siteName } from '../data/site';
 import { API_URL } from '../lib/api';
 
@@ -261,14 +262,14 @@ const jsonLd = {
                 >
                   <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-7 h-7 rounded-full bg-surface-raised border border-border flex items-center justify-center p-0.5 shrink-0 overflow-hidden relative">
-                      <img 
+                      <Image 
                         src={portal.logo} 
                         alt={`${portal.name} emblem logo`} 
                         class="w-full h-full object-contain" 
-                        loading="lazy"
+                        loading="eager"
                         decoding="async"
-                        width="28"
-                        height="28"
+                        width={28}
+                        height={28}
                         onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                       />
                       <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[9px] select-none tracking-tight`}>
@@ -284,7 +285,6 @@ const jsonLd = {
                       </p>
                     </div>
                   </div>
-                  <span class="text-muted group-hover:text-accent transition text-xs shrink-0 ml-1">&#8599;</span>
                 </a>
               ))}
             </div>
