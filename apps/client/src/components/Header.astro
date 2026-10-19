@@ -122,31 +122,33 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
         </button>
       </div>
 
-      {/* Bookmarks / Favorites Button & Dropdown */}
-      <div class="relative z-[1090]">
-        <button 
-          id="header-favorites-btn"
-          type="button"
-          class="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-canvas border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
-          title="Saved Bookmarks"
-          aria-label="Saved Bookmarks"
-          aria-haspopup="dialog"
-          aria-expanded="false"
-        >
-          <svg class="w-4 h-4 text-muted hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-          </svg>
-          <span class="favorites-count-badge hidden absolute -top-1 -right-1 px-1 min-w-[16px] h-4 rounded-full bg-accent text-[9px] font-bold text-white flex items-center justify-center leading-none shadow-xs border border-surface">
-            0
-          </span>
-        </button>
+      {/* Bookmarks / Favorites Button & Dropdown (Desktop only & Logged-in only) */}
+      <div class="header-auth-logged-in hidden">
+        <div class="hidden lg:flex items-center relative z-[1090]">
+          <button 
+            id="header-favorites-btn"
+            type="button"
+            class="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-canvas border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
+            title="Saved Bookmarks"
+            aria-label="Saved Bookmarks"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+          >
+            <svg class="w-4 h-4 text-muted hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+            <span class="favorites-count-badge hidden absolute -top-1 -right-1 px-1 min-w-[16px] h-4 rounded-full bg-accent text-[9px] font-bold text-white flex items-center justify-center leading-none shadow-xs border border-surface">
+              0
+            </span>
+          </button>
 
-        {/* Dropdown Container */}
-        <FavoritesDropdown id="header-favorites-dropdown" />
+          {/* Dropdown Container */}
+          <FavoritesDropdown id="header-favorites-dropdown" />
+        </div>
       </div>
 
-      {/* Notifications Button & Dropdown */}
-      <div class="relative z-[1090]">
+      {/* Notifications Button & Dropdown (Desktop only: available in profile menu & sidebar drawer on mobile/tablet) */}
+      <div class="hidden lg:flex items-center relative z-[1090]">
         <button 
           id="header-notification-btn"
           data-notification-trigger="header-notification-popup"

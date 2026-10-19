@@ -408,8 +408,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         </div>
 
         {/* Logged In */}
-        <div class="sidebar-auth-logged-in hidden">
+        <div class="sidebar-auth-logged-in hidden space-y-2">
           <button
+            type="button"
             class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer"
           >
             <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-xs select-none">
@@ -420,13 +421,61 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <p class="user-display-email text-xs text-muted leading-none mt-0.5 truncate">Free</p>
             </div>
           </button>
+
+          {/* Mobile Drawer Quick Actions: Bookmarks & Notifications */}
+          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+            <button
+              type="button"
+              data-open-favorites
+              data-mobile-sidebar-close
+              class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl bg-surface-raised/60 hover:bg-surface-raised border border-border/60 text-xs font-semibold text-white transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <span>Bookmarks</span>
+              <span class="favorites-count-badge hidden px-1.5 py-0.2 rounded-full bg-accent/20 text-accent text-[9px] font-bold">0</span>
+            </button>
+
+            <button
+              type="button"
+              data-notification-trigger="header-notification-popup"
+              data-mobile-sidebar-close
+              class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl bg-surface-raised/60 hover:bg-surface-raised border border-border/60 text-xs font-semibold text-white transition cursor-pointer"
+            >
+              <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span>Notifications</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
 
-    {/* Global Search Modal (Matching Image 1) */}
+    {/* Global Search Modal */}
     <SearchModal />
+
+    {/* Global Non-intrusive Toast Notification (For Sign-in prompts, status feedback) */}
+    <div 
+      id="global-toast" 
+      class="fixed bottom-5 right-5 z-[10000] max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto bg-surface-raised border border-border/80 shadow-2xl rounded-2xl p-3.5 flex items-center justify-between gap-3 text-white text-xs transition-all duration-300 transform translate-y-12 opacity-0 pointer-events-none backdrop-blur-md"
+      role="status"
+      aria-live="polite"
+    >
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span id="global-toast-icon" class="w-6 h-6 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shrink-0">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </span>
+        <p id="global-toast-msg" class="truncate font-medium text-white/95">Message</p>
+      </div>
+      <a id="global-toast-action" href="/login" class="hidden px-2.5 py-1 rounded-lg bg-accent text-white font-semibold text-[11px] shrink-0 hover:bg-accent/90 transition shadow-2xs">
+        Sign in
+      </a>
+    </div>
 
     {/* Global Robust Interactive Script */}
     <script>
@@ -1132,11 +1181,23 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (bookmarkBtn) {
             e.preventDefault();
             e.stopPropagation();
+
+            const isAuthenticated = document.documentElement.getAttribute('data-authenticated') === 'true' || Boolean((window as any).__currentUser);
+            if (!isAuthenticated) {
+              if (typeof (window as any).showGlobalToast === 'function') {
+                (window as any).showGlobalToast('Please sign in to save articles to your bookmarks', 'Sign in', '/login');
+              }
+              return;
+            }
+
             const slug = bookmarkBtn.getAttribute('data-bookmark-slug') || '';
             const title = bookmarkBtn.getAttribute('data-bookmark-title') || '';
             const category = bookmarkBtn.getAttribute('data-bookmark-category') || '';
             const url = bookmarkBtn.getAttribute('data-bookmark-url') || `/${slug}`;
-            toggleBookmark({ slug, title, category, url });
+            const isSaved = toggleBookmark({ slug, title, category, url });
+            if (typeof (window as any).showGlobalToast === 'function') {
+              (window as any).showGlobalToast(isSaved ? 'Article saved to your bookmarks' : 'Article removed from bookmarks');
+            }
             return;
           }
 
@@ -1316,6 +1377,15 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               l.style.display = 'none';
             });
 
+            // Set authenticated attribute and expose global user state
+            document.documentElement.setAttribute('data-authenticated', 'true');
+            (window as any).__currentUser = user;
+
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+
             // Show Logged In Profile UI in Sidebar & Header, HIDE Logged Out CTA (Get Started button)
             document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
               el.classList.remove('hidden');
@@ -1334,6 +1404,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               el.style.display = 'none';
             });
           } else {
+            document.documentElement.removeAttribute('data-authenticated');
+            (window as any).__currentUser = null;
+
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+
             nameEls.forEach(el => el.textContent = 'Guest User');
             emailEls.forEach(el => el.textContent = 'Sign in to access your profile');
             initialEls.forEach(el => {
@@ -1374,36 +1452,72 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }
         }
 
+        let toastTimer: any = null;
+        function showGlobalToast(message: string, actionLabel?: string, actionHref?: string) {
+          const toast = document.getElementById('global-toast');
+          const msgEl = document.getElementById('global-toast-msg');
+          const actionEl = document.getElementById('global-toast-action') as HTMLAnchorElement | null;
+          if (!toast || !msgEl) return;
+
+          msgEl.textContent = message;
+          if (actionEl && actionLabel && actionHref) {
+            actionEl.textContent = actionLabel;
+            actionEl.href = actionHref;
+            actionEl.classList.remove('hidden');
+            actionEl.style.display = 'inline-flex';
+          } else if (actionEl) {
+            actionEl.classList.add('hidden');
+            actionEl.style.display = 'none';
+          }
+
+          toast.classList.remove('translate-y-12', 'opacity-0', 'pointer-events-none');
+          toast.classList.add('translate-y-0', 'opacity-100');
+
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => {
+            toast.classList.add('translate-y-12', 'opacity-0', 'pointer-events-none');
+            toast.classList.remove('translate-y-0', 'opacity-100');
+          }, 4500);
+        }
+
+        (window as any).showGlobalToast = showGlobalToast;
+
         function updateSidebarActiveLinks() {
           const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
           const navItems = document.querySelectorAll<HTMLAnchorElement>('.sidebar-nav-item');
 
           navItems.forEach((link) => {
-            const rawHref = link.getAttribute('href') || '';
+            const rawHref = (link.getAttribute('href') || '').trim();
             const isAnchor = rawHref.includes('#');
+            const isExternal = link.getAttribute('target') === '_blank' || rawHref.startsWith('http://') || rawHref.startsWith('https://');
+            const isSocial = isExternal || rawHref.includes('wa.me') || rawHref.includes('t.me');
+
+            if (isSocial || !rawHref) {
+              return;
+            }
+
             const linkPath = rawHref.split('#')[0].replace(/\/$/, '') || '/';
 
             let isActive = false;
-            if (rawHref === '/' || rawHref === '') {
+            if (rawHref === '/') {
               isActive = currentPath === '/';
             } else if (!isAnchor && linkPath !== '/') {
               isActive = currentPath === linkPath || currentPath.startsWith(linkPath + '/');
             }
 
             const svg = link.querySelector('svg');
-            const isSocial = rawHref.includes('wa.me') || rawHref.includes('t.me');
 
             if (isActive) {
               link.classList.add('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
               link.classList.remove('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
-              if (svg && !isSocial) {
+              if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
                 svg.classList.add('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
                 svg.classList.remove('text-muted');
               }
             } else {
               link.classList.remove('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
               link.classList.add('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
-              if (svg && !isSocial && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
+              if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
                 svg.classList.remove('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
               }
             }

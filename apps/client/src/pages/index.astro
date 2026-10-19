@@ -486,4 +486,19 @@ const jsonLd = {
       </div>
     </div>
   </div>
+
+  {/* Cache top articles for instant 0ms access when opening article pages */}
+  <script is:inline define:vars={{ cachedPosts: (livePosts || []).slice(0, 10).map((p: any) => ({
+    slug: p.slug,
+    title: p.title,
+    description: p.description || p.metaDescription || '',
+    publishedAt: p.publishedAt,
+    category: p.category ? { name: p.category.name, slug: p.category.slug } : null,
+  })), cacheLang: listLanguage }}>
+    try {
+      if (Array.isArray(cachedPosts) && cachedPosts.length > 0) {
+        sessionStorage.setItem('recent_posts_' + cacheLang, JSON.stringify(cachedPosts));
+      }
+    } catch (e) {}
+  </script>
 </Layout>

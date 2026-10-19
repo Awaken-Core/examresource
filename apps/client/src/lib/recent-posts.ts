@@ -14,7 +14,21 @@ export type ListingPost = {
 
 // In-memory cache shared across SSR requests within the serverless instance runtime
 const memoryCache: Record<string, { posts: ListingPost[]; expiresAt: number }> = {};
-const CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes cache
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes cache
+
+/**
+ * Returns cached recent posts synchronously (0ms) if warm in memory, or empty array if cold.
+ * Never performs a blocking network fetch during SSR.
+ */
+export function getCachedRecentPostsSync(language: string, currentSlug?: string): ListingPost[] {
+  const now = Date.now();
+  const langKey = language || 'HINGLISH';
+  const cached = memoryCache[langKey];
+  if (cached && now < cached.expiresAt && cached.posts.length > 0) {
+    return filterAndSlice(cached.posts, currentSlug);
+  }
+  return [];
+}
 
 /**
  * Fetches recent posts with an in-memory SSR cache and short timeout (2s).
