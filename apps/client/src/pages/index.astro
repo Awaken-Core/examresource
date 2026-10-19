@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
+import BrandLogo from '../components/BrandLogo.astro';
 import { Image } from 'astro:assets';
 import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
 import {
@@ -64,6 +65,64 @@ const displayArticles = (livePosts || []).map(p => ({
   summary: p.description || p.metaDescription || 'Check complete official notification details and direct application links.',
   date: new Date(p.publishedAt || p.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
 }));
+
+// CBT Simulation & Mock Test Landing Data (Stitch Blueprint)
+const trendingTests = [
+  { name: 'SSC CGL Tier 1', href: '/category/ssc-railways' },
+  { name: 'RRB NTPC CBT 1', href: '/category/ssc-railways' },
+  { name: 'IBPS PO Prelims', href: '/category/banking' },
+  { name: 'SBI Clerk 2025', href: '/category/banking' },
+  { name: 'CTET Paper 1', href: '/category/teaching' },
+  { name: 'UGC NET', href: '/category/central-government' },
+];
+
+const statsData = [
+  { value: '9.1+ Cr', label: 'Registered Aspirants' },
+  { value: '242+ Cr', label: 'Tests Attempted' },
+  { value: '4.2+ Lakh', label: 'Verified Selections' },
+];
+
+const curatedInsights = [
+  {
+    tag: 'Exam Strategy',
+    tagClass: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/50',
+    title: 'SSC CGL 2026 Tier 1 Syllabus Changes & High-Scoring Topics',
+    summary: 'Comprehensive breakdown of recent negative marking distribution and official exam blueprints.',
+    author: 'By AIR 2 Topper Team',
+    href: '/category/ssc-railways',
+  },
+  {
+    tag: 'CBT Tips',
+    tagClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/50',
+    title: 'RRB NTPC CBT-2: Negative Marking Avoidance & Speed Benchmarks',
+    summary: 'Proven time allocation frameworks and question skipping for top-ranking candidates.',
+    author: 'By GovtPariksha Editorial',
+    href: '/category/ssc-railways',
+  },
+  {
+    tag: 'Subject Notes',
+    tagClass: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200/60 dark:border-purple-800/50',
+    title: 'Banking Quant: Fast Calculation Shortcuts for Quadratic Equations',
+    summary: 'Step-by-step methods to deduce sign relations and factorize in <15 seconds per question.',
+    author: 'By Quant Faculty',
+    href: '/category/banking',
+  },
+];
+
+const insightArticles = displayArticles.length >= 3
+  ? displayArticles.slice(0, 3).map((art, idx) => ({
+      tag: art.category || curatedInsights[idx % curatedInsights.length].tag,
+      tagClass: idx === 0
+        ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/50'
+        : idx === 1
+        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/50'
+        : 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200/60 dark:border-purple-800/50',
+      title: art.title,
+      summary: art.summary,
+      author: curatedInsights[idx % curatedInsights.length].author,
+      href: art.slug,
+    }))
+  : curatedInsights;
 
 // Exam Categories matching Reference Image 2
 const examCategories = [
@@ -255,242 +314,1002 @@ const jsonLd = {
   ogImage={`${siteUrl}/og-image.jpg`}
   ogType="website"
   jsonLd={jsonLd}
+  hideHeaderFooter={true}
 >
-  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
-    <div class="max-w-[1400px] mx-auto">
-      
-      {/* 2-Column Grid: Main Feed (Left) + Right Sidebar (Portals & Popular) */}
-      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
-        
-        {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7" transition:name="main-content">
-          
-          {/* 1. Main Headline */}
-          <div transition:name="page-hero">
-            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-2.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse will-change-[opacity] transform-gpu"></span>
-              Verified Government Exam &amp; Sarkari Naukri Portal
-            </div>
-            <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight leading-tight">
-              {siteName} | Government Exam Updates &amp; Sarkari Jobs
-            </h1>
-            <p class="mt-2 text-sm sm:text-base text-muted max-w-3xl leading-relaxed">
-              {siteName} ({siteDomain}) provides verified central &amp; state government exam notifications, admit cards, answer keys, syllabi, and direct official commission portal links across India.
-            </p>
+  {/* ── Stitch Global Header ── */}
+  <header class="sticky top-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-border-subtle shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="h-16 max-w-7xl mx-auto px-gutter-lg flex items-center justify-between gap-space-md">
+      <div class="flex items-center gap-space-lg">
+        <a class="flex items-center gap-space-sm group select-none" href="/" aria-label={`${siteDomain} home`}>
+          <div class="relative w-10 h-10 flex items-center justify-center shrink-0">
+            <BrandLogo size={36} class="group-hover:scale-105 transition-transform" />
           </div>
-
-
-
-          {/* 3. Browse by Category */}
-          <section id="categories" class="space-y-3.5">
-            <div class="flex items-center justify-between">
-              <h2 class="text-base sm:text-lg font-bold text-white">
-                Browse by category
-              </h2>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5 leading-none">
+              <span class="font-headline-sm text-headline-sm font-extrabold text-on-surface tracking-tight">govtpariksha<span class="text-primary">.com</span></span>
+              <span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-label-sm text-[9px] font-extrabold tracking-wider uppercase border border-primary/25">GOVT ACCREDITED</span>
             </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-              {examCategories.map((cat) => (
-                <a 
-                  href={`/category/${cat.slug}`}
-                  class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border border-border hover:shadow-xs ${cat.borderColor} transition duration-150 group cursor-pointer`}
-                >
-                  <div class="flex items-start justify-between">
-                    <div class={`w-7 h-7 rounded-md ${cat.iconBg} ${cat.iconColor} flex items-center justify-center shrink-0`}>
-                      {cat.icon === 'monument' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                        </svg>
-                      )}
-                      {cat.icon === 'building' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                      )}
-                      {cat.icon === 'bank' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
-                        </svg>
-                      )}
-                      {cat.icon === 'train' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="2"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
-                        </svg>
-                      )}
-                      {cat.icon === 'book' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                      )}
-                      {cat.icon === 'shield' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                      )}
-                    </div>
-                    <svg class="w-3.5 h-3.5 text-muted group-hover:text-white group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <div class="mt-4">
-                    <h3 class="text-xs font-bold text-white leading-tight">
-                      {cat.name}
-                    </h3>
-                    <p class="mt-1 text-[11px] text-muted leading-tight line-clamp-2">
-                      {cat.subtitle}
-                    </p>
-                  </div>
-                </a>
-              ))}
+            <div class="flex items-center gap-1.5 mt-1 leading-none">
+              <span class="relative flex h-1.5 w-1.5">
+                <span class="animate-beacon-ping absolute inline-flex h-full w-full rounded-full bg-correct-green opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-correct-green"></span>
+              </span>
+              <span class="font-label-sm text-[10px] text-on-surface-variant font-semibold tracking-wider uppercase">Gov Exams Portal &amp; TCS Verified</span>
             </div>
-          </section>
-
-
-
-          {/* 5. Latest Updates — all articles, independent of category navigation */}
-          <section id="latest-updates" class="space-y-3.5">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <h2 class="text-base sm:text-lg font-bold text-white">
-                  All Latest Articles
-                </h2>
-                <p class="mt-0.5 text-xs text-muted">Newest posts across every category</p>
-              </div>
-            </div>
-
-            <div class="space-y-3">
-              {displayArticles.length > 0 ? (
-                displayArticles.map((article, idx) => (
-                  <ArticleCard
-                    variant="standard"
-                    title={article.title}
-                    slug={article.slugKey}
-                    href={article.slug}
-                    category={article.category}
-                    categories={article.categories}
-                    date={article.date}
-                    summary={article.summary}
-                    headingLevel="h3"
-                    prefetch={idx < 3 ? 'viewport' : 'hover'}
-                  />
-                ))
-              ) : fetchError && fetchError.type !== 'empty' ? (
-                <div class="p-8 text-center bg-surface border border-border/80 rounded-lg space-y-2">
-                  <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 mb-1">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  </div>
-                  <h3 class="text-sm font-semibold text-white">Temporarily unable to load latest updates</h3>
-                  <p class="text-xs text-muted max-w-md mx-auto">
-                    We are experiencing a temporary connection issue. Please refresh the page or check our Telegram/WhatsApp channels for immediate notices.
-                  </p>
-                </div>
-              ) : (
-                <div class="p-8 text-center bg-surface border border-border rounded-lg">
-                  <p class="text-sm text-muted">No updates published yet. Please check back soon.</p>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* 6. FAQ Accordion Section */}
-          <div id="faqs" class="pt-4">
-            <FAQSection faqs={siteFaqs} />
           </div>
+        </a>
 
+        <nav class="hidden xl:flex items-center gap-1.5 shrink-0" data-active-classes="bg-primary-container text-on-primary-container rounded-lg font-label-md text-label-md">
+          <a class="px-2.5 py-1.5 transition-colors bg-primary-container text-on-primary-container rounded-lg font-label-md text-label-md whitespace-nowrap font-semibold" href="#test-series">Test Series</a>
+          <a class="px-2.5 py-1.5 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors whitespace-nowrap font-semibold" href="#practice-questions">Practice Questions</a>
+          <a class="px-2.5 py-1.5 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors whitespace-nowrap font-semibold" href="#categories">Previous Year Papers</a>
+          <a class="px-2.5 py-1.5 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors whitespace-nowrap font-semibold" href="#latest-updates">Blogs &amp; Editorial</a>
+          <a class="px-2.5 py-1.5 font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-lg transition-colors whitespace-nowrap font-semibold" href="#pricing">Exam Pass</a>
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-space-sm shrink-0">
+        <div class="flex items-center bg-surface-container-low rounded-lg p-0.5 border border-border-subtle/50" role="group" aria-label="Language selection">
+          <button class="app-lang-btn px-2 py-1 rounded font-label-sm text-label-sm font-semibold bg-surface-card text-on-surface shadow-xs cursor-pointer" type="button" data-app-lang="en">EN</button>
+          <button class="app-lang-btn px-2 py-1 rounded font-label-sm text-label-sm font-semibold text-on-surface-variant hover:text-on-surface cursor-pointer" type="button" data-app-lang="hinglish">HI</button>
         </div>
 
-        {/* RIGHT SIDEBAR (Important Portals + Popular this week) - Sticky to viewport */}
-        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
-          
-          {/* Important Portals Box */}
-          <div id="important-links" class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
-            <div class="flex items-center justify-between pb-1 border-b border-border/50">
-              <h2 class="text-sm font-bold text-white">
-                Important portals
-              </h2>
-            </div>
+        <button aria-label="Toggle Dark Mode" class="theme-toggle-btn w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" type="button">
+          <span class="material-symbols-outlined text-[20px]">dark_mode</span>
+        </button>
 
-            <div class="divide-y divide-border/50">
-              {rightPortals.map((portal) => (
-                <a 
-                  href={portal.href} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  class="flex items-center justify-between py-2.5 px-1 hover:bg-surface-raised rounded transition group cursor-pointer"
-                  title={`${portal.name} - official portal`}
-                  aria-label={`${portal.name} - official portal (${portal.url}) (opens in new tab)`}
-                >
-                  <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-surface-raised border border-border flex items-center justify-center p-1 shrink-0 overflow-hidden relative">
-                      <Image 
-                        src={portal.logo} 
-                        alt={`${portal.name} official emblem logo`} 
-                        class="w-full h-full object-contain" 
-                        loading="lazy"
-                        fetchpriority="low"
-                        decoding="async"
-                        width={32}
-                        height={32}
-                        onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
-                      />
-                      <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[10px] select-none tracking-tight`}>
-                        {portal.initial}
-                      </div>
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-xs font-bold text-white group-hover:text-accent transition truncate leading-tight">
-                        {portal.name}
-                      </p>
-                      <p class="text-[11px] text-muted truncate leading-tight mt-0.5">
-                        {portal.url}
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+        <button aria-label="Search" data-open-search class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" type="button">
+          <span class="material-symbols-outlined text-[20px]">search</span>
+        </button>
+
+        <a class="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg transition-colors shadow-sm font-semibold" href="/login">Get Started</a>
+
+        <a href="/login" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-1 text-on-primary shadow-sm hover:opacity-90 transition cursor-pointer" aria-label="Account">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="w-full bg-background font-body-md text-body-md text-on-surface">
+    <div class="flex flex-col w-full">
+
+      {/* ── Top Trust & Metric Strip ── */}
+      <section class="w-full bg-surface-container-high py-space-sm border-b border-border-subtle">
+        <div class="max-w-7xl mx-auto px-gutter-lg flex flex-wrap items-center justify-between gap-space-sm text-on-surface-variant font-label-sm text-label-sm">
+          <div class="flex items-center gap-space-sm">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-correct-green/10 text-correct-green font-semibold border border-correct-green/20">
+              <span class="w-1.5 h-1.5 rounded-full bg-correct-green animate-pulse"></span>
+              2025-26 CBT ENGINE LIVE
+            </span>
+            <span class="hidden sm:inline text-on-surface-variant">Bilingual Tests benchmarked to latest NTA &amp; TCS exam interfaces</span>
           </div>
+          <div class="flex items-center gap-space-md">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">security</span>100% Exam Hall Accuracy</span>
+            <span class="hidden md:flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">speed</span>AIR &amp; Sectional Cutoffs</span>
+          </div>
+        </div>
+      </section>
 
-          {/* Popular This Week Box */}
-          {popularUpdates.length > 0 && (
-            <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
-              <div class="flex items-center gap-2 pb-1 border-b border-border/50">
-                <span class="text-[#EF4444]">🔥</span>
-                <h2 class="text-sm font-bold text-white">
-                  Popular this week
-                </h2>
+      {/* ── Hero Section ── */}
+      <section class="relative w-full py-space-2xl bg-surface-bg overflow-hidden">
+        <div class="max-w-7xl mx-auto px-gutter-lg">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
+            
+            {/* Hero Left Column */}
+            <div class="lg:col-span-7 flex flex-col gap-space-md">
+              <div class="flex flex-wrap items-center gap-2 self-start">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container text-primary font-label-md text-label-md shadow-sm border border-primary/20">
+                  <span class="material-symbols-outlined text-[16px]">verified</span>
+                  Strictly Practice &amp; Real Mock Testing System
+                </div>
+                
+                {/* Floating Seal Badge */}
+                <div class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-card text-on-surface border border-amber-300/80 shadow-sm animate-float">
+                  <div class="w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[10px] font-bold">
+                    <span class="material-symbols-outlined text-[11px]">military_tech</span>
+                  </div>
+                  <span class="font-label-sm text-[11px] font-bold tracking-tight text-on-surface">National CBT Protocol Standard</span>
+                </div>
               </div>
 
-              <div class="space-y-2.5">
-                {popularUpdates.map((item) => (
+              <h1 class="font-display-lg text-3xl sm:text-4xl lg:text-[46px] font-extrabold text-on-surface tracking-tight leading-[1.12]">
+                Master Any Exam Through <span class="text-primary underline decoration-primary/30 decoration-wavy underline-offset-4">Precision Testing</span> &amp; CBT Simulation.
+              </h1>
+
+              <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                Access 50,000+ bilingual mock tests, All-India Rank analytics, 10+ years of official solved papers, and AI-driven speed telemetry. Zero fluff. Pure test-taking mastery.
+              </p>
+
+              {/* Quick Exam Search Bar */}
+              <div 
+                data-open-search
+                class="relative w-full max-w-xl bg-surface-card rounded-xl p-1.5 shadow-md flex items-center gap-2 border border-border-subtle cursor-pointer hover:border-primary/40 transition"
+              >
+                <span class="material-symbols-outlined text-on-surface-variant text-[22px] ml-3">search</span>
+                <input 
+                  class="w-full bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant cursor-pointer border-none" 
+                  placeholder="Search exam (e.g. SSC CGL Tier 1, RRB NTPC, IBPS PO)..." 
+                  type="text"
+                  readonly
+                />
+                <button class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg transition-colors whitespace-nowrap shadow-sm cursor-pointer font-bold" type="button">
+                  Find Tests
+                </button>
+              </div>
+
+              {/* Quick Filter Selector Pills */}
+              <div class="flex flex-wrap items-center gap-space-xs pt-1">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mr-1 font-bold">Trending Tests:</span>
+                {trendingTests.map((test) => (
                   <a 
-                    href={item.href} 
-                    data-article-link={item.slugKey}
-                    data-astro-prefetch="hover"
-                    class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
+                    href={test.href}
+                    class="px-2.5 py-1 rounded-md bg-surface-card hover:bg-surface-container text-on-surface font-label-sm text-label-sm shadow-xs transition-colors border border-border-subtle/50 cursor-pointer"
                   >
-                    <span class="w-5 h-5 rounded-full bg-surface-raised text-muted group-hover:bg-accent/15 group-hover:text-accent flex items-center justify-center text-[10px] font-bold shrink-0 transition">
-                      {item.rank}
-                    </span>
-                    <p class="text-xs font-medium text-white/90 group-hover:text-accent transition leading-snug truncate" data-article-title>
-                      {item.title}
-                    </p>
+                    {test.name}
                   </a>
                 ))}
               </div>
+
+              {/* Action CTAs */}
+              <div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+                <a 
+                  href="#test-series" 
+                  class="px-6 py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg flex items-center gap-2 shadow-sm transition-all hover:translate-y-[-1px] font-bold cursor-pointer"
+                >
+                  <span class="material-symbols-outlined text-[20px]">play_circle</span>
+                  Start Free Mock Test
+                </a>
+
+                <a 
+                  href="#pricing" 
+                  class="px-6 py-3 rounded-lg bg-surface-card hover:bg-surface-container text-primary font-label-lg text-label-lg shadow-sm flex items-center gap-2 transition-colors border border-border-subtle font-bold cursor-pointer"
+                >
+                  <span class="material-symbols-outlined text-[20px]">confirmation_number</span>
+                  Explore Test Series Pass
+                </a>
+              </div>
+
+              {/* Aspirant Social Proof Counter Strip */}
+              <div class="grid grid-cols-3 gap-space-md pt-space-md mt-space-xs border-t border-border-subtle/60">
+                <div class="flex flex-col">
+                  <span class="font-tabular-stat text-2xl sm:text-tabular-stat font-bold text-on-surface">9.1+ Cr</span>
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Registered Aspirants</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-tabular-stat text-2xl sm:text-tabular-stat font-bold text-primary">242+ Cr</span>
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Tests Attempted</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-tabular-stat text-2xl sm:text-tabular-stat font-bold text-on-surface">4.2+ Lakh</span>
+                  <span class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-wider font-bold">Verified Selections</span>
+                </div>
+              </div>
             </div>
-          )}
 
-        </aside>
+            {/* Hero Right Column: High-Fidelity CBT Console Preview */}
+            <div class="lg:col-span-5 relative">
+              <div class="absolute -top-10 -right-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
 
+              <div class="relative bg-surface-card rounded-xl p-space-lg shadow-md border border-border-subtle flex flex-col gap-space-md h-full">
+                <div class="flex items-center justify-between pb-space-sm border-b border-border-subtle">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-[20px]">menu_book</span>
+                    <span class="font-label-md text-label-md uppercase tracking-wider text-primary font-bold">Latest Exam Articles &amp; Insights</span>
+                  </div>
+                  <a class="font-label-sm text-[12px] text-primary font-bold hover:underline flex items-center gap-0.5 whitespace-nowrap" href="#latest-updates">
+                    All Articles <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                  </a>
+                </div>
+
+                <div class="flex flex-col divide-y divide-border-subtle flex-1 justify-between">
+                  {insightArticles.map((article) => (
+                    <div class="py-3 flex flex-col gap-1.5">
+                      <div class="flex items-center justify-between text-[11px] font-semibold text-on-surface-variant">
+                        <span class="px-2 py-0.5 rounded bg-surface-container text-primary font-bold">{article.tag}</span>
+                        <span>4 min read</span>
+                      </div>
+                      <a href={article.href} class="font-headline-sm text-base sm:text-headline-sm font-bold text-on-surface hover:text-primary transition-colors cursor-pointer leading-snug">
+                        {article.title}
+                      </a>
+                      <p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+                        {article.summary}
+                      </p>
+                      <div class="flex items-center justify-between pt-1 text-[12px]">
+                        <span class="text-on-surface-variant text-[11px]">{article.author}</span>
+                        <a class="font-label-sm text-[12px] text-primary font-bold hover:underline flex items-center gap-0.5" href={article.href}>
+                          Read Article →
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 2: Standard CBT Test Series Grid ── */}
+      <section id="test-series" class="w-full py-space-2xl bg-surface border-t border-border-subtle">
+        <div class="max-w-7xl mx-auto px-gutter-lg flex flex-col gap-space-xl">
+          
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+            <div class="flex flex-col gap-1">
+              <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Standard CBT Test Series</span>
+              <h2 class="font-headline-lg text-2xl sm:text-headline-lg font-bold text-on-surface tracking-tight">
+                Target Your Competitive Exam
+              </h2>
+              <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+                Strictly tailored to actual syllabus weightage, latest negative marking formulas, and real examination timing constraints.
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <a href="#categories" class="px-3.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center gap-1 shadow-xs transition-colors border border-border-subtle font-semibold cursor-pointer">
+                <span class="material-symbols-outlined text-[16px]">tune</span> Filter Exam Stream
+              </a>
+            </div>
+          </div>
+
+          {/* Category Filter Switcher Tabs */}
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 text-nowrap scrollbar-none">
+            <a href="#test-series" class="px-4 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md shadow-sm font-semibold cursor-pointer">All Exams (670+)</a>
+            <a href="/category/ssc-railways" class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-container text-on-surface-variant font-label-md text-label-md shadow-xs transition-colors border border-border-subtle/50 font-semibold cursor-pointer">SSC Exams (33)</a>
+            <a href="/category/ssc-railways" class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-container text-on-surface-variant font-label-md text-label-md shadow-xs transition-colors border border-border-subtle/50 font-semibold cursor-pointer">Railways (35)</a>
+            <a href="/category/banking" class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-container text-on-surface-variant font-label-md text-label-md shadow-xs transition-colors border border-border-subtle/50 font-semibold cursor-pointer">Banking &amp; Insurance (81)</a>
+            <a href="/category/state-exams" class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-container text-on-surface-variant font-label-md text-label-md shadow-xs transition-colors border border-border-subtle/50 font-semibold cursor-pointer">State Govt (690)</a>
+            <a href="/category/defence" class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-container text-on-surface-variant font-label-md text-label-md shadow-xs transition-colors border border-border-subtle/50 font-semibold cursor-pointer">Defence &amp; Police (76)</a>
+            <a href="/category/teaching" class="px-4 py-2 rounded-lg bg-surface-card hover:bg-surface-container text-on-surface-variant font-label-md text-label-md shadow-xs transition-colors border border-border-subtle/50 font-semibold cursor-pointer">Teaching &amp; TET (172)</a>
+          </div>
+
+          {/* Test Series Cards Grid */}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+            
+            {/* Card 1: SSC CGL */}
+            <div class="bg-surface-card rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase">SSC Category</span>
+                  <span class="flex items-center gap-1 font-label-sm text-label-sm font-bold text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded">
+                    <span class="material-symbols-outlined text-[14px]">star</span> 4.9 (42.8k reviews)
+                  </span>
+                </div>
+                <div>
+                  <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface hover:text-primary transition-colors cursor-pointer">
+                    SSC CGL Tier I &amp; Tier II Mock Test Series 2025-26
+                  </h3>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">2.44 Million aspirants practicing on TCS-mapped interfaces</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="px-2.5 py-1 rounded-md bg-surface-container-high font-label-sm text-label-sm font-semibold text-on-surface">2,536 Total Tests</span>
+                  <span class="px-2.5 py-1 rounded-md bg-correct-green/10 text-correct-green font-label-sm text-label-sm font-bold border border-correct-green/20">54 Free Mocks</span>
+                  <span class="px-2.5 py-1 rounded-md bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant">Hindi, English + 8 Langs</span>
+                </div>
+                <ul class="flex flex-col gap-1.5 py-2 text-on-surface-variant font-body-sm text-body-sm">
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>33 Official Pattern Exam Day Special Mocks</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>840+ Topic &amp; Chapter Tests with Negative Marking</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>120+ Previous Year Papers (2019 - 2024 Solved)</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>Live AIR Rank Predictor &amp; Cut-off Matrix</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="pt-space-md mt-space-md flex items-center gap-2 border-t border-border-subtle">
+                <a href="/category/ssc-railways" class="w-1/2 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md text-center transition-colors font-bold cursor-pointer">
+                  Attempt Free Test
+                </a>
+                <a href="#pricing" class="w-1/2 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md text-center shadow-sm transition-colors font-bold cursor-pointer">
+                  Unlock Full Series
+                </a>
+              </div>
+            </div>
+
+            {/* Card 2: RRB NTPC */}
+            <div class="bg-surface-card rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase">Railways Category</span>
+                  <span class="flex items-center gap-1 font-label-sm text-label-sm font-bold text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded">
+                    <span class="material-symbols-outlined text-[14px]">star</span> 4.8 (21.5k reviews)
+                  </span>
+                </div>
+                <div>
+                  <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface hover:text-primary transition-colors cursor-pointer">
+                    RRB NTPC Graduate (CBT 1 + CBT 2) Pack
+                  </h3>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">215,000+ candidates targeting Station Master &amp; Goods Guard posts</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="px-2.5 py-1 rounded-md bg-surface-container-high font-label-sm text-label-sm font-semibold text-on-surface">694 Total Tests</span>
+                  <span class="px-2.5 py-1 rounded-md bg-correct-green/10 text-correct-green font-label-sm text-label-sm font-bold border border-correct-green/20">12 Free Tests</span>
+                  <span class="px-2.5 py-1 rounded-md bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant">Hindi, English, Bengali, Tamil +4</span>
+                </div>
+                <ul class="flex flex-col gap-1.5 py-2 text-on-surface-variant font-body-sm text-body-sm">
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>255 Comprehensive Chapter Tests (CBT 1)</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>29 Railway Current Affairs Express Drills</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>95 Sectional Speed &amp; Accuracy Drills</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>Full Length Simulation of 90-minute CBT pressure</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="pt-space-md mt-space-md flex items-center gap-2 border-t border-border-subtle">
+                <a href="/category/ssc-railways" class="w-1/2 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md text-center transition-colors font-bold cursor-pointer">
+                  Attempt Free Test
+                </a>
+                <a href="#pricing" class="w-1/2 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md text-center shadow-sm transition-colors font-bold cursor-pointer">
+                  Unlock Full Series
+                </a>
+              </div>
+            </div>
+
+            {/* Card 3: Banking IBPS PO & Clerk */}
+            <div class="bg-surface-card rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-space-sm">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-bold uppercase">Banking Category</span>
+                  <span class="flex items-center gap-1 font-label-sm text-label-sm font-bold text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded">
+                    <span class="material-symbols-outlined text-[14px]">star</span> 4.9 (38.2k reviews)
+                  </span>
+                </div>
+                <div>
+                  <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface hover:text-primary transition-colors cursor-pointer">
+                    IBPS PO &amp; Clerk Prelims + Mains Complete Pack
+                  </h3>
+                  <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Sectional timer enforcement matching official IBPS server timings</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="px-2.5 py-1 rounded-md bg-surface-container-high font-label-sm text-label-sm font-semibold text-on-surface">850 Total Tests</span>
+                  <span class="px-2.5 py-1 rounded-md bg-correct-green/10 text-correct-green font-label-sm text-label-sm font-bold border border-correct-green/20">18 Free Tests</span>
+                  <span class="px-2.5 py-1 rounded-md bg-surface-container-low font-label-sm text-label-sm text-on-surface-variant">Bilingual (English &amp; Hindi)</span>
+                </div>
+                <ul class="flex flex-col gap-1.5 py-2 text-on-surface-variant font-body-sm text-body-sm">
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>Sectional Switching Lock (20 mins strictly)</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>High-level DI &amp; Puzzles (Latest Mains Exam Pattern)</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>Financial &amp; Banking Awareness Monthly Quizzes</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[16px] text-correct-green shrink-0">check_circle</span>
+                    <span>SBI PO &amp; IBPS RRB scale-1 cross-testing included</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="pt-space-md mt-space-md flex items-center gap-2 border-t border-border-subtle">
+                <a href="/category/banking" class="w-1/2 py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md text-center transition-colors font-bold cursor-pointer">
+                  Attempt Free Test
+                </a>
+                <a href="#pricing" class="w-1/2 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md text-center shadow-sm transition-colors font-bold cursor-pointer">
+                  Unlock Full Series
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Quick Series Link Strip */}
+          <div class="bg-surface-container-low p-space-md rounded-xl flex flex-wrap items-center justify-between gap-space-md border border-border-subtle">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[20px]">layers</span>
+              <span class="font-body-md text-body-md font-semibold text-on-surface">Explore State Selection Series:</span>
+              <span class="font-body-sm text-body-sm text-on-surface-variant">UPSSSC PET (448 Tests), BSSC Inter Level (310 Tests), Delhi Police (190 Tests), WB TET (240 Tests)</span>
+            </div>
+            <a href="#categories" class="font-label-md text-label-md text-primary font-bold hover:underline flex items-center gap-1 cursor-pointer">
+              View All 670+ Test Packs <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── Section 3: Micro-Level Practice Engine ── */}
+      <section id="practice-questions" class="w-full py-space-2xl bg-surface-bg border-t border-border-subtle">
+        <div class="max-w-7xl mx-auto px-gutter-lg flex flex-col gap-space-xl">
+          
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+            <div>
+              <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Micro-Level Practice Engine</span>
+              <h2 class="font-headline-lg text-2xl sm:text-headline-lg font-bold text-on-surface tracking-tight">
+                Target Weaknesses with Adaptive Topic Quizzes
+              </h2>
+              <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+                Don't just burn full-length mocks. Drill down into specific chapters with 10-minute sprint tests and instant step-by-step mathematical proofs.
+              </p>
+            </div>
+            <div class="flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-surface-container font-semibold text-primary border border-primary/20">
+                <span class="material-symbols-outlined text-[14px]">bolt</span> 180,000+ Curated MCQs
+              </span>
+            </div>
+          </div>
+
+          {/* 4 Core Subject Drill Pillars */}
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-md">
+            
+            {/* Quant */}
+            <div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-2">
+                <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[24px]">calculate</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">Quantitative Aptitude</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Arithmetic, Advanced Algebra, Trigonometry, Geometry, Data Interpretation</p>
+                <div class="flex flex-col gap-1.5 pt-2">
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Total Questions</span>
+                    <span class="font-bold text-on-surface">42,500+</span>
+                  </div>
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Avg Accuracy Required</span>
+                    <span class="font-bold text-correct-green">88%</span>
+                  </div>
+                </div>
+              </div>
+              <button data-open-search class="mt-space-md w-full py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors border border-border-subtle/50 cursor-pointer" type="button">
+                Practice Quant Chapters
+              </button>
+            </div>
+
+            {/* Reasoning */}
+            <div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-2">
+                <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[24px]">psychology</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">General Intelligence</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Syllogisms, Blood Relations, Seating Arrangements, Coding-Decoding, Non-Verbal</p>
+                <div class="flex flex-col gap-1.5 pt-2">
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Total Questions</span>
+                    <span class="font-bold text-on-surface">38,100+</span>
+                  </div>
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Speed Benchmark</span>
+                    <span class="font-bold text-primary">42s / Q</span>
+                  </div>
+                </div>
+              </div>
+              <button data-open-search class="mt-space-md w-full py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors border border-border-subtle/50 cursor-pointer" type="button">
+                Practice Reasoning
+              </button>
+            </div>
+
+            {/* English */}
+            <div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-2">
+                <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[24px]">spellcheck</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">English Comprehension</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Reading Comprehension, Error Spotting, Cloze Test, Idioms &amp; Phrases, Vocab</p>
+                <div class="flex flex-col gap-1.5 pt-2">
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Total Questions</span>
+                    <span class="font-bold text-on-surface">31,400+</span>
+                  </div>
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Rule Reference Notes</span>
+                    <span class="font-bold text-on-surface">Included</span>
+                  </div>
+                </div>
+              </div>
+              <button data-open-search class="mt-space-md w-full py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors border border-border-subtle/50 cursor-pointer" type="button">
+                Practice English
+              </button>
+            </div>
+
+            {/* General Awareness */}
+            <div class="bg-surface-card rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-2">
+                <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[24px]">public</span>
+                </div>
+                <h3 class="font-headline-sm text-headline-sm font-bold text-on-surface">General Awareness &amp; GK</h3>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Indian Polity, Modern History, Geography, General Science, Daily Current Affairs</p>
+                <div class="flex flex-col gap-1.5 pt-2">
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Total Questions</span>
+                    <span class="font-bold text-on-surface">65,000+</span>
+                  </div>
+                  <div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+                    <span>Updated Thru</span>
+                    <span class="font-bold text-correct-green">Today (Live)</span>
+                  </div>
+                </div>
+              </div>
+              <button data-open-search class="mt-space-md w-full py-2 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary font-label-md text-label-md font-semibold transition-colors border border-border-subtle/50 cursor-pointer" type="button">
+                Practice GK Drills
+              </button>
+            </div>
+
+          </div>
+
+          {/* Live Daily 10-Minute Sprint Quiz Strip */}
+          <div class="bg-surface-card rounded-xl p-space-lg shadow-sm border border-border-subtle">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-center">
+              <div class="lg:col-span-4 flex flex-col gap-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-incorrect-red animate-ping"></span>
+                  <span class="font-label-sm text-label-sm font-bold text-incorrect-red uppercase">Daily Speed Sprint Quizzes</span>
+                </div>
+                <h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">10 Questions • 10 Minutes</h4>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Compete with 80,000+ peers taking the same sprint at this very moment.</p>
+              </div>
+
+              <div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+                <div class="p-3 rounded-lg bg-surface-container-low flex flex-col justify-between gap-2 border border-border-subtle/40">
+                  <div>
+                    <span class="font-label-sm text-label-sm text-primary font-bold">TODAY'S GK CAPSULE</span>
+                    <h5 class="font-label-md text-label-md font-bold text-on-surface mt-0.5">Static Art &amp; Classical Dances</h5>
+                    <span class="font-body-sm text-[11px] text-on-surface-variant">10 Qs • Negative 0.25 • 14.2k Attempts</span>
+                  </div>
+                  <button data-open-search class="w-full py-1.5 rounded bg-primary text-on-primary font-label-sm text-label-sm font-bold shadow-sm cursor-pointer hover:bg-primary-container transition">Attempt (Free)</button>
+                </div>
+
+                <div class="p-3 rounded-lg bg-surface-container-low flex flex-col justify-between gap-2 border border-border-subtle/40">
+                  <div>
+                    <span class="font-label-sm text-label-sm text-primary font-bold">DAILY QUANT DRILL</span>
+                    <h5 class="font-label-md text-label-md font-bold text-on-surface mt-0.5">Speed, Time &amp; Train Problems</h5>
+                    <span class="font-body-sm text-[11px] text-on-surface-variant">10 Qs • Negative 0.50 • 21.8k Attempts</span>
+                  </div>
+                  <button data-open-search class="w-full py-1.5 rounded bg-primary text-on-primary font-label-sm text-label-sm font-bold shadow-sm cursor-pointer hover:bg-primary-container transition">Attempt (Free)</button>
+                </div>
+
+                <div class="p-3 rounded-lg bg-surface-container-low flex flex-col justify-between gap-2 border border-border-subtle/40">
+                  <div>
+                    <span class="font-label-sm text-label-sm text-primary font-bold">VOCAB POWER HOUR</span>
+                    <h5 class="font-label-md text-label-md font-bold text-on-surface mt-0.5">One-Word Substitutions 2024</h5>
+                    <span class="font-body-sm text-[11px] text-on-surface-variant">10 Qs • Negative 0.25 • 18.9k Attempts</span>
+                  </div>
+                  <button data-open-search class="w-full py-1.5 rounded bg-primary text-on-primary font-label-sm text-label-sm font-bold shadow-sm cursor-pointer hover:bg-primary-container transition">Attempt (Free)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── Section 4: Flexible Pass Membership ── */}
+      <section id="pricing" class="w-full py-space-2xl bg-surface border-t border-border-subtle">
+        <div class="max-w-7xl mx-auto px-gutter-lg flex flex-col gap-space-xl">
+          <div class="text-center flex flex-col items-center gap-1 max-w-xl mx-auto">
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Flexible Pass Membership</span>
+            <h2 class="font-headline-lg text-2xl sm:text-headline-lg font-bold text-on-surface tracking-tight">
+              Unlock Every Test for Every Central &amp; State Exam
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">
+              No separate packs for SSC, Railways, or Banking. One subscription unlocks 50,000+ tests and full analytics.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg max-w-4xl mx-auto w-full">
+            
+            {/* Free Starter Pass */}
+            <div class="bg-surface-card rounded-xl p-space-lg shadow-sm flex flex-col justify-between border border-border-subtle">
+              <div class="flex flex-col gap-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">Free Diagnostic Tier</span>
+                <div class="flex items-baseline gap-1">
+                  <span class="font-display-lg text-3xl sm:text-display-lg font-bold text-on-surface">₹0</span>
+                  <span class="font-body-sm text-body-sm text-on-surface-variant">/ forever free</span>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Ideal for taking diagnostic tests and evaluating your readiness baseline.</p>
+                <ul class="flex flex-col gap-2 pt-space-sm text-on-surface font-body-sm text-body-sm">
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check</span>
+                    <span>Access to 100+ Free Full-Length Mock Tests</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check</span>
+                    <span>Daily 10-Minute Current Affairs Quizzes</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check</span>
+                    <span>Basic Scoreboard &amp; Question-by-Question Solutions</span>
+                  </li>
+                  <li class="flex items-center gap-2 text-on-surface-variant/60">
+                    <span class="material-symbols-outlined text-[18px] text-unattempted-slate">close</span>
+                    <span>No All-India Rank (AIR) Percentile benchmarking</span>
+                  </li>
+                  <li class="flex items-center gap-2 text-on-surface-variant/60">
+                    <span class="material-symbols-outlined text-[18px] text-unattempted-slate">close</span>
+                    <span>No Previous Year Paper PDF Downloads</span>
+                  </li>
+                </ul>
+              </div>
+              <a href="/login" class="mt-space-lg w-full py-3 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-lg text-label-lg transition-colors font-semibold text-center cursor-pointer block">
+                Current Active Plan
+              </a>
+            </div>
+
+            {/* Pro All-Access Pass (Highlighted) */}
+            <div class="relative bg-surface-card rounded-xl p-space-lg shadow-xl flex flex-col justify-between bg-gradient-to-b from-primary/5 to-transparent border-2 border-primary/40">
+              <div class="absolute -top-3 right-6 bg-primary text-on-primary font-label-sm text-label-sm font-bold px-3 py-1 rounded-full shadow-sm">
+                RECOMMENDED BY TOPPERS
+              </div>
+              <div class="flex flex-col gap-space-sm">
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Apex Pass Pro (1-Year All Access)</span>
+                <div class="flex items-baseline gap-1">
+                  <span class="font-display-lg text-3xl sm:text-display-lg font-bold text-on-surface">₹499</span>
+                  <span class="font-body-sm text-body-sm text-on-surface-variant line-through">₹1,499</span>
+                  <span class="font-label-sm text-label-sm text-correct-green font-bold ml-2">66% OFF</span>
+                </div>
+                <p class="font-body-sm text-body-sm text-on-surface-variant">Full unrestricted access to 670+ Government &amp; Public Sector examinations.</p>
+                <ul class="flex flex-col gap-2 pt-space-sm text-on-surface font-body-sm text-body-sm">
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check_circle</span>
+                    <span class="font-semibold">Unlimited 50,000+ Mock Tests across all categories</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check_circle</span>
+                    <span>All India Rank (AIR) &amp; Real Percentile Simulation</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check_circle</span>
+                    <span>Speed vs Topper millisecond telemetry analysis</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check_circle</span>
+                    <span>10+ Years Official Solved Papers + Printable PDFs</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px] text-correct-green">check_circle</span>
+                    <span>Error Notebook &amp; Unlimited Question Re-Attempts</span>
+                  </li>
+                </ul>
+              </div>
+              <a href="/login" class="mt-space-lg w-full py-3 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg transition-colors shadow-sm flex items-center justify-center gap-2 font-bold cursor-pointer">
+                <span class="material-symbols-outlined text-[20px]">bolt</span>
+                Get Pass Pro • ₹499 / Year
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 5: Browse Categories & Official Portals ── */}
+      <section id="categories" class="w-full py-space-2xl bg-surface-bg border-t border-border-subtle">
+        <div class="max-w-7xl mx-auto px-gutter-lg">
+          <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+            
+            <div class="space-y-6">
+              <div>
+                <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Exam Streams</span>
+                <h2 class="text-xl sm:text-2xl font-bold text-on-surface tracking-tight mt-0.5">
+                  Browse by category
+                </h2>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {examCategories.map((cat) => (
+                  <a 
+                    href={`/category/${cat.slug}`}
+                    class={`flex flex-col justify-between p-3.5 bg-surface-card rounded-lg border border-border-subtle hover:shadow-xs transition duration-150 group cursor-pointer`}
+                  >
+                    <div class="flex items-start justify-between">
+                      <div class={`w-7 h-7 rounded-md ${cat.iconBg} ${cat.iconColor} flex items-center justify-center shrink-0`}>
+                        {cat.icon === 'monument' && (
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                          </svg>
+                        )}
+                        {cat.icon === 'building' && (
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                        )}
+                        {cat.icon === 'bank' && (
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
+                          </svg>
+                        )}
+                        {cat.icon === 'train' && (
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="2"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
+                          </svg>
+                        )}
+                        {cat.icon === 'book' && (
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                        )}
+                        {cat.icon === 'shield' && (
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          </svg>
+                        )}
+                      </div>
+                      <svg class="w-3.5 h-3.5 text-on-surface-variant group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                    <div class="mt-4">
+                      <h3 class="text-xs font-bold text-on-surface leading-tight">
+                        {cat.name}
+                      </h3>
+                      <p class="mt-1 text-[11px] text-on-surface-variant leading-tight line-clamp-2">
+                        {cat.subtitle}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+
+              {/* All Latest Articles Feed */}
+              <div id="latest-updates" class="pt-4 space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Live Editorial</span>
+                    <h2 class="text-xl sm:text-2xl font-bold text-on-surface tracking-tight">
+                      All Latest Articles &amp; Updates
+                    </h2>
+                  </div>
+                </div>
+
+                <div class="space-y-3">
+                  {displayArticles.length > 0 ? (
+                    displayArticles.map((article, idx) => (
+                      <ArticleCard
+                        variant="standard"
+                        title={article.title}
+                        slug={article.slugKey}
+                        href={article.slug}
+                        category={article.category}
+                        categories={article.categories}
+                        date={article.date}
+                        summary={article.summary}
+                        headingLevel="h3"
+                        prefetch={idx < 3 ? 'viewport' : 'hover'}
+                      />
+                    ))
+                  ) : fetchError && fetchError.type !== 'empty' ? (
+                    <div class="p-8 text-center bg-surface-card border border-border-subtle rounded-lg space-y-2">
+                      <h3 class="text-sm font-semibold text-on-surface">Temporarily unable to load latest updates</h3>
+                      <p class="text-xs text-on-surface-variant max-w-md mx-auto">
+                        Please refresh or check back shortly.
+                      </p>
+                    </div>
+                  ) : (
+                    <div class="p-8 text-center bg-surface-card border border-border-subtle rounded-lg">
+                      <p class="text-sm text-on-surface-variant">No updates published yet. Please check back soon.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* FAQs Accordion */}
+              <div id="faqs" class="pt-4">
+                <FAQSection faqs={siteFaqs} />
+              </div>
+
+            </div>
+
+            {/* Right Sidebar: Important Portals & Popular this week */}
+            <aside class="space-y-6">
+              
+              {/* Important Portals Box */}
+              <div class="bg-surface-card border border-border-subtle rounded-xl p-4 shadow-sm space-y-3.5">
+                <div class="flex items-center justify-between pb-1 border-b border-border-subtle/60">
+                  <h2 class="text-sm font-bold text-on-surface uppercase tracking-wider">
+                    Official Portals
+                  </h2>
+                </div>
+
+                <div class="divide-y divide-border-subtle/50">
+                  {rightPortals.map((portal) => (
+                    <a 
+                      href={portal.href} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      class="flex items-center justify-between py-2.5 px-1 hover:bg-surface-container rounded transition group cursor-pointer"
+                      title={`${portal.name} - official portal`}
+                    >
+                      <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-8 h-8 rounded-full bg-surface-container border border-border-subtle flex items-center justify-center p-1 shrink-0 overflow-hidden relative">
+                          <Image 
+                            src={portal.logo} 
+                            alt={`${portal.name} official emblem logo`} 
+                            class="w-full h-full object-contain" 
+                            loading="lazy"
+                            fetchpriority="low"
+                            decoding="async"
+                            width={32}
+                            height={32}
+                            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                          />
+                          <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[10px] select-none tracking-tight`}>
+                            {portal.initial}
+                          </div>
+                        </div>
+                        <div class="min-w-0">
+                          <p class="text-xs font-bold text-on-surface group-hover:text-primary transition truncate leading-tight">
+                            {portal.name}
+                          </p>
+                          <p class="text-[11px] text-on-surface-variant truncate leading-tight mt-0.5">
+                            {portal.url}
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Popular This Week Box */}
+              {popularUpdates.length > 0 && (
+                <div class="bg-surface-card border border-border-subtle rounded-xl p-4 shadow-sm space-y-3.5">
+                  <div class="flex items-center gap-2 pb-1 border-b border-border-subtle/60">
+                    <span class="text-[#EF4444]">🔥</span>
+                    <h2 class="text-sm font-bold text-on-surface uppercase tracking-wider">
+                      Popular this week
+                    </h2>
+                  </div>
+
+                  <div class="space-y-2.5">
+                    {popularUpdates.map((item) => (
+                      <a 
+                        href={item.href} 
+                        data-article-link={item.slugKey}
+                        data-astro-prefetch="hover"
+                        class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-container transition group cursor-pointer"
+                      >
+                        <span class="w-5 h-5 rounded-full bg-surface-container text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary flex items-center justify-center text-[10px] font-bold shrink-0 transition">
+                          {item.rank}
+                        </span>
+                        <p class="text-xs font-medium text-on-surface group-hover:text-primary transition leading-snug truncate">
+                          {item.title}
+                        </p>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </aside>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  {/* ── Stitch Global Footer ── */}
+  <footer class="w-full bg-surface-container-low text-on-surface pt-space-2xl pb-space-xl border-t border-border-subtle">
+    <div class="max-w-7xl mx-auto px-gutter-lg">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-space-lg mb-space-2xl">
+        <div class="col-span-2 md:col-span-3 lg:col-span-2">
+          <div class="flex items-center gap-space-sm mb-space-md">
+            <a class="flex items-center gap-2" href="/">
+              <div class="w-9 h-9 flex items-center justify-center shrink-0">
+                <BrandLogo size={32} />
+              </div>
+              <div class="flex flex-col">
+                <span class="font-headline-sm text-headline-sm font-bold text-on-surface leading-none">govtpariksha<span class="text-primary">.com</span></span>
+                <span class="font-label-sm text-[9px] text-on-surface-variant font-bold uppercase tracking-wider mt-0.5">Govt Examination Authority Testing</span>
+              </div>
+            </a>
+          </div>
+          <p class="font-body-sm text-body-sm text-on-surface-variant max-w-sm mb-space-md">
+            govtpariksha.com - India's premier government exam preparation, CBT mock test simulations, and expert editorial articles platform.
+          </p>
+          <div class="flex flex-col gap-space-xs">
+            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">Mobile Exam Practice</span>
+            <div class="flex gap-space-xs mt-1">
+              <div class="flex items-center gap-2 bg-surface-card px-3 py-2 rounded-lg shadow-xs cursor-pointer hover:bg-surface-container transition-colors border border-border-subtle">
+                <span class="material-symbols-outlined text-primary text-[20px]">android</span>
+                <div class="flex flex-col leading-none">
+                  <span class="font-label-sm text-[9px] text-on-surface-variant">Download for</span>
+                  <span class="font-label-md text-label-md text-on-surface font-semibold">Android</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 bg-surface-card px-3 py-2 rounded-lg shadow-xs cursor-pointer hover:bg-surface-container transition-colors border border-border-subtle">
+                <span class="material-symbols-outlined text-primary text-[20px]">phone_iphone</span>
+                <div class="flex flex-col leading-none">
+                  <span class="font-label-sm text-[9px] text-on-surface-variant">Download for</span>
+                  <span class="font-label-md text-label-md text-on-surface font-semibold">iOS App</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="font-label-lg text-label-lg font-bold text-on-surface block mb-space-md">SSC &amp; Railways</span>
+          <ul class="space-y-2">
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/ssc-railways">SSC CGL Tier I &amp; II</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/ssc-railways">SSC CHSL Mock Series</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/ssc-railways">SSC GD Constable</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/ssc-railways">RRB NTPC CBT 1 &amp; 2</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/ssc-railways">RRB Group D Practice</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/ssc-railways">RRB ALP Sectional Sets</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <span class="font-label-lg text-label-lg font-bold text-on-surface block mb-space-md">Banking &amp; Insurance</span>
+          <ul class="space-y-2">
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/banking">IBPS PO Prelims &amp; Mains</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/banking">SBI PO Mock Test Series</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/banking">IBPS Clerk Speed Tests</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/banking">SBI Clerk Sectionals</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/banking">RBI Assistant Prelims</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/banking">LIC AAO Question Bank</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <span class="font-label-lg text-label-lg font-bold text-on-surface block mb-space-md">Defense &amp; State Exams</span>
+          <ul class="space-y-2">
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/defence">CDS Examination Series</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/defence">NDA Math &amp; GAT Tests</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/defence">AFCAT Full Mocks</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/state-exams">UPSSSC PET Series</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/state-exams">BSSC Inter Level Mocks</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="/category/state-exams">State Police SI Tests</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <span class="font-label-lg text-label-lg font-bold text-on-surface block mb-space-md">Practice &amp; Pass</span>
+          <ul class="space-y-2">
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="#pricing">govtpariksha Pass Pro</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="#latest-updates">Blogs &amp; Exam Editorials</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="#practice-questions">Daily Speed Quizzes</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="#practice-questions">Topic-Wise Drill Sets</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="#test-series">Official Solved Papers</a></li>
+            <li class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer"><a href="#test-series">All India Open Tests</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pt-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md border-t border-border-subtle">
+        <div class="flex flex-wrap items-center gap-space-md text-on-surface-variant font-body-sm text-body-sm">
+          <a href="/about" class="cursor-pointer hover:text-on-surface transition-colors">About Us</a>
+          <a href="/terms-of-service" class="cursor-pointer hover:text-on-surface transition-colors">Exam Guidelines</a>
+          <a href="/terms-of-service" class="cursor-pointer hover:text-on-surface transition-colors">Terms of Practice</a>
+          <a href="/privacy-policy" class="cursor-pointer hover:text-on-surface transition-colors">Privacy Policy</a>
+          <a href="/sitemap" class="cursor-pointer hover:text-on-surface transition-colors">Syllabus Mapping</a>
+          <a href="/contact-us" class="cursor-pointer hover:text-on-surface transition-colors">Support Desk</a>
+        </div>
+        <span class="font-body-sm text-body-sm text-on-surface-variant">
+          © {new Date().getFullYear()} {siteDomain}. All mock test material benchmarked to official CBT patterns. All rights reserved.
+        </span>
       </div>
     </div>
-  </div>
+  </footer>
 
-  {/* Cache top articles for instant 0ms access when opening article pages */}
+  {/* Cache top articles for instant access */}
   <script is:inline define:vars={{ cachedPosts: (livePosts || []).slice(0, 10).map((p: any) => ({
     slug: p.slug,
     title: p.title,
@@ -505,3 +1324,4 @@ const jsonLd = {
     } catch (e) {}
   </script>
 </Layout>
+yout>

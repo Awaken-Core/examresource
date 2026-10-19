@@ -46,7 +46,10 @@
   --color-muted: var(--color-muted);
   --color-border: var(--color-border);
   --color-subtle: var(--color-subtle);
-  --color-primary: #292418;
+  --color-primary: var(--color-primary, #00685f);
+  --color-on-primary: var(--color-on-primary, #ffffff);
+  --color-primary-container: var(--color-primary-container, #008378);
+  --color-on-primary-container: var(--color-on-primary-container, #f4fffc);
   --color-accent: var(--color-accent);
   --color-on-accent: #FFFFFF;
   --color-black: #000000;
@@ -168,6 +171,46 @@
      ──────────────────────────────────────────────────────── */
   --spacing-section: 44px;
   --spacing-band: 48px;
+
+  /* ── Stitch Design Tokens ─────────────────────────────────── */
+  --color-border-subtle: var(--color-border-subtle, #E2E8F0);
+  --color-surface-bg: var(--color-surface-bg, #F8FAFC);
+  --color-surface-card: var(--color-surface-card, #FFFFFF);
+  --color-surface-container: var(--color-surface-container, #e5eeff);
+  --color-surface-container-high: var(--color-surface-container-high, #dce9ff);
+  --color-surface-container-low: var(--color-surface-container-low, #eff4ff);
+  --color-on-surface: var(--color-on-surface, #0b1c30);
+  --color-on-surface-variant: var(--color-on-surface-variant, #3d4947);
+  --color-correct-green: #10B981;
+  --color-incorrect-red: #EF4444;
+  --color-unattempted-slate: #94A3B8;
+  --color-review-purple: #8B5CF6;
+  --color-cyan-accent: #06B6D4;
+  --color-secondary-container: var(--color-secondary-container, #dae2fd);
+  --color-on-secondary-container: var(--color-on-secondary-container, #5c647a);
+  --color-tertiary-container: var(--color-tertiary-container, #a36700);
+  --color-tertiary-fixed: var(--color-tertiary-fixed, #ffddb8);
+  --color-primary-container: var(--color-primary-container, #008378);
+  --color-on-primary-container: var(--color-on-primary-container, #f4fffc);
+
+  /* Spacing Scale matching Stitch */
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-space-2xl: 3rem;
+  --spacing-gutter: 1rem;
+  --spacing-gutter-lg: 1.5rem;
+  --spacing-margin: 1rem;
+  --spacing-margin-md: 1.5rem;
+  --spacing-margin-lg: 2rem;
+
+  /* Typography matching Stitch */
+  --text-tabular-stat: 28px;
+  --text-tabular-stat--line-height: 32px;
+  --text-tabular-stat--letter-spacing: -0.02em;
+  --text-tabular-stat--font-weight: 700;
 }
 
 
@@ -1089,6 +1132,22 @@ html.admin-theme.theme-dark .ProseMirror hr {
   --color-border: #E5E7EB;
   --color-subtle: #F3F4F6;
   --color-accent: #1D4ED8; /* blue-700, WCAG AA compliant ~6.7:1 on white and ~5.7:1 on bg-accent/10 */
+  --color-border-subtle: #E2E8F0;
+  --color-surface-bg: #F8FAFC;
+  --color-surface-card: #FFFFFF;
+  --color-surface-container: #e5eeff;
+  --color-surface-container-high: #dce9ff;
+  --color-surface-container-low: #eff4ff;
+  --color-on-surface: #0b1c30;
+  --color-on-surface-variant: #3d4947;
+  --color-secondary-container: #dae2fd;
+  --color-on-secondary-container: #5c647a;
+  --color-tertiary-container: #a36700;
+  --color-tertiary-fixed: #ffddb8;
+  --color-primary: #00685f;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #008378;
+  --color-on-primary-container: #f4fffc;
   --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.08), 0px 8px 10px -6px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
   color-scheme: light;
@@ -1107,9 +1166,68 @@ html.admin-theme.theme-dark .ProseMirror hr {
   --color-border: #2A2925;
   --color-subtle: #1D1A12;
   --color-accent: #3B82F6; /* blue-500, WCAG AA compliant ~8.2:1 on dark canvas */
+  --color-border-subtle: #2A2925;
+  --color-surface-bg: #131316;
+  --color-surface-card: #1C1B1F;
+  --color-surface-container: #1e293b;
+  --color-surface-container-high: #2d3748;
+  --color-surface-container-low: #0f172a;
+  --color-on-surface: #F8FAFC;
+  --color-on-surface-variant: #94A3B8;
+  --color-secondary-container: #1e293b;
+  --color-on-secondary-container: #94A3B8;
+  --color-tertiary-container: #78350f;
+  --color-tertiary-fixed: #451a03;
+  --color-primary: #008378;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #004d40;
+  --color-on-primary-container: #e6fffa;
   --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.5);
   --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
   color-scheme: dark;
+}
+
+/* ── Stitch Custom Animations ── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes seal-pulse {
+  0% { transform: scale(1); opacity: 0.65; }
+  50% { transform: scale(1.16); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+@keyframes shimmer {
+  0% { transform: translateX(-140%) rotate(25deg); }
+  50%, 100% { transform: translateX(160%) rotate(25deg); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes beacon-ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  70%, 100% { transform: scale(2.4); opacity: 0; }
+}
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+.animate-seal-pulse {
+  animation: seal-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.animate-shimmer {
+  animation: shimmer 4s ease-in-out infinite;
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+.animate-beacon-ping {
+  animation: beacon-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow, .animate-seal-pulse, .animate-shimmer, .animate-float, .animate-beacon-ping {
+    animation: none !important;
+  }
 }
 
 /* ── Desktop Sidebar Sticky & Collapse ── */
