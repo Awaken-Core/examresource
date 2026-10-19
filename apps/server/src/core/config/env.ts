@@ -17,7 +17,9 @@ export const EnvSchema = z.object({
   GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
   GOOGLE_CALLBACK_URL: z.string().url().optional(),
   GEMINI_API_KEY: z.string().optional(),
+  GEMINI_BACKUP_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().optional(),
+  GEMINI_FALLBACK_MODELS: z.string().optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

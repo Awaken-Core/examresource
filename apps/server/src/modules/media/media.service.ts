@@ -141,6 +141,52 @@ export class MediaService {
     };
   }
 
+  async uploadFromUrl(user: CurrentUser, imageUrl: string) {
+    if (user.role === 'student') {
+      throw new ForbiddenException('Editor access is required to upload images.');
+    }
+    const cleanUrl = imageUrl.trim();
+    if (!cleanUrl || !/^https?:\/\//i.test(cleanUrl)) {
+      throw new BadRequestException('A valid HTTP/HTTPS image URL is required.');
+    }
+
+    let referer = '';
+    try {
+      referer = new URL(cleanUrl).origin + '/';
+    } catch (_) {}
+
+    try {
+      const response = await fetch(cleanUrl, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9',
+          ...(referer ? { Referer: referer } : {}),
+        },
+        signal: AbortSignal.timeout(12000),
+      });
+
+      if (!response.ok) {
+        throw new BadRequestException(`Failed to download remote image (${response.status})`);
+      }
+
+      const contentType = response.headers.get('content-type') || 'image/jpeg';
+      const arrayBuf = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuf);
+
+      return this.uploadCompressedImage(user, {
+        buffer,
+        size: buffer.length,
+        mimetype: contentType,
+        originalname: cleanUrl.split('/').pop()?.split('?')[0] || 'remote-image.jpg',
+      });
+    } catch (err: any) {
+      if (err instanceof BadRequestException || err instanceof ForbiddenException) throw err;
+      throw new BadRequestException(`Unable to fetch and process image from URL: ${err?.message || err}`);
+    }
+  }
+
   async listMedia(user: CurrentUser, prefix = 'blog-images/') {
     if (user.role === 'student') {
       throw new ForbiddenException('Editor access is required to access media library.');

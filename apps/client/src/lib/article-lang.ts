@@ -100,20 +100,31 @@ export function processArticleHtml(rawHtml: string, title: string) {
       newAttrs += ` width="${widthVal}" height="${heightVal}"`;
     }
 
-    // Ensure style contains aspect-ratio reservation
-    if (widthVal > 0 && heightVal > 0) {
-      if (!newAttrs.includes('aspect-ratio')) {
-        const styleMatch = newAttrs.match(/\bstyle=["']([^"']*)["']/i);
-        if (styleMatch) {
-          const currentStyle = styleMatch[1].trim();
-          const separator = currentStyle && !currentStyle.endsWith(';') ? ';' : '';
-          newAttrs = newAttrs.replace(
-            /\bstyle=["'][^"']*["']/i,
-            `style="${currentStyle}${separator} aspect-ratio: ${widthVal} / ${heightVal};"`,
-          );
-        } else {
-          newAttrs += ` style="aspect-ratio: ${widthVal} / ${heightVal};"`;
-        }
+    // Ensure style contains exact width and aspect-ratio reservation matching editor
+    const alignMatch = newAttrs.match(/\bdata-align=["']([^"']*)["']/i);
+    const alignVal = alignMatch ? alignMatch[1].toLowerCase() : 'center';
+
+    let alignStyle = '';
+    if (alignVal === 'left') {
+      alignStyle = 'float: left; margin: 0.5rem 1.25rem 0.75rem 0;';
+    } else if (alignVal === 'right') {
+      alignStyle = 'float: right; margin: 0.5rem 0 0.75rem 1.25rem;';
+    } else {
+      alignStyle = 'display: block; margin-left: auto; margin-right: auto;';
+    }
+
+    if (widthVal > 0) {
+      const widthStyle = `width: ${widthVal}px; max-width: 100%; height: auto; ${alignStyle}`;
+      const styleMatch = newAttrs.match(/\bstyle=["']([^"']*)["']/i);
+      if (styleMatch) {
+        const currentStyle = styleMatch[1].trim();
+        const separator = currentStyle && !currentStyle.endsWith(';') ? ';' : '';
+        newAttrs = newAttrs.replace(
+          /\bstyle=["'][^"']*["']/i,
+          `style="${currentStyle}${separator} ${widthStyle} aspect-ratio: ${widthVal} / ${heightVal || Math.round((widthVal * 9) / 16)};"`,
+        );
+      } else {
+        newAttrs += ` style="${widthStyle} aspect-ratio: ${widthVal} / ${heightVal || Math.round((widthVal * 9) / 16)};"`;
       }
     }
 
@@ -164,6 +175,6 @@ export function buildLangVersion(opts: {
     coverImage: opts.coverImage || null,
     imageAlt: opts.imageAlt || null,
     imageCaption: opts.imageCaption || null,
-    url: opts.language === 'ENGLISH' ? `/${opts.slug}?lang=en` : `/${opts.slug}`,
+    url: `/${opts.slug}`,
   };
 }

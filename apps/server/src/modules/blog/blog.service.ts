@@ -2222,11 +2222,18 @@ export class BlogService {
   }
 
   async generateBilingualFromReference(
-    input: { referenceContent: string; category?: string; additionalInstructions?: string },
+    input: {
+      referenceContent: string;
+      category?: string;
+      additionalInstructions?: string;
+      images?: Array<{ url: string; base64?: string; mimeType?: string }>;
+      model?: string;
+    },
     currentUser?: CurrentUser,
+    onStage?: (stage: string, message: string) => void,
   ) {
     if (currentUser) this.assertCanWrite(currentUser);
-    return this.gemini.generateBilingualFromReference(input);
+    return this.gemini.generateBilingualFromReference(input, onStage);
   }
 
   private assertCanWrite(currentUser: CurrentUser) {

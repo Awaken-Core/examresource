@@ -12,11 +12,9 @@ export default defineConfig({
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: '**.r2.dev',
 			},
 			{
-				protocol: 'https',
-				hostname: '**.googleusercontent.com',
+				protocol: 'http',
 			},
 		],
 	},

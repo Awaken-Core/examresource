@@ -55,5 +55,14 @@ export class MediaController {
     const user = await this.auth.requireUser(req);
     return this.media.createImageUploadUrl(user, (body ?? {}) as { contentType?: unknown; size?: unknown });
   }
+
+  @Post('images/from-url')
+  async uploadFromUrl(@Req() req: Request, @Body() body: { url?: string }) {
+    const user = await this.auth.requireUser(req);
+    if (!body?.url || typeof body.url !== 'string') {
+      throw new BadRequestException('Image URL is required.');
+    }
+    return this.media.uploadFromUrl(user, body.url);
+  }
 }
 

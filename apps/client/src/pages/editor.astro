@@ -942,6 +942,60 @@ import { siteUrl } from '../data/site';
           </button>
         </div>
 
+        <!-- Floating Image Alt & Layout Popover (Appears on click of an image in the editor) -->
+        <div
+          id="image-click-popover"
+          class="hidden fixed z-50 bg-white border border-slate-300 rounded-lg shadow-xl p-3 text-xs w-80 space-y-2.5 select-none animate-in fade-in zoom-in-95 duration-100"
+          style="top: 0; left: 0;"
+        >
+          <div class="flex items-center justify-between pb-1.5 border-b border-slate-100">
+            <div class="flex items-center gap-1.5 font-semibold text-slate-800 text-[11px]">
+              <svg class="w-3.5 h-3.5 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Image Alt &amp; Placement</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span id="img-popover-keyword-badge" class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                SEO Alt Check
+              </span>
+              <button type="button" id="img-popover-close-btn" class="text-slate-400 hover:text-slate-700 p-0.5 rounded cursor-pointer leading-none" title="Close">
+                ✕
+              </button>
+            </div>
+          </div>
+
+          <!-- Alt Tag Word / Field -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-[10px]">
+              <label for="img-popover-alt-input" class="font-semibold text-slate-700">Alt Tag (SEO Keyword):</label>
+              <button type="button" id="img-popover-insert-kw-btn" class="text-blue-600 hover:text-blue-800 font-medium hover:underline cursor-pointer" title="Auto-insert Article Focus Keyword">
+                + Focus Keyword
+              </button>
+            </div>
+            <input
+              type="text"
+              id="img-popover-alt-input"
+              placeholder="e.g. SSC CGL 2026 Tier 1 Exam Pattern & Syllabus Chart"
+              class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
+            />
+          </div>
+
+          <!-- Width & Alignment Controls -->
+          <div class="flex items-center justify-between gap-1 pt-1.5 border-t border-slate-100 text-[11px]">
+            <div class="flex items-center gap-1">
+              <span class="text-[10px] text-slate-400 font-medium mr-0.5">Align:</span>
+              <button type="button" class="img-popover-align-btn px-2 py-0.5 rounded hover:bg-slate-100 text-slate-700 font-medium border border-transparent hover:border-slate-200 transition cursor-pointer" data-align="left" title="Align Left (Float)">Left</button>
+              <button type="button" class="img-popover-align-btn px-2 py-0.5 rounded hover:bg-slate-100 text-slate-700 font-medium border border-transparent hover:border-slate-200 transition cursor-pointer" data-align="center" title="Align Center (Block)">Center</button>
+              <button type="button" class="img-popover-align-btn px-2 py-0.5 rounded hover:bg-slate-100 text-slate-700 font-medium border border-transparent hover:border-slate-200 transition cursor-pointer" data-align="right" title="Align Right (Float)">Right</button>
+            </div>
+
+            <button type="button" id="img-popover-more-btn" class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold text-[10px] border border-blue-200 transition cursor-pointer" title="Edit Full Dimensions, Captions & Alt">
+              Alt &amp; Meta...
+            </button>
+          </div>
+        </div>
+
         <!-- Inline Compact Block Menu Popover -->
         <div 
           id="inline-block-menu" 
@@ -1460,9 +1514,16 @@ import { siteUrl } from '../data/site';
               </div>
 
               <!-- Cover Image Preview Box -->
-              <div id="image-preview-box" class="hidden border border-slate-200 rounded-md overflow-hidden bg-slate-50 relative group">
-                <img id="image-preview-el" src="" alt="Featured preview" class="w-full h-32 object-cover" />
-                <button type="button" id="remove-cover-btn" class="absolute top-1.5 right-1.5 p-1 bg-black/60 hover:bg-black text-white rounded text-[10px]">Remove</button>
+              <div id="image-preview-box" class="hidden border border-slate-200 dark:border-zinc-700 rounded-md overflow-hidden bg-slate-50 dark:bg-zinc-900 relative group">
+                <img id="image-preview-el" src="" alt="Featured preview" referrerpolicy="no-referrer" class="w-full h-32 object-cover block" />
+                <div id="image-preview-fallback" class="hidden w-full h-32 flex-col items-center justify-center p-3 text-center bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 text-xs">
+                  <svg class="w-7 h-7 text-slate-400 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span class="font-medium">Image preview unavailable</span>
+                  <span class="text-[10px] text-slate-400 mt-0.5">URL is valid, but host may restrict browser preview</span>
+                </div>
+                <button type="button" id="remove-cover-btn" class="absolute top-1.5 right-1.5 p-1 bg-black/70 hover:bg-black text-white rounded text-[10px] cursor-pointer transition">Remove</button>
               </div>
 
               <div>
@@ -1483,6 +1544,41 @@ import { siteUrl } from '../data/site';
                   placeholder="Credit or description caption"
                   class="w-full bg-white border border-slate-300 rounded-md p-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600"
                 />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2.5: Article Images & Alt Tags -->
+          <div class="accordion-item" data-accordion="article-images">
+            <button type="button" class="accordion-trigger w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-slate-50 transition">
+              <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span class="font-semibold text-slate-900">Article Images (<span id="sidebar-article-images-count">0</span>)</span>
+              <span id="sidebar-images-seo-badge" class="ml-auto text-[10px] px-1.5 py-0.5 rounded font-semibold bg-slate-100 text-slate-600">0 Alt</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 shrink-0 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <div class="accordion-content px-4 pb-4 pt-1 space-y-3">
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                Images placed inside article content. Ensure each has focus keywords in its alt tag.
+              </p>
+              <div id="sidebar-article-images-list" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+                <p class="text-xs text-slate-400 text-center py-4">No content images yet.</p>
+              </div>
+              <div class="pt-2 border-t border-slate-100">
+                <button 
+                  type="button" 
+                  id="sidebar-insert-image-trigger"
+                  class="w-full py-1.5 px-3 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                >
+                  <svg class="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Insert Image Into Content</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1832,7 +1928,7 @@ import { siteUrl } from '../data/site';
 
           <!-- Selected File Info & Live Preview -->
           <div id="upload-preview-container" class="hidden items-center gap-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200">
-            <img id="upload-preview-thumb" src="" alt="Upload preview" class="w-14 h-14 object-cover rounded border border-slate-200 shrink-0" />
+            <img id="upload-preview-thumb" src="" alt="Upload preview" referrerpolicy="no-referrer" class="w-14 h-14 object-cover rounded border border-slate-200 shrink-0 block" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'56\' height=\'56\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2394a3b8\' stroke-width=\'1.5\'><rect x=\'3\' y=\'3\' width=\'18\' height=\'18\' rx=\'2\'/><circle cx=\'8.5\' cy=\'8.5\' r=\'1.5\'/><path d=\'M21 15l-5-5L5 21\'/></svg>';" />
             <div class="min-w-0 flex-1 text-xs">
               <p id="upload-file-name" class="font-semibold text-slate-800 truncate"></p>
               <p id="upload-file-size" class="text-[11px] text-slate-500"></p>
@@ -1881,8 +1977,13 @@ import { siteUrl } from '../data/site';
               class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" 
             />
           </div>
-          <div id="url-preview-container" class="hidden p-2 bg-slate-50 rounded-lg border border-slate-200 text-center">
-            <img id="url-preview-thumb" src="" alt="URL Preview" class="max-h-36 mx-auto rounded object-contain" />
+          <div id="url-preview-container" class="hidden p-2 bg-slate-50 rounded-lg border border-slate-200 text-center relative">
+            <img id="url-preview-thumb" src="" alt="URL Preview" referrerpolicy="no-referrer" class="max-h-36 mx-auto rounded object-contain block" />
+            <div id="url-preview-fallback" class="hidden py-4 px-2 text-center text-xs text-slate-500">
+              <div class="inline-flex p-2 bg-slate-100 rounded-full mb-1 text-slate-400">🖼️</div>
+              <p class="font-medium">Image preview unavailable</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">Direct hotlinking blocked or invalid image URL</p>
+            </div>
           </div>
         </div>
 
@@ -2131,8 +2232,9 @@ import { siteUrl } from '../data/site';
 
       <!-- Preview strip -->
       <div class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
-        <div class="w-20 h-14 bg-slate-200 rounded-lg overflow-hidden shrink-0 flex items-center justify-center border border-slate-300">
-          <img id="img-meta-preview" src="" alt="" class="w-full h-full object-cover" />
+        <div class="w-20 h-14 bg-slate-100 rounded-lg overflow-hidden shrink-0 flex items-center justify-center border border-slate-300 relative">
+          <img id="img-meta-preview" src="" alt="" referrerpolicy="no-referrer" class="w-full h-full object-cover block" onerror="this.onerror=null; this.classList.add('hidden'); if(this.nextElementSibling) this.nextElementSibling.classList.remove('hidden');" />
+          <div class="hidden absolute inset-0 w-full h-full flex items-center justify-center bg-slate-100 text-slate-400 text-xs">🖼️</div>
         </div>
         <div class="min-w-0 flex-1 text-xs">
           <span class="block font-semibold text-slate-800 truncate" id="img-meta-src-label">Image Source</span>
@@ -2370,7 +2472,7 @@ import { siteUrl } from '../data/site';
         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight" id="prev-modal-title">Article Title</h1>
         
         <figure id="prev-modal-cover-box" class="hidden my-4">
-          <img id="prev-modal-cover-img" src="" alt="Cover" class="w-full h-auto max-h-96 object-cover rounded-xl" />
+          <img id="prev-modal-cover-img" src="" alt="Cover" referrerpolicy="no-referrer" class="w-full h-auto max-h-96 object-cover rounded-xl block" onerror="this.onerror=null; const p = document.getElementById('prev-modal-cover-box'); if (p) p.classList.add('hidden');" />
           <figcaption id="prev-modal-cover-caption" class="text-xs text-slate-400 text-center mt-2"></figcaption>
         </figure>
 
@@ -2430,27 +2532,31 @@ import { siteUrl } from '../data/site';
     </div>
   </div>
 
-  <!-- AI Reference Article Rewriter Modal (Clean Utility UI) -->
-  <div id="ai-reference-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-5">
-    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl flex flex-col max-h-[90vh] overflow-hidden">
+  <!-- AI Reference Article Rewriter Modal (Professional High-Contrast UI) -->
+  <div id="ai-reference-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-5">
+    <div class="aim-modal-container bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[90vh] overflow-hidden transition-colors">
       
       <!-- Modal Header -->
-      <div class="px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
+      <div class="aim-header px-5 py-3.5 border-b border-slate-200 flex items-center justify-between bg-white shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center border border-slate-200">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center border border-indigo-200 shrink-0">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
             </svg>
           </div>
           <div>
             <div class="flex items-center gap-2">
-              <h3 class="text-sm font-semibold text-slate-900">Reference Article Rewriter</h3>
-              <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">Gemini 3.8 Flash</span>
+              <h3 class="aim-title text-sm font-semibold text-slate-900">Reference Article Rewriter</h3>
+              <span id="ai-ref-header-model-badge" class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Gemini 3.8 Flash</span>
+              <span id="ai-ref-images-pill" class="hidden px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>📸 <span id="ai-ref-images-count">0</span> Images Auto-Captured</span>
+              </span>
             </div>
-            <p class="text-[11px] text-slate-500">Converts raw notifications into bilingual articles: Hindi (Devanagari + English terms) &amp; English</p>
+            <p class="aim-muted text-[11px] text-slate-500">Converts raw notifications into bilingual articles: Hindi (Devanagari + English terms) &amp; English</p>
           </div>
         </div>
-        <button type="button" id="close-ai-reference-modal-btn" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer" title="Close">
+        <button type="button" id="close-ai-reference-modal-btn" class="aim-btn-ghost text-slate-400 hover:text-slate-700 p-1.5 rounded-md hover:bg-slate-100 transition cursor-pointer" title="Close">
           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
@@ -2461,12 +2567,12 @@ import { siteUrl } from '../data/site';
       <div class="p-5 overflow-y-auto space-y-4 flex-1 text-xs">
         
         <!-- Guidance Bar -->
-        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 flex flex-wrap items-center justify-between gap-2 text-[11px]">
+        <div class="aim-guidance p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 flex flex-wrap items-center justify-between gap-2 text-[11px]">
           <div>
-            <span class="font-semibold text-slate-900">Editorial Standard:</span>
-            <span class="ml-1 text-slate-600">Devanagari Hindi with technical terms (BiharHelp / SarkariResult style) + Structured English</span>
+            <span class="aim-title font-semibold text-slate-900">Editorial Standard:</span>
+            <span class="aim-text ml-1 text-slate-600">Devanagari Hindi with technical terms (BiharHelp / SarkariResult style) + Structured English</span>
           </div>
-          <div class="flex items-center gap-2.5 text-[10px] text-slate-500">
+          <div class="aim-muted flex items-center gap-2.5 text-[10px] text-slate-500">
             <span>✓ GFM Tables</span>
             <span>·</span>
             <span>✓ Important Dates</span>
@@ -2476,65 +2582,136 @@ import { siteUrl } from '../data/site';
         </div>
 
         <!-- Input Box -->
-        <div class="space-y-3 bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <label for="ai-ref-category" class="text-[11px] font-medium text-slate-700">Category:</label>
-              <select 
-                id="ai-ref-category"
-                class="bg-white border border-slate-200 rounded-md px-2 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 cursor-pointer"
-              >
-                <option value="auto-detect">Auto-Detect</option>
-                <option value="notifications">Notification / Vacancy</option>
-                <option value="syllabus">Syllabus &amp; Pattern</option>
-                <option value="admit-card">Admit Card</option>
-                <option value="answer-key">Answer Key</option>
-                <option value="cut-off">Cut-off Marks</option>
-                <option value="results">Results / Merit List</option>
-                <option value="study-material">Study Material</option>
-              </select>
+        <div class="aim-section space-y-3.5 bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs">
+          
+          <!-- Controls Bar (Model, Category, Sample Notice & Clear) -->
+          <div class="aim-divider flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-slate-100">
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Manual Model Selector -->
+              <div class="flex items-center gap-1.5">
+                <label for="ai-ref-model-select" class="aim-label text-[11px] font-semibold text-slate-700 flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                  </svg>
+                  <span>Model:</span>
+                </label>
+                <select 
+                  id="ai-ref-model-select"
+                  class="aim-select bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer shadow-2xs"
+                >
+                  <option value="gemini-3.8-flash" selected>Gemini 3.8 Flash (Recommended · Fastest)</option>
+                  <option value="gemini-3.5-flash">Gemini 3.5 Flash (Fast &amp; Resilient)</option>
+                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview (In-depth Analysis)</option>
+                  <option value="gemini-flash-latest">Gemini Flash Latest</option>
+                </select>
+              </div>
+
+              <!-- Category Selector -->
+              <div class="flex items-center gap-1.5">
+                <label for="ai-ref-category" class="aim-label text-[11px] font-semibold text-slate-700">Category:</label>
+                <select 
+                  id="ai-ref-category"
+                  class="aim-select bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer shadow-2xs"
+                >
+                  <option value="auto-detect">Auto-Detect</option>
+                  <option value="notifications">Notification / Vacancy</option>
+                  <option value="syllabus">Syllabus &amp; Pattern</option>
+                  <option value="admit-card">Admit Card</option>
+                  <option value="answer-key">Answer Key</option>
+                  <option value="cut-off">Cut-off Marks</option>
+                  <option value="results">Results / Merit List</option>
+                  <option value="study-material">Study Material</option>
+                </select>
+              </div>
             </div>
             
             <div class="flex items-center gap-1.5">
               <button 
                 type="button" 
-                id="ai-ref-insert-demo-btn" 
-                class="px-2.5 py-1 rounded text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition cursor-pointer"
-              >
-                Load Sample Notice
-              </button>
-              <button 
-                type="button" 
                 id="ai-ref-clear-btn" 
-                class="px-2 py-1 rounded text-[11px] font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition cursor-pointer"
+                class="aim-btn-ghost px-2 py-1 rounded text-[11px] font-medium text-slate-500 hover:text-slate-800 transition cursor-pointer"
               >
                 Clear
               </button>
             </div>
           </div>
 
+          <!-- Clean Words Text Area (As-Is) -->
           <div>
+            <div class="flex items-center justify-between mb-1">
+              <label for="ai-ref-content" class="aim-label text-[11px] font-semibold text-slate-800">
+                Reference Article Content <span class="aim-muted font-normal text-slate-400">(Words &amp; Text As-Is)</span>
+              </label>
+              <span class="aim-muted text-[10px] text-slate-400">
+                Paste content directly — images are extracted &amp; compressed below
+              </span>
+            </div>
             <textarea 
               id="ai-ref-content"
               rows="7"
-              placeholder="Paste raw exam notification, official release, or competitor post here..."
-              class="w-full bg-slate-50/50 border border-slate-200 rounded-md p-3 text-xs text-slate-900 leading-relaxed outline-none resize-y focus:bg-white focus:border-slate-400 font-mono transition"
+              placeholder="Paste raw exam notification, questions, or reference article here (words are pasted as-is)..."
+              class="aim-textarea w-full bg-slate-50 border border-slate-300 rounded-md p-3 text-xs text-slate-900 leading-relaxed outline-none resize-y focus:border-indigo-500 font-mono transition"
             ></textarea>
-            <div class="flex items-center justify-between text-[10px] text-slate-400 mt-1 px-0.5">
+            <div class="aim-muted flex items-center justify-between text-[10px] text-slate-400 mt-1 px-0.5">
               <span id="ai-ref-char-count">0 words · 0 characters</span>
               <span>Min. 50 characters required</span>
             </div>
           </div>
 
+          <!-- Bottom Extracted Reference Images (Auto-Compressed to R2) -->
+          <div id="ai-ref-images-section" class="aim-well border border-slate-200 rounded-lg p-3 bg-slate-50 transition space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-indigo-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="aim-label text-[11px] font-semibold text-slate-800">Extracted Reference Images</span>
+                <span id="ai-ref-bottom-count-badge" class="px-2 py-0.5 rounded-full text-[10px] font-mono bg-indigo-100 text-indigo-800 border border-indigo-200">0 images</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <button 
+                  type="button" 
+                  id="ai-ref-scan-images-btn" 
+                  class="aim-btn-secondary px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[11px] font-medium cursor-pointer transition shadow-2xs inline-flex items-center gap-1"
+                  title="Scan pasted text for markdown images, <img> tags, or image links"
+                >
+                  <svg class="w-3 h-3 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <span>Scan Text for Images</span>
+                </button>
+                <label for="ai-ref-image-input" class="aim-btn-secondary px-2.5 py-1 rounded bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 text-[11px] font-medium cursor-pointer transition shadow-2xs inline-flex items-center gap-1">
+                  <svg class="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span>Attach Image</span>
+                </label>
+                <input id="ai-ref-image-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple class="hidden" />
+              </div>
+            </div>
+
+            <!-- Scan Result Feedback Notice -->
+            <div id="ai-ref-scan-msg" class="hidden text-[10px] px-2.5 py-1 rounded border transition"></div>
+
+            <!-- Grid of Extracted & Compressed Staged Images -->
+            <div id="ai-ref-staged-images-grid" class="flex flex-wrap gap-2.5 pt-1 empty:hidden">
+              <!-- Dynamically populated cards with thumbnail, compression status, alt tag, and delete button -->
+            </div>
+
+            <p id="ai-ref-images-hint" class="aim-muted text-[10px] text-slate-400">
+              When you paste content containing words and images, text is pasted as-is in the textarea and images are automatically compressed and saved to R2 here. AI will place these reference URLs in the correct sections of the article.
+            </p>
+          </div>
+
           <div>
-            <label for="ai-ref-instructions" class="block text-[11px] font-medium text-slate-700 mb-1">
-              Custom Focus / Instructions <span class="font-normal text-slate-400">(Optional)</span>
+            <label for="ai-ref-instructions" class="aim-label block text-[11px] font-semibold text-slate-700 mb-1">
+              Custom Focus / Instructions <span class="aim-muted font-normal text-slate-400">(Optional)</span>
             </label>
             <input 
               type="text" 
               id="ai-ref-instructions"
               placeholder="e.g. Highlight 3-year COVID age relaxation, post-wise eligibility, CBT-1 dates..."
-              class="w-full bg-white border border-slate-200 rounded-md px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400 transition"
+              class="aim-input w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 transition"
             />
           </div>
 
@@ -2542,9 +2719,9 @@ import { siteUrl } from '../data/site';
             <button 
               type="button" 
               id="ai-ref-generate-btn"
-              class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-xs transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg class="w-3.5 h-3.5 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
               <span id="ai-ref-btn-label">Generate Bilingual Articles</span>
@@ -2552,77 +2729,86 @@ import { siteUrl } from '../data/site';
           </div>
         </div>
 
-        <!-- Clean Loading Card -->
-        <div id="ai-ref-loading-card" class="hidden border border-slate-200 bg-slate-50 rounded-lg p-4 space-y-3">
-          <div class="flex items-center gap-2 text-slate-800 font-medium text-xs">
-            <div class="w-3.5 h-3.5 border-2 border-slate-700 border-t-transparent rounded-full animate-spin"></div>
-            <span id="ai-ref-loading-status">Analyzing reference and generating bilingual articles...</span>
+        <!-- Real-Time SSE Loading Card (Live Progress, Elapsed Timer & Model Feedback) -->
+        <div id="ai-ref-loading-card" class="aim-well hidden border border-slate-200 bg-slate-50 rounded-lg p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="aim-title flex items-center gap-2 text-slate-800 font-semibold text-xs">
+              <div class="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin shrink-0"></div>
+              <span id="ai-ref-loading-status">Connecting to Gemini Multimodal Pipeline...</span>
+            </div>
+            <span id="ai-ref-elapsed-timer" class="aim-timer font-mono text-[11px] text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-2xs">0.0s</span>
           </div>
-          <div class="space-y-1.5 text-[11px] text-slate-600 pl-5">
-            <div id="ai-step-1" class="flex items-center gap-2 text-slate-900 font-medium">
-              <span>●</span> Extracting dates, vacancies, eligibility, and fees...
+
+          <div class="space-y-1.5 text-[11px] text-slate-600 pl-6">
+            <div id="ai-step-ingest" class="flex items-center gap-2 text-slate-400">
+              <span class="step-icon font-mono font-bold">○</span> <span>Ingesting reference content &amp; verifying images</span>
             </div>
-            <div id="ai-step-2" class="flex items-center gap-2 text-slate-400">
-              <span>○</span> Drafting Hindi (हिंदी + Technical Terms) with GFM tables...
+            <div id="ai-step-vision" class="flex items-center gap-2 text-slate-400">
+              <span class="step-icon font-mono font-bold">○</span> <span>Gemini Vision: Image OCR &amp; Contextual Placement</span>
             </div>
-            <div id="ai-step-3" class="flex items-center gap-2 text-slate-400">
-              <span>○</span> Drafting English article with SEO headings...
+            <div id="ai-step-draft" class="flex items-center gap-2 text-slate-400">
+              <span class="step-icon font-mono font-bold">○</span> <span>Drafting bilingual articles (Devanagari Hindi + English)</span>
             </div>
-            <div id="ai-step-4" class="flex items-center gap-2 text-slate-400">
-              <span>○</span> Generating meta titles, slugs, and keywords...
+            <div id="ai-step-seo" class="flex items-center gap-2 text-slate-400">
+              <span class="step-icon font-mono font-bold">○</span> <span>SEO Keyword Alt Tags &amp; GFM Tables Optimization</span>
             </div>
+          </div>
+
+          <div id="ai-ref-model-badge" class="aim-model-badge flex text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200 rounded px-2.5 py-1 items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="ai-ref-model-text" class="font-medium">Active Model: Gemini 3.8 Flash</span>
           </div>
         </div>
 
         <!-- Clean Results Card -->
-        <div id="ai-ref-results-card" class="hidden border border-slate-200 bg-white rounded-lg p-4 space-y-3 shadow-xs">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <div id="ai-ref-results-card" class="aim-section hidden border border-slate-200 bg-white rounded-lg p-4 space-y-3 shadow-xs">
+          <div class="aim-divider flex items-center justify-between pb-2 border-b border-slate-100">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-semibold text-slate-900">Articles Ready for Review</span>
+              <span class="aim-title text-xs font-semibold text-slate-900">Articles Ready for Review</span>
               <span id="ai-ref-result-category" class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">Notification</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="text-[11px] text-slate-500">SEO Score:</span>
+              <span class="aim-muted text-[11px] text-slate-500">SEO Score:</span>
               <span id="ai-ref-result-seo-score" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">88/100</span>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <!-- Hindi Card -->
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5">
-              <div class="flex items-center justify-between text-[11px] font-semibold text-slate-900">
+            <div class="aim-res-box p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5">
+              <div class="aim-res-title flex items-center justify-between text-[11px] font-semibold text-slate-900">
                 <span>🇮🇳 Hindi (हिंदी + English Terms)</span>
-                <span id="ai-res-h-words" class="text-[10px] text-slate-500 font-mono">0 words</span>
+                <span id="ai-res-h-words" class="aim-muted text-[10px] text-slate-500 font-mono">0 words</span>
               </div>
-              <h4 id="ai-res-h-title" class="font-semibold text-slate-900 text-xs line-clamp-2"></h4>
-              <p id="ai-res-h-excerpt" class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed"></p>
-              <div class="text-[10px] text-slate-400 font-mono truncate" id="ai-res-h-slug"></div>
+              <h4 id="ai-res-h-title" class="aim-title font-semibold text-slate-900 text-xs line-clamp-2"></h4>
+              <p id="ai-res-h-excerpt" class="aim-text text-[11px] text-slate-600 line-clamp-2 leading-relaxed"></p>
+              <div class="aim-muted text-[10px] text-slate-400 font-mono truncate" id="ai-res-h-slug"></div>
             </div>
 
             <!-- English Card -->
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5">
-              <div class="flex items-center justify-between text-[11px] font-semibold text-slate-900">
+            <div class="aim-res-box p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1.5">
+              <div class="aim-res-title flex items-center justify-between text-[11px] font-semibold text-slate-900">
                 <span>🇬🇧 English</span>
-                <span id="ai-res-e-words" class="text-[10px] text-slate-500 font-mono">0 words</span>
+                <span id="ai-res-e-words" class="aim-muted text-[10px] text-slate-500 font-mono">0 words</span>
               </div>
-              <h4 id="ai-res-e-title" class="font-semibold text-slate-900 text-xs line-clamp-2"></h4>
-              <p id="ai-res-e-excerpt" class="text-[11px] text-slate-600 line-clamp-2 leading-relaxed"></p>
-              <div class="text-[10px] text-slate-400 font-mono truncate" id="ai-res-e-slug"></div>
+              <h4 id="ai-res-e-title" class="aim-title font-semibold text-slate-900 text-xs line-clamp-2"></h4>
+              <p id="ai-res-e-excerpt" class="aim-text text-[11px] text-slate-600 line-clamp-2 leading-relaxed"></p>
+              <div class="aim-muted text-[10px] text-slate-400 font-mono truncate" id="ai-res-e-slug"></div>
             </div>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+          <div class="aim-divider flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
             <button 
               type="button" 
               id="ai-ref-reset-btn"
-              class="px-2.5 py-1.5 text-xs text-slate-600 hover:text-slate-900 transition cursor-pointer"
+              class="aim-btn-ghost px-2.5 py-1.5 text-xs text-slate-600 hover:text-slate-900 transition cursor-pointer"
             >
               ← Edit Reference
             </button>
             <button 
               type="button" 
               id="ai-ref-apply-compare-btn"
-              class="px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition flex items-center gap-1.5 cursor-pointer"
             >
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -2635,9 +2821,9 @@ import { siteUrl } from '../data/site';
       </div>
 
       <!-- Modal Footer -->
-      <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 shrink-0">
-        <span>Compare mode allows side-by-side editing before 1-click publishing.</span>
-        <button type="button" id="close-ai-reference-bottom-btn" class="px-3 py-1 rounded-md border border-slate-200 text-slate-700 hover:bg-slate-100 transition cursor-pointer">
+      <div class="aim-footer px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500 shrink-0">
+        <span class="aim-muted">Compare mode allows side-by-side editing before 1-click publishing.</span>
+        <button type="button" id="close-ai-reference-bottom-btn" class="aim-btn-secondary px-3 py-1 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100 transition cursor-pointer">
           Close
         </button>
       </div>
@@ -3211,19 +3397,76 @@ import { siteUrl } from '../data/site';
     }
   }
 
+  function updateCoverPreview(url?: string) {
+    const raw = (url !== undefined ? url : coverImageInput?.value || '').trim();
+    const fallback = document.getElementById('image-preview-fallback');
+    if (!imagePreviewBox || !imagePreviewEl) return;
+
+    if (!raw) {
+      imagePreviewBox.classList.add('hidden');
+      imagePreviewEl.src = '';
+      imagePreviewEl.classList.remove('hidden');
+      if (fallback) {
+        fallback.classList.add('hidden');
+        fallback.classList.remove('flex');
+      }
+      return;
+    }
+
+    imagePreviewBox.classList.remove('hidden');
+    imagePreviewEl.referrerPolicy = 'no-referrer';
+    imagePreviewEl.classList.remove('hidden');
+    if (fallback) {
+      fallback.classList.add('hidden');
+      fallback.classList.remove('flex');
+    }
+
+    imagePreviewEl.onload = () => {
+      imagePreviewEl.classList.remove('hidden');
+      if (fallback) {
+        fallback.classList.add('hidden');
+        fallback.classList.remove('flex');
+      }
+    };
+
+    imagePreviewEl.onerror = () => {
+      imagePreviewEl.classList.add('hidden');
+      if (fallback) {
+        fallback.classList.remove('hidden');
+        fallback.classList.add('flex');
+      }
+    };
+
+    imagePreviewEl.src = raw;
+  }
+
   uploadCoverImageBtn?.addEventListener('click', () => coverImageFileInput?.click());
   coverImageFileInput?.addEventListener('change', async () => {
     const file = coverImageFileInput.files?.[0];
     if (!file || !coverImageInput) return;
+
+    // Show local preview immediately using FileReader so user never sees a broken/waiting state!
+    const localReader = new FileReader();
+    localReader.onload = (e) => {
+      if (typeof e.target?.result === 'string') {
+        updateCoverPreview(e.target.result);
+      }
+    };
+    localReader.readAsDataURL(file);
+
     coverUploadStatus?.classList.remove('hidden');
-    if (coverUploadStatus) coverUploadStatus.textContent = 'Uploading image...';
+    if (coverUploadStatus) coverUploadStatus.textContent = 'Uploading to Cloudflare R2...';
     if (uploadCoverImageBtn) uploadCoverImageBtn.disabled = true;
     try {
-      coverImageInput.value = await uploadImage(file);
-      if (coverUploadStatus) coverUploadStatus.textContent = 'Uploaded to Cloudflare R2.';
+      const publicUrl = await uploadImage(file);
+      coverImageInput.value = publicUrl;
+      updateCoverPreview(publicUrl);
+      if (coverUploadStatus) coverUploadStatus.textContent = 'Uploaded to Cloudflare R2 ✓';
       updateSerp();
+      triggerAutosave();
     } catch (error) {
       if (coverUploadStatus) coverUploadStatus.textContent = error instanceof Error ? error.message : 'Image upload failed.';
+      updateCoverPreview(coverImageInput.value);
     } finally {
       if (uploadCoverImageBtn) uploadCoverImageBtn.disabled = false;
       coverImageFileInput.value = '';
@@ -3926,8 +4169,26 @@ import { siteUrl } from '../data/site';
   const floatingAiWriterBtn = document.getElementById('floating-ai-writer-btn');
   const closeAiReferenceModalBtn = document.getElementById('close-ai-reference-modal-btn');
   const closeAiReferenceBottomBtn = document.getElementById('close-ai-reference-bottom-btn');
+  const aiRefModelSelect = document.getElementById('ai-ref-model-select') as HTMLSelectElement | null;
+  const aiRefHeaderModelBadge = document.getElementById('ai-ref-header-model-badge');
   const aiRefCategory = document.getElementById('ai-ref-category') as HTMLSelectElement | null;
+
+  aiRefModelSelect?.addEventListener('change', () => {
+    const val = aiRefModelSelect.value;
+    if (aiRefHeaderModelBadge) {
+      if (val === 'gemini-3.8-flash') aiRefHeaderModelBadge.textContent = 'Gemini 3.8 Flash';
+      else if (val === 'gemini-3.5-flash') aiRefHeaderModelBadge.textContent = 'Gemini 3.5 Flash';
+      else if (val === 'gemini-3.1-pro-preview') aiRefHeaderModelBadge.textContent = 'Gemini 3.1 Pro';
+      else if (val === 'gemini-flash-latest') aiRefHeaderModelBadge.textContent = 'Gemini Flash Latest';
+      else aiRefHeaderModelBadge.textContent = val;
+    }
+  });
   const aiRefContent = document.getElementById('ai-ref-content') as HTMLTextAreaElement | null;
+  const aiRefImagesPill = document.getElementById('ai-ref-images-pill');
+  const aiRefImagesCount = document.getElementById('ai-ref-images-count');
+  const aiRefBottomCountBadge = document.getElementById('ai-ref-bottom-count-badge');
+  const aiRefStagedImagesGrid = document.getElementById('ai-ref-staged-images-grid');
+  const aiRefImageInput = document.getElementById('ai-ref-image-input') as HTMLInputElement | null;
   const aiRefInstructions = document.getElementById('ai-ref-instructions') as HTMLInputElement | null;
   const aiRefCharCount = document.getElementById('ai-ref-char-count');
   const aiRefInsertDemoBtn = document.getElementById('ai-ref-insert-demo-btn');
@@ -3950,47 +4211,27 @@ import { siteUrl } from '../data/site';
   const aiRefResetBtn = document.getElementById('ai-ref-reset-btn');
   const aiRefApplyCompareBtn = document.getElementById('ai-ref-apply-compare-btn');
 
-  const DEMO_REFERENCE_TEXT = `Railway Recruitment Board (RRB) has released the centralized employment notification (CEN 05/2026) for Non-Technical Popular Categories (NTPC) Graduate and Undergraduate posts. A total of 11,558 vacancies have been announced across Indian Railways.
-
-Important Dates:
-- Official Notification Release: 12 October 2026
-- Online Application Starts: 15 October 2026
-- Last Date to Submit Online Application: 14 November 2026 (23:59 Hrs)
-- Correction Window: 16 November to 25 November 2026
-- Computer Based Test (CBT-1) Exam Date: January/February 2027
-
-Vacancy Details:
-- Chief Commercial cum Ticket Supervisor: 1,736 posts (Level 6)
-- Station Master: 994 posts (Level 6)
-- Goods Train Manager: 3,144 posts (Level 5)
-- Junior Accounts Assistant cum Typist: 1,507 posts (Level 5)
-- Senior Clerk cum Typist: 732 posts (Level 5)
-- Commercial cum Ticket Clerk: 2,022 posts (Level 3)
-- Accounts Clerk cum Typist: 361 posts (Level 2)
-- Junior Clerk cum Typist: 990 posts (Level 2)
-- Trains Clerk: 72 posts (Level 2)
-
-Eligibility Criteria:
-- Age Limit: 18 to 36 years as on 01.07.2026 (including 3-year COVID age relaxation). SC/ST gets 5 years, OBC gets 3 years relaxation.
-- Educational Qualification: Graduate degree for Level 5 and 6 posts from recognized university. 12th (+2 Stage) with minimum 50% marks for Level 2 and 3 posts.
-
-Application Fee:
-- General / OBC / EWS Male candidates: ₹500 (₹400 refundable on appearing in CBT-1).
-- SC / ST / Ex-Servicemen / Female / Transgender / Minorities / EBC: ₹250 (Full ₹250 refundable on appearing in CBT-1).
-
-Selection Process:
-1. 1st Stage Computer Based Test (CBT 1) - Common Screening Test
-2. 2nd Stage Computer Based Test (CBT 2) - Post-wise Merit Test
-3. Computer Based Aptitude Test (CBAT) for Station Master / Typing Skill Test for Typist posts
-4. Document Verification (DV) & Medical Examination`;
-
   let lastGeneratedBilingual: any = null;
+
+  // Staged Reference Images (Loaded at bottom with auto-compression)
+  let stagedPastedImages: Array<{
+    id: string;
+    file?: File;
+    url: string;
+    base64?: string;
+    mimeType: string;
+    altText: string;
+    status: 'uploading' | 'ready' | 'error';
+  }> = [];
 
   function openAiReferenceModal() {
     if (!aiReferenceModal) return;
     aiReferenceModal.style.setProperty('display', 'flex', 'important');
     aiReferenceModal.classList.remove('hidden');
-    if (aiRefContent && !aiRefContent.value.trim()) {
+    if (aiRefContent && aiRefContent.value.trim()) {
+      updateAiRefCounters();
+      scanAndExtractImagesFromText(aiRefContent.value);
+    } else {
       setTimeout(() => aiRefContent?.focus(), 100);
     }
   }
@@ -4011,7 +4252,7 @@ Selection Process:
     if (e.target === aiReferenceModal) closeAiReferenceModal();
   });
 
-  // Character and word counter
+  // Word and character counter for standard textarea
   function updateAiRefCounters() {
     const text = aiRefContent?.value || '';
     const words = text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -4031,24 +4272,641 @@ Selection Process:
     }
   }
 
-  aiRefContent?.addEventListener('input', updateAiRefCounters);
+  let aiRefScanDebounceTimer: any = null;
+  aiRefContent?.addEventListener('input', () => {
+    updateAiRefCounters();
+    clearTimeout(aiRefScanDebounceTimer);
+    aiRefScanDebounceTimer = setTimeout(() => {
+      if (aiRefContent?.value) {
+        scanAndExtractImagesFromText(aiRefContent.value);
+      }
+    }, 400);
+  });
 
-  // Demo loader
-  aiRefInsertDemoBtn?.addEventListener('click', () => {
-    if (aiRefContent) {
-      aiRefContent.value = DEMO_REFERENCE_TEXT;
-      if (aiRefCategory) aiRefCategory.value = 'notifications';
-      if (aiRefInstructions) aiRefInstructions.value = 'Highlight 11,558 vacancies, 3-year COVID age relaxation, and CBT-1 dates.';
+  // Render bottom staged images grid
+  function renderBottomStagedImages() {
+    const grid = document.getElementById('ai-ref-staged-images-grid');
+    const badge = document.getElementById('ai-ref-bottom-count-badge');
+    const headerPill = document.getElementById('ai-ref-images-pill');
+    const headerCount = document.getElementById('ai-ref-images-count');
+
+    const count = stagedPastedImages.length;
+    if (badge) badge.textContent = `${count} image${count === 1 ? '' : 's'}`;
+    if (headerCount) headerCount.textContent = String(count);
+    if (headerPill) {
+      if (count > 0) {
+        headerPill.classList.remove('hidden');
+        headerPill.classList.add('inline-flex');
+      } else {
+        headerPill.classList.add('hidden');
+        headerPill.classList.remove('inline-flex');
+      }
+    }
+
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    if (count === 0) {
+      grid.innerHTML = `
+        <div class="w-full text-center py-2 text-slate-400 text-[11px] italic">
+          No reference images yet. Paste text containing images above, or attach an image.
+        </div>
+      `;
+      return;
+    }
+
+    stagedPastedImages.forEach((img, idx) => {
+      const card = document.createElement('div');
+      card.className = 'aim-staged-card border border-slate-200 rounded-lg p-2.5 bg-white shadow-2xs flex items-center gap-2.5 w-full sm:w-[calc(50%-0.35rem)] transition';
+      card.innerHTML = `
+        <div class="w-14 h-14 rounded overflow-hidden bg-slate-100 dark:bg-zinc-800 shrink-0 border border-slate-200 dark:border-zinc-700 flex items-center justify-center relative">
+          <img 
+            src="${img.base64 || img.url}" 
+            referrerpolicy="no-referrer" 
+            loading="lazy"
+            class="w-full h-full object-cover block" 
+            alt="${(img.altText || 'Reference Image').replace(/"/g, '&quot;')}" 
+            onerror="this.onerror=null; this.classList.add('hidden'); if(this.nextElementSibling) this.nextElementSibling.classList.remove('hidden');" 
+          />
+          <div class="hidden absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-slate-100 dark:bg-zinc-800 text-slate-400 p-1 text-center select-none">
+            <svg class="w-5 h-5 text-slate-400 mb-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-[8px] font-medium leading-none text-slate-500 dark:text-zinc-400">Image</span>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0 space-y-1">
+          <div class="flex items-center justify-between gap-1">
+            <span class="text-[9px] font-mono px-1.5 py-0.2 rounded ${img.status === 'ready' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800' : img.status === 'uploading' ? 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800' : 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'}">
+              ${img.status === 'ready' ? '🟢 Compressed (R2) ✓' : img.status === 'uploading' ? '⏳ Compressing...' : '⚠️ Staged'}
+            </span>
+            <button type="button" class="del-staged-btn text-slate-400 hover:text-red-600 text-xs p-0.5 rounded cursor-pointer transition aim-btn-ghost" title="Remove image">
+              ✕
+            </button>
+          </div>
+          <input type="text" class="staged-alt-input aim-input w-full bg-slate-50 border border-slate-300 rounded px-1.5 py-0.5 text-[10px] text-slate-800 focus:outline-none focus:border-indigo-500" value="${(img.altText || '').replace(/"/g, '&quot;')}" placeholder="SEO Alt Keyword (e.g. Vacancy Table)" />
+        </div>
+      `;
+
+      card.querySelector('.del-staged-btn')?.addEventListener('click', () => {
+        stagedPastedImages.splice(idx, 1);
+        renderBottomStagedImages();
+      });
+
+      const altInput = card.querySelector('.staged-alt-input') as HTMLInputElement | null;
+      altInput?.addEventListener('input', () => {
+        img.altText = altInput.value.trim();
+      });
+
+      grid.appendChild(card);
+    });
+  }
+
+  // Upload and compress image file
+  async function stageAndUploadImageFile(file: File) {
+    if (!file.type.startsWith('image/')) return;
+    const tempUrl = URL.createObjectURL(file);
+    const imgId = `staged-img-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+
+    let cleanAlt = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim();
+    if (!cleanAlt || /^image(\d+)?$/i.test(cleanAlt) || /^blob$/i.test(cleanAlt) || /^screenshot/i.test(cleanAlt)) {
+      cleanAlt = `Reference Notice Image #${stagedPastedImages.length + 1}`;
+    }
+
+    const entry = {
+      id: imgId,
+      file,
+      url: tempUrl,
+      base64: undefined as string | undefined,
+      mimeType: file.type,
+      altText: cleanAlt,
+      status: 'uploading' as const,
+    };
+    stagedPastedImages.push(entry);
+    renderBottomStagedImages();
+
+    // Instant local DataURL generation so thumbnail renders immediately with zero network dependency
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (typeof e.target?.result === 'string') {
+        entry.base64 = e.target.result;
+        renderBottomStagedImages();
+      }
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      const publicUrl = await uploadImage(file);
+      entry.url = publicUrl;
+      entry.status = 'ready';
+      renderBottomStagedImages();
+    } catch (err) {
+      console.warn('Compression upload failed, keeping staged url:', err);
+      entry.status = 'error';
+      renderBottomStagedImages();
+    }
+  }
+
+  // Auto-compress and save extracted image URL
+  async function stageAndUploadExtractedImage(src: string, alt: string) {
+    const cleanSrc = src.trim();
+    if (!cleanSrc) return;
+    if (!cleanSrc.startsWith('http://') && !cleanSrc.startsWith('https://') && !cleanSrc.startsWith('data:image/')) {
+      return;
+    }
+    // Filter out 1x1 tracking gifs and tiny placeholder svgs
+    if (cleanSrc.startsWith('data:image/gif') && cleanSrc.length < 150) return;
+    if (cleanSrc.startsWith('data:image/svg') && cleanSrc.length < 100) return;
+    if (/(?:pixel\.gif|spacer\.gif|blank\.gif|beacon|analytics)/i.test(cleanSrc)) return;
+
+    if (stagedPastedImages.some((staged) => staged.url === cleanSrc || staged.base64 === cleanSrc)) {
+      return;
+    }
+
+    const imgId = `staged-img-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const entry = {
+      id: imgId,
+      url: cleanSrc,
+      base64: cleanSrc.startsWith('data:image/') ? cleanSrc : undefined,
+      mimeType: 'image/webp',
+      altText: alt || `Reference Notice Image #${stagedPastedImages.length + 1}`,
+      status: 'uploading' as const,
+    };
+    stagedPastedImages.push(entry);
+    renderBottomStagedImages();
+
+    try {
+      let finalUrl = cleanSrc;
+      let uploaded = false;
+
+      if (cleanSrc.startsWith('data:image/')) {
+        const blob = await (await fetch(cleanSrc)).blob();
+        const file = new File([blob], `extracted-${Date.now()}.png`, { type: blob.type || 'image/png' });
+        finalUrl = await uploadImage(file);
+        uploaded = true;
+      } else if (cleanSrc.startsWith('http://') || cleanSrc.startsWith('https://')) {
+        // 1. Try server-side download and R2 compression (bypasses browser CORS & hotlink protection)
+        try {
+          const res = await apiFetch('/uploads/images/from-url', {
+            method: 'POST',
+            body: JSON.stringify({ url: cleanSrc }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.publicUrl) {
+              finalUrl = data.publicUrl;
+              uploaded = true;
+            }
+          }
+        } catch (fromUrlErr) {
+          console.warn('Backend from-url download error:', fromUrlErr);
+        }
+
+        // 2. Client-side fetch fallback if backend was unreachable
+        if (!uploaded) {
+          try {
+            const clientRes = await fetch(cleanSrc, { mode: 'cors' });
+            if (clientRes.ok) {
+              const blob = await clientRes.blob();
+              const file = new File([blob], `extracted-${Date.now()}.png`, { type: blob.type || 'image/png' });
+              finalUrl = await uploadImage(file);
+              uploaded = true;
+            }
+          } catch (_) {}
+        }
+      }
+
+      entry.url = finalUrl;
+      entry.status = uploaded ? 'ready' : 'error';
+      renderBottomStagedImages();
+    } catch (err) {
+      console.warn('Auto-save of extracted image failed, staging url:', err);
+      entry.status = 'error';
+      renderBottomStagedImages();
+    }
+  }
+
+  // Normalize and unwrap Notion image URLs (e.g. /image/https%3A%2F%2Fprod-files-secure.s3... -> direct S3 presigned URL)
+  function normalizeNotionImageUrl(rawUrl: string, baseOrigin = ''): string {
+    let clean = (rawUrl || '').trim();
+    if (!clean) return '';
+
+    // Notion Image Proxy unwrapper
+    const notionProxyMatch = clean.match(/(?:https?:\/\/[^\/]+)?\/image\/(https?(?:%3A%2F%2F|:\/\/)[^\s?]+)/i);
+    if (notionProxyMatch && notionProxyMatch[1]) {
+      try {
+        const decoded = decodeURIComponent(notionProxyMatch[1]);
+        if (decoded.startsWith('http://') || decoded.startsWith('https://')) {
+          return decoded;
+        }
+      } catch (_) {}
+    }
+
+    if (clean.startsWith('//')) {
+      return 'https:' + clean;
+    }
+    if (clean.startsWith('/image/') || clean.startsWith('image/')) {
+      return 'https://www.notion.so' + (clean.startsWith('/') ? '' : '/') + clean;
+    }
+    if (baseOrigin && (clean.startsWith('/') || clean.startsWith('./') || clean.startsWith('../'))) {
+      try {
+        return new URL(clean, baseOrigin).href;
+      } catch (_) {}
+    }
+
+    return clean;
+  }
+
+  // Extract images from Notion block JSON if present in clipboard
+  function extractImagesFromNotionJson(jsonStr: string): string[] {
+    const urls: string[] = [];
+    try {
+      const regex = /"(https?:\/\/[^"\s\\]+\.(?:png|jpe?g|webp|gif|svg|avif)(?:\?[^"\s\\]*)?)"/gi;
+      let m: RegExpExecArray | null;
+      while ((m = regex.exec(jsonStr)) !== null) {
+        if (!urls.includes(m[1])) urls.push(m[1]);
+      }
+      const s3Regex = /"(https?:\/\/(?:prod-files-secure\.s3[a-z0-9\-\.]*\.amazonaws\.com|file\.notion\.so)[^"\s\\]+)"/gi;
+      let s3m: RegExpExecArray | null;
+      while ((s3m = s3Regex.exec(jsonStr)) !== null) {
+        if (!urls.includes(s3m[1])) urls.push(s3m[1]);
+      }
+    } catch (_) {}
+    return urls;
+  }
+
+  // Scan text content (markdown, HTML, Notion format, image URLs) and extract images
+  async function scanAndExtractImagesFromText(content: string, isManual = false): Promise<number> {
+    if (!content || typeof content !== 'string') return 0;
+
+    let newlyAdded = 0;
+    const detected: Array<{ url: string; alt: string }> = [];
+
+    // 1. Markdown images: ![alt](url) or ![alt](url "title")
+    const mdRegex = /!\[([^\]]*)\]\((https?:\/\/[^\s\)"']+)(?:\s+["'][^"']*["'])?\)/gi;
+    let mdMatch: RegExpExecArray | null;
+    while ((mdMatch = mdRegex.exec(content)) !== null) {
+      const alt = mdMatch[1]?.trim() || '';
+      const url = normalizeNotionImageUrl(mdMatch[2]?.trim());
+      if (url && !detected.some((d) => d.url === url)) {
+        detected.push({ url, alt });
+      }
+    }
+
+    // 2. HTML <img> tags inside text: <img ... src="..." ...>
+    const imgTagRegex = /<img\b[^>]*\bsrc=["'](https?:\/\/[^"'>\s]+|data:image\/[^"'>\s]+)["'][^>]*>/gi;
+    let imgTagMatch: RegExpExecArray | null;
+    while ((imgTagMatch = imgTagRegex.exec(content)) !== null) {
+      const fullTag = imgTagMatch[0];
+      const url = normalizeNotionImageUrl(imgTagMatch[1]?.trim());
+      let alt = '';
+      const altMatch = /alt=["']([^"']*)["']/i.exec(fullTag);
+      if (altMatch) alt = altMatch[1]?.trim();
+      if (url && !detected.some((d) => d.url === url)) {
+        detected.push({ url, alt });
+      }
+    }
+
+    // 3. Notion plain-text images: [image: https://...] or [Image: https://...]
+    const notionRegex = /\[(?:image|Image):\s*(https?:\/\/[^\s\]]+)\]/gi;
+    let notionMatch: RegExpExecArray | null;
+    while ((notionMatch = notionRegex.exec(content)) !== null) {
+      const url = normalizeNotionImageUrl(notionMatch[1]?.trim());
+      if (url && !detected.some((d) => d.url === url)) {
+        detected.push({ url, alt: 'Notion Reference Image' });
+      }
+    }
+
+    // 4. Standalone or embedded image URLs with image extensions
+    const urlRegex = /(https?:\/\/[^\s"'<>\)]+\.(?:png|jpe?g|webp|gif|svg|avif)(?:\?[^\s"'<>\)]*)?)/gi;
+    let urlMatch: RegExpExecArray | null;
+    while ((urlMatch = urlRegex.exec(content)) !== null) {
+      const url = normalizeNotionImageUrl(urlMatch[1]?.trim());
+      if (url && !detected.some((d) => d.url === url)) {
+        detected.push({ url, alt: 'Reference Notice Image' });
+      }
+    }
+
+    // 5. Known image storage & CDN links without extension (R2, Unsplash, Imgur, Cloudinary, S3, Googleusercontent, Notion AWS)
+    const cdnRegex = /(https?:\/\/(?:[a-z0-9\-]+\.r2\.dev|images\.unsplash\.com|i\.imgur\.com|res\.cloudinary\.com|(?:[a-z0-9\-]+\.)?s3[a-z0-9\-\.]*\.amazonaws\.com|lh[0-9]*\.googleusercontent\.com|prod-files-secure\.s3[a-z0-9\-\.]*\.amazonaws\.com|file\.notion\.so)[^\s"'<>\)]+)/gi;
+    let cdnMatch: RegExpExecArray | null;
+    while ((cdnMatch = cdnRegex.exec(content)) !== null) {
+      const url = normalizeNotionImageUrl(cdnMatch[1]?.trim());
+      if (url && !detected.some((d) => d.url === url)) {
+        detected.push({ url, alt: 'Reference Notice Image' });
+      }
+    }
+
+    // Check for Notion plain-text image markers like !image.png or !Screenshot.png
+    const notionPlaceholderRegex = /(?:^|\s)!([\w.\- ()]+\.(?:png|jpe?g|webp|gif|svg|avif))\b/gi;
+    const detectedPlaceholders: string[] = [];
+    let nphMatch: RegExpExecArray | null;
+    while ((nphMatch = notionPlaceholderRegex.exec(content)) !== null) {
+      const fn = nphMatch[1]?.trim();
+      if (fn && !detectedPlaceholders.includes(fn)) {
+        detectedPlaceholders.push(fn);
+      }
+    }
+
+    for (const item of detected) {
+      if (!stagedPastedImages.some((staged) => staged.url === item.url || staged.base64 === item.url)) {
+        newlyAdded++;
+        stageAndUploadExtractedImage(item.url, item.alt);
+      }
+    }
+
+    const scanMsg = document.getElementById('ai-ref-scan-msg');
+    if (scanMsg) {
+      if (isManual) {
+        scanMsg.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'bg-indigo-50', 'text-indigo-700', 'border-indigo-200', 'bg-amber-50', 'text-amber-800', 'border-amber-200', 'text-amber-900');
+        if (newlyAdded > 0) {
+          scanMsg.className = 'text-[10px] px-2.5 py-1.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 inline-block font-medium';
+          scanMsg.textContent = `✓ Extracted ${newlyAdded} new image(s)! Auto-compressing to R2...`;
+          setTimeout(() => scanMsg.classList.add('hidden'), 7000);
+        } else if (stagedPastedImages.length > 0) {
+          scanMsg.className = 'text-[10px] px-2.5 py-1.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 inline-block font-medium';
+          scanMsg.textContent = `All ${stagedPastedImages.length} image(s) already extracted and staged below.`;
+          setTimeout(() => scanMsg.classList.add('hidden'), 7000);
+        } else if (detectedPlaceholders.length > 0) {
+          scanMsg.className = 'text-[10px] px-2.5 py-2 rounded bg-amber-50 text-amber-900 border border-amber-200 block leading-relaxed';
+          scanMsg.innerHTML = `💡 <strong>Notion image placeholder detected (${detectedPlaceholders.map((p) => `<code>!${p}</code>`).join(', ')}):</strong> Notion plain text only copies the filename. To stage this image, right-click the image in Notion &rarr; <em>"Copy image"</em> and press <code>Ctrl+V</code> here, or drag &amp; drop it directly into this box!`;
+        } else {
+          scanMsg.className = 'text-[10px] px-2.5 py-1.5 rounded bg-amber-50 text-amber-800 border border-amber-200 inline-block';
+          scanMsg.textContent = 'ℹ️ No image URLs, markdown images, or <img> tags found in pasted text. Tip: Use "Attach Image", drag & drop images into the box, or copy an image (Ctrl+C) and paste (Ctrl+V) directly.';
+          setTimeout(() => scanMsg.classList.add('hidden'), 7000);
+        }
+      } else if (detectedPlaceholders.length > 0 && stagedPastedImages.length === 0) {
+        // Subtle hint when text with Notion placeholders was pasted
+        scanMsg.className = 'text-[10px] px-2.5 py-2 rounded bg-amber-50 text-amber-900 border border-amber-200 block leading-relaxed';
+        scanMsg.innerHTML = `💡 <strong>Notion image placeholder detected (${detectedPlaceholders.map((p) => `<code>!${p}</code>`).join(', ')}):</strong> To include this image, right-click it in Notion &rarr; <em>"Copy image"</em> and press <code>Ctrl+V</code> here, or drag &amp; drop it directly!`;
+        scanMsg.classList.remove('hidden');
+      }
+    }
+
+    return newlyAdded;
+  }
+
+  // Scan Text for Images button listener
+  document.getElementById('ai-ref-scan-images-btn')?.addEventListener('click', () => {
+    const text = aiRefContent?.value || '';
+    scanAndExtractImagesFromText(text, true);
+  });
+
+  // Paste handler: words paste into textarea as-is, images extract and compress to R2 at bottom
+  aiRefContent?.addEventListener('paste', async (e: ClipboardEvent) => {
+    const clipboardData = e.clipboardData;
+    if (!clipboardData) return;
+
+    // 1. Direct Image Files (Screenshots from Snipping Tool, Win+Shift+S, PrtScn, "Copy Image", file copy)
+    const imageFiles: File[] = [];
+    if (clipboardData.files && clipboardData.files.length > 0) {
+      for (let i = 0; i < clipboardData.files.length; i++) {
+        if (clipboardData.files[i].type.startsWith('image/')) {
+          imageFiles.push(clipboardData.files[i]);
+        }
+      }
+    }
+    if (clipboardData.items) {
+      for (let i = 0; i < clipboardData.items.length; i++) {
+        const item = clipboardData.items[i];
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file && !imageFiles.some((f) => f.size === file.size && f.name === file.name)) {
+            imageFiles.push(file);
+          }
+        }
+      }
+    }
+
+    if (imageFiles.length > 0) {
+      for (const file of imageFiles) {
+        await stageAndUploadImageFile(file);
+      }
+    }
+
+    const plainText = clipboardData.getData('text/plain') || '';
+
+    // If only image(s) were pasted without real body text (e.g. Snipping Tool, "Copy Image", or raw image file path):
+    // Prevent default so the textarea isn't polluted with filename strings or blank lines
+    if (imageFiles.length > 0) {
+      const isJustFilename = !plainText.trim() || /^[\w.\- ()]+\.(png|jpe?g|webp|gif|svg)$/i.test(plainText.trim()) || /^https?:\/\/[^\s]+$/i.test(plainText.trim());
+      if (isJustFilename) {
+        e.preventDefault();
+      }
+    }
+
+    // 2. Notion custom clipboard types if present (application/x-notion-blocks, text/x-notion-blocks)
+    const notionMimeTypes = ['application/x-notion-blocks', 'text/x-notion-blocks', 'notion/blocks'];
+    for (const nMime of notionMimeTypes) {
+      if (clipboardData.types && clipboardData.types.includes(nMime)) {
+        const rawJson = clipboardData.getData(nMime);
+        if (rawJson) {
+          const extractedNotionUrls = extractImagesFromNotionJson(rawJson);
+          for (const nUrl of extractedNotionUrls) {
+            const cleanNUrl = normalizeNotionImageUrl(nUrl);
+            if (!stagedPastedImages.some((staged) => staged.url === cleanNUrl)) {
+              stageAndUploadExtractedImage(cleanNUrl, 'Notion Attached Image');
+            }
+          }
+        }
+      }
+    }
+
+    // 3. HTML content containing words and/or images (from webpage copy, Notion, Google Docs)
+    const html = clipboardData.getData('text/html');
+    if (html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Attempt to find base URL if available in HTML
+      let baseOrigin = '';
+      const baseEl = doc.querySelector('base[href]');
+      if (baseEl) {
+        baseOrigin = baseEl.getAttribute('href') || '';
+      } else {
+        const firstAbsLink = doc.querySelector('a[href^="http://"], a[href^="https://"]');
+        if (firstAbsLink) {
+          try {
+            baseOrigin = new URL(firstAbsLink.getAttribute('href') || '').origin;
+          } catch (_) {}
+        }
+      }
+
+      // Check all <img> tags (including Notion proxy unwrapping)
+      const images = Array.from(doc.querySelectorAll('img'));
+      for (const imgEl of images) {
+        let candidateSrc = 
+          imgEl.getAttribute('data-src') ||
+          imgEl.getAttribute('data-original') ||
+          imgEl.getAttribute('data-lazy-src') ||
+          imgEl.getAttribute('data-hi-res-src') ||
+          imgEl.getAttribute('data-orig-file') ||
+          imgEl.getAttribute('data-large-file') ||
+          imgEl.getAttribute('data-url') ||
+          imgEl.getAttribute('data-native-src') ||
+          imgEl.getAttribute('src') ||
+          '';
+
+        if ((!candidateSrc || candidateSrc.startsWith('data:image/svg') || candidateSrc.startsWith('data:image/gif')) && imgEl.getAttribute('srcset')) {
+          const srcset = imgEl.getAttribute('srcset') || '';
+          const parts = srcset.split(',').map((s) => s.trim().split(/\s+/)[0]).filter(Boolean);
+          if (parts.length > 0) candidateSrc = parts[parts.length - 1];
+        }
+
+        candidateSrc = normalizeNotionImageUrl(candidateSrc, baseOrigin);
+        if (!candidateSrc) continue;
+
+        if (candidateSrc.startsWith('http://') || candidateSrc.startsWith('https://') || candidateSrc.startsWith('data:image/')) {
+          const alt = imgEl.getAttribute('alt') || imgEl.getAttribute('title') || 'Official Notice Reference';
+          if (!stagedPastedImages.some((staged) => staged.url === candidateSrc || staged.base64 === candidateSrc)) {
+            stageAndUploadExtractedImage(candidateSrc, alt);
+          }
+        }
+      }
+
+      // Check elements with background-image style (used by Notion and certain websites)
+      const elementsWithBg = Array.from(doc.querySelectorAll('[style*="url("]'));
+      for (const el of elementsWithBg) {
+        const style = el.getAttribute('style') || '';
+        const bgMatch = /url\(['"]?(https?:\/\/[^\s'")]+|\/image\/[^\s'")]+)['"]?\)/i.exec(style);
+        if (bgMatch && bgMatch[1]) {
+          const cleanBg = normalizeNotionImageUrl(bgMatch[1], baseOrigin);
+          if (cleanBg.startsWith('http://') || cleanBg.startsWith('https://')) {
+            if (!stagedPastedImages.some((staged) => staged.url === cleanBg)) {
+              stageAndUploadExtractedImage(cleanBg, 'Notion Reference Image');
+            }
+          }
+        }
+      }
+
+      // Check <picture><source srcset="..."> tags
+      const pictureSources = Array.from(doc.querySelectorAll('picture source[srcset]'));
+      for (const sourceEl of pictureSources) {
+        const srcset = sourceEl.getAttribute('srcset') || '';
+        const parts = srcset.split(',').map((s) => s.trim().split(/\s+/)[0]).filter(Boolean);
+        const best = parts[parts.length - 1]?.trim();
+        if (best) {
+          const normalizedBest = normalizeNotionImageUrl(best, baseOrigin);
+          if (normalizedBest.startsWith('http://') || normalizedBest.startsWith('https://')) {
+            if (!stagedPastedImages.some((staged) => staged.url === normalizedBest)) {
+              stageAndUploadExtractedImage(normalizedBest, 'Official Notice Reference');
+            }
+          }
+        }
+      }
+
+      // Check <a href="...image.ext"> links and S3/Notion assets
+      const imageLinks = Array.from(doc.querySelectorAll('a[href]'));
+      for (const linkEl of imageLinks) {
+        let href = (linkEl.getAttribute('href') || '').trim();
+        if (href) {
+          href = normalizeNotionImageUrl(href, baseOrigin);
+          if (/\.(png|jpe?g|webp|gif|svg|avif)(\?[^\s]*)?$/i.test(href) || href.includes('prod-files-secure.s3') || href.includes('file.notion.so')) {
+            if (href.startsWith('http://') || href.startsWith('https://')) {
+              const alt = linkEl.textContent?.trim() || 'Official Notice Reference';
+              if (!stagedPastedImages.some((staged) => staged.url === href)) {
+                stageAndUploadExtractedImage(href, alt);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 4. Scan plainText clipboard data
+    if (plainText) {
+      scanAndExtractImagesFromText(plainText);
+    }
+
+    // 5. Schedule scan on textarea after paste has settled in the DOM
+    setTimeout(() => {
       updateAiRefCounters();
-      aiRefContent.focus();
+      if (aiRefContent?.value) {
+        scanAndExtractImagesFromText(aiRefContent.value);
+      }
+    }, 60);
+  });
+
+  // Modal level paste listener for screenshots anywhere in modal
+  aiReferenceModal?.addEventListener('paste', async (e: ClipboardEvent) => {
+    if (e.target === aiRefContent) return; // Handled directly above
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith('image/')) {
+        const file = items[i].getAsFile();
+        if (file) {
+          e.preventDefault();
+          await stageAndUploadImageFile(file);
+        }
+      }
+    }
+  });
+
+  // Drag and Drop handlers on textarea
+  aiRefContent?.addEventListener('dragover', (e) => {
+    if (e.dataTransfer?.types.includes('Files')) {
+      e.preventDefault();
+      aiRefContent.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50/20');
+    }
+  });
+
+  aiRefContent?.addEventListener('dragleave', () => {
+    aiRefContent.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50/20');
+  });
+
+  aiRefContent?.addEventListener('drop', async (e) => {
+    aiRefContent.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50/20');
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      let hasImage = false;
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].type.startsWith('image/')) {
+          hasImage = true;
+          await stageAndUploadImageFile(files[i]);
+        }
+      }
+      if (hasImage) e.preventDefault();
+    }
+  });
+
+  // Drag and Drop on modal
+  aiReferenceModal?.addEventListener('dragover', (e) => {
+    if (e.dataTransfer?.types.includes('Files')) {
+      e.preventDefault();
+    }
+  });
+
+  aiReferenceModal?.addEventListener('drop', async (e) => {
+    if (e.target === aiRefContent) return;
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].type.startsWith('image/')) {
+          e.preventDefault();
+          await stageAndUploadImageFile(files[i]);
+        }
+      }
+    }
+  });
+
+  // File picker handler
+  aiRefImageInput?.addEventListener('change', async () => {
+    if (aiRefImageInput.files && aiRefImageInput.files.length > 0) {
+      for (const file of Array.from(aiRefImageInput.files)) {
+        await stageAndUploadImageFile(file);
+      }
+      aiRefImageInput.value = '';
     }
   });
 
   // Clear button
   aiRefClearBtn?.addEventListener('click', () => {
     if (aiRefContent) aiRefContent.value = '';
+    stagedPastedImages = [];
     if (aiRefInstructions) aiRefInstructions.value = '';
     updateAiRefCounters();
+    renderBottomStagedImages();
   });
 
   aiRefResetBtn?.addEventListener('click', () => {
@@ -4057,7 +4915,7 @@ Selection Process:
     if (aiRefContent) aiRefContent.focus();
   });
 
-  // Generate complete bilingual blog from reference
+  // Generate complete bilingual blog from reference with Real SSE Stepper
   async function generateBilingualFromReference() {
     const content = aiRefContent?.value.trim() || '';
     if (content.length < 50) {
@@ -4068,6 +4926,7 @@ Selection Process:
 
     const category = aiRefCategory?.value || 'auto-detect';
     const instructions = aiRefInstructions?.value.trim() || '';
+    const selectedModel = aiRefModelSelect?.value || 'gemini-3.8-flash';
 
     if (aiRefGenerateBtn) {
       aiRefGenerateBtn.disabled = true;
@@ -4077,49 +4936,159 @@ Selection Process:
     aiRefResultsCard?.classList.add('hidden');
     aiRefLoadingCard?.classList.remove('hidden');
 
-    // Multi-step progress animation
-    const steps = [
-      { id: 'ai-step-1', text: 'Extracting dates, vacancies, eligibility, and fees...' },
-      { id: 'ai-step-2', text: 'Drafting Hindi (हिंदी + Technical Terms) with GFM tables...' },
-      { id: 'ai-step-3', text: 'Drafting English article with SEO structure...' },
-      { id: 'ai-step-4', text: 'Finalizing SEO titles, slugs, and descriptions...' },
-    ];
-    let currentStep = 0;
-    const stepInterval = setInterval(() => {
-      currentStep = (currentStep + 1) % steps.length;
-      if (aiRefLoadingStatus) aiRefLoadingStatus.textContent = steps[currentStep].text;
-      steps.forEach((s, idx) => {
-        const el = document.getElementById(s.id);
-        if (!el) return;
-        if (idx < currentStep) {
-          el.className = 'flex items-center gap-2 text-emerald-700 font-medium';
-          if (el.firstElementChild) el.firstElementChild.textContent = '✓';
-        } else if (idx === currentStep) {
-          el.className = 'flex items-center gap-2 text-slate-900 font-semibold';
-          if (el.firstElementChild) el.firstElementChild.textContent = '●';
-        } else {
-          el.className = 'flex items-center gap-2 text-slate-400';
-          if (el.firstElementChild) el.firstElementChild.textContent = '○';
+    // Real live elapsed timer
+    const startTime = Date.now();
+    const timerEl = document.getElementById('ai-ref-elapsed-timer');
+    const timerInterval = setInterval(() => {
+      if (timerEl) {
+        timerEl.textContent = `${((Date.now() - startTime) / 1000).toFixed(1)}s`;
+      }
+    }, 100);
+
+    const stepIngest = document.getElementById('ai-step-ingest');
+    const stepVision = document.getElementById('ai-step-vision');
+    const stepDraft = document.getElementById('ai-step-draft');
+    const stepSeo = document.getElementById('ai-step-seo');
+    const modelBadge = document.getElementById('ai-ref-model-badge');
+    const modelText = document.getElementById('ai-ref-model-text');
+
+    function updateRealStage(stage: string, message: string) {
+      if (aiRefLoadingStatus) aiRefLoadingStatus.textContent = message;
+
+      if (stage === 'INGEST' || stage === 'CONNECTED') {
+        if (stepIngest) {
+          stepIngest.className = 'flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold';
+          const icon = stepIngest.querySelector('.step-icon');
+          if (icon) icon.textContent = '●';
         }
-      });
-    }, 2800);
+      } else if (stage === 'VISION') {
+        if (stepIngest) {
+          stepIngest.className = 'flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium';
+          const icon = stepIngest.querySelector('.step-icon');
+          if (icon) icon.textContent = '✓';
+        }
+        if (stepVision) {
+          stepVision.className = 'flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold';
+          const icon = stepVision.querySelector('.step-icon');
+          if (icon) icon.textContent = '●';
+        }
+      } else if (stage === 'DRAFTING') {
+        if (stepIngest) {
+          stepIngest.className = 'flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium';
+          const icon = stepIngest.querySelector('.step-icon');
+          if (icon) icon.textContent = '✓';
+        }
+        if (stepVision) {
+          stepVision.className = 'flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium';
+          const icon = stepVision.querySelector('.step-icon');
+          if (icon) icon.textContent = '✓';
+        }
+        if (stepDraft) {
+          stepDraft.className = 'flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold';
+          const icon = stepDraft.querySelector('.step-icon');
+          if (icon) icon.textContent = '●';
+        }
+      } else if (stage === 'MODEL_SWITCH') {
+        if (modelBadge && modelText) {
+          modelBadge.classList.remove('hidden');
+          modelText.textContent = message;
+        }
+      } else if (stage === 'FINALIZING') {
+        if (stepDraft) {
+          stepDraft.className = 'flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium';
+          const icon = stepDraft.querySelector('.step-icon');
+          if (icon) icon.textContent = '✓';
+        }
+        if (stepSeo) {
+          stepSeo.className = 'flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-semibold';
+          const icon = stepSeo.querySelector('.step-icon');
+          if (icon) icon.textContent = '●';
+        }
+      }
+    }
 
     try {
-      const res = await apiFetch('/blogs/generate-from-reference', {
+      updateRealStage('INGEST', `Initializing ${selectedModel} pipeline...`);
+
+      const response = await apiFetch('/blogs/generate-from-reference/stream', {
         method: 'POST',
         body: JSON.stringify({
           referenceContent: content,
           category: category !== 'auto-detect' ? category : undefined,
           additionalInstructions: instructions,
+          model: selectedModel,
+          images: stagedPastedImages.map((img) => ({
+            url: img.url,
+            base64: img.base64,
+            mimeType: img.mimeType,
+            altText: img.altText,
+          })),
         }),
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `HTTP ${res.status}`);
+      let data: any = null;
+
+      if (response.ok && response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const parts = buffer.split('\n\n');
+          buffer = parts.pop() || '';
+
+          for (const part of parts) {
+            const trimmed = part.trim();
+            if (!trimmed.startsWith('data: ')) continue;
+            try {
+              const payload = JSON.parse(trimmed.slice(6));
+              if (payload.type === 'stage') {
+                updateRealStage(payload.stage, payload.message);
+              } else if (payload.type === 'complete') {
+                data = payload.result;
+              } else if (payload.type === 'error') {
+                throw new Error(payload.message);
+              }
+            } catch (pErr: any) {
+              if (pErr.message && !pErr.message.includes('JSON')) throw pErr;
+            }
+          }
+        }
+      } else {
+        // Smooth fallback to non-streaming endpoint if stream is interrupted
+        const fallbackRes = await apiFetch('/blogs/generate-from-reference', {
+          method: 'POST',
+          body: JSON.stringify({
+            referenceContent: content,
+            category: category !== 'auto-detect' ? category : undefined,
+            additionalInstructions: instructions,
+            model: selectedModel,
+            images: stagedPastedImages.map((img) => ({ url: img.url, altText: img.altText })),
+          }),
+        });
+        if (!fallbackRes.ok) {
+          const err = await fallbackRes.json().catch(() => ({}));
+          throw new Error(err.message || `HTTP ${fallbackRes.status}`);
+        }
+        data = await fallbackRes.json();
       }
 
-      const data = await res.json();
+      if (!data) {
+        throw new Error('No article data returned from AI rewriter pipeline.');
+      }
+
+      // Mark all steps complete
+      [stepIngest, stepVision, stepDraft, stepSeo].forEach((el) => {
+        if (el) {
+          el.className = 'flex items-center gap-2 text-emerald-700 font-medium';
+          const icon = el.querySelector('.step-icon');
+          if (icon) icon.textContent = '✓';
+        }
+      });
+
       lastGeneratedBilingual = data;
 
       // Populate Result Preview Card
@@ -4147,6 +5116,11 @@ Selection Process:
         aiResEWords.textContent = `${ew} words`;
       }
 
+      if (data.modelUsed && modelBadge && modelText) {
+        modelBadge.classList.remove('hidden');
+        modelText.textContent = `Generated using ${data.modelUsed}`;
+      }
+
       aiRefLoadingCard?.classList.add('hidden');
       aiRefResultsCard?.classList.remove('hidden');
       setTimeout(() => {
@@ -4155,10 +5129,10 @@ Selection Process:
 
     } catch (err: any) {
       console.error('Failed to generate from reference:', err);
-      alert(`AI Generation Failed: ${err.message || 'Please check Gemini API key configuration.'}`);
+      alert(`AI Generation Failed: ${err.message || 'Please check Gemini API configuration.'}`);
       aiRefLoadingCard?.classList.add('hidden');
     } finally {
-      clearInterval(stepInterval);
+      clearInterval(timerInterval);
       if (aiRefGenerateBtn) {
         aiRefGenerateBtn.disabled = false;
         if (aiRefBtnLabel) aiRefBtnLabel.textContent = 'Generate Bilingual Articles';
@@ -4176,19 +5150,25 @@ Selection Process:
     // Switch to compare mode first so surfaces are active
     await switchEditorMode('compare');
 
+    // Clean Canonical Slug: NEVER append -hinglish or -english suffix so user sees the same clean URL!
+    const cleanSlug = (hinglish?.slug || english?.slug || 'article')
+      .toLowerCase()
+      .replace(/-(hinglish|english)$/, '')
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
     // Hinglish (Hindi) inputs
     if (compareHinglishTitle && hinglish?.title) compareHinglishTitle.value = hinglish.title;
-    if (compareHinglishSlug && hinglish?.slug) {
-      compareHinglishSlug.value = hinglish.slug.endsWith('-hinglish') ? hinglish.slug : `${hinglish.slug}-hinglish`;
-    }
+    if (compareHinglishSlug) compareHinglishSlug.value = cleanSlug;
     if (compareHinglishExcerpt && hinglish?.excerpt) compareHinglishExcerpt.value = hinglish.excerpt;
     if (compareHinglishMarkdown && hinglish?.content) compareHinglishMarkdown.value = hinglish.content;
 
     // English inputs
     if (compareEnglishTitle && english?.title) compareEnglishTitle.value = english.title;
-    if (compareEnglishSlug && english?.slug) {
-      compareEnglishSlug.value = english.slug.endsWith('-english') ? english.slug : `${english.slug}-english`;
-    }
+    if (compareEnglishSlug) compareEnglishSlug.value = cleanSlug;
+    if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
+    if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
     if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
     if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
 
@@ -6107,14 +7087,34 @@ ${mdContent}
     }
   }
 
+  let urlPreviewDebounceTimer: any = null;
   articleImageUrlInput?.addEventListener('input', () => {
-    const url = articleImageUrlInput.value.trim();
-    if (url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/'))) {
-      if (urlPreviewThumb) urlPreviewThumb.src = url;
-      urlPreviewContainer?.classList.remove('hidden');
-    } else {
-      urlPreviewContainer?.classList.add('hidden');
-    }
+    clearTimeout(urlPreviewDebounceTimer);
+    urlPreviewDebounceTimer = setTimeout(() => {
+      const url = articleImageUrlInput.value.trim();
+      const urlPreviewFallback = document.getElementById('url-preview-fallback');
+      if (url && (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('/'))) {
+        if (urlPreviewThumb) {
+          urlPreviewThumb.referrerPolicy = 'no-referrer';
+          urlPreviewThumb.classList.remove('hidden');
+          if (urlPreviewFallback) urlPreviewFallback.classList.add('hidden');
+
+          urlPreviewThumb.onload = () => {
+            urlPreviewThumb.classList.remove('hidden');
+            if (urlPreviewFallback) urlPreviewFallback.classList.add('hidden');
+          };
+          urlPreviewThumb.onerror = () => {
+            urlPreviewThumb.classList.add('hidden');
+            if (urlPreviewFallback) urlPreviewFallback.classList.remove('hidden');
+          };
+          urlPreviewThumb.src = url;
+        }
+        urlPreviewContainer?.classList.remove('hidden');
+      } else {
+        urlPreviewContainer?.classList.add('hidden');
+        if (urlPreviewThumb) urlPreviewThumb.src = '';
+      }
+    }, 250);
   });
 
   async function loadMediaLibrary() {
@@ -6151,8 +7151,12 @@ ${mdContent}
       }
 
       card.innerHTML = `
-        <div class="h-24 bg-slate-100 flex items-center justify-center overflow-hidden">
-          <img src="${item.url}" alt="${item.filename}" class="w-full h-full object-cover group-hover:scale-105 transition duration-150" loading="lazy" />
+        <div class="h-24 bg-slate-100 flex items-center justify-center overflow-hidden relative">
+          <img src="${item.url}" alt="${item.filename}" referrerpolicy="no-referrer" class="w-full h-full object-cover group-hover:scale-105 transition duration-150 block" loading="lazy" onerror="this.onerror=null; this.classList.add('hidden'); if(this.nextElementSibling) this.nextElementSibling.classList.remove('hidden');" />
+          <div class="hidden absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-slate-100 text-slate-400 text-xs">
+            <span>🖼️</span>
+            <span class="text-[9px] text-slate-400">Unavailable</span>
+          </div>
         </div>
         <div class="p-1.5 bg-white text-[10px] text-slate-700 truncate" title="${item.filename}">
           ${item.filename}
@@ -6610,11 +7614,280 @@ ${mdContent}
     }
   });
 
+  // ==========================================
+  // Image Single-Click Popover & Sidebar Synchronizer
+  // ==========================================
+  const imageClickPopover = document.getElementById('image-click-popover');
+  const imgPopoverAltInput = document.getElementById('img-popover-alt-input') as HTMLInputElement | null;
+  const imgPopoverKeywordBadge = document.getElementById('img-popover-keyword-badge');
+  const imgPopoverInsertKwBtn = document.getElementById('img-popover-insert-kw-btn');
+  const imgPopoverCloseBtn = document.getElementById('img-popover-close-btn');
+  const imgPopoverMoreBtn = document.getElementById('img-popover-more-btn');
+  let activeClickedImgEl: HTMLImageElement | null = null;
+
+  function getArticleFocusKeywords(): string[] {
+    const title = (document.getElementById('field-title') as HTMLInputElement | null)?.value || '';
+    const clean = title.replace(/[^\w\s\u0900-\u097F]/gi, ' ').trim();
+    const words = clean.split(/\s+/).filter((w) => w.length >= 4);
+    return Array.from(new Set(words));
+  }
+
+  function evaluateAltKeywordHealth(alt: string): { status: 'good' | 'warning' | 'bad'; label: string } {
+    if (!alt || !alt.trim()) {
+      return { status: 'bad', label: 'Missing Alt Tag' };
+    }
+    const keywords = getArticleFocusKeywords();
+    const hasKeyword = keywords.some((kw) => alt.toLowerCase().includes(kw.toLowerCase()));
+    if (hasKeyword && alt.trim().length >= 15) {
+      return { status: 'good', label: '✓ Keyword Optimized' };
+    }
+    return { status: 'warning', label: 'Add Focus Keyword' };
+  }
+
+  function updatePopoverKeywordBadge(alt: string) {
+    if (!imgPopoverKeywordBadge) return;
+    const health = evaluateAltKeywordHealth(alt);
+    if (health.status === 'good') {
+      imgPopoverKeywordBadge.className = 'px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+      imgPopoverKeywordBadge.textContent = health.label;
+    } else if (health.status === 'warning') {
+      imgPopoverKeywordBadge.className = 'px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-50 text-amber-700 border border-amber-200';
+      imgPopoverKeywordBadge.textContent = health.label;
+    } else {
+      imgPopoverKeywordBadge.className = 'px-1.5 py-0.5 rounded text-[9px] font-semibold bg-red-50 text-red-700 border border-red-200';
+      imgPopoverKeywordBadge.textContent = health.label;
+    }
+  }
+
+  function showImageClickPopover(img: HTMLImageElement) {
+    if (!imageClickPopover) return;
+    activeClickedImgEl = img;
+    const rect = img.getBoundingClientRect();
+    
+    // Position popover right above the image, or below if near top
+    const popoverWidth = 320;
+    let left = rect.left + window.scrollX;
+    if (left + popoverWidth > window.innerWidth - 20) {
+      left = window.innerWidth - popoverWidth - 20;
+    }
+    if (left < 10) left = 10;
+
+    let top = rect.top + window.scrollY - 110;
+    if (top < 70) {
+      top = rect.bottom + window.scrollY + 10;
+    }
+
+    imageClickPopover.style.top = `${top}px`;
+    imageClickPopover.style.left = `${left}px`;
+    imageClickPopover.classList.remove('hidden');
+
+    const currentAlt = img.alt || img.getAttribute('alt') || '';
+    if (imgPopoverAltInput) {
+      imgPopoverAltInput.value = currentAlt;
+    }
+    updatePopoverKeywordBadge(currentAlt);
+  }
+
+  function closeImageClickPopover() {
+    if (imageClickPopover) imageClickPopover.classList.add('hidden');
+    activeClickedImgEl = null;
+  }
+
+  imgPopoverCloseBtn?.addEventListener('click', closeImageClickPopover);
+
+  // Update alt text in real time as user types in the popover
+  imgPopoverAltInput?.addEventListener('input', () => {
+    if (!activeClickedImgEl) return;
+    const newAlt = imgPopoverAltInput.value;
+    activeClickedImgEl.alt = newAlt;
+    activeClickedImgEl.setAttribute('alt', newAlt);
+    updatePopoverKeywordBadge(newAlt);
+
+    // Sync TipTap Node
+    if (currentEditorMode === 'visual') {
+      editor.chain().focus().updateAttributes('image', { alt: newAlt }).run();
+      isDirty = true;
+      triggerAutosave();
+    }
+    refreshSidebarArticleImages();
+  });
+
+  // Insert Focus Keyword into popover alt input
+  imgPopoverInsertKwBtn?.addEventListener('click', () => {
+    if (!imgPopoverAltInput || !activeClickedImgEl) return;
+    const keywords = getArticleFocusKeywords();
+    const primary = keywords.slice(0, 3).join(' ');
+    if (primary) {
+      const current = imgPopoverAltInput.value.trim();
+      const updated = current ? `${current} - ${primary}` : `${primary} Official Chart & Details`;
+      imgPopoverAltInput.value = updated;
+      imgPopoverAltInput.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // Alignment buttons inside popover
+  document.querySelectorAll<HTMLButtonElement>('.img-popover-align-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const align = btn.dataset.align || 'center';
+      if (!activeClickedImgEl) return;
+      activeClickedImgEl.setAttribute('data-align', align);
+
+      if (currentEditorMode === 'visual') {
+        editor.chain().focus().updateAttributes('image', { align }).run();
+        isDirty = true;
+        triggerAutosave();
+      }
+      refreshSidebarArticleImages();
+      showImageClickPopover(activeClickedImgEl);
+    });
+  });
+
+  imgPopoverMoreBtn?.addEventListener('click', () => {
+    closeImageClickPopover();
+    openImageMetaModal();
+  });
+
+  // Single click on image in editor to trigger popover
+  editorElement?.addEventListener('click', (event) => {
+    const img = (event.target as HTMLElement | null)?.closest('img');
+    if (img && currentEditorMode === 'visual') {
+      showImageClickPopover(img as HTMLImageElement);
+    } else if (!event.target?.closest('#image-click-popover')) {
+      closeImageClickPopover();
+    }
+  });
+
   // Double click on image to open metadata modal directly
   editorElement?.addEventListener('dblclick', (event) => {
     const img = (event.target as HTMLElement | null)?.closest('img');
     if (!img || currentEditorMode !== 'visual') return;
+    closeImageClickPopover();
     openImageMetaModal();
+  });
+
+  // ==========================================
+  // Right Sidebar: Article Images & Alt Manager
+  // ==========================================
+  const sidebarArticleImagesCount = document.getElementById('sidebar-article-images-count');
+  const sidebarImagesSeoBadge = document.getElementById('sidebar-images-seo-badge');
+  const sidebarArticleImagesList = document.getElementById('sidebar-article-images-list');
+  const sidebarInsertImageTrigger = document.getElementById('sidebar-insert-image-trigger');
+
+  function refreshSidebarArticleImages() {
+    if (!sidebarArticleImagesList) return;
+    const images: Array<{ src: string; alt: string; align: string; el: HTMLImageElement }> = [];
+
+    if (currentEditorMode === 'visual') {
+      editor.view.dom.querySelectorAll('img').forEach((img) => {
+        if (!img.src || img.src.includes('data:image/svg+xml')) return;
+        images.push({
+          src: img.src,
+          alt: img.alt || img.getAttribute('alt') || '',
+          align: img.getAttribute('data-align') || 'center',
+          el: img as HTMLImageElement,
+        });
+      });
+    }
+
+    if (sidebarArticleImagesCount) {
+      sidebarArticleImagesCount.textContent = String(images.length);
+    }
+
+    if (images.length === 0) {
+      sidebarArticleImagesList.innerHTML = '<p class="text-xs text-slate-400 text-center py-4">No content images in document yet.</p>';
+      if (sidebarImagesSeoBadge) {
+        sidebarImagesSeoBadge.className = 'ml-auto text-[10px] px-1.5 py-0.5 rounded font-semibold bg-slate-100 text-slate-500';
+        sidebarImagesSeoBadge.textContent = '0 Images';
+      }
+      return;
+    }
+
+    let optimizedCount = 0;
+    sidebarArticleImagesList.innerHTML = '';
+
+    images.forEach((imgObj, idx) => {
+      const health = evaluateAltKeywordHealth(imgObj.alt);
+      if (health.status === 'good') optimizedCount++;
+
+      const itemCard = document.createElement('div');
+      itemCard.className = 'p-2.5 bg-slate-50/80 hover:bg-slate-50 border border-slate-200 rounded-lg space-y-2 transition text-xs';
+
+      let badgeClass = 'bg-red-50 text-red-700 border-red-200';
+      if (health.status === 'good') badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      else if (health.status === 'warning') badgeClass = 'bg-amber-50 text-amber-700 border-amber-200';
+
+      itemCard.innerHTML = `
+        <div class="flex items-center gap-2">
+          <div class="w-10 h-10 rounded overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center relative">
+            <img src="${imgObj.src}" referrerpolicy="no-referrer" loading="lazy" class="w-full h-full object-cover block" alt="" onerror="this.onerror=null; this.classList.add('hidden'); if(this.nextElementSibling) this.nextElementSibling.classList.remove('hidden');" />
+            <div class="hidden absolute inset-0 w-full h-full flex items-center justify-center bg-slate-100 text-slate-400 text-xs select-none">🖼️</div>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-[11px] font-semibold text-slate-800">Image #${idx + 1}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded font-semibold border ${badgeClass}">${health.label}</span>
+            </div>
+            <span class="text-[10px] text-slate-400 font-mono block truncate">${imgObj.src.split('/').pop() || 'Image'}</span>
+          </div>
+          <button type="button" class="sidebar-jump-img-btn p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded cursor-pointer transition" title="Scroll to image in editor">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+        <div>
+          <input 
+            type="text" 
+            value="${imgObj.alt.replace(/"/g, '&quot;')}" 
+            placeholder="Add descriptive alt tag with focus keywords..." 
+            class="sidebar-img-alt-field w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
+          />
+        </div>
+      `;
+
+      // Jump to image click
+      itemCard.querySelector('.sidebar-jump-img-btn')?.addEventListener('click', () => {
+        imgObj.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        imgObj.el.classList.add('ring-4', 'ring-blue-500/50');
+        setTimeout(() => imgObj.el.classList.remove('ring-4', 'ring-blue-500/50'), 1500);
+        showImageClickPopover(imgObj.el);
+      });
+
+      // Alt input edit from sidebar
+      const altField = itemCard.querySelector<HTMLInputElement>('.sidebar-img-alt-field');
+      altField?.addEventListener('input', () => {
+        const val = altField.value;
+        imgObj.el.alt = val;
+        imgObj.el.setAttribute('alt', val);
+        if (currentEditorMode === 'visual') {
+          editor.chain().focus().updateAttributes('image', { alt: val }).run();
+          isDirty = true;
+          triggerAutosave();
+        }
+      });
+
+      sidebarArticleImagesList.appendChild(itemCard);
+    });
+
+    if (sidebarImagesSeoBadge) {
+      if (optimizedCount === images.length) {
+        sidebarImagesSeoBadge.className = 'ml-auto text-[10px] px-1.5 py-0.5 rounded font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+        sidebarImagesSeoBadge.textContent = `${optimizedCount}/${images.length} Alt SEO`;
+      } else {
+        sidebarImagesSeoBadge.className = 'ml-auto text-[10px] px-1.5 py-0.5 rounded font-semibold bg-amber-50 text-amber-700 border border-amber-200';
+        sidebarImagesSeoBadge.textContent = `${optimizedCount}/${images.length} Alt SEO`;
+      }
+    }
+  }
+
+  // Hook sidebar refresh into editor update and image modal
+  editor.on('update', refreshSidebarArticleImages);
+  setTimeout(refreshSidebarArticleImages, 1000);
+
+  sidebarInsertImageTrigger?.addEventListener('click', () => {
+    openMediaLibraryModal();
   });
 
   // ==========================================
@@ -7076,18 +8349,12 @@ ${mdContent}
     if (descCharEl) descCharEl.textContent = `${metaDesc.length}/160`;
 
     // Featured Image Preview
-    const coverUrl = coverImageInput?.value.trim();
-    if (coverUrl && imagePreviewBox && imagePreviewEl) {
-      imagePreviewEl.src = coverUrl;
-      imagePreviewBox.classList.remove('hidden');
-    } else if (imagePreviewBox) {
-      imagePreviewBox.classList.add('hidden');
-    }
+    updateCoverPreview(coverImageInput?.value.trim());
   }
 
   document.getElementById('remove-cover-btn')?.addEventListener('click', () => {
     if (coverImageInput) coverImageInput.value = '';
-    imagePreviewBox?.classList.add('hidden');
+    updateCoverPreview('');
     triggerAutosave();
   });
 
@@ -7114,7 +8381,14 @@ ${mdContent}
   metaTitleInput?.addEventListener('input', updateSerp);
   metaDescInput?.addEventListener('input', updateSerp);
   categorySelect?.addEventListener('change', updateSerp);
-  coverImageInput?.addEventListener('input', updateSerp);
+  coverImageInput?.addEventListener('input', () => {
+    updateCoverPreview(coverImageInput.value);
+    updateSerp();
+  });
+  coverImageInput?.addEventListener('change', () => {
+    updateCoverPreview(coverImageInput.value);
+    updateSerp();
+  });
 
   // Autosave
   let autosaveTimer: any = null;

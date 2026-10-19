@@ -68,72 +68,156 @@ function extractCandidateText(data: unknown): string | undefined {
 @Injectable()
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name);
-  private readonly candidateModels = [
-    env.GEMINI_MODEL,
-  ].filter((m): m is string => Boolean(m));
 
-  private getApiKey(): string {
-    const key = env.GEMINI_API_KEY;
-    if (!key) {
+  private getCandidateModels(): string[] {
+    const configuredFallback = env.GEMINI_FALLBACK_MODELS
+      ? env.GEMINI_FALLBACK_MODELS.split(',').map((s) => s.trim()).filter(Boolean)
+      : [];
+    const defaultChain = [
+      env.GEMINI_MODEL,
+      ...configuredFallback,
+      'gemini-3.8-flash',
+      'gemini-3.7-flash',
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-3.1-pro-preview',
+      'gemini-flash-latest',
+      'gemini-pro-latest',
+    ].filter((m): m is string => Boolean(m));
+    return Array.from(new Set(defaultChain));
+  }
+
+  private getApiKeys(): string[] {
+    const keys = [env.GEMINI_API_KEY, env.GEMINI_BACKUP_API_KEY].filter((k): k is string => Boolean(k));
+    if (keys.length === 0) {
       throw new BadRequestException(
         'GEMINI_API_KEY is not configured in server environment. Please set GEMINI_API_KEY in apps/server/.env',
       );
     }
-    return key;
+    return keys;
   }
 
-  private async callGemini(systemPrompt: string, userPrompt: string): Promise<string> {
-    const apiKey = this.getApiKey();
+  private lastUsedModel = 'gemini-3.8-flash';
+
+  public getLastUsedModel(): string {
+    return this.lastUsedModel;
+  }
+
+  private async callGemini(
+    systemPrompt: string,
+    userPrompt: string,
+    images?: Array<{ mimeType: string; data: string; url?: string }>,
+    onModelSwitch?: (model: string) => void,
+    requestedModel?: string,
+  ): Promise<string> {
+    const apiKeys = this.getApiKeys();
+    // When a model is manually chosen by the user, strictly use that model without silently auto-switching
+    const candidateModels = requestedModel ? [requestedModel] : this.getCandidateModels();
     let lastError = '';
 
-    for (const model of this.candidateModels) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    for (const apiKey of apiKeys) {
+      for (const model of candidateModels) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-      const body = {
-        systemInstruction: {
-          parts: [{ text: systemPrompt }],
-        },
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: userPrompt }],
-          },
-        ],
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.2,
-        },
-      };
+        const parts: any[] = [{ text: userPrompt }];
 
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(body),
-        });
-
-        if (response.ok) {
-          const data: unknown = await response.json();
-          const candidateText = extractCandidateText(data);
-          if (candidateText) return candidateText;
-
-          lastError = `Model ${model} returned a successful response without candidate text.`;
-          this.logger.warn(lastError);
-          continue;
+        // Multimodal image support: inject base64 inlineData if provided
+        if (images && images.length > 0) {
+          for (const img of images) {
+            if (img.data && img.mimeType) {
+              const cleanBase64 = img.data.replace(/^data:image\/\w+;base64,/, '').trim();
+              if (cleanBase64) {
+                parts.push({
+                  inlineData: {
+                    mimeType: img.mimeType,
+                    data: cleanBase64,
+                  },
+                });
+              }
+            }
+          }
         }
 
-        const errorText = await response.text();
-        lastError = `Model ${model} returned (${response.status}): ${errorText.slice(0, 300)}`;
-        this.logger.warn(`Gemini try failed with ${model}: ${lastError}. Trying next candidate if available...`);
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : String(err);
-        lastError = `Network/fetch failed with ${model}: ${message}`;
+        const body = {
+          systemInstruction: {
+            parts: [{ text: systemPrompt }],
+          },
+          contents: [
+            {
+              role: 'user',
+              parts,
+            },
+          ],
+          generationConfig: {
+            responseMimeType: 'application/json',
+            temperature: 0.2,
+          },
+        };
+
+        const maxRetries = requestedModel ? 2 : 1;
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+          try {
+            this.logger.log(`Calling Gemini API using model: ${model} (attempt ${attempt}/${maxRetries})...`);
+            onModelSwitch?.(model);
+
+            const response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(body),
+            });
+
+            if (response.ok) {
+              const data: unknown = await response.json();
+              const candidateText = extractCandidateText(data);
+              if (candidateText) {
+                this.lastUsedModel = model;
+                return candidateText;
+              }
+
+              lastError = `Model ${model} returned a successful response without candidate text.`;
+              this.logger.warn(lastError);
+              break;
+            }
+
+            const errorText = await response.text();
+            lastError = `Model ${model} returned (${response.status}): ${errorText.slice(0, 300)}`;
+
+            // On rate limits (429) or high traffic / temporary unavailable (503 / 504 / 500)
+            if (response.status === 429 || response.status === 503 || response.status === 504 || response.status === 500) {
+              if (attempt < maxRetries) {
+                this.logger.warn(
+                  `Gemini temporary encounter on ${model} (${response.status}). Retrying attempt ${attempt + 1}/${maxRetries} after backoff...`,
+                );
+                await new Promise((r) => setTimeout(r, 1200 * attempt));
+                continue;
+              } else if (requestedModel) {
+                // If user selected this model specifically, don't auto-switch! Report clearly
+                throw new BadRequestException(
+                  `Google Model "${model}" is temporarily under high peak traffic (HTTP ${response.status}). Please select another model from the dropdown (e.g. Gemini 3.5 Flash or Gemini 3.1 Pro) and retry.`,
+                );
+              }
+            }
+
+            this.logger.warn(`Gemini try failed with ${model}: ${lastError}. Trying next candidate...`);
+            break;
+          } catch (err: unknown) {
+            if (err instanceof BadRequestException) throw err;
+            const message = err instanceof Error ? err.message : String(err);
+            lastError = `Network/fetch failed with ${model}: ${message}`;
+            if (attempt < maxRetries) {
+              await new Promise((r) => setTimeout(r, 1000 * attempt));
+              continue;
+            }
+            this.logger.warn(`${lastError}. Trying next candidate...`);
+            break;
+          }
+        }
       }
     }
 
-    throw new BadRequestException(`Gemini API request failed: ${lastError}`);
+    throw new BadRequestException(`Gemini API request failed on ${requestedModel || 'all candidate models'}: ${lastError}`);
   }
 
   /**
@@ -378,11 +462,16 @@ Return ONLY valid JSON:
    * Generate complete bilingual blog (Hinglish + English) + SEO from a reference article.
    * Input can be raw text, Markdown, or HTML — Gemini normalises and rewrites fresh content.
    */
-  async generateBilingualFromReference(input: {
-    referenceContent: string;
-    category?: string;
-    additionalInstructions?: string;
-  }): Promise<{
+  async generateBilingualFromReference(
+    input: {
+      referenceContent: string;
+      category?: string;
+      additionalInstructions?: string;
+      images?: Array<{ url: string; base64?: string; mimeType?: string; altText?: string }>;
+      model?: string;
+    },
+    onStage?: (stage: string, message: string) => void,
+  ): Promise<{
     hinglish: {
       title: string;
       slug: string;
@@ -403,11 +492,36 @@ Return ONLY valid JSON:
     };
     seoScore: number;
     detectedCategory?: string;
+    modelUsed: string;
   }> {
+    onStage?.('INGEST', 'Validating reference content and uploaded images...');
+
+    const validImages = (input.images || []).filter((img) => img && (img.url || img.base64));
+
+    let imageInstructions = '';
+    if (validImages.length > 0) {
+      onStage?.('VISION', `Analyzing ${validImages.length} attached image(s) with Gemini Vision...`);
+      imageInstructions = `
+══════════════════════════════════════════════════════════════════════════════
+3. MULTIMODAL CONTEXTUAL IMAGE PLACEMENT & KEYWORD-RICH ALT TAGS (MANDATORY)
+══════════════════════════════════════════════════════════════════════════════
+The author provided ${validImages.length} image(s) for this article:
+${validImages.map((img, i) => `Image ${i + 1}: ${img.url || 'Reference Image'} ${img.altText ? `(Author Alt/Keyword Hint: "${img.altText}")` : ''}`).join('\n')}
+
+INSTRUCTIONS FOR IMAGES:
+1. Inspect what each image represents (e.g. Exam Pattern, Syllabus Breakdown, Important Dates Table, Salary Structure, Official Notification snippet).
+2. Intelligently place each image into BOTH the Hinglish and English versions at the exact point in the article flow where it provides the maximum clarity and visual engagement.
+3. CRITICAL SEO REQUIREMENT: Create a rich, keyword-optimized alt tag that incorporates the author's hint and primary focus keyword/exam name (e.g. alt="SSC CGL 2026 Tier 1 Exam Pattern and Marking Scheme Chart"). Do NOT use generic alt tags like "image" or "chart".
+4. Render each image inside the markdown/HTML content using this exact responsive structure:
+<figure class="article-figure" data-align="center" data-layout="full"><img src="{EXACT_IMAGE_URL}" alt="{DESCRIPTIVE_ALT_WITH_FOCUS_KEYWORDS}" width="700" height="400" data-align="center" data-layout="full" class="article-media" /><figcaption class="text-xs text-center text-slate-500 mt-2">{Helpful Caption}</figcaption></figure>
+5. Every provided image URL MUST be placed.
+`;
+    }
+
     const systemPrompt = `You are an elite bilingual content writer and SEO specialist for an Indian government exam portal, strictly following the editorial format of top Indian education websites like BiharHelp.in and SarkariResult.com.
 
 Your task: Read the REFERENCE article (notification PDF, syllabus, or competitor post) and REWRITE it as TWO complete, publication-ready, search-engine-dominating blog articles.
-
+${imageInstructions}
 ══════════════════════════════════════════════════════════════════════════════
 1. HINDI / HINGLISH VERSION (DEVANAGARI + ENGLISH KEYWORDS — BiharHelp & SarkariResult Style)
 ══════════════════════════════════════════════════════════════════════════════
@@ -494,9 +608,33 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       referenceContent: input.referenceContent.slice(0, 20000),
       category: input.category || 'auto-detect',
       additionalInstructions: input.additionalInstructions || '',
+      attachedImages: validImages.map((img, i) => ({
+        index: i + 1,
+        url: img.url,
+      })),
     });
 
-    const rawJson = await this.callGemini(systemPrompt, userPrompt);
+    onStage?.('DRAFTING', 'Generating bilingual articles & intelligent image placements...');
+
+    const imageParts = validImages.map((img) => ({
+      mimeType: img.mimeType || 'image/jpeg',
+      data: img.base64 || '',
+      url: img.url,
+    }));
+
+    const requestedModel = input.model || 'gemini-3.8-flash';
+    const rawJson = await this.callGemini(
+      systemPrompt,
+      userPrompt,
+      imageParts,
+      (switchingModel) => {
+        onStage?.('MODEL_SWITCH', `Engaging model: ${switchingModel}...`);
+      },
+      requestedModel,
+    );
+
+    onStage?.('FINALIZING', 'Parsing structure and validating keyword density...');
+
     try {
       const cleaned = rawJson.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
       const parsed = JSON.parse(cleaned);
@@ -521,6 +659,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
         },
         seoScore: typeof parsed.seoScore === 'number' ? parsed.seoScore : 75,
         detectedCategory: parsed.detectedCategory || input.category,
+        modelUsed: this.lastUsedModel,
       };
     } catch (err) {
       this.logger.error('Failed to parse Gemini generate-from-reference response', err);

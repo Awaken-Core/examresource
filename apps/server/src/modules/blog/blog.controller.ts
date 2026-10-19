@@ -10,8 +10,9 @@ import {
   Post,
   Query,
   Req,
+  Res,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import type { z } from 'zod';
 import { AuthService } from '../auth/auth.service.js';
 import { BlogService } from './blog.service.js';
@@ -197,12 +198,64 @@ export class BlogController {
     if (!body.referenceContent || typeof body.referenceContent !== 'string' || body.referenceContent.trim().length < 50) {
       throw new BadRequestException('referenceContent must be at least 50 characters.');
     }
-    await this.currentUser(req); // Auth guard — must be logged in
+    const currentUser = await this.currentUser(req); // Auth guard — must be logged in
+    const requestedModel = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : undefined;
     return this.blogs.generateBilingualFromReference({
       referenceContent: body.referenceContent,
       category: body.category,
       additionalInstructions: body.additionalInstructions,
-    });
+      images: Array.isArray(body.images) ? body.images : undefined,
+      model: requestedModel,
+    }, currentUser);
+  }
+
+  @Post('blogs/generate-from-reference/stream')
+  async generateFromReferenceStream(@Req() req: Request, @Res() res: Response) {
+    const body = (req.body as any) || {};
+    if (!body.referenceContent || typeof body.referenceContent !== 'string' || body.referenceContent.trim().length < 50) {
+      res.status(400).json({ message: 'referenceContent must be at least 50 characters.' });
+      return;
+    }
+    const currentUser = await this.currentUser(req);
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    if (typeof (res as any).flushHeaders === 'function') {
+      (res as any).flushHeaders();
+    }
+
+    const sendEvent = (eventData: any) => {
+      res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+      if (typeof (res as any).flush === 'function') {
+        (res as any).flush();
+      }
+    };
+
+    const requestedModel = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : 'gemini-3.8-flash';
+    sendEvent({ type: 'stage', stage: 'CONNECTED', message: `Connected to pipeline. Selected Model: ${requestedModel}` });
+
+    try {
+      const result = await this.blogs.generateBilingualFromReference(
+        {
+          referenceContent: body.referenceContent,
+          category: body.category,
+          additionalInstructions: body.additionalInstructions,
+          images: Array.isArray(body.images) ? body.images : undefined,
+          model: requestedModel,
+        },
+        currentUser,
+        (stage, message) => {
+          sendEvent({ type: 'stage', stage, message });
+        },
+      );
+
+      sendEvent({ type: 'complete', result });
+      res.end();
+    } catch (err: any) {
+      sendEvent({ type: 'error', message: err?.message || 'AI Generation failed. Please try again.' });
+      res.end();
+    }
   }
 
   @Patch('blogs/:id')

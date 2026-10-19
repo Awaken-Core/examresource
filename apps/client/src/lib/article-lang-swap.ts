@@ -107,7 +107,8 @@ export function swapArticleLanguage(lang: string): boolean {
   const ogDesc = document.querySelector('meta[property="og:description"]');
   if (ogDesc) ogDesc.setAttribute('content', version.pageDescription);
 
-  history.pushState({ articleLang: normalized }, '', version.url);
+  // Keep the exact same clean URL without ?lang=en or /language extension
+  history.replaceState({ articleLang: normalized }, '', window.location.pathname);
 
   document.querySelectorAll<HTMLElement>('[data-article-lang]').forEach((el) => {
     el.setAttribute('data-article-lang', normalized);

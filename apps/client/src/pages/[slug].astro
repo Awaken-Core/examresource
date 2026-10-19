@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import BlogArticle from '../components/blog/BlogArticle.astro';
 import TopicNavigation from '../components/blog/TopicNavigation.astro';
 import AdSlot from '../components/blog/AdSlot.astro';
@@ -360,15 +361,15 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
           <article id="article-body" class="space-y-6" transition:name="article-body">
             {livePost.coverImage && (
               <figure class="my-2" data-article-cover>
-                <img
+                <Image
                   src={livePost.coverImage}
                   alt={livePost.imageAlt || article.title}
                   class="max-h-[28rem] w-full rounded-xl border border-border object-cover"
                   loading="eager"
                   fetchpriority="high"
                   decoding="async"
-                  width="800"
-                  height="420"
+                  width={800}
+                  height={420}
                 />
                 {livePost.imageCaption && (
                   <figcaption class="mt-2 text-center text-xs text-muted">{livePost.imageCaption}</figcaption>

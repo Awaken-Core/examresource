@@ -87,5 +87,7 @@ export const ArticleImage = Image.extend({
   },
   HTMLAttributes: {
     class: 'article-media',
+    referrerpolicy: 'no-referrer',
+    loading: 'lazy',
   },
 });
