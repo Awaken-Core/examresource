@@ -26,15 +26,101 @@ export interface BlockRecord {
   metadata?: Record<string, unknown> | null;
 }
 
+function parseBlockFromTag(
+  tagName: string,
+  attributes: string,
+  innerContent: string,
+): BlockRecord | null {
+  if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
+    const level = tagName[1];
+    const type = `HEADING_${level}` as BlockRecord['type'];
+    return { type, value: stripTags(innerContent) };
+  }
+
+  switch (tagName) {
+    case 'blockquote':
+      return { type: 'QUOTE', value: innerContent };
+    case 'pre': {
+      const langMatch = /class=["'][^"']*language-([a-z0-9_-]+)[^"']*["']/i.exec(attributes);
+      const language = langMatch ? langMatch[1] : 'plaintext';
+      return {
+        type: 'CODE',
+        value: stripTags(innerContent),
+        metadata: { language },
+      };
+    }
+    case 'ul': {
+      const bulletMatch = /data-bullet=["'](disc|circle|square)["']/i.exec(attributes);
+      return {
+        type: 'BULLET_LIST',
+        value: innerContent,
+        metadata: { bullet: bulletMatch ? bulletMatch[1].toLowerCase() : 'disc' },
+      };
+    }
+    case 'figure':
+      return readImageTag(innerContent);
+    case 'ol':
+      return { type: 'NUMBERED_LIST', value: innerContent };
+    case 'hr':
+      return { type: 'DIVIDER', value: '' };
+    case 'img':
+      return readImageTag(`<img${attributes}>`);
+    case 'table':
+      return { type: 'TABLE', value: innerContent };
+    case 'iframe': {
+      const srcMatch = /src=["']([^"']+)["']/i.exec(attributes);
+      if (srcMatch) {
+        return {
+          type: 'VIDEO',
+          value: srcMatch[1],
+          metadata: { embedUrl: srcMatch[1] },
+        };
+      }
+      return null;
+    }
+    case 'div': {
+      if (attributes.includes('callout') || attributes.includes('alert') || attributes.includes('important-note')) {
+        return { type: 'CALLOUT', value: innerContent };
+      }
+      return innerContent ? { type: 'PARAGRAPH', value: innerContent } : null;
+    }
+    case 'p':
+    default: {
+      const onlyCode = /^<code([^>]*)>([\s\S]*?)<\/code>$/i.exec(innerContent);
+      if (tagName === 'p' && onlyCode) {
+        const langMatch = /language-([a-z0-9_+-]+)/i.exec(onlyCode[1]);
+        const codeText = stripTags(onlyCode[2]);
+        return {
+          type: 'CODE',
+          value: codeText,
+          metadata: { language: langMatch?.[1] || guessCodeLanguage(codeText) },
+        };
+      }
+      if (innerContent.startsWith('<img')) {
+        const srcMatch = /src=["']([^"']+)["']/i.exec(innerContent);
+        const altMatch = /alt=["']([^"']*)["']/i.exec(innerContent);
+        if (srcMatch) {
+          return {
+            type: 'IMAGE',
+            value: srcMatch[1],
+            metadata: { alt: altMatch ? altMatch[1] : '' },
+          };
+        }
+      }
+      return innerContent ? { type: 'PARAGRAPH', value: innerContent } : null;
+    }
+  }
+}
+
 /**
  * Parses raw HTML (e.g. from TipTap) into typed structured blocks.
  */
 export function htmlToBlocks(html: string): BlockRecord[] {
-  if (!html || !html.trim()) return [];
+  if (!html?.trim()) return [];
 
   const blocks: BlockRecord[] = [];
   // Clean comments and normalize carriage returns
-  const cleanHtml = html.replace(/<!--[\s\S]*?-->/g, '').replace(/\r\n/g, '\n');
+  const cleanHtml = html.replaceAll('\r\n', '\n').replace(/<!--[\s\S]*?-->/g, '');
 
   // Match top-level HTML tags
   const tagRegex = /<(h[1-6]|p|blockquote|pre|ul|ol|hr|figure|img|table|iframe|div)([^>]*)>([\s\S]*?)<\/\1>|<(img|hr)([^>]*)\/?>/gi;
@@ -46,120 +132,9 @@ export function htmlToBlocks(html: string): BlockRecord[] {
     const attributes = match[2] || match[5] || '';
     const innerContent = (match[3] || '').trim();
 
-    switch (tagName) {
-      case 'h1':
-        blocks.push({ type: 'HEADING_1', value: stripTags(innerContent) });
-        break;
-      case 'h2':
-        blocks.push({ type: 'HEADING_2', value: stripTags(innerContent) });
-        break;
-      case 'h3':
-        blocks.push({ type: 'HEADING_3', value: stripTags(innerContent) });
-        break;
-      case 'h4':
-        blocks.push({ type: 'HEADING_4', value: stripTags(innerContent) });
-        break;
-      case 'h5':
-        blocks.push({ type: 'HEADING_5', value: stripTags(innerContent) });
-        break;
-      case 'h6':
-        blocks.push({ type: 'HEADING_6', value: stripTags(innerContent) });
-        break;
-      case 'blockquote':
-        blocks.push({ type: 'QUOTE', value: innerContent });
-        break;
-      case 'pre': {
-        const langMatch = attributes.match(/class=["'][^"']*language-([a-zA-Z0-9_-]+)[^"']*["']/i);
-        const language = langMatch ? langMatch[1] : 'plaintext';
-        const codeText = stripTags(innerContent);
-        blocks.push({
-          type: 'CODE',
-          value: codeText,
-          metadata: { language },
-        });
-        break;
-      }
-      case 'ul': {
-        const bulletMatch = attributes.match(/data-bullet=["'](disc|circle|square)["']/i);
-        blocks.push({
-          type: 'BULLET_LIST',
-          value: innerContent,
-          metadata: { bullet: bulletMatch ? bulletMatch[1].toLowerCase() : 'disc' },
-        });
-        break;
-      }
-      case 'figure': {
-        const image = readImageTag(innerContent);
-        if (image) blocks.push(image);
-        break;
-      }
-      case 'ol':
-        blocks.push({ type: 'NUMBERED_LIST', value: innerContent });
-        break;
-      case 'hr':
-        blocks.push({ type: 'DIVIDER', value: '' });
-        break;
-      case 'img': {
-        const image = readImageTag(`<img${attributes}>`);
-        if (image) blocks.push(image);
-        break;
-      }
-      case 'table':
-        blocks.push({ type: 'TABLE', value: innerContent });
-        break;
-      case 'iframe': {
-        const srcMatch = attributes.match(/src=["']([^"']+)["']/i);
-        if (srcMatch) {
-          blocks.push({
-            type: 'VIDEO',
-            value: srcMatch[1],
-            metadata: { embedUrl: srcMatch[1] },
-          });
-        }
-        break;
-      }
-      case 'div': {
-        if (attributes.includes('callout') || attributes.includes('alert') || attributes.includes('important-note')) {
-          blocks.push({ type: 'CALLOUT', value: innerContent });
-          break;
-        }
-        if (innerContent) {
-          blocks.push({ type: 'PARAGRAPH', value: innerContent });
-        }
-        break;
-      }
-      case 'p':
-      default: {
-        const onlyCode = innerContent.match(/^<code([^>]*)>([\s\S]*?)<\/code>$/i);
-        if (tagName === 'p' && onlyCode) {
-          const langMatch = onlyCode[1].match(/language-([a-zA-Z0-9_+-]+)/i);
-          const codeText = stripTags(onlyCode[2]);
-          blocks.push({
-            type: 'CODE',
-            value: codeText,
-            metadata: { language: langMatch?.[1] || guessCodeLanguage(codeText) },
-          });
-          break;
-        }
-        // If image is inside p
-        const imgInside = attributes.match(/src=["']([^"']+)["']/i) || innerContent.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i);
-        if (imgInside && innerContent.startsWith('<img')) {
-          const srcMatch = innerContent.match(/src=["']([^"']+)["']/i);
-          const altMatch = innerContent.match(/alt=["']([^"']*)["']/i);
-          if (srcMatch) {
-            blocks.push({
-              type: 'IMAGE',
-              value: srcMatch[1],
-              metadata: { alt: altMatch ? altMatch[1] : '' },
-            });
-            break;
-          }
-        }
-        if (innerContent) {
-          blocks.push({ type: 'PARAGRAPH', value: innerContent });
-        }
-        break;
-      }
+    const block = parseBlockFromTag(tagName, attributes, innerContent);
+    if (block) {
+      blocks.push(block);
     }
   }
 
@@ -171,93 +146,121 @@ export function htmlToBlocks(html: string): BlockRecord[] {
   return blocks;
 }
 
+function renderImageBlock(block: BlockRecord, meta: Record<string, unknown>): string {
+  const altRaw = cleanHtmlEntities((meta.alt as string) || '');
+  const caption = cleanHtmlEntities((meta.caption as string) || '');
+  const alt = (!altRaw || altRaw.toLowerCase().includes('pasted image') || altRaw.toLowerCase() === 'image')
+    ? escapeHtml(caption || 'Official examination notice and recruitment details')
+    : escapeHtml(altRaw);
+
+  const layouts = ['content', 'wide', 'full', 'left', 'center', 'right'];
+  const layout = layouts.includes(String(meta.layout)) ? String(meta.layout) : 'full';
+
+  let align = 'center';
+  if (['left', 'center', 'right'].includes(String(meta.align))) {
+    align = String(meta.align);
+  } else if (layout === 'left' || layout === 'right' || layout === 'center') {
+    align = layout;
+  }
+
+  const width = Number(meta.width);
+  const height = Number(meta.height);
+  const widthVal = Number.isFinite(width) && width >= 80 ? Math.round(width) : 800;
+  const heightVal = Number.isFinite(height) && height >= 40 ? Math.round(height) : Math.round((widthVal * 9) / 16);
+  const widthAttr = ` width="${widthVal}"`;
+  const heightAttr = ` height="${heightVal}"`;
+  const styleAttr = ` style="aspect-ratio: ${widthVal} / ${heightVal}; max-width: 100%;"`;
+  const figCaptionHtml = caption ? `<figcaption class="text-xs text-muted mt-1 text-center">${escapeHtml(caption)}</figcaption>` : '';
+
+  return `<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${escapeHtml(block.value)}" alt="${alt}" data-align="${align}" data-layout="${layout}"${widthAttr}${heightAttr}${styleAttr} loading="lazy" class="article-media rounded-lg h-auto" />${figCaptionHtml}</figure>`;
+}
+
+function renderSingleBlock(block: BlockRecord): string {
+  const meta = block.metadata || {};
+
+  switch (block.type) {
+    case 'HEADING_1':
+      return `<h1>${escapeHtml(block.value)}</h1>`;
+    case 'HEADING_2':
+      return `<h2 id="${slugify(block.value)}">${escapeHtml(block.value)}</h2>`;
+    case 'HEADING_3':
+      return `<h3 id="${slugify(block.value)}">${escapeHtml(block.value)}</h3>`;
+    case 'HEADING_4':
+      return `<h4 id="${slugify(block.value)}">${escapeHtml(block.value)}</h4>`;
+    case 'HEADING_5':
+      return `<h5>${escapeHtml(block.value)}</h5>`;
+    case 'HEADING_6':
+      return `<h6>${escapeHtml(block.value)}</h6>`;
+    case 'PARAGRAPH':
+      return `<p>${sanitizeInlineHtml(block.value)}</p>`;
+    case 'QUOTE':
+      return `<blockquote>${sanitizeInlineHtml(block.value)}</blockquote>`;
+    case 'CODE': {
+      const lang = (meta.language as string) || 'plaintext';
+      return `<pre class="language-${lang}"><code class="language-${lang}">${escapeHtml(block.value)}</code></pre>`;
+    }
+    case 'BULLET_LIST': {
+      const bullet = ['disc', 'circle', 'square'].includes(String(meta.bullet))
+        ? String(meta.bullet)
+        : 'disc';
+      return `<ul data-bullet="${bullet}">${sanitizeListHtml(block.value)}</ul>`;
+    }
+    case 'NUMBERED_LIST':
+      return `<ol>${sanitizeListHtml(block.value)}</ol>`;
+    case 'DIVIDER':
+      return `<hr class="my-6 border-border" />`;
+    case 'IMAGE':
+      return renderImageBlock(block, meta);
+    case 'VIDEO':
+      return `<div class="aspect-video my-4"><iframe src="${escapeHtml(block.value)}" class="w-full h-full rounded-lg" allowfullscreen></iframe></div>`;
+    case 'TABLE':
+      return `<div class="overflow-x-auto my-4"><table class="min-w-full border border-border">${sanitizeTableHtml(block.value)}</table></div>`;
+    case 'CALLOUT':
+      return `<div class="p-4 my-4 rounded-lg bg-blue-50/20 border-l-4 border-blue-500 text-sm leading-relaxed">${sanitizeInlineHtml(block.value)}</div>`;
+    default:
+      return `<p>${sanitizeInlineHtml(block.value)}</p>`;
+  }
+}
+
 /**
  * Converts structured blocks into sanitized semantic HTML for SSR and public reading.
  */
 export function blocksToHtml(blocks: BlockRecord[]): string {
-  if (!blocks || blocks.length === 0) return '';
+  if (!blocks?.length) return '';
 
-  return blocks
+  return [...blocks]
     .sort((a, b) => ((a as any).position ?? 0) - ((b as any).position ?? 0))
-    .map((block) => {
-      const meta = block.metadata || {};
-
-      switch (block.type) {
-        case 'HEADING_1':
-          return `<h1>${escapeHtml(block.value)}</h1>`;
-        case 'HEADING_2':
-          return `<h2 id="${slugify(block.value)}">${escapeHtml(block.value)}</h2>`;
-        case 'HEADING_3':
-          return `<h3 id="${slugify(block.value)}">${escapeHtml(block.value)}</h3>`;
-        case 'HEADING_4':
-          return `<h4 id="${slugify(block.value)}">${escapeHtml(block.value)}</h4>`;
-        case 'HEADING_5':
-          return `<h5>${escapeHtml(block.value)}</h5>`;
-        case 'HEADING_6':
-          return `<h6>${escapeHtml(block.value)}</h6>`;
-        case 'PARAGRAPH':
-          return `<p>${sanitizeInlineHtml(block.value)}</p>`;
-        case 'QUOTE':
-          return `<blockquote>${sanitizeInlineHtml(block.value)}</blockquote>`;
-        case 'CODE': {
-          const lang = (meta.language as string) || 'plaintext';
-          return `<pre class="language-${lang}"><code class="language-${lang}">${escapeHtml(block.value)}</code></pre>`;
-        }
-        case 'BULLET_LIST': {
-          const bullet = ['disc', 'circle', 'square'].includes(String(meta.bullet))
-            ? String(meta.bullet)
-            : 'disc';
-          return `<ul data-bullet="${bullet}">${sanitizeListHtml(block.value)}</ul>`;
-        }
-        case 'NUMBERED_LIST':
-          return `<ol>${sanitizeListHtml(block.value)}</ol>`;
-        case 'DIVIDER':
-          return `<hr class="my-6 border-border" />`;
-        case 'IMAGE': {
-          const altRaw = (meta.alt as string) || '';
-          const alt = (!altRaw || altRaw.toLowerCase().includes('pasted image') || altRaw.toLowerCase() === 'image')
-            ? escapeHtml((meta.caption as string) || 'Official examination notice and recruitment details')
-            : escapeHtml(altRaw);
-          const caption = (meta.caption as string) || '';
-          const layouts = ['content', 'wide', 'full', 'left', 'center', 'right'];
-          const layout = layouts.includes(String(meta.layout)) ? String(meta.layout) : 'full';
-          const align = ['left', 'center', 'right'].includes(String(meta.align))
-            ? String(meta.align)
-            : layout === 'left' || layout === 'right' || layout === 'center'
-              ? layout
-              : 'center';
-          const width = Number(meta.width);
-          const height = Number(meta.height);
-          const widthVal = Number.isFinite(width) && width >= 80 ? Math.round(width) : 800;
-          const heightVal = Number.isFinite(height) && height >= 40 ? Math.round(height) : Math.round((widthVal * 9) / 16);
-          const widthAttr = ` width="${widthVal}"`;
-          const heightAttr = ` height="${heightVal}"`;
-          const styleAttr = ` style="aspect-ratio: ${widthVal} / ${heightVal}; max-width: 100%;"`;
-          const figCaptionHtml = caption ? `<figcaption class="text-xs text-muted mt-1 text-center">${escapeHtml(caption)}</figcaption>` : '';
-
-          return `<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${escapeHtml(block.value)}" alt="${alt}" data-align="${align}" data-layout="${layout}"${widthAttr}${heightAttr}${styleAttr} loading="lazy" class="article-media rounded-lg h-auto" />${figCaptionHtml}</figure>`;
-        }
-        case 'VIDEO':
-          return `<div class="aspect-video my-4"><iframe src="${escapeHtml(block.value)}" class="w-full h-full rounded-lg" allowfullscreen></iframe></div>`;
-        case 'TABLE':
-          return `<div class="overflow-x-auto my-4"><table class="min-w-full border border-border">${sanitizeTableHtml(block.value)}</table></div>`;
-        case 'CALLOUT':
-          return `<div class="p-4 my-4 rounded-lg bg-blue-50/20 border-l-4 border-blue-500 text-sm leading-relaxed">${sanitizeInlineHtml(block.value)}</div>`;
-        default:
-          return `<p>${sanitizeInlineHtml(block.value)}</p>`;
-      }
-    })
+    .map(renderSingleBlock)
     .join('\n');
+}
+
+export function cleanHtmlEntities(str: string): string {
+  if (!str) return '';
+  let prev = '';
+  let curr = str;
+  for (let i = 0; i < 5 && curr !== prev; i++) {
+    prev = curr;
+    curr = curr
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#39;', "'")
+      .replaceAll('&#x27;', "'")
+      .replaceAll('&#x2F;', '/');
+  }
+  return curr;
 }
 
 function escapeHtml(str: string): string {
   if (!str) return '';
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  const clean = cleanHtmlEntities(str);
+  return clean
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
 }
 
 function stripTags(html: string): string {
@@ -285,8 +288,7 @@ function slugify(text: string): string {
     .replace(/[^\p{L}\p{N}\s-]+/gu, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
+    .replace(/^-+|-+$/g, '');
   return cleaned || 'section';
 }
 
@@ -297,33 +299,45 @@ function sanitizeInlineHtml(html: string): string {
   if (!html) return '';
   // Disallow scripts, onerror, onclick, style injection
   return html
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
     .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
     .replace(/javascript:/gi, '');
 }
 
 function readImageTag(html: string): BlockRecord | null {
-  const tag = html.match(/<img([^>]*)>/i);
+  const tag = /<img([^>]*)>/i.exec(html);
   if (!tag) return null;
   const attributes = tag[1];
-  const srcMatch = attributes.match(/src=["']([^"']+)["']/i);
+  const srcMatch = /src=["']([^"']+)["']/i.exec(attributes);
   if (!srcMatch) return null;
-  const altMatch = attributes.match(/alt=["']([^"']*)["']/i);
-  const titleMatch = attributes.match(/title=["']([^"']*)["']/i);
-  const dataCaptionMatch = attributes.match(/data-caption=["']([^"']*)["']/i);
-  const captionMatch = html.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/i);
-  const alignMatch = attributes.match(/data-align=["'](left|center|right)["']/i);
-  const layoutMatch = attributes.match(/data-layout=["'](content|wide|full|left|center|right)["']/i);
-  const widthMatch = attributes.match(/\bwidth=["'](\d+)["']/i);
-  const heightMatch = attributes.match(/\bheight=["'](\d+)["']/i);
+
+  const altMatch = /alt=["']([^"']*)["']/i.exec(attributes);
+  const titleMatch = /title=["']([^"']*)["']/i.exec(attributes);
+  const dataCaptionMatch = /data-caption=["']([^"']*)["']/i.exec(attributes);
+  const captionMatch = /<figcaption[^>]*>([\s\S]*?)<\/figcaption>/i.exec(html);
+  const alignMatch = /data-align=["'](left|center|right)["']/i.exec(attributes);
+  const layoutMatch = /data-layout=["'](content|wide|full|left|center|right)["']/i.exec(attributes);
+  const widthMatch = /\bwidth=["'](\d+)["']/i.exec(attributes);
+  const heightMatch = /\bheight=["'](\d+)["']/i.exec(attributes);
+
   const width = widthMatch ? Number(widthMatch[1]) : null;
   const height = heightMatch ? Number(heightMatch[1]) : null;
+
+  let caption = '';
+  if (captionMatch) {
+    caption = stripTags(captionMatch[1]);
+  } else if (dataCaptionMatch) {
+    caption = dataCaptionMatch[1];
+  } else if (titleMatch) {
+    caption = titleMatch[1];
+  }
+
   return {
     type: 'IMAGE',
     value: srcMatch[1],
     metadata: {
       alt: altMatch ? altMatch[1] : '',
-      caption: captionMatch ? stripTags(captionMatch[1]) : dataCaptionMatch ? dataCaptionMatch[1] : titleMatch ? titleMatch[1] : '',
+      caption,
       align: alignMatch ? alignMatch[1] : 'center',
       layout: layoutMatch ? layoutMatch[1] : 'full',
       ...(width && width >= 80 ? { width } : {}),
@@ -342,6 +356,61 @@ function sanitizeTableHtml(html: string): string {
   return sanitizeInlineHtml(html);
 }
 
+const isHeadingBlock = (b: BlockRecord) => b.type.startsWith('HEADING_');
+
+function findTargetInsertionIndex(
+  result: BlockRecord[],
+  sourceBlocks: BlockRecord[],
+  img: BlockRecord,
+): number {
+  const sourceIdx = sourceBlocks.indexOf(img);
+  let headingsBefore = 0;
+  let blocksAfterHeading = 0;
+
+  for (let i = 0; i < sourceIdx; i++) {
+    if (isHeadingBlock(sourceBlocks[i])) {
+      headingsBefore++;
+      blocksAfterHeading = 0;
+    } else if (sourceBlocks[i].type !== 'IMAGE') {
+      blocksAfterHeading++;
+    }
+  }
+
+  let currentHeading = 0;
+  let targetIdx = -1;
+
+  for (let j = 0; j < result.length; j++) {
+    if (isHeadingBlock(result[j])) {
+      currentHeading++;
+      if (currentHeading === headingsBefore) {
+        let offset = 0;
+        let k = j + 1;
+        while (k < result.length && !isHeadingBlock(result[k]) && offset < blocksAfterHeading) {
+          if (result[k].type !== 'IMAGE') offset++;
+          k++;
+        }
+        targetIdx = k;
+        break;
+      }
+    }
+  }
+
+  if (targetIdx !== -1) return targetIdx;
+
+  if (headingsBefore === 0) {
+    let offset = 0;
+    let k = 0;
+    while (k < result.length && !isHeadingBlock(result[k]) && offset < blocksAfterHeading) {
+      if (result[k].type !== 'IMAGE') offset++;
+      k++;
+    }
+    return k;
+  }
+
+  const ratio = sourceIdx / Math.max(1, sourceBlocks.length);
+  return Math.min(result.length, Math.max(0, Math.round(ratio * result.length)));
+}
+
 /**
  * Synchronizes inline IMAGE blocks from sourceBlocks into targetBlocks at corresponding
  * heading-based or relative positions.
@@ -352,94 +421,25 @@ export function syncImageBlocks(
   targetBlocks: BlockRecord[],
   sourceBlocks: BlockRecord[],
 ): BlockRecord[] {
-  if (!sourceBlocks || sourceBlocks.length === 0) return targetBlocks || [];
-  if (!targetBlocks || targetBlocks.length === 0) {
+  if (!sourceBlocks?.length) return targetBlocks || [];
+  if (!targetBlocks?.length) {
     return sourceBlocks.filter((b) => b.type === 'IMAGE');
   }
 
   const sourceImages = sourceBlocks.filter((b) => b.type === 'IMAGE');
   if (sourceImages.length === 0) return targetBlocks;
 
-  const targetImageUrls = new Set(
+  const targetUrls = new Set(
     targetBlocks.filter((b) => b.type === 'IMAGE').map((b) => b.value),
   );
 
-  const missingImages = sourceImages.filter((img) => !targetImageUrls.has(img.value));
-  if (missingImages.length === 0) return targetBlocks;
+  const missing = sourceImages.filter((img) => !targetUrls.has(img.value));
+  if (missing.length === 0) return targetBlocks;
 
   const result = [...targetBlocks];
-
-  const isHeading = (b: BlockRecord) =>
-    ['HEADING_1', 'HEADING_2', 'HEADING_3', 'HEADING_4', 'HEADING_5', 'HEADING_6'].includes(
-      b.type,
-    );
-
-  for (const img of missingImages) {
-    const sourceIdx = sourceBlocks.indexOf(img);
-
-    // 1. Count headings before this image in source & blocks after last heading
-    let headingsBefore = 0;
-    let blocksAfterLastHeading = 0;
-    for (let i = 0; i < sourceIdx; i++) {
-      if (isHeading(sourceBlocks[i])) {
-        headingsBefore++;
-        blocksAfterLastHeading = 0;
-      } else if (sourceBlocks[i].type !== 'IMAGE') {
-        blocksAfterLastHeading++;
-      }
-    }
-
-    // 2. Find matching location in target
-    let targetInsertIdx = -1;
-    if (headingsBefore > 0) {
-      let targetHeadingsFound = 0;
-      for (let j = 0; j < result.length; j++) {
-        if (isHeading(result[j])) {
-          targetHeadingsFound++;
-          if (targetHeadingsFound === headingsBefore) {
-            // Found matching heading in target. Advance by blocksAfterLastHeading, but stop before next heading
-            let offset = 0;
-            let k = j + 1;
-            while (
-              k < result.length &&
-              !isHeading(result[k]) &&
-              offset < blocksAfterLastHeading
-            ) {
-              if (result[k].type !== 'IMAGE') offset++;
-              k++;
-            }
-            targetInsertIdx = k;
-            break;
-          }
-        }
-      }
-    } else {
-      // Image is before any headings (introductory section)
-      let offset = 0;
-      let k = 0;
-      while (
-        k < result.length &&
-        !isHeading(result[k]) &&
-        offset < blocksAfterLastHeading
-      ) {
-        if (result[k].type !== 'IMAGE') offset++;
-        k++;
-      }
-      targetInsertIdx = k;
-    }
-
-    // 3. Fallback to relative ratio if targetInsertIdx is still -1
-    if (targetInsertIdx === -1) {
-      const sourceTotal = Math.max(1, sourceBlocks.length);
-      const ratio = sourceIdx / sourceTotal;
-      targetInsertIdx = Math.min(
-        result.length,
-        Math.max(0, Math.round(ratio * result.length)),
-      );
-    }
-
-    // Insert image block into target at the calculated position
-    result.splice(targetInsertIdx, 0, {
+  for (const img of missing) {
+    const idx = findTargetInsertionIndex(result, sourceBlocks, img);
+    result.splice(idx, 0, {
       type: 'IMAGE',
       value: img.value,
       metadata: img.metadata ? { ...img.metadata } : null,

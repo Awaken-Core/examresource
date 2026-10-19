@@ -1,9 +1,8 @@
 ---
-import AdPlaceholder from './AdPlaceholder.astro';
 import { telegramChannel, whatsappChannel } from '../data/site';
 
 interface Props {
-  officialWebsite: string;
+  officialWebsite?: string;
 }
 
 const { officialWebsite } = Astro.props;
@@ -18,29 +17,6 @@ const liveUpdates = [
 ---
 
 <aside class="space-y-6">
-  {/* Sticky CTA Card for quick download */}
-  <div class="card p-5 bg-gradient-to-b from-surface-raised to-surface border border-border shadow-elevated">
-    <div class="flex items-center gap-2 mb-2">
-      <span class="inline-block w-2 h-2 bg-success rounded-full animate-pulse"></span>
-      <span class="text-caption-xs uppercase font-bold tracking-wider text-muted">Official Link Active</span>
-    </div>
-    <h3 class="text-heading-sm font-bold text-white leading-tight mb-2">Round 1 Allotment Order 2026</h3>
-    <p class="text-body-xs text-muted mb-4 leading-relaxed">
-      Download your provisional seat allotment letter and check verification reporting center.
-    </p>
-    <a 
-      href="#important-links" 
-      class="btn-primary w-full text-center block text-button-sm"
-    >
-      Download Allotment Letter
-    </a>
-  </div>
-
-  {/* Ad Unit 1: Top Sidebar Ad (300x250) */}
-  <div class="card-flat p-3">
-    <AdPlaceholder slotId="sidebar-top-300x250" type="sidebar" label="Top Sidebar Ad Placement" />
-  </div>
-
   {/* Trending Updates Widget */}
   <div class="card-flat p-4">
     <div class="flex items-center gap-2 pb-3 mb-3 border-b border-border">
@@ -52,7 +28,7 @@ const liveUpdates = [
     <ul class="space-y-3 text-body-xs">
       {liveUpdates.map((item) => (
         <li class="flex items-start justify-between gap-2 border-b border-border/50 pb-2 last:border-0 last:pb-0">
-          <a href="/#important-links" class="text-muted hover:text-white transition font-medium line-clamp-2">
+          <a href="/#latest-updates" class="text-muted hover:text-white transition font-medium line-clamp-2">
             {item.text}
           </a>
           <span class={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
@@ -92,10 +68,5 @@ const liveUpdates = [
         WhatsApp
       </a>
     </div>
-  </div>
-
-  {/* Ad Unit 2: Sticky / Lower Sidebar Ad (300x600) */}
-  <div class="sticky top-20 card-flat p-3">
-    <AdPlaceholder slotId="sidebar-sticky-300x600" type="sidebar" label="Sticky Sidebar Ad Placement" />
   </div>
 </aside>

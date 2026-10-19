@@ -103,6 +103,105 @@ export class GeminiService {
     return this.lastUsedModel;
   }
 
+  private buildGeminiPayload(
+    systemPrompt: string,
+    userPrompt: string,
+    images?: Array<{ mimeType: string; data: string; url?: string }>,
+  ) {
+    const parts: any[] = [{ text: userPrompt }];
+
+    if (images && images.length > 0) {
+      for (const img of images) {
+        if (img.data && img.mimeType) {
+          const cleanBase64 = img.data.replace(/^data:image\/\w+;base64,/, '').trim();
+          if (cleanBase64) {
+            parts.push({
+              inlineData: {
+                mimeType: img.mimeType,
+                data: cleanBase64,
+              },
+            });
+          }
+        }
+      }
+    }
+
+    return {
+      systemInstruction: {
+        parts: [{ text: systemPrompt }],
+      },
+      contents: [
+        {
+          role: 'user',
+          parts,
+        },
+      ],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        temperature: 0.2,
+      },
+    };
+  }
+
+  private async trySingleModelAttempt(
+    url: string,
+    body: unknown,
+    model: string,
+    attempt: number,
+    maxRetries: number,
+    requestedModel?: string,
+  ): Promise<{ text?: string; shouldRetry: boolean; error: string }> {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const data: unknown = await response.json();
+        const candidateText = extractCandidateText(data);
+        if (candidateText) {
+          return { text: candidateText, shouldRetry: false, error: '' };
+        }
+        return {
+          shouldRetry: false,
+          error: `Model ${model} returned a successful response without candidate text.`,
+        };
+      }
+
+      const errorText = await response.text();
+      const lastError = `Model ${model} returned (${response.status}): ${errorText.slice(0, 300)}`;
+
+      const isTransient = [429, 500, 503, 504].includes(response.status);
+      if (isTransient) {
+        if (attempt < maxRetries) {
+          this.logger.warn(
+            `Gemini temporary encounter on ${model} (${response.status}). Retrying attempt ${attempt + 1}/${maxRetries} after backoff...`,
+          );
+          await new Promise((r) => setTimeout(r, 1200 * attempt));
+          return { shouldRetry: true, error: lastError };
+        }
+        if (requestedModel) {
+          throw new BadRequestException(
+            `Google Model "${model}" is temporarily under high peak traffic (HTTP ${response.status}). Please select another model from the dropdown (e.g. Gemini 3.5 Flash or Gemini 3.1 Pro) and retry.`,
+          );
+        }
+      }
+
+      return { shouldRetry: false, error: lastError };
+    } catch (err: unknown) {
+      if (err instanceof BadRequestException) throw err;
+      const message = err instanceof Error ? err.message : String(err);
+      const lastError = `Network/fetch failed with ${model}: ${message}`;
+      if (attempt < maxRetries) {
+        await new Promise((r) => setTimeout(r, 1000 * attempt));
+        return { shouldRetry: true, error: lastError };
+      }
+      return { shouldRetry: false, error: lastError };
+    }
+  }
+
   private async callGemini(
     systemPrompt: string,
     userPrompt: string,
@@ -111,113 +210,34 @@ export class GeminiService {
     requestedModel?: string,
   ): Promise<string> {
     const apiKeys = this.getApiKeys();
-    // When a model is manually chosen by the user, strictly use that model without silently auto-switching
     const candidateModels = requestedModel ? [requestedModel] : this.getCandidateModels();
+    const payload = this.buildGeminiPayload(systemPrompt, userPrompt, images);
+    const maxRetries = requestedModel ? 2 : 1;
     let lastError = '';
 
     for (const apiKey of apiKeys) {
       for (const model of candidateModels) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        this.logger.log(`Calling Gemini API using model: ${model}...`);
+        onModelSwitch?.(model);
 
-        const parts: any[] = [{ text: userPrompt }];
-
-        // Multimodal image support: inject base64 inlineData if provided
-        if (images && images.length > 0) {
-          for (const img of images) {
-            if (img.data && img.mimeType) {
-              const cleanBase64 = img.data.replace(/^data:image\/\w+;base64,/, '').trim();
-              if (cleanBase64) {
-                parts.push({
-                  inlineData: {
-                    mimeType: img.mimeType,
-                    data: cleanBase64,
-                  },
-                });
-              }
-            }
-          }
-        }
-
-        const body = {
-          systemInstruction: {
-            parts: [{ text: systemPrompt }],
-          },
-          contents: [
-            {
-              role: 'user',
-              parts,
-            },
-          ],
-          generationConfig: {
-            responseMimeType: 'application/json',
-            temperature: 0.2,
-          },
-        };
-
-        const maxRetries = requestedModel ? 2 : 1;
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
-          try {
-            this.logger.log(`Calling Gemini API using model: ${model} (attempt ${attempt}/${maxRetries})...`);
-            onModelSwitch?.(model);
-
-            const response = await fetch(url, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(body),
-            });
-
-            if (response.ok) {
-              const data: unknown = await response.json();
-              const candidateText = extractCandidateText(data);
-              if (candidateText) {
-                this.lastUsedModel = model;
-                return candidateText;
-              }
-
-              lastError = `Model ${model} returned a successful response without candidate text.`;
-              this.logger.warn(lastError);
-              break;
-            }
-
-            const errorText = await response.text();
-            lastError = `Model ${model} returned (${response.status}): ${errorText.slice(0, 300)}`;
-
-            // On rate limits (429) or high traffic / temporary unavailable (503 / 504 / 500)
-            if (response.status === 429 || response.status === 503 || response.status === 504 || response.status === 500) {
-              if (attempt < maxRetries) {
-                this.logger.warn(
-                  `Gemini temporary encounter on ${model} (${response.status}). Retrying attempt ${attempt + 1}/${maxRetries} after backoff...`,
-                );
-                await new Promise((r) => setTimeout(r, 1200 * attempt));
-                continue;
-              } else if (requestedModel) {
-                // If user selected this model specifically, don't auto-switch! Report clearly
-                throw new BadRequestException(
-                  `Google Model "${model}" is temporarily under high peak traffic (HTTP ${response.status}). Please select another model from the dropdown (e.g. Gemini 3.5 Flash or Gemini 3.1 Pro) and retry.`,
-                );
-              }
-            }
-
-            this.logger.warn(`Gemini try failed with ${model}: ${lastError}. Trying next candidate...`);
-            break;
-          } catch (err: unknown) {
-            if (err instanceof BadRequestException) throw err;
-            const message = err instanceof Error ? err.message : String(err);
-            lastError = `Network/fetch failed with ${model}: ${message}`;
-            if (attempt < maxRetries) {
-              await new Promise((r) => setTimeout(r, 1000 * attempt));
-              continue;
-            }
-            this.logger.warn(`${lastError}. Trying next candidate...`);
-            break;
+          const result = await this.trySingleModelAttempt(url, payload, model, attempt, maxRetries, requestedModel);
+          if (result.text) {
+            this.lastUsedModel = model;
+            return result.text;
           }
+          lastError = result.error;
+          if (!result.shouldRetry) break;
         }
+
+        this.logger.warn(`Gemini try failed with ${model}: ${lastError}. Trying next candidate...`);
       }
     }
 
-    throw new BadRequestException(`Gemini API request failed on ${requestedModel || 'all candidate models'}: ${lastError}`);
+    throw new BadRequestException(
+      `Gemini API request failed on ${requestedModel || 'all candidate models'}: ${lastError}`,
+    );
   }
 
   /**
@@ -446,14 +466,49 @@ Return ONLY valid JSON:
     try {
       const rawJson = await this.callGemini(systemPrompt, userPrompt);
       const parsed = JSON.parse(rawJson);
-      return {
-        alt: typeof parsed.alt === 'string' && parsed.alt.trim() ? parsed.alt.trim() : (input.articleTitle ? `${input.articleTitle} Official Notice` : 'Official recruitment notice details'),
-        caption: typeof parsed.caption === 'string' && parsed.caption.trim() ? parsed.caption.trim() : (input.articleTitle ? `${input.articleTitle} Details` : ''),
+      const cleanText = (str: string) => {
+        let prev = '';
+        let curr = String(str || '');
+        for (let i = 0; i < 5 && curr !== prev; i++) {
+          prev = curr;
+          curr = curr
+            .replaceAll('&amp;', '&')
+            .replaceAll('&lt;', '<')
+            .replaceAll('&gt;', '>')
+            .replaceAll('&quot;', '"')
+            .replaceAll('&#39;', "'")
+            .replaceAll('&#x27;', "'")
+            .replaceAll('&#x2F;', '/');
+        }
+        return curr.trim();
       };
+
+      let alt = 'Official recruitment notice details';
+      if (typeof parsed.alt === 'string' && parsed.alt.trim()) {
+        alt = cleanText(parsed.alt);
+      } else if (input.articleTitle) {
+        alt = `${cleanText(input.articleTitle)} Official Notice`;
+      }
+
+      let caption = '';
+      if (typeof parsed.caption === 'string' && parsed.caption.trim()) {
+        caption = cleanText(parsed.caption);
+      } else if (input.articleTitle) {
+        caption = `${cleanText(input.articleTitle)} Details`;
+      }
+
+      return { alt, caption };
     } catch {
+      const cleanFallback = (str: string) => String(str || '').replaceAll('&amp;', '&').trim();
+      const fallbackAlt = input.articleTitle
+        ? `${cleanFallback(input.articleTitle)} Official Notice`
+        : 'Official recruitment notice details';
+      const fallbackCaption = input.articleTitle
+        ? `${cleanFallback(input.articleTitle)} Details`
+        : '';
       return {
-        alt: input.articleTitle ? `${input.articleTitle} Official Notice` : 'Official recruitment notice details',
-        caption: input.articleTitle ? `${input.articleTitle} Details` : '',
+        alt: fallbackAlt,
+        caption: fallbackCaption,
       };
     }
   }
@@ -501,12 +556,20 @@ Return ONLY valid JSON:
     let imageInstructions = '';
     if (validImages.length > 0) {
       onStage?.('VISION', `Analyzing ${validImages.length} attached image(s) with Gemini Vision...`);
+      const imageDescriptions = validImages
+        .map((img, i) => {
+          const hint = img.altText ? `(Author Alt/Keyword Hint: "${img.altText}")` : '';
+          const urlOrRef = img.url || 'Reference Image';
+          return `Image ${i + 1}: ${urlOrRef} ${hint}`.trim();
+        })
+        .join('\n');
+
       imageInstructions = `
 ══════════════════════════════════════════════════════════════════════════════
 3. MULTIMODAL CONTEXTUAL IMAGE PLACEMENT & KEYWORD-RICH ALT TAGS (MANDATORY)
 ══════════════════════════════════════════════════════════════════════════════
 The author provided ${validImages.length} image(s) for this article:
-${validImages.map((img, i) => `Image ${i + 1}: ${img.url || 'Reference Image'} ${img.altText ? `(Author Alt/Keyword Hint: "${img.altText}")` : ''}`).join('\n')}
+${imageDescriptions}
 
 INSTRUCTIONS FOR IMAGES:
 1. Inspect what each image represents (e.g. Exam Pattern, Syllabus Breakdown, Important Dates Table, Salary Structure, Official Notification snippet).

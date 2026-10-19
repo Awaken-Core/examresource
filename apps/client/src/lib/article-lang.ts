@@ -143,6 +143,20 @@ export function processArticleHtml(rawHtml: string, title: string) {
     return `<img ${newAttrs.replace(/\s+/g, ' ').trim()}>`;
   });
 
+  // 3. Clean and normalize Figcaptions (prevent visible double-escaped &amp; entities)
+  htmlBody = htmlBody.replace(/<figcaption([^>]*)>([\s\S]*?)<\/figcaption>/gi, (_full, attrs = '', content = '') => {
+    let text = content;
+    for (let i = 0; i < 4 && text.includes('&amp;'); i++) {
+      text = text.replace(/&amp;amp;/g, '&amp;').replace(/&amp;/g, '&');
+    }
+    const safeText = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+    return `<figcaption${attrs}>${safeText}</figcaption>`;
+  });
+
   return { htmlBody, tocItems };
 }
 

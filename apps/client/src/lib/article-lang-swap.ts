@@ -2,11 +2,15 @@ import { bindArticleReading } from './article-reading';
 import type { ArticleLangBundle, ArticleLangVersion } from './article-lang';
 
 function escapeAttr(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  let text = value || '';
+  for (let i = 0; i < 4 && text.includes('&amp;'); i++) {
+    text = text.replaceAll('&amp;amp;', '&amp;').replaceAll('&amp;', '&');
+  }
+  return text
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 }
 
 function parseBundle(): ArticleLangBundle | null {
@@ -111,7 +115,7 @@ export function swapArticleLanguage(lang: string): boolean {
   history.replaceState({ articleLang: normalized }, '', window.location.pathname);
 
   document.querySelectorAll<HTMLElement>('[data-article-lang]').forEach((el) => {
-    el.setAttribute('data-article-lang', normalized);
+    el.dataset.articleLang = normalized;
   });
 
   updateSwitcherUi(langKey);
@@ -129,7 +133,7 @@ export function getDisplayedArticleLang(): 'hinglish' | 'en' | null {
   const view = document.querySelector<HTMLElement>('.blog-reading-view, [data-article-lang]');
   if (!view && !document.getElementById('article-lang-data')) return null;
 
-  const fromAttr = view?.getAttribute('data-article-lang');
+  const fromAttr = view?.dataset.articleLang;
   if (fromAttr === 'en' || fromAttr === 'hinglish') return fromAttr;
 
   const urlLang = new URLSearchParams(window.location.search).get('lang');

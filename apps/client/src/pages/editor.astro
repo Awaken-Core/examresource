@@ -981,6 +981,19 @@ import { siteUrl } from '../data/site';
             />
           </div>
 
+          <!-- Bottom Caption / Text Field (Visible under image on site) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-[10px]">
+              <label for="img-popover-caption-input" class="font-semibold text-slate-700">Bottom Caption (Visible Under Image):</label>
+            </div>
+            <input
+              type="text"
+              id="img-popover-caption-input"
+              placeholder="e.g. AFCAT 2026 Exam Pattern & Selection Structure"
+              class="w-full bg-slate-50 border border-slate-200 rounded px-2.5 py-1 text-xs text-slate-900 focus:bg-white focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
+            />
+          </div>
+
           <!-- Width & Alignment Controls -->
           <div class="flex items-center justify-between gap-1 pt-1.5 border-t border-slate-100 text-[11px]">
             <div class="flex items-center gap-1">
@@ -7619,6 +7632,7 @@ ${mdContent}
   // ==========================================
   const imageClickPopover = document.getElementById('image-click-popover');
   const imgPopoverAltInput = document.getElementById('img-popover-alt-input') as HTMLInputElement | null;
+  const imgPopoverCaptionInput = document.getElementById('img-popover-caption-input') as HTMLInputElement | null;
   const imgPopoverKeywordBadge = document.getElementById('img-popover-keyword-badge');
   const imgPopoverInsertKwBtn = document.getElementById('img-popover-insert-kw-btn');
   const imgPopoverCloseBtn = document.getElementById('img-popover-close-btn');
@@ -7672,7 +7686,7 @@ ${mdContent}
     }
     if (left < 10) left = 10;
 
-    let top = rect.top + window.scrollY - 110;
+    let top = rect.top + window.scrollY - 150;
     if (top < 70) {
       top = rect.bottom + window.scrollY + 10;
     }
@@ -7684,6 +7698,10 @@ ${mdContent}
     const currentAlt = img.alt || img.getAttribute('alt') || '';
     if (imgPopoverAltInput) {
       imgPopoverAltInput.value = currentAlt;
+    }
+    const currentCaption = img.getAttribute('data-caption') || img.title || '';
+    if (imgPopoverCaptionInput) {
+      imgPopoverCaptionInput.value = currentCaption;
     }
     updatePopoverKeywordBadge(currentAlt);
   }
@@ -7706,6 +7724,22 @@ ${mdContent}
     // Sync TipTap Node
     if (currentEditorMode === 'visual') {
       editor.chain().focus().updateAttributes('image', { alt: newAlt }).run();
+      isDirty = true;
+      triggerAutosave();
+    }
+    refreshSidebarArticleImages();
+  });
+
+  // Update bottom caption in real time as user types in the popover
+  imgPopoverCaptionInput?.addEventListener('input', () => {
+    if (!activeClickedImgEl) return;
+    const newCaption = imgPopoverCaptionInput.value;
+    activeClickedImgEl.setAttribute('data-caption', newCaption);
+    activeClickedImgEl.title = newCaption;
+
+    // Sync TipTap Node
+    if (currentEditorMode === 'visual') {
+      editor.chain().focus().updateAttributes('image', { caption: newCaption, title: newCaption }).run();
       isDirty = true;
       triggerAutosave();
     }
@@ -7784,6 +7818,7 @@ ${mdContent}
         images.push({
           src: img.src,
           alt: img.alt || img.getAttribute('alt') || '',
+          caption: img.getAttribute('data-caption') || img.title || '',
           align: img.getAttribute('data-align') || 'center',
           el: img as HTMLImageElement,
         });
@@ -7837,13 +7872,25 @@ ${mdContent}
             </svg>
           </button>
         </div>
-        <div>
-          <input 
-            type="text" 
-            value="${imgObj.alt.replace(/"/g, '&quot;')}" 
-            placeholder="Add descriptive alt tag with focus keywords..." 
-            class="sidebar-img-alt-field w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
-          />
+        <div class="space-y-1.5">
+          <div>
+            <label class="text-[9px] font-semibold text-slate-500 block uppercase">Alt Tag (SEO Keyword)</label>
+            <input 
+              type="text" 
+              value="${imgObj.alt.replace(/"/g, '&quot;')}" 
+              placeholder="Add descriptive alt tag with focus keywords..." 
+              class="sidebar-img-alt-field w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
+            />
+          </div>
+          <div>
+            <label class="text-[9px] font-semibold text-slate-500 block uppercase">Bottom Caption (Visible Under Image)</label>
+            <input 
+              type="text" 
+              value="${imgObj.caption.replace(/"/g, '&quot;')}" 
+              placeholder="e.g. AFCAT 2026 Exam Pattern & Selection Structure" 
+              class="sidebar-img-caption-field w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
+            />
+          </div>
         </div>
       `;
 
@@ -7863,6 +7910,19 @@ ${mdContent}
         imgObj.el.setAttribute('alt', val);
         if (currentEditorMode === 'visual') {
           editor.chain().focus().updateAttributes('image', { alt: val }).run();
+          isDirty = true;
+          triggerAutosave();
+        }
+      });
+
+      // Caption input edit from sidebar
+      const captionField = itemCard.querySelector<HTMLInputElement>('.sidebar-img-caption-field');
+      captionField?.addEventListener('input', () => {
+        const val = captionField.value;
+        imgObj.el.setAttribute('data-caption', val);
+        imgObj.el.title = val;
+        if (currentEditorMode === 'visual') {
+          editor.chain().focus().updateAttributes('image', { caption: val, title: val }).run();
           isDirty = true;
           triggerAutosave();
         }
