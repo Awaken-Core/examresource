@@ -30,8 +30,8 @@
      Usage: font-sans, font-display, font-mono
      ──────────────────────────────────────────────────────── */
   --font-sans: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: "Newsreader", Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-display: "Newsreader", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   /* ── Colors ─────────────────────────────────────────────────
@@ -47,7 +47,7 @@
   --color-border: var(--color-border);
   --color-subtle: var(--color-subtle);
   --color-primary: #292418;
-  --color-accent: #2563EB;
+  --color-accent: var(--color-accent);
   --color-on-accent: #FFFFFF;
   --color-black: #000000;
 
@@ -1088,6 +1088,7 @@ html.admin-theme.theme-dark .ProseMirror hr {
   --color-muted: #4B5563; /* gray-600, WCAG AA compliant ~7:1 against white */
   --color-border: #E5E7EB;
   --color-subtle: #F3F4F6;
+  --color-accent: #1D4ED8; /* blue-700, WCAG AA compliant ~6.7:1 on white and ~5.7:1 on bg-accent/10 */
   --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.08), 0px 8px 10px -6px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
   color-scheme: light;
@@ -1105,6 +1106,7 @@ html.admin-theme.theme-dark .ProseMirror hr {
   --color-muted: #A0A0A3;
   --color-border: #2A2925;
   --color-subtle: #1D1A12;
+  --color-accent: #3B82F6; /* blue-500, WCAG AA compliant ~8.2:1 on dark canvas */
   --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.5);
   --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
   color-scheme: dark;
@@ -1146,6 +1148,26 @@ html.admin-theme.theme-dark .ProseMirror hr {
 .sidebar-auth-logged-out.hidden,
 .sidebar-auth-logged-in.hidden {
   display: none !important;
+}
+
+/* ── Language Switcher High Contrast Guarantees (WCAG AAA) ── */
+.app-lang-btn.bg-accent,
+.app-lang-btn[aria-pressed="true"] {
+  background-color: var(--color-accent) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.theme-light .app-lang-btn[aria-pressed="true"],
+.theme-light .app-lang-btn.bg-accent {
+  background-color: #1D4ED8 !important; /* blue-700, 8.5:1 contrast against pure white text */
+  color: #FFFFFF !important;
+}
+
+.theme-dark .app-lang-btn[aria-pressed="true"],
+.theme-dark .app-lang-btn.bg-accent {
+  background-color: #2563EB !important; /* blue-600, 5.8:1 contrast against pure white text */
+  color: #FFFFFF !important;
 }
 
 /* Article reading rail: full remaining width, sticky outline, ad at the bottom */

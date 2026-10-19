@@ -885,6 +885,12 @@ import { siteUrl } from '../data/site';
               <button type="button" class="ctx-layout-option w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-50" data-layout="center" role="menuitem">Align center</button>
               <button type="button" class="ctx-layout-option w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-slate-50" data-layout="right" role="menuitem">Align right</button>
             </div>
+            <button type="button" id="ctx-image-meta-btn" class="h-7 px-2.5 rounded border border-blue-200 bg-blue-50 text-[11px] font-semibold text-blue-700 hover:bg-blue-100 inline-flex items-center gap-1.5 transition-colors cursor-pointer" title="Edit Alt text, Dimensions & Metadata">
+              <svg class="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span>Alt & Meta</span>
+            </button>
           </div>
           <div id="ctx-table-tools" class="hidden items-center px-1 py-1 gap-1 text-slate-700">
             <button type="button" id="table-add-row-btn" class="px-1.5 py-0.5 rounded hover:bg-slate-100 text-[11px]" title="Add row">+Row</button>
@@ -2105,6 +2111,157 @@ import { siteUrl } from '../data/site';
     </div>
   </div>
 
+  <!-- Dedicated Image Attributes & SEO / Accessibility Metadata Modal -->
+  <div id="image-meta-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Image Attributes & SEO Metadata</h3>
+            <p class="text-[11px] text-slate-500">Configure accessibility (Alt text), dimensions (Zero CLS), and layout.</p>
+          </div>
+        </div>
+        <button id="close-image-meta-modal" class="text-slate-400 hover:text-slate-700 font-bold p-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">✕</button>
+      </div>
+
+      <!-- Preview strip -->
+      <div class="flex items-center gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded-xl">
+        <div class="w-20 h-14 bg-slate-200 rounded-lg overflow-hidden shrink-0 flex items-center justify-center border border-slate-300">
+          <img id="img-meta-preview" src="" alt="" class="w-full h-full object-cover" />
+        </div>
+        <div class="min-w-0 flex-1 text-xs">
+          <span class="block font-semibold text-slate-800 truncate" id="img-meta-src-label">Image Source</span>
+          <span class="block text-[10px] text-slate-500 truncate" id="img-meta-dims-label">Natural: -- x --</span>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-xs">
+        <!-- Alt Text -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-semibold text-slate-700">Alt Text (Accessible Name & SEO)</label>
+            <button 
+              type="button" 
+              id="img-meta-ai-alt-btn"
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-[10px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+              title="Generate SEO alt text using AI"
+            >
+              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>AI Alt Text</span>
+            </button>
+          </div>
+          <input 
+            type="text" 
+            id="img-meta-alt" 
+            placeholder="e.g., BHEL Artisan Recruitment 2026 Notification Banner"
+            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+          />
+          <p class="text-[10px] text-slate-500 mt-1">Required for screen readers and high Google Image search rankings. Never leave empty.</p>
+        </div>
+
+        <!-- Caption -->
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="font-semibold text-slate-700">Caption (Optional)</label>
+            <button 
+              type="button" 
+              id="img-meta-ai-caption-btn"
+              class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[10px] transition-colors cursor-pointer"
+            >
+              <span>AI Caption</span>
+            </button>
+          </div>
+          <input 
+            type="text" 
+            id="img-meta-caption" 
+            placeholder="e.g., Official vacancy distribution for Artisan Grade I & II"
+            class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+          />
+        </div>
+
+        <!-- Dimensions -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-semibold text-slate-700 block mb-1">Width (px)</label>
+            <input 
+              type="number" 
+              id="img-meta-width" 
+              placeholder="e.g., 828"
+              class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 block mb-1">Height (px)</label>
+            <input 
+              type="number" 
+              id="img-meta-height" 
+              placeholder="e.g., 466"
+              class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+            />
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-slate-500 -mt-2">
+          <span>Explicit width & height prevent Cumulative Layout Shift (CLS).</span>
+          <button type="button" id="img-meta-detect-size-btn" class="text-blue-600 hover:underline font-semibold cursor-pointer">Detect Natural</button>
+        </div>
+
+        <!-- Layout & Align -->
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <div>
+            <label class="font-semibold text-slate-700 block mb-1">Container Width</label>
+            <select id="img-meta-layout" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900">
+              <option value="full">Full width</option>
+              <option value="wide">Wide width (max 1440px)</option>
+              <option value="content">Content width (max 620px)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-slate-700 block mb-1">Alignment</label>
+            <select id="img-meta-align" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-900">
+              <option value="center">Center</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+        <button 
+          type="button" 
+          id="remove-image-meta-btn"
+          class="text-xs text-red-600 hover:text-red-800 font-semibold cursor-pointer"
+        >
+          Delete Image
+        </button>
+        <div class="flex items-center gap-2">
+          <button 
+            type="button" 
+            id="cancel-image-meta-btn"
+            class="px-3.5 py-2 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button 
+            type="button" 
+            id="apply-image-meta-btn"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+          >
+            Save & Apply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Dedicated Quick Category Creation Modal -->
   <div id="quick-category-modal" class="fixed inset-0 bg-slate-900/40 z-50 hidden items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
@@ -2714,19 +2871,46 @@ import { siteUrl } from '../data/site';
     saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span><span>${message}</span>`;
   }
 
+  function getImageFileDimensions(file: File): Promise<{ width: number; height: number }> {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const width = img.naturalWidth || 800;
+        const height = img.naturalHeight || 450;
+        URL.revokeObjectURL(url);
+        resolve({ width, height });
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        resolve({ width: 800, height: 450 });
+      };
+      img.src = url;
+    });
+  }
+
   function revealUploadedImage(url: string) {
     const apply = (img: HTMLImageElement) => {
       const column = editor.view.dom.clientWidth || img.naturalWidth || 620;
-      const width = Math.max(80, Math.min(img.naturalWidth || column, column));
+      const naturalW = img.naturalWidth || 800;
+      const naturalH = img.naturalHeight || 450;
+      const width = Math.max(80, Math.min(naturalW, column));
+      const height = Math.round((naturalH / naturalW) * width);
       editor.state.doc.descendants((node, pos) => {
-        if (node.type.name === 'image' && node.attrs.src === url && node.attrs.width !== width) {
-          editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, width }));
+        if (node.type.name === 'image' && node.attrs.src === url && (node.attrs.width !== width || !node.attrs.height)) {
+          editor.view.dispatch(editor.state.tr.setNodeMarkup(pos, undefined, { ...node.attrs, width, height }));
           return false;
         }
         return undefined;
       });
       const shown = editor.view.dom.querySelector(`img[src="${CSS.escape(url)}"]`) as HTMLImageElement | null;
-      if (shown) shown.style.width = `${width}px`;
+      if (shown) {
+        shown.style.width = `${width}px`;
+        shown.style.height = `${height}px`;
+        shown.setAttribute('width', String(width));
+        shown.setAttribute('height', String(height));
+        shown.style.aspectRatio = `${width} / ${height}`;
+      }
     };
     requestAnimationFrame(() => {
       const img = editor.view.dom.querySelector(`img[src="${CSS.escape(url)}"]`) as HTMLImageElement | null;
@@ -2743,17 +2927,25 @@ import { siteUrl } from '../data/site';
       return;
     }
     setUploadStatus(accepted.length > 1 ? `Uploading ${accepted.length} images to R2...` : 'Uploading image to R2...');
-    const uploaded: { url: string; alt: string }[] = [];
+    const uploaded: { url: string; alt: string; width: number; height: number }[] = [];
+    const docTitle = (document.getElementById('field-title') as HTMLInputElement | null)?.value?.trim() || '';
+
     for (const file of accepted) {
-      const url = await uploadImage(file);
-      const alt = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'image';
-      uploaded.push({ url, alt });
+      const [url, dims] = await Promise.all([
+        uploadImage(file),
+        getImageFileDimensions(file),
+      ]);
+      let alt = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ').trim();
+      if (!alt || /^image(\d+)?$/i.test(alt) || /^pasted-?image/i.test(alt) || /^blob/i.test(alt)) {
+        alt = docTitle ? `${docTitle} Official Notice` : 'Official recruitment notice illustration';
+      }
+      uploaded.push({ url, alt, width: dims.width, height: dims.height });
     }
 
     if (currentEditorMode === 'markdown' && markdownTextarea) {
-      const snippet = uploaded.map(({ url, alt }) => {
+      const snippet = uploaded.map(({ url, alt, width, height }) => {
         const safeAlt = alt.replace(/"/g, '&quot;');
-        return `\n\n<figure class="article-figure" data-align="center" data-layout="full"><img src="${url}" alt="${safeAlt}" data-align="center" data-layout="full" class="article-media" /></figure>\n\n`;
+        return `\n\n<figure class="article-figure" data-align="center" data-layout="full"><img src="${url}" alt="${safeAlt}" width="${width}" height="${height}" data-align="center" data-layout="full" class="article-media" /></figure>\n\n`;
       }).join('');
       const start = markdownTextarea.selectionStart;
       const end = markdownTextarea.selectionEnd;
@@ -2762,8 +2954,8 @@ import { siteUrl } from '../data/site';
       markdownTextarea.selectionStart = markdownTextarea.selectionEnd = start + snippet.length;
       markdownTextarea.dispatchEvent(new Event('input', { bubbles: true }));
     } else {
-      const nodes = uploaded.flatMap(({ url, alt }) => [
-        { type: 'image', attrs: { src: url, alt, title: '', align: 'center', layout: 'full', width: null, height: null } },
+      const nodes = uploaded.flatMap(({ url, alt, width, height }) => [
+        { type: 'image', attrs: { src: url, alt, title: '', align: 'center', layout: 'full', width, height } },
         { type: 'paragraph' },
       ]);
       const chain = editor.chain().focus();
@@ -5390,11 +5582,16 @@ ${mdContent}
     if (!editor.isActive('image')) return;
     const align = layout === 'left' || layout === 'right' || layout === 'center' ? layout : 'center';
     const preset = layout === 'content' || layout === 'center' ? 620 : layout === 'wide' ? 1440 : layout === 'left' || layout === 'right' ? 480 : null;
+    const currentAttrs = editor.getAttributes('image');
+    let nextHeight = currentAttrs.height || null;
+    if (preset && currentAttrs.width && currentAttrs.height) {
+      nextHeight = Math.round((currentAttrs.height / currentAttrs.width) * preset);
+    }
     editor.chain().focus().updateAttributes('image', {
       layout,
       align,
       width: preset,
-      height: null,
+      height: nextHeight,
     }).run();
     const img = editor.view.dom.querySelector('.ProseMirror-selectednode img') as HTMLImageElement | null;
     if (!img) return;
@@ -5405,7 +5602,10 @@ ${mdContent}
     } else if (preset) {
       img.style.width = `${preset}px`;
     }
-    img.style.height = 'auto';
+    if (nextHeight) {
+      img.setAttribute('height', String(nextHeight));
+      if (preset) img.style.aspectRatio = `${preset} / ${nextHeight}`;
+    }
     img.style.maxWidth = '100%';
     syncMediaControls();
   }
@@ -6156,6 +6356,266 @@ ${mdContent}
   insertArticleImageBtn?.addEventListener('click', executeImageInsertion);
   document.getElementById('cancel-article-image-btn')?.addEventListener('click', closeArticleImageModal);
   document.getElementById('close-article-image-modal')?.addEventListener('click', closeArticleImageModal);
+
+  // ========================================================
+  // Image Attributes & SEO / Accessibility Metadata Controller
+  // ========================================================
+  const imageMetaModal = document.getElementById('image-meta-modal');
+  const imgMetaPreview = document.getElementById('img-meta-preview') as HTMLImageElement | null;
+  const imgMetaSrcLabel = document.getElementById('img-meta-src-label');
+  const imgMetaDimsLabel = document.getElementById('img-meta-dims-label');
+  const imgMetaAltInput = document.getElementById('img-meta-alt') as HTMLInputElement | null;
+  const imgMetaCaptionInput = document.getElementById('img-meta-caption') as HTMLInputElement | null;
+  const imgMetaWidthInput = document.getElementById('img-meta-width') as HTMLInputElement | null;
+  const imgMetaHeightInput = document.getElementById('img-meta-height') as HTMLInputElement | null;
+  const imgMetaLayoutSelect = document.getElementById('img-meta-layout') as HTMLSelectElement | null;
+  const imgMetaAlignSelect = document.getElementById('img-meta-align') as HTMLSelectElement | null;
+
+  let activeImageMetaNode: { src: string; alt: string; caption: string; width: number | null; height: number | null; align: string; layout: string } | null = null;
+
+  function openImageMetaModal() {
+    if (!imageMetaModal) return;
+    let attrs: any = null;
+
+    if (currentEditorMode === 'visual' && editor.isActive('image')) {
+      attrs = editor.getAttributes('image');
+    }
+
+    if (!attrs || !attrs.src) {
+      const selectedImg = editorElement?.querySelector('.ProseMirror-selectednode img, img.ProseMirror-selectednode') as HTMLImageElement | null;
+      if (selectedImg) {
+        attrs = {
+          src: selectedImg.src,
+          alt: selectedImg.alt || '',
+          caption: selectedImg.getAttribute('data-caption') || selectedImg.title || '',
+          width: parseInt(selectedImg.getAttribute('width') || '', 10) || selectedImg.naturalWidth || null,
+          height: parseInt(selectedImg.getAttribute('height') || '', 10) || selectedImg.naturalHeight || null,
+          align: selectedImg.getAttribute('data-align') || 'center',
+          layout: selectedImg.getAttribute('data-layout') || 'full',
+        };
+      }
+    }
+
+    if (!attrs || !attrs.src) {
+      alert('Please click on an image in the editor to select it first.');
+      return;
+    }
+
+    activeImageMetaNode = {
+      src: attrs.src,
+      alt: attrs.alt || '',
+      caption: attrs.caption || attrs.title || '',
+      width: attrs.width || null,
+      height: attrs.height || null,
+      align: attrs.align || 'center',
+      layout: attrs.layout || 'full',
+    };
+
+    if (imgMetaPreview) imgMetaPreview.src = attrs.src;
+    if (imgMetaSrcLabel) imgMetaSrcLabel.textContent = attrs.src.split('/').pop() || 'Image';
+    if (imgMetaAltInput) imgMetaAltInput.value = attrs.alt || '';
+    if (imgMetaCaptionInput) imgMetaCaptionInput.value = attrs.caption || attrs.title || '';
+    if (imgMetaWidthInput) imgMetaWidthInput.value = attrs.width ? String(attrs.width) : '';
+    if (imgMetaHeightInput) imgMetaHeightInput.value = attrs.height ? String(attrs.height) : '';
+    if (imgMetaLayoutSelect) imgMetaLayoutSelect.value = attrs.layout || 'full';
+    if (imgMetaAlignSelect) imgMetaAlignSelect.value = attrs.align || 'center';
+
+    const tester = new Image();
+    tester.onload = () => {
+      if (imgMetaDimsLabel) imgMetaDimsLabel.textContent = `Natural: ${tester.naturalWidth} x ${tester.naturalHeight} px`;
+      if (!imgMetaWidthInput?.value && tester.naturalWidth) imgMetaWidthInput.value = String(tester.naturalWidth);
+      if (!imgMetaHeightInput?.value && tester.naturalHeight) imgMetaHeightInput.value = String(tester.naturalHeight);
+    };
+    tester.src = attrs.src;
+
+    imageMetaModal.classList.remove('hidden');
+    imageMetaModal.classList.add('flex');
+    imgMetaAltInput?.focus();
+  }
+
+  function closeImageMetaModal() {
+    imageMetaModal?.classList.add('hidden');
+    imageMetaModal?.classList.remove('flex');
+    activeImageMetaNode = null;
+  }
+
+  document.getElementById('ctx-image-meta-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openImageMetaModal();
+  });
+
+  document.getElementById('close-image-meta-modal')?.addEventListener('click', closeImageMetaModal);
+  document.getElementById('cancel-image-meta-btn')?.addEventListener('click', closeImageMetaModal);
+
+  document.getElementById('img-meta-detect-size-btn')?.addEventListener('click', () => {
+    if (!activeImageMetaNode?.src) return;
+    const test = new Image();
+    test.onload = () => {
+      if (imgMetaWidthInput) imgMetaWidthInput.value = String(test.naturalWidth);
+      if (imgMetaHeightInput) imgMetaHeightInput.value = String(test.naturalHeight);
+      if (imgMetaDimsLabel) imgMetaDimsLabel.textContent = `Natural: ${test.naturalWidth} x ${test.naturalHeight} px`;
+    };
+    test.src = activeImageMetaNode.src;
+  });
+
+  // AI Alt Text Generator
+  document.getElementById('img-meta-ai-alt-btn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('img-meta-ai-alt-btn');
+    if (!btn || !imgMetaAltInput) return;
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = `<span>Thinking...</span>`;
+    btn.setAttribute('disabled', 'true');
+
+    const articleTitle = (document.getElementById('field-title') as HTMLInputElement | null)?.value?.trim() || '';
+    const sectionHeading = (document.querySelector('.ProseMirror h2, .ProseMirror h3') as HTMLElement | null)?.textContent?.trim() || '';
+    const language = (document.getElementById('field-language') as HTMLSelectElement | null)?.value || 'HINGLISH';
+
+    try {
+      const res = await apiFetch('/blogs/ai-image-meta', {
+        method: 'POST',
+        body: JSON.stringify({ articleTitle, sectionHeading, language }),
+      });
+      const data = await res.json().catch(() => null);
+      if (data?.alt) {
+        imgMetaAltInput.value = data.alt;
+        if (!imgMetaCaptionInput?.value && data.caption) {
+          imgMetaCaptionInput.value = data.caption;
+        }
+      } else {
+        imgMetaAltInput.value = articleTitle ? `${articleTitle} Official Notice & Guide Details` : 'Official recruitment notice illustration';
+      }
+      imgMetaAltInput.classList.add('ring-2', 'ring-blue-500');
+      setTimeout(() => imgMetaAltInput?.classList.remove('ring-2', 'ring-blue-500'), 1200);
+    } catch {
+      imgMetaAltInput.value = articleTitle ? `${articleTitle} Official Notice & Guide Details` : 'Official recruitment notice illustration';
+    } finally {
+      btn.innerHTML = origHtml;
+      btn.removeAttribute('disabled');
+    }
+  });
+
+  // AI Caption Generator
+  document.getElementById('img-meta-ai-caption-btn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('img-meta-ai-caption-btn');
+    if (!btn || !imgMetaCaptionInput) return;
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = `<span>Thinking...</span>`;
+    btn.setAttribute('disabled', 'true');
+
+    const articleTitle = (document.getElementById('field-title') as HTMLInputElement | null)?.value?.trim() || '';
+    const sectionHeading = (document.querySelector('.ProseMirror h2, .ProseMirror h3') as HTMLElement | null)?.textContent?.trim() || '';
+    const language = (document.getElementById('field-language') as HTMLSelectElement | null)?.value || 'HINGLISH';
+
+    try {
+      const res = await apiFetch('/blogs/ai-image-meta', {
+        method: 'POST',
+        body: JSON.stringify({ articleTitle, sectionHeading, language }),
+      });
+      const data = await res.json().catch(() => null);
+      if (data?.caption) {
+        imgMetaCaptionInput.value = data.caption;
+      } else {
+        imgMetaCaptionInput.value = articleTitle ? `${articleTitle} Notice & Key Information` : 'Key information and official notice';
+      }
+      imgMetaCaptionInput.classList.add('ring-2', 'ring-blue-500');
+      setTimeout(() => imgMetaCaptionInput?.classList.remove('ring-2', 'ring-blue-500'), 1200);
+    } catch {
+      imgMetaCaptionInput.value = articleTitle ? `${articleTitle} Notice & Key Information` : 'Key information and official notice';
+    } finally {
+      btn.innerHTML = origHtml;
+      btn.removeAttribute('disabled');
+    }
+  });
+
+  // Apply Metadata to image
+  document.getElementById('apply-image-meta-btn')?.addEventListener('click', () => {
+    if (!activeImageMetaNode) return;
+    const alt = imgMetaAltInput?.value.trim() || 'image';
+    const caption = imgMetaCaptionInput?.value.trim() || '';
+    const widthVal = parseInt(imgMetaWidthInput?.value || '', 10) || null;
+    const heightVal = parseInt(imgMetaHeightInput?.value || '', 10) || null;
+    const layout = imgMetaLayoutSelect?.value || 'full';
+    const align = imgMetaAlignSelect?.value || 'center';
+
+    if (currentEditorMode === 'visual') {
+      editor.chain().focus().updateAttributes('image', {
+        src: activeImageMetaNode.src,
+        alt,
+        caption,
+        title: caption,
+        width: widthVal,
+        height: heightVal,
+        layout,
+        align,
+      }).run();
+
+      const img = editor.view.dom.querySelector(`img[src="${CSS.escape(activeImageMetaNode.src)}"]`) as HTMLImageElement | null;
+      if (img) {
+        img.alt = alt;
+        img.setAttribute('alt', alt);
+        if (caption) {
+          img.title = caption;
+          img.setAttribute('data-caption', caption);
+        }
+        if (widthVal) {
+          img.setAttribute('width', String(widthVal));
+          img.style.width = `${widthVal}px`;
+        }
+        if (heightVal) {
+          img.setAttribute('height', String(heightVal));
+          img.style.height = `${heightVal}px`;
+        }
+        if (widthVal && heightVal) {
+          img.style.aspectRatio = `${widthVal} / ${heightVal}`;
+        }
+      }
+      isDirty = true;
+      triggerAutosave();
+    } else if (currentEditorMode === 'markdown' && markdownTextarea) {
+      const val = markdownTextarea.value;
+      const srcEscaped = activeImageMetaNode.src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const imgTagRegex = new RegExp(`(<img\\b[^>]*src=["']${srcEscaped}["'][^>]*>)`, 'i');
+      if (imgTagRegex.test(val)) {
+        const widthAttr = widthVal ? ` width="${widthVal}"` : '';
+        const heightAttr = heightVal ? ` height="${heightVal}"` : '';
+        const newTag = `<img src="${activeImageMetaNode.src}" alt="${alt.replace(/"/g, '&quot;')}"${widthAttr}${heightAttr} data-align="${align}" data-layout="${layout}" class="article-media" />`;
+        markdownTextarea.value = val.replace(imgTagRegex, newTag);
+        isDirty = true;
+        triggerAutosave();
+      }
+    }
+
+    closeImageMetaModal();
+  });
+
+  // Delete image
+  document.getElementById('remove-image-meta-btn')?.addEventListener('click', () => {
+    if (!activeImageMetaNode) return;
+    if (confirm('Are you sure you want to delete this image?')) {
+      if (currentEditorMode === 'visual') {
+        editor.chain().focus().deleteSelection().run();
+      } else if (currentEditorMode === 'markdown' && markdownTextarea) {
+        const val = markdownTextarea.value;
+        const srcEscaped = activeImageMetaNode.src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const figureRegex = new RegExp(`<figure[^>]*>\\s*<img[^>]*src=["']${srcEscaped}["'][^>]*>.*?<\\/figure>`, 'is');
+        if (figureRegex.test(val)) {
+          markdownTextarea.value = val.replace(figureRegex, '');
+        } else {
+          markdownTextarea.value = val.replace(new RegExp(`<img[^>]*src=["']${srcEscaped}["'][^>]*>`, 'i'), '');
+        }
+        isDirty = true;
+        triggerAutosave();
+      }
+      closeImageMetaModal();
+    }
+  });
+
+  // Double click on image to open metadata modal directly
+  editorElement?.addEventListener('dblclick', (event) => {
+    const img = (event.target as HTMLElement | null)?.closest('img');
+    if (!img || currentEditorMode !== 'visual') return;
+    openImageMetaModal();
+  });
 
   // ==========================================
   // Table Setup Dialog Implementation

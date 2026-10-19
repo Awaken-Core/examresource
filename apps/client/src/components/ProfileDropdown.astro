@@ -52,11 +52,10 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
       <span>Admin panel</span>
     </a>
 
-    {/* Saved Articles / Bookmarks trigger (Shown when user is logged in) */}
-    <button 
-      type="button" 
-      data-open-favorites
-      class="auth-logged-in-only hidden w-full items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition group cursor-pointer text-left"
+    {/* Saved Articles / Bookmarks link */}
+    <a 
+      href="/bookmarks"
+      class="auth-logged-in-only hidden w-full flex items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition group cursor-pointer text-left"
     >
       <div class="flex items-center gap-3">
         <svg class="w-4 h-4 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -65,12 +64,11 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
         <span>Saved Bookmarks</span>
       </div>
       <span class="favorites-count-badge hidden px-1.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/30 leading-none">0</span>
-    </button>
+    </a>
 
-    {/* Notifications trigger (Quick access on mobile/tablet and desktop) */}
-    <button 
-      type="button" 
-      data-notification-trigger="header-notification-popup"
+    {/* Notifications link */}
+    <a 
+      href="/notifications"
       class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-body-sm text-white hover:bg-surface-raised transition group cursor-pointer text-left"
     >
       <div class="flex items-center gap-3">
@@ -80,7 +78,7 @@ const { id = "profile-dropdown", position = "top" } = Astro.props;
         <span>Notifications</span>
       </div>
       <span class="notification-badge-count hidden px-1.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/30 leading-none">0</span>
-    </button>
+    </a>
 
     {/* Auth Action: Sign in or Logout */}
     <div class="border-t border-border/60 mt-1 pt-1">

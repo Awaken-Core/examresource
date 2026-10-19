@@ -2006,6 +2006,19 @@ export class BlogService {
     });
   }
 
+  async generateImageMeta(
+    input: {
+      articleTitle?: string;
+      sectionHeading?: string;
+      contextText?: string;
+      language?: string;
+    },
+    currentUser: CurrentUser,
+  ) {
+    this.assertCanWrite(currentUser);
+    return this.gemini.generateImageMeta(input);
+  }
+
   async translateMarkdownContent(
     input: {
       title: string;

@@ -39,7 +39,6 @@ export function htmlToBlocks(html: string): BlockRecord[] {
   // Match top-level HTML tags
   const tagRegex = /<(h[1-6]|p|blockquote|pre|ul|ol|hr|figure|img|table|iframe|div)([^>]*)>([\s\S]*?)<\/\1>|<(img|hr)([^>]*)\/?>/gi;
 
-  let lastIndex = 0;
   let match: RegExpExecArray | null;
 
   while ((match = tagRegex.exec(cleanHtml)) !== null) {
@@ -215,7 +214,10 @@ export function blocksToHtml(blocks: BlockRecord[]): string {
         case 'DIVIDER':
           return `<hr class="my-6 border-border" />`;
         case 'IMAGE': {
-          const alt = escapeHtml((meta.alt as string) || '');
+          const altRaw = (meta.alt as string) || '';
+          const alt = (!altRaw || altRaw.toLowerCase().includes('pasted image') || altRaw.toLowerCase() === 'image')
+            ? escapeHtml((meta.caption as string) || 'Official examination notice and recruitment details')
+            : escapeHtml(altRaw);
           const caption = (meta.caption as string) || '';
           const layouts = ['content', 'wide', 'full', 'left', 'center', 'right'];
           const layout = layouts.includes(String(meta.layout)) ? String(meta.layout) : 'full';
@@ -225,9 +227,15 @@ export function blocksToHtml(blocks: BlockRecord[]): string {
               ? layout
               : 'center';
           const width = Number(meta.width);
-          const widthAttr = Number.isFinite(width) && width >= 80 ? ` width="${Math.round(width)}"` : '';
-          const figCaptionHtml = caption ? `<figcaption class="text-xs text-muted mt-1">${escapeHtml(caption)}</figcaption>` : '';
-          return `<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${escapeHtml(block.value)}" alt="${alt}" data-align="${align}" data-layout="${layout}"${widthAttr} loading="lazy" class="article-media rounded-lg h-auto" />${figCaptionHtml}</figure>`;
+          const height = Number(meta.height);
+          const widthVal = Number.isFinite(width) && width >= 80 ? Math.round(width) : 800;
+          const heightVal = Number.isFinite(height) && height >= 40 ? Math.round(height) : Math.round((widthVal * 9) / 16);
+          const widthAttr = ` width="${widthVal}"`;
+          const heightAttr = ` height="${heightVal}"`;
+          const styleAttr = ` style="aspect-ratio: ${widthVal} / ${heightVal}; max-width: 100%;"`;
+          const figCaptionHtml = caption ? `<figcaption class="text-xs text-muted mt-1 text-center">${escapeHtml(caption)}</figcaption>` : '';
+
+          return `<figure class="article-figure" data-align="${align}" data-layout="${layout}"><img src="${escapeHtml(block.value)}" alt="${alt}" data-align="${align}" data-layout="${layout}"${widthAttr}${heightAttr}${styleAttr} loading="lazy" class="article-media rounded-lg h-auto" />${figCaptionHtml}</figure>`;
         }
         case 'VIDEO':
           return `<div class="aspect-video my-4"><iframe src="${escapeHtml(block.value)}" class="w-full h-full rounded-lg" allowfullscreen></iframe></div>`;
@@ -274,9 +282,9 @@ function slugify(text: string): string {
     .toLowerCase()
     .trim()
     .replace(/\\+/g, '')
-    .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
+    .replace(/[^\p{L}\p{N}\s-]+/gu, '')
     .replace(/\s+/g, '-')
-    .replace(/\-+/g, '-')
+    .replace(/-+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
   return cleaned || 'section';
@@ -302,20 +310,24 @@ function readImageTag(html: string): BlockRecord | null {
   if (!srcMatch) return null;
   const altMatch = attributes.match(/alt=["']([^"']*)["']/i);
   const titleMatch = attributes.match(/title=["']([^"']*)["']/i);
+  const dataCaptionMatch = attributes.match(/data-caption=["']([^"']*)["']/i);
   const captionMatch = html.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/i);
   const alignMatch = attributes.match(/data-align=["'](left|center|right)["']/i);
   const layoutMatch = attributes.match(/data-layout=["'](content|wide|full|left|center|right)["']/i);
   const widthMatch = attributes.match(/\bwidth=["'](\d+)["']/i);
+  const heightMatch = attributes.match(/\bheight=["'](\d+)["']/i);
   const width = widthMatch ? Number(widthMatch[1]) : null;
+  const height = heightMatch ? Number(heightMatch[1]) : null;
   return {
     type: 'IMAGE',
     value: srcMatch[1],
     metadata: {
       alt: altMatch ? altMatch[1] : '',
-      caption: captionMatch ? stripTags(captionMatch[1]) : titleMatch ? titleMatch[1] : '',
+      caption: captionMatch ? stripTags(captionMatch[1]) : dataCaptionMatch ? dataCaptionMatch[1] : titleMatch ? titleMatch[1] : '',
       align: alignMatch ? alignMatch[1] : 'center',
       layout: layoutMatch ? layoutMatch[1] : 'full',
       ...(width && width >= 80 ? { width } : {}),
+      ...(height && height >= 40 ? { height } : {}),
     },
   };
 }
