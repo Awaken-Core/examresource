@@ -518,7 +518,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
         // If not in sessionStorage, fetch in background without delaying article interaction
         var idle = window.requestIdleCallback || function(cb) { setTimeout(cb, 150); };
         idle(function() {
-          fetch(apiEndpoint + '/blogs?limit=6&language=' + reqLang + '&includeImages=false')
+          fetch(apiEndpoint + '/blogs?limit=6&language=' + reqLang + '&includeImages=false', { priority: 'low' })
             .then(function(r) { return r.ok ? r.json() : []; })
             .then(function(data) {
               if (Array.isArray(data) && data.length > 0) {

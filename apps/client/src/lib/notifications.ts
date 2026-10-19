@@ -15,7 +15,7 @@ const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
 let currentItems: AppNotification[] = [];
 let currentToken: string | null = null;
 
-function relativeTime(iso: string) {
+export function relativeTime(iso: string) {
   const delta = Date.now() - new Date(iso).getTime();
   const minutes = Math.max(0, Math.floor(delta / 60000));
   if (minutes < 1) return 'Just now';
@@ -44,7 +44,7 @@ async function goToNotificationHref(href: string) {
   window.location.assign(href);
 }
 
-function iconFor(kind: AppNotification['kind']) {
+export function iconFor(kind: AppNotification['kind']) {
   if (kind === 'blog') return '📰';
   if (kind === 'broadcast') return '🔔';
   return '📢';
@@ -261,6 +261,14 @@ function paint(items: AppNotification[]) {
   });
 
   updateBrowserNotificationUI();
+
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('notifications-updated', { detail: { items, unreadCount: unread.length } }));
+  }
+}
+
+export function getNotifications(): AppNotification[] {
+  return currentItems;
 }
 
 export async function refreshNotifications(token: string | null) {
@@ -272,7 +280,7 @@ export async function refreshNotifications(token: string | null) {
   }
 
   try {
-    const response = await fetch(`${API_URL}/me/notifications`, { credentials: 'include' });
+    const response = await fetch(`${API_URL}/me/notifications`, { priority: 'low', credentials: 'include' } as any);
     if (!response.ok) return;
     const data = (await response.json()) as { items?: AppNotification[] };
     currentItems = data.items ?? [];
@@ -289,6 +297,7 @@ export async function markAllNotificationsRead() {
   if (!currentToken) return;
   await fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
+    priority: 'low',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-Protection': '1',
@@ -296,7 +305,7 @@ export async function markAllNotificationsRead() {
     credentials: 'include',
     body: '{}',
     keepalive: true,
-  }).catch(() => null);
+  } as any).catch(() => null);
 }
 
 export function markNotificationRead(id: string) {
@@ -306,6 +315,7 @@ export function markNotificationRead(id: string) {
   if (!currentToken) return;
   void fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
+    priority: 'low',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-Protection': '1',
@@ -313,5 +323,5 @@ export function markNotificationRead(id: string) {
     credentials: 'include',
     body: JSON.stringify({ ids: [id] }),
     keepalive: true,
-  }).catch(() => null);
+  } as any).catch(() => null);
 }

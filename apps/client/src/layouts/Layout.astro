@@ -2,7 +2,6 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
-import TrendingBanner from '../components/TrendingBanner.astro';
 import SearchModal from '../components/SearchModal.astro';
 import BrandLogo from '../components/BrandLogo.astro';
 import { whatsappChannel, telegramChannel, siteUrl, siteDomain, siteName } from '../data/site';
@@ -70,39 +69,24 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 <!doctype html>
 <html lang="en" class="theme-light">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
-    <script is:inline define:vars={{ gaMeasurementId }}>
+    <!-- Google tag (gtag.js) & GTM (Deferred for zero render-blocking & maximum mobile speed) -->
+    <script is:inline define:vars={{ gaMeasurementId, gtmId }}>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', gaMeasurementId, { send_page_view: false });
+      if (gaMeasurementId) {
+        gtag('config', gaMeasurementId, { send_page_view: false });
+      }
 
       // Track page views on Astro ClientRouter view transitions
       document.addEventListener('astro:page-load', function() {
-        if (typeof gtag === 'function') {
+        if (typeof gtag === 'function' && gaMeasurementId) {
           gtag('event', 'page_view', {
             page_title: document.title,
             page_location: window.location.href,
             page_path: window.location.pathname
           });
         }
-      });
-    </script>
-
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    {/* Google Tag Manager */}
-    <script is:inline define:vars={{ gtmId }}>
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer',gtmId);
-    </script>
-    <script is:inline>
-      document.addEventListener('astro:page-load', function() {
         if (window.dataLayer) {
           window.dataLayer.push({
             event: 'page_view',
@@ -112,13 +96,50 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
         }
       });
-    </script>
-    {/* End Google Tag Manager */}
 
-    {/* Google Fonts: Preconnect & Direct Non-blocking Link */}
+      // Lazy load analytics on first user interaction or idle to unblock mobile main-thread
+      function loadThirdPartyAnalytics() {
+        if (window.__thirdPartyAnalyticsLoaded) return;
+        window.__thirdPartyAnalyticsLoaded = true;
+
+        if (gaMeasurementId) {
+          var gaScript = document.createElement('script');
+          gaScript.async = true;
+          gaScript.setAttribute('fetchpriority', 'low');
+          gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaMeasurementId;
+          document.head.appendChild(gaScript);
+        }
+
+        if (gtmId) {
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.setAttribute('fetchpriority', 'low');j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer',gtmId);
+        }
+      }
+
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(function() { setTimeout(loadThirdPartyAnalytics, 2000); });
+      } else {
+        setTimeout(loadThirdPartyAnalytics, 2500);
+      }
+      ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function(evt) {
+        window.addEventListener(evt, loadThirdPartyAnalytics, { once: true, passive: true });
+      });
+    </script>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {/* Google Fonts: Preconnect & Asynchronous Non-blocking Stylesheet */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
+    </noscript>
 
     {/* Preconnect and DNS prefetch for the media CDN */}
     <link rel="preconnect" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" crossorigin />
@@ -352,7 +373,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <button
                 type="button"
                 data-app-lang="hinglish"
-                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors duration-150 cursor-pointer text-muted hover:text-white"
                 title="Switch to Hinglish"
               >
                 HI
@@ -360,7 +381,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <button
                 type="button"
                 data-app-lang="en"
-                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors duration-150 cursor-pointer text-muted hover:text-white"
                 title="Switch to English"
               >
                 EN
@@ -424,9 +445,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           {/* Mobile Drawer Quick Actions: Bookmarks & Notifications */}
           <div class="grid grid-cols-2 gap-1.5 pt-0.5">
-            <button
-              type="button"
-              data-open-favorites
+            <a
+              href="/bookmarks"
               data-mobile-sidebar-close
               class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl bg-surface-raised/60 hover:bg-surface-raised border border-border/60 text-xs font-semibold text-white transition cursor-pointer"
             >
@@ -435,11 +455,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               </svg>
               <span>Bookmarks</span>
               <span class="favorites-count-badge hidden px-1.5 py-0.2 rounded-full bg-accent/20 text-accent text-[9px] font-bold">0</span>
-            </button>
+            </a>
 
-            <button
-              type="button"
-              data-notification-trigger="header-notification-popup"
+            <a
+              href="/notifications"
               data-mobile-sidebar-close
               class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-xl bg-surface-raised/60 hover:bg-surface-raised border border-border/60 text-xs font-semibold text-white transition cursor-pointer"
             >
@@ -447,7 +466,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               <span>Notifications</span>
-            </button>
+              <span class="notification-badge-count hidden px-1.5 py-0.2 rounded-full bg-accent/20 text-accent text-[9px] font-bold">0</span>
+            </a>
           </div>
         </div>
       </div>
@@ -485,6 +505,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       import { API_URL } from '../lib/api';
       import { searchItems, siteDomain } from '../data/site';
       import { updateFavoritesUI, toggleBookmark, removeBookmark, clearAllBookmarks } from '../lib/bookmarks';
+      import { navigate } from 'astro:transitions/client';
 
       (function initApp() {
 
@@ -745,7 +766,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (categoryMatch?.[1]) params.set('category', categoryMatch[1]);
 
           try {
-            const res = await fetch(`${API_URL}/blogs?${params.toString()}`);
+            const res = await fetch(`${API_URL}/blogs?${params.toString()}`, { priority: 'high' } as any);
             if (!res.ok) return;
             const posts = await res.json();
             if (!Array.isArray(posts)) return;
@@ -1010,12 +1031,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             if (target.closest('[data-auth-action="logout"]')) {
               e.preventDefault();
               e.stopPropagation();
-              const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+              const apiUrl = API_URL;
               void fetch(`${apiUrl}/auth/logout`, {
                 method: 'POST',
+                priority: 'high',
                 credentials: 'include',
                 headers: { 'X-CSRF-Protection': '1' },
-              }).finally(() => window.location.assign('/login'));
+              } as any).finally(() => window.location.assign('/login'));
               return;
             }
 
@@ -1040,6 +1062,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (notifTrigger) {
             e.preventDefault();
             e.stopPropagation();
+            if (window.innerWidth < 1024) {
+              closeAllDropdowns();
+              navigate('/notifications');
+              return;
+            }
             const targetId = notifTrigger.getAttribute('data-notification-trigger');
             const notifPopup = targetId ? document.getElementById(targetId) : null;
             if (notifPopup) {
@@ -1136,6 +1163,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (favBtn) {
             e.preventDefault();
             e.stopPropagation();
+            if (window.innerWidth < 1024) {
+              closeAllDropdowns();
+              navigate('/bookmarks');
+              return;
+            }
             const dropdown = document.getElementById('header-favorites-dropdown');
             if (dropdown) {
               const isOpen = !dropdown.classList.contains('hidden');
@@ -1326,8 +1358,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       }
 
         async function syncAuthProfile() {
-          const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
-          const response = await fetch(`${apiUrl}/me`, { credentials: 'include' }).catch(() => null);
+          const apiUrl = API_URL;
+          const response = await fetch(`${apiUrl}/me`, { priority: 'low', credentials: 'include' } as any).catch(() => null);
           const user = response?.ok ? await response.json().catch(() => null) : null;
 
           if (user) {
@@ -1586,7 +1618,22 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
 
           updateFavoritesUI();
-          syncAuthProfile();
+          queueSyncAuthProfile();
+        }
+
+        let authProfileQueued = false;
+        function queueSyncAuthProfile() {
+          if (authProfileQueued) return;
+          authProfileQueued = true;
+          const run = () => {
+            authProfileQueued = false;
+            void syncAuthProfile();
+          };
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(run, { timeout: 2000 });
+          } else {
+            setTimeout(run, 1000);
+          }
         }
 
         // --- Global One-Time Event Listeners & Lifecycles ---
@@ -1641,8 +1688,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             }
             reinitPageElements();
           });
-
-          void syncAuthProfile();
         }
 
         // Run immediately for initial page render

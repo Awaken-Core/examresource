@@ -81,7 +81,7 @@ export function clearAllBookmarks(): void {
   window.dispatchEvent(new CustomEvent('bookmarks-updated', { detail: { cleared: true } }));
 }
 
-function timeAgo(isoString: string): string {
+export function timeAgo(isoString: string): string {
   try {
     const delta = Date.now() - new Date(isoString).getTime();
     const minutes = Math.max(0, Math.floor(delta / 60000));

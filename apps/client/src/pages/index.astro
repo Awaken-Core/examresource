@@ -268,7 +268,7 @@ const jsonLd = {
           {/* 1. Main Headline */}
           <div transition:name="page-hero">
             <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-2.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse will-change-[opacity] transform-gpu"></span>
               Verified Government Exam &amp; Sarkari Naukri Portal
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight font-serif leading-tight">
@@ -361,7 +361,7 @@ const jsonLd = {
 
             <div class="space-y-3">
               {displayArticles.length > 0 ? (
-                displayArticles.map((article) => (
+                displayArticles.map((article, idx) => (
                   <ArticleCard
                     variant="standard"
                     title={article.title}
@@ -372,6 +372,7 @@ const jsonLd = {
                     date={article.date}
                     summary={article.summary}
                     headingLevel="h3"
+                    prefetch={idx < 3 ? 'viewport' : 'hover'}
                   />
                 ))
               ) : fetchError && fetchError.type !== 'empty' ? (
@@ -407,9 +408,9 @@ const jsonLd = {
           {/* Important Portals Box */}
           <div id="important-links" class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
             <div class="flex items-center justify-between pb-1 border-b border-border/50">
-              <h3 class="text-sm font-bold text-white">
+              <h2 class="text-sm font-bold text-white">
                 Important portals
-              </h3>
+              </h2>
             </div>
 
             <div class="divide-y divide-border/50">
@@ -428,7 +429,8 @@ const jsonLd = {
                         src={portal.logo} 
                         alt={`${portal.name} official emblem logo`} 
                         class="w-full h-full object-contain" 
-                        loading="eager"
+                        loading="lazy"
+                        fetchpriority="low"
                         decoding="async"
                         width={32}
                         height={32}
@@ -457,9 +459,9 @@ const jsonLd = {
             <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
               <div class="flex items-center gap-2 pb-1 border-b border-border/50">
                 <span class="text-[#EF4444]">🔥</span>
-                <h3 class="text-sm font-bold text-white">
+                <h2 class="text-sm font-bold text-white">
                   Popular this week
-                </h3>
+                </h2>
               </div>
 
               <div class="space-y-2.5">
@@ -467,6 +469,7 @@ const jsonLd = {
                   <a 
                     href={item.href} 
                     data-article-link={item.slugKey}
+                    data-astro-prefetch="hover"
                     class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
                   >
                     <span class="w-5 h-5 rounded-full bg-surface-raised text-muted group-hover:bg-accent/15 group-hover:text-accent flex items-center justify-center text-[10px] font-bold shrink-0 transition">
