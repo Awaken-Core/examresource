@@ -10,12 +10,7 @@
     "start": "bun run --cwd apps/client start && bun run --cwd apps/server start:prod",
     "test": "bun run --cwd apps/server test",
     "typecheck": "bun run --cwd apps/server tsc --noEmit",
-    "lint": "bun run --cwd apps/server lint",
-    "db:migrate": "bun run --cwd apps/server drizzle:migrate",
-    "drizzle:migrate": "bun run --cwd apps/server drizzle:migrate",
-    "db:push": "bun run --cwd apps/server drizzle:push",
-    "db:generate": "bun run --cwd apps/server drizzle:generate",
-    "db:studio": "bun run --cwd apps/server drizzle:studio"
+    "lint": "bun run --cwd apps/server lint"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
