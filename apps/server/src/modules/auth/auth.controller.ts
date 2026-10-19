@@ -97,6 +97,7 @@ export class AuthController {
     this.assertSafeMutation(req);
     await this.auth.logout(this.sessionToken(req));
     res.clearCookie(this.cookieName(), this.sessionCookieOptions());
+    res.clearCookie('logged_in', { path: '/' });
   }
 
   @Post('auth/forgot-password')
@@ -129,7 +130,10 @@ export class AuthController {
 
   @Get('me')
   async me(@Req() req: SessionRequest) {
-    return (await this.requireSession(req)).user;
+    const token = this.sessionToken(req);
+    if (!token) return null;
+    const current = await this.auth.getSession(token);
+    return current?.user ?? null;
   }
 
   @Get('authors')
@@ -217,6 +221,12 @@ export class AuthController {
   private setSessionCookie(res: Response, token: string) {
     res.cookie(this.cookieName(), token, {
       ...this.sessionCookieOptions(),
+      maxAge: env.SESSION_TTL_DAYS * 86_400_000,
+    });
+    res.cookie('logged_in', '1', {
+      path: '/',
+      secure: this.isHostedEnvironment(),
+      sameSite: this.isHostedEnvironment() ? 'none' : 'lax',
       maxAge: env.SESSION_TTL_DAYS * 86_400_000,
     });
   }

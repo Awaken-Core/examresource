@@ -123,37 +123,15 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
       </div>
 
       {/* Bookmarks / Favorites Button & Dropdown (Desktop only & Logged-in only) */}
-      <div class="header-auth-logged-in hidden">
-        <div class="hidden lg:flex items-center relative z-[1090]">
-          <button 
-            id="header-favorites-btn"
-            type="button"
-            class="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-canvas border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
-            title="Saved Bookmarks"
-            aria-label="Saved Bookmarks"
-            aria-haspopup="dialog"
-            aria-expanded="false"
-          >
-            <svg class="w-4 h-4 text-muted hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            <span class="favorites-count-badge hidden absolute -top-1 -right-1 px-1 min-w-[16px] h-4 rounded-full bg-accent text-[9px] font-bold text-white flex items-center justify-center leading-none shadow-xs border border-surface">
-              0
-            </span>
-          </button>
-
-          {/* Dropdown Container */}
-          <FavoritesDropdown id="header-favorites-dropdown" />
-        </div>
-      </div>
-
-      {/* Bookmarks Quick Link (Mobile & Tablet when logged in) */}
-      <div class="header-auth-logged-in hidden lg:hidden flex items-center">
-        <a 
-          href="/bookmarks"
-          class="relative w-8 h-8 flex items-center justify-center rounded-xl bg-canvas border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
+      <div class="header-auth-logged-in hidden max-lg:!hidden lg:flex items-center relative z-[1090]">
+        <button 
+          id="header-favorites-btn"
+          type="button"
+          class="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-canvas border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
           title="Saved Bookmarks"
           aria-label="Saved Bookmarks"
+          aria-haspopup="dialog"
+          aria-expanded="false"
         >
           <svg class="w-4 h-4 text-muted hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -161,7 +139,10 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
           <span class="favorites-count-badge hidden absolute -top-1 -right-1 px-1 min-w-[16px] h-4 rounded-full bg-accent text-[9px] font-bold text-white flex items-center justify-center leading-none shadow-xs border border-surface">
             0
           </span>
-        </a>
+        </button>
+
+        {/* Dropdown Container */}
+        <FavoritesDropdown id="header-favorites-dropdown" />
       </div>
 
       {/* Notifications Button & Dropdown (Desktop only) */}
@@ -188,25 +169,6 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 
         {/* Header Notification Popover */}
         <NotificationPopup id="header-notification-popup" prefix="header" />
-      </div>
-
-      {/* Notifications Quick Link (Mobile & Tablet when logged in) */}
-      <div class="header-auth-logged-in hidden lg:hidden flex items-center">
-        <a 
-          href="/notifications"
-          class="relative w-8 h-8 flex items-center justify-center rounded-xl bg-canvas border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
-          title="Notifications"
-          aria-label="Notifications"
-        >
-          <span class="notification-dot-indicator relative flex h-2 w-2 absolute top-1.5 right-1.5 hidden">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-          </span>
-          <svg class="w-4 h-4 text-muted hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <span class="notification-badge-count hidden">0</span>
-        </a>
       </div>
 
       {/* TOP RIGHT PROFILE SECTION & DROPDOWN (Shown when user is logged in) */}

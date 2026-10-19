@@ -69,6 +69,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 <!doctype html>
 <html lang="en" class="theme-light">
   <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- Google tag (gtag.js) & GTM (Deferred for zero render-blocking & maximum mobile speed) -->
     <script is:inline define:vars={{ gaMeasurementId, gtmId }}>
       window.dataLayer = window.dataLayer || [];
@@ -120,17 +123,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       }
 
       if ('requestIdleCallback' in window) {
-        requestIdleCallback(function() { setTimeout(loadThirdPartyAnalytics, 2000); });
+        requestIdleCallback(function() { setTimeout(loadThirdPartyAnalytics, 4500); });
       } else {
-        setTimeout(loadThirdPartyAnalytics, 2500);
+        setTimeout(loadThirdPartyAnalytics, 4500);
       }
       ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function(evt) {
         window.addEventListener(evt, loadThirdPartyAnalytics, { once: true, passive: true });
       });
     </script>
-
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     {/* Google Fonts: Preconnect & Asynchronous Non-blocking Stylesheet */}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -141,8 +141,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" />
     </noscript>
 
-    {/* Preconnect and DNS prefetch for the media CDN */}
-    <link rel="preconnect" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" crossorigin />
+    {/* DNS prefetch for the media CDN without holding an unused TLS socket */}
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -492,7 +491,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         </span>
         <p id="global-toast-msg" class="truncate font-medium text-white/95">Message</p>
       </div>
-      <a id="global-toast-action" href="/login" class="hidden px-2.5 py-1 rounded-lg bg-accent text-white font-semibold text-[11px] shrink-0 hover:bg-accent/90 transition shadow-2xs">
+      <a id="global-toast-action" href="/login" class="hidden px-2.5 py-1 rounded-lg bg-accent text-on-accent font-semibold text-[11px] shrink-0 hover:bg-accent/90 transition shadow-2xs">
         Sign in
       </a>
     </div>
@@ -823,11 +822,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const btnLang = btn.getAttribute('data-app-lang') || btn.getAttribute('data-global-lang');
             const isBtnActive = (btnLang === normalized);
             if (isBtnActive) {
-              btn.classList.add('bg-accent', 'text-white', 'font-bold', 'shadow-2xs');
+              btn.classList.add('bg-accent', '!text-white', 'text-on-accent', 'font-bold', 'shadow-2xs');
               btn.classList.remove('text-muted', 'bg-accent/20', 'text-accent');
+              btn.setAttribute('aria-pressed', 'true');
             } else {
-              btn.classList.remove('bg-accent', 'text-white', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
+              btn.classList.remove('bg-accent', '!text-white', 'text-on-accent', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
               btn.classList.add('text-muted');
+              btn.setAttribute('aria-pressed', 'false');
             }
           });
 
@@ -1031,6 +1032,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             if (target.closest('[data-auth-action="logout"]')) {
               e.preventDefault();
               e.stopPropagation();
+              try { localStorage.removeItem('auth_active'); } catch (e) {}
               const apiUrl = API_URL;
               void fetch(`${apiUrl}/auth/logout`, {
                 method: 'POST',
@@ -1358,9 +1360,34 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       }
 
         async function syncAuthProfile() {
+          if (window.location.search.includes('login=success')) {
+            try { localStorage.setItem('auth_active', '1'); } catch (e) {}
+          }
+
+          const hasAuthHint = (function() {
+            try {
+              return localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
+            } catch (e) {
+              return false;
+            }
+          })();
+
+          if (!hasAuthHint) {
+            void refreshNotifications(null);
+            return;
+          }
+
           const apiUrl = API_URL;
           const response = await fetch(`${apiUrl}/me`, { priority: 'low', credentials: 'include' } as any).catch(() => null);
+          if (response && response.status === 401) {
+            try { localStorage.removeItem('auth_active'); } catch (e) {}
+          }
           const user = response?.ok ? await response.json().catch(() => null) : null;
+          if (user) {
+            try { localStorage.setItem('auth_active', '1'); } catch (e) {}
+          } else {
+            try { localStorage.removeItem('auth_active'); } catch (e) {}
+          }
 
           if (user) {
             void refreshNotifications('session');

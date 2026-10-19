@@ -1150,6 +1150,13 @@ html.admin-theme.theme-dark .ProseMirror hr {
   display: none !important;
 }
 
+/* ── Language Switcher High Contrast Guarantees (WCAG AAA) ── */
+.app-lang-btn.bg-accent,
+.app-lang-btn[aria-pressed="true"] {
+  background-color: var(--color-accent) !important;
+  color: #FFFFFF !important;
+}
+
 /* Article reading rail: full remaining width, sticky outline, ad at the bottom */
 .article-shell {
   display: flex;
