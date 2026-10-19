@@ -39,7 +39,7 @@ export const GET: APIRoute = async () => {
       lastmod: currentDate,
       image: {
         loc: `${siteUrl}/og-image.jpg`,
-        title: `${siteName} — Verified Government Exam Updates & Sarkari Naukri Portal`,
+        title: `${siteName} | Government Exam Updates & Sarkari Jobs`,
       },
     },
     { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },

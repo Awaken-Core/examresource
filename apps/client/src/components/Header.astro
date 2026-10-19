@@ -8,7 +8,7 @@ const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 ---
 
-<header class="bg-surface border-b border-border sticky top-0 z-[1000] shadow-2xs relative h-14 sm:h-16">
+<header id="main-header" transition:persist="main-header" class="bg-surface border-b border-border sticky top-0 z-[1000] shadow-2xs relative h-14 sm:h-16">
   {/* Main Navbar */}
   <div class="w-full flex items-center justify-between h-14 sm:h-16">
     
@@ -80,8 +80,45 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
       </div>
     </div>
 
-    {/* Right Toolbar Items: Profile & Log in */}
-    <div class="flex items-center gap-2.5 sm:gap-3.5 shrink-0 px-3 sm:px-5">
+    {/* Right Toolbar Items: Desktop Toggles, Profile & Log in */}
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0 px-2 sm:px-4">
+      {/* Desktop Header Toggles: Language & Theme (Hidden on mobile & tablet; available in sidebar drawer) */}
+      <div class="hidden lg:flex items-center gap-2 mr-1">
+        {/* Language Switcher Pill */}
+        <div class="inline-flex items-center p-0.5 bg-canvas border border-border/80 rounded-lg text-xs font-semibold select-none shrink-0" role="group" aria-label="Language selection">
+          <button
+            type="button"
+            data-app-lang="hinglish"
+            class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+            title="Switch to Hinglish"
+          >
+            HI
+          </button>
+          <button
+            type="button"
+            data-app-lang="en"
+            class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+            title="Switch to English"
+          >
+            EN
+          </button>
+        </div>
+
+        {/* Theme Toggle Button */}
+        <button
+          type="button"
+          class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border/80 hover:border-accent/40 rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0"
+          title="Toggle Dark and Light Mode"
+          aria-label="Toggle Dark and Light Mode"
+        >
+          <span
+            class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-2xs transition-transform duration-200 translate-x-0.5"
+          >
+            <span class="light-icon text-[11px] select-none leading-none">☀️</span>
+            <span class="dark-icon text-[11px] select-none leading-none hidden">🌙</span>
+          </span>
+        </button>
+      </div>
 
       {/* TOP RIGHT PROFILE SECTION & DROPDOWN (Shown when user is logged in) */}
       <div id="header-profile-section" class="header-auth-logged-in hidden relative z-[1100]">

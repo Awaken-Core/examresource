@@ -13,6 +13,8 @@ interface Props {
 const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHome = currentPath === '/';
 ---
 
 <aside 
@@ -66,13 +68,17 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 
     {/* Navigation Scrollable Body (Clean minimal educational layout matching reference) */}
     <nav class="pt-0 px-3 pb-3 space-y-1 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-none">
-      {/* 1. Home (Active state) */}
+      {/* 1. Home */}
       <a 
         href="/" 
-        class="sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-[#EBF2FE] text-[#2563EB] font-semibold text-xs transition" 
+        class={`sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition ${
+          isHome 
+            ? 'bg-[#EBF2FE] text-[#2563EB] font-semibold dark:bg-[#2563EB]/20 dark:text-[#60A5FA]' 
+            : 'text-muted hover:text-white hover:bg-surface-raised font-medium'
+        }`}
         title="Home"
       >
-        <svg class="w-4 h-4 text-[#2563EB] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <svg class={`w-4 h-4 shrink-0 ${isHome ? 'text-[#2563EB] dark:text-[#60A5FA]' : ''}`} viewBox="0 0 24 24" fill="currentColor">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
         <span class="sidebar-text truncate">Home</span>
@@ -193,6 +199,58 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
   <div class="p-3 border-t border-border/60 relative overflow-visible space-y-2">
     {/* Popover Dropdown (Positioned Bottom-Up on Desktop or Mobile) */}
     <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} />
+
+    {/* Quick Preferences: Theme & Language */}
+    <div class="sidebar-preferences sidebar-text px-1 py-1 space-y-2">
+      <div class="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-surface-raised/40 border border-border/50">
+        <span class="text-[11px] font-medium text-muted flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>Language</span>
+        </span>
+        <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-md text-xs font-semibold select-none" role="group" aria-label="Language selection">
+          <button
+            type="button"
+            data-app-lang="hinglish"
+            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+            title="Switch to Hinglish"
+          >
+            HI
+          </button>
+          <button
+            type="button"
+            data-app-lang="en"
+            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold transition-all cursor-pointer text-muted hover:text-white"
+            title="Switch to English"
+          >
+            EN
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between gap-2 p-1.5 rounded-lg bg-surface-raised/40 border border-border/50">
+        <span class="text-[11px] font-medium text-muted flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+          <span>Theme</span>
+        </span>
+        <button
+          type="button"
+          class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0"
+          title="Toggle Dark and Light Mode"
+          aria-label="Toggle Dark and Light Mode"
+        >
+          <span
+            class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-2xs transition-transform duration-200 translate-x-0.5"
+          >
+            <span class="light-icon text-[11px] select-none leading-none">☀️</span>
+            <span class="dark-icon text-[11px] select-none leading-none hidden">🌙</span>
+          </span>
+        </button>
+      </div>
+    </div>
 
     {/* Contact support & See plans and pricing links (Matches Image 2) */}
     <div class="space-y-0.5">

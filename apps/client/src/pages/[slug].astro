@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
 import BlogArticle from '../components/blog/BlogArticle.astro';
 import TopicNavigation from '../components/blog/TopicNavigation.astro';
 import AdSlot from '../components/blog/AdSlot.astro';
+import ArticleCard from '../components/blog/ArticleCard.astro';
 import type { TopicDetail } from '../data/blogData';
 import { API_URL } from '../lib/api';
 import { siteUrl, siteName, siteDomain } from '../data/site';
@@ -18,77 +20,6 @@ const requestedLanguage = resolveArticleLanguage({
   langParam,
   cookieHeader: Astro.request.headers.get('cookie'),
 });
-let livePost: any = null;
-let alternatePost: any = null;
-let redirectUrl: string | null = null;
-
-// Single API call — getPublished already embeds alternateArticle (html + meta)
-try {
-  const primaryRes = await fetch(`${API_URL}/blogs/${slugKey}?language=${requestedLanguage}`, {
-    signal: AbortSignal.timeout(6000),
-  });
-
-  if (primaryRes.ok) {
-    livePost = await primaryRes.json();
-    const alt = livePost?.alternateArticle;
-    if (alt?.language && alt.language !== livePost?.language && alt.htmlContent != null) {
-      alternatePost = alt;
-    }
-  } else if (primaryRes.status === 404) {
-    try {
-      const errData = await primaryRes.json();
-      if (errData?.redirectUrl) redirectUrl = errData.redirectUrl;
-    } catch {}
-  }
-} catch (e) {}
-
-if (redirectUrl) {
-  return Astro.redirect(redirectUrl, 301);
-}
-
-let article: TopicDetail;
-let tocItems: { id: string; text: string; level: number }[] = [];
-let htmlBody: string | null = null;
-
-if (livePost) {
-  const processed = processArticleHtml(livePost.htmlContent || '', livePost.title);
-  htmlBody = processed.htmlBody;
-  tocItems = processed.tocItems;
-
-  const subjectSlug = livePost.category?.slug || 'general';
-
-  article = {
-    slug: livePost.slug,
-    title: livePost.title,
-    subjectSlug,
-    subjectTitle: livePost.category?.name || 'General',
-    description: livePost.description || livePost.metaDescription || '',
-    readTime: '4 min read',
-    difficulty: 'Intermediate',
-    category: livePost.category?.name || 'Articles',
-    publishedDate: livePost.publishedAt ? new Date(livePost.publishedAt).toISOString().split('T')[0] : '2026-10-13',
-    updatedDate: livePost.updatedAt ? new Date(livePost.updatedAt).toISOString().split('T')[0] : '2026-10-13',
-    introParagraphs: [
-      livePost.description || 'Detailed guide and notification information.',
-    ],
-    sections: [],
-    summaryPoints: [
-      `Official publication for ${livePost.title}.`,
-      'Review complete eligibility, timelines, and guidelines below.',
-    ],
-  };
-}
-
-if (!livePost) {
-  return Astro.rewrite('/404');
-}
-
-const plainText = (htmlBody || article.introParagraphs.join(' ')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-const wordCount = plainText ? plainText.split(' ').length : 0;
-const readMinutes = Math.max(1, Math.round(wordCount / 200));
-
-// Edge CDN caching: cache article HTML for 5 minutes, serve stale up to 15 minutes
-Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
 
 type ListingPost = {
   slug: string;
@@ -102,18 +33,85 @@ type ListingPost = {
   category?: { slug?: string; name?: string } | null;
 };
 
+let livePost: any = null;
+let alternatePost: any = null;
+let redirectUrl: string | null = null;
 let recentPosts: ListingPost[] = [];
+
+// Parallelize primary article and recent posts fetch to eliminate SSR waterfall
 try {
-  const listRes = await fetch(`${API_URL}/blogs?limit=12`, {
-    signal: AbortSignal.timeout(6000),
-  });
+  const [primaryRes, listRes] = await Promise.all([
+    fetch(`${API_URL}/blogs/${slugKey}?language=${requestedLanguage}`, {
+      signal: AbortSignal.timeout(6000),
+    }),
+    fetch(`${API_URL}/blogs?limit=15&language=${requestedLanguage}`, {
+      signal: AbortSignal.timeout(6000),
+    }),
+  ]);
+
+  if (primaryRes.ok) {
+    livePost = await primaryRes.json();
+    const alt = livePost?.alternateArticle;
+    if (alt?.language && alt.language !== livePost?.language && alt.htmlContent != null) {
+      alternatePost = alt;
+    }
+  } else if (primaryRes.status === 404) {
+    try {
+      const errData = await primaryRes.json();
+      if (errData?.redirectUrl) redirectUrl = errData.redirectUrl;
+    } catch {}
+  }
+
   if (listRes.ok) {
     const all = (await listRes.json()) as ListingPost[];
-    recentPosts = all.filter((post) => post.slug !== livePost.slug);
+    recentPosts = Array.isArray(all) ? all.filter((post) => post.slug !== slugKey) : [];
   }
-} catch {
-  recentPosts = [];
+} catch (e) {}
+
+if (redirectUrl) {
+  return Astro.redirect(redirectUrl, 301);
 }
+
+if (!livePost) {
+  return Astro.rewrite('/404');
+}
+
+let tocItems: { id: string; text: string; level: number }[] = [];
+let htmlBody: string | null = null;
+
+const processed = processArticleHtml(livePost.htmlContent || '', livePost.title);
+htmlBody = processed.htmlBody;
+tocItems = processed.tocItems;
+
+const subjectSlug = livePost.category?.slug || 'general';
+
+const article: TopicDetail = {
+  slug: livePost.slug,
+  title: livePost.title,
+  subjectSlug,
+  subjectTitle: livePost.category?.name || 'General',
+  description: livePost.description || livePost.metaDescription || '',
+  readTime: '4 min read',
+  difficulty: 'Intermediate',
+  category: livePost.category?.name || 'Articles',
+  publishedDate: livePost.publishedAt ? new Date(livePost.publishedAt).toISOString().split('T')[0] : '2026-10-13',
+  updatedDate: livePost.updatedAt ? new Date(livePost.updatedAt).toISOString().split('T')[0] : '2026-10-13',
+  introParagraphs: [
+    livePost.description || 'Detailed guide and notification information.',
+  ],
+  sections: [],
+  summaryPoints: [
+    `Official publication for ${livePost.title}.`,
+    'Review complete eligibility, timelines, and guidelines below.',
+  ],
+};
+
+const plainText = (htmlBody || article.introParagraphs.join(' ')).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+const wordCount = plainText ? plainText.split(' ').length : 0;
+const readMinutes = Math.max(1, Math.round(wordCount / 200));
+
+// Edge CDN caching: cache article HTML for 5 minutes, serve stale up to 15 minutes
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
 
 function makePageTitle(metaTitle: string | undefined, title: string) {
   const base = metaTitle || title;
@@ -337,30 +335,18 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
                 Recent Posts
               </h3>
             </div>
-            <div class="space-y-2.5">
-              {recentPosts.slice(0, 5).map((post) => {
-                const targetUrl = requestedLanguage === 'ENGLISH' ? `/${post.slug}?lang=en` : `/${post.slug}`;
-                return (
-                  <a
-                    href={targetUrl}
-                    class="group flex items-start p-2 rounded-lg hover:bg-surface-raised transition border border-transparent hover:border-border/60"
-                  >
-                    <div class="min-w-0 flex-1">
-                      <span class="inline-block text-[10px] font-semibold text-accent leading-none mb-1">
-                        {post.category?.name || 'Latest Updates'}
-                      </span>
-                      <h4 class="text-xs font-semibold text-white group-hover:text-accent line-clamp-2 leading-snug transition-colors">
-                        {post.title}
-                      </h4>
-                      {post.publishedAt && (
-                        <p class="text-[10px] text-muted mt-1">
-                          {new Date(post.publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                        </p>
-                      )}
-                    </div>
-                  </a>
-                );
-              })}
+            <div class="space-y-1">
+              {recentPosts.slice(0, 10).map((post) => (
+                <ArticleCard
+                  variant="compact"
+                  title={post.title}
+                  slug={post.slug}
+                  href={requestedLanguage === 'ENGLISH' ? `/${post.slug}?lang=en` : `/${post.slug}`}
+                  category={post.category?.name || 'Latest Updates'}
+                  publishedAt={post.publishedAt}
+                  headingLevel="h4"
+                />
+              ))}
             </div>
           </div>
         )}
@@ -373,15 +359,14 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
           <article id="article-body" class="space-y-6" transition:name="article-body">
             {livePost.coverImage && (
               <figure class="my-2" data-article-cover>
-                <img
+                <Image
                   src={livePost.coverImage}
                   alt={livePost.imageAlt || article.title}
                   class="max-h-[28rem] w-full rounded-xl border border-border object-cover"
                   loading="eager"
-                  fetchpriority="high"
                   decoding="async"
-                  width="800"
-                  height="420"
+                  width={800}
+                  height={420}
                 />
                 {livePost.imageCaption && (
                   <figcaption class="mt-2 text-center text-xs text-muted">{livePost.imageCaption}</figcaption>
@@ -407,42 +392,18 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
               </h2>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {recentPosts.slice(0, 4).map((post) => {
-                const targetUrl = requestedLanguage === 'ENGLISH' ? `/${post.slug}?lang=en` : `/${post.slug}`;
-                return (
-                  <a
-                    href={targetUrl}
-                    class="group flex flex-col justify-between rounded-xl border border-border bg-surface p-4 hover:border-accent/40 transition shadow-xs"
-                  >
-                    <div>
-                      <div class="flex items-center justify-between gap-2 mb-2">
-                        <span class="rounded bg-accent/10 px-2 py-0.5 text-[10px] font-semibold text-accent">
-                          {post.category?.name || 'Latest Updates'}
-                        </span>
-                        {post.publishedAt && (
-                          <span class="text-[11px] text-muted">
-                            {new Date(post.publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                          </span>
-                        )}
-                      </div>
-                      <h3 class="font-bold text-sm text-white group-hover:text-accent transition-colors line-clamp-2 leading-snug">
-                        {post.title}
-                      </h3>
-                      {(post.description || post.metaDescription) && (
-                        <p class="mt-2 line-clamp-2 text-xs leading-relaxed text-muted">
-                          {post.description || post.metaDescription}
-                        </p>
-                      )}
-                    </div>
-                    <div class="mt-3 flex items-center text-xs font-semibold text-accent group-hover:underline gap-1">
-                      <span>Read article</span>
-                      <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  </a>
-                );
-              })}
+              {recentPosts.slice(0, 10).map((post) => (
+                <ArticleCard
+                  variant="standard"
+                  title={post.title}
+                  slug={post.slug}
+                  href={requestedLanguage === 'ENGLISH' ? `/${post.slug}?lang=en` : `/${post.slug}`}
+                  category={post.category?.name || 'Latest Updates'}
+                  publishedAt={post.publishedAt}
+                  summary={post.description || post.metaDescription}
+                  headingLevel="h3"
+                />
+              ))}
             </div>
           </section>
         )}

@@ -2,12 +2,14 @@
 import type { AuthMode } from '../stores/auth';
 import BrandLogo from './BrandLogo.astro';
 import { siteDomain } from '../data/site';
+import { API_URL } from '../lib/api';
 
 interface Props { mode: AuthMode }
 const { mode } = Astro.props;
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length ? `.${brandRest.join('.')}` : '';
 const title = mode === 'signup' ? 'Create your account' : 'Welcome back';
+const googleAuthUrl = `${API_URL}/auth/google`;
 ---
 
 <main class="min-h-screen w-full bg-canvas px-4 py-8 flex items-center justify-center">
@@ -27,7 +29,7 @@ const title = mode === 'signup' ? 'Create your account' : 'Welcome back';
     </div>
     <a
       id="google-continue-btn"
-      href="#"
+      href={googleAuthUrl}
       class="mt-7 flex min-h-11 w-full items-center justify-center gap-3 rounded-pill border border-border bg-surface-raised px-5 py-3 text-button-md font-semibold text-white transition hover:border-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
