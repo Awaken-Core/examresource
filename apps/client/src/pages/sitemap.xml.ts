@@ -1,6 +1,21 @@
 import type { APIRoute } from 'astro';
 import { API_URL } from '../lib/api';
 
+function escapeXml(str: string): string {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function safeCdata(str: string): string {
+  if (!str) return '';
+  return str.replace(/]]>/g, ']]]]><![CDATA[>');
+}
+
 export const GET: APIRoute = async () => {
   const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const siteName = import.meta.env.PUBLIC_SITE_NAME;
@@ -11,19 +26,21 @@ export const GET: APIRoute = async () => {
 
   try {
     const [entriesRes, catRes] = await Promise.all([
-      fetch(`${API_URL}/sitemap-entries`),
-      fetch(`${API_URL}/categories`),
+      fetch(`${API_URL}/sitemap-entries`, { signal: AbortSignal.timeout(6000) }).catch(() => null),
+      fetch(`${API_URL}/categories`, { signal: AbortSignal.timeout(6000) }).catch(() => null),
     ]);
 
-    if (entriesRes.ok) {
+    if (entriesRes && entriesRes.ok) {
       sitemapEntries = await entriesRes.json();
     } else {
       // Fallback to /blogs if sitemap-entries fails
-      const blogRes = await fetch(`${API_URL}/blogs?limit=200`);
-      if (blogRes.ok) sitemapEntries = await blogRes.json();
+      const blogRes = await fetch(`${API_URL}/blogs?limit=200`, { signal: AbortSignal.timeout(6000) }).catch(() => null);
+      if (blogRes && blogRes.ok) {
+        sitemapEntries = await blogRes.json();
+      }
     }
 
-    if (catRes.ok) {
+    if (catRes && catRes.ok) {
       categories = await catRes.json();
     }
   } catch (e) {
@@ -74,7 +91,7 @@ export const GET: APIRoute = async () => {
   // Known fallback articles to guarantee crawler coverage if API is offline
   const fallbackSlugs = [
     'mp-police-constable-driver-recruitment-2026',
-    'upessc-prt-assistant-teacher-recruitment-2026-english',
+    'upessc-prt-assistant-teacher-recruitment-2026',
     'rrb-ntpc-10-2-ug-recruitment-2026',
   ];
 
@@ -84,7 +101,9 @@ export const GET: APIRoute = async () => {
   if (Array.isArray(sitemapEntries) && sitemapEntries.length > 0) {
     for (const post of sitemapEntries) {
       if (!post.slug || post.noindex) continue;
-      const cleanSlug = String(post.slug).replace(/^\//, '');
+      const cleanSlug = String(post.slug)
+        .replace(/^\//, '')
+        .replace(/-(english|hinglish)$/i, '');
       const loc = `${siteUrl}/${cleanSlug}`;
       if (!seenUrls.has(loc)) {
         seenUrls.add(loc);
@@ -126,14 +145,14 @@ export const GET: APIRoute = async () => {
 ${allUrls
   .map(
     (u) => `  <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${u.lastmod}</lastmod>
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>${
+    <loc>${escapeXml(u.loc)}</loc>
+    <lastmod>${escapeXml(u.lastmod)}</lastmod>
+    <changefreq>${escapeXml(u.changefreq)}</changefreq>
+    <priority>${escapeXml(u.priority)}</priority>${
       u.image
         ? `\n    <image:image>
-      <image:loc>${u.image.loc}</image:loc>
-      <image:title><![CDATA[${u.image.title}]]></image:title>
+      <image:loc>${escapeXml(u.image.loc)}</image:loc>
+      <image:title><![CDATA[${safeCdata(u.image.title)}]]></image:title>
     </image:image>`
         : ''
     }
@@ -146,7 +165,9 @@ ${allUrls
     status: 200,
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff',
       'Cache-Control': 'public, max-age=3600, s-maxage=86400',
     },
   });
 };
+

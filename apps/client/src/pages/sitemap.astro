@@ -15,8 +15,11 @@ interface LivePost {
 
 let livePosts: LivePost[] = [];
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=100`, { credentials: 'omit' });
-  if (res.ok) {
+  const res = await fetch(`${API_URL}/blogs?limit=100`, { 
+    credentials: 'omit',
+    signal: AbortSignal.timeout(6000),
+  }).catch(() => null);
+  if (res && res.ok) {
     livePosts = await res.json();
   }
 } catch (e) {
@@ -36,7 +39,7 @@ const fallbackArticles = [
   },
   {
     title: 'RRB NTPC Graduate Recruitment 2026',
-    slug: 'rrb-ntpc-graduate-recruitment-2026-english',
+    slug: 'rrb-ntpc-graduate-recruitment-2026',
     category: 'Railways',
   }
 ];
@@ -44,7 +47,7 @@ const fallbackArticles = [
 const articlesList = (livePosts && livePosts.length > 0)
   ? livePosts.map(p => ({
       title: p.title,
-      slug: p.slug?.replace(/^\//, ''),
+      slug: p.slug?.replace(/^\//, '')?.replace(/-(english|hinglish)$/i, ''),
       category: p.category?.name || p.categories?.[0]?.name || 'Exam Guide',
     }))
   : fallbackArticles;

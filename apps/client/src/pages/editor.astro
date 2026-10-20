@@ -3886,6 +3886,18 @@ import { siteUrl } from '../data/site';
       topLangHindiBtn?.classList.add('font-medium', 'text-slate-600');
     }
 
+    // 3.5. Update active post ID to match target language
+    if (targetLang === 'ENGLISH') {
+      currentPostId = englishBlogId;
+    } else {
+      currentPostId = hinglishBlogId;
+    }
+    if (currentPostId) {
+      window.history.replaceState({}, '', `/editor?edit=${currentPostId}`);
+    } else {
+      window.history.replaceState({}, '', `/editor`);
+    }
+
     // 4. Retrieve target language content
     const targetTitle = targetLang === 'ENGLISH'
       ? (compareEnglishTitle?.value || '')
@@ -4013,21 +4025,27 @@ import { siteUrl } from '../data/site';
         if (compareEnglishTitle) compareEnglishTitle.value = data.title || '';
         if (compareEnglishMarkdown) compareEnglishMarkdown.value = data.markdown || '';
         if (compareEnglishExcerpt) compareEnglishExcerpt.value = data.excerpt || '';
-        if (compareEnglishSlug && data.slugSuggestion) {
-          compareEnglishSlug.value = data.slugSuggestion.endsWith('-english') ? data.slugSuggestion : `${data.slugSuggestion}-english`;
+        const cleanSug = (data.slugSuggestion || slugInput?.value || '')
+          .toLowerCase()
+          .replace(/-(hinglish|english)$/i, '');
+        if (compareEnglishSlug && cleanSug) {
+          compareEnglishSlug.value = cleanSug;
         }
-        if (compareHinglishSlug && !compareHinglishSlug.value.trim() && slugInput?.value) {
-          compareHinglishSlug.value = slugInput.value.endsWith('-hinglish') ? slugInput.value : `${slugInput.value}-hinglish`;
+        if (compareHinglishSlug && !compareHinglishSlug.value.trim() && cleanSug) {
+          compareHinglishSlug.value = cleanSug;
         }
       } else {
         if (compareHinglishTitle) compareHinglishTitle.value = data.title || '';
         if (compareHinglishMarkdown) compareHinglishMarkdown.value = data.markdown || '';
         if (compareHinglishExcerpt) compareHinglishExcerpt.value = data.excerpt || '';
-        if (compareHinglishSlug && data.slugSuggestion) {
-          compareHinglishSlug.value = data.slugSuggestion.endsWith('-hinglish') ? data.slugSuggestion : `${data.slugSuggestion}-hinglish`;
+        const cleanSug = (data.slugSuggestion || slugInput?.value || '')
+          .toLowerCase()
+          .replace(/-(hinglish|english)$/i, '');
+        if (compareHinglishSlug && cleanSug) {
+          compareHinglishSlug.value = cleanSug;
         }
-        if (compareEnglishSlug && !compareEnglishSlug.value.trim() && slugInput?.value) {
-          compareEnglishSlug.value = slugInput.value.endsWith('-english') ? slugInput.value : `${slugInput.value}-english`;
+        if (compareEnglishSlug && !compareEnglishSlug.value.trim() && cleanSug) {
+          compareEnglishSlug.value = cleanSug;
         }
       }
 
@@ -4094,6 +4112,17 @@ import { siteUrl } from '../data/site';
       const hHtml = DOMPurify.sanitize(String(await marked.parse(hMd)), DOMPURIFY_CONFIG);
       const eHtml = DOMPurify.sanitize(String(await marked.parse(eMd)), DOMPURIFY_CONFIG);
 
+      const canonicalBilingualSlug = (compareEnglishSlug?.value.trim() || compareHinglishSlug?.value.trim() || slugInput?.value.trim() || slugify(eTitle || hTitle || 'article'))
+        .toLowerCase()
+        .replace(/-(hinglish|english)$/i, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'article';
+
+      if (compareEnglishSlug) compareEnglishSlug.value = canonicalBilingualSlug;
+      if (compareHinglishSlug) compareHinglishSlug.value = canonicalBilingualSlug;
+      if (slugInput) slugInput.value = canonicalBilingualSlug;
+
       const payload = {
         categoryId: categorySelect?.value || null,
         coverImage: coverImageInput?.value || null,
@@ -4104,7 +4133,7 @@ import { siteUrl } from '../data/site';
         hinglish: {
           id: hinglishBlogId || (languageSelect?.value === 'HINGLISH' && currentPostId ? currentPostId : undefined),
           title: hTitle,
-          slug: compareHinglishSlug?.value.trim() || hTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-hinglish',
+          slug: canonicalBilingualSlug,
           markdown: hMd,
           htmlContent: hHtml,
           excerpt: compareHinglishExcerpt?.value.trim() || '',
@@ -4112,7 +4141,7 @@ import { siteUrl } from '../data/site';
         english: {
           id: englishBlogId || (languageSelect?.value === 'ENGLISH' && currentPostId ? currentPostId : undefined),
           title: eTitle,
-          slug: compareEnglishSlug?.value.trim() || eTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-english',
+          slug: canonicalBilingualSlug,
           markdown: eMd,
           htmlContent: eHtml,
           excerpt: compareEnglishExcerpt?.value.trim() || '',
@@ -8437,6 +8466,30 @@ ${mdContent}
   });
 
   slugInput?.addEventListener('input', updateSerp);
+  slugInput?.addEventListener('blur', () => {
+    if (slugInput && slugInput.value.trim()) {
+      slugInput.value = slugify(slugInput.value);
+      updateSerp();
+    }
+  });
+  compareEnglishSlug?.addEventListener('blur', () => {
+    if (compareEnglishSlug && compareEnglishSlug.value.trim()) {
+      const clean = slugify(compareEnglishSlug.value);
+      compareEnglishSlug.value = clean;
+      if (compareHinglishSlug) compareHinglishSlug.value = clean;
+      if (slugInput) slugInput.value = clean;
+      updateSerp();
+    }
+  });
+  compareHinglishSlug?.addEventListener('blur', () => {
+    if (compareHinglishSlug && compareHinglishSlug.value.trim()) {
+      const clean = slugify(compareHinglishSlug.value);
+      compareHinglishSlug.value = clean;
+      if (compareEnglishSlug) compareEnglishSlug.value = clean;
+      if (slugInput) slugInput.value = clean;
+      updateSerp();
+    }
+  });
   excerptInput?.addEventListener('input', updateSerp);
   metaTitleInput?.addEventListener('input', updateSerp);
   metaDescInput?.addEventListener('input', updateSerp);
@@ -8515,9 +8568,14 @@ ${mdContent}
         slug = languageSelect?.value === 'ENGLISH'
           ? (compareEnglishSlug?.value.trim() || '')
           : (compareHinglishSlug?.value.trim() || '');
-        if (slugInput && slug) slugInput.value = slug;
       }
-      slug = slug || slugify(title || 'untitled');
+      slug = (slug || slugify(title || 'untitled'))
+        .toLowerCase()
+        .replace(/-(hinglish|english)$/i, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'article';
+      if (slugInput) slugInput.value = slug;
 
       if (!title) {
         if (!isAutosave) alert('Please enter an article title before saving.');
@@ -8613,8 +8671,12 @@ ${mdContent}
           window.history.replaceState({}, '', `/editor?edit=${saved.id}`);
         }
       } else if (res.status === 409) {
-        const err = await res.json();
-        alert(`Version Conflict: ${err.message}`);
+        const err = await res.json().catch(() => ({}));
+        if (err.serverVersion !== undefined) {
+          alert(`Version Conflict: ${err.message || 'This article was modified by another editor. Please refresh.'}`);
+        } else {
+          alert(`Conflict: ${err.message || 'This blog slug is already in use.'}`);
+        }
       } else {
         const err = await res.json().catch(() => ({}));
         const details = err.errors ? Object.entries(err.errors).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('; ') : '';
@@ -8833,11 +8895,13 @@ ${mdContent}
     return text
       .toLowerCase()
       .trim()
+      .replace(/-(english|hinglish)$/i, '')
       .replace(/\\+/g, '')
       .replace(/\s+/g, '-')
       .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
       .replace(/\-\-+/g, '-')
-      .replace(/(^-|-$)/g, '');
+      .replace(/(^-|-$)/g, '')
+      .replace(/-(english|hinglish)$/i, '');
   }
 
   // Initialization

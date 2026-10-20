@@ -34,7 +34,7 @@ export function resolveArticleLanguage(opts: {
   return appLangToBlogLanguage(preferredLangFromCookieHeader(opts.cookieHeader));
 }
 
-export function articleHref(slug: string, lang: AppLang): string {
+export function articleHref(slug: string, _lang?: AppLang): string {
   const clean = slug.replace(/^\//, '');
-  return lang === 'en' ? `/${clean}?lang=en` : `/${clean}`;
+  return `/${clean}`;
 }

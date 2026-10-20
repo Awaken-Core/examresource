@@ -63,7 +63,14 @@ Allow: /
 
 # XML Sitemap and RSS Feed locations
 Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/sitemap_index.xml
 Sitemap: ${siteUrl}/rss.xml
+
+# LLM Agents & AI Search Engine Context (llms.txt standard)
+# https://llmstxt.org/
+# Machine-readable directory of official recruitment portals, exam categories, and citation standards
+# Context Document: ${siteUrl}/llms.txt
+# Full Reference: ${siteUrl}/llms-full.txt
 `;
 
   return new Response(content, {

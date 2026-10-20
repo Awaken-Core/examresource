@@ -1,0 +1,197 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ActivityTabs from '../components/ActivityTabs.astro';
+import { siteName, siteUrl } from '../data/site';
+
+const pageTitle = `Saved Favorites | ${siteName}`;
+const pageDescription = `Quickly access all your favorite exam notifications, syllabus breakdowns, and admit card links on ${siteName}.`;
+const canonicalUrl = `${siteUrl}/favorites`;
+---
+
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={canonicalUrl}
+  noindex={true}
+>
+  <div class="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-8 min-h-[70vh]">
+    <ActivityTabs activeTab="favorites" />
+
+    {/* Controls Header: Total count, Search filter & Clear all */}
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-border/60">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold text-white">Saved Favorites</span>
+        <span id="favorites-count-pill" class="px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 text-xs font-bold border border-rose-500/30 leading-none">
+          0
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        {/* Instant Search Bar */}
+        <div class="relative flex-1 sm:w-64">
+          <input
+            type="search"
+            id="favorites-search-input"
+            placeholder="Search favorites..."
+            class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-surface border border-border text-xs text-white placeholder:text-muted focus:outline-none focus:border-rose-400 transition-colors"
+          />
+          <svg class="w-3.5 h-3.5 text-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <button
+          type="button"
+          data-clear-bookmarks
+          class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold text-muted hover:text-red-400 hover:bg-surface-raised border border-border/60 hover:border-red-500/30 transition-colors cursor-pointer shrink-0"
+          title="Clear all saved favorites"
+        >
+          Clear all
+        </button>
+      </div>
+    </div>
+
+    {/* Favorites List Container */}
+    <div id="favorites-page-list" class="space-y-2.5">
+      <div class="py-12 text-center text-xs text-muted">Loading saved favorites...</div>
+    </div>
+
+    {/* Empty State */}
+    <div id="favorites-empty-state" class="hidden py-14 px-4 text-center rounded-2xl bg-surface border border-border shadow-2xs">
+      <div class="w-14 h-14 rounded-2xl bg-surface-raised border border-border flex items-center justify-center mx-auto mb-3.5 text-rose-400/80">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-white tracking-tight">No saved favorites yet</h2>
+      <p class="text-xs text-muted max-w-sm mx-auto mt-1 leading-relaxed">
+        Save recruitment notifications, answer keys, or study syllabus pages while browsing to quickly find them here anytime.
+      </p>
+
+      <div class="mt-5">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent text-on-accent text-xs font-semibold hover:brightness-110 transition shadow-xs"
+        >
+          <span>Browse latest notifications</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { getBookmarks, timeAgo } from '../lib/bookmarks';
+
+  let searchQuery = '';
+
+  function renderFavoritesPage() {
+    const list = document.getElementById('favorites-page-list');
+    const emptyState = document.getElementById('favorites-empty-state');
+    const countPill = document.getElementById('favorites-count-pill');
+    if (!list || !emptyState) return;
+
+    const allBookmarks = getBookmarks();
+    if (countPill) {
+      countPill.textContent = String(allBookmarks.length);
+    }
+
+    // Toggle clear all button
+    document.querySelectorAll<HTMLElement>('[data-clear-bookmarks]').forEach((btn) => {
+      btn.classList.toggle('hidden', allBookmarks.length === 0);
+    });
+
+    if (allBookmarks.length === 0) {
+      list.classList.add('hidden');
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    const filtered = searchQuery.trim()
+      ? allBookmarks.filter((b) => 
+          b.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          (b.category && b.category.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
+      : allBookmarks;
+
+    list.classList.remove('hidden');
+    emptyState.classList.add('hidden');
+    list.innerHTML = '';
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="py-10 text-center text-xs text-muted rounded-2xl bg-surface border border-border">
+          <p class="font-semibold text-white">No matches found</p>
+          <p class="mt-1 text-muted">No saved favorites matched "${searchQuery}".</p>
+        </div>
+      `;
+      return;
+    }
+
+    filtered.forEach((item) => {
+      const card = document.createElement('div');
+      card.className =
+        'group relative flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-surface hover:bg-surface-raised border border-border hover:border-rose-400/40 transition-all duration-150 shadow-2xs';
+
+      const content = document.createElement('a');
+      content.href = item.url;
+      content.className = 'flex-1 min-w-0 pr-2 block text-left';
+      content.innerHTML = `
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-surface-raised border border-border/80 text-rose-400">
+            ${item.category || 'Notification'}
+          </span>
+          <span class="text-muted/40">•</span>
+          <span class="text-[11px] text-muted">${timeAgo(item.savedAt)}</span>
+        </div>
+        <h3 class="text-xs sm:text-sm font-bold text-white group-hover:text-rose-400 transition leading-snug line-clamp-2">
+          ${item.title}
+        </h3>
+      `;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.setAttribute('data-remove-bookmark', item.slug);
+      removeBtn.setAttribute('title', 'Remove favorite');
+      removeBtn.setAttribute('aria-label', `Remove ${item.title} from favorites`);
+      removeBtn.className =
+        'p-2 rounded-xl text-muted hover:text-red-400 hover:bg-surface-raised border border-transparent hover:border-border transition-colors cursor-pointer shrink-0';
+      removeBtn.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      `;
+
+      card.appendChild(content);
+      card.appendChild(removeBtn);
+      list.appendChild(card);
+    });
+  }
+
+  function setupSearch() {
+    const input = document.getElementById('favorites-search-input') as HTMLInputElement | null;
+    if (input && !input.hasAttribute('data-bound')) {
+      input.setAttribute('data-bound', 'true');
+      input.addEventListener('input', () => {
+        searchQuery = input.value;
+        renderFavoritesPage();
+      });
+    }
+  }
+
+  // Initial render
+  renderFavoritesPage();
+  setupSearch();
+
+  window.addEventListener('bookmarks-updated', () => {
+    renderFavoritesPage();
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    renderFavoritesPage();
+    setupSearch();
+  });
+</script>

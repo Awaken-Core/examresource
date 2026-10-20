@@ -334,7 +334,7 @@ Output must be valid JSON matching this schema:
 {
   "title": "translated title string",
   "description": "translated short excerpt string",
-  "slugSuffix": "-hinglish" or "-english",
+  "slugSuffix": "",
   "metaTitle": "translated SEO meta title string (under 60 chars)",
   "metaDescription": "translated SEO meta description string (under 160 chars)",
   "imageAlt": "translated image alt text string",

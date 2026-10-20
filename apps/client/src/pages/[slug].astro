@@ -14,6 +14,17 @@ import { blogLanguageToAppLang, resolveArticleLanguage } from '../lib/preferred-
 const { slug: slugParam } = Astro.params;
 const slugKey = (slugParam || '').toLowerCase();
 
+// Automatic 301 redirect for legacy -english or -hinglish URLs to clean slug
+const cleanSlugMatch = slugKey.match(/^(.*?)-(english|hinglish)$/i);
+if (cleanSlugMatch && cleanSlugMatch[1]) {
+  return Astro.redirect(`/${cleanSlugMatch[1]}`, 301);
+}
+
+// Legacy or malformed sitemap and XML requests redirect cleanly to /sitemap.xml
+if (slugKey.endsWith('-sitemap.xml') || slugKey.endsWith('.xml')) {
+  return Astro.redirect('/sitemap.xml', 301);
+}
+
 // URL ?lang= wins; otherwise honor preferred_lang cookie so toggle & content stay in sync
 const langParam = Astro.url.searchParams.get('lang');
 const requestedLanguage = resolveArticleLanguage({
@@ -132,8 +143,12 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "BlogPosting",
+      "@type": ["NewsArticle", "BlogPosting"],
       "@id": `${canonicalUrl}#article`,
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["[data-article-title]", "h1", "nav[aria-label='Breadcrumb']"]
+      },
       "isPartOf": {
         "@type": "WebPage",
         "@id": canonicalUrl,
@@ -222,7 +237,7 @@ const alternateLinks: { hreflang: string; href: string }[] = [];
 alternateLinks.push({ hreflang: 'hi-Latn', href: `${siteOrigin}/${article.slug}` });
 alternateLinks.push({ hreflang: 'x-default', href: `${siteOrigin}/${article.slug}` });
 if (hasAlternateLanguage) {
-  alternateLinks.push({ hreflang: 'en', href: `${siteOrigin}/${article.slug}?lang=en` });
+  alternateLinks.push({ hreflang: 'en', href: `${siteOrigin}/${article.slug}` });
 }
 
 // Embed both language versions for instant client-side swap (no navigation)
@@ -285,46 +300,63 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
     class="blog-reading-view min-h-screen bg-canvas text-white"
     data-article-lang={blogLanguageToAppLang(currentLanguage)}
   >
-    <div class="article-shell w-full px-4 pt-5 pb-10 sm:px-6 lg:px-8">
+    <div class="article-shell w-full px-3.5 py-3 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto">
       <header class="article-shell-head min-w-0">
-        <nav aria-label="Breadcrumb" class="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-muted">
-          <a href="/" class="hover:text-accent">Home</a>
-          <span>/</span>
-          <a href="/" class="hover:text-accent">Articles</a>
-          <span>/</span>
-          <a href={`/category/${article.subjectSlug}`} class="hover:text-accent">{article.subjectTitle}</a>
-          <span>/</span>
-          <span class="truncate font-medium text-white" data-article-crumb-title>{article.title}</span>
+        <nav aria-label="Breadcrumb" class="mb-2 sm:mb-3 flex items-center gap-1.5 text-[11px] sm:text-xs text-muted overflow-x-auto scrollbar-none whitespace-nowrap py-0.5">
+          <a href="/" class="hover:text-accent shrink-0">Home</a>
+          <span class="text-muted/40 shrink-0">/</span>
+          <a href="/" class="hover:text-accent shrink-0">Articles</a>
+          <span class="text-muted/40 shrink-0">/</span>
+          <a href={`/category/${article.subjectSlug}`} class="hover:text-accent shrink-0">{article.subjectTitle}</a>
+          <span class="text-muted/40 shrink-0">/</span>
+          <span class="truncate font-medium text-white max-w-[170px] sm:max-w-xs md:max-w-none" data-article-crumb-title>{article.title}</span>
         </nav>
-        <div class="mb-5 flex flex-wrap items-center justify-between gap-3 text-xs text-muted">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded bg-accent/10 px-2.5 py-0.5 font-semibold text-accent">{article.category}</span>
+        <div class="mb-3 sm:mb-5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 text-xs text-muted">
+          <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0 text-[11px] sm:text-xs">
+            <span class="rounded bg-accent/10 px-2 py-0.5 font-semibold text-accent border border-accent/20 shrink-0">{article.category}</span>
             <span class="text-muted/60">•</span>
-            <span data-article-read-time>{readMinutes} min read</span>
-            <span class="text-muted/60">•</span>
-            <span data-article-updated>Updated {article.updatedDate}</span>
+            <span data-article-read-time class="shrink-0">{readMinutes} min read</span>
+            <span class="text-muted/60 hidden xs:inline">•</span>
+            <span data-article-updated class="hidden xs:inline shrink-0">Updated {article.updatedDate}</span>
           </div>
 
-          {/* Article Bookmark / Favourite Toggle Button */}
-          <button 
-            type="button" 
-            data-bookmark-slug={article.slug}
-            data-bookmark-title={article.title}
-            data-bookmark-category={article.category}
-            data-bookmark-url={canonicalUrl}
-            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-accent/50 text-muted hover:text-white transition-all text-xs font-medium cursor-pointer shadow-2xs group"
-            title="Save article to bookmarks"
-            aria-label="Save article to bookmarks"
-          >
-            <svg class="bookmark-icon w-3.5 h-3.5 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            <span class="bookmark-label font-medium">Bookmark</span>
-          </button>
+          {/* Article Action Buttons: Favorite (localStorage) & Share */}
+          <div class="inline-flex items-center gap-1.5 shrink-0 ml-auto sm:ml-0">
+            <button 
+              type="button" 
+              data-favorite-slug={article.slug}
+              data-favorite-title={article.title}
+              data-favorite-category={article.category}
+              data-favorite-url={canonicalUrl}
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-red-500/50 text-muted hover:text-white transition-all text-xs font-medium cursor-pointer shadow-2xs group shrink-0"
+              title="Add article to favorites"
+              aria-label="Add article to favorites"
+            >
+              <svg class="favorite-icon w-3.5 h-3.5 text-muted group-hover:text-red-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span class="favorite-label font-medium hidden xs:inline">Favorite</span>
+            </button>
+
+            <button 
+              type="button" 
+              data-share-btn
+              data-share-url={canonicalUrl}
+              data-share-title={article.title}
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-accent/50 text-muted hover:text-white transition-all text-xs font-medium cursor-pointer shadow-2xs group shrink-0"
+              title="Share this article"
+              aria-label="Share this article"
+            >
+              <svg class="w-3.5 h-3.5 text-muted group-hover:text-accent transition fill-current" viewBox="0 0 24 24">
+                <path d="M14 5v4C7 10 4 15 3 20c2.5-3.5 6-5.1 11-5.1V19l8-7-8-7z" />
+              </svg>
+              <span class="font-medium">Share</span>
+            </button>
+          </div>
         </div>
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white" data-article-title transition:name="article-title">{article.title}</h1>
+        <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-snug sm:leading-tight" data-article-title transition:name="article-title">{article.title}</h1>
         <p
-          class="mt-3 max-w-4xl text-base leading-relaxed text-muted"
+          class="mt-1.5 sm:mt-2.5 max-w-4xl text-xs sm:text-sm md:text-base leading-relaxed text-muted"
           data-article-description
           hidden={!article.description}
         >{article.description}</p>
@@ -349,7 +381,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
                     variant="compact"
                     title={post.title}
                     slug={post.slug}
-                    href={requestedLanguage === 'ENGLISH' ? `/${post.slug}?lang=en` : `/${post.slug}`}
+                    href={`/${post.slug}`}
                     category={post.category?.name || 'Latest Updates'}
                     publishedAt={post.publishedAt}
                     headingLevel="h4"
@@ -363,13 +395,13 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
 
       <div class="article-shell-body min-w-0">
         {htmlBody ? (
-          <article id="article-body" class="space-y-6" transition:name="article-body">
+          <article id="article-body" class="space-y-4 sm:space-y-6" transition:name="article-body">
             {livePost.coverImage && (
-              <figure class="my-2" data-article-cover>
+              <figure class="my-1 sm:my-3" data-article-cover>
                 <Image
                   src={livePost.coverImage}
                   alt={livePost.imageAlt || article.title}
-                  class="max-h-[28rem] w-full rounded-xl border border-border object-cover"
+                  class="max-h-56 sm:max-h-80 md:max-h-[28rem] w-full rounded-xl border border-border object-cover"
                   loading="eager"
                   fetchpriority="high"
                   decoding="async"
@@ -377,7 +409,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
                   height={420}
                 />
                 {livePost.imageCaption && (
-                  <figcaption class="mt-2 text-center text-xs text-muted">{livePost.imageCaption}</figcaption>
+                  <figcaption class="mt-1.5 text-center text-xs text-muted">{livePost.imageCaption}</figcaption>
                 )}
               </figure>
             )}
@@ -389,24 +421,80 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
           </div>
         )}
 
+        {/* End of Article Share Bar */}
+        <div class="mt-6 sm:mt-10 p-3 sm:p-4 rounded-xl border border-border/80 bg-surface/90 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-2xs">
+          <div class="flex items-center gap-2.5 text-center sm:text-left w-full sm:w-auto">
+            <div class="w-8 h-8 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <path d="M14 5v4C7 10 4 15 3 20c2.5-3.5 6-5.1 11-5.1V19l8-7-8-7z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs sm:text-sm font-semibold text-white">Share this article</p>
+              <p class="text-[11px] text-muted">Spread the update with fellow aspirants</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button
+              type="button"
+              data-share-btn
+              data-share-url={canonicalUrl}
+              data-share-title={article.title}
+              class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-accent hover:bg-accent/90 text-white font-semibold text-xs transition cursor-pointer shadow-2xs"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M14 5v4C7 10 4 15 3 20c2.5-3.5 6-5.1 11-5.1V19l8-7-8-7z" />
+              </svg>
+              <span>Share</span>
+            </button>
+            <a
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(article.title + ' ' + canonicalUrl)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#25D366] font-semibold text-xs transition cursor-pointer"
+              title="Share on WhatsApp"
+              aria-label="Share on WhatsApp"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              <span class="hidden sm:inline">WhatsApp</span>
+            </a>
+            <a
+              href={`https://t.me/share/url?url=${encodeURIComponent(canonicalUrl)}&text=${encodeURIComponent(article.title)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2AABEE]/15 hover:bg-[#2AABEE]/25 border border-[#2AABEE]/30 text-[#2AABEE] font-semibold text-xs transition cursor-pointer"
+              title="Share on Telegram"
+              aria-label="Share on Telegram"
+            >
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+              </svg>
+              <span class="hidden sm:inline">Telegram</span>
+            </a>
+          </div>
+        </div>
+
         <div id="recent-posts-bottom">
           {recentPosts.length > 0 && (
-            <section class="mt-10 border-t border-border/80 pt-8 xl:hidden" aria-label="Recent posts">
-              <div class="flex items-center justify-between mb-4">
-                <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <section class="mt-6 pt-5 sm:mt-10 sm:pt-8 border-t border-border/80 xl:hidden" aria-label="Recent posts">
+              <div class="flex items-center justify-between mb-3 sm:mb-4">
+                <h2 class="text-sm sm:text-lg font-bold text-white flex items-center gap-2">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                   </svg>
                   Recent Posts
                 </h2>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">
                 {recentPosts.slice(0, 4).map((post) => (
                   <ArticleCard
                     variant="standard"
                     title={post.title}
                     slug={post.slug}
-                    href={requestedLanguage === 'ENGLISH' ? `/${post.slug}?lang=en` : `/${post.slug}`}
+                    href={`/${post.slug}`}
                     category={post.category?.name || 'Latest Updates'}
                     publishedAt={post.publishedAt}
                     summary={post.description || post.metaDescription}
@@ -430,6 +518,13 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
   {/* Lightweight zero-dependency progressive enhancement for recent posts */}
   <script is:inline define:vars={{ currentSlug: slugKey, reqLang: requestedLanguage, apiEndpoint: API_URL }}>
     (function() {
+      // Instantly remove any ?lang=en or other query string from address bar so browser sees only clean article URL
+      try {
+        if (window.location.search && window.location.search.indexOf('lang=') !== -1) {
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      } catch (e) {}
+
       function runHydrate() {
         var railEl = document.getElementById('recent-posts-rail');
         var bottomEl = document.getElementById('recent-posts-bottom');
@@ -460,7 +555,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
               '<div class="space-y-1">';
 
             filtered.slice(0, 5).forEach(function(post) {
-              var href = reqLang === 'ENGLISH' ? '/' + post.slug + '?lang=en' : '/' + post.slug;
+              var href = '/' + post.slug;
               var catName = (post.category && post.category.name) ? post.category.name : 'Latest Updates';
               railHtml += '<a href="' + href + '" data-astro-prefetch="hover" class="group flex items-start p-2.5 rounded-lg hover:bg-surface-raised transition border border-transparent hover:border-border/60">' +
                 '<div class="min-w-0 flex-1">' +
@@ -476,17 +571,17 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
           }
 
           if (bottomEl && bottomEl.children.length === 0) {
-            var bottomHtml = '<section class="mt-10 border-t border-border/80 pt-8 xl:hidden" aria-label="Recent posts">' +
-              '<div class="flex items-center justify-between mb-4">' +
-                '<h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">' +
-                  '<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>' +
+            var bottomHtml = '<section class="mt-6 pt-5 sm:mt-10 sm:pt-8 border-t border-border/80 xl:hidden" aria-label="Recent posts">' +
+              '<div class="flex items-center justify-between mb-3 sm:mb-4">' +
+                '<h2 class="text-sm sm:text-lg font-bold text-white flex items-center gap-2">' +
+                  '<svg class="w-4 h-4 sm:w-5 sm:h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>' +
                   'Recent Posts' +
                 '</h2>' +
               '</div>' +
-              '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">';
+              '<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3.5">';
 
             filtered.slice(0, 4).forEach(function(post) {
-              var href = reqLang === 'ENGLISH' ? '/' + post.slug + '?lang=en' : '/' + post.slug;
+              var href = '/' + post.slug;
               var catName = (post.category && post.category.name) ? post.category.name : 'Latest Updates';
               var dateStr = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
               var desc = post.description || post.metaDescription || '';

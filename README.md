@@ -74,24 +74,35 @@ flowchart TD
 
 ## 🚢 Production Deployment
 
-Deployments to production are automated via Git. Pushing to **`release/prod`** triggers the production pipeline for both Vercel (frontend) and Cloudflare Workers (backend).
+Deployments to production are automated via Git. Pushing to **`main`** triggers the production pipeline for both Vercel (frontend) and Cloudflare Workers (backend).
 
 ### The Deployment Commands:
 ```bash
-# 1. Commit and push your verified changes to main
+# 1. Run local pre-flight checks
+bun run typecheck
+bun run lint
+bun run test
+bun run build
+
+# 2. Push to main to trigger production builds
 git checkout main
+git add <files>
+git commit -m "feat/fix: descriptive summary"
 git push origin main
-
-# 2. Switch to release/prod and sync with main
-git checkout release/prod
-git pull origin main
-
-# 3. Push to release/prod to trigger production builds
-git push origin release/prod
-
-# 4. Return to main
-git checkout main
 ```
+
+> [!IMPORTANT]
+> `main` is our active production branch. All pushes to `main` trigger automatic production builds and deployments on Vercel and Cloudflare Workers.
+
+---
+
+## 📚 Version 2 Roadmap & Development (`feat/textbook-v2`)
+
+Active development for **GovtPariksha Version 2** (including new textbook resources, comprehensive exam portals, mock test series, and question bank modules) takes place on the **`feat/textbook-v2`** branch:
+
+- **Branch URL**: [https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2](https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2)
+- Contributors should branch off `feat/textbook-v2` for Version 2 features.
+- PRs for v2 features should target `feat/textbook-v2` prior to final stabilization into `main`.
 
 For complete deployment details, pre-flight checks, and rollback instructions, see [docs/DEPLOYMENT.md](file:///c:/Users/Devil/Desktop/examresource/docs/DEPLOYMENT.md).
 
@@ -181,7 +192,7 @@ bun run dev
 ## 📚 Technical Documentation Index
 
 - **[AGENTS.md](file:///c:/Users/Devil/Desktop/examresource/AGENTS.md)**: AI agent instructions, coding constraints (Bun only, no hardcoded URLs), UI/UX skills references.
-- **[docs/DEPLOYMENT.md](file:///c:/Users/Devil/Desktop/examresource/docs/DEPLOYMENT.md)**: Production release guide, `release/prod` trigger workflow, environment variables, rollbacks.
+- **[docs/DEPLOYMENT.md](file:///c:/Users/Devil/Desktop/examresource/docs/DEPLOYMENT.md)**: Production release guide (`main` branch trigger), Version 2 development workflow, environment variables, rollbacks.
 - **[docs/ARCHITECTURE.md](file:///c:/Users/Devil/Desktop/examresource/docs/ARCHITECTURE.md)**: Complete architecture, dual-runtime Cloudflare Worker/Node.js, Durable Object proxy.
 - **[docs/PERFORMANCE.md](file:///c:/Users/Devil/Desktop/examresource/docs/PERFORMANCE.md)**: PageSpeed 95+ optimizations, Web Vitals, Edge caching headers, deferred scripts, bilingual DOM swap.
 - **[docs/AUTH.md](file:///c:/Users/Devil/Desktop/examresource/docs/AUTH.md)**: Custom session authentication, Argon2id hashing, Google OAuth 2.0 flow.

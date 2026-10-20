@@ -4,14 +4,14 @@ import { API_URL } from '../lib/api';
 
 let livePosts: any[] = [];
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=50`);
-  if (res.ok) livePosts = await res.json();
+  const res = await fetch(`${API_URL}/blogs?limit=50`, { signal: AbortSignal.timeout(5000) }).catch(() => null);
+  if (res && res.ok) livePosts = await res.json();
 } catch (e) {}
 
 let categoriesList: any[] = [];
 try {
-  const catRes = await fetch(`${API_URL}/categories`);
-  if (catRes.ok) categoriesList = await catRes.json();
+  const catRes = await fetch(`${API_URL}/categories`, { signal: AbortSignal.timeout(5000) }).catch(() => null);
+  if (catRes && catRes.ok) categoriesList = await catRes.json();
 } catch (e) {}
 ---
 
