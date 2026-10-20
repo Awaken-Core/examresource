@@ -1141,16 +1141,22 @@ html.admin-theme.theme-dark {
 }
 
 .article-shell-rail {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  position: sticky;
-  top: 80px;
-  display: flex;
-  max-height: calc(100dvh - 96px);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  flex-direction: column;
-  padding-bottom: 1rem;
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .article-shell-rail {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 80px;
+    display: flex;
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    flex-direction: column;
+    padding-bottom: 1rem;
+  }
 }
 
 .blog-reading-view :is(h1, h2, h3, h4, h5, h6) {

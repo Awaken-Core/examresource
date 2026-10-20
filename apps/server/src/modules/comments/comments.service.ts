@@ -76,15 +76,15 @@ export class CommentsService {
 
     if (user) {
       await this.assertUserRateLimit(user.id);
-    } else if (!input.authorName) {
-      throw new BadRequestException('A name is required for a guest comment.');
     }
+
+    const resolvedAuthorName = user?.name || input.authorName?.trim() || 'Guest';
 
     const payload: Record<string, unknown> = {
       blogId: blog._id,
       parentCommentId,
       authorUserId: user ? new Types.ObjectId(user.id) : null,
-      authorName: user?.name || input.authorName,
+      authorName: resolvedAuthorName,
       content: input.content,
       status: 'APPROVED',
     };
@@ -195,6 +195,45 @@ export class CommentsService {
     if (result.deletedCount === 0) throw new NotFoundException('Comment was not found.');
   }
 
+  async updateByUserOrAdmin(id: string, input: { content: string }, user: CurrentUser) {
+    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Comment was not found.');
+    const commentId = new Types.ObjectId(id);
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment was not found.');
+
+    const isAuthor = comment.authorUserId && comment.authorUserId.toString() === user.id;
+    const isModerator = user.role === 'admin' || user.role === 'editor';
+
+    if (!isAuthor && !isModerator) {
+      throw new ForbiddenException('You are not allowed to edit this comment.');
+    }
+
+    comment.content = input.content.trim();
+    await comment.save();
+
+    return { comment: this.publicComment(comment), message: 'Comment updated successfully.' };
+  }
+
+  async deleteByUserOrAdmin(id: string, user: CurrentUser) {
+    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Comment was not found.');
+    const commentId = new Types.ObjectId(id);
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment was not found.');
+
+    const isAuthor = comment.authorUserId && comment.authorUserId.toString() === user.id;
+    const isModerator = user.role === 'admin' || user.role === 'editor';
+
+    if (!isAuthor && !isModerator) {
+      throw new ForbiddenException('You are not allowed to delete this comment.');
+    }
+
+    await this.commentModel.deleteMany({
+      $or: [{ _id: commentId }, { parentCommentId: commentId }],
+    });
+
+    return { message: 'Comment deleted successfully.' };
+  }
+
   private async findPublishedBlog(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
     const cleanSlug = slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
     const publishedCondition: any = {
@@ -260,9 +299,11 @@ export class CommentsService {
     return {
       id: comment._id.toString(),
       parentCommentId: comment.parentCommentId?.toString() ?? null,
-      authorName: comment.authorName,
+      authorUserId: comment.authorUserId?.toString() ?? null,
+      authorName: comment.authorName || 'Guest',
       content: comment.content,
       createdAt: comment.createdAt,
+      updatedAt: comment.updatedAt,
     };
   }
 

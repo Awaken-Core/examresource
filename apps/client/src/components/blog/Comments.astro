@@ -16,31 +16,35 @@ const { slug, language } = Astro.props;
   data-slug={slug}
   data-language={language}
 >
-  <div class="flex items-start justify-between gap-4">
-    <div>
-      <h2 id="comments-heading" class="text-lg sm:text-xl font-bold text-white">Discussion</h2>
-      <p class="mt-1 text-xs sm:text-sm text-muted">Share a helpful question or update. Keep the discussion respectful and useful.</p>
+  <div class="flex items-center justify-between gap-4">
+    <div class="flex items-center gap-2.5">
+      <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 id="comments-heading" class="text-base sm:text-lg font-bold text-white leading-tight">Discussion</h2>
+          <span class="hidden rounded-full bg-surface-raised border border-border/80 px-2 py-0.5 text-[11px] font-semibold text-accent" data-comment-count>0</span>
+        </div>
+        <p class="text-[11px] sm:text-xs text-muted">Ask questions or share updates with fellow aspirants</p>
+      </div>
     </div>
   </div>
 
-  <form class="mt-5 rounded-xl border border-border bg-surface p-4 sm:p-5" data-comment-form>
+  <form class="mt-4 sm:mt-5 rounded-xl border border-border bg-surface p-3.5 sm:p-5 shadow-2xs" data-comment-form>
     <input type="hidden" name="parentCommentId" value="" data-parent-comment-id />
-    <div class="hidden mb-3 rounded-lg border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-white" data-reply-context>
-      <span data-reply-label></span>
-      <button type="button" class="ml-2 underline underline-offset-2 hover:text-accent" data-cancel-reply>Cancel reply</button>
+    <div class="hidden mb-3 rounded-lg border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-white flex items-center justify-between" data-reply-context>
+      <div class="flex items-center gap-1.5 truncate">
+        <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+        </svg>
+        <span class="truncate" data-reply-label></span>
+      </div>
+      <button type="button" class="ml-2 font-medium underline underline-offset-2 text-accent hover:text-white shrink-0 cursor-pointer" data-cancel-reply>Cancel reply</button>
     </div>
-    <div class="mb-3" data-guest-name-field>
-      <label for="comment-author" class="mb-1.5 block text-xs font-semibold text-white">Your name</label>
-      <input
-        id="comment-author"
-        name="authorName"
-        autocomplete="name"
-        maxlength="100"
-        required
-        class="w-full min-h-11 rounded-lg border border-border bg-canvas px-3 text-sm text-white placeholder:text-muted focus:border-accent"
-        placeholder="Your name"
-      />
-    </div>
+
     <div>
       <label for="comment-content" class="mb-1.5 block text-xs font-semibold text-white">Comment</label>
       <textarea
@@ -48,26 +52,29 @@ const { slug, language } = Astro.props;
         name="content"
         maxlength="2000"
         required
-        rows="4"
-        class="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2.5 text-base text-white placeholder:text-muted focus:border-accent"
-        placeholder="Write a respectful, useful comment…"
+        rows="3"
+        class="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2.5 text-sm sm:text-base text-white placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+        placeholder="Write a respectful, useful comment or question…"
       ></textarea>
     </div>
+
     <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p class="text-xs leading-relaxed text-muted" data-comment-rule>You can leave one guest comment. Sign in to comment again.</p>
+      <p class="text-[11px] sm:text-xs leading-relaxed text-muted" data-comment-rule>Commenting as Guest. You can leave one guest comment.</p>
       <button
         type="submit"
-        class="min-h-11 rounded-lg bg-accent px-4 text-sm font-semibold text-on-accent transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
+        class="min-h-11 w-full sm:w-auto rounded-lg bg-accent px-5 text-xs sm:text-sm font-semibold text-on-accent transition hover:bg-accent/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         data-submit-comment
       >
         Post comment
       </button>
     </div>
-    <p class="mt-3 hidden text-sm" aria-live="polite" data-comment-status></p>
+    <div class="mt-3 hidden text-xs sm:text-sm" aria-live="polite" data-comment-status></div>
   </form>
 
-  <div class="mt-6 space-y-4" data-comments-list aria-live="polite">
-    <p class="text-sm text-muted">Loading discussion…</p>
+  <div class="mt-5 sm:mt-6 space-y-3 sm:space-y-4" data-comments-list aria-live="polite">
+    <div class="rounded-xl border border-border/60 bg-surface/40 p-5 text-center text-xs sm:text-sm text-muted animate-pulse">
+      Loading discussion…
+    </div>
   </div>
 </section>
 
@@ -86,33 +93,93 @@ const { slug, language } = Astro.props;
       }
     }
 
-    function createComment(comment, isReply, onReply) {
+    function createComment(comment, isReply, onReply, user, onEdit, onDelete) {
       var item = document.createElement('article');
+      item.setAttribute('data-comment-id', comment.id);
       item.className = isReply
-        ? 'border-l-2 border-border pl-3 sm:pl-4'
-        : 'rounded-xl border border-border bg-surface p-4 sm:p-5';
+        ? 'border-l-2 border-accent/30 pl-3 sm:pl-4 ml-2 sm:ml-4 mt-2.5 transition-all'
+        : 'rounded-xl border border-border/80 bg-surface/90 p-3.5 sm:p-4.5 shadow-2xs hover:border-border transition-all';
+
       var header = document.createElement('div');
       header.className = 'flex items-center justify-between gap-3';
+
+      var authorGroup = document.createElement('div');
+      authorGroup.className = 'flex items-center gap-2.5 min-w-0';
+
+      var authorName = comment.authorName || 'Guest';
+      var isGuest = !comment.authorUserId && authorName.toLowerCase() === 'guest';
+
+      var avatar = document.createElement('div');
+      var initial = (authorName.charAt(0) || 'G').toUpperCase();
+      avatar.className = 'w-7 h-7 sm:w-8 sm:h-8 rounded-full ' + (isGuest ? 'bg-muted/15 border border-muted/30 text-muted' : 'bg-accent/15 border border-accent/30 text-accent') + ' font-bold text-xs flex items-center justify-center shrink-0 select-none';
+      avatar.textContent = initial;
+
+      var nameInfo = document.createElement('div');
+      nameInfo.className = 'flex items-center gap-1.5 flex-wrap min-w-0';
+
       var name = document.createElement('h3');
-      name.className = 'text-sm font-semibold text-white';
-      addText(name, comment.authorName);
+      name.className = 'text-xs sm:text-sm font-semibold text-white truncate';
+      addText(name, authorName);
+      nameInfo.append(name);
+
+      if (isGuest) {
+        var guestBadge = document.createElement('span');
+        guestBadge.className = 'text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted/15 text-muted border border-border/50 shrink-0';
+        guestBadge.textContent = 'Guest';
+        nameInfo.append(guestBadge);
+      }
+
+      authorGroup.append(avatar, nameInfo);
+
       var date = document.createElement('time');
       date.className = 'shrink-0 text-[11px] text-muted';
       date.dateTime = comment.createdAt;
       addText(date, formatDate(comment.createdAt));
-      header.append(name, date);
+
+      header.append(authorGroup, date);
+
       var content = document.createElement('p');
-      content.className = 'mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-white/85';
+      content.className = 'mt-2 whitespace-pre-wrap break-words text-xs sm:text-sm leading-relaxed text-white/90 pl-9 sm:pl-10.5';
       addText(content, comment.content);
+
       item.append(header, content);
+
+      var actions = document.createElement('div');
+      actions.className = 'mt-2 pl-9 sm:pl-10.5 flex items-center gap-2 flex-wrap';
+
       if (!isReply) {
         var reply = document.createElement('button');
         reply.type = 'button';
-        reply.className = 'mt-3 min-h-11 px-1 text-xs font-semibold text-accent hover:text-white';
-        addText(reply, 'Reply');
+        reply.className = 'inline-flex items-center gap-1.5 py-1 px-2 -ml-2 rounded text-xs font-semibold text-accent hover:text-white hover:bg-surface-raised transition cursor-pointer';
+        reply.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg><span>Reply</span>';
         reply.addEventListener('click', function () { onReply(comment); });
-        item.append(reply);
+        actions.append(reply);
       }
+
+      var isAuthor = user && comment.authorUserId && user.id === comment.authorUserId;
+      var isAdmin = user && (user.role === 'admin' || user.role === 'editor');
+
+      if (isAuthor || isAdmin) {
+        var editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'inline-flex items-center gap-1 py-1 px-2 rounded text-xs font-medium text-muted hover:text-accent hover:bg-surface-raised transition cursor-pointer';
+        editBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg><span>Edit</span>';
+        editBtn.addEventListener('click', function () { onEdit(comment, item, content); });
+        actions.append(editBtn);
+
+        var deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'inline-flex items-center gap-1 py-1 px-2 rounded text-xs font-medium text-muted hover:text-red-400 hover:bg-surface-raised transition cursor-pointer';
+        var delLabel = isAdmin && !isAuthor ? 'Delete (Admin)' : 'Delete';
+        deleteBtn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg><span>' + delLabel + '</span>';
+        deleteBtn.addEventListener('click', function () { onDelete(comment, item, isReply); });
+        actions.append(deleteBtn);
+      }
+
+      if (actions.children.length > 0) {
+        item.append(actions);
+      }
+
       return item;
     }
 
@@ -125,7 +192,6 @@ const { slug, language } = Astro.props;
         var list = root.querySelector('[data-comments-list]');
         var status = root.querySelector('[data-comment-status]');
         var submit = root.querySelector('[data-submit-comment]');
-        var nameField = root.querySelector('[data-guest-name-field]');
         var rule = root.querySelector('[data-comment-rule]');
         var parentId = root.querySelector('[data-parent-comment-id]');
         var replyContext = root.querySelector('[data-reply-context]');
@@ -134,7 +200,7 @@ const { slug, language } = Astro.props;
         var user = null;
 
         function showStatus(message, kind) {
-          status.className = 'mt-3 text-sm ' + (kind === 'error' ? 'text-error' : 'text-success');
+          status.className = 'mt-3 p-3 rounded-lg text-xs sm:text-sm ' + (kind === 'error' ? 'bg-red-500/10 border border-red-500/30 text-red-300' : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300');
           status.textContent = message;
         }
 
@@ -146,27 +212,135 @@ const { slug, language } = Astro.props;
 
         function startReply(comment) {
           parentId.value = comment.id;
-          replyLabel.textContent = 'Replying to ' + comment.authorName;
+          replyLabel.textContent = 'Replying to ' + (comment.authorName || 'Guest');
           replyContext.classList.remove('hidden');
+          form.scrollIntoView({ behavior: 'smooth', block: 'center' });
           root.querySelector('#comment-content').focus();
         }
 
         cancelReply.addEventListener('click', resetReply);
 
+        function updateCount(count) {
+          var countBadge = root.querySelector('[data-comment-count]');
+          if (countBadge) {
+            countBadge.textContent = count;
+            countBadge.classList.remove('hidden');
+          }
+        }
+
+        async function handleEdit(comment, itemElement, contentElement) {
+          if (itemElement.querySelector('.comment-edit-box')) return;
+          var editBox = document.createElement('div');
+          editBox.className = 'comment-edit-box mt-2 pl-9 sm:pl-10.5';
+
+          var textarea = document.createElement('textarea');
+          textarea.className = 'w-full min-h-20 rounded-lg border border-accent bg-canvas px-3 py-2 text-xs sm:text-sm text-white placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent resize-y';
+          textarea.value = comment.content;
+          textarea.maxLength = 2000;
+
+          var actions = document.createElement('div');
+          actions.className = 'mt-2 flex items-center gap-2';
+
+          var saveBtn = document.createElement('button');
+          saveBtn.type = 'button';
+          saveBtn.className = 'px-3 py-1 rounded bg-accent text-on-accent text-xs font-semibold hover:bg-accent/90 transition cursor-pointer';
+          saveBtn.textContent = 'Save';
+
+          var cancelBtn = document.createElement('button');
+          cancelBtn.type = 'button';
+          cancelBtn.className = 'px-3 py-1 rounded bg-surface-raised border border-border/80 text-muted hover:text-white text-xs font-medium transition cursor-pointer';
+          cancelBtn.textContent = 'Cancel';
+
+          actions.append(saveBtn, cancelBtn);
+          editBox.append(textarea, actions);
+
+          contentElement.style.display = 'none';
+          contentElement.after(editBox);
+          textarea.focus();
+
+          cancelBtn.addEventListener('click', function () {
+            editBox.remove();
+            contentElement.style.display = '';
+          });
+
+          saveBtn.addEventListener('click', async function () {
+            var updated = textarea.value.trim();
+            if (!updated) {
+              alert('Comment cannot be empty.');
+              return;
+            }
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+            try {
+              var res = await fetch(apiUrl + '/comments/' + encodeURIComponent(comment.id), {
+                method: 'PATCH',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-Protection': '1' },
+                body: JSON.stringify({ content: updated }),
+              });
+              var data = await res.json().catch(function () { return {}; });
+              if (!res.ok) throw new Error(data.message || 'Failed to update comment.');
+              comment.content = updated;
+              contentElement.textContent = updated;
+              editBox.remove();
+              contentElement.style.display = '';
+            } catch (err) {
+              alert(err.message || 'Could not update comment.');
+              saveBtn.disabled = false;
+              saveBtn.textContent = 'Save';
+            }
+          });
+        }
+
+        async function handleDelete(comment, itemElement, isReply) {
+          if (!confirm('Are you sure you want to delete this comment?')) return;
+          try {
+            var res = await fetch(apiUrl + '/comments/' + encodeURIComponent(comment.id), {
+              method: 'DELETE',
+              credentials: 'include',
+              headers: { 'X-CSRF-Protection': '1' },
+            });
+            if (!res.ok) {
+              var errData = await res.json().catch(function () { return {}; });
+              throw new Error(errData.message || 'Failed to delete comment.');
+            }
+            itemElement.style.transition = 'all 0.25s ease';
+            itemElement.style.opacity = '0';
+            itemElement.style.transform = 'scale(0.96)';
+            setTimeout(function () {
+              var parentThread = itemElement.closest('.comment-thread');
+              if (!isReply && parentThread) {
+                parentThread.remove();
+              } else {
+                itemElement.remove();
+              }
+              var remaining = list.querySelectorAll('article').length;
+              updateCount(remaining);
+              if (remaining === 0) renderComments([]);
+            }, 250);
+          } catch (err) {
+            alert(err.message || 'Could not delete comment.');
+          }
+        }
+
         function renderComments(comments) {
           list.replaceChildren();
+          var totalCount = comments.reduce(function (acc, c) { return acc + 1 + (c.replies ? c.replies.length : 0); }, 0);
+          updateCount(totalCount);
           if (!comments.length) {
-            var empty = document.createElement('p');
-            empty.className = 'rounded-lg border border-dashed border-border px-4 py-5 text-center text-sm text-muted';
-            empty.textContent = 'No approved comments yet. Start the discussion.';
+            var empty = document.createElement('div');
+            empty.className = 'rounded-xl border border-dashed border-border/80 bg-surface/40 p-6 text-center';
+            empty.innerHTML = '<div class="w-10 h-10 mx-auto rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center mb-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><p class="text-xs sm:text-sm font-semibold text-white">No comments yet</p><p class="text-xs text-muted mt-1">Be the first to share your thoughts or ask a question.</p>';
             list.append(empty);
             return;
           }
           comments.forEach(function (comment) {
             var thread = document.createElement('div');
-            thread.className = 'space-y-3';
-            thread.append(createComment(comment, false, startReply));
-            (comment.replies || []).forEach(function (reply) { thread.append(createComment(reply, true, startReply)); });
+            thread.className = 'comment-thread space-y-2.5';
+            thread.append(createComment(comment, false, startReply, user, handleEdit, handleDelete));
+            (comment.replies || []).forEach(function (reply) {
+              thread.append(createComment(reply, true, startReply, user, handleEdit, handleDelete));
+            });
             list.append(thread);
           });
         }
@@ -181,15 +355,15 @@ const { slug, language } = Astro.props;
               .then(function (response) { return response.ok ? response.json() : null; })
               .catch(function () { return null; });
             if (user) {
-              nameField.classList.add('hidden');
-              nameField.querySelector('input').required = false;
-              rule.textContent = 'Commenting as ' + user.name + '.';
+              rule.textContent = 'Commenting as ' + user.name + (user.role === 'admin' ? ' (Admin)' : user.role === 'editor' ? ' (Editor)' : '') + '.';
+            } else {
+              rule.textContent = 'Commenting as Guest. You can leave one guest comment. Sign in to comment again.';
             }
             renderComments(data.comments || []);
           } catch (_) {
             list.replaceChildren();
-            var error = document.createElement('p');
-            error.className = 'text-sm text-muted';
+            var error = document.createElement('div');
+            error.className = 'rounded-xl border border-border/60 bg-surface/40 p-5 text-center text-xs sm:text-sm text-muted';
             error.textContent = 'Comments are temporarily unavailable. Please try again soon.';
             list.append(error);
           }
@@ -198,13 +372,26 @@ const { slug, language } = Astro.props;
         form.addEventListener('submit', async function (event) {
           event.preventDefault();
           submit.disabled = true;
-          status.className = 'mt-3 hidden text-sm';
+          var originalBtnText = submit.textContent;
+          submit.textContent = 'Posting...';
+          status.className = 'mt-3 hidden text-xs sm:text-sm';
+
           var fields = new FormData(form);
+          var contentVal = (fields.get('content') || '').toString().trim();
+
+          if (!contentVal) {
+            showStatus('Please write a comment before posting.', 'error');
+            submit.disabled = false;
+            submit.textContent = originalBtnText;
+            return;
+          }
+
           var body = {
-            authorName: fields.get('authorName') || undefined,
-            content: fields.get('content'),
+            authorName: user ? user.name : 'Guest',
+            content: contentVal,
             parentCommentId: fields.get('parentCommentId') || undefined,
           };
+
           try {
             var response = await fetch(apiUrl + '/blogs/' + encodeURIComponent(slug) + '/comments?language=' + encodeURIComponent(language), {
               method: 'POST',
@@ -217,7 +404,7 @@ const { slug, language } = Astro.props;
               showStatus('You have already used your guest comment. Please sign in to comment again.', 'error');
               var login = document.createElement('a');
               login.href = '/login';
-              login.className = 'ml-2 font-semibold underline underline-offset-2';
+              login.className = 'ml-2 font-bold underline underline-offset-2 text-white hover:text-accent';
               login.textContent = 'Sign in';
               status.append(login);
               return;
@@ -225,15 +412,26 @@ const { slug, language } = Astro.props;
             if (!response.ok) throw new Error(data.message || 'Your comment could not be posted.');
             form.reset();
             resetReply();
-            if (user) nameField.classList.add('hidden');
             showStatus(data.message || 'Your comment has been posted.', 'success');
             load();
           } catch (error) {
             showStatus(error.message || 'Your comment could not be posted. Please try again.', 'error');
           } finally {
             submit.disabled = false;
+            submit.textContent = originalBtnText;
           }
         });
+
+        function onLanguageChange(e) {
+          var newLang = e.detail && e.detail.lang;
+          var mapped = (newLang === 'en' || newLang === 'english' || newLang === 'ENGLISH') ? 'ENGLISH' : 'HINGLISH';
+          if (mapped !== language) {
+            language = mapped;
+            root.setAttribute('data-language', language);
+            load();
+          }
+        }
+        window.addEventListener('exam:language-change', onLanguageChange);
 
         load();
       });

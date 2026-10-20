@@ -14,7 +14,7 @@ import {
 import type { Request } from 'express';
 import { env } from '../../core/config/env.js';
 import { AuthService } from '../auth/auth.service.js';
-import { createCommentSchema, moderateCommentSchema } from './dto/comment.dto.js';
+import { createCommentSchema, moderateCommentSchema, updateCommentSchema } from './dto/comment.dto.js';
 import { CommentsService } from './comments.service.js';
 
 @Controller('api/v1')
@@ -71,6 +71,22 @@ export class CommentsController {
     return this.comments.listArticlesWithCounts(search);
   }
 
+  @Patch('comments/:id')
+  async updateComment(@Param('id') id: string, @Req() req: Request) {
+    this.assertSafeMutation(req);
+    const user = await this.auth.requireUser(req);
+    const body = this.parse(updateCommentSchema, req.body);
+    return this.comments.updateByUserOrAdmin(id, body, user);
+  }
+
+  @Delete('comments/:id')
+  @HttpCode(200)
+  async deleteComment(@Param('id') id: string, @Req() req: Request) {
+    this.assertSafeMutation(req);
+    const user = await this.auth.requireUser(req);
+    return this.comments.deleteByUserOrAdmin(id, user);
+  }
+
   @Patch('admin/comments/:id')
   async moderate(@Param('id') id: string, @Req() req: Request) {
     this.assertSafeMutation(req);
@@ -103,15 +119,22 @@ export class CommentsController {
   }
 
   private assertSafeMutation(req: Request) {
-    if (req.header('origin') !== env.CLIENT_URL) throw new BadRequestException('Origin is not allowed.');
+    const origin = req.header('origin')?.replace(/\/$/, '');
+    const clientUrl = env.CLIENT_URL.replace(/\/$/, '');
+    if (origin) {
+      const stripWww = (u: string) => u.replace(/^https?:\/\/(www\.)?/, '');
+      if (origin !== clientUrl && stripWww(origin) !== stripWww(clientUrl)) {
+        throw new BadRequestException('Origin is not allowed.');
+      }
+    }
     if (req.header('x-csrf-protection') !== '1') throw new BadRequestException('Missing CSRF protection header.');
   }
 
   private clientIp(req: Request) {
-    if (env.NODE_ENV === 'production' || env.NODE_ENV === 'preview') {
-      return req.header('cf-connecting-ip') || null;
-    }
-    return req.ip || req.socket.remoteAddress || null;
+    const cfIp = req.header('cf-connecting-ip');
+    const xForwarded = req.header('x-forwarded-for')?.split(',')[0]?.trim();
+    const realIp = req.header('x-real-ip');
+    return cfIp || xForwarded || realIp || req.ip || req.socket.remoteAddress || '127.0.0.1';
   }
 
   private assertModerator(role: string) {
