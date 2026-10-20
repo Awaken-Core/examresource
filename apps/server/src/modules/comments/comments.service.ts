@@ -127,14 +127,19 @@ export class CommentsService {
 
   private async findPublishedBlog(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
     const cleanSlug = slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
-    const blog = await this.blogModel.findOne({
+    const publishedCondition: any = {
       slug: { $in: [slug.trim().toLowerCase(), cleanSlug] },
-      ...(language ? { language } : {}),
       $or: [
         { status: 'PUBLISHED' },
         { status: 'SCHEDULED', scheduledAt: { $lte: new Date() } },
       ],
+    };
+    let blog = await this.blogModel.findOne({
+      ...publishedCondition,
+      ...(language ? { language } : {}),
     });
+    // Match the article route: show comments for the available language when a translation is absent.
+    if (!blog && language) blog = await this.blogModel.findOne(publishedCondition);
     if (!blog) throw new NotFoundException('Blog was not found.');
     return blog;
   }
