@@ -11,7 +11,26 @@ import {
 } from '../../lib/preferred-lang';
 
 const { category: categoryParam } = Astro.params;
-const categorySlug = (categoryParam || '').toLowerCase();
+const rawCategorySlug = (categoryParam || '').toLowerCase();
+
+// Common category slug aliases redirect cleanly to canonical category URL
+const slugAliases: Record<string, string> = {
+  'notifications': 'notification',
+  'police-exams': 'police',
+  'railway': 'railways',
+  'rrb': 'railways',
+  'admission': 'admissions',
+  'latestupdate': 'latest-updates',
+  'latest-update': 'latest-updates',
+  'state-pcs': 'state-exams',
+  'state-exam': 'state-exams',
+};
+
+if (slugAliases[rawCategorySlug]) {
+  return Astro.redirect(`/category/${slugAliases[rawCategorySlug]}`, 301);
+}
+
+const categorySlug = rawCategorySlug;
 const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
 const listLanguage = appLangToBlogLanguage(preferredAppLang);
 
@@ -43,22 +62,12 @@ try {
   liveCategoryPosts = [];
 }
 
-// Fallback category titles if categories endpoint returns empty
-const defaultCategoryNames: Record<string, string> = {
-  'central-government': 'Central Government',
-  'state-exams': 'State Exams',
-  'banking': 'Banking',
-  'ssc-railways': 'SSC & Railways',
-  'teaching': 'Teaching',
-  'defence': 'Defence',
-};
-
-// If the category does not exist in the database, is not a known category, and has no posts, return 404
-if (!categoryInfo && !defaultCategoryNames[categorySlug] && liveCategoryPosts.length === 0) {
+// If the category does not exist in the database and has no posts, return 404
+if (!categoryInfo && liveCategoryPosts.length === 0) {
   return Astro.rewrite('/404');
 }
 
-const categoryTitle = categoryInfo?.name || defaultCategoryNames[categorySlug] || categorySlug.replace(/-/g, ' ').toUpperCase();
+const categoryTitle = categoryInfo?.name || categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 const categoryDesc = categoryInfo?.description || `Verified recruitment notifications, exam dates, syllabi, admit cards, and official portal links for ${categoryTitle}.`;
 
 const pageTitle = `${categoryTitle} Exam Updates & Notifications | ${siteName}`;

@@ -65,34 +65,28 @@ export const GET: APIRoute = async () => {
     { loc: `${siteUrl}/sitemap`, changefreq: 'weekly', priority: '0.7', lastmod: currentDate },
   ];
 
-  // Default Categories if API is offline
-  const defaultCategories = [
-    'central-government',
-    'state-exams',
-    'banking',
-    'ssc-railways',
-    'teaching',
-    'defence',
-  ];
-
-  const categorySlugs = categories && categories.length > 0
-    ? categories.map((c: any) => c.slug).filter(Boolean)
-    : defaultCategories;
-
-  for (const catSlug of categorySlugs) {
-    staticUrls.push({
-      loc: `${siteUrl}/category/${catSlug}`,
-      changefreq: 'daily',
-      priority: '0.85',
-      lastmod: currentDate,
-    });
+  if (Array.isArray(categories) && categories.length > 0) {
+    for (const c of categories) {
+      if (!c?.slug) continue;
+      staticUrls.push({
+        loc: `${siteUrl}/category/${c.slug}`,
+        changefreq: 'daily',
+        priority: '0.85',
+        lastmod: currentDate,
+      });
+    }
   }
 
   // Known fallback articles to guarantee crawler coverage if API is offline
   const fallbackSlugs = [
     'mp-police-constable-driver-recruitment-2026',
     'upessc-prt-assistant-teacher-recruitment-2026',
-    'rrb-ntpc-10-2-ug-recruitment-2026',
+    'rrb-ntpc-undergraduate-recruitment-2026',
+    'rrb-ntpc-graduate-recruitment-2026',
+    'bhel-artisan-recruitment-2026',
+    'afcat-2-2026-notification-exam-date-eligibility',
+    'up-polytechnic-jeecup-2027-application-form',
+    'fifa-world-cup-2026-standings-points-table-results',
   ];
 
   const seenUrls = new Set<string>(staticUrls.map((u) => u.loc));

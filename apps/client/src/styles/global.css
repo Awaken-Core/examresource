@@ -826,8 +826,16 @@ div[data-youtube-video] {
     }
 
     :is(ul, ol) {
-      padding-left: 1.25rem;
+      padding-left: 1rem;
+      margin-left: 0;
+      padding-right: 0;
       margin-bottom: 11px;
+    }
+
+    :is(ul, ol) :is(ul, ol) {
+      padding-left: 0.85rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
     }
 
     li {
@@ -835,6 +843,14 @@ div[data-youtube-video] {
       line-height: 1.55;
       margin-top: 0.15em;
       margin-bottom: 0.2em;
+
+      & > p {
+        margin-top: 0;
+        margin-bottom: 0.25rem;
+      }
+      & > p:last-child {
+        margin-bottom: 0;
+      }
     }
 
     table {
@@ -977,10 +993,59 @@ html.admin-theme.theme-dark {
     color: #f8fafc;
   }
 
-  .library-icon {
-    background: #2a2a30;
-    color: #f8fafc;
-  }
+}
+
+/* ============================================================
+   ── 10. FAQ Collapsible Enclosed Accordion
+   ============================================================ */
+
+.faq-accordion-section {
+  clear: both;
+}
+
+/* ============================================================
+   ── 9. Shadcn / Radix UI Minimal FAQ Accordion
+   ============================================================ */
+
+.faq-accordion-root {
+  border-top: 1px solid var(--color-border, #e2e8f0);
+}
+
+.faq-accordion-item {
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.faq-accordion-item summary {
+  list-style: none;
+}
+
+.faq-accordion-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-accordion-item summary .faq-chevron {
+  transition: transform 0.2s cubic-bezier(0.87, 0, 0.13, 1);
+}
+
+.faq-accordion-item[open] summary .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer > :first-child {
+  margin-top: 0;
+}
+
+.faq-answer > :last-child {
+  margin-bottom: 0;
+}
+
+.faq-answer p {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.faq-answer p:last-child {
+  margin-bottom: 0;
 }
 
 /* ============================================================

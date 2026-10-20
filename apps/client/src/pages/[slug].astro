@@ -547,6 +547,12 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
     </article>
   </div>
 
+  <script>
+    import { bindArticleReading } from '../lib/article-reading';
+    bindArticleReading();
+    document.addEventListener('astro:page-load', bindArticleReading);
+  </script>
+
   {/* Clean query params from address bar without page reload */}
   <script is:inline>
     try {

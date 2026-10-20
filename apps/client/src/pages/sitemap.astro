@@ -14,16 +14,27 @@ interface LivePost {
 }
 
 let livePosts: LivePost[] = [];
+let liveCategories: any[] = [];
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=100`, { 
-    credentials: 'omit',
-    signal: AbortSignal.timeout(6000),
-  }).catch(() => null);
-  if (res && res.ok) {
-    livePosts = await res.json();
+  const [postRes, catRes] = await Promise.all([
+    fetch(`${API_URL}/blogs?limit=100`, { 
+      credentials: 'omit',
+      signal: AbortSignal.timeout(6000),
+    }).catch(() => null),
+    fetch(`${API_URL}/categories`, { 
+      credentials: 'omit',
+      signal: AbortSignal.timeout(6000),
+    }).catch(() => null),
+  ]);
+  if (postRes && postRes.ok) {
+    livePosts = await postRes.json();
+  }
+  if (catRes && catRes.ok) {
+    liveCategories = await catRes.json();
   }
 } catch (e) {
   livePosts = [];
+  liveCategories = [];
 }
 
 const fallbackArticles = [
@@ -52,14 +63,13 @@ const articlesList = (livePosts && livePosts.length > 0)
     }))
   : fallbackArticles;
 
-const examCategories = [
-  { name: 'SSC Exams', path: '/category/ssc', desc: 'CGL, CHSL, MTS, GD Constable guides' },
-  { name: 'Banking & IBPS', path: '/category/banking', desc: 'PO, Clerk, SBI, RBI Grade B updates' },
-  { name: 'Railways (RRB)', path: '/category/railways', desc: 'NTPC, Group D, ALP, JE notices' },
-  { name: 'State PCS', path: '/category/state-pcs', desc: 'UPPSC, MPPSC, BPSC exam guides' },
-  { name: 'Police Exams', path: '/category/police', desc: 'UP Police, SSC GD, CISF notices' },
-  { name: 'Teaching Eligibility', path: '/category/teaching', desc: 'CTET, UPTET, DSSSB syllabus' }
-];
+const examCategories = (liveCategories && liveCategories.length > 0)
+  ? liveCategories.map((c: any) => ({
+      name: c.name,
+      path: `/category/${c.slug}`,
+      desc: c.description || `${c.name} exam notifications, eligibility, and updates`,
+    }))
+  : [];
 
 const corePages = [
   { name: 'Home', path: '/', desc: 'Exam notifications, notices, and guides' },

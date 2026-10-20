@@ -2156,6 +2156,52 @@ import { siteUrl } from '../data/site';
     </div>
   </div>
 
+  <!-- Dedicated FAQ Section Dialog -->
+  <div id="faq-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-2xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2 shrink-0">
+        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+          <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[11px] font-bold">?</span>
+          <span>Frequently Asked Questions (FAQs)</span>
+        </h3>
+        <button type="button" id="close-faq-modal" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-3 overflow-y-auto flex-1 pr-1" id="faq-modal-scroll">
+        <div>
+          <label for="faq-modal-heading" class="block text-xs font-semibold text-slate-700 mb-1">Section Heading</label>
+          <input type="text" id="faq-modal-heading" value="Frequently Asked Questions (FAQs)" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" />
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-xs font-bold text-slate-700">Questions & Answers</span>
+          <button type="button" id="add-faq-row-btn" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+            <span>+ Add Question</span>
+          </button>
+        </div>
+
+        <div id="faq-rows-container" class="space-y-3">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+          <label class="flex items-start gap-2 cursor-pointer">
+            <input type="checkbox" id="faq-modal-enclose" checked class="mt-0.5 rounded text-blue-600 focus:ring-blue-500" />
+            <div>
+              <span class="text-xs font-semibold text-slate-800 block">Enclose in Collapsible Accordion</span>
+              <span class="text-[11px] text-slate-500 block">Automatically transforms into interactive expandable cards with Close/Expand All toggle. Compatible with database articles.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 shrink-0">
+        <button type="button" id="cancel-faq-modal" class="px-3 py-1.5 border border-slate-200 rounded-md text-xs text-slate-700 hover:bg-slate-50">Cancel</button>
+        <button type="button" id="confirm-faq-modal" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold">Insert FAQs</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Dedicated Video Embed Dialog -->
   <div id="video-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-2xs z-50 hidden items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
@@ -2858,6 +2904,8 @@ import { siteUrl } from '../data/site';
   import { marked } from 'marked';
   import TurndownService from 'turndown';
   import DOMPurify from 'dompurify';
+  import { transformFaqSection } from '../lib/article-lang';
+  import { bindFaqAccordion } from '../lib/article-reading';
 
   // Configure marked for GitHub flavored markdown with tables and standard rules
   const markedRenderer = new marked.Renderer();
@@ -2891,14 +2939,15 @@ import { siteUrl } from '../data/site';
       'ul', 'ol', 'li',
       'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
       'a', 'img', 'figure', 'figcaption',
-      'div', 'iframe'
+      'div', 'iframe', 'details', 'summary', 'section', 'button', 'svg', 'path'
     ],
     ALLOWED_ATTR: [
       'href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel',
       'width', 'height', 'loading', 'data-align', 'data-layout', 'data-bullet', 'style',
-      'allow', 'allowfullscreen', 'frameborder', 'referrerpolicy'
+      'allow', 'allowfullscreen', 'frameborder', 'referrerpolicy',
+      'data-faq-toggle-all', 'data-state', 'aria-label', 'open', 'viewBox', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'd'
     ],
-    ADD_TAGS: ['iframe'],
+    ADD_TAGS: ['iframe', 'details', 'summary', 'section', 'button', 'svg', 'path'],
     ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   };
 
@@ -3614,7 +3663,9 @@ import { siteUrl } from '../data/site';
     }
 
     // Populate rendered preview body
-    previewRenderedBody.innerHTML = cleanHtml || '<p class="text-slate-400 italic">No content to preview.</p>';
+    const finalHtml = transformFaqSection(cleanHtml);
+    previewRenderedBody.innerHTML = finalHtml || '<p class="text-slate-400 italic">No content to preview.</p>';
+    bindFaqAccordion();
 
     // Hide editing surfaces, show dedicated reading preview surface
     markdownEditorSurface?.classList.add('hidden');
@@ -5670,6 +5721,9 @@ ${mdContent}
       } else if (type === 'video') {
         openVideoModal(targetPos);
         return;
+      } else if (type === 'faq' || type === 'faqs') {
+        openFaqModal(targetPos);
+        return;
       }
       insertMarkdownSnippet(type);
       inserterDrawer?.classList.add('hidden');
@@ -5693,6 +5747,9 @@ ${mdContent}
       return;
     } else if (type === 'video') {
       openVideoModal(targetPos);
+      return;
+    } else if (type === 'faq' || type === 'faqs') {
+      openFaqModal(targetPos);
       return;
     } else if (type === 'toc') {
       insertTableOfContentsBlock(targetPos);
@@ -5796,12 +5853,28 @@ ${mdContent}
         snippet = `\n\n## Eligibility Criteria\n\n- **Nationality:** Must be a citizen of India.\n- **Age Limit:** 21 to 30 years.\n- **Educational Qualification:** Bachelor's Degree in relevant discipline.\n\n> **Note:** Final year students must present degree before interview.\n\n`;
       } else if (pattern === 'fees') {
         snippet = `\n\n## Application Fee Structure\n\n| Category | Application Fee |\n| --- | --- |\n| General / OBC / EWS | ₹500 |\n| SC / ST / PwD / Female | Exempted / ₹100 |\n\n`;
+      } else if (pattern === 'vacancies') {
+        snippet = `\n\n## Vacancy Details & Category Reservation\n\n| Post Name | Category | Total Vacancies |\n| --- | --- | --- |\n| Primary Post | UR / EWS / OBC | To be announced |\n| Reserved Post | SC / ST / PwD | As per reservation |\n\n`;
+      } else if (pattern === 'links') {
+        snippet = `\n\n## Important Links & Official Portals\n\n| Document / Portal | Direct Official Link |\n| --- | --- |\n| Official Notification PDF | [Download PDF](https://) |\n| Online Application Form | [Apply Online](https://) |\n| Official Website | [Visit Portal](https://) |\n\n`;
+      } else if (pattern === 'howto') {
+        snippet = `\n\n## How to Apply Online (Step-by-Step Guide)\n\n1. Visit the official website at [Portal URL].\n2. Locate the recruitment notification link under 'Latest Announcements'.\n3. Complete Candidate Profile or One-Time Registration (OTR).\n4. Fill in all personal and educational details accurately.\n5. Upload scanned photograph and signature in prescribed format.\n6. Pay the applicable application fee through online gateway.\n7. Submit the form and download the confirmation page for reference.\n\n`;
+      } else if (pattern === 'faqs') {
+        openFaqModal();
+        inserterDrawer?.classList.add('hidden');
+        return;
       }
       if (snippet && markdownTextarea) {
         insertMarkdownSnippet(snippet);
         inserterDrawer?.classList.add('hidden');
         return;
       }
+    }
+
+    if (pattern === 'faqs') {
+      openFaqModal();
+      inserterDrawer?.classList.add('hidden');
+      return;
     }
 
     if (!editor) return;
@@ -5872,6 +5945,77 @@ ${mdContent}
             </tbody>
           </table>
         </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'vacancies') {
+      editor.chain().focus().insertContent(`
+        <h2>Vacancy Details & Category Reservation</h2>
+        <div class="overflow-x-auto my-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Post Name</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Category</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900">Total Vacancies</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Primary Post</td>
+                <td class="p-2 text-xs border-r border-slate-200">UR / EWS / OBC</td>
+                <td class="p-2 text-xs">To be announced</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Reserved Post</td>
+                <td class="p-2 text-xs border-r border-slate-200">SC / ST / PwD</td>
+                <td class="p-2 text-xs">As per norms</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'links') {
+      editor.chain().focus().insertContent(`
+        <h2>Important Links & Official Portals</h2>
+        <div class="overflow-x-auto my-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Document / Portal</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900">Direct Official Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Official Notification PDF</td>
+                <td class="p-2 text-xs"><a href="https://" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Download PDF</a></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Online Application Form</td>
+                <td class="p-2 text-xs"><a href="https://" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Apply Online</a></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Official Website</td>
+                <td class="p-2 text-xs"><a href="https://" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Visit Portal</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'howto') {
+      editor.chain().focus().insertContent(`
+        <h2>How to Apply Online (Step-by-Step Guide)</h2>
+        <ol>
+          <li>Visit the official recruitment portal of the examination board.</li>
+          <li>Locate the notification link under 'Latest Updates' or 'Active Recruitment'.</li>
+          <li>Complete Candidate Profile or One-Time Registration (OTR).</li>
+          <li>Fill in all required personal, educational, and contact details carefully.</li>
+          <li>Upload your recent passport-size photograph and signature in required format.</li>
+          <li>Pay the online application fee via Debit Card, Credit Card, Net Banking, or UPI.</li>
+          <li>Review the application preview, submit the form, and download confirmation page.</li>
+        </ol>
         <p></p>
       `).run();
     }
@@ -5981,6 +6125,12 @@ ${mdContent}
     { title: 'Video Embed', desc: 'YouTube or direct video player', action: () => insertBlock('video') },
     { title: 'Table of Contents', desc: 'Heading links', action: () => insertBlock('toc') },
     { title: 'Important Dates Pattern', desc: 'Exam timeline table', action: () => insertExamPattern('dates') },
+    { title: 'Eligibility Pattern', desc: 'Criteria and age limits', action: () => insertExamPattern('eligibility') },
+    { title: 'Application Fees Pattern', desc: 'Category fee structure', action: () => insertExamPattern('fees') },
+    { title: 'Vacancies Pattern', desc: 'Category-wise vacancy table', action: () => insertExamPattern('vacancies') },
+    { title: 'Important Links Pattern', desc: 'Official notifications & portals', action: () => insertExamPattern('links') },
+    { title: 'How to Apply Pattern', desc: 'Step-by-step registration guide', action: () => insertExamPattern('howto') },
+    { title: 'FAQs Pattern', desc: 'Frequently asked questions (collapsible accordion)', action: () => openFaqModal() },
   ];
 
   function renderSlashMenuItems() {
@@ -8142,6 +8292,154 @@ ${mdContent}
     }
 
     closeCalloutModal();
+  });
+
+  // ==========================================
+  // FAQ Setup Dialog Implementation
+  // ==========================================
+  const faqModal = document.getElementById('faq-modal');
+  const faqModalHeading = document.getElementById('faq-modal-heading') as HTMLInputElement | null;
+  const faqRowsContainer = document.getElementById('faq-rows-container');
+  const addFaqRowBtn = document.getElementById('add-faq-row-btn');
+  let faqTargetPos: number | null = null;
+
+  const defaultFaqPairs = [
+    {
+      q: 'What is the application deadline for this recruitment?',
+      a: 'The online application window is open until [Closing Date] at 11:59 PM. Aspirants are advised not to wait until the last day to submit their form.',
+    },
+    {
+      q: 'What is the educational qualification and eligibility criteria?',
+      a: 'Candidates must possess a Bachelor\'s Degree or 10+2 from a recognized board/university. Minimum age is 18-21 years with relaxations for reserved categories.',
+    },
+    {
+      q: 'What is the application fee structure?',
+      a: 'General / OBC / EWS candidates are charged the standard portal fee (approx. ₹500), while SC / ST / PwD / Female candidates are either exempted or charged a concession fee.',
+    },
+    {
+      q: 'Where can I download the official notification PDF and syllabus?',
+      a: 'The complete detailed notification PDF and subject-wise exam syllabus are available on the official recruitment board portal and via direct links in the table above.',
+    },
+  ];
+
+  function renderFaqRows(pairs = defaultFaqPairs) {
+    if (!faqRowsContainer) return;
+    faqRowsContainer.innerHTML = pairs.map((pair, idx) => `
+      <div class="faq-row-card p-3 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 relative" data-row-idx="${idx}">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+            <span class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">Q${idx + 1}</span>
+            <span>Question ${idx + 1}</span>
+          </span>
+          <button type="button" class="remove-faq-row-btn text-slate-400 hover:text-red-500 text-xs px-1" title="Remove question">✕</button>
+        </div>
+        <input type="text" class="faq-q-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" value="${escapeHtmlSnippet(pair.q)}" placeholder="Enter question..." />
+        <textarea rows="2" class="faq-a-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none" placeholder="Enter answer...">${escapeHtmlSnippet(pair.a)}</textarea>
+      </div>
+    `).join('');
+
+    faqRowsContainer.querySelectorAll('.remove-faq-row-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const row = (e.currentTarget as HTMLElement).closest('.faq-row-card');
+        row?.remove();
+        renumberFaqRows();
+      });
+    });
+  }
+
+  function renumberFaqRows() {
+    if (!faqRowsContainer) return;
+    const rows = faqRowsContainer.querySelectorAll('.faq-row-card');
+    rows.forEach((row, idx) => {
+      const label = row.querySelector('.text-\\[11px\\]');
+      if (label) {
+        label.innerHTML = `
+          <span class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">Q${idx + 1}</span>
+          <span>Question ${idx + 1}</span>
+        `;
+      }
+    });
+  }
+
+  function openFaqModal(targetPos: number | null = null) {
+    faqTargetPos = typeof targetPos === 'number' ? targetPos : blockInsertTargetPos;
+    renderFaqRows();
+    faqModal?.classList.remove('hidden');
+    faqModal?.classList.add('flex');
+    faqModalHeading?.focus();
+  }
+
+  function closeFaqModal() {
+    faqModal?.classList.add('hidden');
+    faqModal?.classList.remove('flex');
+  }
+
+  addFaqRowBtn?.addEventListener('click', () => {
+    if (!faqRowsContainer) return;
+    const currentCount = faqRowsContainer.querySelectorAll('.faq-row-card').length;
+    const newIdx = currentCount;
+    const div = document.createElement('div');
+    div.className = 'faq-row-card p-3 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 relative';
+    div.dataset.rowIdx = `${newIdx}`;
+    div.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">Q${newIdx + 1}</span>
+          <span>Question ${newIdx + 1}</span>
+        </span>
+        <button type="button" class="remove-faq-row-btn text-slate-400 hover:text-red-500 text-xs px-1" title="Remove question">✕</button>
+      </div>
+      <input type="text" class="faq-q-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" value="" placeholder="Enter question..." />
+      <textarea rows="2" class="faq-a-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none" placeholder="Enter answer..."></textarea>
+    `;
+    div.querySelector('.remove-faq-row-btn')?.addEventListener('click', () => {
+      div.remove();
+      renumberFaqRows();
+    });
+    faqRowsContainer.appendChild(div);
+    div.querySelector('input')?.focus();
+  });
+
+  document.getElementById('close-faq-modal')?.addEventListener('click', closeFaqModal);
+  document.getElementById('cancel-faq-modal')?.addEventListener('click', closeFaqModal);
+  document.getElementById('confirm-faq-modal')?.addEventListener('click', () => {
+    const heading = faqModalHeading?.value.trim() || 'Frequently Asked Questions (FAQs)';
+    const rows = faqRowsContainer?.querySelectorAll('.faq-row-card') || [];
+    const pairs: { q: string; a: string }[] = [];
+
+    rows.forEach((row) => {
+      const q = (row.querySelector('.faq-q-input') as HTMLInputElement | null)?.value.trim();
+      const a = (row.querySelector('.faq-a-input') as HTMLTextAreaElement | null)?.value.trim();
+      if (q && a) pairs.push({ q, a });
+    });
+
+    if (pairs.length === 0) {
+      alert('Please enter at least one question and answer.');
+      return;
+    }
+
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      let mdContent = `\n\n## ${heading}\n\n`;
+      pairs.forEach((p, idx) => {
+        mdContent += `**Q${idx + 1}: ${p.q}**<br>Ans: ${p.a}\n\n`;
+      });
+      insertMarkdownSnippet('faqs', mdContent);
+    } else if (editor) {
+      let htmlContent = `<h2>${escapeHtmlSnippet(heading)}</h2>`;
+      pairs.forEach((p, idx) => {
+        htmlContent += `<p><strong>Q${idx + 1}: ${escapeHtmlSnippet(p.q)}</strong><br>Ans: ${escapeHtmlSnippet(p.a)}</p>`;
+      });
+      htmlContent += `<p></p>`;
+
+      if (typeof faqTargetPos === 'number') {
+        editor.chain().focus().insertContentAt(faqTargetPos, htmlContent).run();
+      } else {
+        editor.chain().focus().insertContent(htmlContent).run();
+      }
+    }
+
+    closeFaqModal();
+    inserterDrawer?.classList.add('hidden');
   });
 
   // ==========================================
