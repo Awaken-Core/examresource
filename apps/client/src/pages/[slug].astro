@@ -313,11 +313,11 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
     data-article-lang={blogLanguageToAppLang(currentLanguage)}
   >
     <article
-      class="article-shell w-full px-3.5 py-3 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto"
+      class="w-full px-3.5 py-3 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto flex flex-col gap-3.5 sm:gap-6 xl:grid xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-x-8 xl:gap-y-5 xl:items-start"
       itemscope
       itemtype="https://schema.org/Article"
     >
-      <header class="article-shell-head min-w-0">
+      <header class="min-w-0 xl:col-start-1 xl:row-start-1">
         <nav aria-label="Breadcrumb" class="mb-2 sm:mb-3 flex items-center gap-1.5 text-[11px] sm:text-xs text-muted overflow-x-auto scrollbar-none whitespace-nowrap py-0.5">
           <a href="/" class="hover:text-accent shrink-0">Home</a>
           <span class="text-muted/40 shrink-0">/</span>
@@ -380,7 +380,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
       </header>
 
       {/* Desktop Right Rail: Recent Posts */}
-      <aside aria-label="Recent posts" class="article-shell-rail hidden xl:flex flex-col">
+      <aside aria-label="Recent posts" class="hidden xl:flex xl:flex-col xl:col-start-2 xl:row-start-1 xl:row-span-2 xl:sticky xl:top-20 xl:max-h-[calc(100dvh-6rem)] xl:overflow-y-auto xl:pb-4">
         <div id="recent-posts-rail" class="w-full">
           {recentPosts.length > 0 && (
             <div class="rounded-xl border border-border bg-surface p-4 flex flex-col shadow-xs w-full">
@@ -410,7 +410,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
         </div>
       </aside>
 
-      <div class="article-shell-body min-w-0">
+      <div class="min-w-0 xl:col-start-1 xl:row-start-2">
         {htmlBody ? (
           <div id="article-body" class="space-y-4 sm:space-y-6" itemprop="articleBody">
             {livePost.coverImage && (
