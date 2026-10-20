@@ -71,7 +71,8 @@ export class CommentsService {
     clientIp: string | null,
   ) {
     const blog = await this.findPublishedBlog(slug, language);
-    const parentCommentId = await this.resolveParentCommentId(input.parentCommentId, blog._id);
+    const threadBlogIds = await this.groupBlogIds(blog);
+    const parentCommentId = await this.resolveParentCommentId(input.parentCommentId, threadBlogIds);
 
     if (user) {
       await this.assertUserRateLimit(user.id);
@@ -193,12 +194,12 @@ export class CommentsService {
     return this.blogModel.distinct('_id', { translationGroupId: blog.translationGroupId });
   }
 
-  private async resolveParentCommentId(parentCommentId: string | null | undefined, blogId: Types.ObjectId) {
+  private async resolveParentCommentId(parentCommentId: string | null | undefined, blogIds: Types.ObjectId[]) {
     if (!parentCommentId) return null;
     if (!Types.ObjectId.isValid(parentCommentId)) throw new BadRequestException('Parent comment was not found.');
     const parent = await this.commentModel.exists({
       _id: new Types.ObjectId(parentCommentId),
-      blogId,
+      blogId: { $in: blogIds },
       parentCommentId: null,
     });
     if (!parent) throw new BadRequestException('Replies can only be added to a top-level comment.');
