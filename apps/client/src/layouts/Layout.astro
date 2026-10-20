@@ -687,7 +687,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         // --- Desktop Sidebar Collapse Management (Matches Image 1) ---
-        let hoverPeekTimer: number | null = null;
 
         function setSidebarCollapsed(isCollapsed: boolean) {
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
@@ -727,33 +726,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }
         }
 
-        // --- Hover-Peek: On hover of collapse icon/pill in header, open temporarily until clicked ---
-        function startHoverPeek() {
-          const wrapper = document.getElementById('desktop-sidebar-wrapper');
-          if (!wrapper || !wrapper.classList.contains('collapsed')) return;
-          if (hoverPeekTimer) {
-            clearTimeout(hoverPeekTimer);
-            hoverPeekTimer = null;
-          }
-          wrapper.classList.add('hover-peek');
-        }
 
-        function endHoverPeek() {
-          const wrapper = document.getElementById('desktop-sidebar-wrapper');
-          if (!wrapper) return;
-          if (hoverPeekTimer) clearTimeout(hoverPeekTimer);
-          hoverPeekTimer = window.setTimeout(() => {
-            wrapper.classList.remove('hover-peek');
-            hoverPeekTimer = null;
-          }, 220);
-        }
-
-        function cancelHoverPeekTimer() {
-          if (hoverPeekTimer) {
-            clearTimeout(hoverPeekTimer);
-            hoverPeekTimer = null;
-          }
-        }
 
         // --- Language Switcher Integration ---
         function syncListingCardLinks(lang: string) {
@@ -964,7 +937,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             <a 
               href="${item.href}" 
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
+              data-astro-prefetch="false"
               data-result-index="${idx}"
               class="search-result-row flex items-center justify-between p-3 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/40 hover:border-accent/40 transition group cursor-pointer"
             >
@@ -1746,10 +1720,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             closeAllDropdowns();
             closeSearchModal();
             closeMobileDrawer();
-            if (hoverPeekTimer) {
-              clearTimeout(hoverPeekTimer);
-              hoverPeekTimer = null;
-            }
           });
 
           document.addEventListener('astro:before-preparation', () => {

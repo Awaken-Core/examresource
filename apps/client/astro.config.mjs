@@ -27,20 +27,28 @@ export default defineConfig({
 		defaultStrategy: 'hover',
 	},
 	server: { port: Number(process.env.PORT || 3000), host: true },
+	redirects: {
+		'/feed': '/rss.xml',
+		'/feed/(.*)': '/rss.xml',
+	},
+	build: {
+		inlineStylesheets: 'always',
+	},
 	adapter: vercel(),
 	integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
     build: {
       chunkSizeWarningLimit: 750,
-      modulePreload: {
-        polyfill: false,
-      },
+      modulePreload: false,
       rollupOptions: {
         output: {
           manualChunks(id) {
-            if (id.includes('astro/virtual-modules/transitions') || id.includes('astro/dist/transitions')) {
+            if (id.includes('astro/virtual-modules/transitions') || id.includes('astro/dist/transitions') || id.includes('ClientRouter')) {
               return 'astro-transitions';
+            }
+            if (id.includes('src/lib/bookmarks') || id.includes('src/lib/notifications') || id.includes('src/lib/api') || id.includes('src/lib/article-lang-swap') || id.includes('src/lib/article-reading')) {
+              return 'app-modules';
             }
           },
         },
