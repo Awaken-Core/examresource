@@ -3,7 +3,7 @@ import { siteName, siteDomain } from '../data/site';
 
 export const prerender = false;
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = () => {
   const manifest = {
     name: siteDomain,
     short_name: siteName,
