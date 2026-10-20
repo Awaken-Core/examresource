@@ -34,8 +34,9 @@ export class CommentsService {
 
   async listPublished(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
     const blog = await this.findPublishedBlog(slug, language);
+    const blogIds = await this.groupBlogIds(blog);
     const comments = await this.commentModel
-      .find({ blogId: blog._id, parentCommentId: null, status: 'APPROVED' })
+      .find({ blogId: { $in: blogIds }, parentCommentId: null, status: 'APPROVED' })
       .sort({ createdAt: -1 })
       .limit(20)
       .lean();
@@ -102,11 +103,15 @@ export class CommentsService {
     }
   }
 
-  async listForModeration(status?: CommentStatus, blogId?: string) {
+  async listForModeration(status?: CommentStatus, blogId?: string, translationGroupId?: string) {
     if (blogId && !Types.ObjectId.isValid(blogId)) throw new BadRequestException('Blog was not found.');
+    const groupedIds = translationGroupId
+      ? await this.blogModel.distinct('_id', { translationGroupId })
+      : null;
     const filter: Record<string, unknown> = {
       ...(status ? { status } : {}),
       ...(blogId ? { blogId: new Types.ObjectId(blogId) } : {}),
+      ...(groupedIds ? { blogId: { $in: groupedIds } } : {}),
     };
     const comments = await this.commentModel
       .find(filter)
@@ -122,8 +127,11 @@ export class CommentsService {
       ? { $match: { $or: [{ 'blog.title': { $regex: search.trim(), $options: 'i' } }, { 'blog.slug': { $regex: search.trim(), $options: 'i' } }] } }
       : null;
     const rows = await this.commentModel.aggregate([
+      { $lookup: { from: 'blogs', localField: 'blogId', foreignField: '_id', as: 'blog' } },
+      { $unwind: '$blog' },
       { $group: {
-        _id: '$blogId',
+        _id: { $ifNull: ['$blog.translationGroupId', { $toString: '$blogId' }] },
+        blog: { $first: '$blog' },
         total: { $sum: 1 },
         pending: { $sum: { $cond: [{ $eq: ['$status', 'PENDING'] }, 1, 0] } },
         approved: { $sum: { $cond: [{ $eq: ['$status', 'APPROVED'] }, 1, 0] } },
@@ -131,12 +139,10 @@ export class CommentsService {
         spam: { $sum: { $cond: [{ $eq: ['$status', 'SPAM'] }, 1, 0] } },
         latestCommentAt: { $max: '$createdAt' },
       } },
-      { $lookup: { from: 'blogs', localField: '_id', foreignField: '_id', as: 'blog' } },
-      { $unwind: '$blog' },
       ...(match ? [match] : []),
       { $sort: { pending: -1, latestCommentAt: -1 } },
       { $limit: 100 },
-      { $project: { _id: 0, id: { $toString: '$_id' }, title: '$blog.title', slug: '$blog.slug', total: 1, pending: 1, approved: 1, rejected: 1, spam: 1, latestCommentAt: 1 } },
+      { $project: { _id: 0, id: { $toString: '$_id' }, translationGroupId: { $ifNull: ['$blog.translationGroupId', null] }, title: '$blog.title', slug: '$blog.slug', total: 1, pending: 1, approved: 1, rejected: 1, spam: 1, latestCommentAt: 1 } },
     ]).exec();
     return { articles: rows };
   }
@@ -180,6 +186,11 @@ export class CommentsService {
     if (!blog && language) blog = await this.blogModel.findOne(publishedCondition);
     if (!blog) throw new NotFoundException('Blog was not found.');
     return blog;
+  }
+
+  private async groupBlogIds(blog: any) {
+    if (!blog.translationGroupId) return [blog._id];
+    return this.blogModel.distinct('_id', { translationGroupId: blog.translationGroupId });
   }
 
   private async resolveParentCommentId(parentCommentId: string | null | undefined, blogId: Types.ObjectId) {

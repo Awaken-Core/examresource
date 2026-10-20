@@ -14,7 +14,7 @@ export function CommentsManager() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const loadArticles = useCallback(async () => { setLoading(true); setError(null); try { setArticles((await adminApi.getCommentArticles(search)).articles); } catch (e: any) { setError(e.message || 'Could not load articles.'); } finally { setLoading(false); } }, [search]);
-  const loadComments = useCallback(async () => { if (!selected) return; setLoading(true); setError(null); try { setComments((await adminApi.getComments(filter, selected.id)).comments); } catch (e: any) { setError(e.message || 'Could not load comments.'); } finally { setLoading(false); } }, [filter, selected]);
+  const loadComments = useCallback(async () => { if (!selected) return; setLoading(true); setError(null); try { setComments((await adminApi.getComments(filter, selected.translationGroupId ? undefined : selected.id, selected.translationGroupId)).comments); } catch (e: any) { setError(e.message || 'Could not load comments.'); } finally { setLoading(false); } }, [filter, selected]);
   useEffect(() => { const timer = window.setTimeout(loadArticles, 180); return () => window.clearTimeout(timer); }, [loadArticles]);
   useEffect(() => { if (selected) void loadComments(); }, [selected, loadComments]);
   async function update(id: string, status: 'APPROVED' | 'REJECTED' | 'SPAM') { setBusy(id); try { await adminApi.moderateComment(id, status); setComments((rows) => rows.filter((row) => row.id !== id)); void loadArticles(); } catch (e: any) { setError(e.message || 'Could not update comment.'); } finally { setBusy(null); } }

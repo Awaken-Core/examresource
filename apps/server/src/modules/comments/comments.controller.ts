@@ -54,13 +54,14 @@ export class CommentsController {
     @Req() req: Request,
     @Query('status') status?: string,
     @Query('blogId') blogId?: string,
+    @Query('translationGroupId') translationGroupId?: string,
   ) {
     const user = await this.auth.requireUser(req);
     this.assertModerator(user.role);
     if (status && status !== 'ALL' && !['PENDING', 'APPROVED', 'REJECTED', 'SPAM'].includes(status)) {
       throw new BadRequestException('Comment status is invalid.');
     }
-    return this.comments.listForModeration(status === 'ALL' ? undefined : status as any, blogId);
+    return this.comments.listForModeration(status === 'ALL' ? undefined : status as any, blogId, translationGroupId);
   }
 
   @Get('admin/comment-articles')
