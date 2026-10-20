@@ -102,8 +102,12 @@ export class CommentsService {
     }
   }
 
-  async listForModeration(status?: CommentStatus) {
-    const filter: Record<string, unknown> = status ? { status } : { status: 'PENDING' };
+  async listForModeration(status?: CommentStatus, blogId?: string) {
+    if (blogId && !Types.ObjectId.isValid(blogId)) throw new BadRequestException('Blog was not found.');
+    const filter: Record<string, unknown> = {
+      ...(status ? { status } : { status: 'PENDING' }),
+      ...(blogId ? { blogId: new Types.ObjectId(blogId) } : {}),
+    };
     const comments = await this.commentModel
       .find(filter)
       .sort({ createdAt: -1 })
@@ -111,6 +115,30 @@ export class CommentsService {
       .populate('blogId', '_id title slug')
       .lean();
     return { comments: comments.map((comment) => this.moderationComment(comment)) };
+  }
+
+  async listArticlesWithCounts(search?: string) {
+    const match = search?.trim()
+      ? { $match: { $or: [{ 'blog.title': { $regex: search.trim(), $options: 'i' } }, { 'blog.slug': { $regex: search.trim(), $options: 'i' } }] } }
+      : null;
+    const rows = await this.commentModel.aggregate([
+      { $group: {
+        _id: '$blogId',
+        total: { $sum: 1 },
+        pending: { $sum: { $cond: [{ $eq: ['$status', 'PENDING'] }, 1, 0] } },
+        approved: { $sum: { $cond: [{ $eq: ['$status', 'APPROVED'] }, 1, 0] } },
+        rejected: { $sum: { $cond: [{ $eq: ['$status', 'REJECTED'] }, 1, 0] } },
+        spam: { $sum: { $cond: [{ $eq: ['$status', 'SPAM'] }, 1, 0] } },
+        latestCommentAt: { $max: '$createdAt' },
+      } },
+      { $lookup: { from: 'blogs', localField: '_id', foreignField: '_id', as: 'blog' } },
+      { $unwind: '$blog' },
+      ...(match ? [match] : []),
+      { $sort: { pending: -1, latestCommentAt: -1 } },
+      { $limit: 100 },
+      { $project: { _id: 0, id: { $toString: '$_id' }, title: '$blog.title', slug: '$blog.slug', total: 1, pending: 1, approved: 1, rejected: 1, spam: 1, latestCommentAt: 1 } },
+    ]).exec();
+    return { articles: rows };
   }
 
   async moderate(id: string, input: ModerateCommentInput, user: CurrentUser) {

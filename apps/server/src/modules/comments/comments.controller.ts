@@ -50,13 +50,24 @@ export class CommentsController {
   }
 
   @Get('admin/comments')
-  async listForModeration(@Req() req: Request, @Query('status') status?: string) {
+  async listForModeration(
+    @Req() req: Request,
+    @Query('status') status?: string,
+    @Query('blogId') blogId?: string,
+  ) {
     const user = await this.auth.requireUser(req);
     this.assertModerator(user.role);
     if (status && !['PENDING', 'APPROVED', 'REJECTED', 'SPAM'].includes(status)) {
       throw new BadRequestException('Comment status is invalid.');
     }
-    return this.comments.listForModeration(status as any);
+    return this.comments.listForModeration(status as any, blogId);
+  }
+
+  @Get('admin/comment-articles')
+  async listCommentArticles(@Req() req: Request, @Query('search') search?: string) {
+    const user = await this.auth.requireUser(req);
+    this.assertModerator(user.role);
+    return this.comments.listArticlesWithCounts(search);
   }
 
   @Patch('admin/comments/:id')
