@@ -23,16 +23,23 @@ export default defineConfig({
 	},
 	output: 'server',
 	compressHTML: true,
-	prefetch: {
-		defaultStrategy: 'hover',
-	},
+	prefetch: false,
 	server: { port: Number(process.env.PORT || 3000), host: true },
+	redirects: {
+		'/feed': '/rss.xml',
+		'/feed/(.*)': '/rss.xml',
+	},
+	build: {
+		inlineStylesheets: 'always',
+	},
 	adapter: vercel(),
 	integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
     build: {
       chunkSizeWarningLimit: 750,
+      modulePreload: false,
+      rollupOptions: {},
     },
     optimizeDeps: {
       include: [

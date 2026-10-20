@@ -138,6 +138,8 @@ const canonicalUrl = `${siteUrl}/favorites`;
 
       const content = document.createElement('a');
       content.href = item.url;
+      content.target = '_blank';
+      content.rel = 'noopener noreferrer';
       content.className = 'flex-1 min-w-0 pr-2 block text-left';
       content.innerHTML = `
         <div class="flex items-center gap-2 mb-1">
