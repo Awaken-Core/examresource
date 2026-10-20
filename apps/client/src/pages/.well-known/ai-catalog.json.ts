@@ -1,48 +1,54 @@
 import type { APIRoute } from 'astro';
+import { siteDomain, siteName, siteUrl } from '../../data/site';
 
 export const prerender = false;
 
 export const GET: APIRoute = () => {
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
-  const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN;
-  const siteName = import.meta.env.PUBLIC_SITE_NAME;
-
   const catalog = {
     specVersion: '1.0',
     host: {
+      identifier: `urn:air:${siteDomain}`,
+      displayName: siteName,
       domain: siteDomain,
-      name: siteName,
+      url: siteUrl,
     },
     entries: [
       {
-        id: 'llms-manifest',
-        type: 'llms-txt',
+        identifier: `urn:air:${siteDomain}:agent:exam-guide`,
+        displayName: `${siteName} Government Exam Discovery Agent`,
+        type: 'application/agent-card+json',
+        url: `${siteUrl}/.well-known/agent-card.json`,
+        description: `Autonomous agent providing verified official government exam notices, admit cards, syllabus guides, and recruitment results across India.`,
+        representativeQueries: [
+          'latest government exam notifications 2026',
+          'sarkari job admit card download and dates',
+          'civil services and state PSC recruitment details',
+          'railways and staff selection commission exam syllabus',
+        ],
+      },
+      {
+        identifier: `urn:air:${siteDomain}:skill:llms-manifest`,
+        displayName: `${siteName} LLM Knowledge Manifest`,
+        type: 'text/markdown; profile="urn:air:agent-skills"',
         url: `${siteUrl}/llms.txt`,
         description: `Concise LLM knowledge manifest for ${siteName} government examination notifications, admit cards, and results.`,
+        representativeQueries: [
+          'government examination notices summary',
+          'sarkari exam syllabus and eligibility guide',
+          'official recruitment portal commission directory',
+        ],
       },
       {
-        id: 'llms-full',
-        type: 'llms-txt',
+        identifier: `urn:air:${siteDomain}:skill:llms-full`,
+        displayName: `${siteName} Comprehensive Examination Directory`,
+        type: 'text/markdown; profile="urn:air:agent-skills"',
         url: `${siteUrl}/llms-full.txt`,
         description: `Comprehensive LLM knowledge document with recruitment portal references and official commission details for ${siteName}.`,
-      },
-      {
-        id: 'rss-feed',
-        type: 'feed',
-        url: `${siteUrl}/rss.xml`,
-        description: `Real-time RSS 2.0 feed of newly published government exam updates and notifications.`,
-      },
-      {
-        id: 'search-api',
-        type: 'api',
-        url: `${siteUrl}/api/search`,
-        description: `Fast search endpoint for government examinations, notifications, and admit cards.`,
-      },
-      {
-        id: 'sitemap-xml',
-        type: 'sitemap',
-        url: `${siteUrl}/sitemap.xml`,
-        description: `Complete XML index of all published recruitment articles and categories on ${siteName}.`,
+        representativeQueries: [
+          'complete government exam directory India',
+          'state public service commission official links',
+          'staff selection commission notification archives',
+        ],
       },
     ],
   };

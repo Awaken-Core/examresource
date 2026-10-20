@@ -41,18 +41,7 @@ export default defineConfig({
     build: {
       chunkSizeWarningLimit: 750,
       modulePreload: false,
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('astro/virtual-modules/transitions') || id.includes('astro/dist/transitions') || id.includes('ClientRouter')) {
-              return 'astro-transitions';
-            }
-            if (id.includes('src/lib/bookmarks') || id.includes('src/lib/notifications') || id.includes('src/lib/api') || id.includes('src/lib/article-lang-swap') || id.includes('src/lib/article-reading')) {
-              return 'app-modules';
-            }
-          },
-        },
-      },
+      rollupOptions: {},
     },
     optimizeDeps: {
       include: [
