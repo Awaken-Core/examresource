@@ -19,7 +19,7 @@ const { slug, language } = Astro.props;
   <div class="flex items-start justify-between gap-4">
     <div>
       <h2 id="comments-heading" class="text-lg sm:text-xl font-bold text-white">Discussion</h2>
-      <p class="mt-1 text-xs sm:text-sm text-muted">Share a helpful question or update. Every comment is reviewed before it appears.</p>
+      <p class="mt-1 text-xs sm:text-sm text-muted">Share a helpful question or update. Keep the discussion respectful and useful.</p>
     </div>
   </div>
 
@@ -161,7 +161,7 @@ const { slug, language } = Astro.props;
             if (user) {
               nameField.classList.add('hidden');
               nameField.querySelector('input').required = false;
-              rule.textContent = 'Commenting as ' + user.name + '. Your comment will be reviewed before publishing.';
+              rule.textContent = 'Commenting as ' + user.name + '.';
             }
             renderComments(data.comments || []);
           } catch (_) {
@@ -204,7 +204,8 @@ const { slug, language } = Astro.props;
             form.reset();
             resetReply();
             if (user) nameField.classList.add('hidden');
-            showStatus(data.message || 'Your comment is awaiting review.', 'success');
+            showStatus(data.message || 'Your comment has been posted.', 'success');
+            load();
           } catch (error) {
             showStatus(error.message || 'Your comment could not be posted. Please try again.', 'error');
           } finally {

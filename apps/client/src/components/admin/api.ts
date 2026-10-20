@@ -105,7 +105,7 @@ export async function apiFetch<T = any>(endpoint: string, options: RequestInit =
 export const adminApi = {
   // Current user
   getCurrentUser: () => apiFetch<CurrentUser>('/me'),
-  getComments: (status = 'PENDING', blogId?: string) => apiFetch<{ comments: ModerationComment[] }>(`/admin/comments?status=${status}${blogId ? `&blogId=${encodeURIComponent(blogId)}` : ''}`),
+  getComments: (status = 'ALL', blogId?: string) => apiFetch<{ comments: ModerationComment[] }>(`/admin/comments?status=${status}${blogId ? `&blogId=${encodeURIComponent(blogId)}` : ''}`),
   getCommentArticles: (search?: string) => apiFetch<{ articles: CommentArticleSummary[] }>(`/admin/comment-articles${search ? `?search=${encodeURIComponent(search)}` : ''}`),
   moderateComment: (id: string, status: 'APPROVED' | 'REJECTED' | 'SPAM') =>
     apiFetch<{ comment: ModerationComment }>(`/admin/comments/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),

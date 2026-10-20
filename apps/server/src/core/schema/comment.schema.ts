@@ -23,7 +23,7 @@ export class Comment {
   @Prop({ type: String, required: true, trim: true, maxlength: 2_000 })
   content: string;
 
-  @Prop({ type: String, enum: commentStatuses, default: 'PENDING', index: true })
+  @Prop({ type: String, enum: commentStatuses, default: 'APPROVED', index: true })
   status: CommentStatus;
 
   // Only guest comments receive this value; the raw address is never stored.

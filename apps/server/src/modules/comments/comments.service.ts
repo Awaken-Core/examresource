@@ -84,7 +84,7 @@ export class CommentsService {
       authorUserId: user ? new Types.ObjectId(user.id) : null,
       authorName: user?.name || input.authorName,
       content: input.content,
-      status: 'PENDING',
+      status: 'APPROVED',
     };
 
     if (!user) {
@@ -93,7 +93,7 @@ export class CommentsService {
 
     try {
       const comment = await this.commentModel.create(payload);
-      return { comment: this.publicComment(comment), message: 'Your comment is awaiting review.' };
+      return { comment: this.publicComment(comment), message: 'Your comment has been posted.' };
     } catch (error: any) {
       if (error?.code === 11000 && !user) {
         throw new ConflictException('You have already posted a guest comment. Please log in to comment again.');
@@ -105,7 +105,7 @@ export class CommentsService {
   async listForModeration(status?: CommentStatus, blogId?: string) {
     if (blogId && !Types.ObjectId.isValid(blogId)) throw new BadRequestException('Blog was not found.');
     const filter: Record<string, unknown> = {
-      ...(status ? { status } : { status: 'PENDING' }),
+      ...(status ? { status } : {}),
       ...(blogId ? { blogId: new Types.ObjectId(blogId) } : {}),
     };
     const comments = await this.commentModel
