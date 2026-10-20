@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import BlogArticle from '../components/blog/BlogArticle.astro';
 import TopicNavigation from '../components/blog/TopicNavigation.astro';
+import Comments from '../components/blog/Comments.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
 import type { TopicDetail } from '../data/blogData';
 import { API_URL } from '../lib/api';
@@ -521,6 +522,8 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
             </section>
           )}
         </div>
+
+        <Comments slug={article.slug} language={requestedLanguage} />
 
         <TopicNavigation
           subjectSlug={article.subjectSlug}

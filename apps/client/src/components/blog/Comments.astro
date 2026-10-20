@@ -1,0 +1,245 @@
+---
+import { API_URL } from '../../lib/api';
+
+interface Props {
+  slug: string;
+  language: 'HINGLISH' | 'ENGLISH';
+}
+
+const { slug, language } = Astro.props;
+---
+
+<section
+  class="mt-8 sm:mt-12 border-t border-border/80 pt-6 sm:pt-8"
+  aria-labelledby="comments-heading"
+  data-comments
+  data-slug={slug}
+  data-language={language}
+>
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h2 id="comments-heading" class="text-lg sm:text-xl font-bold text-white">Discussion</h2>
+      <p class="mt-1 text-xs sm:text-sm text-muted">Share a helpful question or update. Keep the discussion respectful and useful.</p>
+    </div>
+  </div>
+
+  <form class="mt-5 rounded-xl border border-border bg-surface p-4 sm:p-5" data-comment-form>
+    <input type="hidden" name="parentCommentId" value="" data-parent-comment-id />
+    <div class="hidden mb-3 rounded-lg border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-white" data-reply-context>
+      <span data-reply-label></span>
+      <button type="button" class="ml-2 underline underline-offset-2 hover:text-accent" data-cancel-reply>Cancel reply</button>
+    </div>
+    <div class="mb-3" data-guest-name-field>
+      <label for="comment-author" class="mb-1.5 block text-xs font-semibold text-white">Your name</label>
+      <input
+        id="comment-author"
+        name="authorName"
+        autocomplete="name"
+        maxlength="100"
+        required
+        class="w-full min-h-11 rounded-lg border border-border bg-canvas px-3 text-sm text-white placeholder:text-muted focus:border-accent"
+        placeholder="Your name"
+      />
+    </div>
+    <div>
+      <label for="comment-content" class="mb-1.5 block text-xs font-semibold text-white">Comment</label>
+      <textarea
+        id="comment-content"
+        name="content"
+        maxlength="2000"
+        required
+        rows="4"
+        class="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2.5 text-base text-white placeholder:text-muted focus:border-accent"
+        placeholder="Write a respectful, useful comment…"
+      ></textarea>
+    </div>
+    <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-xs leading-relaxed text-muted" data-comment-rule>You can leave one guest comment. Sign in to comment again.</p>
+      <button
+        type="submit"
+        class="min-h-11 rounded-lg bg-accent px-4 text-sm font-semibold text-on-accent transition hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-60"
+        data-submit-comment
+      >
+        Post comment
+      </button>
+    </div>
+    <p class="mt-3 hidden text-sm" aria-live="polite" data-comment-status></p>
+  </form>
+
+  <div class="mt-6 space-y-4" data-comments-list aria-live="polite">
+    <p class="text-sm text-muted">Loading discussion…</p>
+  </div>
+</section>
+
+<script is:inline define:vars={{ apiUrl: API_URL }}>
+  (function () {
+    function addText(element, value) {
+      element.textContent = value || '';
+      return element;
+    }
+
+    function formatDate(value) {
+      try {
+        return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value));
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function createComment(comment, isReply, onReply) {
+      var item = document.createElement('article');
+      item.className = isReply
+        ? 'border-l-2 border-border pl-3 sm:pl-4'
+        : 'rounded-xl border border-border bg-surface p-4 sm:p-5';
+      var header = document.createElement('div');
+      header.className = 'flex items-center justify-between gap-3';
+      var name = document.createElement('h3');
+      name.className = 'text-sm font-semibold text-white';
+      addText(name, comment.authorName);
+      var date = document.createElement('time');
+      date.className = 'shrink-0 text-[11px] text-muted';
+      date.dateTime = comment.createdAt;
+      addText(date, formatDate(comment.createdAt));
+      header.append(name, date);
+      var content = document.createElement('p');
+      content.className = 'mt-2 whitespace-pre-wrap break-words text-sm leading-relaxed text-white/85';
+      addText(content, comment.content);
+      item.append(header, content);
+      if (!isReply) {
+        var reply = document.createElement('button');
+        reply.type = 'button';
+        reply.className = 'mt-3 min-h-11 px-1 text-xs font-semibold text-accent hover:text-white';
+        addText(reply, 'Reply');
+        reply.addEventListener('click', function () { onReply(comment); });
+        item.append(reply);
+      }
+      return item;
+    }
+
+    function initialize() {
+      document.querySelectorAll('[data-comments]:not([data-comments-ready])').forEach(function (root) {
+        root.setAttribute('data-comments-ready', 'true');
+        var slug = root.getAttribute('data-slug');
+        var language = root.getAttribute('data-language');
+        var form = root.querySelector('[data-comment-form]');
+        var list = root.querySelector('[data-comments-list]');
+        var status = root.querySelector('[data-comment-status]');
+        var submit = root.querySelector('[data-submit-comment]');
+        var nameField = root.querySelector('[data-guest-name-field]');
+        var rule = root.querySelector('[data-comment-rule]');
+        var parentId = root.querySelector('[data-parent-comment-id]');
+        var replyContext = root.querySelector('[data-reply-context]');
+        var replyLabel = root.querySelector('[data-reply-label]');
+        var cancelReply = root.querySelector('[data-cancel-reply]');
+        var user = null;
+
+        function showStatus(message, kind) {
+          status.className = 'mt-3 text-sm ' + (kind === 'error' ? 'text-error' : 'text-success');
+          status.textContent = message;
+        }
+
+        function resetReply() {
+          parentId.value = '';
+          replyContext.classList.add('hidden');
+          replyLabel.textContent = '';
+        }
+
+        function startReply(comment) {
+          parentId.value = comment.id;
+          replyLabel.textContent = 'Replying to ' + comment.authorName;
+          replyContext.classList.remove('hidden');
+          root.querySelector('#comment-content').focus();
+        }
+
+        cancelReply.addEventListener('click', resetReply);
+
+        function renderComments(comments) {
+          list.replaceChildren();
+          if (!comments.length) {
+            var empty = document.createElement('p');
+            empty.className = 'rounded-lg border border-dashed border-border px-4 py-5 text-center text-sm text-muted';
+            empty.textContent = 'No approved comments yet. Start the discussion.';
+            list.append(empty);
+            return;
+          }
+          comments.forEach(function (comment) {
+            var thread = document.createElement('div');
+            thread.className = 'space-y-3';
+            thread.append(createComment(comment, false, startReply));
+            (comment.replies || []).forEach(function (reply) { thread.append(createComment(reply, true, startReply)); });
+            list.append(thread);
+          });
+        }
+
+        async function load() {
+          try {
+            var commentsResponse = await fetch(apiUrl + '/blogs/' + encodeURIComponent(slug) + '/comments?language=' + encodeURIComponent(language));
+            if (!commentsResponse.ok) throw new Error('Unable to load comments.');
+            var data = await commentsResponse.json();
+            // Authentication is optional for reading comments; never let it hide public discussion.
+            user = await fetch(apiUrl + '/me', { credentials: 'include' })
+              .then(function (response) { return response.ok ? response.json() : null; })
+              .catch(function () { return null; });
+            if (user) {
+              nameField.classList.add('hidden');
+              nameField.querySelector('input').required = false;
+              rule.textContent = 'Commenting as ' + user.name + '.';
+            }
+            renderComments(data.comments || []);
+          } catch (_) {
+            list.replaceChildren();
+            var error = document.createElement('p');
+            error.className = 'text-sm text-muted';
+            error.textContent = 'Comments are temporarily unavailable. Please try again soon.';
+            list.append(error);
+          }
+        }
+
+        form.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          submit.disabled = true;
+          status.className = 'mt-3 hidden text-sm';
+          var fields = new FormData(form);
+          var body = {
+            authorName: fields.get('authorName') || undefined,
+            content: fields.get('content'),
+            parentCommentId: fields.get('parentCommentId') || undefined,
+          };
+          try {
+            var response = await fetch(apiUrl + '/blogs/' + encodeURIComponent(slug) + '/comments?language=' + encodeURIComponent(language), {
+              method: 'POST',
+              credentials: 'include',
+              headers: { 'Content-Type': 'application/json', 'X-CSRF-Protection': '1' },
+              body: JSON.stringify(body),
+            });
+            var data = await response.json().catch(function () { return {}; });
+            if (response.status === 409) {
+              showStatus('You have already used your guest comment. Please sign in to comment again.', 'error');
+              var login = document.createElement('a');
+              login.href = '/login';
+              login.className = 'ml-2 font-semibold underline underline-offset-2';
+              login.textContent = 'Sign in';
+              status.append(login);
+              return;
+            }
+            if (!response.ok) throw new Error(data.message || 'Your comment could not be posted.');
+            form.reset();
+            resetReply();
+            if (user) nameField.classList.add('hidden');
+            showStatus(data.message || 'Your comment has been posted.', 'success');
+            load();
+          } catch (error) {
+            showStatus(error.message || 'Your comment could not be posted. Please try again.', 'error');
+          } finally {
+            submit.disabled = false;
+          }
+        });
+
+        load();
+      });
+    }
+
+    initialize();
+    document.addEventListener('astro:page-load', initialize);
+  })();
+</script>
