@@ -1394,19 +1394,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             try { localStorage.setItem('auth_active', '1'); } catch (e) {}
           }
 
-          const hasAuthHint = (function() {
-            try {
-              return localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
-            } catch (e) {
-              return false;
-            }
-          })();
-
-          if (!hasAuthHint) {
-            void refreshNotifications(null);
-            return;
-          }
-
           const apiUrl = API_URL;
           const response = await fetch(`${apiUrl}/me`, { priority: 'low', credentials: 'include' } as any).catch(() => null);
           if (response && response.status === 401) {
