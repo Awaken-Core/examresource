@@ -311,6 +311,9 @@ const jsonLd = {
               {examCategories.map((cat) => (
                 <a 
                   href={`/category/${cat.slug}`}
+                  target="_blank"
+                  rel="noopener"
+                  data-astro-prefetch="false"
                   class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border border-border hover:shadow-xs ${cat.borderColor} transition duration-150 group cursor-pointer`}
                 >
                   <div class="flex items-start justify-between">
@@ -447,8 +450,7 @@ const jsonLd = {
                         src={portal.logo} 
                         alt={`${portal.name} official emblem logo`} 
                         class="w-full h-full object-contain" 
-                        loading="lazy"
-                        fetchpriority="low"
+                        loading="eager"
                         decoding="async"
                         width={32}
                         height={32}

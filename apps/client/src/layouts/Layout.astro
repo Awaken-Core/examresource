@@ -22,6 +22,7 @@ interface Props {
   hideHeaderFooter?: boolean;
   alternateLinks?: { hreflang: string; href: string }[];
   noindex?: boolean;
+  useClientRouter?: boolean;
 }
 
 const siteOrigin = siteUrl;
@@ -45,6 +46,7 @@ const {
   hideHeaderFooter = false,
   alternateLinks = [],
   noindex = false,
+  useClientRouter = false,
 } = Astro.props;
 
 // Ensure explicit X-Robots-Tag HTTP header matches the meta robots directive
@@ -218,10 +220,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={resolvedOgImage} />
-    <meta name="twitter:image:alt" content={title} />
+    {/* ClientRouter for page transitions on specific routes like /favorites & /notifications */}
+    {useClientRouter && <ClientRouter />}
 
-    {/* ClientRouter for page transitions */}
-    <ClientRouter />
+
 
     {/* Structured Data (JSON-LD) */}
     {jsonLd && (
@@ -246,7 +248,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     </script>
   </head>
   <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
-    <div id="route-loading-bar" class="fixed top-0 left-0 right-0 h-[2px] bg-accent z-[99999] opacity-0 pointer-events-none origin-left scale-x-0" transition:persist></div>
     {/* Google Tag Manager (noscript) */}
     <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -258,7 +259,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         <div 
           id="desktop-sidebar-wrapper" 
           class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300"
-          transition:persist="desktop-sidebar"
         >
           <LeftSidebar prefix="desktop" />
         </div>
@@ -266,8 +266,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
       {/* Main Area: Header (Header width decreases when sidebar is open!) + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
-        {!hideHeaderFooter && <Header transition:persist="main-header" />}
-        <main id="main-content" role="main" class="flex-grow">
+        {!hideHeaderFooter && <Header />}
+        <main id="main-content" class="flex-grow">
           <slot />
         </main>
         {!hideHeaderFooter && <Footer />}
@@ -280,7 +280,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       id="mobile-sidebar-backdrop" 
       class="fixed inset-0 z-[9998] hidden"
       aria-hidden="true"
-      transition:persist="mobile-sidebar-backdrop"
     >
       {/* Dark translucent overlay */}
       <div 
@@ -296,7 +295,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       aria-label="Navigation menu"
       role="dialog"
       aria-modal="true"
-      transition:persist="mobile-sidebar-container"
     >
       {/* ── Drawer Header ── */}
       <div class="flex items-center justify-between h-14 px-4 border-b border-border/60 shrink-0 bg-canvas">
@@ -745,9 +743,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function softNavigate(url: string) {
-          void import('astro:transitions/client')
-            .then(({ navigate }) => navigate(url))
-            .catch(() => { window.location.href = url; });
+          window.location.href = url;
         }
 
         /** Update home/category cards in place — no navigation, no scroll jump. */
@@ -1075,7 +1071,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.stopPropagation();
             if (window.innerWidth < 1024) {
               closeAllDropdowns();
-              void import('astro:transitions/client').then(({ navigate }) => navigate('/notifications'));
+              void import('astro:transitions/client').then(({ navigate }) => navigate('/notifications')).catch(() => {
+                window.location.href = '/notifications';
+              });
               return;
             }
             const targetId = notifTrigger.getAttribute('data-notification-trigger');
@@ -1180,7 +1178,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.stopPropagation();
             if (window.innerWidth < 1024) {
               closeAllDropdowns();
-              void import('astro:transitions/client').then(({ navigate }) => navigate('/favorites'));
+              void import('astro:transitions/client').then(({ navigate }) => navigate('/favorites')).catch(() => {
+                window.location.href = '/favorites';
+              });
               return;
             }
             const dropdown = document.getElementById('header-favorites-dropdown');
@@ -1735,36 +1735,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             if (e.detail?.lang) setLanguage(e.detail.lang, false);
           }) as EventListener);
 
-          // Cleanup before page swap
-          document.addEventListener('astro:before-swap', () => {
-            closeAllDropdowns();
-            closeSearchModal();
-            closeMobileDrawer();
-          });
-
-          document.addEventListener('astro:before-preparation', () => {
-            const bar = document.getElementById('route-loading-bar');
-            if (bar) {
-              bar.style.transition = 'transform 0.3s ease, opacity 0.15s ease';
-              bar.style.opacity = '1';
-              bar.style.transform = 'scaleX(0.7)';
-            }
-          });
-
-          // Re-initialize dynamic elements on every Astro ClientRouter navigation
-          document.addEventListener('astro:page-load', () => {
-            const bar = document.getElementById('route-loading-bar');
-            if (bar) {
-              bar.style.transform = 'scaleX(1)';
-              setTimeout(() => {
-                bar.style.opacity = '0';
-                setTimeout(() => {
-                  bar.style.transform = 'scaleX(0)';
-                }, 200);
-              }, 150);
-            }
-            reinitPageElements();
-          });
+          // Dispatch astro:page-load so any components listening to it continue working seamlessly
+          try {
+            document.dispatchEvent(new Event('astro:page-load'));
+          } catch (e) {}
         }
 
         // Run smoothly without blocking initial layout paint or causing forced reflow

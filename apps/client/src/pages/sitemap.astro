@@ -123,7 +123,7 @@ const jsonLd = {
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
         
         {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7" transition:name="main-content">
+        <div class="min-w-0 space-y-7">
           
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
@@ -202,6 +202,9 @@ const jsonLd = {
               {examCategories.map((cat) => (
                 <a
                   href={cat.path}
+                  target="_blank"
+                  rel="noopener"
+                  data-astro-prefetch="false"
                   class="sitemap-link p-3 rounded-lg bg-surface-raised border border-border/60 hover:border-accent/40 transition block group"
                 >
                   <div class="text-xs font-semibold text-white group-hover:text-accent transition flex items-center justify-between">

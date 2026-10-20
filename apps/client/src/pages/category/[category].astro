@@ -131,7 +131,7 @@ const relevantPortals = [
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
         
         {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7" transition:name="main-content">
+        <div class="min-w-0 space-y-7">
           
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
@@ -178,6 +178,9 @@ const relevantPortals = [
                   return (
                     <a
                       href={`/category/${c.slug}`}
+                      target="_blank"
+                      rel="noopener"
+                      data-astro-prefetch="false"
                       class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 border ${
                         isActive
                           ? 'bg-surface-raised text-white border-border shadow-xs'
@@ -352,6 +355,9 @@ const relevantPortals = [
               {displayCategories.filter(c => c.slug !== categorySlug).map((c) => (
                 <a
                   href={`/category/${c.slug}`}
+                  target="_blank"
+                  rel="noopener"
+                  data-astro-prefetch="false"
                   class="flex items-center justify-between p-2 rounded hover:bg-surface-raised text-xs text-muted hover:text-white transition group"
                 >
                   <span class="truncate">{c.name}</span>

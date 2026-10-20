@@ -90,6 +90,9 @@ const popularCategories = [
           {popularCategories.map((cat) => (
             <a
               href={`/category/${cat.slug}`}
+              target="_blank"
+              rel="noopener"
+              data-astro-prefetch="false"
               class="group flex items-center gap-3 p-3 rounded-xl bg-surface border border-border hover:border-accent/40 hover:bg-surface-raised transition-all duration-150 cursor-pointer"
             >
               <span class="text-xl shrink-0 group-hover:scale-110 transition-transform duration-150">{cat.icon}</span>

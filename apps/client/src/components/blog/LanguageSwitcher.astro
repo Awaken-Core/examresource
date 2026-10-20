@@ -99,7 +99,7 @@ const isHinglish = currentLanguage === 'HINGLISH';
     });
   }
 
-  async function softNavigate(lang: string) {
+  function softNavigate(lang: string) {
     const path = window.location.pathname;
     const search = new URLSearchParams(window.location.search);
     if (lang === 'en' || lang === 'english' || lang === 'ENGLISH') {
@@ -109,12 +109,7 @@ const isHinglish = currentLanguage === 'HINGLISH';
     }
     const qs = search.toString();
     const url = qs ? `${path}?${qs}` : path;
-    try {
-      const { navigate } = await import('astro:transitions/client');
-      navigate(url);
-    } catch {
-      window.location.href = url;
-    }
+    window.location.href = url;
   }
 
   function onArticleLangSwap(e: Event) {

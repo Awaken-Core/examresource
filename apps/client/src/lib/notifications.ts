@@ -27,19 +27,19 @@ export function relativeTime(iso: string) {
   return new Date(iso).toLocaleDateString();
 }
 
-/** Same-origin / relative hrefs soft-navigate via ClientRouter; externals hard-navigate. */
-async function goToNotificationHref(href: string) {
+/** Same-origin / relative hrefs soft-navigate via ClientRouter when available; externals hard-navigate. */
+function goToNotificationHref(href: string) {
   try {
     const url = new URL(href, window.location.origin);
-    const isSameOrigin = url.origin === window.location.origin;
-    if (isSameOrigin) {
+    if (url.origin === window.location.origin) {
       const path = `${url.pathname}${url.search}${url.hash}`;
-      const { navigate } = await import('astro:transitions/client');
-      navigate(path);
+      void import('astro:transitions/client')
+        .then(({ navigate }) => navigate(path))
+        .catch(() => { window.location.assign(href); });
       return;
     }
   } catch {
-    // fall through
+    // Ignored: Malformed URL string; fall back to standard window.location.assign
   }
   window.location.assign(href);
 }
@@ -63,7 +63,45 @@ function saveFiredIds(ids: Set<string>) {
   try {
     const arr = Array.from(ids).slice(-100);
     localStorage.setItem(FIRED_STORAGE_KEY, JSON.stringify(arr));
-  } catch {}
+  } catch {
+    // Ignored: Storage quota exceeded or disabled in private browsing
+  }
+}
+
+async function showSingleNotification(
+  item: AppNotification,
+  swReg: ServiceWorkerRegistration | null,
+) {
+  const title = item.title ? `${siteName}: ${item.title}` : `${siteName} Alert`;
+  const body = item.body || 'New examination notification published.';
+  const options: NotificationOptions = {
+    body,
+    icon: '/logo.png',
+    badge: '/favicon.svg',
+    tag: item.id,
+    data: { url: item.href || '/' },
+  };
+
+  if (swReg && 'showNotification' in swReg) {
+    try {
+      await swReg.showNotification(title, options);
+      return;
+    } catch {
+      // Ignored: Fallback to standard window.Notification if service worker showNotification rejects
+    }
+  }
+
+  try {
+    const notif = new Notification(title, options);
+    notif.onclick = () => {
+      window.focus();
+      if (item.href) {
+        goToNotificationHref(item.href);
+      }
+    };
+  } catch (err) {
+    console.warn('System Notification error:', err);
+  }
 }
 
 export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
@@ -81,39 +119,15 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
   }
   saveFiredIds(firedIds);
 
-  for (const item of toFire) {
-    const title = item.title ? `${siteName}: ${item.title}` : `${siteName} Alert`;
-    const body = item.body || 'New examination notification published.';
-    const options: NotificationOptions = {
-      body,
-      icon: '/logo.png',
-      badge: '/favicon.svg',
-      tag: item.id,
-      data: { url: item.href || '/' },
-    };
+  if (toFire.length === 0) return;
 
-    try {
-      if ('serviceWorker' in navigator) {
-        const reg = await navigator.serviceWorker.getRegistration().catch(() => null);
-        if (reg && 'showNotification' in reg) {
-          await reg.showNotification(title, options);
-          continue;
-        }
-      }
-    } catch (_) {}
-
-    try {
-      const notif = new Notification(title, options);
-      notif.onclick = () => {
-        window.focus();
-        if (item.href) {
-          void goToNotificationHref(item.href);
-        }
-      };
-    } catch (err) {
-      console.warn('System Notification error:', err);
-    }
+  let swReg: ServiceWorkerRegistration | null = null;
+  if ('serviceWorker' in navigator) {
+    const reg = await navigator.serviceWorker.getRegistration().catch(() => null);
+    swReg = reg ?? null;
   }
+
+  await Promise.all(toFire.map((item) => showSingleNotification(item, swReg)));
 }
 
 export async function requestBrowserNotificationPermission(): Promise<boolean> {
@@ -172,7 +186,7 @@ function buildCard(item: AppNotification) {
 
   const message = document.createElement('p');
   message.className = 'text-xs text-white/90 leading-relaxed font-normal';
-  const welcome = item.kind === 'welcome' ? item.body.match(/^Hi (.+?), ([\s\S]+)$/) : null;
+  const welcome = item.kind === 'welcome' ? /^Hi (.+?), ([\s\S]+)$/.exec(item.body) : null;
   if (welcome) {
     message.append('Hi ');
     const name = document.createElement('span');
@@ -250,10 +264,14 @@ function paint(items: AppNotification[]) {
     node.classList.toggle('opacity-50', unread.length === 0);
   });
 
+  const notifCount = unread.length;
+  const pluralSuffix = notifCount === 1 ? '' : 's';
+  const pillText = notifCount === 0
+    ? 'No new notifications'
+    : `You have ${notifCount} new notification${pluralSuffix}`;
+
   document.querySelectorAll('.notification-pill-text').forEach((node) => {
-    node.textContent = unread.length === 0
-      ? 'No new notifications'
-      : `You have ${unread.length} new notification${unread.length === 1 ? '' : 's'}`;
+    node.textContent = pillText;
   });
 
   document.querySelectorAll('.notification-dot-indicator').forEach((node) => {
