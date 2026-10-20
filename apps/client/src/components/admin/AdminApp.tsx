@@ -5,9 +5,10 @@ import { ArticlesManager } from './ArticlesManager';
 import { CategoriesManager } from './CategoriesManager';
 import { UsersManager } from './UsersManager';
 import { NotificationsManager } from './NotificationsManager';
+import { CommentsManager } from './CommentsManager';
 import { CategoryModal } from './CategoryModal';
 
-export type AdminTab = 'posts' | 'categories' | 'users' | 'notifications';
+export type AdminTab = 'posts' | 'categories' | 'users' | 'notifications' | 'comments';
 
 interface AdminAppProps {
   initialTab?: AdminTab;
@@ -63,6 +64,8 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
         setActiveTab('users');
       } else if (path.includes('/notifications')) {
         setActiveTab('notifications');
+      } else if (path.includes('/comments')) {
+        setActiveTab('comments');
       } else if (window.location.hash === '#categories-section') {
         setActiveTab('categories');
       } else {
@@ -82,6 +85,7 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
     let targetUrl = '/admin';
     if (tab === 'users') targetUrl = '/admin/users';
     else if (tab === 'notifications') targetUrl = '/admin/notifications';
+    else if (tab === 'comments') targetUrl = '/admin/comments';
     else if (tab === 'categories') targetUrl = '/admin#categories-section';
 
     if (window.location.pathname !== targetUrl && targetUrl !== '/admin#categories-section') {
@@ -194,7 +198,7 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
       ? 'Blog Categories'
       : activeTab === 'users'
       ? 'Users'
-      : 'Notifications';
+      : activeTab === 'notifications' ? 'Notifications' : 'Comments';
 
   return (
     <div className="h-screen w-screen flex bg-slate-50 dark:bg-[#131316] text-slate-900 dark:text-zinc-100 overflow-hidden font-sans">
@@ -317,6 +321,8 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
                 </button>
               </>
             )}
+
+            {(currentUser?.role === 'admin' || currentUser?.role === 'editor') && <button type="button" onClick={() => switchTab('comments')} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${activeTab === 'comments' ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold' : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'}`}><span className="w-4 h-4 text-center text-sm leading-4">◌</span><span>Comments</span></button>}
 
             <div className="pt-4 pb-1">
               <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
@@ -489,6 +495,8 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
             {activeTab === 'users' && <UsersManager currentUser={currentUser} />}
 
             {activeTab === 'notifications' && <NotificationsManager />}
+
+            {activeTab === 'comments' && <CommentsManager />}
           </div>
         </main>
       </div>

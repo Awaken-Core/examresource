@@ -50,6 +50,16 @@ export interface CurrentUser {
   role: 'admin' | 'editor' | 'student';
 }
 
+export interface ModerationComment {
+  id: string;
+  parentCommentId: string | null;
+  authorName: string;
+  content: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SPAM';
+  createdAt: string;
+  blog: { id: string; title: string; slug: string } | null;
+}
+
 export async function apiFetch<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers || {});
   if (options.body && typeof options.body === 'string' && !headers.has('Content-Type')) {
@@ -91,6 +101,9 @@ export async function apiFetch<T = any>(endpoint: string, options: RequestInit =
 export const adminApi = {
   // Current user
   getCurrentUser: () => apiFetch<CurrentUser>('/me'),
+  getComments: (status = 'PENDING') => apiFetch<{ comments: ModerationComment[] }>(`/admin/comments?status=${status}`),
+  moderateComment: (id: string, status: 'APPROVED' | 'REJECTED' | 'SPAM') =>
+    apiFetch<{ comment: ModerationComment }>(`/admin/comments/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),
 
   // Articles
   getArticles: (params: {

@@ -1,0 +1,8 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import AdminApp from '../../components/admin/AdminApp';
+---
+
+<AdminLayout title="Comments" fullWidth={true}>
+  <AdminApp client:only="react" initialTab="comments" />
+</AdminLayout>
