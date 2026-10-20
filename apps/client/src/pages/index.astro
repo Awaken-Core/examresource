@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
 import { Image } from 'astro:assets';
-import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
+import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain, siteSlogan } from '../data/site';
 import {
   appLangToBlogLanguage,
   articleHref,
@@ -272,7 +272,7 @@ const jsonLd = {
               Verified Government Exam &amp; Sarkari Naukri Portal
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight leading-tight">
-              {siteName} | Government Exam Updates &amp; Sarkari Jobs
+              {siteSlogan}
             </h1>
             <p class="mt-2 text-sm sm:text-base text-muted max-w-3xl leading-relaxed">
               {siteName} ({siteDomain}) provides verified central &amp; state government exam notifications, admit cards, answer keys, syllabi, and direct official commission portal links across India.

@@ -300,7 +300,11 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
     class="blog-reading-view min-h-screen bg-canvas text-white"
     data-article-lang={blogLanguageToAppLang(currentLanguage)}
   >
-    <div class="article-shell w-full px-3.5 py-3 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto">
+    <article
+      class="article-shell w-full px-3.5 py-3 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto"
+      itemscope
+      itemtype="https://schema.org/Article"
+    >
       <header class="article-shell-head min-w-0">
         <nav aria-label="Breadcrumb" class="mb-2 sm:mb-3 flex items-center gap-1.5 text-[11px] sm:text-xs text-muted overflow-x-auto scrollbar-none whitespace-nowrap py-0.5">
           <a href="/" class="hover:text-accent shrink-0">Home</a>
@@ -354,10 +358,11 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
             </button>
           </div>
         </div>
-        <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-snug sm:leading-tight" data-article-title transition:name="article-title">{article.title}</h1>
+        <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-snug sm:leading-tight" data-article-title itemprop="headline" transition:name="article-title">{article.title}</h1>
         <p
           class="mt-1.5 sm:mt-2.5 max-w-4xl text-xs sm:text-sm md:text-base leading-relaxed text-muted"
           data-article-description
+          itemprop="description"
           hidden={!article.description}
         >{article.description}</p>
       </header>
@@ -395,7 +400,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
 
       <div class="article-shell-body min-w-0">
         {htmlBody ? (
-          <article id="article-body" class="space-y-4 sm:space-y-6" transition:name="article-body">
+          <div id="article-body" class="space-y-4 sm:space-y-6" itemprop="articleBody" transition:name="article-body">
             {livePost.coverImage && (
               <figure class="my-1 sm:my-3" data-article-cover>
                 <Image
@@ -414,9 +419,9 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
               </figure>
             )}
             <div class="prose-markdown markdown-preview-content max-w-none" data-article-html set:html={htmlBody} />
-          </article>
+          </div>
         ) : (
-          <div id="article-body" transition:name="article-body">
+          <div id="article-body" itemprop="articleBody" transition:name="article-body">
             <BlogArticle article={article} />
           </div>
         )}
@@ -512,7 +517,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
           nextTopic={article.nextTopic}
         />
       </div>
-    </div>
+    </article>
   </div>
 
   {/* Lightweight zero-dependency progressive enhancement for recent posts */}
