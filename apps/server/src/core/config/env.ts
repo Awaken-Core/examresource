@@ -8,6 +8,7 @@ export const EnvSchema = z.object({
   CLIENT_URL: z.string().url(),
   PORT: z.coerce.number().int().min(1).max(65535),
   SESSION_TTL_DAYS: z.coerce.number().int().min(1).max(90).default(30),
+  COMMENT_IP_HASH_SECRET: z.string().min(32).optional(),
   R2_ACCOUNT_ID: z.string().min(1).optional(),
   R2_ACCESS_KEY_ID: z.string().min(1).optional(),
   R2_SECRET_ACCESS_KEY: z.string().min(1).optional(),
