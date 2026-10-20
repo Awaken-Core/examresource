@@ -125,26 +125,51 @@ export class CommentsService {
 
   async listArticlesWithCounts(search?: string) {
     const match = search?.trim()
-      ? { $match: { $or: [{ 'blog.title': { $regex: search.trim(), $options: 'i' } }, { 'blog.slug': { $regex: search.trim(), $options: 'i' } }] } }
+      ? {
+          $match: {
+            $or: [
+              { 'blog.title': { $regex: search.trim(), $options: 'i' } },
+              { 'blog.slug': { $regex: search.trim(), $options: 'i' } },
+            ],
+          },
+        }
       : null;
-    const rows = await this.commentModel.aggregate([
-      { $lookup: { from: 'blogs', localField: 'blogId', foreignField: '_id', as: 'blog' } },
-      { $unwind: '$blog' },
-      { $group: {
-        _id: { $ifNull: ['$blog.translationGroupId', { $toString: '$blogId' }] },
-        blog: { $first: '$blog' },
-        total: { $sum: 1 },
-        pending: { $sum: { $cond: [{ $eq: ['$status', 'PENDING'] }, 1, 0] } },
-        approved: { $sum: { $cond: [{ $eq: ['$status', 'APPROVED'] }, 1, 0] } },
-        rejected: { $sum: { $cond: [{ $eq: ['$status', 'REJECTED'] }, 1, 0] } },
-        spam: { $sum: { $cond: [{ $eq: ['$status', 'SPAM'] }, 1, 0] } },
-        latestCommentAt: { $max: '$createdAt' },
-      } },
-      ...(match ? [match] : []),
-      { $sort: { pending: -1, latestCommentAt: -1 } },
-      { $limit: 100 },
-      { $project: { _id: 0, id: { $toString: '$_id' }, translationGroupId: { $ifNull: ['$blog.translationGroupId', null] }, title: '$blog.title', slug: '$blog.slug', total: 1, pending: 1, approved: 1, rejected: 1, spam: 1, latestCommentAt: 1 } },
-    ]).exec();
+    const rows = await this.commentModel
+      .aggregate([
+        { $lookup: { from: 'blogs', localField: 'blogId', foreignField: '_id', as: 'blog' } },
+        { $unwind: '$blog' },
+        {
+          $group: {
+            _id: { $ifNull: ['$blog.translationGroupId', { $toString: '$blogId' }] },
+            blog: { $first: '$blog' },
+            total: { $sum: 1 },
+            pending: { $sum: { $cond: [{ $eq: ['$status', 'PENDING'] }, 1, 0] } },
+            approved: { $sum: { $cond: [{ $eq: ['$status', 'APPROVED'] }, 1, 0] } },
+            rejected: { $sum: { $cond: [{ $eq: ['$status', 'REJECTED'] }, 1, 0] } },
+            spam: { $sum: { $cond: [{ $eq: ['$status', 'SPAM'] }, 1, 0] } },
+            latestCommentAt: { $max: '$createdAt' },
+          },
+        },
+        ...(match ? [match] : []),
+        { $sort: { pending: -1, latestCommentAt: -1 } },
+        { $limit: 100 },
+        {
+          $project: {
+            _id: 0,
+            id: { $toString: '$_id' },
+            translationGroupId: { $ifNull: ['$blog.translationGroupId', null] },
+            title: '$blog.title',
+            slug: '$blog.slug',
+            total: 1,
+            pending: 1,
+            approved: 1,
+            rejected: 1,
+            spam: 1,
+            latestCommentAt: 1,
+          },
+        },
+      ])
+      .exec();
     return { articles: rows };
   }
 
@@ -194,7 +219,7 @@ export class CommentsService {
     return this.blogModel.distinct('_id', { translationGroupId: blog.translationGroupId });
   }
 
-  private async resolveParentCommentId(parentCommentId: string | null | undefined, blogIds: Types.ObjectId[]) {
+  private async resolveParentCommentId(parentCommentId: string | undefined, blogIds: Types.ObjectId[]) {
     if (!parentCommentId) return null;
     if (!Types.ObjectId.isValid(parentCommentId)) throw new BadRequestException('Parent comment was not found.');
     const parent = await this.commentModel.exists({

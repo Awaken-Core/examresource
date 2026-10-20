@@ -322,7 +322,20 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
               </>
             )}
 
-            {(currentUser?.role === 'admin' || currentUser?.role === 'editor') && <button type="button" onClick={() => switchTab('comments')} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${activeTab === 'comments' ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold' : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'}`}><span className="w-4 h-4 text-center text-sm leading-4">◌</span><span>Comments</span></button>}
+            {(currentUser?.role === 'admin' || currentUser?.role === 'editor') && (
+              <button
+                type="button"
+                onClick={() => switchTab('comments')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${
+                  activeTab === 'comments'
+                    ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                    : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <span className="w-4 h-4 text-center text-sm leading-4">◌</span>
+                <span>Comments</span>
+              </button>
+            )}
 
             <div className="pt-4 pb-1">
               <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
