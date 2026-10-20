@@ -578,7 +578,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
             filtered.slice(0, 5).forEach(function(post) {
               var href = '/' + post.slug;
               var catName = (post.category && post.category.name) ? post.category.name : 'Latest Updates';
-              railHtml += '<a href="' + href + '" data-astro-prefetch="hover" class="group flex items-start p-2.5 rounded-lg hover:bg-surface-raised transition border border-transparent hover:border-border/60">' +
+              railHtml += '<a href="' + href + '" target="_blank" rel="noopener noreferrer" data-astro-prefetch="hover" class="group flex items-start p-2.5 rounded-lg hover:bg-surface-raised transition border border-transparent hover:border-border/60">' +
                 '<div class="min-w-0 flex-1">' +
                   '<div class="flex items-center justify-between gap-2 mb-1">' +
                     '<span class="inline-block text-[10px] font-semibold text-accent leading-none truncate max-w-[140px]">' + escapeHtml(catName) + '</span>' +
@@ -607,7 +607,7 @@ const langBundleJson = JSON.stringify(langBundle).replace(/</g, '\\u003c');
               var dateStr = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '';
               var desc = post.description || post.metaDescription || '';
 
-              bottomHtml += '<a href="' + href + '" data-astro-prefetch="hover" class="group block p-4 bg-surface border border-border rounded-xl shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 cursor-pointer">' +
+              bottomHtml += '<a href="' + href + '" target="_blank" rel="noopener noreferrer" data-astro-prefetch="hover" class="group block p-4 bg-surface border border-border rounded-xl shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 cursor-pointer">' +
                 '<div>' +
                   '<div class="flex items-center justify-between gap-2">' +
                     '<div class="flex flex-wrap items-center gap-1.5">' +

@@ -33,6 +33,18 @@ export default defineConfig({
     plugins: [tailwindcss()],
     build: {
       chunkSizeWarningLimit: 750,
+      modulePreload: {
+        polyfill: false,
+      },
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('astro/virtual-modules/transitions') || id.includes('astro/dist/transitions')) {
+              return 'astro-transitions';
+            }
+          },
+        },
+      },
     },
     optimizeDeps: {
       include: [

@@ -140,13 +140,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       });
     </script>
 
-    {/* Google Fonts: Asynchronous Non-blocking Geist Sans (Newsreader removed to eliminate 130 KiB unused font weight) */}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" />
-    </noscript>
+    {/* Preload Self-Hosted Geist Latin Font for zero external TLS latency, zero CLS & instant text render */}
+    <link rel="preload" href="/fonts/geist-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 
     {/* DNS prefetch for the media CDN without holding an unused TLS socket */}
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
@@ -510,13 +505,20 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
     {/* Global Robust Interactive Script */}
     <script>
-      import { markAllNotificationsRead, markNotificationRead, refreshNotifications, requestBrowserNotificationPermission, updateBrowserNotificationUI } from '../lib/notifications';
-      import { canSwapArticleLanguage, getDisplayedArticleLang, swapArticleLanguage } from '../lib/article-lang-swap';
       import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
-      import { API_URL } from '../lib/api';
       import { searchItems, siteDomain } from '../data/site';
-      import { updateFavoritesUI, toggleBookmark, removeBookmark, clearAllBookmarks } from '../lib/bookmarks';
-      import { navigate } from 'astro:transitions/client';
+
+      const API_URL = (import.meta.env.PUBLIC_API_URL || '').replace(/\/$/, '');
+
+      function getDisplayedArticleLang(): 'hinglish' | 'en' | null {
+        const view = document.querySelector<HTMLElement>('.blog-reading-view, [data-article-lang]');
+        if (!view && !document.getElementById('article-lang-data')) return null;
+        const fromAttr = view?.dataset.articleLang;
+        if (fromAttr === 'en' || fromAttr === 'hinglish') return fromAttr;
+        const urlLang = new URLSearchParams(window.location.search).get('lang');
+        if (urlLang === 'en' || urlLang === 'english') return 'en';
+        return 'hinglish';
+      }
 
       (function initApp() {
 
@@ -858,16 +860,18 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const displayed = getDisplayedArticleLang();
             if (displayed === normalized) return;
 
-            if (canSwapArticleLanguage(normalized)) {
-              swapArticleLanguage(normalized);
-            } else {
-              const path = window.location.pathname;
-              const search = new URLSearchParams(window.location.search);
-              if (normalized === 'en') search.set('lang', 'en');
-              else search.delete('lang');
-              const qs = search.toString();
-              softNavigate(qs ? `${path}?${qs}` : path);
-            }
+            void import('../lib/article-lang-swap').then(({ canSwapArticleLanguage, swapArticleLanguage }) => {
+              if (canSwapArticleLanguage(normalized)) {
+                swapArticleLanguage(normalized);
+              } else {
+                const path = window.location.pathname;
+                const search = new URLSearchParams(window.location.search);
+                if (normalized === 'en') search.set('lang', 'en');
+                else search.delete('lang');
+                const qs = search.toString();
+                softNavigate(qs ? `${path}?${qs}` : path);
+              }
+            });
             return;
           }
 
@@ -959,6 +963,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           resultsList.innerHTML = filtered.map((item, idx) => `
             <a 
               href="${item.href}" 
+              target="_blank"
+              rel="noopener noreferrer"
               data-result-index="${idx}"
               class="search-result-row flex items-center justify-between p-3 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/40 hover:border-accent/40 transition group cursor-pointer"
             >
@@ -1080,7 +1086,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.stopPropagation();
             if (window.innerWidth < 1024) {
               closeAllDropdowns();
-              navigate('/notifications');
+              void import('astro:transitions/client').then(({ navigate }) => navigate('/notifications'));
               return;
             }
             const targetId = notifTrigger.getAttribute('data-notification-trigger');
@@ -1089,7 +1095,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               const isOpen = !notifPopup.classList.contains('hidden');
               closeAllDropdowns();
               if (!isOpen) {
-                updateBrowserNotificationUI();
+                void import('../lib/notifications').then(({ updateBrowserNotificationUI }) => updateBrowserNotificationUI());
                 notifPopup.classList.remove('hidden');
                 requestAnimationFrame(() => {
                   notifPopup.classList.remove('scale-95', 'opacity-0');
@@ -1112,7 +1118,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (enableBrowserBtn) {
             e.preventDefault();
             e.stopPropagation();
-            void requestBrowserNotificationPermission();
+            void import('../lib/notifications').then(({ requestBrowserNotificationPermission }) => requestBrowserNotificationPermission());
             return;
           }
 
@@ -1121,7 +1127,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.preventDefault();
             e.stopPropagation();
             const notificationId = dismissNotifBtn.getAttribute('data-dismiss-notification');
-            if (notificationId) markNotificationRead(notificationId);
+            if (notificationId) {
+              void import('../lib/notifications').then(({ markNotificationRead }) => markNotificationRead(notificationId));
+            }
             return;
           }
 
@@ -1129,14 +1137,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (markAllReadBtn) {
             e.preventDefault();
             e.stopPropagation();
-            void markAllNotificationsRead();
+            void import('../lib/notifications').then(({ markAllNotificationsRead }) => markAllNotificationsRead());
             return;
           }
 
           const notificationLink = target.closest('[data-notification-link]');
           if (notificationLink) {
             const notificationId = notificationLink.getAttribute('data-notification-link');
-            if (notificationId) markNotificationRead(notificationId);
+            if (notificationId) {
+              void import('../lib/notifications').then(({ markNotificationRead }) => markNotificationRead(notificationId));
+            }
           }
 
           // If clicked inside notifications popup, don't close
@@ -1181,7 +1191,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.stopPropagation();
             if (window.innerWidth < 1024) {
               closeAllDropdowns();
-              navigate('/favorites');
+              void import('astro:transitions/client').then(({ navigate }) => navigate('/favorites'));
               return;
             }
             const dropdown = document.getElementById('header-favorites-dropdown');
@@ -1189,7 +1199,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               const isOpen = !dropdown.classList.contains('hidden');
               closeAllDropdowns();
               if (!isOpen) {
-                updateFavoritesUI();
+                void import('../lib/bookmarks').then(({ updateFavoritesUI }) => updateFavoritesUI());
                 dropdown.classList.remove('hidden');
                 requestAnimationFrame(() => {
                   dropdown.classList.remove('scale-95', 'opacity-0');
@@ -1213,7 +1223,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.preventDefault();
             e.stopPropagation();
             const slug = removeFavBtn.getAttribute('data-remove-favorite') || removeFavBtn.getAttribute('data-remove-bookmark');
-            if (slug) removeBookmark(slug);
+            if (slug) {
+              void import('../lib/bookmarks').then(({ removeBookmark }) => removeBookmark(slug));
+            }
             return;
           }
 
@@ -1221,7 +1233,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (clearFavBtn) {
             e.preventDefault();
             e.stopPropagation();
-            clearAllBookmarks();
+            void import('../lib/bookmarks').then(({ clearAllBookmarks }) => clearAllBookmarks());
             return;
           }
 
@@ -1235,10 +1247,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const title = favoriteBtn.getAttribute('data-favorite-title') || favoriteBtn.getAttribute('data-bookmark-title') || '';
             const category = favoriteBtn.getAttribute('data-favorite-category') || favoriteBtn.getAttribute('data-bookmark-category') || '';
             const url = favoriteBtn.getAttribute('data-favorite-url') || favoriteBtn.getAttribute('data-bookmark-url') || `/${slug}`;
-            const isSaved = toggleBookmark({ slug, title, category, url });
-            if (typeof (window as any).showGlobalToast === 'function') {
-              (window as any).showGlobalToast(isSaved ? 'Article added to favorites' : 'Article removed from favorites');
-            }
+            void import('../lib/bookmarks').then(({ toggleBookmark }) => {
+              const isSaved = toggleBookmark({ slug, title, category, url });
+              if (typeof (window as any).showGlobalToast === 'function') {
+                (window as any).showGlobalToast(isSaved ? 'Article added to favorites' : 'Article removed from favorites');
+              }
+            });
             return;
           }
 
@@ -1401,6 +1415,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               return false;
             }
           })();
+
+          const { refreshNotifications } = await import('../lib/notifications');
 
           if (!hasAuthHint) {
             void refreshNotifications(null);
@@ -1641,8 +1657,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               setLanguage(displayedArticleLang, false);
             } else {
               setLanguage(displayedArticleLang, false);
-              if (preferred !== displayedArticleLang && canSwapArticleLanguage(preferred)) {
-                setLanguage(preferred, true);
+              if (preferred !== displayedArticleLang) {
+                void import('../lib/article-lang-swap').then(({ canSwapArticleLanguage }) => {
+                  if (canSwapArticleLanguage(preferred)) {
+                    setLanguage(preferred, true);
+                  }
+                });
               }
             }
           } else {
@@ -1675,9 +1695,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
 
           if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => updateFavoritesUI(), { timeout: 1500 });
+            requestIdleCallback(() => {
+              void import('../lib/bookmarks').then(({ updateFavoritesUI }) => updateFavoritesUI());
+            }, { timeout: 1500 });
           } else {
-            setTimeout(updateFavoritesUI, 100);
+            setTimeout(() => {
+              void import('../lib/bookmarks').then(({ updateFavoritesUI }) => updateFavoritesUI());
+            }, 100);
           }
           queueSyncAuthProfile();
         }
@@ -1708,7 +1732,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           document.addEventListener('keydown', handleGlobalKeydown);
 
           // Reactive bookmarks event
-          window.addEventListener('bookmarks-updated', () => updateFavoritesUI());
+          window.addEventListener('bookmarks-updated', () => {
+            void import('../lib/bookmarks').then(({ updateFavoritesUI }) => updateFavoritesUI());
+          });
 
           // Window language change event
           window.addEventListener('exam:language-change', ((e: CustomEvent) => {

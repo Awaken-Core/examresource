@@ -17,16 +17,14 @@ const { faqs } = Astro.props;
   <div class="space-y-3">
     {faqs.map((faq, i) => (
       <details class="group bg-surface-raised/40 border border-border rounded-xl transition-all duration-200 hover:border-accent/60">
-        <summary class="flex justify-between items-center font-semibold text-white cursor-pointer text-body-md list-none min-h-[44px] p-4">
-          <span class="flex items-start gap-2.5">
-            <span class="text-accent font-bold">Q{i + 1}.</span>
+        <summary class="flex justify-between items-center font-semibold text-white cursor-pointer text-body-md list-none min-h-[44px] p-4 gap-2.5">
+          <span class="flex items-start gap-2 min-w-0">
+            <span class="text-accent font-bold shrink-0">Q{i + 1}.</span>
             <span>{faq.question}</span>
           </span>
-          <span class="ml-2 text-muted group-open:rotate-180 transition-transform duration-200">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </span>
+          <svg class="w-5 h-5 shrink-0 text-muted group-open:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
         </summary>
         <div class="px-4 pb-4 text-body-sm text-white/70 leading-relaxed pl-7 border-t border-border/50 pt-3">
           {faq.answer}

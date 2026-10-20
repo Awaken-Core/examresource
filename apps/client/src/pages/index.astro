@@ -486,6 +486,8 @@ const jsonLd = {
                 {popularUpdates.map((item) => (
                   <a 
                     href={item.href} 
+                    target="_blank"
+                    rel="noopener noreferrer"
                     data-article-link={item.slugKey}
                     data-astro-prefetch="hover"
                     class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
