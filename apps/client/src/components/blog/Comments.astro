@@ -151,13 +151,13 @@ const { slug, language } = Astro.props;
 
         async function load() {
           try {
-            var responses = await Promise.all([
-              fetch(apiUrl + '/blogs/' + encodeURIComponent(slug) + '/comments?language=' + encodeURIComponent(language)),
-              fetch(apiUrl + '/me', { credentials: 'include' }),
-            ]);
-            if (!responses[0].ok) throw new Error('Unable to load comments.');
-            var data = await responses[0].json();
-            user = responses[1].ok ? await responses[1].json() : null;
+            var commentsResponse = await fetch(apiUrl + '/blogs/' + encodeURIComponent(slug) + '/comments?language=' + encodeURIComponent(language));
+            if (!commentsResponse.ok) throw new Error('Unable to load comments.');
+            var data = await commentsResponse.json();
+            // Authentication is optional for reading comments; never let it hide public discussion.
+            user = await fetch(apiUrl + '/me', { credentials: 'include' })
+              .then(function (response) { return response.ok ? response.json() : null; })
+              .catch(function () { return null; });
             if (user) {
               nameField.classList.add('hidden');
               nameField.querySelector('input').required = false;
