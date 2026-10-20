@@ -206,6 +206,13 @@ const jsonLd = {
       url: canonicalUrl,
       description: pageDescription,
       inLanguage: ['en-IN', 'hi-Latn'],
+      about: [
+        { '@type': 'Thing', name: 'Government Examinations in India' },
+        { '@type': 'Thing', name: 'Sarkari Naukri Notifications' },
+        { '@type': 'Thing', name: 'Civil Services Examination' },
+        { '@type': 'Thing', name: 'Staff Selection Commission' },
+        { '@type': 'Thing', name: 'Railway Recruitment Boards' },
+      ],
       publisher: {
         '@id': `${siteUrl}/#organization`,
       },
@@ -234,6 +241,17 @@ const jsonLd = {
       image: `${siteUrl}/og-image.jpg`,
       sameAs: [whatsappChannel, telegramChannel].filter(Boolean),
       description: 'Verified government exam notifications, Sarkari job updates, admit cards, answer keys, and counselling results portal across India.',
+      knowsAbout: [
+        'Government Exams in India',
+        'Sarkari Naukri Alerts',
+        'UPSC Civil Services Examination',
+        'Staff Selection Commission (SSC)',
+        'Railway Recruitment Control Board (RRB)',
+        'Institute of Banking Personnel Selection (IBPS)',
+        'State Public Service Commissions',
+        'Admit Cards & Answer Keys',
+        'Exam Syllabi & Cut-off Marks',
+      ],
     },
     {
       '@type': 'FAQPage',

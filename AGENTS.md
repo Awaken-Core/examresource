@@ -21,6 +21,10 @@ This file contains **mandatory instructions and context** for any AI agent or de
    - **Frontend & UI/UX**: Always check and adhere to:
      - `.agents/skills/astra-frontend-design/SKILL.md` (Design systems, layout hierarchy, visual polish).
      - `.agents/skills/ui-ux-pro-max/SKILL.md` (Design intelligence, color palettes, typography, spacing).
+     - `.agents/skills/mobile-responsive/SKILL.md` (Mobile responsiveness, touch targets, mobile PageSpeed & LCP optimization).
+   - **AEO & SEO Optimization**:
+     - `.agents/skills/aeo-audit/SKILL.md` (Answer Engine Optimization for Google AI Overviews, ChatGPT, Perplexity, citation readiness, query fan-out, entity grounding, and non-commodity content).
+     - `.agents/skills/seo-audit/SKILL.md` (Technical SEO checklist, Schema.org structured data, and Core Web Vitals).
    - **Backend NestJS**: Always follow:
      - `.agents/skills/nestjs-best-practices/SKILL.md` (Architecture, modular dependency injection, security, transaction safety, exception filters, DTO validation).
 
@@ -38,6 +42,7 @@ Production deployments are automated via Git. Pushing to **`main`** triggers the
 ```bash
 # 1. Run local pre-flight checks
 bun run typecheck
+bunx astro check
 bun run lint
 bun run test
 bun run build
@@ -50,7 +55,7 @@ git push origin main
 ```
 
 > [!IMPORTANT]
-> **`main` is the production branch.** Never push untested or breaking changes directly to `main`. Always test locally using `bun run typecheck`, `bun run lint`, `bun run test`, and `bun run build` before pushing to `main`.
+> **`main` is the production branch.** Never push untested or breaking changes directly to `main`. Always test locally using `bun run typecheck`, `bunx astro check`, `bun run lint`, `bun run test`, and `bun run build` before pushing to `main`.
 
 ---
 
@@ -142,6 +147,9 @@ Before concluding any task or pushing to git:
 ```bash
 # Typecheck backend
 bun run typecheck
+
+# Check Astro client types & components
+bunx astro check
 
 # Lint backend
 bun run lint

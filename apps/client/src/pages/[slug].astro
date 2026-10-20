@@ -147,7 +147,7 @@ const jsonLd = {
       "@id": `${canonicalUrl}#article`,
       "speakable": {
         "@type": "SpeakableSpecification",
-        "cssSelector": ["[data-article-title]", "h1", "nav[aria-label='Breadcrumb']"]
+        "cssSelector": ["[data-article-title]", "h1", "nav[aria-label='Breadcrumb']", "[data-article-description]"]
       },
       "isPartOf": {
         "@type": "WebPage",
@@ -159,6 +159,22 @@ const jsonLd = {
       "headline": article.title,
       "name": article.title,
       "description": pageDescription,
+      "about": [
+        {
+          "@type": "Thing",
+          "name": article.subjectTitle
+        },
+        {
+          "@type": "Thing",
+          "name": "Government Recruitment"
+        }
+      ],
+      "mentions": [
+        {
+          "@type": "Thing",
+          "name": article.category
+        }
+      ],
       "image": [postCover],
       "datePublished": article.publishedDate,
       "dateModified": article.updatedDate,

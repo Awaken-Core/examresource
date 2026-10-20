@@ -10,6 +10,8 @@
     "start": "bun run --cwd apps/client start && bun run --cwd apps/server start:prod",
     "test": "bun run --cwd apps/server test",
     "typecheck": "bun run --cwd apps/server tsc --noEmit",
+    "check:client": "bun run --cwd apps/client astro check",
+    "check": "bun run typecheck && bun run check:client",
     "lint": "bun run --cwd apps/server lint"
   },
   "devDependencies": {

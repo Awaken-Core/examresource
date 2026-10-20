@@ -80,6 +80,7 @@ Deployments to production are automated via Git. Pushing to **`main`** triggers 
 ```bash
 # 1. Run local pre-flight checks
 bun run typecheck
+bunx astro check
 bun run lint
 bun run test
 bun run build
@@ -185,6 +186,8 @@ bun run dev
 | `bun run build` | Builds both `apps/client` (Astro/Vercel) and `apps/server` (NestJS) |
 | `bun run test` | Runs backend test suite via Vitest |
 | `bun run typecheck` | Checks TypeScript compilation across the backend (`tsc --noEmit`) |
+| `bunx astro check` | Typechecks and validates Astro frontend components and routes (`apps/client`) |
+| `bun run check` | Runs full typecheck across backend and frontend (`bun run typecheck && bun run check:client`) |
 | `bun run lint` | Runs linter across the backend code (`oxlint`) |
 
 ---

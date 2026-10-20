@@ -10,6 +10,7 @@ interface Props {
   summary?: string | null;
   variant?: 'standard' | 'compact';
   headingLevel?: 'h2' | 'h3' | 'h4';
+  prefetch?: 'viewport' | 'hover' | 'tap' | boolean;
   class?: string;
 }
 
@@ -24,6 +25,7 @@ const {
   summary,
   variant = 'standard',
   headingLevel = 'h3',
+  prefetch,
   class: className = '',
 } = Astro.props;
 
@@ -49,7 +51,7 @@ const allCategories = categories && categories.length > 0
   <a
     href={targetUrl}
     data-article-link={slug}
-    data-astro-prefetch="hover"
+    data-astro-prefetch={prefetch ?? 'hover'}
     class={`group flex items-start p-2.5 rounded-lg hover:bg-surface-raised transition border border-transparent hover:border-border/60 ${className}`}
   >
     <div class="min-w-0 flex-1">
@@ -78,7 +80,7 @@ const allCategories = categories && categories.length > 0
   <a
     href={targetUrl}
     data-article-link={slug}
-    data-astro-prefetch="hover"
+    data-astro-prefetch={prefetch ?? 'hover'}
     class={`group block p-4 bg-surface border border-border rounded-xl shadow-2xs hover:shadow-xs hover:border-accent/40 transition duration-150 cursor-pointer ${className}`}
   >
     <div>

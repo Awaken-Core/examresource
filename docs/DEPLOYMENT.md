@@ -15,6 +15,7 @@ Execute the following commands from the project root:
 ```bash
 # Step 1: Run pre-flight verification locally
 bun run typecheck
+bunx astro check
 bun run lint
 bun run test
 bun run build
@@ -40,7 +41,7 @@ All development for **Version 2** of the platform (textbooks, subject/topic lear
    git fetch origin
    git checkout -b feat/v2-my-feature origin/feat/textbook-v2
    ```
-2. **Develop & Test**: Verify with `bun run typecheck`, `bun run lint`, and `bun run test`.
+2. **Develop & Test**: Verify with `bun run typecheck`, `bunx astro check`, `bun run lint`, and `bun run test`.
 3. **Open PR against `feat/textbook-v2`**: Version 2 PRs should target `feat/textbook-v2`.
 4. **Promotion to Production (`main`)**: Once v2 milestones are verified and stable, `feat/textbook-v2` is merged into `main` to trigger the production deployment.
 
@@ -69,13 +70,16 @@ Before pushing or merging into `main`, ALWAYS verify the following locally:
 # 1. Typecheck the backend NestJS application
 bun run typecheck
 
-# 2. Run linter across backend
+# 2. Typecheck and validate Astro frontend
+bunx astro check
+
+# 3. Run linter across backend
 bun run lint
 
-# 3. Execute unit and integration tests
+# 4. Execute unit and integration tests
 bun run test
 
-# 4. Run production build test for both client and server
+# 5. Run production build test for both client and server
 bun run build
 ```
 
