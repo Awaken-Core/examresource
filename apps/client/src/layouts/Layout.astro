@@ -75,7 +75,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
-<html lang="en" class="theme-light">
+<html lang="en" class="theme-light" data-site-domain={siteDomain}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -132,7 +132,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       // Check if current agent is an automated audit or bot tool (Lighthouse, PageSpeed, etc.)
       var isAuditBot = /Chrome-Lighthouse|Lighthouse|PageSpeed|PTST|Googlebot|AdsBot/i.test(navigator.userAgent);
       if (!isAuditBot) {
-        // Real users: trigger immediately upon first user interaction (scroll, click, touch, keydown)
+        // Real users: trigger immediately upon first genuine user interaction (scroll, click, touch, keydown)
         var userInteractionEvents = ['pointerdown', 'touchstart', 'scroll', 'keydown', 'click'];
         var onUserInteract = function() {
           loadThirdPartyAnalytics();
@@ -143,12 +143,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         userInteractionEvents.forEach(function(evt) {
           window.addEventListener(evt, onUserInteract, { once: true, passive: true });
         });
-        // Idle fallback with 6s timeout for real users who don't touch anything
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(function() { setTimeout(loadThirdPartyAnalytics, 6000); });
-        } else {
-          setTimeout(loadThirdPartyAnalytics, 6000);
-        }
       }
     </script>
 
@@ -518,8 +512,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Global Robust Interactive Script */}
     <script>
       import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
-      import { siteDomain } from '../data/site';
 
+      const siteDomain = document.documentElement.getAttribute('data-site-domain') || window.location.hostname;
       const API_URL = (import.meta.env.PUBLIC_API_URL || '').replace(/\/$/, '');
 
       function getDisplayedArticleLang(): 'hinglish' | 'en' | null {
@@ -1786,8 +1780,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
         }
 
-        // Run immediately for initial page render
-        reinitPageElements();
+        // Run smoothly without blocking initial layout paint or causing forced reflow
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(reinitPageElements);
+          }, { once: true });
+        } else {
+          requestAnimationFrame(reinitPageElements);
+        }
       })();
     </script>
     <Analytics />

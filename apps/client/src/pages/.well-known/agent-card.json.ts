@@ -50,6 +50,7 @@ export const GET: APIRoute = () => {
   return new Response(JSON.stringify(agentCard, null, 2), {
     headers: {
       'Content-Type': 'application/agent-card+json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
       'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
     },
   });

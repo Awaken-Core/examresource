@@ -7,10 +7,8 @@ export const GET: APIRoute = () => {
   const catalog = {
     specVersion: '1.0',
     host: {
-      identifier: `urn:air:${siteDomain}`,
+      identifier: `urn:air:${siteDomain}:host`,
       displayName: siteName,
-      domain: siteDomain,
-      url: siteUrl,
     },
     entries: [
       {
@@ -56,6 +54,7 @@ export const GET: APIRoute = () => {
   return new Response(JSON.stringify(catalog, null, 2), {
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
       'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800',
     },
   });
