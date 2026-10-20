@@ -1,8 +1,10 @@
 import {
   BadRequestException,
   Controller,
+  Delete,
   Get,
   Header,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -65,6 +67,13 @@ export class CommentsController {
       this.parse(moderateCommentSchema, req.body),
       await this.auth.requireUser(req),
     );
+  }
+
+  @Delete('admin/comments/:id')
+  @HttpCode(204)
+  async remove(@Param('id') id: string, @Req() req: Request) {
+    this.assertSafeMutation(req);
+    await this.comments.remove(id, await this.auth.requireUser(req));
   }
 
   private language(language: string | undefined) {

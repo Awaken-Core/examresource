@@ -125,6 +125,16 @@ export class CommentsService {
     return { comment: this.moderationComment(comment) };
   }
 
+  async remove(id: string, user: CurrentUser) {
+    this.assertModerator(user);
+    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Comment was not found.');
+    const commentId = new Types.ObjectId(id);
+    const result = await this.commentModel.deleteMany({
+      $or: [{ _id: commentId }, { parentCommentId: commentId }],
+    });
+    if (result.deletedCount === 0) throw new NotFoundException('Comment was not found.');
+  }
+
   private async findPublishedBlog(slug: string, language?: 'HINGLISH' | 'ENGLISH') {
     const cleanSlug = slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
     const publishedCondition: any = {

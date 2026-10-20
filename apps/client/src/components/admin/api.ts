@@ -104,6 +104,7 @@ export const adminApi = {
   getComments: (status = 'PENDING') => apiFetch<{ comments: ModerationComment[] }>(`/admin/comments?status=${status}`),
   moderateComment: (id: string, status: 'APPROVED' | 'REJECTED' | 'SPAM') =>
     apiFetch<{ comment: ModerationComment }>(`/admin/comments/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  deleteComment: (id: string) => apiFetch(`/admin/comments/${id}`, { method: 'DELETE' }),
 
   // Articles
   getArticles: (params: {
