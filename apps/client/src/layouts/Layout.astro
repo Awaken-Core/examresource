@@ -1409,6 +1409,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             try { localStorage.removeItem('auth_active'); } catch (e) {}
           }
 
+          const { refreshNotifications } = await import('../lib/notifications');
           if (user) {
             void refreshNotifications('session');
 
