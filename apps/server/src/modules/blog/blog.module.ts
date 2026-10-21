@@ -26,6 +26,7 @@ import { AuthModule } from '../auth/auth.module.js';
 import { BlogController } from './blog.controller.js';
 import { BlogService } from './blog.service.js';
 import { GeminiService } from './gemini.service.js';
+import { ArticleGenerationService } from './article-generation.service.js';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { GeminiService } from './gemini.service.js';
     ]),
   ],
   controllers: [BlogController],
-  providers: [BlogService, GeminiService],
+  providers: [BlogService, GeminiService, ArticleGenerationService],
   exports: [BlogService, GeminiService],
 })
 export class BlogModule {}

@@ -30,7 +30,11 @@ import {
   UrlRedirect,
   User,
 } from '../../core/schema/index.js';
-import { blocksToHtml, htmlToBlocks, syncImageBlocks } from './blog-content.adapter.js';
+import {
+  blocksToHtml,
+  htmlToBlocks,
+  syncImageBlocks,
+} from './blog-content.adapter.js';
 import type {
   CreateBlockInput,
   CreateBlogInput,
@@ -41,6 +45,7 @@ import type {
   UpdateCategoryInput,
 } from './dto/blog.dto.js';
 import { GeminiService } from './gemini.service.js';
+import { ArticleGenerationService } from './article-generation.service.js';
 import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 
 interface CacheEntry<T> {
@@ -120,6 +125,7 @@ export class BlogService {
     @InjectConnection()
     private readonly connection: Connection,
     private readonly gemini: GeminiService = {} as any,
+    private readonly articleGeneration: ArticleGenerationService = {} as any,
   ) {}
 
   public invalidateCache(): void {
@@ -204,10 +210,7 @@ export class BlogService {
       const matchedBlogIds = blogCatRows.map((r) => r.blogId);
 
       andConditions.push({
-        $or: [
-          { categoryId: cat._id },
-          { _id: { $in: matchedBlogIds } },
-        ],
+        $or: [{ categoryId: cat._id }, { _id: { $in: matchedBlogIds } }],
       });
     }
 
@@ -307,7 +310,10 @@ export class BlogService {
       }
 
       allRelatedBlogIds = [
-        ...new Set([...allRelatedBlogIds, ...siblingBlogs.map((s) => s._id.toString())]),
+        ...new Set([
+          ...allRelatedBlogIds,
+          ...siblingBlogs.map((s) => s._id.toString()),
+        ]),
       ];
     }
 
@@ -362,7 +368,10 @@ export class BlogService {
       }
     }
 
-    const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
+    const blogCategoryMap = new Map<
+      string,
+      { id: string; name: string; slug: string }[]
+    >();
     for (const cr of catRows as any[]) {
       if (!cr.categoryId) continue;
       const bId = cr.blogId.toString();
@@ -380,17 +389,22 @@ export class BlogService {
 
     const result = rows.map((row) => {
       const firstInlineImage = shouldFetchImages
-        ? (blogImageMap.get(row.id) ||
-          (row.translationGroupId ? groupImageMap.get(row.translationGroupId) : null) ||
-          null)
+        ? blogImageMap.get(row.id) ||
+          (row.translationGroupId
+            ? groupImageMap.get(row.translationGroupId)
+            : null) ||
+          null
         : null;
 
-      const firstImage = shouldFetchImages ? (firstInlineImage || row.coverImage || null) : null;
-      const coverImage = shouldFetchImages ? (row.coverImage || firstInlineImage || null) : null;
+      const firstImage = shouldFetchImages
+        ? firstInlineImage || row.coverImage || null
+        : null;
+      const coverImage = shouldFetchImages
+        ? row.coverImage || firstInlineImage || null
+        : null;
 
       const attachedCats =
-        blogCategoryMap.get(row.id) ||
-        (row.category?.id ? [row.category] : []);
+        blogCategoryMap.get(row.id) || (row.category?.id ? [row.category] : []);
       const primaryCategory = attachedCats[0] || row.category;
 
       return {
@@ -414,7 +428,14 @@ export class BlogService {
     const now = new Date();
     const requestedLang = language || 'HINGLISH';
     const cleanSlug = slug.replace(/-(english|hinglish)$/i, '');
-    const slugCandidates = Array.from(new Set([slug, cleanSlug, `${cleanSlug}-english`, `${cleanSlug}-hinglish`]));
+    const slugCandidates = Array.from(
+      new Set([
+        slug,
+        cleanSlug,
+        `${cleanSlug}-english`,
+        `${cleanSlug}-hinglish`,
+      ]),
+    );
 
     const baseCondition: any = {
       slug: { $in: slugCandidates },
@@ -546,7 +567,10 @@ export class BlogService {
       if (alt) {
         const altId = alt._id.toString();
         const altBlocks = await this.getBlocks(altId);
-        effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
+        effectiveBlocks = syncImageBlocks(
+          effectiveBlocks as any,
+          altBlocks as any,
+        ) as any;
         alternateArticle = {
           id: altId,
           title: alt.title,
@@ -651,10 +675,7 @@ export class BlogService {
           .lean();
         const pivotBlogIds = pivotRows.map((r) => r.blogId);
         conditions.push({
-          $or: [
-            { categoryId: catObjectId },
-            { _id: { $in: pivotBlogIds } },
-          ],
+          $or: [{ categoryId: catObjectId }, { _id: { $in: pivotBlogIds } }],
         });
       }
     }
@@ -725,7 +746,10 @@ export class BlogService {
             .lean()
         : [];
 
-    const blogCategoryMap = new Map<string, { id: string; name: string; slug: string }[]>();
+    const blogCategoryMap = new Map<
+      string,
+      { id: string; name: string; slug: string }[]
+    >();
     for (const cr of catRows as any[]) {
       if (!cr.categoryId) continue;
       const bId = cr.blogId.toString();
@@ -745,8 +769,7 @@ export class BlogService {
     for (const row of rows) {
       const groupKey = row.translationGroupId || row.slug || row.id;
       const attachedCats =
-        blogCategoryMap.get(row.id) ||
-        (row.category?.id ? [row.category] : []);
+        blogCategoryMap.get(row.id) || (row.category?.id ? [row.category] : []);
       const primaryCategory = attachedCats[0] || row.category;
       const primaryCategoryId = primaryCategory?.id || row.categoryId || null;
 
@@ -810,7 +833,10 @@ export class BlogService {
         const altId = alt._id.toString();
         let altBlocks = await this.getBlocks(altId);
         const syncedBlocks = syncImageBlocks(blocks as any, altBlocks as any);
-        const syncedAltBlocks = syncImageBlocks(altBlocks as any, blocks as any);
+        const syncedAltBlocks = syncImageBlocks(
+          altBlocks as any,
+          blocks as any,
+        );
         blocks = syncedBlocks as any;
         altBlocks = syncedAltBlocks as any;
 
@@ -835,7 +861,8 @@ export class BlogService {
 
     return {
       ...blog,
-      category: postCategories[0] || (blog.categoryId ? { id: blog.categoryId } : null),
+      category:
+        postCategories[0] || (blog.categoryId ? { id: blog.categoryId } : null),
       categories: postCategories,
       blocks,
       tags: postTagsList,
@@ -848,7 +875,10 @@ export class BlogService {
     this.assertCanWrite(currentUser);
     const authorId = await this.resolveAuthorId(input.authorId, currentUser);
 
-    input.slug = input.slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
+    input.slug = input.slug
+      .trim()
+      .toLowerCase()
+      .replace(/-(english|hinglish)$/i, '');
     const language = input.language ?? 'HINGLISH';
     const existingDraft = await this.blogModel
       .findOne({
@@ -991,11 +1021,18 @@ export class BlogService {
     }
 
     if (input.slug) {
-      input.slug = input.slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
+      input.slug = input.slug
+        .trim()
+        .toLowerCase()
+        .replace(/-(english|hinglish)$/i, '');
     }
 
     const targetLanguage = input.language || existing.language;
-    if (input.slug && (input.slug !== existing.slug || (input.language && input.language !== existing.language))) {
+    if (
+      input.slug &&
+      (input.slug !== existing.slug ||
+        (input.language && input.language !== existing.language))
+    ) {
       await this.assertSlugAvailable(input.slug, existing.id, targetLanguage);
     }
 
@@ -1056,12 +1093,14 @@ export class BlogService {
           input.categoryIds !== undefined
             ? input.categoryIds
             : input.categoryId !== undefined
-              ? (input.categoryId ? [input.categoryId] : [])
+              ? input.categoryId
+                ? [input.categoryId]
+                : []
               : undefined;
 
         const updatedPrimaryCategoryId =
           updatedCategoryIds !== undefined
-            ? (updatedCategoryIds[0] || null)
+            ? updatedCategoryIds[0] || null
             : existing.categoryId;
 
         const updateFields: any = {
@@ -1071,22 +1110,32 @@ export class BlogService {
         };
         if (input.title !== undefined) updateFields.title = input.title;
         if (input.slug !== undefined) updateFields.slug = input.slug;
-        if (input.description !== undefined) updateFields.description = input.description;
-        if (input.coverImage !== undefined) updateFields.coverImage = input.coverImage;
-        if (input.imageAlt !== undefined) updateFields.imageAlt = input.imageAlt;
-        if (input.imageCaption !== undefined) updateFields.imageCaption = input.imageCaption;
+        if (input.description !== undefined)
+          updateFields.description = input.description;
+        if (input.coverImage !== undefined)
+          updateFields.coverImage = input.coverImage;
+        if (input.imageAlt !== undefined)
+          updateFields.imageAlt = input.imageAlt;
+        if (input.imageCaption !== undefined)
+          updateFields.imageCaption = input.imageCaption;
         if (updatedPrimaryCategoryId !== undefined) {
           updateFields.categoryId =
-            updatedPrimaryCategoryId && Types.ObjectId.isValid(updatedPrimaryCategoryId)
+            updatedPrimaryCategoryId &&
+            Types.ObjectId.isValid(updatedPrimaryCategoryId)
               ? new Types.ObjectId(updatedPrimaryCategoryId)
               : null;
         }
-        if (input.metaTitle !== undefined) updateFields.metaTitle = input.metaTitle;
-        if (input.metaDescription !== undefined) updateFields.metaDescription = input.metaDescription;
-        if (input.canonicalUrl !== undefined) updateFields.canonicalUrl = input.canonicalUrl;
+        if (input.metaTitle !== undefined)
+          updateFields.metaTitle = input.metaTitle;
+        if (input.metaDescription !== undefined)
+          updateFields.metaDescription = input.metaDescription;
+        if (input.canonicalUrl !== undefined)
+          updateFields.canonicalUrl = input.canonicalUrl;
         if (input.noindex !== undefined) updateFields.noindex = input.noindex;
-        if (input.language !== undefined) updateFields.language = input.language;
-        if (input.translationGroupId !== undefined) updateFields.translationGroupId = input.translationGroupId;
+        if (input.language !== undefined)
+          updateFields.language = input.language;
+        if (input.translationGroupId !== undefined)
+          updateFields.translationGroupId = input.translationGroupId;
         if (input.status !== undefined) {
           updateFields.status = status;
           updateFields.publishedAt = publishedAt;
@@ -1114,7 +1163,11 @@ export class BlogService {
             { blogId: new Types.ObjectId(existing.id) },
             { session },
           );
-          blocks = await this.insertBlocks(existing.id, blocksToPersist, session);
+          blocks = await this.insertBlocks(
+            existing.id,
+            blocksToPersist,
+            session,
+          );
         }
 
         if (input.tagIds) {
@@ -1140,13 +1193,17 @@ export class BlogService {
             sharedFieldsToSync.publishedAt = publishedAt;
             sharedFieldsToSync.scheduledAt = scheduledAt;
           }
-          if (input.coverImage !== undefined) sharedFieldsToSync.coverImage = blogDoc.coverImage;
-          if (input.imageAlt !== undefined) sharedFieldsToSync.imageAlt = blogDoc.imageAlt;
-          if (input.imageCaption !== undefined) sharedFieldsToSync.imageCaption = blogDoc.imageCaption;
+          if (input.coverImage !== undefined)
+            sharedFieldsToSync.coverImage = blogDoc.coverImage;
+          if (input.imageAlt !== undefined)
+            sharedFieldsToSync.imageAlt = blogDoc.imageAlt;
+          if (input.imageCaption !== undefined)
+            sharedFieldsToSync.imageCaption = blogDoc.imageCaption;
           if (updatedPrimaryCategoryId !== undefined) {
             sharedFieldsToSync.categoryId = updateFields.categoryId;
           }
-          if (input.noindex !== undefined) sharedFieldsToSync.noindex = blogDoc.noindex;
+          if (input.noindex !== undefined)
+            sharedFieldsToSync.noindex = blogDoc.noindex;
           if (input.slug !== undefined) sharedFieldsToSync.slug = blogDoc.slug;
 
           if (Object.keys(sharedFieldsToSync).length > 0) {
@@ -1170,13 +1227,20 @@ export class BlogService {
             }
             if (blocksToPersist !== null) {
               const siblingBlocks = await this.getBlocks(siblingId);
-              const syncedSiblingBlocks = syncImageBlocks(siblingBlocks as any, blocks as any);
+              const syncedSiblingBlocks = syncImageBlocks(
+                siblingBlocks as any,
+                blocks as any,
+              );
               if (syncedSiblingBlocks.length !== siblingBlocks.length) {
                 await this.blogBlockModel.deleteMany(
                   { blogId: sibling._id },
                   { session },
                 );
-                await this.insertBlocks(siblingId, syncedSiblingBlocks as any, session);
+                await this.insertBlocks(
+                  siblingId,
+                  syncedSiblingBlocks as any,
+                  session,
+                );
                 await this.blogModel.updateOne(
                   { _id: sibling._id },
                   { $set: { updatedAt: new Date() } },
@@ -1227,7 +1291,10 @@ export class BlogService {
         };
       });
 
-      await this.announceIfNewlyPublished(updated as any, existing.status === 'PUBLISHED');
+      await this.announceIfNewlyPublished(
+        updated as any,
+        existing.status === 'PUBLISHED',
+      );
       this.invalidateCache();
       return updated;
     } catch (error) {
@@ -1334,10 +1401,19 @@ export class BlogService {
 
       for (const blogId of idsToDelete) {
         const bObjectId = new Types.ObjectId(blogId);
-        await this.blogBlockModel.deleteMany({ blogId: bObjectId }, { session });
+        await this.blogBlockModel.deleteMany(
+          { blogId: bObjectId },
+          { session },
+        );
         await this.blogTagModel.deleteMany({ blogId: bObjectId }, { session });
-        await this.blogCategoryModel.deleteMany({ blogId: bObjectId }, { session });
-        await this.blogRevisionModel.deleteMany({ blogId: bObjectId }, { session });
+        await this.blogCategoryModel.deleteMany(
+          { blogId: bObjectId },
+          { session },
+        );
+        await this.blogRevisionModel.deleteMany(
+          { blogId: bObjectId },
+          { session },
+        );
         await this.blogModel.deleteOne({ _id: bObjectId }, { session });
       }
     });
@@ -1404,16 +1480,18 @@ export class BlogService {
     const cached = this.cache.get<any[]>(cacheKey);
     if (cached) return cached;
 
-    const [categoriesList, blogCatCounts, directBlogCounts] = await Promise.all([
-      this.categoryModel.find().sort({ name: 1 }).lean(),
-      this.blogCategoryModel.aggregate([
-        { $group: { _id: '$categoryId', count: { $sum: 1 } } },
-      ]),
-      this.blogModel.aggregate([
-        { $match: { categoryId: { $ne: null } } },
-        { $group: { _id: '$categoryId', count: { $sum: 1 } } },
-      ]),
-    ]);
+    const [categoriesList, blogCatCounts, directBlogCounts] = await Promise.all(
+      [
+        this.categoryModel.find().sort({ name: 1 }).lean(),
+        this.blogCategoryModel.aggregate([
+          { $group: { _id: '$categoryId', count: { $sum: 1 } } },
+        ]),
+        this.blogModel.aggregate([
+          { $match: { categoryId: { $ne: null } } },
+          { $group: { _id: '$categoryId', count: { $sum: 1 } } },
+        ]),
+      ],
+    );
 
     const countMap = new Map<string, number>();
     for (const row of blogCatCounts) {
@@ -1439,13 +1517,12 @@ export class BlogService {
     return res;
   }
 
-  async createCategory(
-    input: CreateCategoryInput,
-    currentUser: CurrentUser,
-  ) {
+  async createCategory(input: CreateCategoryInput, currentUser: CurrentUser) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
-    const existing = await this.categoryModel.findOne({ slug: input.slug }).lean();
+    const existing = await this.categoryModel
+      .findOne({ slug: input.slug })
+      .lean();
 
     if (existing) {
       throw new ConflictException(
@@ -1479,9 +1556,12 @@ export class BlogService {
   ) {
     this.assertAdmin(currentUser);
     this.invalidateCache();
-    if (!Types.ObjectId.isValid(id)) throw new NotFoundException('Category not found.');
+    if (!Types.ObjectId.isValid(id))
+      throw new NotFoundException('Category not found.');
     if (input.slug) {
-      const existing = await this.categoryModel.findOne({ slug: input.slug }).lean();
+      const existing = await this.categoryModel
+        .findOne({ slug: input.slug })
+        .lean();
       if (existing && existing._id.toString() !== id) {
         throw new ConflictException(
           `A category with slug "${input.slug}" already exists.`,
@@ -1516,7 +1596,9 @@ export class BlogService {
     this.invalidateCache();
     if (!Types.ObjectId.isValid(id)) return;
     await this.categoryModel.deleteOne({ _id: new Types.ObjectId(id) });
-    await this.blogCategoryModel.deleteMany({ categoryId: new Types.ObjectId(id) });
+    await this.blogCategoryModel.deleteMany({
+      categoryId: new Types.ObjectId(id),
+    });
   }
 
   async listTags() {
@@ -1614,12 +1696,17 @@ export class BlogService {
     const updateData: any = {};
     if (input.type !== undefined) updateData.type = input.type;
     if (input.value !== undefined) updateData.value = input.value;
-    if ((input as any).position !== undefined) updateData.position = (input as any).position;
-    if (input.metadata !== undefined) updateData.metadata = input.metadata as any;
+    if ((input as any).position !== undefined)
+      updateData.position = (input as any).position;
+    if (input.metadata !== undefined)
+      updateData.metadata = input.metadata as any;
 
     const block = await this.blogBlockModel
       .findOneAndUpdate(
-        { _id: new Types.ObjectId(blockId), blogId: new Types.ObjectId(blogId) },
+        {
+          _id: new Types.ObjectId(blockId),
+          blogId: new Types.ObjectId(blogId),
+        },
         { $set: updateData },
         { new: true },
       )
@@ -1639,11 +1726,7 @@ export class BlogService {
     };
   }
 
-  async removeBlock(
-    blogId: string,
-    blockId: string,
-    currentUser: CurrentUser,
-  ) {
+  async removeBlock(blogId: string, blockId: string, currentUser: CurrentUser) {
     await this.findManageable(blogId, currentUser);
     if (!Types.ObjectId.isValid(blockId)) {
       throw new NotFoundException('Block was not found.');
@@ -1818,7 +1901,10 @@ export class BlogService {
     session?: ClientSession,
   ) {
     const blogObjectId = new Types.ObjectId(blogId);
-    await this.blogCategoryModel.deleteMany({ blogId: blogObjectId }, { session });
+    await this.blogCategoryModel.deleteMany(
+      { blogId: blogObjectId },
+      { session },
+    );
     if (categoryIds.length > 0) {
       const docs = categoryIds
         .filter((cid) => Types.ObjectId.isValid(cid))
@@ -1879,7 +1965,11 @@ export class BlogService {
     }
   }
 
-  private async isSlugAvailable(slug: string, excludeId?: string, language?: string) {
+  private async isSlugAvailable(
+    slug: string,
+    excludeId?: string,
+    language?: string,
+  ) {
     const where: any = { slug };
     if (excludeId && Types.ObjectId.isValid(excludeId)) {
       where._id = { $ne: new Types.ObjectId(excludeId) };
@@ -1887,11 +1977,18 @@ export class BlogService {
     if (language) {
       where.language = language;
     }
-    const existing = await this.blogModel.findOne(where).select({ _id: 1 }).lean();
+    const existing = await this.blogModel
+      .findOne(where)
+      .select({ _id: 1 })
+      .lean();
     return !existing;
   }
 
-  private async assertSlugAvailable(slug: string, excludeId?: string, language?: string) {
+  private async assertSlugAvailable(
+    slug: string,
+    excludeId?: string,
+    language?: string,
+  ) {
     const available = await this.isSlugAvailable(slug, excludeId, language);
     if (!available) {
       throw new ConflictException('This URL slug is already taken.');
@@ -2080,21 +2177,25 @@ export class BlogService {
     const status = input.status || 'DRAFT';
 
     const rawSharedSlug = input.english.slug || input.hinglish.slug || '';
-    const cleanSharedSlug = rawSharedSlug
-      .toLowerCase()
-      .replace(/-(hinglish|english)$/i, '')
-      .replace(/[^a-z0-9-]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '') || 'article';
+    const cleanSharedSlug =
+      rawSharedSlug
+        .toLowerCase()
+        .replace(/-(hinglish|english)$/i, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'article';
 
     const sharedSlug = cleanSharedSlug;
     input.hinglish.slug = sharedSlug;
     input.english.slug = sharedSlug;
 
-    let hinglishHtml = input.hinglish.htmlContent || input.hinglish.markdown || '';
-    if (hinglishHtml === '[object Promise]') hinglishHtml = input.hinglish.markdown || '';
+    let hinglishHtml =
+      input.hinglish.htmlContent || input.hinglish.markdown || '';
+    if (hinglishHtml === '[object Promise]')
+      hinglishHtml = input.hinglish.markdown || '';
     let englishHtml = input.english.htmlContent || input.english.markdown || '';
-    if (englishHtml === '[object Promise]') englishHtml = input.english.markdown || '';
+    if (englishHtml === '[object Promise]')
+      englishHtml = input.english.markdown || '';
 
     let hBlocks = htmlToBlocks(hinglishHtml);
     let eBlocks = htmlToBlocks(englishHtml);
@@ -2248,7 +2349,10 @@ export class BlogService {
     onStage?: (stage: string, message: string) => void,
   ) {
     if (currentUser) this.assertCanWrite(currentUser);
-    return this.gemini.generateBilingualFromReference(input, onStage);
+    return this.articleGeneration.generateBilingualFromReference(
+      input,
+      onStage,
+    );
   }
 
   private assertCanWrite(currentUser: CurrentUser) {
@@ -2268,9 +2372,12 @@ export class BlogService {
       (error as { code?: number | string })?.code === 11000 ||
       (error as { code?: number | string })?.code === 'P2002'
     ) {
-      const keyPattern = (error as { keyPattern?: Record<string, number> })?.keyPattern;
+      const keyPattern = (error as { keyPattern?: Record<string, number> })
+        ?.keyPattern;
       if (keyPattern && !keyPattern.slug) {
-        throw new ConflictException(`Duplicate record error on ${Object.keys(keyPattern).join(', ')}.`);
+        throw new ConflictException(
+          `Duplicate record error on ${Object.keys(keyPattern).join(', ')}.`,
+        );
       }
       throw new ConflictException('This blog slug is already in use.');
     }
