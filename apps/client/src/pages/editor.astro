@@ -2651,13 +2651,23 @@ import { siteUrl } from '../data/site';
 
           <!-- Clean Words Text Area (As-Is) -->
           <div>
-            <div class="flex items-center justify-between mb-1">
+            <div class="flex items-center justify-between mb-1.5">
               <label for="ai-ref-content" class="aim-label text-[11px] font-semibold text-slate-800">
                 Reference Article Content <span class="aim-muted font-normal text-slate-400">(Words &amp; Text As-Is)</span>
               </label>
-              <span class="aim-muted text-[10px] text-slate-400">
-                Paste content directly — images are extracted &amp; compressed below
-              </span>
+              <div class="flex items-center gap-2">
+                <label 
+                  for="ai-ref-doc-input" 
+                  class="aim-btn-secondary px-2.5 py-1 rounded bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-[11px] font-semibold cursor-pointer transition shadow-2xs inline-flex items-center gap-1.5"
+                  title="Upload official exam notification PDF, TXT, or Markdown document directly"
+                >
+                  <svg class="w-3.5 h-3.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Upload PDF / Notification Doc</span>
+                </label>
+                <input id="ai-ref-doc-input" type="file" accept=".pdf,.txt,.md,.html,.json" class="hidden" />
+              </div>
             </div>
             <textarea 
               id="ai-ref-content"
@@ -4202,6 +4212,7 @@ import { siteUrl } from '../data/site';
   const aiRefBottomCountBadge = document.getElementById('ai-ref-bottom-count-badge');
   const aiRefStagedImagesGrid = document.getElementById('ai-ref-staged-images-grid');
   const aiRefImageInput = document.getElementById('ai-ref-image-input') as HTMLInputElement | null;
+  const aiRefDocInput = document.getElementById('ai-ref-doc-input') as HTMLInputElement | null;
   const aiRefInstructions = document.getElementById('ai-ref-instructions') as HTMLInputElement | null;
   const aiRefCharCount = document.getElementById('ai-ref-char-count');
   const aiRefInsertDemoBtn = document.getElementById('ai-ref-insert-demo-btn');
@@ -4911,6 +4922,44 @@ import { siteUrl } from '../data/site';
       }
       aiRefImageInput.value = '';
     }
+  });
+
+  // Document & PDF notification handler
+  aiRefDocInput?.addEventListener('change', async () => {
+    const file = aiRefDocInput.files?.[0];
+    if (!file) return;
+
+    if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Data = reader.result as string;
+        stagedPastedImages.push({
+          id: `doc-${Date.now()}`,
+          url: file.name,
+          base64: base64Data,
+          mimeType: 'application/pdf',
+          altText: file.name.replace(/\.pdf$/i, ''),
+          status: 'ready',
+        });
+        renderBottomStagedImages();
+
+        if (aiRefContent) {
+          const currentVal = aiRefContent.value.trim();
+          const docNotice = `[Official Notification PDF Attached: ${file.name} - ${(file.size / 1024).toFixed(1)} KB]\nExtract all tables, Important Dates, Vacancy Details, Eligibility, Age Limit, Fees, Selection Stages, and How to Apply.`;
+          aiRefContent.value = currentVal ? `${currentVal}\n\n${docNotice}` : docNotice;
+          updateAiRefCounters();
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      const text = await file.text();
+      if (aiRefContent) {
+        aiRefContent.value = text;
+        updateAiRefCounters();
+        scanAndExtractImagesFromText(text);
+      }
+    }
+    aiRefDocInput.value = '';
   });
 
   // Clear button

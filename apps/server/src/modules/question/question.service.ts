@@ -4,25 +4,36 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
+  Chapter,
+  type ChapterDocument,
+  Exam,
+  type ExamDocument,
   Question,
   type QuestionDocument,
   ReportedQuestion,
   type ReportedQuestionDocument,
   SavedQuestion,
   type SavedQuestionDocument,
-  Exam,
-  type ExamDocument,
+  Subject,
+  type SubjectDocument,
+  TestSeries,
+  type TestSeriesDocument,
 } from '../../core/schema/index.js';
 import type { CurrentUser } from '../auth/auth.service.js';
 import type {
   CreateQuestionsInput,
+  GenerateQuestionsAiInput,
+  ParseRawQuestionsAiInput,
   ReportQuestionInput,
+  TranslateExplainAiInput,
   UpdateQuestionInput,
 } from './dto/question.dto.js';
+import { GeminiService } from '../blog/gemini.service.js';
 
 @Injectable()
 export class QuestionService {
@@ -35,6 +46,14 @@ export class QuestionService {
     private readonly reportedQuestionModel: Model<ReportedQuestionDocument>,
     @InjectModel(Exam.name)
     private readonly examModel: Model<ExamDocument>,
+    @InjectModel(Subject.name)
+    private readonly subjectModel: Model<SubjectDocument>,
+    @InjectModel(Chapter.name)
+    private readonly chapterModel: Model<ChapterDocument>,
+    @InjectModel(TestSeries.name)
+    private readonly testSeriesModel: Model<TestSeriesDocument>,
+    @Optional()
+    private readonly gemini?: GeminiService,
   ) {}
 
   async listPublished() {
@@ -73,10 +92,89 @@ export class QuestionService {
   async createMany(input: CreateQuestionsInput, user: CurrentUser) {
     this.assertEditor(user);
     const userObjectId = new Types.ObjectId(user.id);
+
+    // Fetch existing subjects and chapters to auto-resolve IDs and names
+    const [allSubjects, allChapters] = await Promise.all([
+      this.subjectModel.find().lean(),
+      this.chapterModel.find().lean(),
+    ]);
+    const defaultSubject = allSubjects[0];
+
     const questionsToInsert = input.questions.map((item) => {
       const { options, ...rest } = item;
+
+      let subjectId = item.subjectId && Types.ObjectId.isValid(item.subjectId)
+        ? new Types.ObjectId(item.subjectId)
+        : null;
+      let subjectName = item.subject?.trim() || '';
+
+      if (subjectId) {
+        const found = allSubjects.find(
+          (s) => s._id.toString() === subjectId!.toString(),
+        );
+        if (found) {
+          subjectName = found.name;
+        }
+      } else if (subjectName) {
+        const matched = allSubjects.find(
+          (s) => s.name.trim().toLowerCase() === subjectName.toLowerCase(),
+        );
+        if (matched) {
+          subjectId = matched._id;
+          subjectName = matched.name;
+        }
+      } else if (defaultSubject) {
+        subjectId = defaultSubject._id;
+        subjectName = defaultSubject.name;
+      }
+
+      let chapterId = item.chapterId && Types.ObjectId.isValid(item.chapterId)
+        ? new Types.ObjectId(item.chapterId)
+        : null;
+      let topic = item.topic?.trim() || null;
+
+      if (chapterId) {
+        const found = allChapters.find(
+          (c) => c._id.toString() === chapterId!.toString(),
+        );
+        if (found) {
+          topic = found.name;
+          if (!subjectId && found.subjectId) {
+            subjectId = found.subjectId;
+            const sub = allSubjects.find(
+              (s) => s._id.toString() === subjectId!.toString(),
+            );
+            if (sub) subjectName = sub.name;
+          }
+        }
+      } else if (topic) {
+        const matched = allChapters.find((c) => {
+          const nameMatches = c.name.trim().toLowerCase() === topic!.toLowerCase();
+          if (!nameMatches) return false;
+          if (subjectId) {
+            return c.subjectId?.toString() === subjectId.toString();
+          }
+          return true;
+        });
+        if (matched) {
+          chapterId = matched._id;
+          topic = matched.name;
+          if (!subjectId && matched.subjectId) {
+            subjectId = matched.subjectId;
+            const sub = allSubjects.find(
+              (s) => s._id.toString() === subjectId!.toString(),
+            );
+            if (sub) subjectName = sub.name;
+          }
+        }
+      }
+
       return {
         ...rest,
+        subject: subjectName,
+        subjectId,
+        chapterId,
+        topic,
         createdBy: userObjectId,
         options: options.map((option, position) => ({
           _id: new Types.ObjectId(),
@@ -84,6 +182,7 @@ export class QuestionService {
           imageUrl: option.imageUrl || null,
           position,
           isCorrect: option.isCorrect,
+          translations: option.translations || {},
         })),
       };
     });
@@ -113,6 +212,14 @@ export class QuestionService {
 
     const { options, ...rest } = input;
     const updatePayload: Record<string, any> = { ...rest };
+
+    if (updatePayload.subjectId && Types.ObjectId.isValid(updatePayload.subjectId)) {
+      updatePayload.subjectId = new Types.ObjectId(updatePayload.subjectId);
+    }
+    if (updatePayload.chapterId && Types.ObjectId.isValid(updatePayload.chapterId)) {
+      updatePayload.chapterId = new Types.ObjectId(updatePayload.chapterId);
+    }
+
     if (options) {
       updatePayload.options = options.map((option, position) => ({
         _id: option.id && Types.ObjectId.isValid(option.id)
@@ -265,12 +372,37 @@ export class QuestionService {
     }
   }
 
+  async generateAiQuestions(input: GenerateQuestionsAiInput, user: CurrentUser) {
+    this.assertEditor(user);
+    if (!this.gemini) {
+      throw new BadRequestException('AI Question Service is not available.');
+    }
+    return this.gemini.generateQuestions(input);
+  }
+
+  async translateAndExplainAi(input: TranslateExplainAiInput, user: CurrentUser) {
+    this.assertEditor(user);
+    if (!this.gemini) {
+      throw new BadRequestException('AI Question Service is not available.');
+    }
+    return this.gemini.translateAndExplainQuestion(input);
+  }
+
+  async parseRawQuestionsAi(input: ParseRawQuestionsAiInput, user: CurrentUser) {
+    this.assertEditor(user);
+    if (!this.gemini) {
+      throw new BadRequestException('AI Question Service is not available.');
+    }
+    return this.gemini.parseRawQuestions(input);
+  }
+
   private formatQuestion(doc: any, includeAnswers: boolean) {
     const options = (doc.options || []).map((option: any) => ({
       id: option._id?.toString() || option.id?.toString(),
       _id: option._id?.toString() || option.id?.toString(),
       questionId: doc._id.toString(),
       content: option.content,
+      translations: option.translations || {},
       imageUrl: option.imageUrl || null,
       position: option.position,
       ...(includeAnswers ? { isCorrect: option.isCorrect } : {}),
@@ -280,10 +412,13 @@ export class QuestionService {
       id: doc._id.toString(),
       _id: doc._id.toString(),
       content: doc.content,
+      translations: doc.translations || {},
       type: doc.type,
       difficulty: doc.difficulty,
       status: doc.status,
       subject: doc.subject,
+      subjectId: doc.subjectId?.toString() || null,
+      chapterId: doc.chapterId?.toString() || null,
       topic: doc.topic || null,
       subtopic: doc.subtopic || null,
       tags: doc.tags || [],
@@ -294,7 +429,13 @@ export class QuestionService {
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
       options,
-      ...(includeAnswers ? { explanation: doc.explanation || null } : {}),
+      ...(includeAnswers
+        ? {
+            explanation: doc.explanation || null,
+            explanationTranslations: doc.explanationTranslations || {},
+          }
+        : {}),
     };
   }
 }
+

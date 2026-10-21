@@ -500,6 +500,8 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
     }
   };
 
+
+
   return (
     <div className="space-y-6">
       {/* Header & Series Selector */}
@@ -1011,13 +1013,27 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           </div>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => openQuestionPicker(null)}
-                          className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-xs cursor-pointer"
-                        >
-                          Pick Questions from Bank
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setRandomSectionIndex(null);
+                              setRandomCount(formTotalQuestionsCount || 25);
+                              setIsRandomModalOpen(true);
+                            }}
+                            className="px-3 py-1.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl font-semibold shadow-xs cursor-pointer flex items-center gap-1.5 transition"
+                            title="Automatically select random questions balanced by difficulty"
+                          >
+                            <span>🎲 AI Smart Pick</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openQuestionPicker(null)}
+                            className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold shadow-xs cursor-pointer"
+                          >
+                            Pick Questions from Bank
+                          </button>
+                        </div>
                       </div>
 
                       <div className="space-y-1">
@@ -1052,13 +1068,15 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                     </div>
 
                     {formTestMode === 'full' && (
-                      <button
-                        type="button"
-                        onClick={addSection}
-                        className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs shadow-xs cursor-pointer"
-                      >
-                        + Add Section
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={addSection}
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs shadow-xs cursor-pointer"
+                        >
+                          + Add Section
+                        </button>
+                      </div>
                     )}
                   </div>
 
@@ -1435,6 +1453,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
           </div>
         </div>
       )}
+
     </div>
   );
 }

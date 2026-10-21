@@ -589,6 +589,19 @@ export class TestSeriesService {
     return docs.map((doc) => this.formatChapter(doc));
   }
 
+  async listAllChapters(subjectId?: string, user?: CurrentUser) {
+    if (user) this.assertEditor(user);
+    const filter: Record<string, any> = {};
+    if (subjectId && Types.ObjectId.isValid(subjectId)) {
+      filter.subjectId = new Types.ObjectId(subjectId);
+    }
+    const docs = await this.chapterModel
+      .find(filter)
+      .sort({ order: 1, name: 1 })
+      .lean();
+    return docs.map((doc) => this.formatChapter(doc));
+  }
+
   async getChapter(id: string) {
     const doc = await this.findChapterById(id);
     return this.formatChapter(doc);
@@ -962,11 +975,36 @@ export class TestSeriesService {
     }
 
     if (query.subjectId && Types.ObjectId.isValid(query.subjectId)) {
-      filter.subjectId = new Types.ObjectId(query.subjectId);
+      const subjectObjId = new Types.ObjectId(query.subjectId);
+      const sub = await this.subjectModel.findById(subjectObjId).lean();
+      if (sub) {
+        filter.$or = filter.$or || [];
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+          $or: [
+            { subjectId: subjectObjId },
+            { subject: { $regex: `^${sub.name.trim()}$`, $options: 'i' } },
+          ],
+        });
+      } else {
+        filter.subjectId = subjectObjId;
+      }
     }
 
     if (query.chapterId && Types.ObjectId.isValid(query.chapterId)) {
-      filter.chapterId = new Types.ObjectId(query.chapterId);
+      const chapterObjId = new Types.ObjectId(query.chapterId);
+      const chap = await this.chapterModel.findById(chapterObjId).lean();
+      if (chap) {
+        filter.$and = filter.$and || [];
+        filter.$and.push({
+          $or: [
+            { chapterId: chapterObjId },
+            { topic: { $regex: `^${chap.name.trim()}$`, $options: 'i' } },
+          ],
+        });
+      } else {
+        filter.chapterId = chapterObjId;
+      }
     }
 
     if (query.topic && query.topic.trim()) {

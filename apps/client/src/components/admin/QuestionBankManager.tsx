@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   adminApi,
   type AdminQuestion,
@@ -33,7 +33,18 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
   // Supporting hierarchy data
   const [subjects, setSubjects] = useState<AdminSubject[]>([]);
   const [seriesList, setSeriesList] = useState<AdminTestSeries[]>([]);
+  const [allChapters, setAllChapters] = useState<AdminChapter[]>([]);
   const [availableChapters, setAvailableChapters] = useState<AdminChapter[]>([]);
+
+  // Bulk Import Target Assignment
+  const [bulkTargetSubjectId, setBulkTargetSubjectId] = useState('');
+  const [bulkTargetSubjectName, setBulkTargetSubjectName] = useState('');
+  const [bulkTargetChapterId, setBulkTargetChapterId] = useState('');
+  const [bulkTargetChapterName, setBulkTargetChapterName] = useState('');
+
+  // Single Question Custom input toggle flags
+  const [isCustomSubject, setIsCustomSubject] = useState(false);
+  const [isCustomTopic, setIsCustomTopic] = useState(false);
 
   // Pagination
   const [limit] = useState(25);
@@ -58,6 +69,26 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
   const [importErrors, setImportErrors] = useState<string[]>([]);
   const [importPreviewCount, setImportPreviewCount] = useState(0);
   const [isImporting, setIsImporting] = useState(false);
+
+  // AI Question Generator state
+  const [isAiGenModalOpen, setIsAiGenModalOpen] = useState(false);
+  const [aiExamName, setAiExamName] = useState('SSC CGL');
+  const [aiSubject, setAiSubject] = useState('');
+  const [aiTopic, setAiTopic] = useState('');
+  const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
+  const [aiCount, setAiCount] = useState(5);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [generatedAiQuestions, setGeneratedAiQuestions] = useState<any[]>([]);
+
+  // 1-Click AI Translate & Explain state
+  const [isTranslatingAi, setIsTranslatingAi] = useState(false);
+
+  // AI Raw Text Parsing state in Bulk Import
+  const [isParsingRawAi, setIsParsingRawAi] = useState(false);
+
+  // Bulk Import Format tab state
+  const [importFormat, setImportFormat] = useState<'csv' | 'aiken' | 'json' | 'ai_raw'>('csv');
 
   // Form Fields for single question
   const [formContent, setFormContent] = useState('');
@@ -87,22 +118,48 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
     { content: '', isCorrect: false },
   ]);
 
-  // Load initial subjects & series for dropdowns
+  // Load initial subjects & series & all chapters for dropdowns
   useEffect(() => {
     async function loadMetadata() {
       try {
-        const [subs, series] = await Promise.all([
+        const [subs, series, chaps] = await Promise.all([
           adminApi.getSubjects(),
           adminApi.getTestSeries(),
+          adminApi.getAllChapters(),
         ]);
         setSubjects(subs || []);
         setSeriesList(series || []);
+        setAllChapters(chaps || []);
+        if (subs && subs.length > 0) {
+          const firstSub = subs[0];
+          const firstSubId = firstSub.id || firstSub._id || '';
+          setBulkTargetSubjectId(firstSubId);
+          setBulkTargetSubjectName(firstSub.name || '');
+        }
       } catch (err: any) {
         showToast(err.message || 'Failed to load reference subjects', 'error');
       }
     }
     loadMetadata();
   }, []);
+
+  // Filtered chapters for bulk import
+  const bulkAvailableChapters = useMemo(() => {
+    if (!bulkTargetSubjectId) return allChapters;
+    return allChapters.filter((c) => c.subjectId === bulkTargetSubjectId);
+  }, [allChapters, bulkTargetSubjectId]);
+
+  // Filtered chapters for single question form
+  const formAvailableChapters = useMemo(() => {
+    if (!formSubjectId) return allChapters;
+    return allChapters.filter((c) => c.subjectId === formSubjectId);
+  }, [allChapters, formSubjectId]);
+
+  // Filtered chapters for main filter bar
+  const filterChapters = useMemo(() => {
+    if (selectedSubjectId === 'ALL') return allChapters;
+    return allChapters.filter((c) => c.subjectId === selectedSubjectId);
+  }, [allChapters, selectedSubjectId]);
 
   // Fetch chapters when mapping series & subject are chosen
   useEffect(() => {
@@ -147,7 +204,7 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
 
   useEffect(() => {
     fetchQuestions();
-  }, [offset, selectedType, selectedDifficulty, selectedStatus, selectedAvailability]);
+  }, [offset, selectedType, selectedDifficulty, selectedStatus, selectedAvailability, selectedSubjectId, selectedChapterId]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,16 +215,25 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
   // Open Create Modal
   const openCreateModal = () => {
     setEditingQuestion(null);
+    setIsCustomSubject(false);
+    setIsCustomTopic(false);
+
+    const initialSub = subjects[0];
+    const initialSubId = initialSub?.id || initialSub?._id || '';
+    const initialSubName = initialSub?.name || 'Quantitative Aptitude';
+    const subChaps = allChapters.filter((c) => c.subjectId === initialSubId);
+    const initialChap = subChaps[0];
+
     setFormContent('');
     setFormContentHi('');
     setFormType('single_choice');
     setFormNumericalAnswer('');
     setFormDifficulty('medium');
     setFormStatus('published');
-    setFormSubjectName(subjects[0]?.name || 'General Studies');
-    setFormSubjectId(subjects[0]?.id || subjects[0]?._id || '');
-    setFormChapterId('');
-    setFormTopic('');
+    setFormSubjectName(initialSubName);
+    setFormSubjectId(initialSubId);
+    setFormChapterId(initialChap?.id || initialChap?._id || '');
+    setFormTopic(initialChap?.name || '');
     setFormMarks(1);
     setFormNegativeMarks(0.25);
     setFormExplanation('');
@@ -192,10 +258,35 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
     setFormNumericalAnswer(q.numericalAnswer || '');
     setFormDifficulty(q.difficulty || 'medium');
     setFormStatus(q.status || 'published');
-    setFormSubjectName(q.subject || '');
-    setFormSubjectId(q.subjectId || '');
-    setFormChapterId(q.chapterId || '');
-    setFormTopic(q.topic || '');
+
+    // Resolve subject dropdown or custom
+    const matchedSub = subjects.find(
+      (s) => (s.id || s._id) === q.subjectId || s.name.toLowerCase() === (q.subject || '').toLowerCase()
+    );
+    if (matchedSub) {
+      setFormSubjectId(matchedSub.id || matchedSub._id || '');
+      setFormSubjectName(matchedSub.name);
+      setIsCustomSubject(false);
+    } else {
+      setFormSubjectId('');
+      setFormSubjectName(q.subject || '');
+      setIsCustomSubject(Boolean(q.subject));
+    }
+
+    // Resolve chapter dropdown or custom
+    const matchedChap = allChapters.find(
+      (c) => (c.id || c._id) === q.chapterId || c.name.toLowerCase() === (q.topic || '').toLowerCase()
+    );
+    if (matchedChap) {
+      setFormChapterId(matchedChap.id || matchedChap._id || '');
+      setFormTopic(matchedChap.name);
+      setIsCustomTopic(false);
+    } else {
+      setFormChapterId('');
+      setFormTopic(q.topic || '');
+      setIsCustomTopic(Boolean(q.topic));
+    }
+
     setFormMarks(q.marks || 1);
     setFormNegativeMarks(q.negativeMarks || 0);
     setFormExplanation(q.explanation || '');
@@ -435,63 +526,317 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
     }
   };
 
-  // Bulk Import Workflow
+  // Multi-Format Templates for Bulk Import
+  const CSV_SAMPLE = `Question,Option 1,Option 2,Option 3,Option 4,Correct,Subject,Topic,Difficulty,Explanation
+"What is the simple interest on Rs. 1000 at 10% per annum for 2 years?","Rs. 150","Rs. 200","Rs. 250","Rs. 300",2,"Quantitative Aptitude","Simple & Compound Interest","easy","SI = (P*R*T)/100 = (1000*10*2)/100 = Rs. 200"
+"Find the next number in sequence: 2, 6, 12, 20, 30, ?","36","40","42","48",3,"Reasoning Ability","Number Series","medium","Differences increase by 2: +4, +6, +8, +10, +12. 30 + 12 = 42"`;
+
+  const AIKEN_SAMPLE = `What is the simple interest on Rs. 1000 at 10% per annum for 2 years?
+A. Rs. 150
+B. Rs. 200
+C. Rs. 250
+D. Rs. 300
+ANSWER: B
+EXPLANATION: SI = (P*R*T)/100 = (1000*10*2)/100 = Rs. 200
+SUBJECT: Quantitative Aptitude
+TOPIC: Simple & Compound Interest
+DIFFICULTY: easy
+
+Find the next number in sequence: 2, 6, 12, 20, 30, ?
+A. 36
+B. 40
+C. 42
+D. 48
+ANSWER: C
+EXPLANATION: Differences increase by 2: +4, +6, +8, +10, +12. 30 + 12 = 42.
+SUBJECT: Reasoning Ability
+TOPIC: Number Series
+DIFFICULTY: medium`;
+
+  const JSON_SAMPLE = `[
+  {
+    "content": "What is the simple interest on Rs. 1000 at 10% per annum for 2 years?",
+    "translations": {
+      "hi": "1000 रुपये पर 10% की दर से 2 वर्ष का साधारण ब्याज क्या है?"
+    },
+    "type": "single_choice",
+    "subject": "Quantitative Aptitude",
+    "topic": "Simple & Compound Interest",
+    "difficulty": "easy",
+    "explanation": "SI = (P * R * T) / 100 = (1000 * 10 * 2) / 100 = Rs. 200",
+    "explanationTranslations": {
+      "hi": "साधारण ब्याज = (मूलधन * दर * समय) / 100 = 200 रुपये"
+    },
+    "options": [
+      { "content": "Rs. 150", "isCorrect": false, "position": 0, "translations": { "hi": "150 रुपये" } },
+      { "content": "Rs. 200", "isCorrect": true, "position": 1, "translations": { "hi": "200 रुपये" } },
+      { "content": "Rs. 250", "isCorrect": false, "position": 2, "translations": { "hi": "250 रुपये" } },
+      { "content": "Rs. 300", "isCorrect": false, "position": 3, "translations": { "hi": "300 रुपये" } }
+    ]
+  }
+]`;
+
+  const AI_RAW_SAMPLE = `Q1. A train running at the speed of 60 km/hr crosses a pole in 9 seconds. What is the length of the train?
+Options:
+(A) 120 metres
+(B) 150 metres
+(C) 180 metres
+(D) 324 metres
+Correct Answer: B
+Explanation: Speed = 60 * (5/18) = 50/3 m/sec. Length = Speed * Time = (50/3) * 9 = 150 metres.
+
+Q2. If 'ROSE' is coded as '6821' and 'CHAIR' is coded as '73456', how will 'SEARCH' be coded?
+Options:
+(A) 214673
+(B) 214763
+(C) 216473
+(D) 214573
+Correct Answer: A
+Explanation: Direct letter to digit substitution from ROSE and CHAIR. S=2, E=1, A=4, R=6, C=7, H=3.`;
+
+  const [parsedQuestionsCache, setParsedQuestionsCache] = useState<any[]>([]);
+
+  // Parse questions from CSV, Aiken format, or JSON
+  const parseUniversalQuestions = (rawText: string): any[] => {
+    const trimmed = rawText.trim();
+    if (!trimmed) throw new Error('Input text is empty.');
+    const defaultSubject = bulkTargetSubjectName || subjects[0]?.name || 'Quantitative Aptitude';
+    const defaultSubjectId = bulkTargetSubjectId || subjects[0]?.id || subjects[0]?._id || null;
+    const defaultChapterName = bulkTargetChapterName || null;
+    const defaultChapterId = bulkTargetChapterId || null;
+
+    // 1. JSON Array
+    if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+      const obj = JSON.parse(trimmed);
+      const arr = Array.isArray(obj) ? obj : [obj];
+      return arr.map((q) => ({
+        content: q.content,
+        translations: q.translations || (q.contentHi ? { hi: q.contentHi } : {}),
+        type: q.type || 'single_choice',
+        numericalAnswer: q.numericalAnswer || null,
+        subject: q.subject || defaultSubject,
+        subjectId: q.subjectId || defaultSubjectId,
+        topic: q.topic || defaultChapterName,
+        chapterId: q.chapterId || defaultChapterId,
+        difficulty: ['easy', 'medium', 'hard'].includes(q.difficulty?.toLowerCase()) ? q.difficulty.toLowerCase() : 'medium',
+        status: q.status || 'published',
+        marks: q.marks || 1,
+        negativeMarks: q.negativeMarks ?? 0.25,
+        explanation: q.explanation || null,
+        explanationTranslations: q.explanationTranslations || (q.explanationHi ? { hi: q.explanationHi } : {}),
+        options: Array.isArray(q.options)
+          ? q.options.map((opt: any, idx: number) => ({
+              content: opt.content,
+              position: idx,
+              isCorrect: Boolean(opt.isCorrect),
+              translations: opt.translations || (opt.contentHi ? { hi: opt.contentHi } : {}),
+            }))
+          : [],
+      }));
+    }
+
+    // 2. Aiken Format (Educational Standard)
+    const hasAikenAnswer = /\b(ANSWER|ANS):\s*([A-Za-z0-9])/i.test(trimmed);
+    if (hasAikenAnswer) {
+      const blocks = trimmed.split(/\n\s*\n/).filter((b) => b.trim().length > 0);
+      const parsedList: any[] = [];
+
+      for (let bIdx = 0; bIdx < blocks.length; bIdx++) {
+        const block = blocks[bIdx];
+        const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
+        const contentLines: string[] = [];
+        const options: Array<{ letter: string; content: string }> = [];
+        let answerLetter = '';
+        let explanation = '';
+        let subject = defaultSubject;
+        let topic = '';
+        let difficulty = 'medium';
+
+        for (const line of lines) {
+          const ansMatch = line.match(/^(?:ANSWER|ANS):\s*([A-Za-z0-9])/i);
+          const expMatch = line.match(/^(?:EXPLANATION|EXP|SOLUTION):\s*(.*)/i);
+          const subMatch = line.match(/^SUBJECT:\s*(.*)/i);
+          const topMatch = line.match(/^(?:TOPIC|CHAPTER):\s*(.*)/i);
+          const diffMatch = line.match(/^DIFFICULTY:\s*(easy|medium|hard)/i);
+          const optMatch = line.match(/^([A-Da-d])[.\)]\s+(.*)/);
+
+          if (ansMatch) {
+            answerLetter = ansMatch[1].toUpperCase();
+          } else if (expMatch) {
+            explanation = expMatch[1].trim();
+          } else if (subMatch) {
+            subject = subMatch[1].trim();
+          } else if (topMatch) {
+            topic = topMatch[1].trim();
+          } else if (diffMatch) {
+            difficulty = diffMatch[1].toLowerCase();
+          } else if (optMatch) {
+            options.push({ letter: optMatch[1].toUpperCase(), content: optMatch[2].trim() });
+          } else if (options.length === 0) {
+            contentLines.push(line.replace(/^(?:Q\d+[.:]?|\d+[.:]?)\s*/, ''));
+          }
+        }
+
+        if (options.length < 2) {
+          throw new Error(`Question block ${bIdx + 1} does not have at least 2 options (A., B., ...).`);
+        }
+        if (!answerLetter) {
+          throw new Error(`Question block ${bIdx + 1} is missing "ANSWER: X".`);
+        }
+
+        const qContent = contentLines.join(' ').trim();
+        if (!qContent) {
+          throw new Error(`Question block ${bIdx + 1} is missing question text.`);
+        }
+
+        let correctIdx = -1;
+        if (['A', 'B', 'C', 'D'].includes(answerLetter)) {
+          correctIdx = answerLetter.charCodeAt(0) - 65;
+        } else {
+          const num = parseInt(answerLetter, 10);
+          if (!isNaN(num)) correctIdx = num - 1;
+        }
+
+        parsedList.push({
+          content: qContent,
+          subject: subject || defaultSubject,
+          subjectId: defaultSubjectId,
+          topic: topic || defaultChapterName,
+          chapterId: defaultChapterId,
+          difficulty,
+          type: 'single_choice',
+          status: 'published',
+          marks: 1,
+          negativeMarks: 0.25,
+          explanation: explanation || null,
+          options: options.map((opt, idx) => ({
+            content: opt.content,
+            position: idx,
+            isCorrect: idx === correctIdx || opt.letter === answerLetter,
+          })),
+        });
+      }
+
+      return parsedList;
+    }
+
+    // 3. CSV Format (with quote-escaping support)
+    const lines = trimmed.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    if (lines.length < 2) {
+      throw new Error('CSV input must contain a header row and at least 1 question row.');
+    }
+
+    const parseCsvLine = (line: string): string[] => {
+      const res: string[] = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (c === ',' && !inQuotes) {
+          res.push(cur.trim());
+          cur = '';
+        } else {
+          cur += c;
+        }
+      }
+      res.push(cur.trim());
+      return res;
+    };
+
+    const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase().replace(/[\s_-]+/g, ''));
+    const dataLines = lines.slice(1);
+
+    return dataLines.map((line, rIdx) => {
+      const parts = parseCsvLine(line);
+      if (parts.length < 6) {
+        throw new Error(`Row ${rIdx + 2} has only ${parts.length} columns (expected at least 6: Question, Opt1, Opt2, Opt3, Opt4, Correct).`);
+      }
+
+      const qCol = header.indexOf('question') >= 0 ? header.indexOf('question') : header.indexOf('content') >= 0 ? header.indexOf('content') : 0;
+      const opt1Col = header.indexOf('option1') >= 0 ? header.indexOf('option1') : header.indexOf('opt1') >= 0 ? header.indexOf('opt1') : 1;
+      const opt2Col = header.indexOf('option2') >= 0 ? header.indexOf('option2') : header.indexOf('opt2') >= 0 ? header.indexOf('opt2') : 2;
+      const opt3Col = header.indexOf('option3') >= 0 ? header.indexOf('option3') : header.indexOf('opt3') >= 0 ? header.indexOf('opt3') : 3;
+      const opt4Col = header.indexOf('option4') >= 0 ? header.indexOf('option4') : header.indexOf('opt4') >= 0 ? header.indexOf('opt4') : 4;
+      const corCol = header.indexOf('correct') >= 0 ? header.indexOf('correct') : header.indexOf('correctoption') >= 0 ? header.indexOf('correctoption') : 5;
+      const subCol = header.indexOf('subject') >= 0 ? header.indexOf('subject') : 6;
+      const topCol = header.indexOf('topic') >= 0 ? header.indexOf('topic') : header.indexOf('chapter') >= 0 ? header.indexOf('chapter') : 7;
+      const diffCol = header.indexOf('difficulty') >= 0 ? header.indexOf('difficulty') : header.indexOf('diff') >= 0 ? header.indexOf('diff') : 8;
+      const expCol = header.indexOf('explanation') >= 0 ? header.indexOf('explanation') : 9;
+
+      const content = parts[qCol] || '';
+      const opt1 = parts[opt1Col] || '';
+      const opt2 = parts[opt2Col] || '';
+      const opt3 = parts[opt3Col] || '';
+      const opt4 = parts[opt4Col] || '';
+      const corRaw = (parts[corCol] || '').toUpperCase();
+      const subject = parts[subCol] || defaultSubject;
+      const topic = parts[topCol] || null;
+      const diff = (parts[diffCol] || 'medium').toLowerCase();
+      const explanation = parts[expCol] || null;
+
+      let correctIdx = 0;
+      if (['A', 'B', 'C', 'D'].includes(corRaw)) {
+        correctIdx = corRaw.charCodeAt(0) - 65;
+      } else {
+        const parsedNum = parseInt(corRaw, 10);
+        if (!isNaN(parsedNum)) correctIdx = parsedNum - 1;
+      }
+
+      return {
+        content,
+        subject: subject || defaultSubject,
+        subjectId: defaultSubjectId,
+        topic: topic || defaultChapterName,
+        chapterId: defaultChapterId,
+        difficulty: ['easy', 'medium', 'hard'].includes(diff) ? diff : 'medium',
+        type: 'single_choice',
+        status: 'published',
+        marks: 1,
+        negativeMarks: 0.25,
+        explanation: explanation || null,
+        options: [
+          { content: opt1, isCorrect: correctIdx === 0, position: 0 },
+          { content: opt2, isCorrect: correctIdx === 1, position: 1 },
+          { content: opt3, isCorrect: correctIdx === 2, position: 2 },
+          { content: opt4, isCorrect: correctIdx === 3, position: 3 },
+        ].filter((o) => o.content.trim().length > 0),
+      };
+    });
+  };
+
   const handleParseImport = () => {
     setImportErrors([]);
     setImportPreviewCount(0);
+    setParsedQuestionsCache([]);
+
     if (!importJsonText.trim()) {
-      setImportErrors(['Import text is empty. Paste a JSON array or CSV questions.']);
+      setImportErrors(['Import text is empty. Paste questions or load an example template.']);
       return;
     }
 
     try {
-      let parsed: any[];
-      if (importJsonText.trim().startsWith('[') || importJsonText.trim().startsWith('{')) {
-        const obj = JSON.parse(importJsonText);
-        parsed = Array.isArray(obj) ? obj : [obj];
-      } else {
-        // Simple CSV parser for questions: "Question", "Option 1", "Option 2", "Option 3", "Option 4", "Correct (1-4)", "Subject", "Difficulty"
-        const lines = importJsonText.split('\n').filter((l) => l.trim().length > 0);
-        if (lines.length < 2) {
-          throw new Error('CSV must contain a header row and at least one question row.');
-        }
-        const dataLines = lines.slice(1);
-        parsed = dataLines.map((line, idx) => {
-          const parts = line.split(',').map((p) => p.trim().replace(/^"|"$/g, ''));
-          if (parts.length < 6) {
-            throw new Error(`Row ${idx + 2} has insufficient columns (expected at least 6).`);
-          }
-          const [content, opt1, opt2, opt3, opt4, correctIndexStr, subject, diff] = parts;
-          const correctIdx = parseInt(correctIndexStr, 10);
-          return {
-            content,
-            subject: subject || 'General Studies',
-            difficulty: (diff && ['easy', 'medium', 'hard'].includes(diff.toLowerCase()) ? diff.toLowerCase() : 'medium'),
-            type: 'single_choice',
-            status: 'published',
-            options: [
-              { content: opt1, isCorrect: correctIdx === 1 },
-              { content: opt2, isCorrect: correctIdx === 2 },
-              { content: opt3, isCorrect: correctIdx === 3 },
-              { content: opt4, isCorrect: correctIdx === 4 },
-            ],
-          };
-        });
-      }
+      const parsed = parseUniversalQuestions(importJsonText);
 
-      // Validate rows
+      // Validate questions
       const errors: string[] = [];
       parsed.forEach((q, idx) => {
-        if (!q.content || typeof q.content !== 'string') {
-          errors.push(`Row ${idx + 1}: Missing question content.`);
+        if (!q.content || typeof q.content !== 'string' || !q.content.trim()) {
+          errors.push(`Row/Question ${idx + 1}: Missing question content.`);
         }
         if (q.type !== 'numerical') {
           if (!q.options || !Array.isArray(q.options) || q.options.length < 2) {
-            errors.push(`Row ${idx + 1}: Requires at least 2 options.`);
+            errors.push(`Row/Question ${idx + 1}: Requires at least 2 options.`);
           } else {
             const corrects = q.options.filter((o: any) => o.isCorrect).length;
             if (corrects === 0) {
-              errors.push(`Row ${idx + 1}: Must have at least one correct option.`);
+              errors.push(`Row/Question ${idx + 1}: Must have at least one correct option.`);
             }
           }
         }
@@ -500,54 +845,235 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
       if (errors.length > 0) {
         setImportErrors(errors);
       } else {
+        setParsedQuestionsCache(parsed);
         setImportPreviewCount(parsed.length);
       }
     } catch (err: any) {
-      setImportErrors([err.message || 'Failed to parse JSON/CSV format']);
+      setImportErrors([err.message || 'Failed to parse format. Please check syntax or use sample template.']);
     }
   };
 
   const handleExecuteImport = async () => {
     setIsImporting(true);
     try {
-      let parsed: any[];
-      if (importJsonText.trim().startsWith('[') || importJsonText.trim().startsWith('{')) {
-        const obj = JSON.parse(importJsonText);
-        parsed = Array.isArray(obj) ? obj : [obj];
-      } else {
-        const lines = importJsonText.split('\n').filter((l) => l.trim().length > 0);
-        const dataLines = lines.slice(1);
-        parsed = dataLines.map((line) => {
-          const parts = line.split(',').map((p) => p.trim().replace(/^"|"$/g, ''));
-          const [content, opt1, opt2, opt3, opt4, correctIndexStr, subject, diff] = parts;
-          const correctIdx = parseInt(correctIndexStr, 10);
-          return {
-            content,
-            subject: subject || 'General Studies',
-            difficulty: diff && ['easy', 'medium', 'hard'].includes(diff.toLowerCase()) ? diff.toLowerCase() : 'medium',
-            type: 'single_choice',
-            status: 'published',
-            options: [
-              { content: opt1, isCorrect: correctIdx === 1, position: 0 },
-              { content: opt2, isCorrect: correctIdx === 2, position: 1 },
-              { content: opt3, isCorrect: correctIdx === 3, position: 2 },
-              { content: opt4, isCorrect: correctIdx === 4, position: 3 },
-            ],
-          };
-        });
+      let questionsToImport = parsedQuestionsCache;
+      if (!questionsToImport || questionsToImport.length === 0) {
+        questionsToImport = parseUniversalQuestions(importJsonText);
       }
 
-      await adminApi.createQuestion({ questions: parsed });
-      showToast(`Successfully imported ${parsed.length} questions into Question Bank!`, 'success');
+      // Pre-fill target subject & chapter if configured
+      const finalQuestions = questionsToImport.map((q) => {
+        let subName = q.subject || bulkTargetSubjectName || subjects[0]?.name || 'Quantitative Aptitude';
+        let subId = q.subjectId || bulkTargetSubjectId || subjects[0]?.id || subjects[0]?._id || null;
+        let topName = q.topic || bulkTargetChapterName || null;
+        let chapId = q.chapterId || bulkTargetChapterId || null;
+
+        if (bulkTargetSubjectId) {
+          subId = bulkTargetSubjectId;
+          if (bulkTargetSubjectName) subName = bulkTargetSubjectName;
+        }
+        if (bulkTargetChapterId) {
+          chapId = bulkTargetChapterId;
+          if (bulkTargetChapterName) topName = bulkTargetChapterName;
+        }
+
+        return {
+          ...q,
+          subject: subName,
+          subjectId: subId || undefined,
+          chapterId: chapId || undefined,
+          topic: topName || undefined,
+        };
+      });
+
+      await adminApi.createQuestion({ questions: finalQuestions });
+      showToast(`Successfully imported ${finalQuestions.length} questions into Question Bank!`, 'success');
       setIsImportModalOpen(false);
       setImportJsonText('');
       setImportPreviewCount(0);
+      setParsedQuestionsCache([]);
       setImportErrors([]);
       fetchQuestions();
     } catch (err: any) {
       showToast(err.message || 'Failed to import questions', 'error');
     } finally {
       setIsImporting(false);
+    }
+  };
+
+  const loadExampleTemplate = (fmt: 'csv' | 'aiken' | 'json' | 'ai_raw') => {
+    setImportFormat(fmt);
+    setImportErrors([]);
+    setImportPreviewCount(0);
+    if (fmt === 'csv') setImportJsonText(CSV_SAMPLE);
+    else if (fmt === 'aiken') setImportJsonText(AIKEN_SAMPLE);
+    else if (fmt === 'json') setImportJsonText(JSON_SAMPLE);
+    else if (fmt === 'ai_raw') setImportJsonText(AI_RAW_SAMPLE);
+  };
+
+  const downloadSampleTemplate = (fmt: 'csv' | 'aiken' | 'json') => {
+    let content = '';
+    let filename = '';
+    let mimeType = 'text/plain';
+
+    if (fmt === 'csv') {
+      content = CSV_SAMPLE;
+      filename = 'questions_template.csv';
+      mimeType = 'text/csv;charset=utf-8;';
+    } else if (fmt === 'aiken') {
+      content = AIKEN_SAMPLE;
+      filename = 'questions_template_aiken.txt';
+      mimeType = 'text/plain;charset=utf-8;';
+    } else if (fmt === 'json') {
+      content = JSON_SAMPLE;
+      filename = 'questions_template.json';
+      mimeType = 'application/json;charset=utf-8;';
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      if (text) {
+        setImportJsonText(text);
+        if (file.name.endsWith('.json')) setImportFormat('json');
+        else if (file.name.endsWith('.csv') || file.name.endsWith('.tsv')) setImportFormat('csv');
+        else if (file.name.endsWith('.txt')) setImportFormat('aiken');
+        setImportPreviewCount(0);
+        setImportErrors([]);
+        showToast(`Loaded ${file.name} successfully. Click "Validate & Preview".`, 'info');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  // AI Generation Handlers
+  const openAiGenModal = () => {
+    setAiSubject(subjects[0]?.name || 'General Studies');
+    setAiTopic('');
+    setAiPrompt('');
+    setGeneratedAiQuestions([]);
+    setIsAiGenModalOpen(true);
+  };
+
+  const handleAiGenerateQuestions = async () => {
+    if (!aiSubject.trim()) {
+      showToast('Please specify or select a subject', 'error');
+      return;
+    }
+    setIsGeneratingAi(true);
+    try {
+      const res = await adminApi.generateAiQuestions({
+        examName: aiExamName,
+        subject: aiSubject.trim(),
+        topic: aiTopic.trim() || undefined,
+        difficulty: aiDifficulty,
+        count: aiCount,
+        additionalPrompt: aiPrompt.trim() || undefined,
+      });
+      if (res?.questions && res.questions.length > 0) {
+        setGeneratedAiQuestions(res.questions);
+        showToast(`Generated ${res.questions.length} questions successfully!`, 'success');
+      } else {
+        showToast('No questions were returned. Please try again.', 'error');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Failed to generate questions with AI', 'error');
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
+
+  const handleImportAiGeneratedQuestions = async () => {
+    if (generatedAiQuestions.length === 0) return;
+    setIsGeneratingAi(true);
+    try {
+      await adminApi.createQuestion({ questions: generatedAiQuestions });
+      showToast(`Successfully saved ${generatedAiQuestions.length} AI questions to Question Bank!`, 'success');
+      setIsAiGenModalOpen(false);
+      setGeneratedAiQuestions([]);
+      fetchQuestions();
+    } catch (err: any) {
+      showToast(err.message || 'Failed to import AI questions', 'error');
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
+
+  // 1-Click AI Translate & Explain in Question Modal
+  const handleAiTranslateExplain = async () => {
+    if (!formContent.trim()) {
+      showToast('Please enter English Question text first', 'error');
+      return;
+    }
+    setIsTranslatingAi(true);
+    try {
+      const res = await adminApi.translateAndExplainQuestion({
+        content: formContent.trim(),
+        options: formOptions.map((o) => ({ content: o.content.trim(), isCorrect: o.isCorrect })),
+        explanation: formExplanation.trim() || undefined,
+        subject: formSubjectName.trim() || undefined,
+        topic: formTopic.trim() || undefined,
+      });
+
+      if (res?.contentHi) setFormContentHi(res.contentHi);
+      if (res?.optionsHi && Array.isArray(res.optionsHi)) {
+        setFormOptions((prev) =>
+          prev.map((opt, idx) => ({
+            ...opt,
+            contentHi: res.optionsHi[idx] || opt.contentHi || '',
+          }))
+        );
+      }
+      if (res?.explanation) setFormExplanation(res.explanation);
+      if (res?.explanationHi) setFormExplanationHi(res.explanationHi);
+
+      showToast('Question translated & bilingual explanation generated!', 'success');
+    } catch (err: any) {
+      showToast(err.message || 'Failed to translate question', 'error');
+    } finally {
+      setIsTranslatingAi(false);
+    }
+  };
+
+  // AI Raw Paper Parsing in Bulk Import Modal
+  const handleAiParseRawText = async () => {
+    if (!importJsonText.trim()) {
+      showToast('Please paste question paper text or notes first', 'error');
+      return;
+    }
+    setIsParsingRawAi(true);
+    try {
+      const res = await adminApi.parseRawQuestionsAi({
+        rawText: importJsonText,
+        subject: formSubjectName || undefined,
+      });
+
+      if (res?.questions && res.questions.length > 0) {
+        setImportJsonText(JSON.stringify(res.questions, null, 2));
+        setImportPreviewCount(res.questions.length);
+        setImportErrors([]);
+        showToast(`AI successfully parsed ${res.questions.length} questions! Review and click Import.`, 'success');
+      } else {
+        showToast('Could not extract structured questions. Please verify format.', 'error');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'AI parsing failed', 'error');
+    } finally {
+      setIsParsingRawAi(false);
     }
   };
 
@@ -568,6 +1094,18 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
         </div>
 
         <div className="flex items-center gap-2">
+
+          <button
+            type="button"
+            onClick={openAiGenModal}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-xs rounded-xl shadow-xs transition cursor-pointer"
+          >
+            <svg className="w-4 h-4 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span>✨ Generate with AI</span>
+          </button>
+
           <button
             type="button"
             onClick={() => {
@@ -627,7 +1165,7 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
         </form>
 
         {/* Filter Selects */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-1 border-t border-slate-100 dark:border-zinc-800 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1 border-t border-slate-100 dark:border-zinc-800 text-xs">
           <div>
             <label className="block text-[10px] font-semibold text-slate-400 mb-1">TYPE</label>
             <select
@@ -685,6 +1223,7 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
               value={selectedSubjectId}
               onChange={(e) => {
                 setSelectedSubjectId(e.target.value);
+                setSelectedChapterId('ALL');
                 setOffset(0);
               }}
               className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-hidden"
@@ -693,6 +1232,25 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
               {subjects.map((sub) => (
                 <option key={sub.id || sub._id} value={sub.id || sub._id}>
                   {sub.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-semibold text-slate-400 mb-1">CHAPTER / TOPIC</label>
+            <select
+              value={selectedChapterId}
+              onChange={(e) => {
+                setSelectedChapterId(e.target.value);
+                setOffset(0);
+              }}
+              className="w-full px-2.5 py-1.5 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-800 dark:text-zinc-200 focus:outline-hidden"
+            >
+              <option value="ALL">All Chapters</option>
+              {filterChapters.map((chap) => (
+                <option key={chap.id || chap._id} value={chap.id || chap._id}>
+                  {chap.name}
                 </option>
               ))}
             </select>
@@ -956,9 +1514,29 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
             <form onSubmit={handleSaveQuestion} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
               {/* Question Text English & Hindi */}
               <div className="space-y-1.5">
-                <label className="block font-semibold text-slate-700 dark:text-zinc-300">
-                  Question Text (English) <span className="text-rose-500">*</span>
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                    Question Text (English) <span className="text-rose-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAiTranslateExplain}
+                    disabled={isTranslatingAi}
+                    title="Auto-generates Hindi translation for question, options, and in-depth bilingual explanations"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg text-[11px] font-semibold cursor-pointer disabled:opacity-50 transition"
+                  >
+                    {isTranslatingAi ? (
+                      <>
+                        <div className="w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                        <span>Translating with AI...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>✨ AI Translate &amp; Explain</span>
+                      </>
+                    )}
+                  </button>
+                </div>
                 <textarea
                   rows={3}
                   required
@@ -1026,26 +1604,100 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
 
               {/* Subject, Topic, Marks */}
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                {/* Subject Selector */}
                 <div className="space-y-1">
-                  <label className="block font-semibold text-slate-700 dark:text-zinc-300">Subject Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={formSubjectName}
-                    onChange={(e) => setFormSubjectName(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
-                  />
+                  <div className="flex items-center justify-between">
+                    <label className="block font-semibold text-slate-700 dark:text-zinc-300">Subject</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomSubject(!isCustomSubject);
+                        if (!isCustomSubject) {
+                          setFormSubjectId('');
+                        } else {
+                          const first = subjects[0];
+                          setFormSubjectId(first?.id || first?._id || '');
+                          setFormSubjectName(first?.name || '');
+                        }
+                      }}
+                      className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                    >
+                      {isCustomSubject ? 'Select from list' : '+ Custom'}
+                    </button>
+                  </div>
+                  {isCustomSubject ? (
+                    <input
+                      type="text"
+                      required
+                      placeholder="Enter subject name..."
+                      value={formSubjectName}
+                      onChange={(e) => setFormSubjectName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100 text-xs"
+                    />
+                  ) : (
+                    <select
+                      value={formSubjectId}
+                      onChange={(e) => {
+                        setFormSubjectId(e.target.value);
+                        const found = subjects.find((s) => (s.id || s._id) === e.target.value);
+                        setFormSubjectName(found?.name || '');
+                        setFormChapterId('');
+                        setFormTopic('');
+                      }}
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100 text-xs font-medium"
+                    >
+                      {subjects.map((s) => (
+                        <option key={s.id || s._id} value={s.id || s._id}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
+                {/* Chapter / Topic Selector */}
                 <div className="space-y-1">
-                  <label className="block font-semibold text-slate-700 dark:text-zinc-300">Topic / Category</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Percentage, Optics"
-                    value={formTopic}
-                    onChange={(e) => setFormTopic(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
-                  />
+                  <div className="flex items-center justify-between">
+                    <label className="block font-semibold text-slate-700 dark:text-zinc-300">Chapter / Topic</label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomTopic(!isCustomTopic);
+                        if (!isCustomTopic) {
+                          setFormChapterId('');
+                        }
+                      }}
+                      className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                    >
+                      {isCustomTopic ? 'Select Chapter' : '+ Custom'}
+                    </button>
+                  </div>
+                  {isCustomTopic || formAvailableChapters.length === 0 ? (
+                    <input
+                      type="text"
+                      placeholder="e.g. Percentage, Time & Work"
+                      value={formTopic}
+                      onChange={(e) => setFormTopic(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100 text-xs"
+                    />
+                  ) : (
+                    <select
+                      value={formChapterId}
+                      onChange={(e) => {
+                        setFormChapterId(e.target.value);
+                        const found = formAvailableChapters.find((c) => (c.id || c._id) === e.target.value);
+                        setFormTopic(found?.name || '');
+                      }}
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100 text-xs font-medium"
+                    >
+                      <option value="">-- Select Chapter (Optional) --</option>
+                      {formAvailableChapters.map((c) => (
+                        <option key={c.id || c._id} value={c.id || c._id}>
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 <div className="space-y-1">
@@ -1349,46 +2001,256 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
       )}
 
       {/* ===================================================================== */}
-      {/* BULK IMPORT MODAL */}
+      {/* UNIVERSAL BULK IMPORT MODAL */}
       {/* ===================================================================== */}
       {isImportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-          <div className="w-full max-w-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xl p-5 space-y-4 max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
-              <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100">
-                Bulk Question Import (CSV / JSON)
-              </h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-5 space-y-4 max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3 shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  📥
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
+                    <span>Universal Bulk Question Import</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border border-blue-200 dark:border-blue-900/60">
+                      Multi-Format
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400">
+                    Upload or paste questions using CSV/Excel, Aiken (.txt), JSON, or AI-powered unstructured text parsing.
+                  </p>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={() => setIsImportModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 cursor-pointer"
               >
                 ✕
               </button>
             </div>
 
-            <div className="text-xs text-slate-600 dark:text-zinc-400 space-y-1">
-              <p>Paste JSON array or CSV text with questions. Format for CSV:</p>
-              <code className="block p-2 rounded-lg bg-slate-100 dark:bg-zinc-800 text-[11px] font-mono text-slate-800 dark:text-zinc-200">
-                Question,Option 1,Option 2,Option 3,Option 4,Correct (1-4),Subject,Difficulty
-              </code>
+            {/* Target Hierarchy Assignment for this Batch */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-2.5 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-900/40 shrink-0">
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-slate-800 dark:text-zinc-200 flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <span>🏷️ Target Subject</span>
+                    <span className="text-[10px] text-blue-600 dark:text-blue-400 font-normal">(Auto-fill batch)</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal">Pre-fills all questions</span>
+                </label>
+                <select
+                  value={bulkTargetSubjectId}
+                  onChange={(e) => {
+                    setBulkTargetSubjectId(e.target.value);
+                    const found = subjects.find((s) => (s.id || s._id) === e.target.value);
+                    setBulkTargetSubjectName(found?.name || '');
+                    setBulkTargetChapterId('');
+                    setBulkTargetChapterName('');
+                  }}
+                  className="w-full px-2.5 py-1.5 bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs font-semibold text-slate-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                >
+                  {subjects.map((sub) => (
+                    <option key={sub.id || sub._id} value={sub.id || sub._id}>
+                      {sub.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold text-slate-800 dark:text-zinc-200 flex items-center justify-between">
+                  <span className="flex items-center gap-1">
+                    <span>📂 Target Chapter / Topic</span>
+                    <span className="text-[10px] text-slate-400 font-normal">(Optional)</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal">
+                    {bulkAvailableChapters.length} chapters available
+                  </span>
+                </label>
+                <select
+                  value={bulkTargetChapterId}
+                  onChange={(e) => {
+                    setBulkTargetChapterId(e.target.value);
+                    const found = bulkAvailableChapters.find((c) => (c.id || c._id) === e.target.value);
+                    setBulkTargetChapterName(found?.name || '');
+                  }}
+                  className="w-full px-2.5 py-1.5 bg-white dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 rounded-lg text-xs font-semibold text-slate-900 dark:text-zinc-100 focus:outline-hidden focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">-- Auto-detect from file or No Chapter --</option>
+                  {bulkAvailableChapters.map((chap) => (
+                    <option key={chap.id || chap._id} value={chap.id || chap._id}>
+                      {chap.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <textarea
-              rows={8}
-              placeholder="Paste JSON array or CSV questions..."
-              value={importJsonText}
-              onChange={(e) => {
-                setImportJsonText(e.target.value);
-                setImportPreviewCount(0);
-                setImportErrors([]);
-              }}
-              className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl font-mono text-xs text-slate-900 dark:text-zinc-100"
-            />
+            {/* Format Selection Tabs */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 dark:border-zinc-800 pb-2 shrink-0">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-zinc-800 p-1 rounded-xl text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setImportFormat('csv')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                    importFormat === 'csv'
+                      ? 'bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900'
+                  }`}
+                >
+                  <span>📊 CSV / Excel</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImportFormat('aiken')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                    importFormat === 'aiken'
+                      ? 'bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900'
+                  }`}
+                >
+                  <span>📝 Aiken (.txt)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImportFormat('json')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                    importFormat === 'json'
+                      ? 'bg-white dark:bg-zinc-900 text-blue-600 dark:text-blue-400 shadow-xs'
+                      : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900'
+                  }`}
+                >
+                  <span>📦 JSON (Full)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImportFormat('ai_raw')}
+                  className={`px-3 py-1.5 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                    importFormat === 'ai_raw'
+                      ? 'bg-white dark:bg-zinc-900 text-purple-600 dark:text-purple-400 shadow-xs'
+                      : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900'
+                  }`}
+                >
+                  <span>🤖 AI Raw Parser</span>
+                </button>
+              </div>
 
+              {/* Actions: Load Template, Download Sample, Upload File */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => loadExampleTemplate(importFormat)}
+                  title="Insert a pre-filled valid working example into the editor"
+                  className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 rounded-lg text-xs font-semibold cursor-pointer flex items-center gap-1"
+                >
+                  <span>📋 Load Example</span>
+                </button>
+
+                {importFormat !== 'ai_raw' && (
+                  <button
+                    type="button"
+                    onClick={() => downloadSampleTemplate(importFormat as any)}
+                    title="Download ready-to-fill sample template file"
+                    className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-300 rounded-lg text-xs font-semibold cursor-pointer flex items-center gap-1"
+                  >
+                    <span>📥 Download Sample</span>
+                  </button>
+                )}
+
+                <label
+                  title="Upload a .csv, .txt, or .json file directly"
+                  className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/60 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-lg text-xs font-semibold cursor-pointer flex items-center gap-1 border border-blue-200 dark:border-blue-900/60"
+                >
+                  <span>📂 Choose File</span>
+                  <input
+                    type="file"
+                    accept=".csv,.tsv,.txt,.json"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Format Instructions Card */}
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-800 text-[11px] text-slate-600 dark:text-zinc-400 space-y-1 shrink-0">
+              {importFormat === 'csv' && (
+                <div>
+                  <div className="font-semibold text-slate-800 dark:text-zinc-200 mb-0.5">
+                    CSV / Excel Format (Standard 10 Columns):
+                  </div>
+                  <code className="block p-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 font-mono text-[10px] text-slate-800 dark:text-zinc-200 overflow-x-auto whitespace-nowrap">
+                    Question, Option 1, Option 2, Option 3, Option 4, Correct (1-4 or A-D), Subject, Topic, Difficulty (easy/medium/hard), Explanation
+                  </code>
+                </div>
+              )}
+
+              {importFormat === 'aiken' && (
+                <div>
+                  <div className="font-semibold text-slate-800 dark:text-zinc-200 mb-0.5">
+                    Aiken Format (Moodle / LMS Standard):
+                  </div>
+                  <p>
+                    Question text on line 1, followed by options <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">A. ...</code>, <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">B. ...</code>, and <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">ANSWER: B</code>. Optional tags: <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">SUBJECT:</code>, <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">TOPIC:</code>, <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">DIFFICULTY:</code>, <code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">EXPLANATION:</code>. Separate questions with a blank line.
+                  </p>
+                </div>
+              )}
+
+              {importFormat === 'json' && (
+                <div>
+                  <div className="font-semibold text-slate-800 dark:text-zinc-200 mb-0.5">
+                    JSON Array Format:
+                  </div>
+                  <p>
+                    Full schema support with bilingual translations (<code className="px-1 py-0.5 bg-white dark:bg-zinc-900 rounded font-mono">translations.hi</code>), detailed option structures, numerical answer keys, and explanations.
+                  </p>
+                </div>
+              )}
+
+              {importFormat === 'ai_raw' && (
+                <div>
+                  <div className="font-semibold text-slate-800 dark:text-zinc-200 mb-0.5">
+                    AI Multimodal Raw Text Parser:
+                  </div>
+                  <p>
+                    Paste raw, unformatted text copied from PDFs, question papers, or word documents. Click <strong>"✨ Parse with AI"</strong> below to automatically extract questions, bilingual options, answer keys, and solutions into structured JSON.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Input Text Area */}
+            <div className="flex-1 min-h-[160px] flex flex-col">
+              <textarea
+                rows={10}
+                placeholder={
+                  importFormat === 'csv'
+                    ? 'Paste CSV content with header row, or click "Load Example"...'
+                    : importFormat === 'aiken'
+                    ? 'Paste Aiken format questions, or click "Load Example"...'
+                    : importFormat === 'json'
+                    ? 'Paste JSON array of questions, or click "Load Example"...'
+                    : 'Paste raw question paper text or OCR notes, then click "✨ Parse with AI"...'
+                }
+                value={importJsonText}
+                onChange={(e) => {
+                  setImportJsonText(e.target.value);
+                  setImportPreviewCount(0);
+                  setImportErrors([]);
+                }}
+                className="w-full flex-1 p-3 bg-slate-50 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 rounded-xl font-mono text-xs text-slate-900 dark:text-zinc-100 focus:outline-hidden resize-none"
+              />
+            </div>
+
+            {/* Validation Feedback */}
             {importErrors.length > 0 && (
-              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-700 dark:text-rose-300 space-y-1 max-h-32 overflow-y-auto">
-                <span className="font-bold">Validation Errors Detected:</span>
+              <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-700 dark:text-rose-300 space-y-1 max-h-32 overflow-y-auto shrink-0">
+                <span className="font-bold">Validation Issues Detected:</span>
                 <ul className="list-disc pl-4 space-y-0.5">
                   {importErrors.map((err, i) => (
                     <li key={i}>{err}</li>
@@ -1398,38 +2260,368 @@ export function QuestionBankManager({ currentUserRole }: QuestionBankManagerProp
             )}
 
             {importPreviewCount > 0 && (
-              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900/60 text-xs text-emerald-800 dark:text-emerald-300 font-semibold">
-                ✓ Validated {importPreviewCount} questions ready to insert.
+              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-900/60 text-xs text-emerald-800 dark:text-emerald-300 font-semibold flex items-center justify-between shrink-0">
+                <span>✓ Validated {importPreviewCount} questions ready to insert into Question Bank!</span>
+                <span className="text-[10px] bg-emerald-200/60 dark:bg-emerald-900 px-2 py-0.5 rounded font-mono">
+                  All constraints passed
+                </span>
               </div>
             )}
 
-            <div className="pt-3 border-t border-slate-100 dark:border-zinc-800 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setIsImportModalOpen(false)}
-                className="px-4 py-2 border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-700 dark:text-zinc-300 font-semibold text-xs cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleParseImport}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-semibold text-xs cursor-pointer"
-              >
-                Validate & Preview
-              </button>
-              <button
-                type="button"
-                disabled={importPreviewCount === 0 || isImporting}
-                onClick={handleExecuteImport}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs shadow-xs disabled:opacity-40 cursor-pointer"
-              >
-                {isImporting ? 'Importing...' : `Import ${importPreviewCount > 0 ? importPreviewCount : ''} Questions`}
-              </button>
+            {/* Footer Toolbar */}
+            <div className="pt-3 border-t border-slate-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 shrink-0">
+              <div>
+                {importFormat === 'ai_raw' ? (
+                  <button
+                    type="button"
+                    disabled={isParsingRawAi || !importJsonText.trim()}
+                    onClick={handleAiParseRawText}
+                    title="Paste raw paper text and AI will structure it into bilingual MCQs"
+                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-semibold text-xs disabled:opacity-40 cursor-pointer flex items-center gap-1.5 transition shadow-xs"
+                  >
+                    {isParsingRawAi ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Parsing with Gemini AI...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>✨ Parse with AI</span>
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <div className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    Format: <span className="font-semibold text-slate-700 dark:text-zinc-300 uppercase">{importFormat}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsImportModalOpen(false)}
+                  className="px-4 py-2 border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-700 dark:text-zinc-300 font-semibold text-xs cursor-pointer hover:bg-slate-50 dark:hover:bg-zinc-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleParseImport}
+                  className="px-4 py-2 bg-slate-800 hover:bg-slate-900 dark:bg-zinc-700 dark:hover:bg-zinc-600 text-white rounded-xl font-semibold text-xs cursor-pointer transition shadow-2xs"
+                >
+                  Validate & Preview
+                </button>
+                <button
+                  type="button"
+                  disabled={importPreviewCount === 0 || isImporting}
+                  onClick={handleExecuteImport}
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-xs shadow-xs disabled:opacity-40 cursor-pointer transition"
+                >
+                  {isImporting ? 'Importing...' : `Import ${importPreviewCount > 0 ? importPreviewCount : ''} Questions`}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* ===================================================================== */}
+      {/* AI QUESTION GENERATOR MODAL */}
+      {/* ===================================================================== */}
+      {isAiGenModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-4xl max-h-[92vh] bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between bg-gradient-to-r from-indigo-50/60 via-white to-violet-50/60 dark:from-indigo-950/20 dark:via-zinc-900 dark:to-violet-950/20 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-xs">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
+                    <span>AI Question Generator</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-950/70 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                      Gemini Multimodal
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400">
+                    Generate exam-standard MCQs with bilingual English &amp; Devanagari Hindi, distractors, and step-by-step solutions.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsAiGenModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-5 text-xs">
+              {/* Configuration Inputs */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200 dark:border-zinc-800 space-y-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-zinc-300 mb-1">
+                      Target Exam
+                    </label>
+                    <input
+                      type="text"
+                      value={aiExamName}
+                      onChange={(e) => setAiExamName(e.target.value)}
+                      placeholder="e.g. SSC CGL, RRB NTPC, UPSC Prelims"
+                      className="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500 font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-zinc-300 mb-1">
+                      Subject
+                    </label>
+                    <input
+                      type="text"
+                      value={aiSubject}
+                      onChange={(e) => setAiSubject(e.target.value)}
+                      placeholder="e.g. Indian Polity, Quantitative Aptitude"
+                      className="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500 font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-zinc-300 mb-1">
+                      Chapter / Topic (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={aiTopic}
+                      onChange={(e) => setAiTopic(e.target.value)}
+                      placeholder="e.g. Fundamental Rights, Time & Work"
+                      className="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-zinc-300 mb-1">
+                      Difficulty Level
+                    </label>
+                    <div className="flex rounded-lg border border-slate-300 dark:border-zinc-700 p-0.5 bg-white dark:bg-zinc-900">
+                      {(['easy', 'medium', 'hard'] as const).map((diff) => (
+                        <button
+                          key={diff}
+                          type="button"
+                          onClick={() => setAiDifficulty(diff)}
+                          className={`flex-1 py-1 rounded-md text-[11px] font-semibold capitalize transition ${
+                            aiDifficulty === diff
+                              ? 'bg-indigo-600 text-white shadow-2xs'
+                              : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                          }`}
+                        >
+                          {diff}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-zinc-300 mb-1">
+                      Number of Questions
+                    </label>
+                    <div className="flex rounded-lg border border-slate-300 dark:border-zinc-700 p-0.5 bg-white dark:bg-zinc-900">
+                      {[3, 5, 10].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setAiCount(num)}
+                          className={`flex-1 py-1 rounded-md text-[11px] font-semibold transition ${
+                            aiCount === num
+                              ? 'bg-indigo-600 text-white shadow-2xs'
+                              : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                          }`}
+                        >
+                          {num} Qs
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex sm:self-end">
+                    <button
+                      type="button"
+                      disabled={isGeneratingAi}
+                      onClick={handleAiGenerateQuestions}
+                      className="w-full py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold text-xs rounded-lg shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition"
+                    >
+                      {isGeneratingAi ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          <span>Generating Questions...</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                          <span>Generate Questions</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-700 dark:text-zinc-300 mb-1">
+                    Custom Prompt or Syllabus Focus (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="e.g. Focus on landmark Supreme Court cases and 2024 constitutional amendments..."
+                    className="w-full px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100 focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+              </div>
+
+              {/* Generated Questions Preview Cards */}
+              {generatedAiQuestions.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-slate-800 dark:text-zinc-200 flex items-center gap-2 text-sm">
+                      <span>Generated Questions Preview</span>
+                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                        {generatedAiQuestions.length} Ready
+                      </span>
+                    </h4>
+                    <span className="text-slate-400 text-[11px]">Bilingual (English + Hindi) with solutions</span>
+                  </div>
+
+                  <div className="space-y-3">
+                    {generatedAiQuestions.map((q, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-2xs space-y-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="space-y-1 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-[10px] shrink-0">
+                                {idx + 1}
+                              </span>
+                              <span className="font-bold text-slate-900 dark:text-zinc-100 text-xs">
+                                {q.content}
+                              </span>
+                            </div>
+                            {q.translations?.hi && (
+                              <p className="text-[11px] text-slate-600 dark:text-zinc-400 italic pl-7">
+                                {q.translations.hi}
+                              </p>
+                            )}
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 uppercase shrink-0">
+                            {q.difficulty}
+                          </span>
+                        </div>
+
+                        {/* Options */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-7">
+                          {q.options?.map((opt: any, optIdx: number) => (
+                            <div
+                              key={optIdx}
+                              className={`p-2.5 rounded-lg border text-xs flex items-start gap-2 ${
+                                opt.isCorrect
+                                  ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 font-semibold'
+                                  : 'bg-slate-50 dark:bg-zinc-800/40 border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300'
+                              }`}
+                            >
+                              <span
+                                className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] shrink-0 font-bold ${
+                                  opt.isCorrect
+                                    ? 'bg-emerald-600 text-white'
+                                    : 'bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-zinc-300'
+                                }`}
+                              >
+                                {String.fromCharCode(65 + optIdx)}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <div>{opt.content}</div>
+                                {opt.translations?.hi && (
+                                  <div className="text-[10px] opacity-80 italic mt-0.5">{opt.translations.hi}</div>
+                                )}
+                              </div>
+                              {opt.isCorrect && (
+                                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                                  ✓ Answer
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Explanation */}
+                        {q.explanation && (
+                          <div className="ml-7 p-3 rounded-lg bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 text-[11px] text-slate-700 dark:text-zinc-300 space-y-1">
+                            <span className="font-bold text-indigo-700 dark:text-indigo-400 block">
+                              Detailed Solution:
+                            </span>
+                            <p>{q.explanation}</p>
+                            {q.explanationTranslations?.hi && (
+                              <p className="italic text-slate-600 dark:text-zinc-400">
+                                {q.explanationTranslations.hi}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-slate-50 dark:bg-zinc-800/80 border-t border-slate-200 dark:border-zinc-800 flex items-center justify-between shrink-0">
+              <span className="text-slate-500 dark:text-zinc-400 text-xs">
+                {generatedAiQuestions.length > 0
+                  ? `${generatedAiQuestions.length} questions ready to insert`
+                  : 'Configure parameters and click Generate'}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAiGenModalOpen(false)}
+                  className="px-4 py-2 border border-slate-300 dark:border-zinc-700 rounded-xl text-slate-700 dark:text-zinc-300 font-semibold text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-zinc-700 transition"
+                >
+                  Close
+                </button>
+
+                <button
+                  type="button"
+                  disabled={generatedAiQuestions.length === 0 || isGeneratingAi}
+                  onClick={handleImportAiGeneratedQuestions}
+                  className="px-5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-semibold text-xs shadow-xs disabled:opacity-40 cursor-pointer flex items-center gap-1.5 transition"
+                >
+                  <svg className="w-4 h-4 text-emerald-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Import All {generatedAiQuestions.length > 0 ? generatedAiQuestions.length : ''} into Question Bank</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+
+

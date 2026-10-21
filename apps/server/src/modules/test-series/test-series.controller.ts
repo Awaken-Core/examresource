@@ -242,6 +242,17 @@ export class TestSeriesController {
   // 5. EXAM-SPECIFIC CHAPTER ROUTES
   // =========================================================================
 
+  @Get('me/chapters')
+  async listAllChapters(
+    @Query('subjectId') subjectId: string | undefined,
+    @Req() req: Request,
+  ) {
+    return this.service.listAllChapters(
+      subjectId,
+      await this.auth.requireUser(req),
+    );
+  }
+
   @Get('me/test-series/:id/subjects/:subjectId/chapters')
   async listManageableChapters(
     @Param('id') seriesId: string,

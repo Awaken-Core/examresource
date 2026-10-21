@@ -14,7 +14,10 @@ import type { z } from 'zod';
 import { AuthService } from '../auth/auth.service.js';
 import {
   createQuestionsSchema,
+  generateQuestionsAiSchema,
+  parseRawQuestionsAiSchema,
   reportQuestionSchema,
+  translateExplainAiSchema,
   updateQuestionSchema,
 } from './dto/question.dto.js';
 import { QuestionService } from './question.service.js';
@@ -45,6 +48,30 @@ export class QuestionController {
   async createMany(@Req() req: Request) {
     return this.service.createMany(
       this.parse(createQuestionsSchema, req.body),
+      await this.auth.requireUser(req),
+    );
+  }
+
+  @Post('questions/ai/generate')
+  async generateAi(@Req() req: Request) {
+    return this.service.generateAiQuestions(
+      this.parse(generateQuestionsAiSchema, req.body),
+      await this.auth.requireUser(req),
+    );
+  }
+
+  @Post('questions/ai/translate-explain')
+  async translateExplainAi(@Req() req: Request) {
+    return this.service.translateAndExplainAi(
+      this.parse(translateExplainAiSchema, req.body),
+      await this.auth.requireUser(req),
+    );
+  }
+
+  @Post('questions/ai/parse-raw')
+  async parseRawAi(@Req() req: Request) {
+    return this.service.parseRawQuestionsAi(
+      this.parse(parseRawQuestionsAiSchema, req.body),
       await this.auth.requireUser(req),
     );
   }

@@ -219,7 +219,8 @@ export const adminApi = {
       method: 'DELETE',
     }),
 
-  // 4. Exam-Specific Chapters
+  getAllChapters: (subjectId?: string) =>
+    apiFetch<AdminChapter[]>(subjectId ? `/me/chapters?subjectId=${subjectId}` : '/me/chapters'),
   getSeriesChapters: (seriesId: string, subjectId: string) =>
     apiFetch<AdminChapter[]>(`/me/test-series/${seriesId}/subjects/${subjectId}/chapters`),
   createChapter: (seriesId: string, data: { name: string; slug: string; subjectId: string; order?: number; status?: 'draft' | 'published' | 'archived'; description?: string | null }) =>
@@ -277,6 +278,50 @@ export const adminApi = {
     apiFetch(`/questions/${id}`, {
       method: 'DELETE',
     }),
+
+  // AI Question Bank Tools
+  generateAiQuestions: (data: {
+    subject: string;
+    topic?: string;
+    examName?: string;
+    difficulty?: 'easy' | 'medium' | 'hard';
+    count?: number;
+    language?: 'bilingual' | 'english' | 'hindi';
+    additionalPrompt?: string;
+  }) =>
+    apiFetch<{ questions: AdminQuestion[] }>('/questions/ai/generate', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  translateAndExplainQuestion: (data: {
+    content: string;
+    options: Array<{ content: string; isCorrect: boolean }>;
+    explanation?: string;
+    subject?: string;
+    topic?: string;
+  }) =>
+    apiFetch<{
+      contentHi: string;
+      optionsHi: string[];
+      explanation: string;
+      explanationHi: string;
+    }>('/questions/ai/translate-explain', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  parseRawQuestionsAi: (data: {
+    rawText: string;
+    subject?: string;
+    topic?: string;
+    examName?: string;
+  }) =>
+    apiFetch<{ questions: AdminQuestion[] }>('/questions/ai/parse-raw', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
 
   // 6. Question Mappings
   getQuestionMappings: (seriesId: string, subjectId: string, chapterId?: string) => {

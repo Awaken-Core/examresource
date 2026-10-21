@@ -4,6 +4,7 @@ const optionSchema = z.object({
   id: z.string().optional(),
   _id: z.string().optional(),
   content: z.string().trim().min(1).max(10_000),
+  translations: z.record(z.string(), z.string()).optional(),
   imageUrl: z.string().trim().max(2_000).nullable().optional(),
   isCorrect: z.boolean(),
 });
@@ -99,6 +100,43 @@ export const reportQuestionSchema = z.object({
   details: z.string().trim().max(5_000).nullable().optional(),
 });
 
+export const generateQuestionsAiSchema = z.object({
+  subject: z.string().trim().min(1).max(200),
+  topic: z.string().trim().max(200).optional(),
+  examName: z.string().trim().max(200).optional(),
+  difficulty: z.enum(['easy', 'medium', 'hard']).default('medium'),
+  count: z.number().int().min(1).max(20).default(5),
+  language: z.enum(['bilingual', 'english', 'hindi']).default('bilingual'),
+  additionalPrompt: z.string().trim().max(2_000).optional(),
+});
+
+export const translateExplainAiSchema = z.object({
+  content: z.string().trim().min(1),
+  options: z
+    .array(
+      z.object({
+        content: z.string().trim().min(1),
+        isCorrect: z.boolean(),
+      }),
+    )
+    .min(2)
+    .max(10),
+  explanation: z.string().trim().optional(),
+  subject: z.string().trim().optional(),
+  topic: z.string().trim().optional(),
+});
+
+export const parseRawQuestionsAiSchema = z.object({
+  rawText: z.string().trim().min(10).max(50_000),
+  subject: z.string().trim().optional(),
+  topic: z.string().trim().optional(),
+  examName: z.string().trim().optional(),
+});
+
 export type CreateQuestionsInput = z.infer<typeof createQuestionsSchema>;
 export type UpdateQuestionInput = z.infer<typeof updateQuestionSchema>;
 export type ReportQuestionInput = z.infer<typeof reportQuestionSchema>;
+export type GenerateQuestionsAiInput = z.input<typeof generateQuestionsAiSchema>;
+export type TranslateExplainAiInput = z.infer<typeof translateExplainAiSchema>;
+export type ParseRawQuestionsAiInput = z.infer<typeof parseRawQuestionsAiSchema>;
+
