@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
 import { Image } from 'astro:assets';
-import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
+import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain, siteSlogan } from '../data/site';
 import {
   appLangToBlogLanguage,
   articleHref,
@@ -206,6 +206,13 @@ const jsonLd = {
       url: canonicalUrl,
       description: pageDescription,
       inLanguage: ['en-IN', 'hi-Latn'],
+      about: [
+        { '@type': 'Thing', name: 'Government Examinations in India' },
+        { '@type': 'Thing', name: 'Sarkari Naukri Notifications' },
+        { '@type': 'Thing', name: 'Civil Services Examination' },
+        { '@type': 'Thing', name: 'Staff Selection Commission' },
+        { '@type': 'Thing', name: 'Railway Recruitment Boards' },
+      ],
       publisher: {
         '@id': `${siteUrl}/#organization`,
       },
@@ -234,6 +241,17 @@ const jsonLd = {
       image: `${siteUrl}/og-image.jpg`,
       sameAs: [whatsappChannel, telegramChannel].filter(Boolean),
       description: 'Verified government exam notifications, Sarkari job updates, admit cards, answer keys, and counselling results portal across India.',
+      knowsAbout: [
+        'Government Exams in India',
+        'Sarkari Naukri Alerts',
+        'UPSC Civil Services Examination',
+        'Staff Selection Commission (SSC)',
+        'Railway Recruitment Control Board (RRB)',
+        'Institute of Banking Personnel Selection (IBPS)',
+        'State Public Service Commissions',
+        'Admit Cards & Answer Keys',
+        'Exam Syllabi & Cut-off Marks',
+      ],
     },
     {
       '@type': 'FAQPage',
@@ -263,16 +281,16 @@ const jsonLd = {
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
         
         {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7" transition:name="main-content">
+        <div class="min-w-0 space-y-7">
           
           {/* 1. Main Headline */}
-          <div transition:name="page-hero">
+          <div>
             <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-2.5">
               <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse will-change-[opacity] transform-gpu"></span>
               Verified Government Exam &amp; Sarkari Naukri Portal
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight leading-tight">
-              {siteName} | Government Exam Updates &amp; Sarkari Jobs
+              {siteSlogan}
             </h1>
             <p class="mt-2 text-sm sm:text-base text-muted max-w-3xl leading-relaxed">
               {siteName} ({siteDomain}) provides verified central &amp; state government exam notifications, admit cards, answer keys, syllabi, and direct official commission portal links across India.
@@ -293,6 +311,9 @@ const jsonLd = {
               {examCategories.map((cat) => (
                 <a 
                   href={`/category/${cat.slug}`}
+                  target="_blank"
+                  rel="noopener"
+                  data-astro-prefetch="false"
                   class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border border-border hover:shadow-xs ${cat.borderColor} transition duration-150 group cursor-pointer`}
                 >
                   <div class="flex items-start justify-between">
@@ -429,8 +450,7 @@ const jsonLd = {
                         src={portal.logo} 
                         alt={`${portal.name} official emblem logo`} 
                         class="w-full h-full object-contain" 
-                        loading="lazy"
-                        fetchpriority="low"
+                        loading="eager"
                         decoding="async"
                         width={32}
                         height={32}
@@ -468,8 +488,10 @@ const jsonLd = {
                 {popularUpdates.map((item) => (
                   <a 
                     href={item.href} 
+                    target="_blank"
+                    rel="noopener"
                     data-article-link={item.slugKey}
-                    data-astro-prefetch="hover"
+                    data-astro-prefetch="false"
                     class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
                   >
                     <span class="w-5 h-5 rounded-full bg-surface-raised text-muted group-hover:bg-accent/15 group-hover:text-accent flex items-center justify-center text-[10px] font-bold shrink-0 transition">

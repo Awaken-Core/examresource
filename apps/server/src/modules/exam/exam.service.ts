@@ -570,11 +570,12 @@ export class ExamService {
         isCorrect = isAnswered && candidateValue.toLowerCase() === expectedValue.toLowerCase();
       } else {
         const selectedIds = (answer.optionIds || [])
-          .map((optId: any) => optId.toString())
+          .map((optId: any) => optId?.toString())
+          .filter(Boolean)
           .sort();
         const correctIds = (qDoc.options || [])
-          .filter((opt: any) => opt.isCorrect)
-          .map((opt: any) => (opt._id || opt.id).toString())
+          .filter((opt: any) => Boolean(opt?.isCorrect))
+          .map((opt: any, idx: number) => (opt?._id || opt?.id || `opt_${idx}`).toString())
           .sort();
 
         isAnswered = selectedIds.length > 0;
@@ -605,27 +606,34 @@ export class ExamService {
   private async getExamQuestionsWithSnapshots(examQuestionItems: any[]) {
     if (!examQuestionItems || examQuestionItems.length === 0) return [];
 
-    const qIds = examQuestionItems.map((item: any) => item.questionId);
-    const questions = await this.questionModel
-      .find({ _id: { $in: qIds } })
-      .lean();
+    const qIds = examQuestionItems
+      .map((item: any) => item?.questionId)
+      .filter(Boolean);
+    const questions = qIds.length > 0
+      ? await this.questionModel.find({ _id: { $in: qIds } }).lean()
+      : [];
     const questionMap = new Map(
       questions.map((q) => [q._id.toString(), q]),
     );
 
     return examQuestionItems.map((item: any) => {
-      const qDoc = questionMap.get(item.questionId.toString());
+      const qIdStr = item?.questionId?.toString();
+      if (!qIdStr) return null;
+      const qDoc = questionMap.get(qIdStr);
       if (!qDoc) return null;
 
-      const options = (qDoc.options || []).map((opt: any) => ({
-        id: opt._id.toString(),
-        _id: opt._id.toString(),
-        content: opt.content,
-        translations: opt.translations || {},
-        imageUrl: opt.imageUrl || null,
-        position: opt.position,
-        isCorrect: opt.isCorrect,
-      }));
+      const options = (qDoc.options || []).map((opt: any, idx: number) => {
+        const optionId = (opt?._id || opt?.id || new Types.ObjectId()).toString();
+        return {
+          id: optionId,
+          _id: optionId,
+          content: typeof opt === 'string' ? opt : (opt?.content || ''),
+          translations: opt?.translations || {},
+          imageUrl: opt?.imageUrl || null,
+          position: opt?.position ?? idx,
+          isCorrect: Boolean(opt?.isCorrect),
+        };
+      });
 
       const snapshot = item.snapshot || {
         questionId: qDoc._id,
@@ -1051,17 +1059,17 @@ export class ExamService {
           answeredAt: ans.answeredAt || null,
           question: snap
             ? {
-                id: (snap.questionId || ans.questionId).toString(),
+                id: (snap.questionId || ans.questionId)?.toString() || '',
                 content: snap.content,
                 translations: snap.translations || {},
                 type: snap.type,
-                options: (snap.options || []).map((opt: any) => ({
-                  id: (opt._id || opt.id).toString(),
-                  content: opt.content,
-                  translations: opt.translations || {},
-                  imageUrl: opt.imageUrl || null,
-                  position: opt.position,
-                  ...(exposeScore ? { isCorrect: opt.isCorrect } : {}),
+                options: (snap.options || []).map((opt: any, idx: number) => ({
+                  id: (opt?._id || opt?.id || `opt_${idx}`)?.toString() || `opt_${idx}`,
+                  content: typeof opt === 'string' ? opt : (opt?.content || ''),
+                  translations: opt?.translations || {},
+                  imageUrl: opt?.imageUrl || null,
+                  position: opt?.position ?? idx,
+                  ...(exposeScore ? { isCorrect: Boolean(opt?.isCorrect) } : {}),
                 })),
                 marks: snap.marks,
                 negativeMarks: snap.negativeMarks,

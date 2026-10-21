@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = () => {
   const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const content = `# Default rules for all web search crawlers
 User-agent: *
@@ -61,9 +61,25 @@ Allow: /
 User-agent: cohere-ai
 Allow: /
 
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
 # XML Sitemap and RSS Feed locations
 Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/sitemap_index.xml
 Sitemap: ${siteUrl}/rss.xml
+
+# LLM Agents & AI Search Engine Context (llms.txt standard)
+# https://llmstxt.org/
+# Machine-readable directory of official recruitment portals, exam categories, and citation standards
+# Context Document: ${siteUrl}/llms.txt
+# Full Reference: ${siteUrl}/llms-full.txt
 `;
 
   return new Response(content, {

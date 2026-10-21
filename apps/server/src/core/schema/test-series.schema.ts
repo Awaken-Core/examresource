@@ -17,7 +17,7 @@ export class Subject {
   @Prop({ required: true, trim: true, unique: true })
   name: string;
 
-  @Prop({ required: true, trim: true, unique: true, lowercase: true, index: true })
+  @Prop({ required: true, trim: true, unique: true, lowercase: true })
   slug: string;
 
   @Prop({ type: String, default: null, trim: true })
@@ -34,7 +34,6 @@ export class Subject {
 }
 
 export const SubjectSchema = SchemaFactory.createForClass(Subject);
-SubjectSchema.index({ name: 1 });
 
 /**
  * 2. Test Series Parent

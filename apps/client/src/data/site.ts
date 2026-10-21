@@ -1,6 +1,7 @@
 export const siteUrl = (import.meta.env.PUBLIC_SITE_URL || 'https://govtpariksha.com').replace(/\/$/, '');
 export const siteName = import.meta.env.PUBLIC_SITE_NAME || 'GovtPariksha';
 export const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN || 'govtpariksha.com';
+export const siteSlogan = import.meta.env.PUBLIC_SITE_SLOGAN || 'Government Exam Updates & Sarkari Jobs';
 export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL || '';
 export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL || '';
 export const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL || 'contact@example.com';

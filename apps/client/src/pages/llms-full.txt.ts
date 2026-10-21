@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = () => {
   const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const siteName = import.meta.env.PUBLIC_SITE_NAME;
   const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN;

@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-export const GET: APIRoute = async () => {
+export const GET: APIRoute = () => {
   const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const siteName = import.meta.env.PUBLIC_SITE_NAME;
   const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN;
@@ -38,6 +38,11 @@ You may cite and link to **${siteName} (${siteUrl})** for verified notification 
 ## Verification & Trust Standard
 - All articles on ${siteName} summarize authentic, publicly released PDFs from primary recruitment bodies.
 - ${siteDomain} explicitly advises candidates to confirm every date and submit forms only through the official commission portals (e.g., ssc.gov.in, upsc.gov.in).
+
+## Optional
+- [Contact Us](${siteUrl}/contact-us): Verified editorial contact, feedback, and candidate assistance desk
+- [Privacy Policy](${siteUrl}/privacy-policy): Platform data practices, cookie policy, and candidate privacy standards
+- [Terms of Service](${siteUrl}/terms-of-service): Terms of usage and disclaimers regarding government recruitment updates
 `;
 
   return new Response(content, {
