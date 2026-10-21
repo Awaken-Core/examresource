@@ -259,9 +259,14 @@ function paint(items: AppNotification[]) {
     node.classList.toggle('hidden', unread.length > 0);
   });
 
-  document.querySelectorAll('.notification-badge-count, .notification-pill-badge').forEach((node) => {
+  document.querySelectorAll<HTMLElement>('.notification-badge-count, .notification-pill-badge').forEach((node) => {
     node.textContent = String(unread.length);
     node.classList.toggle('opacity-50', unread.length === 0);
+    if (!node.classList.contains('sr-only') && !node.closest('[data-notification-popup]') && !node.closest('h1')) {
+      if (node.classList.contains('bg-accent') || node.classList.contains('bg-accent/15') || node.classList.contains('bg-accent/20')) {
+        node.classList.toggle('hidden', unread.length === 0);
+      }
+    }
   });
 
   const notifCount = unread.length;

@@ -54,6 +54,57 @@ function cleanPlainText(str: string): string {
   return stripHtmlTags(str).replace(/\s+/g, ' ').trim();
 }
 
+export function isDuplicateTitle(headingText: string, articleTitle: string): boolean {
+  const cleanHeading = cleanPlainText(headingText);
+  const cleanTitle = cleanPlainText(articleTitle);
+
+  if (!cleanHeading || !cleanTitle) return false;
+
+  const normalize = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/&amp;/g, '&')
+      .replace(/&#39;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/[^\p{L}\p{N}]+/gu, '')
+      .trim();
+
+  const normH = normalize(cleanHeading);
+  const normT = normalize(cleanTitle);
+
+  if (!normH || !normT) return false;
+  if (normH === normT) return true;
+
+  // Handle minor differences like "Overview" or "Notice" suffix/prefix or punctuation
+  if (normH.length >= 8 && normT.length >= 8) {
+    if (normH.startsWith(normT) || normT.startsWith(normH)) {
+      if (Math.abs(normH.length - normT.length) <= 25) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function stripDuplicateTitleParagraph(html: string, title: string): string {
+  if (!html || !title) return html;
+
+  // Strip leading empty paragraphs or linebreaks first
+  let cleaned = html.replace(/^\s*(?:<p\b[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>\s*)+/i, '');
+
+  // Check if the first block element is a paragraph consisting solely of the article title
+  cleaned = cleaned.replace(/^\s*<p\b[^>]*>([\s\S]*?)<\/p>/i, (fullP, pContent) => {
+    const cleanP = cleanPlainText(pContent);
+    if (cleanP && isDuplicateTitle(cleanP, title)) {
+      return '';
+    }
+    return fullP;
+  });
+
+  return cleaned;
+}
+
 function normalizeHeadingTags(htmlBody: string, title: string) {
   const tocItems: { id: string; text: string; level: number }[] = [];
   tocItems.push({ id: 'overview-top', text: title, level: 2 });
@@ -61,16 +112,30 @@ function normalizeHeadingTags(htmlBody: string, title: string) {
   let hasEncounteredH2 = false;
   let hIdx = 0;
 
-  const normalizedHtml = htmlBody.replace(
-    /<h([2-4])([^>]*)>([\s\S]*?)<\/h\1>/gi,
+  let normalizedHtml = htmlBody.replace(
+    /<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/gi,
     (_full, rawLvl, attrs = '', content = '') => {
+      const cleanText = cleanPlainText(content);
+
+      // 1. If this heading duplicates the article title, strip it completely
+      if (isDuplicateTitle(cleanText, title)) {
+        return '';
+      }
+
       let lvl = Number.parseInt(rawLvl, 10);
+
+      // 2. An article body must never contain an <h1> (page header already has the primary H1).
+      // Downgrade any non-duplicate H1 to H2 for SEO hierarchy.
+      if (lvl === 1) {
+        lvl = 2;
+      }
+
+      // Promote first sub-heading to H2 if H2 hasn't been encountered yet
       if (lvl >= 3 && !hasEncounteredH2) {
         lvl = 2;
       }
       if (lvl === 2) hasEncounteredH2 = true;
 
-      const cleanText = cleanPlainText(content);
       const idMatch = /id=["']([^"']+)["']/i.exec(attrs);
       const id = idMatch ? idMatch[1] : toHeadingSlug(cleanText) || `heading-${++hIdx}`;
       const cleanAttrs = attrs.replace(/id=["'][^"']*["']/i, '').trim();
@@ -83,6 +148,9 @@ function normalizeHeadingTags(htmlBody: string, title: string) {
       return `<h${lvl} id="${id}"${attrSuffix}>${content.replace(/\\+/g, '')}</h${lvl}>`;
     },
   );
+
+  // Clean any leading empty paragraphs leftover from removed duplicate headings
+  normalizedHtml = normalizedHtml.replace(/^\s*(?:<p\b[^>]*>(?:\s|&nbsp;|<br\s*\/?>)*<\/p>\s*)+/i, '');
 
   return { normalizedHtml, tocItems };
 }
@@ -256,7 +324,10 @@ export function processArticleHtml(rawHtml: string, title: string) {
   // 1. Repair unclosed lists so headings/tables are never swallowed into <li>
   htmlBody = repairUnclosedLists(htmlBody);
 
-  // 2. Normalize Headings
+  // 2. Strip leading paragraph if it only duplicates the title
+  htmlBody = stripDuplicateTitleParagraph(htmlBody, title);
+
+  // 3. Normalize Headings & strip duplicate title headings
   const { normalizedHtml, tocItems } = normalizeHeadingTags(htmlBody, title);
   htmlBody = normalizedHtml;
 
