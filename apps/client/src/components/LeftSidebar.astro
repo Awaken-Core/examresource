@@ -27,7 +27,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
     <div class="sidebar-header h-16 px-4 flex items-center justify-between border-b border-border/60">
       <a href="/" class="flex items-center gap-2.5 group truncate" aria-label={`${siteDomain} home`}>
         <BrandLogo size={36} class="group-hover:scale-105 transition-transform shrink-0" />
-        <div class="sidebar-text flex items-center truncate font-bold text-base tracking-tight text-white">
+        <div class="sidebar-text flex items-center truncate font-bold text-base tracking-tight text-slate-900 dark:text-white">
           <span>{brandPrefix}</span><span class="text-accent">{brandSuffix}</span>
         </div>
       </a>
@@ -290,8 +290,8 @@ const isTestSeries = currentPath.startsWith('/test-series');
       >
         <div class="flex items-center gap-2.5 min-w-0">
           {/* Avatar Circle */}
-          <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform overflow-hidden shadow-xs select-none">
-            <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">DW</span>
+          <div class="w-8 h-8 rounded-full bg-accent/15 dark:bg-accent/25 border border-accent/40 text-accent font-bold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform overflow-hidden shadow-xs select-none">
+            <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase text-accent dark:text-blue-300">DW</span>
           </div>
           <div class="sidebar-text truncate">
             <p class="user-display-name text-body-sm font-bold text-white truncate leading-tight">Devil</p>

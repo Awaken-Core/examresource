@@ -9,6 +9,7 @@ import { ExamModule } from './modules/exam/exam.module.js';
 import { MediaModule } from './modules/media/media.module.js';
 import { NotificationModule } from './modules/notifications/notification.module.js';
 import { QuestionModule } from './modules/question/question.module.js';
+import { TestSeriesModule } from './modules/test-series/test-series.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { QuestionModule } from './modules/question/question.module.js';
     MediaModule,
     NotificationModule,
     QuestionModule,
+    TestSeriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,6 +19,7 @@
     "worker:types": "wrangler types",
     "worker:check": "bun run build && wrangler deploy --dry-run",
     "migrate:pg-to-mongo": "node scripts/migrate-pg-to-mongo.mjs",
+    "seed:test-series": "node scripts/seed-test-series.mjs",
     "lint": "oxlint src/ test/",
     "test": "vitest run",
     "test:watch": "vitest",

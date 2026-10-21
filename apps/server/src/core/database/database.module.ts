@@ -7,6 +7,8 @@ import {
   isWorkerDatabaseProxyEnabled,
 } from './durable-model.js';
 
+import dns from 'node:dns';
+
 @Global()
 @Module({})
 export class DatabaseModule {
@@ -25,6 +27,12 @@ export class DatabaseModule {
       env.DATABASE_URL &&
       mongoose.connection.readyState === 0
     ) {
+      try {
+        dns.setServers(['8.8.8.8', '1.1.1.1']);
+      } catch {
+        // Fallback silently if custom DNS cannot be assigned
+      }
+
       mongoose
         .connect(env.DATABASE_URL, {
           maxPoolSize: 2,

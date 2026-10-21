@@ -12,7 +12,9 @@ describe('ExamService publication and duration rules', () => {
     const exams: any = { findOne: vi.fn() };
     const questions: any = { countDocuments: vi.fn() };
     const attempts: any = { findOne: vi.fn(), findByIdAndUpdate: vi.fn() };
-    return { service: new ExamService(exams, questions, attempts), exams, questions, attempts };
+    const users: any = { findById: vi.fn() };
+    const testSeries: any = { findById: vi.fn() };
+    return { service: new ExamService(exams, questions, attempts, users, testSeries), exams, questions, attempts, users, testSeries };
   }
 
   it('does not start an attempt for a draft exam', async () => {

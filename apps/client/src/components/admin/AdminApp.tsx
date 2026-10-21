@@ -6,8 +6,23 @@ import { CategoriesManager } from './CategoriesManager';
 import { UsersManager } from './UsersManager';
 import { NotificationsManager } from './NotificationsManager';
 import { CategoryModal } from './CategoryModal';
+import { TestSeriesManager } from './TestSeriesManager';
+import { HierarchyManager } from './HierarchyManager';
+import { QuestionBankManager } from './QuestionBankManager';
+import { TestBuilderManager } from './TestBuilderManager';
+import { TestAttemptsManager } from './TestAttemptsManager';
+import type { AdminTestSeries } from './api';
 
-export type AdminTab = 'posts' | 'categories' | 'users' | 'notifications';
+export type AdminTab =
+  | 'posts'
+  | 'categories'
+  | 'users'
+  | 'notifications'
+  | 'series'
+  | 'hierarchy'
+  | 'question-bank'
+  | 'test-builder'
+  | 'attempts';
 
 interface AdminAppProps {
   initialTab?: AdminTab;
@@ -23,6 +38,7 @@ export default function AdminApp({ initialTab = 'posts' }: AdminAppProps) {
 
 function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
+  const [selectedSeriesForNav, setSelectedSeriesForNav] = useState<AdminTestSeries | null>(null);
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [isVerifyingAuth, setIsVerifyingAuth] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -63,8 +79,20 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
         setActiveTab('users');
       } else if (path.includes('/notifications')) {
         setActiveTab('notifications');
+      } else if (path.includes('/attempts')) {
+        setActiveTab('attempts');
+      } else if (path.includes('/series')) {
+        setActiveTab('series');
+      } else if (path.includes('/hierarchy')) {
+        setActiveTab('hierarchy');
+      } else if (path.includes('/question-bank')) {
+        setActiveTab('question-bank');
+      } else if (path.includes('/test-builder')) {
+        setActiveTab('test-builder');
       } else if (window.location.hash === '#categories-section') {
         setActiveTab('categories');
+      } else if (window.location.hash === '#attempts') {
+        setActiveTab('attempts');
       } else {
         setActiveTab('posts');
       }
@@ -82,12 +110,17 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
     let targetUrl = '/admin';
     if (tab === 'users') targetUrl = '/admin/users';
     else if (tab === 'notifications') targetUrl = '/admin/notifications';
+    else if (tab === 'attempts') targetUrl = '/admin#attempts';
+    else if (tab === 'series') targetUrl = '/admin#series';
+    else if (tab === 'hierarchy') targetUrl = '/admin#hierarchy';
+    else if (tab === 'question-bank') targetUrl = '/admin#question-bank';
+    else if (tab === 'test-builder') targetUrl = '/admin#test-builder';
     else if (tab === 'categories') targetUrl = '/admin#categories-section';
 
-    if (window.location.pathname !== targetUrl && targetUrl !== '/admin#categories-section') {
+    if (window.location.pathname !== targetUrl && !targetUrl.includes('#')) {
       window.history.pushState(null, '', targetUrl);
-    } else if (tab === 'categories') {
-      window.history.pushState(null, '', '/admin#categories-section');
+    } else if (targetUrl.includes('#')) {
+      window.history.pushState(null, '', targetUrl);
     } else {
       window.history.pushState(null, '', '/admin');
     }
@@ -192,6 +225,16 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
       ? 'Articles'
       : activeTab === 'categories'
       ? 'Blog Categories'
+      : activeTab === 'series'
+      ? 'Test Series'
+      : activeTab === 'hierarchy'
+      ? 'Subjects & Chapters'
+      : activeTab === 'question-bank'
+      ? 'Question Bank'
+      : activeTab === 'test-builder'
+      ? 'Test Builder'
+      : activeTab === 'attempts'
+      ? 'Student Test Attempts'
       : activeTab === 'users'
       ? 'Users'
       : 'Notifications';
@@ -284,8 +327,90 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
               <span>Write Article</span>
             </a>
 
+            {/* Test Series Platform Management */}
+            <div className="pt-3 pb-1">
+              <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+                Test Series Platform
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => switchTab('series')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${
+                activeTab === 'series'
+                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <svg className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+              <span>Test Series</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => switchTab('hierarchy')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${
+                activeTab === 'hierarchy'
+                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <svg className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+              <span>Subjects & Chapters</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => switchTab('question-bank')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${
+                activeTab === 'question-bank'
+                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <svg className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>Question Bank</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => switchTab('test-builder')}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${
+                activeTab === 'test-builder'
+                  ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <svg className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span>Test Builder</span>
+            </button>
+
             {currentUser?.role === 'admin' && (
               <>
+                <button
+                  type="button"
+                  onClick={() => switchTab('attempts')}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition cursor-pointer text-left ${
+                    activeTab === 'attempts'
+                      ? 'bg-slate-100 dark:bg-zinc-800 text-slate-900 dark:text-white font-semibold'
+                      : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg className="w-4 h-4 text-slate-400 dark:text-zinc-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  </svg>
+                  <span>Test Attempts</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => switchTab('users')}
@@ -489,6 +614,45 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
             {activeTab === 'users' && <UsersManager currentUser={currentUser} />}
 
             {activeTab === 'notifications' && <NotificationsManager />}
+
+            {activeTab === 'series' && (
+              <TestSeriesManager
+                currentUserRole={currentUser?.role}
+                onSelectSeriesForHierarchy={(series) => {
+                  setSelectedSeriesForNav(series);
+                  switchTab('hierarchy');
+                }}
+                onSelectSeriesForTests={(series) => {
+                  setSelectedSeriesForNav(series);
+                  switchTab('test-builder');
+                }}
+              />
+            )}
+
+            {activeTab === 'hierarchy' && (
+              <HierarchyManager
+                initialSeriesId={selectedSeriesForNav?.id || selectedSeriesForNav?._id}
+                onNavigateToTests={(series) => {
+                  setSelectedSeriesForNav(series);
+                  switchTab('test-builder');
+                }}
+              />
+            )}
+
+            {activeTab === 'question-bank' && (
+              <QuestionBankManager currentUserRole={currentUser?.role} />
+            )}
+
+            {activeTab === 'test-builder' && (
+              <TestBuilderManager
+                currentUserRole={currentUser?.role}
+                initialSeriesId={selectedSeriesForNav?.id || selectedSeriesForNav?._id}
+              />
+            )}
+
+            {activeTab === 'attempts' && (
+              <TestAttemptsManager />
+            )}
           </div>
         </main>
       </div>

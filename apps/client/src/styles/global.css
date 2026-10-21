@@ -42,7 +42,7 @@
   --color-canvas: var(--color-canvas);
   --color-surface: var(--color-surface);
   --color-surface-raised: var(--color-surface-raised);
-  --color-white: var(--color-white);
+  --color-text-body: var(--color-text-body);
   --color-muted: var(--color-muted);
   --color-border: var(--color-border);
   --color-subtle: var(--color-subtle);
@@ -176,7 +176,7 @@
 @layer base {
   html {
     background-color: var(--color-canvas);
-    color: var(--color-white);
+    color: var(--color-text-body);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -238,7 +238,7 @@
 
   .btn-secondary {
     background-color: var(--color-primary);
-    color: var(--color-white);
+    color: #FFFFFF;
     font-weight: 500;
     font-size: 14px;
     line-height: 1.5;
@@ -264,7 +264,7 @@
 
   .btn-ghost {
     background-color: var(--color-subtle);
-    color: var(--color-white);
+    color: var(--color-text-body);
     font-weight: 500;
     font-size: 14px;
     line-height: 1.5;
@@ -952,7 +952,8 @@ html.admin-theme.theme-dark .library-icon {
   --color-canvas: #F8F9FA;
   --color-surface: #FFFFFF;
   --color-surface-raised: #F1F3F5;
-  --color-white: #111827;
+  --color-text-body: #111827;
+  --color-white: #FFFFFF;
   --color-muted: #4B5563; /* gray-600, WCAG AA compliant ~7:1 against white */
   --color-border: #E5E7EB;
   --color-subtle: #F3F4F6;
@@ -960,6 +961,61 @@ html.admin-theme.theme-dark .library-icon {
   --shadow-elevated: 0px 10px 25px -5px rgba(0, 0, 0, 0.08), 0px 8px 10px -6px rgba(0, 0, 0, 0.04);
   --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.08);
   color-scheme: light;
+}
+
+/* In light mode, bare text-white across general content must adapt to high-contrast dark body text,
+   except on deliberate colored badges/buttons (like bg-accent, bg-blue-*, etc.) where white text is desired. */
+html:not(.theme-dark) body {
+  color: #111827 !important;
+}
+
+/* Light mode text contrast overrides for dark-first utility classes */
+html:not(.theme-dark) :is(h1, h2, h3, h4, h5, h6).text-white,
+html:not(.theme-dark) p.text-white,
+html:not(.theme-dark) span.text-white:not(.app-lang-btn):not([class*="bg-"]):not([class*="badge"]),
+html:not(.theme-dark) a.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]),
+html:not(.theme-dark) div.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not([class*="bg-slate-900"]):not([class*="bg-slate-800"]) {
+  color: #111827 !important;
+}
+
+/* Opacity variants of white in light mode */
+html:not(.theme-dark) :is(.text-white\/90, .text-white\/95, .text-white\/80, .text-white\/70) {
+  color: #1F2937 !important;
+}
+
+/* Light mode adjustments for slate text used as body/question text */
+html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-300:not([class*="bg-slate-"]):not([class*="bg-gray-"]) {
+  color: #374151 !important;
+}
+
+html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-400:not([class*="bg-slate-"]):not([class*="bg-gray-"]) {
+  color: #4B5563 !important;
+}
+
+/* Hover text-white in navigation/buttons should turn to solid dark in light mode */
+html:not(.theme-dark) .hover\:text-white:hover {
+  color: #111827 !important;
+}
+
+/* Sidebar and Header branding */
+html:not(.theme-dark) .sidebar-text.text-white,
+html:not(.theme-dark) .user-display-name.text-white {
+  color: #111827 !important;
+}
+
+/* Avatar initials contrast */
+html:not(.theme-dark) .user-avatar-initials {
+  color: var(--color-accent) !important;
+}
+
+html.theme-dark .user-avatar-initials {
+  color: #93C5FD !important;
+}
+
+/* Ensure svg icons inherit proper dark color when text-muted/hover:text-white is used */
+html:not(.theme-dark) button:hover > svg.text-muted,
+html:not(.theme-dark) a:hover > svg.text-muted {
+  color: #111827 !important;
 }
 
 /* ============================================================
@@ -970,6 +1026,7 @@ html.admin-theme.theme-dark .library-icon {
   --color-canvas: #131316;
   --color-surface: #1C1B1F;
   --color-surface-raised: #252528;
+  --color-text-body: #FFFFFF;
   --color-white: #FFFFFF;
   --color-muted: #A0A0A3;
   --color-border: #2A2925;

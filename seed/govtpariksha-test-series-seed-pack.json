@@ -1,0 +1,4173 @@
+{
+  "meta": {
+    "title": "GovtPariksha Test Series Demo Seed Pack",
+    "version": "1.0.0",
+    "demoOnly": true,
+    "intendedUse": "Local development and UI end-to-end testing only. Questions are original sample content, not official exam papers.",
+    "counts": {
+      "testSeries": 5,
+      "globalSubjects": 8,
+      "examSubjectAssignments": 15,
+      "chapters": 15,
+      "uniqueQuestions": 32,
+      "questionMappings": 60,
+      "subjectWiseTests": 10,
+      "chapterWiseTests": 10,
+      "fullTests": 10,
+      "totalTests": 30,
+      "fullTestSections": 30
+    }
+  },
+  "sharedSubjects": [
+    {
+      "slug": "quantitative-aptitude",
+      "name": "Quantitative Aptitude"
+    },
+    {
+      "slug": "reasoning",
+      "name": "Reasoning"
+    },
+    {
+      "slug": "general-awareness",
+      "name": "General Awareness"
+    },
+    {
+      "slug": "english-language",
+      "name": "English Language"
+    },
+    {
+      "slug": "indian-polity",
+      "name": "Indian Polity"
+    },
+    {
+      "slug": "history",
+      "name": "History"
+    },
+    {
+      "slug": "geography",
+      "name": "Geography"
+    },
+    {
+      "slug": "bihar-general-knowledge",
+      "name": "Bihar General Knowledge"
+    }
+  ],
+  "testSeries": [
+    {
+      "slug": "rrb-ntpc-graduate",
+      "title": "RRB NTPC Graduate Level",
+      "targetExam": "RRB NTPC Graduate Level",
+      "category": "ssc-railways",
+      "description": "Original demo practice tests for Railway recruitment exam preparation.",
+      "status": "published",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "accessType": "freemium",
+      "subjects": [
+        {
+          "subjectSlug": "quantitative-aptitude",
+          "displayName": "Mathematics",
+          "chapterSlug": "rrb-number-system-and-percentages",
+          "chapterName": "Number System & Percentages"
+        },
+        {
+          "subjectSlug": "reasoning",
+          "displayName": "General Intelligence & Reasoning",
+          "chapterSlug": "rrb-series-and-analogy",
+          "chapterName": "Number Series & Analogy"
+        },
+        {
+          "subjectSlug": "general-awareness",
+          "displayName": "General Awareness",
+          "chapterSlug": "rrb-indian-general-awareness",
+          "chapterName": "Indian General Awareness"
+        }
+      ]
+    },
+    {
+      "slug": "ssc-cgl-tier1-tier2",
+      "title": "SSC CGL Tier 1 & Tier 2",
+      "targetExam": "SSC CGL",
+      "category": "ssc-railways",
+      "description": "Original demo practice tests for quantitative aptitude, reasoning and English.",
+      "status": "published",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "accessType": "freemium",
+      "subjects": [
+        {
+          "subjectSlug": "quantitative-aptitude",
+          "displayName": "Quantitative Aptitude",
+          "chapterSlug": "ssc-arithmetic-and-percentages",
+          "chapterName": "Arithmetic & Percentages"
+        },
+        {
+          "subjectSlug": "reasoning",
+          "displayName": "General Intelligence & Reasoning",
+          "chapterSlug": "ssc-logical-reasoning-basics",
+          "chapterName": "Logical Reasoning Basics"
+        },
+        {
+          "subjectSlug": "english-language",
+          "displayName": "English Language",
+          "chapterSlug": "ssc-grammar-and-vocabulary",
+          "chapterName": "Grammar & Vocabulary"
+        }
+      ]
+    },
+    {
+      "slug": "ibps-po-complete",
+      "title": "IBPS PO Complete Series",
+      "targetExam": "IBPS PO",
+      "category": "banking",
+      "description": "Original demo practice tests for banking recruitment exams.",
+      "status": "published",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "accessType": "freemium",
+      "subjects": [
+        {
+          "subjectSlug": "quantitative-aptitude",
+          "displayName": "Quantitative Aptitude",
+          "chapterSlug": "ibps-quantitative-aptitude-basics",
+          "chapterName": "Quantitative Aptitude Basics"
+        },
+        {
+          "subjectSlug": "reasoning",
+          "displayName": "Reasoning Ability",
+          "chapterSlug": "ibps-logical-reasoning-basics",
+          "chapterName": "Logical Reasoning Basics"
+        },
+        {
+          "subjectSlug": "english-language",
+          "displayName": "English Language",
+          "chapterSlug": "ibps-english-language-basics",
+          "chapterName": "English Language Basics"
+        }
+      ]
+    },
+    {
+      "slug": "upsc-civil-services-prelims",
+      "title": "UPSC Civil Services Prelims",
+      "targetExam": "UPSC Civil Services Prelims",
+      "category": "central-government",
+      "description": "Original demo practice tests for Civil Services preliminary preparation.",
+      "status": "published",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "accessType": "freemium",
+      "subjects": [
+        {
+          "subjectSlug": "indian-polity",
+          "displayName": "Indian Polity",
+          "chapterSlug": "upsc-constitution-and-governance",
+          "chapterName": "Constitution & Governance"
+        },
+        {
+          "subjectSlug": "history",
+          "displayName": "History",
+          "chapterSlug": "upsc-modern-indian-history",
+          "chapterName": "Modern Indian History"
+        },
+        {
+          "subjectSlug": "geography",
+          "displayName": "Geography",
+          "chapterSlug": "upsc-indian-physical-geography",
+          "chapterName": "Indian Physical Geography"
+        }
+      ]
+    },
+    {
+      "slug": "bihar-bpsc-prelims",
+      "title": "Bihar BPSC Prelims",
+      "targetExam": "Bihar BPSC Prelims",
+      "category": "state-exams",
+      "description": "Original demo practice tests for Bihar state civil services preparation.",
+      "status": "published",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "accessType": "freemium",
+      "subjects": [
+        {
+          "subjectSlug": "history",
+          "displayName": "History",
+          "chapterSlug": "bpsc-modern-history-basics",
+          "chapterName": "Modern History Basics"
+        },
+        {
+          "subjectSlug": "bihar-general-knowledge",
+          "displayName": "Bihar General Knowledge",
+          "chapterSlug": "bpsc-bihar-history-and-culture",
+          "chapterName": "Bihar History & Culture"
+        },
+        {
+          "subjectSlug": "indian-polity",
+          "displayName": "Indian Polity",
+          "chapterSlug": "bpsc-constitution-and-governance",
+          "chapterName": "Constitution & Governance"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "slug": "qa-001",
+      "subjectSlug": "quantitative-aptitude",
+      "subjectName": "Quantitative Aptitude",
+      "content": "What is 25% of 240?",
+      "translations": {
+        "hi": "240 का 25% कितना है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "40",
+          "translations": {
+            "hi": "40"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "50",
+          "translations": {
+            "hi": "50"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "60",
+          "translations": {
+            "hi": "60"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "80",
+          "translations": {
+            "hi": "80"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "25% is one quarter. 240 ÷ 4 = 60.",
+      "explanationTranslations": {
+        "hi": "25% का अर्थ एक-चौथाई है। 240 ÷ 4 = 60।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "percentage",
+        "arithmetic"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "qa-002",
+      "subjectSlug": "quantitative-aptitude",
+      "subjectName": "Quantitative Aptitude",
+      "content": "The ratio of boys to girls in a class is 3:5. If there are 64 students, how many are boys?",
+      "translations": {
+        "hi": "एक कक्षा में लड़कों और लड़कियों का अनुपात 3:5 है। यदि कुल 64 विद्यार्थी हैं, तो लड़के कितने हैं?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "24",
+          "translations": {
+            "hi": "24"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "32",
+          "translations": {
+            "hi": "32"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "40",
+          "translations": {
+            "hi": "40"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "16",
+          "translations": {
+            "hi": "16"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Total ratio parts = 3 + 5 = 8. One part is 64 ÷ 8 = 8, so boys = 3 × 8 = 24.",
+      "explanationTranslations": {
+        "hi": "अनुपात के कुल भाग = 3 + 5 = 8। एक भाग = 64 ÷ 8 = 8, इसलिए लड़के = 3 × 8 = 24।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "ratio",
+        "arithmetic"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "qa-003",
+      "subjectSlug": "quantitative-aptitude",
+      "subjectName": "Quantitative Aptitude",
+      "content": "Find the simple interest on ₹2,000 at 5% per year for 2 years.",
+      "translations": {
+        "hi": "₹2,000 पर 5% वार्षिक दर से 2 वर्ष का साधारण ब्याज कितना होगा?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "₹100",
+          "translations": {
+            "hi": "₹100"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "₹150",
+          "translations": {
+            "hi": "₹150"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "₹200",
+          "translations": {
+            "hi": "₹200"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "₹250",
+          "translations": {
+            "hi": "₹250"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Simple interest = Principal × Rate × Time ÷ 100 = 2000 × 5 × 2 ÷ 100 = ₹200.",
+      "explanationTranslations": {
+        "hi": "साधारण ब्याज = मूलधन × दर × समय ÷ 100 = 2000 × 5 × 2 ÷ 100 = ₹200।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "simple-interest",
+        "arithmetic"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "qa-004",
+      "subjectSlug": "quantitative-aptitude",
+      "subjectName": "Quantitative Aptitude",
+      "content": "What is 15% of 200? Enter the number only.",
+      "translations": {
+        "hi": "200 का 15% कितना है? केवल संख्या दर्ज करें।"
+      },
+      "type": "numerical",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [],
+      "correctOptionKeys": [],
+      "numericalAnswer": "30",
+      "explanation": "10% of 200 is 20 and 5% is 10. Together, 15% is 30.",
+      "explanationTranslations": {
+        "hi": "200 का 10% = 20 और 5% = 10। इसलिए 15% = 30।"
+      },
+      "marks": 1,
+      "negativeMarks": 0,
+      "tags": [
+        "percentage",
+        "numerical-answer"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "rs-001",
+      "subjectSlug": "reasoning",
+      "subjectName": "Reasoning",
+      "content": "Find the next number in the series: 2, 6, 12, 20, 30, __.",
+      "translations": {
+        "hi": "श्रृंखला में अगली संख्या ज्ञात करें: 2, 6, 12, 20, 30, __।"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "36",
+          "translations": {
+            "hi": "36"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "40",
+          "translations": {
+            "hi": "40"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "42",
+          "translations": {
+            "hi": "42"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "44",
+          "translations": {
+            "hi": "44"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The differences are 4, 6, 8, and 10. The next difference is 12, so 30 + 12 = 42.",
+      "explanationTranslations": {
+        "hi": "अंतर 4, 6, 8 और 10 हैं। अगला अंतर 12 होगा, इसलिए 30 + 12 = 42।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "number-series",
+        "logical-reasoning"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "rs-002",
+      "subjectSlug": "reasoning",
+      "subjectName": "Reasoning",
+      "content": "Bird is related to Nest in the same way as Bee is related to:",
+      "translations": {
+        "hi": "जिस प्रकार पक्षी का संबंध घोंसले से है, उसी प्रकार मधुमक्खी का संबंध किससे है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Web",
+          "translations": {
+            "hi": "जाला"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Hive",
+          "translations": {
+            "hi": "छत्ता"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "Stable",
+          "translations": {
+            "hi": "अस्तबल"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Burrow",
+          "translations": {
+            "hi": "बिल"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "A bird lives in a nest; a bee lives in a hive.",
+      "explanationTranslations": {
+        "hi": "पक्षी घोंसले में रहता है और मधुमक्खी छत्ते में रहती है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "analogy",
+        "logical-reasoning"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "rs-003",
+      "subjectSlug": "reasoning",
+      "subjectName": "Reasoning",
+      "content": "Select all numbers divisible by 3.",
+      "translations": {
+        "hi": "वे सभी संख्याएँ चुनें जो 3 से विभाज्य हैं।"
+      },
+      "type": "multiple_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "12",
+          "translations": {
+            "hi": "12"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "14",
+          "translations": {
+            "hi": "14"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "18",
+          "translations": {
+            "hi": "18"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "22",
+          "translations": {
+            "hi": "22"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A",
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "12 ÷ 3 = 4 and 18 ÷ 3 = 6, so both are divisible by 3. Fourteen and twenty-two are not divisible by 3.",
+      "explanationTranslations": {
+        "hi": "12 ÷ 3 = 4 और 18 ÷ 3 = 6, इसलिए दोनों 3 से विभाज्य हैं। 14 और 22, 3 से विभाज्य नहीं हैं।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "divisibility",
+        "multiple-correct"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "rs-004",
+      "subjectSlug": "reasoning",
+      "subjectName": "Reasoning",
+      "content": "Find the next number: 3, 8, 15, 24, __. Enter the number only.",
+      "translations": {
+        "hi": "अगली संख्या ज्ञात करें: 3, 8, 15, 24, __। केवल संख्या दर्ज करें।"
+      },
+      "type": "numerical",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [],
+      "correctOptionKeys": [],
+      "numericalAnswer": "35",
+      "explanation": "The differences are 5, 7, and 9. The next difference is 11, so 24 + 11 = 35.",
+      "explanationTranslations": {
+        "hi": "अंतर 5, 7 और 9 हैं। अगला अंतर 11 होगा, इसलिए 24 + 11 = 35।"
+      },
+      "marks": 1,
+      "negativeMarks": 0,
+      "tags": [
+        "number-series",
+        "numerical-answer"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ga-001",
+      "subjectSlug": "general-awareness",
+      "subjectName": "General Awareness",
+      "content": "On which date did the Constitution of India come into effect?",
+      "translations": {
+        "hi": "भारत का संविधान किस तारीख को लागू हुआ?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "15 August 1947",
+          "translations": {
+            "hi": "15 अगस्त 1947"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "26 January 1950",
+          "translations": {
+            "hi": "26 जनवरी 1950"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "26 November 1949",
+          "translations": {
+            "hi": "26 नवंबर 1949"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "2 October 1950",
+          "translations": {
+            "hi": "2 अक्टूबर 1950"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Constitution of India came into effect on 26 January 1950, celebrated as Republic Day.",
+      "explanationTranslations": {
+        "hi": "भारत का संविधान 26 जनवरी 1950 को लागू हुआ। यह दिन गणतंत्र दिवस के रूप में मनाया जाता है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "indian-constitution",
+        "national-dates"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ga-002",
+      "subjectSlug": "general-awareness",
+      "subjectName": "General Awareness",
+      "content": "Which river is commonly regarded as the longest river flowing entirely within India?",
+      "translations": {
+        "hi": "भारत की सीमाओं के भीतर बहने वाली सबसे लंबी नदी सामान्यतः किसे माना जाता है?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Narmada",
+          "translations": {
+            "hi": "नर्मदा"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Krishna",
+          "translations": {
+            "hi": "कृष्णा"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "Godavari",
+          "translations": {
+            "hi": "गोदावरी"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "Kaveri",
+          "translations": {
+            "hi": "कावेरी"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Godavari is widely described as the longest river flowing entirely within India.",
+      "explanationTranslations": {
+        "hi": "गोदावरी को सामान्यतः भारत की सीमाओं के भीतर बहने वाली सबसे लंबी नदी माना जाता है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "indian-geography",
+        "rivers"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ga-003",
+      "subjectSlug": "general-awareness",
+      "subjectName": "General Awareness",
+      "content": "In which year did the Reserve Bank of India begin operations?",
+      "translations": {
+        "hi": "भारतीय रिज़र्व बैंक ने किस वर्ष काम करना शुरू किया?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "1925",
+          "translations": {
+            "hi": "1925"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "1935",
+          "translations": {
+            "hi": "1935"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "1947",
+          "translations": {
+            "hi": "1947"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "1950",
+          "translations": {
+            "hi": "1950"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Reserve Bank of India began operations on 1 April 1935.",
+      "explanationTranslations": {
+        "hi": "भारतीय रिज़र्व बैंक ने 1 अप्रैल 1935 को काम करना शुरू किया।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "banking-awareness",
+        "rbi"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ga-004",
+      "subjectSlug": "general-awareness",
+      "subjectName": "General Awareness",
+      "content": "Which Constitutional Amendment added the Fundamental Duties to the Constitution of India?",
+      "translations": {
+        "hi": "भारत के संविधान में मौलिक कर्तव्यों को किस संविधान संशोधन द्वारा जोड़ा गया?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "24th Amendment",
+          "translations": {
+            "hi": "24वाँ संशोधन"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "42nd Amendment",
+          "translations": {
+            "hi": "42वाँ संशोधन"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "44th Amendment",
+          "translations": {
+            "hi": "44वाँ संशोधन"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "52nd Amendment",
+          "translations": {
+            "hi": "52वाँ संशोधन"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The 42nd Constitutional Amendment Act of 1976 added Fundamental Duties.",
+      "explanationTranslations": {
+        "hi": "1976 के 42वें संविधान संशोधन अधिनियम द्वारा मौलिक कर्तव्य जोड़े गए।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "indian-constitution",
+        "amendments"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "en-001",
+      "subjectSlug": "english-language",
+      "subjectName": "English Language",
+      "content": "Choose the synonym of “concise”.",
+      "translations": {
+        "hi": "“Concise” शब्द का समानार्थी चुनें।"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Brief",
+          "translations": {
+            "hi": "संक्षिप्त"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "Confusing",
+          "translations": {
+            "hi": "भ्रमित करने वाला"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "Lengthy",
+          "translations": {
+            "hi": "लंबा"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Unclear",
+          "translations": {
+            "hi": "अस्पष्ट"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A"
+      ],
+      "numericalAnswer": null,
+      "explanation": "“Concise” means brief and expressed in few words.",
+      "explanationTranslations": {
+        "hi": "“Concise” का अर्थ कम शब्दों में स्पष्ट रूप से व्यक्त किया गया है, यानी संक्षिप्त।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "vocabulary",
+        "synonyms"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "en-002",
+      "subjectSlug": "english-language",
+      "subjectName": "English Language",
+      "content": "Choose the correct preposition: “She is interested ___ learning languages.”",
+      "translations": {
+        "hi": "सही preposition चुनें: “She is interested ___ learning languages.”"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "on",
+          "translations": {
+            "hi": "on"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "at",
+          "translations": {
+            "hi": "at"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "in",
+          "translations": {
+            "hi": "in"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "for",
+          "translations": {
+            "hi": "for"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The standard expression is “interested in” something or doing something.",
+      "explanationTranslations": {
+        "hi": "सही प्रयोग “interested in” है, जैसे किसी काम या विषय में रुचि होना।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "grammar",
+        "prepositions"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "en-003",
+      "subjectSlug": "english-language",
+      "subjectName": "English Language",
+      "content": "Choose the grammatically correct sentence.",
+      "translations": {
+        "hi": "व्याकरण की दृष्टि से सही वाक्य चुनें।"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "He do not like tea.",
+          "translations": {
+            "hi": "He do not like tea."
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "He does not likes tea.",
+          "translations": {
+            "hi": "He does not likes tea."
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "He does not like tea.",
+          "translations": {
+            "hi": "He does not like tea."
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "He not like tea.",
+          "translations": {
+            "hi": "He not like tea."
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "With “he” in the present simple negative, use “does not” followed by the base verb “like”.",
+      "explanationTranslations": {
+        "hi": "Present Simple के negative वाक्य में “he” के साथ “does not” और उसके बाद verb का मूल रूप “like” आता है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "grammar",
+        "present-simple"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "en-004",
+      "subjectSlug": "english-language",
+      "subjectName": "English Language",
+      "content": "Choose the correct passive voice: “The committee approved the proposal.”",
+      "translations": {
+        "hi": "सही passive voice चुनें: “The committee approved the proposal.”"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "The proposal approves the committee.",
+          "translations": {
+            "hi": "The proposal approves the committee."
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "The proposal was approved by the committee.",
+          "translations": {
+            "hi": "The proposal was approved by the committee."
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "The proposal has approve by the committee.",
+          "translations": {
+            "hi": "The proposal has approve by the committee."
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "The committee was approved by the proposal.",
+          "translations": {
+            "hi": "The committee was approved by the proposal."
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The simple past passive uses “was/were + past participle”: “was approved”.",
+      "explanationTranslations": {
+        "hi": "Simple Past Passive में “was/were + past participle” लगता है, इसलिए “was approved” सही है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "grammar",
+        "passive-voice"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ip-001",
+      "subjectSlug": "indian-polity",
+      "subjectName": "Indian Polity",
+      "content": "Article 21 of the Constitution of India protects which right?",
+      "translations": {
+        "hi": "भारत के संविधान का अनुच्छेद 21 किस अधिकार की रक्षा करता है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Right to Property",
+          "translations": {
+            "hi": "संपत्ति का अधिकार"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Right to Life and Personal Liberty",
+          "translations": {
+            "hi": "जीवन और व्यक्तिगत स्वतंत्रता का अधिकार"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "Right to Vote",
+          "translations": {
+            "hi": "मतदान का अधिकार"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Right against Exploitation only",
+          "translations": {
+            "hi": "केवल शोषण के विरुद्ध अधिकार"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Article 21 protects life and personal liberty, subject to the procedure established by law.",
+      "explanationTranslations": {
+        "hi": "अनुच्छेद 21 कानून द्वारा स्थापित प्रक्रिया के अनुसार जीवन और व्यक्तिगत स्वतंत्रता की रक्षा करता है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "constitution",
+        "fundamental-rights"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ip-002",
+      "subjectSlug": "indian-polity",
+      "subjectName": "Indian Polity",
+      "content": "What is the normal term of the Lok Sabha, unless dissolved earlier?",
+      "translations": {
+        "hi": "समय से पहले भंग न होने पर लोकसभा का सामान्य कार्यकाल कितना होता है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Four years",
+          "translations": {
+            "hi": "चार वर्ष"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Five years",
+          "translations": {
+            "hi": "पाँच वर्ष"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "Six years",
+          "translations": {
+            "hi": "छह वर्ष"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Seven years",
+          "translations": {
+            "hi": "सात वर्ष"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The normal term of the Lok Sabha is five years from its first meeting, unless dissolved earlier.",
+      "explanationTranslations": {
+        "hi": "समय से पहले भंग न होने पर लोकसभा का सामान्य कार्यकाल उसकी पहली बैठक से पाँच वर्ष होता है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "parliament",
+        "lok-sabha"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ip-003",
+      "subjectSlug": "indian-polity",
+      "subjectName": "Indian Polity",
+      "content": "Who elects the President of India?",
+      "translations": {
+        "hi": "भारत के राष्ट्रपति का चुनाव कौन करता है?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "All citizens by direct vote",
+          "translations": {
+            "hi": "सभी नागरिक प्रत्यक्ष मतदान से"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Only the Lok Sabha members",
+          "translations": {
+            "hi": "केवल लोकसभा के सदस्य"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "An electoral college specified by the Constitution",
+          "translations": {
+            "hi": "संविधान द्वारा निर्दिष्ट निर्वाचक मंडल"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "The Prime Minister alone",
+          "translations": {
+            "hi": "केवल प्रधानमंत्री"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The President is elected by an electoral college consisting of elected MPs and elected MLAs of states and eligible Union Territories.",
+      "explanationTranslations": {
+        "hi": "राष्ट्रपति का चुनाव निर्वाचक मंडल करता है, जिसमें निर्वाचित सांसद तथा राज्यों और पात्र केंद्रशासित प्रदेशों के निर्वाचित विधायक शामिल होते हैं।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "president",
+        "elections"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "ip-004",
+      "subjectSlug": "indian-polity",
+      "subjectName": "Indian Polity",
+      "content": "Which Constitutional Amendment gave constitutional status to Panchayati Raj institutions?",
+      "translations": {
+        "hi": "किस संविधान संशोधन ने पंचायती राज संस्थाओं को संवैधानिक दर्जा दिया?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "42nd Amendment",
+          "translations": {
+            "hi": "42वाँ संशोधन"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "52nd Amendment",
+          "translations": {
+            "hi": "52वाँ संशोधन"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "73rd Amendment",
+          "translations": {
+            "hi": "73वाँ संशोधन"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "86th Amendment",
+          "translations": {
+            "hi": "86वाँ संशोधन"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The 73rd Constitutional Amendment introduced constitutional provisions for Panchayati Raj institutions.",
+      "explanationTranslations": {
+        "hi": "73वें संविधान संशोधन ने पंचायती राज संस्थाओं के लिए संवैधानिक प्रावधान किए।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "panchayati-raj",
+        "amendments"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "hi-001",
+      "subjectSlug": "history",
+      "subjectName": "History",
+      "content": "The Battle of Plassey was fought in which year?",
+      "translations": {
+        "hi": "प्लासी का युद्ध किस वर्ष लड़ा गया था?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "1757",
+          "translations": {
+            "hi": "1757"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "1764",
+          "translations": {
+            "hi": "1764"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "1773",
+          "translations": {
+            "hi": "1773"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "1857",
+          "translations": {
+            "hi": "1857"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Battle of Plassey was fought in 1757 between the forces of the East India Company and the Nawab of Bengal’s forces.",
+      "explanationTranslations": {
+        "hi": "प्लासी का युद्ध 1757 में ईस्ट इंडिया कंपनी की सेना और बंगाल के नवाब की सेना के बीच हुआ था।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "modern-history",
+        "battle-of-plassey"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "hi-002",
+      "subjectSlug": "history",
+      "subjectName": "History",
+      "content": "In which year was the Quit India Movement launched?",
+      "translations": {
+        "hi": "भारत छोड़ो आंदोलन किस वर्ष शुरू किया गया था?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "1919",
+          "translations": {
+            "hi": "1919"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "1930",
+          "translations": {
+            "hi": "1930"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "1942",
+          "translations": {
+            "hi": "1942"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "1947",
+          "translations": {
+            "hi": "1947"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Quit India Movement was launched in August 1942.",
+      "explanationTranslations": {
+        "hi": "भारत छोड़ो आंदोलन अगस्त 1942 में शुरू हुआ था।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "freedom-movement",
+        "quit-india"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "hi-003",
+      "subjectSlug": "history",
+      "subjectName": "History",
+      "content": "Who founded the Maurya Empire?",
+      "translations": {
+        "hi": "मौर्य साम्राज्य की स्थापना किसने की थी?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Ashoka",
+          "translations": {
+            "hi": "अशोक"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Chandragupta Maurya",
+          "translations": {
+            "hi": "चंद्रगुप्त मौर्य"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "Bindusara",
+          "translations": {
+            "hi": "बिंदुसार"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Harsha",
+          "translations": {
+            "hi": "हर्ष"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Chandragupta Maurya founded the Maurya Empire in the late fourth century BCE.",
+      "explanationTranslations": {
+        "hi": "चंद्रगुप्त मौर्य ने चौथी शताब्दी ईसा पूर्व के उत्तरार्ध में मौर्य साम्राज्य की स्थापना की।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "ancient-history",
+        "maurya"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "hi-004",
+      "subjectSlug": "history",
+      "subjectName": "History",
+      "content": "The Salt March led by Mahatma Gandhi began in which year?",
+      "translations": {
+        "hi": "महात्मा गांधी के नेतृत्व में नमक सत्याग्रह किस वर्ष शुरू हुआ?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "1920",
+          "translations": {
+            "hi": "1920"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "1928",
+          "translations": {
+            "hi": "1928"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "1930",
+          "translations": {
+            "hi": "1930"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "1935",
+          "translations": {
+            "hi": "1935"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Salt March began in March 1930 as part of the Civil Disobedience Movement.",
+      "explanationTranslations": {
+        "hi": "नमक सत्याग्रह मार्च 1930 में सविनय अवज्ञा आंदोलन के भाग के रूप में शुरू हुआ।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "freedom-movement",
+        "salt-march"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "geo-001",
+      "subjectSlug": "geography",
+      "subjectName": "Geography",
+      "content": "Which is the largest Indian state by area?",
+      "translations": {
+        "hi": "क्षेत्रफल के आधार पर भारत का सबसे बड़ा राज्य कौन-सा है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Madhya Pradesh",
+          "translations": {
+            "hi": "मध्य प्रदेश"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Maharashtra",
+          "translations": {
+            "hi": "महाराष्ट्र"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "Rajasthan",
+          "translations": {
+            "hi": "राजस्थान"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "Uttar Pradesh",
+          "translations": {
+            "hi": "उत्तर प्रदेश"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Rajasthan is the largest Indian state by area.",
+      "explanationTranslations": {
+        "hi": "क्षेत्रफल के आधार पर राजस्थान भारत का सबसे बड़ा राज्य है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "indian-geography",
+        "states"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "geo-002",
+      "subjectSlug": "geography",
+      "subjectName": "Geography",
+      "content": "Through how many Indian states does the Tropic of Cancer pass?",
+      "translations": {
+        "hi": "कर्क रेखा भारत के कितने राज्यों से होकर गुजरती है?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "6",
+          "translations": {
+            "hi": "6"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "7",
+          "translations": {
+            "hi": "7"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "8",
+          "translations": {
+            "hi": "8"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "9",
+          "translations": {
+            "hi": "9"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Tropic of Cancer passes through eight Indian states.",
+      "explanationTranslations": {
+        "hi": "कर्क रेखा भारत के आठ राज्यों से होकर गुजरती है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "latitude",
+        "indian-geography"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "geo-003",
+      "subjectSlug": "geography",
+      "subjectName": "Geography",
+      "content": "Chilika Lake is located in which Indian state?",
+      "translations": {
+        "hi": "चिलिका झील भारत के किस राज्य में स्थित है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Odisha",
+          "translations": {
+            "hi": "ओडिशा"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "Gujarat",
+          "translations": {
+            "hi": "गुजरात"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "Kerala",
+          "translations": {
+            "hi": "केरल"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Assam",
+          "translations": {
+            "hi": "असम"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Chilika Lake is a brackish-water lagoon on the coast of Odisha.",
+      "explanationTranslations": {
+        "hi": "चिलिका झील ओडिशा के तट पर स्थित खारे-मीठे पानी की लैगून है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "lakes",
+        "indian-geography"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "geo-004",
+      "subjectSlug": "geography",
+      "subjectName": "Geography",
+      "content": "The Deccan Plateau occupies a large part of which region of India?",
+      "translations": {
+        "hi": "दक्कन का पठार भारत के किस क्षेत्र के बड़े भाग में फैला है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Northern Himalayan region",
+          "translations": {
+            "hi": "उत्तरी हिमालयी क्षेत्र"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Peninsular India",
+          "translations": {
+            "hi": "प्रायद्वीपीय भारत"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "Thar Desert only",
+          "translations": {
+            "hi": "केवल थार मरुस्थल"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Ganga delta only",
+          "translations": {
+            "hi": "केवल गंगा डेल्टा"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The Deccan Plateau occupies a large part of southern and central peninsular India.",
+      "explanationTranslations": {
+        "hi": "दक्कन का पठार दक्षिणी और मध्य प्रायद्वीपीय भारत के बड़े भाग में फैला है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "physiography",
+        "plateaus"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "bg-001",
+      "subjectSlug": "bihar-general-knowledge",
+      "subjectName": "Bihar General Knowledge",
+      "content": "What is the capital of Bihar?",
+      "translations": {
+        "hi": "बिहार की राजधानी क्या है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Gaya",
+          "translations": {
+            "hi": "गया"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "Patna",
+          "translations": {
+            "hi": "पटना"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "Bhagalpur",
+          "translations": {
+            "hi": "भागलपुर"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "Muzaffarpur",
+          "translations": {
+            "hi": "मुजफ्फरपुर"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Patna is the capital of Bihar.",
+      "explanationTranslations": {
+        "hi": "पटना बिहार की राजधानी है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "bihar-basics",
+        "capital"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "bg-002",
+      "subjectSlug": "bihar-general-knowledge",
+      "subjectName": "Bihar General Knowledge",
+      "content": "Bihar Diwas is observed on which date?",
+      "translations": {
+        "hi": "बिहार दिवस किस तारीख को मनाया जाता है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "15 January",
+          "translations": {
+            "hi": "15 जनवरी"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "22 March",
+          "translations": {
+            "hi": "22 मार्च"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "15 August",
+          "translations": {
+            "hi": "15 अगस्त"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "2 October",
+          "translations": {
+            "hi": "2 अक्टूबर"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Bihar Diwas is observed on 22 March, commemorating the formation of Bihar as a separate province in 1912.",
+      "explanationTranslations": {
+        "hi": "बिहार दिवस 22 मार्च को मनाया जाता है। यह 1912 में बिहार के अलग प्रांत बनने की याद दिलाता है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "bihar-history",
+        "bihar-diwas"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "bg-003",
+      "subjectSlug": "bihar-general-knowledge",
+      "subjectName": "Bihar General Knowledge",
+      "content": "Vikramshila Mahavihara is associated with which historical tradition?",
+      "translations": {
+        "hi": "विक्रमशिला महाविहार किस ऐतिहासिक परंपरा से जुड़ा है?"
+      },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Ancient Buddhist learning",
+          "translations": {
+            "hi": "प्राचीन बौद्ध शिक्षा"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "Roman architecture",
+          "translations": {
+            "hi": "रोमन वास्तुकला"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "Mughal naval training",
+          "translations": {
+            "hi": "मुगल नौसैनिक प्रशिक्षण"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "European industrial education",
+          "translations": {
+            "hi": "यूरोपीय औद्योगिक शिक्षा"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A"
+      ],
+      "numericalAnswer": null,
+      "explanation": "Vikramshila was a major Buddhist monastic university established under the Pala dynasty.",
+      "explanationTranslations": {
+        "hi": "विक्रमशिला पाल वंश के शासनकाल में स्थापित एक प्रमुख बौद्ध महाविहार था।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "bihar-history",
+        "vikramshila"
+      ],
+      "source": "Original GovtPariksha demo question"
+    },
+    {
+      "slug": "bg-004",
+      "subjectSlug": "bihar-general-knowledge",
+      "subjectName": "Bihar General Knowledge",
+      "content": "Nalanda, an ancient centre of learning, is located in which present-day Indian state?",
+      "translations": {
+        "hi": "प्राचीन शिक्षा केंद्र नालंदा वर्तमान भारत के किस राज्य में स्थित है?"
+      },
+      "type": "single_choice",
+      "difficulty": "easy",
+      "status": "published",
+      "isAvailableForNewTests": true,
+      "options": [
+        {
+          "key": "A",
+          "content": "Bihar",
+          "translations": {
+            "hi": "बिहार"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "B",
+          "content": "Uttar Pradesh",
+          "translations": {
+            "hi": "उत्तर प्रदेश"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "Odisha",
+          "translations": {
+            "hi": "ओडिशा"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "West Bengal",
+          "translations": {
+            "hi": "पश्चिम बंगाल"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "A"
+      ],
+      "numericalAnswer": null,
+      "explanation": "The historic Nalanda site is in present-day Bihar.",
+      "explanationTranslations": {
+        "hi": "ऐतिहासिक नालंदा स्थल वर्तमान बिहार में स्थित है।"
+      },
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "tags": [
+        "bihar-history",
+        "nalanda"
+      ],
+      "source": "Original GovtPariksha demo question"
+    }
+  ],
+  "questionMappings": [
+    {
+      "questionSlug": "qa-001",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "rrb-number-system-and-percentages"
+    },
+    {
+      "questionSlug": "qa-002",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "rrb-number-system-and-percentages"
+    },
+    {
+      "questionSlug": "qa-003",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "rrb-number-system-and-percentages"
+    },
+    {
+      "questionSlug": "qa-004",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "rrb-number-system-and-percentages"
+    },
+    {
+      "questionSlug": "rs-001",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "rrb-series-and-analogy"
+    },
+    {
+      "questionSlug": "rs-002",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "rrb-series-and-analogy"
+    },
+    {
+      "questionSlug": "rs-003",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "rrb-series-and-analogy"
+    },
+    {
+      "questionSlug": "rs-004",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "rrb-series-and-analogy"
+    },
+    {
+      "questionSlug": "ga-001",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "general-awareness",
+      "chapterSlug": "rrb-indian-general-awareness"
+    },
+    {
+      "questionSlug": "ga-002",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "general-awareness",
+      "chapterSlug": "rrb-indian-general-awareness"
+    },
+    {
+      "questionSlug": "ga-003",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "general-awareness",
+      "chapterSlug": "rrb-indian-general-awareness"
+    },
+    {
+      "questionSlug": "ga-004",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "subjectSlug": "general-awareness",
+      "chapterSlug": "rrb-indian-general-awareness"
+    },
+    {
+      "questionSlug": "qa-001",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ssc-arithmetic-and-percentages"
+    },
+    {
+      "questionSlug": "qa-002",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ssc-arithmetic-and-percentages"
+    },
+    {
+      "questionSlug": "qa-003",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ssc-arithmetic-and-percentages"
+    },
+    {
+      "questionSlug": "qa-004",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ssc-arithmetic-and-percentages"
+    },
+    {
+      "questionSlug": "rs-001",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ssc-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "rs-002",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ssc-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "rs-003",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ssc-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "rs-004",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ssc-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "en-001",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ssc-grammar-and-vocabulary"
+    },
+    {
+      "questionSlug": "en-002",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ssc-grammar-and-vocabulary"
+    },
+    {
+      "questionSlug": "en-003",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ssc-grammar-and-vocabulary"
+    },
+    {
+      "questionSlug": "en-004",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ssc-grammar-and-vocabulary"
+    },
+    {
+      "questionSlug": "qa-001",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ibps-quantitative-aptitude-basics"
+    },
+    {
+      "questionSlug": "qa-002",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ibps-quantitative-aptitude-basics"
+    },
+    {
+      "questionSlug": "qa-003",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ibps-quantitative-aptitude-basics"
+    },
+    {
+      "questionSlug": "qa-004",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ibps-quantitative-aptitude-basics"
+    },
+    {
+      "questionSlug": "rs-001",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ibps-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "rs-002",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ibps-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "rs-003",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ibps-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "rs-004",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ibps-logical-reasoning-basics"
+    },
+    {
+      "questionSlug": "en-001",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ibps-english-language-basics"
+    },
+    {
+      "questionSlug": "en-002",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ibps-english-language-basics"
+    },
+    {
+      "questionSlug": "en-003",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ibps-english-language-basics"
+    },
+    {
+      "questionSlug": "en-004",
+      "seriesSlug": "ibps-po-complete",
+      "subjectSlug": "english-language",
+      "chapterSlug": "ibps-english-language-basics"
+    },
+    {
+      "questionSlug": "ip-001",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "upsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "ip-002",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "upsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "ip-003",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "upsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "ip-004",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "upsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "hi-001",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "upsc-modern-indian-history"
+    },
+    {
+      "questionSlug": "hi-002",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "upsc-modern-indian-history"
+    },
+    {
+      "questionSlug": "hi-003",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "upsc-modern-indian-history"
+    },
+    {
+      "questionSlug": "hi-004",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "upsc-modern-indian-history"
+    },
+    {
+      "questionSlug": "geo-001",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "geography",
+      "chapterSlug": "upsc-indian-physical-geography"
+    },
+    {
+      "questionSlug": "geo-002",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "geography",
+      "chapterSlug": "upsc-indian-physical-geography"
+    },
+    {
+      "questionSlug": "geo-003",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "geography",
+      "chapterSlug": "upsc-indian-physical-geography"
+    },
+    {
+      "questionSlug": "geo-004",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "subjectSlug": "geography",
+      "chapterSlug": "upsc-indian-physical-geography"
+    },
+    {
+      "questionSlug": "hi-001",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "bpsc-modern-history-basics"
+    },
+    {
+      "questionSlug": "hi-002",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "bpsc-modern-history-basics"
+    },
+    {
+      "questionSlug": "hi-003",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "bpsc-modern-history-basics"
+    },
+    {
+      "questionSlug": "hi-004",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "history",
+      "chapterSlug": "bpsc-modern-history-basics"
+    },
+    {
+      "questionSlug": "bg-001",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "bihar-general-knowledge",
+      "chapterSlug": "bpsc-bihar-history-and-culture"
+    },
+    {
+      "questionSlug": "bg-002",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "bihar-general-knowledge",
+      "chapterSlug": "bpsc-bihar-history-and-culture"
+    },
+    {
+      "questionSlug": "bg-003",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "bihar-general-knowledge",
+      "chapterSlug": "bpsc-bihar-history-and-culture"
+    },
+    {
+      "questionSlug": "bg-004",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "bihar-general-knowledge",
+      "chapterSlug": "bpsc-bihar-history-and-culture"
+    },
+    {
+      "questionSlug": "ip-001",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "bpsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "ip-002",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "bpsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "ip-003",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "bpsc-constitution-and-governance"
+    },
+    {
+      "questionSlug": "ip-004",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "bpsc-constitution-and-governance"
+    }
+  ],
+  "tests": [
+    {
+      "seedKey": "rrb-ntpc-graduate-subject-1",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "title": "Mathematics Practice Test 01",
+      "testMode": "subject",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "qa-001",
+        "qa-002",
+        "qa-003",
+        "qa-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "rrb-ntpc-graduate-subject-2",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "title": "General Intelligence & Reasoning Practice Test 02",
+      "testMode": "subject",
+      "subjectSlug": "reasoning",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "randomized",
+      "questionCount": 4,
+      "questionSlugs": [
+        "rs-001",
+        "rs-002",
+        "rs-003",
+        "rs-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "rrb-ntpc-graduate-chapter-1",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "title": "Number System & Percentages Chapter Test 01",
+      "testMode": "chapter",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "rrb-number-system-and-percentages",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "qa-001",
+        "qa-002",
+        "qa-003",
+        "qa-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "rrb-ntpc-graduate-chapter-2",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "title": "Number Series & Analogy Chapter Test 02",
+      "testMode": "chapter",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "rrb-series-and-analogy",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "rs-001",
+        "rs-002",
+        "rs-003",
+        "rs-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "rrb-ntpc-graduate-full-1",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "title": "RRB NTPC Graduate Level Full Mock Test 01",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 12,
+      "sections": [
+        {
+          "seedKey": "rrb-ntpc-graduate-full-1-section-1",
+          "title": "Mathematics",
+          "order": 1,
+          "subjectSlug": "quantitative-aptitude",
+          "chapterSlug": "rrb-number-system-and-percentages",
+          "questionSlugs": [
+            "qa-001",
+            "qa-002",
+            "qa-003",
+            "qa-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "rrb-ntpc-graduate-full-1-section-2",
+          "title": "General Intelligence & Reasoning",
+          "order": 2,
+          "subjectSlug": "reasoning",
+          "chapterSlug": "rrb-series-and-analogy",
+          "questionSlugs": [
+            "rs-001",
+            "rs-002",
+            "rs-003",
+            "rs-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "rrb-ntpc-graduate-full-1-section-3",
+          "title": "General Awareness",
+          "order": 3,
+          "subjectSlug": "general-awareness",
+          "chapterSlug": "rrb-indian-general-awareness",
+          "questionSlugs": [
+            "ga-001",
+            "ga-002",
+            "ga-003",
+            "ga-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": false,
+          "negativeMarks": 0,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "rrb-ntpc-graduate-full-2",
+      "seriesSlug": "rrb-ntpc-graduate",
+      "title": "RRB NTPC Graduate Level Full Mock Test 02",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 9,
+      "sections": [
+        {
+          "seedKey": "rrb-ntpc-graduate-full-2-section-1",
+          "title": "Mathematics",
+          "order": 1,
+          "subjectSlug": "quantitative-aptitude",
+          "chapterSlug": "rrb-number-system-and-percentages",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "qa-001",
+            "qa-002",
+            "qa-003",
+            "qa-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "rrb-ntpc-graduate-full-2-section-2",
+          "title": "General Intelligence & Reasoning",
+          "order": 2,
+          "subjectSlug": "reasoning",
+          "chapterSlug": "rrb-series-and-analogy",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "rs-001",
+            "rs-002",
+            "rs-003",
+            "rs-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "rrb-ntpc-graduate-full-2-section-3",
+          "title": "General Awareness",
+          "order": 3,
+          "subjectSlug": "general-awareness",
+          "chapterSlug": "rrb-indian-general-awareness",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "ga-001",
+            "ga-002",
+            "ga-003",
+            "ga-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ssc-cgl-tier1-tier2-subject-1",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "title": "Quantitative Aptitude Practice Test 01",
+      "testMode": "subject",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "qa-001",
+        "qa-002",
+        "qa-003",
+        "qa-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ssc-cgl-tier1-tier2-subject-2",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "title": "General Intelligence & Reasoning Practice Test 02",
+      "testMode": "subject",
+      "subjectSlug": "reasoning",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "randomized",
+      "questionCount": 4,
+      "questionSlugs": [
+        "rs-001",
+        "rs-002",
+        "rs-003",
+        "rs-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ssc-cgl-tier1-tier2-chapter-1",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "title": "Arithmetic & Percentages Chapter Test 01",
+      "testMode": "chapter",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ssc-arithmetic-and-percentages",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "qa-001",
+        "qa-002",
+        "qa-003",
+        "qa-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ssc-cgl-tier1-tier2-chapter-2",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "title": "Logical Reasoning Basics Chapter Test 02",
+      "testMode": "chapter",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ssc-logical-reasoning-basics",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "rs-001",
+        "rs-002",
+        "rs-003",
+        "rs-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ssc-cgl-tier1-tier2-full-1",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "title": "SSC CGL Tier 1 & Tier 2 Full Mock Test 01",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 12,
+      "sections": [
+        {
+          "seedKey": "ssc-cgl-tier1-tier2-full-1-section-1",
+          "title": "Quantitative Aptitude",
+          "order": 1,
+          "subjectSlug": "quantitative-aptitude",
+          "chapterSlug": "ssc-arithmetic-and-percentages",
+          "questionSlugs": [
+            "qa-001",
+            "qa-002",
+            "qa-003",
+            "qa-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ssc-cgl-tier1-tier2-full-1-section-2",
+          "title": "General Intelligence & Reasoning",
+          "order": 2,
+          "subjectSlug": "reasoning",
+          "chapterSlug": "ssc-logical-reasoning-basics",
+          "questionSlugs": [
+            "rs-001",
+            "rs-002",
+            "rs-003",
+            "rs-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ssc-cgl-tier1-tier2-full-1-section-3",
+          "title": "English Language",
+          "order": 3,
+          "subjectSlug": "english-language",
+          "chapterSlug": "ssc-grammar-and-vocabulary",
+          "questionSlugs": [
+            "en-001",
+            "en-002",
+            "en-003",
+            "en-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": false,
+          "negativeMarks": 0,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ssc-cgl-tier1-tier2-full-2",
+      "seriesSlug": "ssc-cgl-tier1-tier2",
+      "title": "SSC CGL Tier 1 & Tier 2 Full Mock Test 02",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 9,
+      "sections": [
+        {
+          "seedKey": "ssc-cgl-tier1-tier2-full-2-section-1",
+          "title": "Quantitative Aptitude",
+          "order": 1,
+          "subjectSlug": "quantitative-aptitude",
+          "chapterSlug": "ssc-arithmetic-and-percentages",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "qa-001",
+            "qa-002",
+            "qa-003",
+            "qa-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ssc-cgl-tier1-tier2-full-2-section-2",
+          "title": "General Intelligence & Reasoning",
+          "order": 2,
+          "subjectSlug": "reasoning",
+          "chapterSlug": "ssc-logical-reasoning-basics",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "rs-001",
+            "rs-002",
+            "rs-003",
+            "rs-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ssc-cgl-tier1-tier2-full-2-section-3",
+          "title": "English Language",
+          "order": 3,
+          "subjectSlug": "english-language",
+          "chapterSlug": "ssc-grammar-and-vocabulary",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "en-001",
+            "en-002",
+            "en-003",
+            "en-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ibps-po-complete-subject-1",
+      "seriesSlug": "ibps-po-complete",
+      "title": "Quantitative Aptitude Practice Test 01",
+      "testMode": "subject",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "qa-001",
+        "qa-002",
+        "qa-003",
+        "qa-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ibps-po-complete-subject-2",
+      "seriesSlug": "ibps-po-complete",
+      "title": "Reasoning Ability Practice Test 02",
+      "testMode": "subject",
+      "subjectSlug": "reasoning",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "randomized",
+      "questionCount": 4,
+      "questionSlugs": [
+        "rs-001",
+        "rs-002",
+        "rs-003",
+        "rs-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ibps-po-complete-chapter-1",
+      "seriesSlug": "ibps-po-complete",
+      "title": "Quantitative Aptitude Basics Chapter Test 01",
+      "testMode": "chapter",
+      "subjectSlug": "quantitative-aptitude",
+      "chapterSlug": "ibps-quantitative-aptitude-basics",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "qa-001",
+        "qa-002",
+        "qa-003",
+        "qa-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ibps-po-complete-chapter-2",
+      "seriesSlug": "ibps-po-complete",
+      "title": "Logical Reasoning Basics Chapter Test 02",
+      "testMode": "chapter",
+      "subjectSlug": "reasoning",
+      "chapterSlug": "ibps-logical-reasoning-basics",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "rs-001",
+        "rs-002",
+        "rs-003",
+        "rs-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ibps-po-complete-full-1",
+      "seriesSlug": "ibps-po-complete",
+      "title": "IBPS PO Complete Series Full Mock Test 01",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 12,
+      "sections": [
+        {
+          "seedKey": "ibps-po-complete-full-1-section-1",
+          "title": "Quantitative Aptitude",
+          "order": 1,
+          "subjectSlug": "quantitative-aptitude",
+          "chapterSlug": "ibps-quantitative-aptitude-basics",
+          "questionSlugs": [
+            "qa-001",
+            "qa-002",
+            "qa-003",
+            "qa-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ibps-po-complete-full-1-section-2",
+          "title": "Reasoning Ability",
+          "order": 2,
+          "subjectSlug": "reasoning",
+          "chapterSlug": "ibps-logical-reasoning-basics",
+          "questionSlugs": [
+            "rs-001",
+            "rs-002",
+            "rs-003",
+            "rs-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ibps-po-complete-full-1-section-3",
+          "title": "English Language",
+          "order": 3,
+          "subjectSlug": "english-language",
+          "chapterSlug": "ibps-english-language-basics",
+          "questionSlugs": [
+            "en-001",
+            "en-002",
+            "en-003",
+            "en-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": false,
+          "negativeMarks": 0,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "ibps-po-complete-full-2",
+      "seriesSlug": "ibps-po-complete",
+      "title": "IBPS PO Complete Series Full Mock Test 02",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 9,
+      "sections": [
+        {
+          "seedKey": "ibps-po-complete-full-2-section-1",
+          "title": "Quantitative Aptitude",
+          "order": 1,
+          "subjectSlug": "quantitative-aptitude",
+          "chapterSlug": "ibps-quantitative-aptitude-basics",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "qa-001",
+            "qa-002",
+            "qa-003",
+            "qa-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ibps-po-complete-full-2-section-2",
+          "title": "Reasoning Ability",
+          "order": 2,
+          "subjectSlug": "reasoning",
+          "chapterSlug": "ibps-logical-reasoning-basics",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "rs-001",
+            "rs-002",
+            "rs-003",
+            "rs-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "ibps-po-complete-full-2-section-3",
+          "title": "English Language",
+          "order": 3,
+          "subjectSlug": "english-language",
+          "chapterSlug": "ibps-english-language-basics",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "en-001",
+            "en-002",
+            "en-003",
+            "en-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "upsc-civil-services-prelims-subject-1",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "title": "Indian Polity Practice Test 01",
+      "testMode": "subject",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "ip-001",
+        "ip-002",
+        "ip-003",
+        "ip-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "upsc-civil-services-prelims-subject-2",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "title": "History Practice Test 02",
+      "testMode": "subject",
+      "subjectSlug": "history",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "randomized",
+      "questionCount": 4,
+      "questionSlugs": [
+        "hi-001",
+        "hi-002",
+        "hi-003",
+        "hi-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "upsc-civil-services-prelims-chapter-1",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "title": "Constitution & Governance Chapter Test 01",
+      "testMode": "chapter",
+      "subjectSlug": "indian-polity",
+      "chapterSlug": "upsc-constitution-and-governance",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "ip-001",
+        "ip-002",
+        "ip-003",
+        "ip-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "upsc-civil-services-prelims-chapter-2",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "title": "Modern Indian History Chapter Test 02",
+      "testMode": "chapter",
+      "subjectSlug": "history",
+      "chapterSlug": "upsc-modern-indian-history",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "hi-001",
+        "hi-002",
+        "hi-003",
+        "hi-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "upsc-civil-services-prelims-full-1",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "title": "UPSC Civil Services Prelims Full Mock Test 01",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 12,
+      "sections": [
+        {
+          "seedKey": "upsc-civil-services-prelims-full-1-section-1",
+          "title": "Indian Polity",
+          "order": 1,
+          "subjectSlug": "indian-polity",
+          "chapterSlug": "upsc-constitution-and-governance",
+          "questionSlugs": [
+            "ip-001",
+            "ip-002",
+            "ip-003",
+            "ip-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "upsc-civil-services-prelims-full-1-section-2",
+          "title": "History",
+          "order": 2,
+          "subjectSlug": "history",
+          "chapterSlug": "upsc-modern-indian-history",
+          "questionSlugs": [
+            "hi-001",
+            "hi-002",
+            "hi-003",
+            "hi-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "upsc-civil-services-prelims-full-1-section-3",
+          "title": "Geography",
+          "order": 3,
+          "subjectSlug": "geography",
+          "chapterSlug": "upsc-indian-physical-geography",
+          "questionSlugs": [
+            "geo-001",
+            "geo-002",
+            "geo-003",
+            "geo-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": false,
+          "negativeMarks": 0,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "upsc-civil-services-prelims-full-2",
+      "seriesSlug": "upsc-civil-services-prelims",
+      "title": "UPSC Civil Services Prelims Full Mock Test 02",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 9,
+      "sections": [
+        {
+          "seedKey": "upsc-civil-services-prelims-full-2-section-1",
+          "title": "Indian Polity",
+          "order": 1,
+          "subjectSlug": "indian-polity",
+          "chapterSlug": "upsc-constitution-and-governance",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "ip-001",
+            "ip-002",
+            "ip-003",
+            "ip-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "upsc-civil-services-prelims-full-2-section-2",
+          "title": "History",
+          "order": 2,
+          "subjectSlug": "history",
+          "chapterSlug": "upsc-modern-indian-history",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "hi-001",
+            "hi-002",
+            "hi-003",
+            "hi-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "upsc-civil-services-prelims-full-2-section-3",
+          "title": "Geography",
+          "order": 3,
+          "subjectSlug": "geography",
+          "chapterSlug": "upsc-indian-physical-geography",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "geo-001",
+            "geo-002",
+            "geo-003",
+            "geo-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "bihar-bpsc-prelims-subject-1",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "title": "History Practice Test 01",
+      "testMode": "subject",
+      "subjectSlug": "history",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "hi-001",
+        "hi-002",
+        "hi-003",
+        "hi-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "bihar-bpsc-prelims-subject-2",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "title": "Bihar General Knowledge Practice Test 02",
+      "testMode": "subject",
+      "subjectSlug": "bihar-general-knowledge",
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 12,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "randomized",
+      "questionCount": 4,
+      "questionSlugs": [
+        "bg-001",
+        "bg-002",
+        "bg-003",
+        "bg-004"
+      ],
+      "instructions": "This is an original sample test for UI and workflow verification. Read each question carefully.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "bihar-bpsc-prelims-chapter-1",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "title": "Modern History Basics Chapter Test 01",
+      "testMode": "chapter",
+      "subjectSlug": "history",
+      "chapterSlug": "bpsc-modern-history-basics",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": false,
+      "negativeMarks": 0,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "hi-001",
+        "hi-002",
+        "hi-003",
+        "hi-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "bihar-bpsc-prelims-chapter-2",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "title": "Bihar History & Culture Chapter Test 02",
+      "testMode": "chapter",
+      "subjectSlug": "bihar-general-knowledge",
+      "chapterSlug": "bpsc-bihar-history-and-culture",
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 10,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 4,
+      "questionSlugs": [
+        "bg-001",
+        "bg-002",
+        "bg-003",
+        "bg-004"
+      ],
+      "instructions": "This is an original sample chapter test for UI and workflow verification.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "bihar-bpsc-prelims-full-1",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "title": "Bihar BPSC Prelims Full Mock Test 01",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "free",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": null,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 12,
+      "sections": [
+        {
+          "seedKey": "bihar-bpsc-prelims-full-1-section-1",
+          "title": "History",
+          "order": 1,
+          "subjectSlug": "history",
+          "chapterSlug": "bpsc-modern-history-basics",
+          "questionSlugs": [
+            "hi-001",
+            "hi-002",
+            "hi-003",
+            "hi-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "bihar-bpsc-prelims-full-1-section-2",
+          "title": "Bihar General Knowledge",
+          "order": 2,
+          "subjectSlug": "bihar-general-knowledge",
+          "chapterSlug": "bpsc-bihar-history-and-culture",
+          "questionSlugs": [
+            "bg-001",
+            "bg-002",
+            "bg-003",
+            "bg-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "bihar-bpsc-prelims-full-1-section-3",
+          "title": "Indian Polity",
+          "order": 3,
+          "subjectSlug": "indian-polity",
+          "chapterSlug": "bpsc-constitution-and-governance",
+          "questionSlugs": [
+            "ip-001",
+            "ip-002",
+            "ip-003",
+            "ip-004"
+          ],
+          "eligibleQuestionSlugs": [],
+          "questionCount": 4,
+          "questionSelectionMode": "manual",
+          "questionSetMode": "fixed",
+          "questionOrderMode": "fixed",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": false,
+          "negativeMarks": 0,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    },
+    {
+      "seedKey": "bihar-bpsc-prelims-full-2",
+      "seriesSlug": "bihar-bpsc-prelims",
+      "title": "Bihar BPSC Prelims Full Mock Test 02",
+      "testMode": "full",
+      "subjectSlug": null,
+      "chapterSlug": null,
+      "status": "published",
+      "version": 1,
+      "isCurrentVersion": true,
+      "access": "premium",
+      "languages": [
+        "English",
+        "Hindi"
+      ],
+      "durationMinutes": 24,
+      "maxAttempts": 3,
+      "positiveMarks": 1,
+      "negativeMarkingEnabled": true,
+      "negativeMarks": 0.25,
+      "questionSelectionMode": "manual",
+      "questionSetMode": "fixed",
+      "questionOrderMode": "fixed",
+      "questionCount": 9,
+      "sections": [
+        {
+          "seedKey": "bihar-bpsc-prelims-full-2-section-1",
+          "title": "History",
+          "order": 1,
+          "subjectSlug": "history",
+          "chapterSlug": "bpsc-modern-history-basics",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "hi-001",
+            "hi-002",
+            "hi-003",
+            "hi-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "bihar-bpsc-prelims-full-2-section-2",
+          "title": "Bihar General Knowledge",
+          "order": 2,
+          "subjectSlug": "bihar-general-knowledge",
+          "chapterSlug": "bpsc-bihar-history-and-culture",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "bg-001",
+            "bg-002",
+            "bg-003",
+            "bg-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 2,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.5,
+          "navigationMode": "free"
+        },
+        {
+          "seedKey": "bihar-bpsc-prelims-full-2-section-3",
+          "title": "Indian Polity",
+          "order": 3,
+          "subjectSlug": "indian-polity",
+          "chapterSlug": "bpsc-constitution-and-governance",
+          "questionSlugs": [],
+          "eligibleQuestionSlugs": [
+            "ip-001",
+            "ip-002",
+            "ip-003",
+            "ip-004"
+          ],
+          "questionCount": 3,
+          "questionSelectionMode": "automatic",
+          "questionSetMode": "random_per_attempt",
+          "questionOrderMode": "randomized",
+          "durationMinutes": 8,
+          "positiveMarks": 1,
+          "negativeMarkingEnabled": true,
+          "negativeMarks": 0.25,
+          "navigationMode": "free"
+        }
+      ],
+      "instructions": "This is an original sample full mock test. Each section has its own marking configuration and timer.",
+      "availableFrom": null,
+      "availableTo": null
+    }
+  ]
+}

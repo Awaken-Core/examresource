@@ -1,0 +1,26 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { siteName } from '../../../data/site';
+import { CBTTestRunner } from '../../../components/test-series/CBTTestRunner';
+
+const { attemptId } = Astro.params;
+
+if (!attemptId) {
+  return Astro.redirect('/test-series');
+}
+
+// Disable caching for live exam attempt screen
+Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+const pageTitle = `CBT Test Runner | ${siteName}`;
+---
+
+<Layout
+  title={pageTitle}
+  description="Computer-based timed examination testing environment"
+  hideHeaderFooter={true}
+>
+  <div class="w-full max-w-none px-3 sm:px-5 lg:px-6 py-3 min-h-screen">
+    <CBTTestRunner client:only="react" attemptId={attemptId} />
+  </div>
+</Layout>
