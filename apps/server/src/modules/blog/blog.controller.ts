@@ -39,7 +39,10 @@ export class BlogController {
   // ==========================================
 
   @Get('blogs')
-  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
+  @Header(
+    'Cache-Control',
+    'public, max-age=60, s-maxage=120, stale-while-revalidate=300',
+  )
   listPublished(
     @Query('category') categorySlug?: string,
     @Query('tag') tagSlug?: string,
@@ -56,12 +59,20 @@ export class BlogController {
       language,
       limit: limit ? parseInt(limit, 10) : undefined,
       offset: offset ? parseInt(offset, 10) : undefined,
-      includeImages: includeImages === 'false' ? false : includeImages === 'true' ? true : undefined,
+      includeImages:
+        includeImages === 'false'
+          ? false
+          : includeImages === 'true'
+            ? true
+            : undefined,
     });
   }
 
   @Get('blogs/:slug')
-  @Header('Cache-Control', 'public, max-age=120, s-maxage=300, stale-while-revalidate=600')
+  @Header(
+    'Cache-Control',
+    'public, max-age=120, s-maxage=300, stale-while-revalidate=600',
+  )
   getPublished(
     @Param('slug') slug: string,
     @Query('language') language?: 'HINGLISH' | 'ENGLISH',
@@ -70,25 +81,37 @@ export class BlogController {
   }
 
   @Get('sitemap-entries')
-  @Header('Cache-Control', 'public, max-age=600, s-maxage=1800, stale-while-revalidate=3600')
+  @Header(
+    'Cache-Control',
+    'public, max-age=600, s-maxage=1800, stale-while-revalidate=3600',
+  )
   getSitemapEntries() {
     return this.blogs.getSitemapEntries();
   }
 
   @Get('redirects/check')
-  @Header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800')
+  @Header(
+    'Cache-Control',
+    'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
+  )
   checkRedirect(@Query('path') path: string) {
     return this.blogs.checkRedirect(path);
   }
 
   @Get('categories')
-  @Header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800')
+  @Header(
+    'Cache-Control',
+    'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
+  )
   listCategories() {
     return this.blogs.listCategories();
   }
 
   @Get('tags')
-  @Header('Cache-Control', 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800')
+  @Header(
+    'Cache-Control',
+    'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
+  )
   listTags() {
     return this.blogs.listTags();
   }
@@ -138,9 +161,15 @@ export class BlogController {
   async translateBlog(@Param('id') id: string, @Req() req: Request) {
     const targetLanguage = req.body?.targetLanguage || 'HINGLISH';
     if (targetLanguage !== 'HINGLISH' && targetLanguage !== 'ENGLISH') {
-      throw new BadRequestException('targetLanguage must be HINGLISH or ENGLISH');
+      throw new BadRequestException(
+        'targetLanguage must be HINGLISH or ENGLISH',
+      );
     }
-    return this.blogs.translateBlog(id, targetLanguage, await this.currentUser(req));
+    return this.blogs.translateBlog(
+      id,
+      targetLanguage,
+      await this.currentUser(req),
+    );
   }
 
   @Post('blogs/ai-seo')
@@ -195,25 +224,44 @@ export class BlogController {
   @Post('blogs/generate-from-reference')
   async generateFromReference(@Req() req: Request) {
     const body = (req.body as any) || {};
-    if (!body.referenceContent || typeof body.referenceContent !== 'string' || body.referenceContent.trim().length < 50) {
-      throw new BadRequestException('referenceContent must be at least 50 characters.');
+    if (
+      !body.referenceContent ||
+      typeof body.referenceContent !== 'string' ||
+      body.referenceContent.trim().length < 50
+    ) {
+      throw new BadRequestException(
+        'referenceContent must be at least 50 characters.',
+      );
     }
     const currentUser = await this.currentUser(req); // Auth guard — must be logged in
-    const requestedModel = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : undefined;
-    return this.blogs.generateBilingualFromReference({
-      referenceContent: body.referenceContent,
-      category: body.category,
-      additionalInstructions: body.additionalInstructions,
-      images: Array.isArray(body.images) ? body.images : undefined,
-      model: requestedModel,
-    }, currentUser);
+    const requestedModel =
+      typeof body.model === 'string' && body.model.trim()
+        ? body.model.trim()
+        : undefined;
+    return this.blogs.generateBilingualFromReference(
+      {
+        referenceContent: body.referenceContent,
+        category: body.category,
+        additionalInstructions: body.additionalInstructions,
+        images: Array.isArray(body.images) ? body.images : undefined,
+        model: requestedModel,
+        provider: body.provider,
+      },
+      currentUser,
+    );
   }
 
   @Post('blogs/generate-from-reference/stream')
   async generateFromReferenceStream(@Req() req: Request, @Res() res: Response) {
     const body = (req.body as any) || {};
-    if (!body.referenceContent || typeof body.referenceContent !== 'string' || body.referenceContent.trim().length < 50) {
-      res.status(400).json({ message: 'referenceContent must be at least 50 characters.' });
+    if (
+      !body.referenceContent ||
+      typeof body.referenceContent !== 'string' ||
+      body.referenceContent.trim().length < 50
+    ) {
+      res
+        .status(400)
+        .json({ message: 'referenceContent must be at least 50 characters.' });
       return;
     }
     const currentUser = await this.currentUser(req);
@@ -232,8 +280,15 @@ export class BlogController {
       }
     };
 
-    const requestedModel = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : 'gemini-3.8-flash';
-    sendEvent({ type: 'stage', stage: 'CONNECTED', message: `Connected to pipeline. Selected Model: ${requestedModel}` });
+    const requestedModel =
+      typeof body.model === 'string' && body.model.trim()
+        ? body.model.trim()
+        : undefined;
+    sendEvent({
+      type: 'stage',
+      stage: 'CONNECTED',
+      message: `Connected to pipeline. Selected Model: ${requestedModel || 'provider default'}`,
+    });
 
     try {
       const result = await this.blogs.generateBilingualFromReference(
@@ -243,6 +298,7 @@ export class BlogController {
           additionalInstructions: body.additionalInstructions,
           images: Array.isArray(body.images) ? body.images : undefined,
           model: requestedModel,
+          provider: body.provider,
         },
         currentUser,
         (stage, message) => {
@@ -253,7 +309,10 @@ export class BlogController {
       sendEvent({ type: 'complete', result });
       res.end();
     } catch (err: any) {
-      sendEvent({ type: 'error', message: err?.message || 'AI Generation failed. Please try again.' });
+      sendEvent({
+        type: 'error',
+        message: err?.message || 'AI Generation failed. Please try again.',
+      });
       res.end();
     }
   }
@@ -286,7 +345,11 @@ export class BlogController {
     @Param('revisionId') revisionId: string,
     @Req() req: Request,
   ) {
-    return this.blogs.restoreRevision(id, revisionId, await this.currentUser(req));
+    return this.blogs.restoreRevision(
+      id,
+      revisionId,
+      await this.currentUser(req),
+    );
   }
 
   // Categories CRUD
@@ -330,10 +393,7 @@ export class BlogController {
 
   // Block granular endpoints
   @Post('blogs/:blogId/blocks')
-  async createBlock(
-    @Param('blogId') blogId: string,
-    @Req() req: Request,
-  ) {
+  async createBlock(@Param('blogId') blogId: string, @Req() req: Request) {
     return this.blogs.createBlock(
       blogId,
       this.parse(createBlockSchema, req.body),
@@ -342,10 +402,7 @@ export class BlogController {
   }
 
   @Patch('blogs/:blogId/blocks/reorder')
-  async reorderBlocks(
-    @Param('blogId') blogId: string,
-    @Req() req: Request,
-  ) {
+  async reorderBlocks(@Param('blogId') blogId: string, @Req() req: Request) {
     const input = this.parse(reorderBlocksSchema, req.body);
     return this.blogs.reorderBlocks(
       blogId,

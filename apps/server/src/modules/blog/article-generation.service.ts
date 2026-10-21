@@ -1,11 +1,15 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { ChatCompletionService } from './chat-completion.service.js';
 import { GeminiService } from './gemini.service.js';
 
 @Injectable()
 export class ArticleGenerationService {
   private readonly logger = new Logger(ArticleGenerationService.name);
 
-  constructor(private readonly gemini: GeminiService) {}
+  constructor(
+    private readonly gemini: GeminiService,
+    private readonly chatCompletion: ChatCompletionService,
+  ) {}
 
   /**
    * Generate complete bilingual blog (Hinglish + English) + SEO from a reference article.
@@ -23,6 +27,7 @@ export class ArticleGenerationService {
         altText?: string;
       }>;
       model?: string;
+      provider?: string;
     },
     onStage?: (stage: string, message: string) => void,
   ): Promise<{
@@ -48,6 +53,10 @@ export class ArticleGenerationService {
     detectedCategory?: string;
     modelUsed: string;
   }> {
+    const provider = input.provider ?? 'gemini';
+    if (!['gemini', 'openrouter', 'groq'].includes(provider)) {
+      throw new BadRequestException('Unsupported AI provider.');
+    }
     onStage?.('INGEST', 'Validating reference content and uploaded images...');
 
     const validImages = (input.images || []).filter(
@@ -58,7 +67,7 @@ export class ArticleGenerationService {
     if (validImages.length > 0) {
       onStage?.(
         'VISION',
-        `Analyzing ${validImages.length} attached image(s) with Gemini Vision...`,
+        `Analyzing ${validImages.length} attached image(s) with ${provider} vision...`,
       );
       const imageDescriptions = validImages
         .map((img, i) => {
@@ -194,17 +203,24 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       url: img.url,
     }));
 
-    const requestedModel = input.model || 'gemini-3.8-flash';
-    const { text: rawJson, model: modelUsed } =
-      await this.gemini.generateContent(
-        systemPrompt,
-        userPrompt,
-        imageParts,
-        (switchingModel) => {
-          onStage?.('MODEL_SWITCH', `Engaging model: ${switchingModel}...`);
-        },
-        requestedModel,
-      );
+    const requestedModel =
+      input.model || (provider === 'gemini' ? 'gemini-3.8-flash' : undefined);
+    const { text: rawJson, model: modelUsed } = await (
+      provider === 'gemini'
+        ? this.gemini.generateContent.bind(this.gemini)
+        : this.chatCompletion.generateContent.bind(
+            this.chatCompletion,
+            provider as 'openrouter' | 'groq',
+          )
+    )(
+      systemPrompt,
+      userPrompt,
+      imageParts,
+      (switchingModel) => {
+        onStage?.('MODEL_SWITCH', `Engaging model: ${switchingModel}...`);
+      },
+      requestedModel,
+    );
 
     onStage?.(
       'FINALIZING',
@@ -248,7 +264,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       };
     } catch (err) {
       this.logger.error(
-        'Failed to parse Gemini generate-from-reference response',
+        'Failed to parse AI generate-from-reference response',
         err,
       );
       throw new BadRequestException(

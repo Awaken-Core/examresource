@@ -26,6 +26,7 @@ import { AuthModule } from '../auth/auth.module.js';
 import { BlogController } from './blog.controller.js';
 import { BlogService } from './blog.service.js';
 import { GeminiService } from './gemini.service.js';
+import { ChatCompletionService } from './chat-completion.service.js';
 import { ArticleGenerationService } from './article-generation.service.js';
 
 @Module({
@@ -45,7 +46,12 @@ import { ArticleGenerationService } from './article-generation.service.js';
     ]),
   ],
   controllers: [BlogController],
-  providers: [BlogService, GeminiService, ArticleGenerationService],
+  providers: [
+    BlogService,
+    GeminiService,
+    ArticleGenerationService,
+    ChatCompletionService,
+  ],
   exports: [BlogService, GeminiService],
 })
 export class BlogModule {}

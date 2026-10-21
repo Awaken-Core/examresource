@@ -3,7 +3,10 @@ import { z } from 'zod';
 export const EnvSchema = z.object({
   DATABASE_URL: z
     .string()
-    .regex(/^mongodb(?:\+srv)?:\/\//, 'DATABASE_URL must be a MongoDB connection URI'),
+    .regex(
+      /^mongodb(?:\+srv)?:\/\//,
+      'DATABASE_URL must be a MongoDB connection URI',
+    ),
   NODE_ENV: z.enum(['development', 'test', 'production', 'preview']),
   CLIENT_URL: z.string().url(),
   PORT: z.coerce.number().int().min(1).max(65535),
@@ -21,6 +24,36 @@ export const EnvSchema = z.object({
   GEMINI_BACKUP_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().optional(),
   GEMINI_FALLBACK_MODELS: z.string().optional(),
+  AI_REQUEST_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .min(1000)
+    .max(120000)
+    .default(60000),
+  OPENROUTER_API_KEY: z.string().optional(),
+  OPENROUTER_BASE_URL: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().url().optional(),
+  ),
+  OPENROUTER_MODEL: z.string().optional(),
+  OPENROUTER_MAX_OUTPUT_TOKENS: z.coerce
+    .number()
+    .int()
+    .min(1024)
+    .max(65536)
+    .default(16000),
+  GROQ_API_KEY: z.string().optional(),
+  GROQ_BASE_URL: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.string().url().optional(),
+  ),
+  GROQ_MODEL: z.string().optional(),
+  GROQ_MAX_OUTPUT_TOKENS: z.coerce
+    .number()
+    .int()
+    .min(1024)
+    .max(65536)
+    .default(16000),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -11,17 +11,32 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
 
   const mockBlogService = {
     listPublished: () => Promise.resolve([{ id: '1', title: 'Test Article' }]),
-    getPublished: (slug: string) => Promise.resolve({ id: '1', slug, title: 'Article Detail' }),
+    getPublished: (slug: string) =>
+      Promise.resolve({ id: '1', slug, title: 'Article Detail' }),
     listCategories: () => Promise.resolve([{ id: 'c1', name: 'Banking' }]),
     listTags: () => Promise.resolve([{ id: 't1', name: 'Admit Card' }]),
-    getSitemapEntries: () => Promise.resolve([{ url: 'https://example.com/test' }]),
-    checkRedirect: (path: string) => Promise.resolve({ targetPath: '/canonical' }),
-    listManageable: () => Promise.resolve({ data: [{ id: 'admin-1', title: 'Draft' }] }),
+    getSitemapEntries: () =>
+      Promise.resolve([{ url: 'https://example.com/test' }]),
+    checkRedirect: (path: string) =>
+      Promise.resolve({ targetPath: '/canonical' }),
+    listManageable: () =>
+      Promise.resolve({ data: [{ id: 'admin-1', title: 'Draft' }] }),
+    generateBilingualFromReference: (input: unknown) => Promise.resolve(input),
   };
 
   const mockAuthService = {
-    requireUser: () => Promise.resolve({ id: 'user-1', email: 'admin@example.com', role: 'admin' }),
-    getUser: () => Promise.resolve({ id: 'user-1', email: 'admin@example.com', role: 'admin' }),
+    requireUser: () =>
+      Promise.resolve({
+        id: 'user-1',
+        email: 'admin@example.com',
+        role: 'admin',
+      }),
+    getUser: () =>
+      Promise.resolve({
+        id: 'user-1',
+        email: 'admin@example.com',
+        role: 'admin',
+      }),
   };
 
   beforeAll(async () => {
@@ -41,6 +56,41 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
     await app.close();
   });
 
+  it('passes provider and model through the regular article endpoint', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/v1/blogs/generate-from-reference')
+      .send({
+        referenceContent: 'Reference '.repeat(10),
+        provider: 'groq',
+        model: 'configured-model',
+      });
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({
+      provider: 'groq',
+      model: 'configured-model',
+    });
+  });
+
+  it('uses the provider default when the stream request omits a model', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/api/v1/blogs/generate-from-reference/stream')
+      .send({
+        referenceContent: 'Reference '.repeat(10),
+        provider: 'openrouter',
+      });
+    expect(res.headers['content-type']).toContain('text/event-stream');
+    const events = res.text
+      .split('\n\n')
+      .filter(Boolean)
+      .map((line: string) => JSON.parse(line.slice(6)));
+    expect(
+      events.find((event: any) => event.type === 'complete').result,
+    ).toMatchObject({ provider: 'openrouter' });
+    expect(
+      events.find((event: any) => event.type === 'complete').result.model,
+    ).toBeUndefined();
+  });
+
   it('GET /api/v1/blogs should have public Cache-Control with s-maxage=120 and stale-while-revalidate=300', async () => {
     const res = await request(app.getHttpServer()).get('/api/v1/blogs');
     expect(res.status).toBe(200);
@@ -50,7 +100,9 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
   });
 
   it('GET /api/v1/blogs/:slug should have public Cache-Control with s-maxage=300 and stale-while-revalidate=600', async () => {
-    const res = await request(app.getHttpServer()).get('/api/v1/blogs/upsc-2026');
+    const res = await request(app.getHttpServer()).get(
+      '/api/v1/blogs/upsc-2026',
+    );
     expect(res.status).toBe(200);
     expect(res.headers['cache-control']).toBe(
       'public, max-age=120, s-maxage=300, stale-while-revalidate=600',
@@ -74,7 +126,9 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
   });
 
   it('GET /api/v1/sitemap-entries should have public Cache-Control with s-maxage=1800 and stale-while-revalidate=3600', async () => {
-    const res = await request(app.getHttpServer()).get('/api/v1/sitemap-entries');
+    const res = await request(app.getHttpServer()).get(
+      '/api/v1/sitemap-entries',
+    );
     expect(res.status).toBe(200);
     expect(res.headers['cache-control']).toBe(
       'public, max-age=600, s-maxage=1800, stale-while-revalidate=3600',
@@ -82,7 +136,9 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
   });
 
   it('GET /api/v1/redirects/check should have public Cache-Control with s-maxage=600', async () => {
-    const res = await request(app.getHttpServer()).get('/api/v1/redirects/check?path=/old');
+    const res = await request(app.getHttpServer()).get(
+      '/api/v1/redirects/check?path=/old',
+    );
     expect(res.status).toBe(200);
     expect(res.headers['cache-control']).toBe(
       'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',

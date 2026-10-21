@@ -2344,6 +2344,7 @@ export class BlogService {
       additionalInstructions?: string;
       images?: Array<{ url: string; base64?: string; mimeType?: string }>;
       model?: string;
+      provider?: string;
     },
     currentUser?: CurrentUser,
     onStage?: (stage: string, message: string) => void,
