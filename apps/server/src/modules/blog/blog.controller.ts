@@ -206,6 +206,7 @@ export class BlogController {
       additionalInstructions: body.additionalInstructions,
       images: Array.isArray(body.images) ? body.images : undefined,
       model: requestedModel,
+      availableCategories: Array.isArray(body.availableCategories) ? body.availableCategories : undefined,
     }, currentUser);
   }
 
@@ -243,6 +244,7 @@ export class BlogController {
           additionalInstructions: body.additionalInstructions,
           images: Array.isArray(body.images) ? body.images : undefined,
           model: requestedModel,
+          availableCategories: Array.isArray(body.availableCategories) ? body.availableCategories : undefined,
         },
         currentUser,
         (stage, message) => {

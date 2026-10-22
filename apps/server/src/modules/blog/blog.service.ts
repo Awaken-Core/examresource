@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -94,6 +95,7 @@ function escapeRegex(text: string): string {
 
 @Injectable()
 export class BlogService {
+  private readonly logger = new Logger(BlogService.name);
   private cache = new MemoryCache();
 
   constructor(
@@ -2243,12 +2245,29 @@ export class BlogService {
       additionalInstructions?: string;
       images?: Array<{ url: string; base64?: string; mimeType?: string }>;
       model?: string;
+      availableCategories?: Array<{ id: string; name: string; slug: string }>;
     },
     currentUser?: CurrentUser,
     onStage?: (stage: string, message: string) => void,
   ) {
     if (currentUser) this.assertCanWrite(currentUser);
-    return this.gemini.generateBilingualFromReference(input, onStage);
+
+    // Read real existing categories from database to ensure AI labels strictly within existing list
+    let availableCategories = input.availableCategories;
+    if (!availableCategories || availableCategories.length === 0) {
+      try {
+        const dbCats = await this.categoryModel.find({}, 'name slug').lean();
+        availableCategories = dbCats.map((c: any) => ({
+          id: String(c._id),
+          name: c.name,
+          slug: c.slug,
+        }));
+      } catch (err) {
+        this.logger.warn('Failed to fetch existing categories from DB for AI rewriter', err);
+      }
+    }
+
+    return this.gemini.generateBilingualFromReference({ ...input, availableCategories }, onStage);
   }
 
   private assertCanWrite(currentUser: CurrentUser) {

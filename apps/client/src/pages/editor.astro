@@ -1640,11 +1640,28 @@ import { siteUrl } from '../data/site';
           <div class="accordion-item" data-accordion="seo">
             <button type="button" class="accordion-trigger w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-slate-50 transition">
               <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path stroke-linecap="round" d="M20 20l-3-3" /></svg>
-              <span class="font-semibold text-slate-900">SEO</span>
-              <svg class="accordion-chevron w-4 h-4 text-slate-400 ml-auto shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              <span class="font-semibold text-slate-900">SEO &amp; AEO</span>
+              <span id="summary-seo-status" class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-600">Metadata</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </button>
 
             <div class="accordion-content hidden px-5 pb-5 pt-1 space-y-3.5">
+              <!-- AI Article Metadata Card -->
+              <div id="seo-ai-summary-card" class="p-3 bg-gradient-to-br from-indigo-50/70 to-blue-50/70 border border-indigo-200/60 rounded-lg space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-900">Article Intelligence</span>
+                  </div>
+                  <span id="seo-ai-model-badge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-white text-indigo-700 border border-indigo-200 font-medium">Ready</span>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-600">
+                  <span>Assigned Category:</span>
+                  <span id="seo-ai-detected-type" class="font-semibold text-slate-900">Auto-Labeled</span>
+                </div>
+              </div>
+
+              <!-- Google Search Preview Card -->
               <div class="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-1">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Google Search Preview</span>
                 <div id="serp-title" class="font-semibold text-blue-700 truncate text-xs">
@@ -1658,6 +1675,7 @@ import { siteUrl } from '../data/site';
                 </div>
               </div>
 
+              <!-- SEO Title -->
               <div>
                 <div class="flex items-center justify-between mb-1">
                   <label class="font-semibold text-slate-700">SEO Title</label>
@@ -1671,6 +1689,7 @@ import { siteUrl } from '../data/site';
                 />
               </div>
 
+              <!-- Meta Description -->
               <div>
                 <div class="flex items-center justify-between mb-1">
                   <label class="font-semibold text-slate-700">Meta Description</label>
@@ -1684,6 +1703,33 @@ import { siteUrl } from '../data/site';
                 ></textarea>
               </div>
 
+              <!-- Target Keywords & AEO Entities Manager -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="font-semibold text-slate-700">Target Keywords &amp; AEO Entities</label>
+                  <span id="keywords-count-badge" class="text-[10px] text-slate-400 font-mono">0 keywords</span>
+                </div>
+                <div id="seo-keywords-chips" class="flex flex-wrap gap-1.5 p-2 bg-white border border-slate-300 rounded-md min-h-[42px] max-h-32 overflow-y-auto">
+                  <span class="text-[11px] text-slate-400 italic py-0.5">No target keywords added yet</span>
+                </div>
+                <div class="mt-1.5 flex gap-1.5">
+                  <input 
+                    type="text" 
+                    id="field-add-keyword" 
+                    placeholder="Add keyword or entity &amp; press Enter..." 
+                    class="min-w-0 flex-1 bg-white border border-slate-300 rounded-md px-2 py-1 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                  <button 
+                    type="button" 
+                    id="btn-add-keyword" 
+                    class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Canonical URL -->
               <div>
                 <label class="block font-semibold text-slate-700 mb-1">Canonical URL</label>
                 <input 
@@ -1694,6 +1740,7 @@ import { siteUrl } from '../data/site';
                 />
               </div>
 
+              <!-- Search Indexing Checkbox -->
               <div class="flex items-center gap-2 pt-1">
                 <input type="checkbox" id="field-noindex" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
                 <label for="field-noindex" class="text-slate-700 cursor-pointer select-none">
@@ -2658,28 +2705,43 @@ import { siteUrl } from '../data/site';
                   id="ai-ref-model-select"
                   class="aim-select bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer shadow-2xs"
                 >
-                  <option value="gemini-3.8-flash" selected>Gemini 3.8 Flash (Recommended · Fastest)</option>
-                  <option value="gemini-3.5-flash">Gemini 3.5 Flash (Fast &amp; Resilient)</option>
-                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview (In-depth Analysis)</option>
-                  <option value="gemini-flash-latest">Gemini Flash Latest</option>
+                  <optgroup label="⚡ DeepSeek AI (Direct API)">
+                    <option value="deepseek-chat" selected>DeepSeek: DeepSeek V3 (Ultra-Fast)</option>
+                    <option value="deepseek-reasoner">DeepSeek: DeepSeek R1 (Deep Reasoning)</option>
+                  </optgroup>
+                  <optgroup label="🌐 OpenRouter (Multi-LLM Gateway)">
+                    <option value="openrouter:deepseek/deepseek-chat">OpenRouter: DeepSeek V3</option>
+                    <option value="openrouter:deepseek/deepseek-r1">OpenRouter: DeepSeek R1</option>
+                    <option value="openrouter:nvidia/nemotron-3-ultra-550b-a55b:free">OpenRouter: NVIDIA Nemotron 3 Ultra 550B (Free)</option>
+                    <option value="openrouter:nvidia/nemotron-3.5-super-vl:free">OpenRouter: NVIDIA Nemotron 3.5 Super VL (Free)</option>
+                    <option value="openrouter:google/gemma-4-31b-it:free">OpenRouter: Google Gemma 4 31B (Free)</option>
+                    <option value="openrouter:anthropic/claude-3.7-sonnet">OpenRouter: Claude 3.7 Sonnet</option>
+                    <option value="openrouter:meta-llama/llama-3.3-70b-instruct">OpenRouter: Llama 3.3 70B</option>
+                  </optgroup>
+                  <optgroup label="✨ Google Gemini (Direct API)">
+                    <option value="gemini-3.8-flash">Google Gemini: Gemini 3.8 Flash (Multimodal &amp; Fast)</option>
+                    <option value="gemini-3.5-flash">Google Gemini: Gemini 3.5 Flash (Resilient)</option>
+                    <option value="gemini-3.1-pro-preview">Google Gemini: Gemini 3.1 Pro Preview</option>
+                  </optgroup>
                 </select>
               </div>
 
               <!-- Category Selector -->
               <div class="flex items-center gap-1.5">
-                <label for="ai-ref-category" class="aim-label text-[11px] font-semibold text-slate-700">Category:</label>
+                <label for="ai-ref-category" class="aim-label text-[11px] font-semibold text-slate-700">Topic Type:</label>
                 <select 
                   id="ai-ref-category"
                   class="aim-select bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer shadow-2xs"
                 >
-                  <option value="auto-detect">Auto-Detect</option>
-                  <option value="notifications">Notification / Vacancy</option>
-                  <option value="syllabus">Syllabus &amp; Pattern</option>
-                  <option value="admit-card">Admit Card</option>
-                  <option value="answer-key">Answer Key</option>
-                  <option value="cut-off">Cut-off Marks</option>
+                  <option value="auto-detect">Auto-Detect Topic &amp; Intent</option>
+                  <option value="general-knowledge">General Knowledge (GK / GS)</option>
+                  <option value="current-affairs">Current Affairs &amp; Daily Updates</option>
+                  <option value="study-material">Subject Guide &amp; Study Material</option>
+                  <option value="notifications">Govt Job / Vacancy Notification</option>
+                  <option value="admit-card">Admit Card / Hall Ticket</option>
+                  <option value="answer-key">Answer Key &amp; Cut-Off</option>
                   <option value="results">Results / Merit List</option>
-                  <option value="study-material">Study Material</option>
+                  <option value="syllabus">Syllabus &amp; Exam Pattern</option>
                 </select>
               </div>
             </div>
@@ -2827,8 +2889,7 @@ import { siteUrl } from '../data/site';
               <span id="ai-ref-result-category" class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">Notification</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="aim-muted text-[11px] text-slate-500">SEO Score:</span>
-              <span id="ai-ref-result-seo-score" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">88/100</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">✓ Complete Bilingual Draft</span>
             </div>
           </div>
 
@@ -2894,12 +2955,10 @@ import { siteUrl } from '../data/site';
 <script>
   import { Editor } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
-  import Link from '@tiptap/extension-link';
   import { ArticleBulletList, ArticleImage } from '../lib/editor-nodes';
   import { collectDocMatches, FindReplace, findReplaceKey, findStringMatches, type FindMatch } from '../lib/find-replace';
   import Youtube from '@tiptap/extension-youtube';
   import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
-  import Underline from '@tiptap/extension-underline';
   import CharacterCount from '@tiptap/extension-character-count';
   import { marked } from 'marked';
   import TurndownService from 'turndown';
@@ -3418,6 +3477,8 @@ import { siteUrl } from '../data/site';
   let currentPostId = editId;
   let hinglishBlogId: string | null = null;
   let englishBlogId: string | null = null;
+  let hinglishVersion: number = 1;
+  let englishVersion: number = 1;
   let currentTranslationGroupId: string | null = null;
   let currentVersion = 1;
   let isDirty = false;
@@ -3430,17 +3491,83 @@ import { siteUrl } from '../data/site';
   let currentEditorMode: 'visual' | 'markdown' | 'compare' = 'visual';
   let tagCatalog: { id: string; name: string }[] = [];
 
+  let activeFocusKeywords: string[] = [];
+
+  function renderSeoKeywordChips() {
+    const chipsContainer = document.getElementById('seo-keywords-chips');
+    const countBadge = document.getElementById('keywords-count-badge');
+    if (!chipsContainer) return;
+
+    if (countBadge) {
+      countBadge.textContent = `${activeFocusKeywords.length} keywords`;
+    }
+
+    if (activeFocusKeywords.length === 0) {
+      chipsContainer.innerHTML = '<span class="text-[11px] text-slate-400 italic py-0.5">No target keywords added yet</span>';
+      return;
+    }
+
+    chipsContainer.innerHTML = '';
+    activeFocusKeywords.forEach((kw, index) => {
+      const chip = document.createElement('span');
+      chip.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-2xs';
+      chip.innerHTML = `<span>${kw}</span><button type="button" data-kw-index="${index}" class="text-indigo-400 hover:text-indigo-800 font-bold ml-0.5 leading-none cursor-pointer" title="Remove keyword">✕</button>`;
+      chip.querySelector('button')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeFocusKeywords.splice(index, 1);
+        renderSeoKeywordChips();
+        updateSerp();
+      });
+      chipsContainer.appendChild(chip);
+    });
+  }
+
+  function addSeoKeyword(keyword: string) {
+    const trimmed = keyword.trim().replace(/^,+|,+$/g, '');
+    if (!trimmed) return;
+    if (!activeFocusKeywords.some((k) => k.toLowerCase() === trimmed.toLowerCase())) {
+      activeFocusKeywords.push(trimmed);
+      renderSeoKeywordChips();
+      updateSerp();
+    }
+  }
+
+  const addKeywordInput = document.getElementById('field-add-keyword') as HTMLInputElement | null;
+  const addKeywordBtn = document.getElementById('btn-add-keyword');
+
+  if (addKeywordBtn && addKeywordInput) {
+    addKeywordBtn.addEventListener('click', () => {
+      addSeoKeyword(addKeywordInput.value);
+      addKeywordInput.value = '';
+      addKeywordInput.focus();
+    });
+
+    addKeywordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addSeoKeyword(addKeywordInput.value);
+        addKeywordInput.value = '';
+      }
+    });
+  }
+
   function applyKeywordsAndTags(keywords: string[]) {
     if (!keywords || !keywords.length) return;
     const cleanKeywords = keywords
-      .map((k) => k.trim().toLowerCase())
+      .map((k) => k.trim())
       .filter(Boolean);
+
+    // Update active focus keywords in SEO panel
+    activeFocusKeywords = Array.from(new Set([...activeFocusKeywords, ...cleanKeywords]));
+    renderSeoKeywordChips();
+
+    const cleanLower = cleanKeywords.map((k) => k.toLowerCase());
     const matchedTagIds: string[] = [];
 
     for (const tag of tagCatalog) {
       const tagNameLower = tag.name.trim().toLowerCase();
       const tagWords = tagNameLower.split(/\s+/);
-      const isMatched = cleanKeywords.some((kw) => {
+      const isMatched = cleanLower.some((kw) => {
         if (kw === tagNameLower || kw.includes(tagNameLower) || tagNameLower.includes(kw)) return true;
         const kwWords = kw.split(/\s+/);
         return tagWords.some((tw) => tw.length > 2 && kwWords.includes(tw));
@@ -3562,14 +3689,13 @@ import { siteUrl } from '../data/site';
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4] },
         bulletList: false,
+        link: {
+          openOnClick: false,
+          autolink: true,
+        },
       }),
       ArticleBulletList,
       FindReplace,
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-      }),
       ArticleImage,
       Youtube.configure({
         controls: true,
@@ -3917,6 +4043,9 @@ import { siteUrl } from '../data/site';
   async function setActiveLanguage(targetLang: 'HINGLISH' | 'ENGLISH', forceRefresh = false) {
     if (!forceRefresh && languageSelect?.value === targetLang && currentEditorMode !== 'compare') return;
 
+    // Cancel any pending autosave timer for previous language to prevent cross-language saving race conditions
+    clearTimeout(autosaveTimer);
+
     // 1. Save whatever is currently typed in active editor into current language draft
     syncCurrentEditorToState();
 
@@ -3937,12 +4066,16 @@ import { siteUrl } from '../data/site';
       topLangHindiBtn?.classList.add('font-medium', 'text-slate-600');
     }
 
-    // 3.5. Update active post ID to match target language
+    // 3.5. Update active post ID and version to match target language
     if (targetLang === 'ENGLISH') {
       currentPostId = englishBlogId;
+      currentVersion = englishVersion;
     } else {
       currentPostId = hinglishBlogId;
+      currentVersion = hinglishVersion;
     }
+    if (docVersionDisplay) docVersionDisplay.textContent = `${currentVersion}`;
+
     if (currentPostId) {
       window.history.replaceState({}, '', `/editor?edit=${currentPostId}`);
     } else {
@@ -3973,15 +4106,16 @@ import { siteUrl } from '../data/site';
       return;
     }
 
-    // 6. Populate current surface
+    // 6. Populate current surface without triggering false isDirty or autosave
     if (currentEditorMode === 'markdown' && markdownTextarea) {
       markdownTextarea.value = targetMd;
       updateLineNumbers();
     } else if (currentEditorMode === 'visual') {
       const cleanHtml = targetMd ? DOMPurify.sanitize(String(await marked.parse(targetMd)), DOMPURIFY_CONFIG) : '<p></p>';
-      editor.commands.setContent(cleanHtml);
+      editor.commands.setContent(cleanHtml, { emitUpdate: false });
     }
 
+    isDirty = false;
     updateSerp();
     updateMetrics();
     updateDocumentOutline();
@@ -4214,14 +4348,17 @@ import { siteUrl } from '../data/site';
 
       if (data.hinglish?.id) hinglishBlogId = data.hinglish.id;
       if (data.english?.id) englishBlogId = data.english.id;
+      if (data.hinglish?.version !== undefined) hinglishVersion = data.hinglish.version;
+      if (data.english?.version !== undefined) englishVersion = data.english.version;
       if (data.translationGroupId) currentTranslationGroupId = data.translationGroupId;
 
-      if (languageSelect?.value === 'ENGLISH' && data.english?.id) {
-        currentPostId = data.english.id;
-        window.history.replaceState({}, '', `/editor?edit=${data.english.id}`);
-      } else if (data.hinglish?.id) {
-        currentPostId = data.hinglish.id;
-        window.history.replaceState({}, '', `/editor?edit=${data.hinglish.id}`);
+      const activeLang = languageSelect?.value === 'ENGLISH' ? 'ENGLISH' : 'HINGLISH';
+      currentPostId = activeLang === 'ENGLISH' ? englishBlogId : hinglishBlogId;
+      currentVersion = activeLang === 'ENGLISH' ? englishVersion : hinglishVersion;
+      if (docVersionDisplay) docVersionDisplay.textContent = `${currentVersion}`;
+
+      if (currentPostId) {
+        window.history.replaceState({}, '', `/editor?edit=${currentPostId}`);
       }
 
       if (data.hinglish?.slug && compareHinglishSlug) compareHinglishSlug.value = data.hinglish.slug;
@@ -4292,7 +4429,6 @@ import { siteUrl } from '../data/site';
   const aiRefLoadingStatus = document.getElementById('ai-ref-loading-status');
   const aiRefResultsCard = document.getElementById('ai-ref-results-card');
   const aiRefResultCategory = document.getElementById('ai-ref-result-category');
-  const aiRefResultSeoScore = document.getElementById('ai-ref-result-seo-score');
   const aiResHTitle = document.getElementById('ai-res-h-title');
   const aiResHExcerpt = document.getElementById('ai-res-h-excerpt');
   const aiResHSlug = document.getElementById('ai-res-h-slug');
@@ -5110,6 +5246,11 @@ import { siteUrl } from '../data/site';
           category: category !== 'auto-detect' ? category : undefined,
           additionalInstructions: instructions,
           model: selectedModel,
+          availableCategories: categoriesCache.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+          })),
           images: stagedPastedImages.map((img) => ({
             url: img.url,
             base64: img.base64,
@@ -5159,6 +5300,11 @@ import { siteUrl } from '../data/site';
             category: category !== 'auto-detect' ? category : undefined,
             additionalInstructions: instructions,
             model: selectedModel,
+            availableCategories: categoriesCache.map((c: any) => ({
+              id: c.id,
+              name: c.name,
+              slug: c.slug,
+            })),
             images: stagedPastedImages.map((img) => ({ url: img.url, altText: img.altText })),
           }),
         });
@@ -5186,11 +5332,7 @@ import { siteUrl } from '../data/site';
 
       // Populate Result Preview Card
       if (aiRefResultCategory) {
-        aiRefResultCategory.textContent = data.detectedCategory || category || 'Exam Notification';
-      }
-      if (aiRefResultSeoScore) {
-        const score = typeof data.seoScore === 'number' ? data.seoScore : 85;
-        aiRefResultSeoScore.textContent = `${score}/100`;
+        aiRefResultCategory.textContent = data.detectedCategory || category || 'General';
       }
 
       if (aiResHTitle) aiResHTitle.textContent = data.hinglish?.title || '';
@@ -5222,7 +5364,7 @@ import { siteUrl } from '../data/site';
 
     } catch (err: any) {
       console.error('Failed to generate from reference:', err);
-      alert(`AI Generation Failed: ${err.message || 'Please check Gemini API configuration.'}`);
+      alert(`AI Generation Failed: ${err.message || 'Please check AI provider configuration.'}`);
       aiRefLoadingCard?.classList.add('hidden');
     } finally {
       clearInterval(timerInterval);
@@ -5262,8 +5404,6 @@ import { siteUrl } from '../data/site';
     if (compareEnglishSlug) compareEnglishSlug.value = cleanSlug;
     if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
     if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
-    if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
-    if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
 
     // Determine active language
     const isEnglish = languageSelect?.value === 'ENGLISH';
@@ -5291,24 +5431,59 @@ import { siteUrl } from '../data/site';
     }
     if (targetMd) {
       const cleanHtml = DOMPurify.sanitize(String(await marked.parse(targetMd)), DOMPURIFY_CONFIG);
-      editor.commands.setContent(cleanHtml);
+      editor.commands.setContent(cleanHtml, { emitUpdate: false });
     }
 
-    // Category matching if available
+    // Strictly match existing system categories (Do NOT add any new category)
     const categorySelect = document.getElementById('field-category') as HTMLSelectElement | null;
     if (categorySelect && detectedCategory) {
       const match = Array.from(categorySelect.options).find(
-        (opt) => opt.text.toLowerCase().includes(detectedCategory.toLowerCase()) || opt.value.toLowerCase().includes(detectedCategory.toLowerCase())
+        (opt) => opt.text.trim().toLowerCase() === detectedCategory.trim().toLowerCase() ||
+                 opt.value.trim().toLowerCase() === detectedCategory.trim().toLowerCase() ||
+                 opt.text.toLowerCase().includes(detectedCategory.toLowerCase()) ||
+                 detectedCategory.toLowerCase().includes(opt.text.toLowerCase())
       );
-      if (match) categorySelect.value = match.value;
+      if (match) {
+        categorySelect.value = match.value;
+        refreshSidebarSummaries();
+      }
     }
 
-    // Auto-match keywords to tags
+    // Update SEO panel elements
+    const seoAiType = document.getElementById('seo-ai-detected-type');
+    if (seoAiType) seoAiType.textContent = detectedCategory || 'Auto-Labeled';
+
+    const seoAiModel = document.getElementById('seo-ai-model-badge');
+    if (seoAiModel && lastGeneratedBilingual.modelUsed) {
+      seoAiModel.textContent = lastGeneratedBilingual.modelUsed;
+    }
+
+    const summarySeoStatus = document.getElementById('summary-seo-status');
+    if (summarySeoStatus) {
+      summarySeoStatus.textContent = 'Auto-Populated';
+      summarySeoStatus.className = 'ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+    }
+
+    // Auto-match keywords to tags and render chips in SEO panel
     const allKeywords = [
       ...(hinglish?.keywords || []),
       ...(english?.keywords || []),
     ];
+    activeFocusKeywords = [];
     applyKeywordsAndTags(allKeywords);
+
+    // Auto-expand the SEO Accordion so author can immediately view & tweak metadata manually
+    const seoAccordion = document.querySelector<HTMLElement>('.accordion-item[data-accordion="seo"]');
+    if (seoAccordion) {
+      const content = seoAccordion.querySelector<HTMLElement>('.accordion-content');
+      const chevron = seoAccordion.querySelector<HTMLElement>('.accordion-chevron');
+      if (content) content.classList.remove('hidden');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    }
+
+    // Ensure right sidebar is open so metadata is visible
+    editorSidebar?.classList.remove('hidden');
+    updateDrawerBackdrop();
 
     isDirty = true;
     updateCompareStats();
@@ -7819,6 +7994,9 @@ ${mdContent}
   let activeClickedImgEl: HTMLImageElement | null = null;
 
   function getArticleFocusKeywords(): string[] {
+    if (activeFocusKeywords && activeFocusKeywords.length > 0) {
+      return activeFocusKeywords;
+    }
     const title = (document.getElementById('field-title') as HTMLInputElement | null)?.value || '';
     const clean = title.replace(/[^\w\s\u0900-\u097F]/gi, ' ').trim();
     const words = clean.split(/\s+/).filter((w) => w.length >= 4);
@@ -8955,8 +9133,13 @@ ${mdContent}
         currentVersion = saved.version;
         isDirty = false;
         if (saved.translationGroupId) currentTranslationGroupId = saved.translationGroupId;
-        if (saved.language === 'ENGLISH') englishBlogId = saved.id;
-        else if (saved.language === 'HINGLISH') hinglishBlogId = saved.id;
+        if (saved.language === 'ENGLISH') {
+          englishBlogId = saved.id;
+          englishVersion = saved.version;
+        } else if (saved.language === 'HINGLISH') {
+          hinglishBlogId = saved.id;
+          hinglishVersion = saved.version;
+        }
 
         if (statusSelect) statusSelect.value = saved.status || effectiveStatus;
         if (docVersionDisplay) docVersionDisplay.textContent = `${saved.version}`;
@@ -8972,7 +9155,21 @@ ${mdContent}
       } else if (res.status === 409) {
         const err = await res.json().catch(() => ({}));
         if (err.serverVersion !== undefined) {
-          alert(`Version Conflict: ${err.message || 'This article was modified by another editor. Please refresh.'}`);
+          // Synchronize client version with server version
+          currentVersion = err.serverVersion;
+          if (languageSelect?.value === 'ENGLISH') {
+            englishVersion = err.serverVersion;
+          } else {
+            hinglishVersion = err.serverVersion;
+          }
+          if (docVersionDisplay) docVersionDisplay.textContent = `${err.serverVersion}`;
+          if (isAutosave) {
+            if (saveStatusEl) {
+              saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span><span>Version synced</span>`;
+            }
+          } else {
+            alert(`Version Conflict: ${err.message || 'This article was modified by another editor. Please refresh.'}`);
+          }
         } else {
           alert(`Conflict: ${err.message || 'This blog slug is already in use.'}`);
         }
@@ -9743,10 +9940,14 @@ ${mdContent}
         const isPostEnglish = post.language === 'ENGLISH';
         if (isPostEnglish) {
           englishBlogId = post.id;
+          englishVersion = post.version || 1;
           hinglishBlogId = post.linkedBlog?.id || null;
+          hinglishVersion = post.linkedBlog?.version || 1;
         } else {
           hinglishBlogId = post.id;
+          hinglishVersion = post.version || 1;
           englishBlogId = post.linkedBlog?.id || null;
+          englishVersion = post.linkedBlog?.version || 1;
         }
 
         const postMd = post.htmlContent ? turndownService.turndown(post.htmlContent) : '';

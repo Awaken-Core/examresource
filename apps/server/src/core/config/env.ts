@@ -21,6 +21,20 @@ export const EnvSchema = z.object({
   GEMINI_BACKUP_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().optional(),
   GEMINI_FALLBACK_MODELS: z.string().optional(),
+  DEEPSEEK_API_KEY: z.string().optional(),
+  DEEPSEEK_BASE_URL: z
+    .string()
+    .optional()
+    .transform((val) => (val?.trim() ? val.trim() : 'https://api.deepseek.com'))
+    .pipe(z.string().url())
+    .default('https://api.deepseek.com'),
+  OPENROUTER_API_KEY: z.string().optional(),
+  OPENROUTER_BASE_URL: z
+    .string()
+    .optional()
+    .transform((val) => (val?.trim() ? val.trim() : 'https://openrouter.ai/api/v1'))
+    .pipe(z.string().url())
+    .default('https://openrouter.ai/api/v1'),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -1,10 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
+import express from 'express';
 import type { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module.js';
 import { env } from './core/config/env.js';
+
 export async function createApplication() {
-  const app = await NestFactory.create(AppModule, { rawBody: true });
+  const app = await NestFactory.create(AppModule, {
+    bodyParser: false,
+    rawBody: true,
+  });
+
+  app.use(
+    express.json({
+      limit: '50mb',
+      verify: (req: any, _res, buf) => {
+        req.rawBody = buf;
+      },
+    }),
+  );
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
   app.use(cookieParser());
   app.enableCors({
