@@ -1693,15 +1693,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         let authProfileQueued = false;
         function queueSyncAuthProfile() {
-          const hasAuthHint = (function() {
-            try {
-              return localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
-            } catch (e) {
-              return false;
-            }
-          })();
-          if (!hasAuthHint) return;
-
+          // API-host cookies are unreadable here in production; always verify the session.
           if (authProfileQueued) return;
           authProfileQueued = true;
           const run = () => {
