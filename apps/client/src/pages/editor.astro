@@ -7705,7 +7705,7 @@ Write paragraphs with **bold**, *italic*, and `code`.
         new Option(
           model.label +
             (model.id === provider!.defaultModel ? " (Default)" : "") +
-            (!model.vision ? " ? Text only" : ""),
+            (!model.vision ? " · Text only" : ""),
           model.id,
         ),
       );
@@ -8844,22 +8844,44 @@ Write paragraphs with **bold**, *italic*, and `code`.
           for (const part of parts) {
             const trimmed = part.trim();
             if (!trimmed.startsWith("data: ")) continue;
+            let payload: any = null;
             try {
-              const payload = JSON.parse(trimmed.slice(6));
-              if (payload.type === "stage") {
-                updateRealStage(payload.stage, payload.message);
-              } else if (payload.type === "complete") {
-                data = payload.result;
-              } else if (payload.type === "error") {
-                throw new Error(payload.message);
-              }
-            } catch (pErr: any) {
-              if (pErr.message && !pErr.message.includes("JSON")) throw pErr;
+              payload = JSON.parse(trimmed.slice(6));
+            } catch {
+              continue;
+            }
+            if (payload?.type === "stage") {
+              updateRealStage(payload.stage, payload.message);
+            } else if (payload?.type === "complete") {
+              data = payload.result;
+            } else if (payload?.type === "error") {
+              throw new Error(payload.message || "AI Generation failed.");
             }
           }
         }
-      } else {
-        // Smooth fallback to non-streaming endpoint if stream is interrupted
+
+        if (buffer.trim()) {
+          const parts = buffer.split("\n\n");
+          for (const part of parts) {
+            const trimmed = part.trim();
+            if (!trimmed.startsWith("data: ")) continue;
+            let payload: any = null;
+            try {
+              payload = JSON.parse(trimmed.slice(6));
+            } catch {
+              continue;
+            }
+            if (payload?.type === "complete") {
+              data = payload.result;
+            } else if (payload?.type === "error") {
+              throw new Error(payload.message || "AI Generation failed.");
+            }
+          }
+        }
+      }
+
+      if (!data) {
+        // Smooth fallback to non-streaming endpoint if stream yielded no data
         const fallbackRes = await apiFetch("/blogs/generate-from-reference", {
           method: "POST",
           body: generationBody,

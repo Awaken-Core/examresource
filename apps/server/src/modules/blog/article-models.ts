@@ -14,19 +14,35 @@ export const ARTICLE_MODELS = {
   ],
   openrouter: [
     {
-      id: 'anthropic/claude-sonnet-4.6',
-      label: 'Claude Sonnet 4.6',
+      id: 'openrouter/free',
+      label: 'OpenRouter Free Models Router',
       vision: true,
     },
     {
-      id: 'google/gemini-3.1-pro-preview',
-      label: 'Gemini 3.1 Pro (Preview)',
+      id: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+      label: 'NVIDIA Nemotron 3 Ultra (free)',
+      vision: false,
+    },
+    {
+      id: 'nvidia/nemotron-3.5-lightning:free',
+      label: 'NVIDIA Nemotron 3.5 Lightning (free)',
+      vision: false,
+    },
+    {
+      id: 'nvidia/nemotron-3.5-super-vl:free',
+      label: 'NVIDIA Nemotron 3.5 Super VL (free)',
       vision: true,
     },
-    { id: 'openai/gpt-4.1', label: 'GPT-4.1', vision: true },
-    { id: 'deepseek/deepseek-v3.2', label: 'DeepSeek V3.2', vision: false },
-    { id: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash', vision: true },
-    { id: 'openai/gpt-4.1-mini', label: 'GPT-4.1 Mini', vision: true },
+    {
+      id: 'google/gemma-4-26b-a4b-it:free',
+      label: 'Google Gemma 4 26B (free)',
+      vision: true,
+    },
+    {
+      id: 'cohere/north-mini-code:free',
+      label: 'Cohere North Mini Code (free)',
+      vision: false,
+    },
   ],
   groq: [
     { id: 'openai/gpt-oss-120b', label: 'GPT OSS 120B', vision: false },
@@ -36,6 +52,8 @@ export const ARTICLE_MODELS = {
 } as const;
 
 export function getArticleProviders() {
+  const openrouterDefault = env.OPENROUTER_MODEL || 'openrouter/free';
+
   const providers: Array<{
     id: string;
     label: string;
@@ -57,13 +75,13 @@ export function getArticleProviders() {
     {
       id: 'openrouter',
       label: 'OpenRouter',
-      enabled: Boolean(
-        env.OPENROUTER_API_KEY &&
-        env.OPENROUTER_BASE_URL &&
-        env.OPENROUTER_MODEL,
-      ),
-      defaultModel: env.OPENROUTER_MODEL,
-      models: [...ARTICLE_MODELS.openrouter],
+      enabled: Boolean(env.OPENROUTER_API_KEY),
+      defaultModel: openrouterDefault,
+      models: [...ARTICLE_MODELS.openrouter] as Array<{
+        id: string;
+        label: string;
+        vision: boolean;
+      }>,
     },
     {
       id: 'groq',

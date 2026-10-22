@@ -160,7 +160,6 @@ export class GeminiService {
     try {
       const response = await fetch(url, {
         method: 'POST',
-        signal: AbortSignal.timeout(env.AI_REQUEST_TIMEOUT_MS),
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });

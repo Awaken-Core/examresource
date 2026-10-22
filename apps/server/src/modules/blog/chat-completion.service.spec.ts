@@ -11,7 +11,7 @@ describe('ChatCompletionService', () => {
     Object.assign(env, {
       OPENROUTER_API_KEY: 'test-key',
       OPENROUTER_BASE_URL: env.CLIENT_URL,
-      OPENROUTER_MODEL: 'openai/gpt-4.1-mini',
+      OPENROUTER_MODEL: 'openrouter/free',
       GROQ_API_KEY: 'test-key',
       GROQ_BASE_URL: env.CLIENT_URL,
       GROQ_MODEL: 'openai/gpt-oss-120b',
@@ -48,7 +48,7 @@ describe('ChatCompletionService', () => {
         `${env.CLIENT_URL.replace(/\/+$/, '')}/chat/completions`,
       );
       expect(options.headers.Authorization).toBe('Bearer test-key');
-      expect(options.signal).toBeInstanceOf(AbortSignal);
+      expect(options.signal).toBeUndefined();
       expect(JSON.parse(options.body)).not.toHaveProperty(
         'max_completion_tokens',
       );
@@ -116,6 +116,72 @@ describe('ChatCompletionService', () => {
     });
     expect(body).not.toHaveProperty('max_completion_tokens');
     expect(env.GROQ_MODEL).toBe('openai/gpt-oss-120b');
+  });
+
+  it('sends structured json_object format for openrouter/free', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          choices: [
+            {
+              finish_reason: 'stop',
+              message: {
+                content: JSON.stringify({
+                  hinglish: { title: 'Notice', content: 'Hindi article' },
+                  english: { title: 'Notice', content: 'English article' },
+                }),
+              },
+            },
+          ],
+        }),
+      ),
+    );
+    const result = await service.generateContent(
+      'openrouter',
+      'Return JSON',
+      'Reference',
+      [],
+      undefined,
+      'openrouter/free',
+    );
+    expect(result.model).toBe('openrouter/free');
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.model).toBe('openrouter/free');
+    expect(body.response_format).toEqual({ type: 'json_object' });
+    expect(body).not.toHaveProperty('provider');
+  });
+
+  it('runs nvidia/nemotron-3-ultra-550b-a55b:free without format constraint on OpenRouter', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          choices: [
+            {
+              finish_reason: 'stop',
+              message: {
+                content: JSON.stringify({
+                  hinglish: { title: 'Notice', content: 'Hindi article' },
+                  english: { title: 'Notice', content: 'English article' },
+                }),
+              },
+            },
+          ],
+        }),
+      ),
+    );
+    const result = await service.generateContent(
+      'openrouter',
+      'Return JSON',
+      'Reference',
+      [],
+      undefined,
+      'nvidia/nemotron-3-ultra-550b-a55b:free',
+    );
+    expect(result.model).toBe('nvidia/nemotron-3-ultra-550b-a55b:free');
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.model).toBe('nvidia/nemotron-3-ultra-550b-a55b:free');
+    expect(body).not.toHaveProperty('response_format');
+    expect(body).not.toHaveProperty('provider');
   });
 
   it.each([
@@ -279,7 +345,7 @@ describe('ChatCompletionService', () => {
       new DOMException('Aborted', 'TimeoutError'),
     );
     await expect(service.generateContent('groq', '', '', [])).rejects.toThrow(
-      'timed out',
+      'failed to connect or returned an invalid response',
     );
   });
 

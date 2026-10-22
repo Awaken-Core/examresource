@@ -25,7 +25,7 @@ describe('Article provider catalog', () => {
       GEMINI_MODEL: 'gemini-3.5-flash',
       OPENROUTER_API_KEY: 'private-test-key',
       OPENROUTER_BASE_URL: env.CLIENT_URL,
-      OPENROUTER_MODEL: 'openai/gpt-4.1',
+      OPENROUTER_MODEL: 'openrouter/free',
       GROQ_API_KEY: 'private-test-key',
       GROQ_BASE_URL: env.CLIENT_URL,
       GROQ_MODEL: 'unlisted-model',
@@ -45,6 +45,31 @@ describe('Article provider catalog', () => {
         'models',
       ]);
     expect(JSON.stringify(providers)).not.toContain('private-test-key');
+  });
+
+  it('includes exclusively 100% free OpenRouter models with zero credit requirements', () => {
+    const ids = ARTICLE_MODELS.openrouter.map((m) => m.id);
+    expect(ids).toEqual([
+      'openrouter/free',
+      'nvidia/nemotron-3-ultra-550b-a55b:free',
+      'nvidia/nemotron-3.5-lightning:free',
+      'nvidia/nemotron-3.5-super-vl:free',
+      'google/gemma-4-26b-a4b-it:free',
+      'cohere/north-mini-code:free',
+    ]);
+    expect(
+      ARTICLE_MODELS.openrouter.find((m) => m.id === 'openrouter/free')?.vision,
+    ).toBe(true);
+    expect(
+      ARTICLE_MODELS.openrouter.find(
+        (m) => m.id === 'nvidia/nemotron-3.5-super-vl:free',
+      )?.vision,
+    ).toBe(true);
+    expect(
+      ARTICLE_MODELS.openrouter.find(
+        (m) => m.id === 'nvidia/nemotron-3-ultra-550b-a55b:free',
+      )?.vision,
+    ).toBe(false);
   });
 
   it('retains custom Gemini defaults and backup-key-only configuration', () => {

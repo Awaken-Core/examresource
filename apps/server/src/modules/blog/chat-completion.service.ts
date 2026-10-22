@@ -23,11 +23,17 @@ export class ChatCompletionService {
   ): Promise<{ text: string; model: string }> {
     const prefix = provider === 'openrouter' ? 'OPENROUTER' : 'GROQ';
     const apiKey = env[`${prefix}_API_KEY`];
-    const baseUrl = env[`${prefix}_BASE_URL`];
-    const model = requestedModel || env[`${prefix}_MODEL`];
+    const defaultBaseUrl =
+      provider === 'openrouter'
+        ? 'https://openrouter.ai/api/v1'
+        : 'https://api.groq.com/openai/v1';
+    const baseUrl = env[`${prefix}_BASE_URL`] || defaultBaseUrl;
+    const defaultModel =
+      provider === 'openrouter' ? 'openrouter/free' : 'openai/gpt-oss-120b';
+    const model = requestedModel || env[`${prefix}_MODEL`] || defaultModel;
     if (!apiKey || !baseUrl || !model) {
       throw new BadRequestException(
-        `${provider} is not configured. Set its API key, base URL and model on the server.`,
+        `${provider} is not configured. Set its API key on the server.`,
       );
     }
     const selectedModel = ARTICLE_MODELS[provider].find(
@@ -56,9 +62,13 @@ export class ChatCompletionService {
       content.push({ type: 'image_url', image_url: { url } });
     }
     onModelSwitch?.(model);
-    // GPT OSS 20B rejected the full article with json_validate_failed in both JSON modes.
-    // Keep the same JSON prompt and validate locally instead of using its failing format constraint.
-    const promptOnly = provider === 'groq' && model === 'openai/gpt-oss-20b';
+
+    // GPT OSS 20B and Nemotron models do not support structured json_object constraints.
+    // Keep the same JSON prompt and validate locally instead of using a failing format constraint.
+    const promptOnly =
+      (provider === 'groq' && model === 'openai/gpt-oss-20b') ||
+      model.startsWith('nvidia/nemotron');
+
     try {
       const response = await fetch(
         `${baseUrl.replace(/\/+$/, '')}/chat/completions`,
@@ -68,7 +78,6 @@ export class ChatCompletionService {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${apiKey}`,
           },
-          signal: AbortSignal.timeout(env.AI_REQUEST_TIMEOUT_MS),
           body: JSON.stringify({
             model,
             messages: [
@@ -84,9 +93,6 @@ export class ChatCompletionService {
                       ? ARTICLE_RESPONSE_FORMAT
                       : { type: 'json_object' },
                 }),
-            ...(provider === 'openrouter'
-              ? { provider: { require_parameters: true } }
-              : {}),
           }),
         },
       );
@@ -188,12 +194,16 @@ export class ChatCompletionService {
       }
       if (promptOnly) {
         try {
-          const parsed = JSON.parse(
-            choice.message.content
-              .trim()
-              .replace(/^```(?:json)?\s*/i, '')
-              .replace(/\s*```$/, ''),
-          );
+          const raw = choice.message.content.trim();
+          let jsonStr = raw
+            .replace(/^```(?:json)?\s*/i, '')
+            .replace(/\s*```$/, '');
+          const firstBrace = jsonStr.indexOf('{');
+          const lastBrace = jsonStr.lastIndexOf('}');
+          if (firstBrace !== -1 && lastBrace > firstBrace) {
+            jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
+          }
+          const parsed = JSON.parse(jsonStr);
           for (const language of ['hinglish', 'english']) {
             if (
               typeof parsed?.[language]?.title !== 'string' ||
@@ -214,7 +224,7 @@ export class ChatCompletionService {
     } catch (error) {
       if (error instanceof ServiceUnavailableException) throw error;
       throw new ServiceUnavailableException(
-        `${provider} request timed out, failed to connect or returned an invalid response. Please retry or select another provider.`,
+        `${provider} request failed to connect or returned an invalid response. Please retry or select another provider.`,
       );
     }
   }

@@ -24,12 +24,7 @@ export const EnvSchema = z.object({
   GEMINI_BACKUP_API_KEY: z.string().optional(),
   GEMINI_MODEL: z.string().optional(),
   GEMINI_FALLBACK_MODELS: z.string().optional(),
-  AI_REQUEST_TIMEOUT_MS: z.coerce
-    .number()
-    .int()
-    .min(1000)
-    .max(120000)
-    .default(60000),
+  AI_REQUEST_TIMEOUT_MS: z.coerce.number().int().min(1).optional(),
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_BASE_URL: z.preprocess(
     (value) => (value === '' ? undefined : value),

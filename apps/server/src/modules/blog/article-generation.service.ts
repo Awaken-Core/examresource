@@ -233,11 +233,22 @@ Output ONLY valid JSON (no markdown fences, no extra text):
     );
 
     try {
-      const cleaned = rawJson
-        .replace(/^```(?:json)?\n?/i, '')
-        .replace(/\n?```$/i, '')
+      let cleaned = rawJson
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```$/i, '')
         .trim();
-      const parsed = JSON.parse(cleaned);
+      let parsed: any;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch {
+        const firstBrace = cleaned.indexOf('{');
+        const lastBrace = cleaned.lastIndexOf('}');
+        if (firstBrace !== -1 && lastBrace > firstBrace) {
+          parsed = JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+        } else {
+          throw new Error('No valid JSON object found');
+        }
+      }
       return {
         hinglish: {
           title: parsed.hinglish?.title || 'Untitled Hinglish Article',

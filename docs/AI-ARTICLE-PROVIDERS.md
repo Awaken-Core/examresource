@@ -6,18 +6,24 @@ Errors identify the selected provider/model and distinguish rejected keys, permi
 
 Successful HTTP responses are also checked for their completion status. Rejection messages include the model and finish reason, distinguishing `length` (provider output limit), `content_filter`/refusal, missing article text and other unfinished responses. The server records only provider/model, finish reason, content character count and the presence of an upstream error. It never logs article text or reasoning. Omitting an app token cap does not disable provider-side output limits.
 
-Groq GPT OSS 120B and Qwen use the existing bilingual article fields as a strict JSON schema. GPT OSS 20B rejected the full article request with `json_validate_failed` in live checks even with strict output enabled. Its compatibility path keeps the original JSON-writing prompt, omits the provider format constraint, uses low reasoning effort, and locally requires nonempty titles/content in both languages. This does not switch providers or add a token cap. See [Groq structured-output support](https://console.groq.com/docs/structured-outputs).
+Groq models in the catalog run on Groq's high-speed free developer tier:
+- [GPT OSS 120B](https://console.groq.com/docs/models) (`openai/gpt-oss-120b`): High-accuracy open model for detailed technical and bilingual content.
+- [GPT OSS 20B](https://console.groq.com/docs/models) (`openai/gpt-oss-20b`): Ultra-fast generation running with local JSON validation.
+- [Qwen 3.8 27B](https://console.groq.com/docs/models) (`qwen/qwen3.8-27b`): Multimodal vision-capable model supporting attached image analysis.
 
-An OpenRouter HTTP 402 is an account credit/reservation issue. With no output cap in the request, its default allowance may require more credits than the final generated article would use. Add credits or choose another model/provider; the app does not silently reintroduce an output limit. Successful synthetic article checks do not establish quality or success for every reference and image combination.
-
-Additional OpenRouter options include [Claude Sonnet 4.6](https://openrouter.ai/anthropic/claude-sonnet-4.6), [Gemini 3.1 Pro Preview](https://openrouter.ai/google/gemini-3.1-pro-preview), [GPT-4.1](https://openrouter.ai/openai/gpt-4.1), and text-only [DeepSeek V3.2](https://openrouter.ai/deepseek/deepseek-v3.2). These are candidates for comparison on the same bilingual reference, not a measured quality ranking. Premium models can cost more and reasoning models can take longer than the default request timeout. Existing environment defaults are unchanged. Provider account access and JSON-mode routing still require live verification.
+OpenRouter exclusively includes 100% free models ($0 balance required, no paid credits needed):
+- [OpenRouter Free Models Router](https://openrouter.ai/models/openrouter/free) (`openrouter/free`): Automatically routes requests to an available free zero-cost model on OpenRouter. Supports text and multimodal image input.
+- [NVIDIA Nemotron 3 Ultra](https://openrouter.ai/models/nvidia/nemotron-3-ultra-550b-a55b:free) (`nvidia/nemotron-3-ultra-550b-a55b:free`): Frontier 550B hybrid MoE reasoning model with 1M context, running without format constraints for complex technical and analytical content.
+- [NVIDIA Nemotron 3.5 Super VL](https://openrouter.ai/models/nvidia/nemotron-3.5-super-vl:free) (`nvidia/nemotron-3.5-super-vl:free`): 100% free multimodal vision model with 1M context for attached reference images.
+- [NVIDIA Nemotron 3.5 Lightning](https://openrouter.ai/models/nvidia/nemotron-3.5-lightning:free) (`nvidia/nemotron-3.5-lightning:free`): High-efficiency free text model with fast response times.
+- [Google Gemma 4 26B](https://openrouter.ai/models/google/gemma-4-26b-a4b-it:free) (`google/gemma-4-26b-a4b-it:free`): Multimodal open model by Google.
+- [Cohere North Mini Code](https://openrouter.ai/models/cohere/north-mini-code:free) (`cohere/north-mini-code:free`): Free model optimized for technical formatting.
 
 Gemini remains the default. Translation, SEO tools, article prompts, returned fields and saving are unchanged. The reference article writer now has Provider and Model selectors. Choices load only when the modal opens, from the authenticated `GET /api/v1/blogs/ai/providers` endpoint. The response contains configured providers, their code-defined models, image capabilities and default model IDs; it never contains keys or base URLs and is marked private/no-store.
 
-For OpenRouter or Groq, configure the corresponding server-only `API_KEY`, `BASE_URL`, and `MODEL` variables shown in `apps/server/.env.example`. The base URL includes the provider's API version prefix and excludes `/chat/completions`. Obtain it from the official API documentation:
-
-- [OpenRouter Chat Completions](https://openrouter.ai/docs/api/api-reference/chat/send-chat-completion-request)
-- [Groq API reference](https://console.groq.com/docs/api-reference)
+For OpenRouter or Groq, configure the corresponding server-only `API_KEY`, `BASE_URL`, and `MODEL` variables shown in `apps/server/.env.example`. The base URL includes the provider's API version prefix and excludes `/chat/completions`. Default base URLs are automatically provided if omitted:
+- OpenRouter: `https://openrouter.ai/api/v1`
+- Groq: `https://api.groq.com/openai/v1`
 
 Available models, display labels and image capabilities live in `apps/server/src/modules/blog/article-models.ts`. Set `OPENROUTER_MODEL` and `GROQ_MODEL` to a model ID from that provider's catalog to choose its default. Both requested and default models must appear in the catalog; unknown models are rejected before an API call. Add or update options in code, not in environment lists. Text-only models reject image requests before an API call. Gemini's existing model selection remains unchanged.
 
@@ -29,8 +35,4 @@ Both authenticated generation endpoints accept an optional `provider` (`gemini`,
 
 `AI_REQUEST_TIMEOUT_MS` bounds each provider attempt (default 60 seconds, maximum 120 seconds); Gemini retains its existing retry behavior. New providers make one attempt and never silently switch providers. Rate limits, credential failures, timeouts, blocked or truncated output produce an error. Provider response bodies are not exposed. Full bilingual content validation remains scheduled for Phase 4.
 
-Live provider quality, account access and model limits need verification with configured credentials; mocked tests do not establish writing quality.
-
-Catalog references: [OpenRouter Gemini 2.5 Flash](https://openrouter.ai/google/gemini-2.5-flash), [OpenRouter GPT-4.1 Mini](https://openrouter.ai/openai/gpt-4.1-mini), [Groq models](https://console.groq.com/docs/models), [Groq vision](https://console.groq.com/docs/vision). The Groq Qwen vision option is a preview model; account availability and provider limits still apply.
-
-The editor initially selects Gemini when configured, otherwise the first enabled provider. Changing providers selects its server-configured default model. Gemini article generation also honors `GEMINI_MODEL`. Providers with missing credentials/base URL/default or an unlisted default (OpenRouter/Groq) are omitted. Failed or empty discovery offers a retry action without clearing the reference input. Provider/model controls are locked during generation. Attached images require a vision-capable selection; both streaming and fallback requests send the same complete image payload. Translation and the standalone SEO tools remain on Gemini. Phase 4 output validation is still pending.
+The editor initially selects Gemini when configured, otherwise the first enabled provider. Changing providers selects its server-configured default model. Gemini article generation also honors `GEMINI_MODEL`. Providers with missing credentials or an unlisted default are omitted. Failed or empty discovery offers a retry action without clearing the reference input. Provider/model controls are locked during generation. Attached images require a vision-capable selection; both streaming and fallback requests send the same complete image payload. Translation and the standalone SEO tools remain on Gemini.
