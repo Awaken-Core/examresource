@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import request from 'supertest';
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { BlogController } from './blog.controller.js';
 import { BlogService } from './blog.service.js';
 import { AuthService } from '../auth/auth.service.js';
@@ -22,6 +22,14 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
     listManageable: () =>
       Promise.resolve({ data: [{ id: 'admin-1', title: 'Draft' }] }),
     generateBilingualFromReference: (input: unknown) => Promise.resolve(input),
+    getArticleProviders: () => [
+      {
+        id: 'groq',
+        label: 'Groq',
+        defaultModel: 'configured-model',
+        models: [],
+      },
+    ],
   };
 
   const mockAuthService = {
@@ -54,6 +62,29 @@ describe('BlogController Public Cache-Control & Security Headers', () => {
 
   afterAll(async () => {
     await app.close();
+  });
+
+  it('serves provider choices as private, non-cacheable data', async () => {
+    const res = await request(app.getHttpServer()).get(
+      '/api/v1/blogs/ai/providers',
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers['cache-control']).toBe('private, no-store');
+    expect(res.body[0].id).toBe('groq');
+  });
+
+  it('requires authentication before returning provider choices', async () => {
+    const auth = vi
+      .spyOn(mockAuthService, 'requireUser')
+      .mockRejectedValueOnce(new UnauthorizedException());
+    try {
+      const res = await request(app.getHttpServer()).get(
+        '/api/v1/blogs/ai/providers',
+      );
+      expect(res.status).toBe(401);
+    } finally {
+      auth.mockRestore();
+    }
   });
 
   it('passes provider and model through the regular article endpoint', async () => {

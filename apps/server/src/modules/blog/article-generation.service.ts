@@ -1,6 +1,7 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
 import { ChatCompletionService } from './chat-completion.service.js';
 import { GeminiService } from './gemini.service.js';
+import { env } from '../../core/config/env.js';
 
 @Injectable()
 export class ArticleGenerationService {
@@ -52,6 +53,7 @@ export class ArticleGenerationService {
     seoScore: number;
     detectedCategory?: string;
     modelUsed: string;
+    providerUsed: string;
   }> {
     const provider = input.provider ?? 'gemini';
     if (!['gemini', 'openrouter', 'groq'].includes(provider)) {
@@ -204,7 +206,10 @@ Output ONLY valid JSON (no markdown fences, no extra text):
     }));
 
     const requestedModel =
-      input.model || (provider === 'gemini' ? 'gemini-3.8-flash' : undefined);
+      input.model ||
+      (provider === 'gemini'
+        ? env.GEMINI_MODEL || 'gemini-3.8-flash'
+        : undefined);
     const { text: rawJson, model: modelUsed } = await (
       provider === 'gemini'
         ? this.gemini.generateContent.bind(this.gemini)
@@ -261,6 +266,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
         seoScore: typeof parsed.seoScore === 'number' ? parsed.seoScore : 75,
         detectedCategory: parsed.detectedCategory || input.category,
         modelUsed,
+        providerUsed: provider,
       };
     } catch (err) {
       this.logger.error(

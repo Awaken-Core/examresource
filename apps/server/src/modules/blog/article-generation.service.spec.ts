@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { ArticleGenerationService } from './article-generation.service.js';
 import { ChatCompletionService } from './chat-completion.service.js';
 import { GeminiService } from './gemini.service.js';
+import { env } from '../../core/config/env.js';
 
 describe('ArticleGenerationService', () => {
   it.each(['openrouter', 'groq'])(
@@ -91,7 +92,11 @@ describe('ArticleGenerationService', () => {
       stages,
     );
 
-    expect(result).toEqual({ ...output, modelUsed: 'selected-model' });
+    expect(result).toEqual({
+      ...output,
+      modelUsed: 'selected-model',
+      providerUsed: 'gemini',
+    });
     const [system, user, images, onModelSwitch, model] =
       generateContent.mock.calls[0];
     expect(system).toContain('DEVANAGARI');
@@ -125,7 +130,9 @@ describe('ArticleGenerationService', () => {
       referenceContent: 'Reference',
       category: 'jobs',
     });
-    expect(generateContent.mock.calls[0][4]).toBe('gemini-3.8-flash');
+    expect(generateContent.mock.calls[0][4]).toBe(
+      env.GEMINI_MODEL || 'gemini-3.8-flash',
+    );
     expect(result.hinglish.title).toBe('Untitled Hinglish Article');
     expect(result.english.content).toBe('');
     expect(result.detectedCategory).toBe('jobs');

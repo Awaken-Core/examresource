@@ -221,6 +221,12 @@ export class BlogController {
     return this.blogs.saveBilingual(body, await this.currentUser(req));
   }
 
+  @Get('blogs/ai/providers')
+  @Header('Cache-Control', 'private, no-store')
+  async articleProviders(@Req() req: Request) {
+    return this.blogs.getArticleProviders(await this.currentUser(req));
+  }
+
   @Post('blogs/generate-from-reference')
   async generateFromReference(@Req() req: Request) {
     const body = (req.body as any) || {};

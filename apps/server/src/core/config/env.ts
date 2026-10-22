@@ -36,24 +36,12 @@ export const EnvSchema = z.object({
     z.string().url().optional(),
   ),
   OPENROUTER_MODEL: z.string().optional(),
-  OPENROUTER_MAX_OUTPUT_TOKENS: z.coerce
-    .number()
-    .int()
-    .min(1024)
-    .max(65536)
-    .default(16000),
   GROQ_API_KEY: z.string().optional(),
   GROQ_BASE_URL: z.preprocess(
     (value) => (value === '' ? undefined : value),
     z.string().url().optional(),
   ),
   GROQ_MODEL: z.string().optional(),
-  GROQ_MAX_OUTPUT_TOKENS: z.coerce
-    .number()
-    .int()
-    .min(1024)
-    .max(65536)
-    .default(16000),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

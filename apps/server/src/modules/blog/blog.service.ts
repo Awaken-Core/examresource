@@ -46,6 +46,7 @@ import type {
 } from './dto/blog.dto.js';
 import { GeminiService } from './gemini.service.js';
 import { ArticleGenerationService } from './article-generation.service.js';
+import { getArticleProviders } from './article-models.js';
 import { createBlogPublishedNotification } from '../notifications/notification.store.js';
 
 interface CacheEntry<T> {
@@ -2335,6 +2336,11 @@ export class BlogService {
       hinglish: hinglishPost,
       english: englishPost,
     };
+  }
+
+  getArticleProviders(currentUser: CurrentUser) {
+    this.assertCanWrite(currentUser);
+    return getArticleProviders();
   }
 
   async generateBilingualFromReference(

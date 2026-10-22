@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { env, EnvSchema } from '../../core/config/env.js';
 import { ChatCompletionService } from './chat-completion.service.js';
+import { ARTICLE_RESPONSE_FORMAT } from './article-response.schema.js';
 
 describe('ChatCompletionService', () => {
   const original = { ...env };
@@ -48,9 +49,16 @@ describe('ChatCompletionService', () => {
       );
       expect(options.headers.Authorization).toBe('Bearer test-key');
       expect(options.signal).toBeInstanceOf(AbortSignal);
+      expect(JSON.parse(options.body)).not.toHaveProperty(
+        'max_completion_tokens',
+      );
+      expect(JSON.parse(options.body)).not.toHaveProperty('max_tokens');
       expect(JSON.parse(options.body)).toMatchObject({
         model: expectedModel,
-        response_format: { type: 'json_object' },
+        response_format:
+          provider === 'groq'
+            ? ARTICLE_RESPONSE_FORMAT
+            : { type: 'json_object' },
       });
     },
   );
@@ -74,7 +82,23 @@ describe('ChatCompletionService', () => {
   });
 
   it('allows a catalog model other than the environment default', async () => {
-    fetchMock.mockResolvedValueOnce(success());
+    fetchMock.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          choices: [
+            {
+              finish_reason: 'stop',
+              message: {
+                content: JSON.stringify({
+                  hinglish: { title: 'Notice', content: 'Hindi article' },
+                  english: { title: 'Notice', content: 'English article' },
+                }),
+              },
+            },
+          ],
+        }),
+      ),
+    );
     const result = await service.generateContent(
       'groq',
       'Return JSON',
@@ -84,7 +108,39 @@ describe('ChatCompletionService', () => {
       'openai/gpt-oss-20b',
     );
     expect(result.model).toBe('openai/gpt-oss-20b');
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body).not.toHaveProperty('response_format');
+    expect(body).toMatchObject({
+      reasoning_effort: 'low',
+      include_reasoning: false,
+    });
+    expect(body).not.toHaveProperty('max_completion_tokens');
     expect(env.GROQ_MODEL).toBe('openai/gpt-oss-120b');
+  });
+
+  it.each([
+    '[]',
+    '{}',
+    'invalid json',
+    '{"hinglish":{"title":"Notice","content":""}}',
+  ])('rejects incomplete prompt-only output: %s', async (content) => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          choices: [{ finish_reason: 'stop', message: { content } }],
+        }),
+      ),
+    );
+    await expect(
+      service.generateContent(
+        'groq',
+        '',
+        '',
+        [],
+        undefined,
+        'openai/gpt-oss-20b',
+      ),
+    ).rejects.toThrow('invalid or incomplete article JSON');
   });
 
   it('rejects an environment default outside the code catalog', async () => {
@@ -128,6 +184,38 @@ describe('ChatCompletionService', () => {
     },
   );
 
+  it.each([
+    [402, {}, 'Insufficient provider credits'],
+    [
+      400,
+      { code: 'json_validate_failed', message: 'Failed to generate JSON' },
+      'valid article JSON',
+    ],
+    [400, { message: 'Context length exceeded' }, 'Shorten the reference'],
+    [400, { message: 'Image size too large' }, 'attached image'],
+    [400, { message: 'response_format not supported' }, 'output format'],
+    [404, { message: 'No endpoints found' }, 'compatible endpoint'],
+  ])(
+    'explains HTTP %s without exposing raw provider data',
+    async (status, error, expected) => {
+      fetchMock.mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            error: { ...error, failed_generation: 'private article content' },
+          }),
+          { status: status as number },
+        ),
+      );
+      const result = await service
+        .generateContent('groq', '', '', [])
+        .catch((error) => error);
+      expect(result.message).toContain(expected);
+      expect(result.message).toContain('openai/gpt-oss-120b');
+      expect(result.message).not.toContain('private article content');
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it.each(['length', 'content_filter'])(
     'rejects %s responses',
     async (finish_reason) => {
@@ -139,8 +227,44 @@ describe('ChatCompletionService', () => {
         ),
       );
       await expect(service.generateContent('groq', '', '', [])).rejects.toThrow(
-        'incomplete or blocked',
+        finish_reason === 'length' ? 'output limit' : 'blocked or refused',
       );
+    },
+  );
+
+  it.each([
+    [
+      { choices: [{ finish_reason: 'stop', message: { content: '' } }] },
+      'no article text',
+    ],
+    [
+      {
+        choices: [
+          {
+            finish_reason: 'stop',
+            message: { content: '{}', refusal: 'private refusal text' },
+          },
+        ],
+      },
+      'blocked or refused',
+    ],
+    [
+      {
+        choices: [{ finish_reason: 'tool_calls', message: { content: '{}' } }],
+      },
+      'did not report a completed article',
+    ],
+    [{ error: { message: 'private provider text' } }, 'upstream error'],
+  ])(
+    'distinguishes rejected successful responses without leaking content',
+    async (response, expected) => {
+      fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(response)));
+      const error = await service
+        .generateContent('groq', '', '', [])
+        .catch((error) => error);
+      expect(error.message).toContain(expected);
+      expect(error.message).toContain('openai/gpt-oss-120b');
+      expect(error.message).not.toContain('private');
     },
   );
 
