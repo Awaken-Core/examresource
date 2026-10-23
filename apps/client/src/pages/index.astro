@@ -2,13 +2,20 @@
 import Layout from '../layouts/Layout.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ArticleCard from '../components/blog/ArticleCard.astro';
+import BrandLogo from '../components/BrandLogo.astro';
+import ProfileDropdown from '../components/ProfileDropdown.astro';
+import NotificationPopup from '../components/NotificationPopup.astro';
+import FavoritesDropdown from '../components/FavoritesDropdown.astro';
 import { Image } from 'astro:assets';
-import { examPortals, govPortals, siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain, siteSlogan } from '../data/site';
+import { siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
 import {
   appLangToBlogLanguage,
   articleHref,
   preferredLangFromCookieHeader,
 } from '../lib/preferred-lang';
+
+const [brandPrefix, ...brandRest] = siteDomain.split('.');
+const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 
 const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
 const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
@@ -23,14 +30,13 @@ let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string;
 
 const fetchStart = performance.now();
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=50&language=${listLanguage}&includeImages=false`, {
+  const res = await fetch(`${API_URL}/blogs?limit=60&language=${listLanguage}&includeImages=false`, {
     signal: AbortSignal.timeout(6000),
   });
   const durationMs = Math.round(performance.now() - fetchStart);
 
   if (!res.ok) {
     fetchError = { type: 'http', status: res.status, durationMs };
-    console.error(`[Index SSR] /blogs?limit=50&language=${listLanguage} failed with HTTP ${res.status} in ${durationMs}ms`);
   } else {
     try {
       const data = await res.json();
@@ -39,160 +45,160 @@ try {
         if (data.length === 0) {
           fetchError = { type: 'empty', status: res.status, durationMs };
         }
-        console.info(`[Index SSR] /blogs?limit=50&language=${listLanguage} fetched ${data.length} articles in ${durationMs}ms`);
       } else {
         fetchError = { type: 'json', message: 'Payload is not an array', status: res.status, durationMs };
-        console.error(`[Index SSR] /blogs?limit=50 invalid JSON structure in ${durationMs}ms`);
       }
     } catch (parseErr: any) {
       fetchError = { type: 'json', message: parseErr?.message, status: res.status, durationMs };
-      console.error(`[Index SSR] /blogs?limit=50 JSON parse error: ${parseErr?.message}`);
     }
   }
 } catch (netErr: any) {
   const durationMs = Math.round(performance.now() - fetchStart);
   fetchError = { type: 'network', message: netErr?.message, durationMs };
-  console.error(`[Index SSR] /blogs?limit=50 network fetch failed in ${durationMs}ms: ${netErr?.message}`);
 }
 
-const displayArticles = (livePosts || []).map(p => ({
-  title: p.title,
-  slugKey: p.slug,
-  slug: articleHref(p.slug, preferredAppLang),
-  category: p.category?.name || p.categories?.[0]?.name || 'Latest Updates',
-  categories: p.categories || (p.category ? [p.category] : []),
-  summary: p.description || p.metaDescription || 'Check complete official notification details and direct application links.',
-  date: new Date(p.publishedAt || p.updatedAt || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-}));
+// Map only REAL live database articles
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+const nowTime = Date.now();
+const displayArticles = (livePosts || []).map((p) => {
+  const title = p.title || 'Untitled Notification';
+  const categoryName = p.category?.name || p.categories?.[0]?.name || 'Central Government';
+  const categorySlug = p.category?.slug || p.categories?.[0]?.slug || 'central-government';
+  const pubTime = new Date(p.publishedAt || p.updatedAt || Date.now()).getTime();
+  
+  // NEW tag ONLY on blogs published within the last 3 days
+  const isNew = (nowTime - pubTime) >= 0 && (nowTime - pubTime) <= THREE_DAYS_MS;
 
-// Exam Categories matching Reference Image 2
-const examCategories = [
+  return {
+    title,
+    slugKey: p.slug,
+    slug: articleHref(p.slug, preferredAppLang),
+    category: categoryName,
+    categorySlug,
+    categories: p.categories || (p.category ? [p.category] : []),
+    summary: p.description || p.metaDescription || '',
+    date: new Date(pubTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+    isNew,
+  };
+});
+
+// 9 Curated Authentic Government Exam Streams (3x3 Grid)
+const streamCategories = [
   {
-    name: 'Central Government',
-    subtitle: 'UPSC, SSC, Railways and more',
-    iconColor: 'text-blue-600 dark:text-blue-400',
-    iconBg: 'bg-blue-50 dark:bg-blue-950/60',
-    borderColor: 'hover:border-blue-500/40',
+    id: 'central-govt',
+    name: 'Central Govt & UPSC',
+    shortName: 'Central & UPSC',
     slug: 'central-government',
-    icon: 'monument'
+    coverage: 'UPSC Civil Services, EPFO, Central Ministries & National Agencies',
+    keywords: ['central', 'upsc', 'ias', 'ips', 'ministry', 'epfo', 'ncs'],
+    iconType: 'monument',
   },
   {
-    name: 'State Exams',
-    subtitle: 'UPPSC, BPSC, MPSC and more',
-    iconColor: 'text-orange-600 dark:text-orange-400',
-    iconBg: 'bg-orange-50 dark:bg-orange-950/60',
-    borderColor: 'hover:border-orange-500/40',
-    slug: 'state-exams',
-    icon: 'building'
+    id: 'ssc',
+    name: 'SSC Exams',
+    shortName: 'SSC Exams',
+    slug: 'ssc',
+    coverage: 'Staff Selection Commission (CGL, CHSL, MTS, GD, CPO, Steno)',
+    keywords: ['ssc', 'cgl', 'chsl', 'mts', 'staff selection', 'cpo', 'stenographer', 'gd constable'],
+    iconType: 'document',
   },
   {
-    name: 'Banking',
-    subtitle: 'IBPS, SBI, RBI and more',
-    iconColor: 'text-purple-600 dark:text-purple-400',
-    iconBg: 'bg-purple-50 dark:bg-purple-950/60',
-    borderColor: 'hover:border-purple-500/40',
+    id: 'railways',
+    name: 'Railway Exams (RRB)',
+    shortName: 'Railway Exams',
+    slug: 'railways',
+    coverage: 'Railway Recruitment Boards (NTPC, Group D, ALP, Technician, RPF)',
+    keywords: ['railway', 'railways', 'rrb', 'ntpc', 'group d', 'alp', 'rpf', 'technician'],
+    iconType: 'train',
+  },
+  {
+    id: 'banking',
+    name: 'Banking & Insurance Exams',
+    shortName: 'Banking Exams',
     slug: 'banking',
-    icon: 'bank'
+    coverage: 'SBI, IBPS PO/Clerk, RBI Grade B, LIC & Public Sector Banks',
+    keywords: ['bank', 'banking', 'sbi', 'ibps', 'rbi', 'lic', 'clerk', 'po', 'nabard', 'insurance'],
+    iconType: 'bank',
   },
   {
-    name: 'SSC & Railways',
-    subtitle: 'SSC, RRB, RPF and more',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    iconBg: 'bg-emerald-50 dark:bg-emerald-950/60',
-    borderColor: 'hover:border-emerald-500/40',
-    slug: 'ssc-railways',
-    icon: 'train'
+    id: 'state-exams',
+    name: 'Latest Govt Jobs',
+    shortName: 'Latest Govt Jobs',
+    slug: 'state-exams',
+    coverage: 'State PSCs (UPPSC, BPSC, MPPSC, MPSC, RPSC) & State Boards',
+    keywords: ['state', 'uppsc', 'bpsc', 'mpsc', 'rpsc', 'mppsc', 'pcs', 'patwari', 'lekhpal', 'psc', 'vyapam', 'jobs', 'sarkari'],
+    iconType: 'building',
   },
   {
-    name: 'Teaching',
-    subtitle: 'CTET, UPTET and more',
-    iconColor: 'text-rose-600 dark:text-rose-400',
-    iconBg: 'bg-rose-50 dark:bg-rose-950/60',
-    borderColor: 'hover:border-rose-500/40',
-    slug: 'teaching',
-    icon: 'book'
-  },
-  {
-    name: 'Defence',
-    subtitle: 'NDA, CDS, AFCAT and more',
-    iconColor: 'text-blue-700 dark:text-blue-400',
-    iconBg: 'bg-blue-50 dark:bg-blue-950/60',
-    borderColor: 'hover:border-blue-500/40',
+    id: 'defence',
+    name: 'Defence & Paramilitary Exams',
+    shortName: 'Defence Exams',
     slug: 'defence',
-    icon: 'shield'
-  }
+    coverage: 'Indian Armed Forces (Army, Navy, Air Force), NDA, CDS, AFCAT, CAPF, Coast Guard',
+    keywords: ['defence', 'defense', 'army', 'navy', 'air force', 'nda', 'cds', 'afcat', 'capf', 'coast guard', 'cgept', 'navik', 'agniveer'],
+    iconType: 'shield',
+  },
+  {
+    id: 'police',
+    name: 'Police Recruitment Exams',
+    shortName: 'Police Exams',
+    slug: 'police',
+    coverage: 'State Police Sub-Inspector (SI), Constable, ASI & Driver Drives',
+    keywords: ['police', 'constable', 'si', 'sub-inspector', 'driver', 'delhi police', 'mp police', 'mpesb'],
+    iconType: 'badge',
+  },
+  {
+    id: 'teaching',
+    name: 'Teaching & Education Exams',
+    shortName: 'Teaching Exams',
+    slug: 'teaching',
+    coverage: 'CTET, State TETs, KVS, NVS, DSSSB, Assistant Professor & PGT/TGT/PRT',
+    keywords: ['teach', 'teacher', 'ctet', 'tet', 'kvs', 'nvs', 'dsssb', 'ugc', 'net', 'pgt', 'tgt', 'prt', 'upessc'],
+    iconType: 'book',
+  },
+  {
+    id: 'psu-engineering',
+    name: 'PSU & Engineering Exams',
+    shortName: 'PSU & Engineering',
+    slug: 'psu-engineering',
+    coverage: 'BHEL, ISRO, DRDO, GATE, State Engineering Services & Technical Drives',
+    keywords: ['psu', 'engineering', 'gate', 'isro', 'drdo', 'bhel', 'bel', 'sail', 'iocl', 'polytechnic', 'jeecup', 'artisan', 'technical', 'diploma'],
+    iconType: 'gear',
+  },
 ];
 
-// Important Portals matching Reference Right Sidebar
+// Combine ONLY real database articles per category (NO fake fallback data)
+const bentoGridData = streamCategories.map((cat) => {
+  const matchedLive = displayArticles.filter((art) => {
+    const artCatSlug = (art.categorySlug || '').toLowerCase();
+    const artCatName = (art.category || '').toLowerCase();
+    const artTitle = (art.title || '').toLowerCase();
+
+    if (artCatSlug === cat.slug || artCatName === cat.name.toLowerCase()) return true;
+    if (cat.slug === 'psu-engineering' && (artCatSlug === 'admissions' || artCatName.includes('admission'))) return true;
+    return cat.keywords.some((kw) => artCatSlug.includes(kw) || artCatName.includes(kw) || artTitle.includes(kw));
+  });
+
+  return {
+    ...cat,
+    articles: matchedLive.slice(0, 4),
+    totalCount: matchedLive.length,
+  };
+});
+
+// Official Portals for rapid reference
 const R2_PORTAL_BASE = 'https://pub-68568854a58845bc975b176de76b1ad5.r2.dev/portals';
-
-const rightPortals = [
-  {
-    name: 'UPSC',
-    url: 'upsc.gov.in',
-    href: 'https://www.upsc.gov.in/',
-    logo: `${R2_PORTAL_BASE}/upsc.svg`,
-    initial: 'U',
-    bg: 'bg-[#0C2340]',
-    textColor: 'text-[#E2B13C]'
-  },
-  {
-    name: 'SSC',
-    url: 'ssc.gov.in',
-    href: 'https://ssc.gov.in/',
-    logo: `${R2_PORTAL_BASE}/ssc.svg`,
-    initial: 'S',
-    bg: 'bg-[#8B0000]',
-    textColor: 'text-[#FFD700]'
-  },
-  {
-    name: 'Railways',
-    url: 'rrb.indianrailways.gov.in',
-    href: 'https://rrb.indianrailways.gov.in/',
-    logo: `${R2_PORTAL_BASE}/railways.svg`,
-    initial: 'R',
-    bg: 'bg-[#003366]',
-    textColor: 'text-[#E5A823]'
-  },
-  {
-    name: 'UPPSC',
-    url: 'uppsc.up.nic.in',
-    href: 'https://uppsc.up.nic.in/',
-    logo: `${R2_PORTAL_BASE}/uppsc.svg`,
-    initial: 'UP',
-    bg: 'bg-[#14532D]',
-    textColor: 'text-[#FEF08A]'
-  },
-  {
-    name: 'SBI',
-    url: 'sbi.co.in',
-    href: 'https://sbi.co.in/web/careers',
-    logo: `${R2_PORTAL_BASE}/sbi.svg`,
-    initial: 'SBI',
-    bg: 'bg-[#0080C7]',
-    textColor: 'text-white'
-  },
-  {
-    name: 'IBPS',
-    url: 'ibps.in',
-    href: 'https://www.ibps.in/',
-    logo: `${R2_PORTAL_BASE}/ibps.svg`,
-    initial: 'I',
-    bg: 'bg-[#312E81]',
-    textColor: 'text-[#F59E0B]'
-  }
+const verifiedPortals = [
+  { name: 'UPSC', url: 'upsc.gov.in', href: 'https://www.upsc.gov.in/', logo: `${R2_PORTAL_BASE}/upsc.svg`, initial: 'U', bg: 'bg-[#0C2340]', text: 'text-[#E2B13C]' },
+  { name: 'SSC', url: 'ssc.gov.in', href: 'https://ssc.gov.in/', logo: `${R2_PORTAL_BASE}/ssc.svg`, initial: 'S', bg: 'bg-[#8B0000]', text: 'text-[#FFD700]' },
+  { name: 'Railways', url: 'rrb.indianrailways.gov.in', href: 'https://rrb.indianrailways.gov.in/', logo: `${R2_PORTAL_BASE}/railways.svg`, initial: 'R', bg: 'bg-[#003366]', text: 'text-[#E5A823]' },
+  { name: 'UPPSC', url: 'uppsc.up.nic.in', href: 'https://uppsc.up.nic.in/', logo: `${R2_PORTAL_BASE}/uppsc.svg`, initial: 'UP', bg: 'bg-[#14532D]', text: 'text-[#FEF08A]' },
+  { name: 'SBI Careers', url: 'sbi.co.in', href: 'https://sbi.co.in/web/careers', logo: `${R2_PORTAL_BASE}/sbi.svg`, initial: 'SBI', bg: 'bg-[#0080C7]', text: 'text-white' },
+  { name: 'IBPS', url: 'ibps.in', href: 'https://www.ibps.in/', logo: `${R2_PORTAL_BASE}/ibps.svg`, initial: 'I', bg: 'bg-[#312E81]', text: 'text-[#F59E0B]' },
 ];
 
-// Popular this week items derived from live posts
-const popularUpdates = displayArticles.slice(0, 5).map((item, idx) => ({
-  rank: idx + 1,
-  title: item.title,
-  href: item.slug,
-  slugKey: item.slugKey,
-}));
-
-const pageTitle = `${siteName} | Sarkari Jobs, Exam Notifications & Results`;
-const pageDescription = `${siteName} (${siteDomain}) provides latest government exam notifications, Sarkari job alerts, admit cards, answer keys, and results.`;
+const pageTitle = `${siteName} — Official Government Exam Intelligence & Sarkari Portals`;
+const pageDescription = `${siteName} (${siteDomain}) delivers verified government examination notices, admit cards, answer keys, syllabi, and direct official commission portal links across India.`;
 const canonicalUrl = `${siteUrl}/`;
 
 const jsonLd = {
@@ -202,7 +208,7 @@ const jsonLd = {
       '@type': 'WebSite',
       '@id': `${siteUrl}/#website`,
       name: siteName,
-      alternateName: [siteName, siteDomain, `${siteName} Exam Updates`],
+      alternateName: [siteName, siteDomain, `${siteName} Sarkari Portal`],
       url: canonicalUrl,
       description: pageDescription,
       inLanguage: ['en-IN', 'hi-Latn'],
@@ -273,244 +279,848 @@ const jsonLd = {
   ogImage={`${siteUrl}/og-image.jpg`}
   ogType="website"
   jsonLd={jsonLd}
+  hideHeader={true}
+  hideDesktopSidebar={true}
 >
-  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
-    <div class="max-w-[1400px] mx-auto">
-      
-      {/* 2-Column Grid: Main Feed (Left) + Right Sidebar (Portals & Popular) */}
-      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+  <div class="min-h-screen bg-canvas text-white transition-colors duration-200 relative overflow-hidden">
+    
+    {/* Horizon Ambient Radial Glow */}
+    <div class="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-gradient-to-b from-[#0a58ca]/20 via-[#38b6ff]/5 to-transparent blur-[120px] rounded-full select-none" aria-hidden="true"></div>
+
+    <div class="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-20 relative z-10">
+
+      {/* ══════════════════════════════════════════════════════════
+          1. TOP HOMEPAGE NAVBAR: BRAND (govtpariksha.com) + HEADER TOOLS
+          ══════════════════════════════════════════════════════════ */}
+      <h1 class="sr-only">GovtPariksha — Verified Government Exam Notifications, Admit Cards & Results</h1>
+
+      <div class="flex items-center justify-between gap-3 py-3 border-b border-border/50 mb-6">
         
-        {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7">
-          
-          {/* 1. Main Headline */}
-          <div>
-            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-2.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse will-change-[opacity] transform-gpu"></span>
-              Verified Government Exam &amp; Sarkari Naukri Portal
-            </div>
-            <h1 class="text-2xl sm:text-3xl lg:text-[2.25rem] font-bold text-white tracking-tight leading-tight">
-              {siteSlogan}
-            </h1>
-            <p class="mt-2 text-sm sm:text-base text-muted max-w-3xl leading-relaxed">
-              {siteName} ({siteDomain}) provides verified central &amp; state government exam notifications, admit cards, answer keys, syllabi, and direct official commission portal links across India.
-            </p>
-          </div>
+        {/* Left: Mobile Drawer Trigger + Brand Identity */}
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Mobile Drawer Button for Phone screens */}
+          <button 
+            id="mobile-drawer-toggle-btn"
+            data-sidebar-toggle
+            type="button"
+            class="lg:hidden text-muted hover:text-white p-2 rounded-xl hover:bg-surface-raised border border-border/60 transition cursor-pointer flex items-center justify-center shrink-0"
+            title="Open Menu"
+            aria-label="Open Navigation Menu"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
 
-
-
-          {/* 3. Browse by Category */}
-          <section id="categories" class="space-y-3.5">
-            <div class="flex items-center justify-between">
-              <h2 class="text-base sm:text-lg font-bold text-white">
-                Browse by category
-              </h2>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-              {examCategories.map((cat) => (
-                <a 
-                  href={`/category/${cat.slug}`}
-                  target="_blank"
-                  rel="noopener"
-                  data-astro-prefetch="false"
-                  class={`flex flex-col justify-between p-3.5 bg-surface rounded-lg border border-border hover:shadow-xs ${cat.borderColor} transition duration-150 group cursor-pointer`}
-                >
-                  <div class="flex items-start justify-between">
-                    <div class={`w-7 h-7 rounded-md ${cat.iconBg} ${cat.iconColor} flex items-center justify-center shrink-0`}>
-                      {cat.icon === 'monument' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                        </svg>
-                      )}
-                      {cat.icon === 'building' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                      )}
-                      {cat.icon === 'bank' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
-                        </svg>
-                      )}
-                      {cat.icon === 'train' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="2"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
-                        </svg>
-                      )}
-                      {cat.icon === 'book' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                        </svg>
-                      )}
-                      {cat.icon === 'shield' && (
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                      )}
-                    </div>
-                    <svg class="w-3.5 h-3.5 text-muted group-hover:text-white group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <div class="mt-4">
-                    <h3 class="text-xs font-bold text-white leading-tight">
-                      {cat.name}
-                    </h3>
-                    <p class="mt-1 text-[11px] text-muted leading-tight line-clamp-2">
-                      {cat.subtitle}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
-
-
-
-          {/* 5. Latest Updates — all articles, independent of category navigation */}
-          <section id="latest-updates" class="space-y-3.5">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <h2 class="text-base sm:text-lg font-bold text-white">
-                  All Latest Articles
-                </h2>
-                <p class="mt-0.5 text-xs text-muted">Newest posts across every category</p>
-              </div>
-            </div>
-
-            <div class="space-y-3">
-              {displayArticles.length > 0 ? (
-                displayArticles.map((article, idx) => (
-                  <ArticleCard
-                    variant="standard"
-                    title={article.title}
-                    slug={article.slugKey}
-                    href={article.slug}
-                    category={article.category}
-                    categories={article.categories}
-                    date={article.date}
-                    summary={article.summary}
-                    headingLevel="h3"
-                    prefetch={idx < 3 ? 'viewport' : 'hover'}
-                  />
-                ))
-              ) : fetchError && fetchError.type !== 'empty' ? (
-                <div class="p-8 text-center bg-surface border border-border/80 rounded-lg space-y-2">
-                  <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 mb-1">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  </div>
-                  <h3 class="text-sm font-semibold text-white">Temporarily unable to load latest updates</h3>
-                  <p class="text-xs text-muted max-w-md mx-auto">
-                    We are experiencing a temporary connection issue. Please refresh the page or check our Telegram/WhatsApp channels for immediate notices.
-                  </p>
-                </div>
-              ) : (
-                <div class="p-8 text-center bg-surface border border-border rounded-lg">
-                  <p class="text-sm text-muted">No updates published yet. Please check back soon.</p>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* 6. FAQ Accordion Section */}
-          <div id="faqs" class="pt-4">
-            <FAQSection faqs={siteFaqs} />
-          </div>
-
+          {/* Brand Logo & Name */}
+          <a href="/" class="flex items-center gap-2.5 group shrink-0" aria-label={`${siteDomain} home`}>
+            <BrandLogo size={32} class="group-hover:scale-105 transition-transform shrink-0" />
+            <span class="flex items-center font-bold text-base sm:text-lg tracking-tight text-white">
+              {brandPrefix}<span class="text-accent">{brandSuffix}</span>
+            </span>
+          </a>
         </div>
 
-        {/* RIGHT SIDEBAR (Important Portals + Popular this week) - Sticky to viewport */}
-        <aside class="space-y-6 hidden lg:block sticky top-20 max-h-[calc(100vh-5.5rem)] overflow-y-auto scrollbar-none">
-          
-          {/* Important Portals Box */}
-          <div id="important-links" class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
-            <div class="flex items-center justify-between pb-1 border-b border-border/50">
-              <h2 class="text-sm font-bold text-white">
-                Important portals
-              </h2>
-            </div>
-
-            <div class="divide-y divide-border/50">
-              {rightPortals.map((portal) => (
-                <a 
-                  href={portal.href} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  class="flex items-center justify-between py-2.5 px-1 hover:bg-surface-raised rounded transition group cursor-pointer"
-                  title={`${portal.name} - official portal`}
-                  aria-label={`${portal.name} - official portal (${portal.url}) (opens in new tab)`}
-                >
-                  <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-8 h-8 rounded-full bg-surface-raised border border-border flex items-center justify-center p-1 shrink-0 overflow-hidden relative">
-                      <Image 
-                        src={portal.logo} 
-                        alt={`${portal.name} official emblem logo`} 
-                        class="w-full h-full object-contain" 
-                        loading="eager"
-                        decoding="async"
-                        width={32}
-                        height={32}
-                        onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
-                      />
-                      <div class={`w-full h-full rounded-full ${portal.bg} ${portal.textColor} hidden items-center justify-center font-bold text-[10px] select-none tracking-tight`}>
-                        {portal.initial}
-                      </div>
-                    </div>
-                    <div class="min-w-0">
-                      <p class="text-xs font-bold text-white group-hover:text-accent transition truncate leading-tight">
-                        {portal.name}
-                      </p>
-                      <p class="text-[11px] text-muted truncate leading-tight mt-0.5">
-                        {portal.url}
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
+        {/* Right Toolbar Items: Language, Theme, Favorites, Notifications, Profile / Login */}
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Language Switcher Pill */}
+          <div class="hidden sm:inline-flex items-center p-0.5 bg-surface border border-border/80 rounded-xl text-xs font-semibold select-none shrink-0" role="group" aria-label="Language selection">
+            <button
+              type="button"
+              data-app-lang="hinglish"
+              class="app-lang-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-accent !text-white"
+              title="Switch to Hinglish"
+              aria-pressed="true"
+            >
+              HI
+            </button>
+            <button
+              type="button"
+              data-app-lang="en"
+              class="app-lang-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer text-muted hover:text-white"
+              title="Switch to English"
+              aria-pressed="false"
+            >
+              EN
+            </button>
           </div>
 
-          {/* Popular This Week Box */}
-          {popularUpdates.length > 0 && (
-            <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
-              <div class="flex items-center gap-2 pb-1 border-b border-border/50">
-                <span class="text-[#EF4444]">🔥</span>
-                <h2 class="text-sm font-bold text-white">
-                  Popular this week
-                </h2>
-              </div>
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            class="theme-toggle-btn relative w-12 sm:w-13 h-7 bg-surface border border-border/80 hover:border-accent/40 rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0"
+            title="Toggle Dark and Light Mode"
+            aria-label="Toggle Dark and Light Mode"
+          >
+            <span
+              class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-2xs transition-transform duration-200 translate-x-0.5"
+            >
+              <span class="light-icon text-[11px] select-none leading-none">☀️</span>
+              <span class="dark-icon text-[11px] select-none leading-none hidden">🌙</span>
+            </span>
+          </button>
 
-              <div class="space-y-2.5">
-                {popularUpdates.map((item) => (
-                  <a 
-                    href={item.href} 
-                    target="_blank"
-                    rel="noopener"
-                    data-article-link={item.slugKey}
-                    data-astro-prefetch="false"
-                    class="flex items-center gap-3 p-1.5 rounded hover:bg-surface-raised transition group cursor-pointer"
+          {/* Bookmarks / Favorites Button & Dropdown */}
+          <div class="relative z-[1090] flex items-center">
+            <button 
+              id="header-favorites-btn"
+              type="button"
+              class="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-surface border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
+              title="Saved Favorites"
+              aria-label="Saved Favorites"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <svg class="w-4 h-4 text-muted hover:text-rose-400 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span class="favorites-count-badge hidden absolute -top-1 -right-1 px-1 min-w-[16px] h-4 rounded-full bg-rose-500 text-[9px] font-bold text-white flex items-center justify-center leading-none shadow-xs border border-surface">
+                0
+              </span>
+            </button>
+
+            {/* Dropdown Container */}
+            <FavoritesDropdown id="header-favorites-dropdown" />
+          </div>
+
+          {/* Notifications Button & Dropdown */}
+          <div class="relative z-[1090] flex items-center">
+            <button 
+              id="header-notification-btn"
+              data-notification-trigger="header-notification-popup"
+              type="button"
+              class="group relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl bg-surface border border-border/80 hover:border-accent/40 text-muted hover:text-white transition cursor-pointer shadow-2xs focus:outline-none hover:bg-surface-raised"
+              title="Notifications"
+              aria-label="Notifications"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <svg class="w-4 h-4 text-muted group-hover:text-accent transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              <span class="notification-dot-indicator absolute top-1.5 right-1.5 flex h-2 w-2 hidden pointer-events-none z-10">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+              </span>
+              <span class="notification-badge-count sr-only">0</span>
+            </button>
+
+            {/* Header Notification Popover */}
+            <NotificationPopup id="header-notification-popup" prefix="header" />
+          </div>
+
+          {/* Profile Dropdown for Logged In User */}
+          <div id="header-profile-section" class="header-auth-logged-in hidden relative z-[1100]">
+            <button 
+              id="header-profile-trigger"
+              data-profile-trigger="header-profile-dropdown"
+              type="button"
+              class="header-profile-avatar-btn w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center transition cursor-pointer shadow-xs focus:outline-none focus:ring-2 focus:ring-accent/40 select-none overflow-hidden shrink-0 hover:border-accent/40"
+              aria-label="Open User Profile Menu"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <span class="user-avatar-initials header-profile-initials inline-flex items-center justify-center text-center text-xs sm:text-[13px] font-bold leading-none uppercase">U</span>
+            </button>
+
+            <ProfileDropdown id="header-profile-dropdown" position="top" />
+          </div>
+
+          {/* Login / Get Started Button for Logged Out User */}
+          <div class="header-auth-logged-out flex items-center">
+            <a 
+              href="/login"
+              id="header-login-btn"
+              class="group inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-xl bg-accent hover:bg-accent/90 text-[#ffffff] font-semibold text-xs shadow-xs hover:shadow-sm transition-all duration-150 shrink-0 cursor-pointer"
+              title="Log in / Get Started"
+            >
+              <span class="tracking-tight sm:hidden">Log in</span>
+              <span class="tracking-tight hidden sm:inline">Get Started</span>
+              <svg 
+                class="w-3.5 h-3.5 text-[#ffffff] transition-transform duration-200 ease-out group-hover:translate-x-1" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2.5" 
+                stroke-linecap="round" 
+                stroke-linejoin="round"
+              >
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════
+          2. SECOND: COMMAND SEARCHBAR WITH INTEGRATED CATEGORY DROPDOWN
+          ══════════════════════════════════════════════════════════ */}
+      <section class="max-w-3xl mx-auto mb-10 pt-1 relative z-40" aria-label="Exam Search and Category Filter">
+        
+        {/* Spotlight Command Bar with Attached Category Dropdown */}
+        <div class="relative group z-40">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-accent/30 via-sky-500/20 to-blue-600/30 rounded-2xl blur-xs opacity-0 group-focus-within:opacity-100 transition-opacity duration-200 pointer-events-none"></div>
+
+          <div class="relative flex items-center bg-surface border border-border/80 group-focus-within:border-accent rounded-2xl px-2 sm:px-3 py-1.5 sm:py-2 shadow-2xs transition-all duration-200 gap-1.5 sm:gap-2">
+            
+            {/* Attached Category Dropdown Trigger */}
+            <div class="relative shrink-0 z-50" id="category-dropdown-container">
+              <button
+                id="category-dropdown-btn"
+                type="button"
+                class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-surface-raised/80 hover:bg-surface-raised border border-border/80 text-white text-xs font-semibold cursor-pointer transition select-none"
+                aria-expanded="false"
+                aria-haspopup="listbox"
+                title="Filter by Exam Category"
+              >
+                <span id="category-dropdown-label" class="truncate max-w-[100px] sm:max-w-[150px]">All Streams</span>
+                <svg id="category-dropdown-arrow" class="w-3.5 h-3.5 text-muted transition-transform duration-200 shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* Category Dropdown Menu */}
+              <div
+                id="category-dropdown-menu"
+                class="hidden absolute left-0 top-full mt-2 w-64 max-h-84 overflow-y-auto bg-surface border border-border rounded-2xl shadow-2xl py-1.5 z-[100] backdrop-blur-xl scrollbar-none"
+                role="listbox"
+              >
+                <button
+                  type="button"
+                  data-stream-option="all"
+                  data-stream-name="All Streams"
+                  class="category-option-btn w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold text-white hover:bg-surface-raised transition text-left cursor-pointer"
+                  role="option"
+                  aria-selected="true"
+                >
+                  <span class="flex items-center gap-2 truncate">
+                    <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    All Streams
+                  </span>
+                  <span class="category-check text-accent font-bold text-xs shrink-0">✓</span>
+                </button>
+
+                <div class="h-px bg-border/60 my-1 mx-2"></div>
+
+                {streamCategories.map((cat) => (
+                  <button
+                    type="button"
+                    data-stream-option={cat.slug}
+                    data-stream-name={cat.shortName}
+                    class="category-option-btn w-full flex items-center justify-between px-3.5 py-2 text-xs font-medium text-muted hover:text-white hover:bg-surface-raised transition text-left cursor-pointer"
+                    role="option"
+                    aria-selected="false"
                   >
-                    <span class="w-5 h-5 rounded-full bg-surface-raised text-muted group-hover:bg-accent/15 group-hover:text-accent flex items-center justify-center text-[10px] font-bold shrink-0 transition">
-                      {item.rank}
-                    </span>
-                    <p class="text-xs font-medium text-white/90 group-hover:text-accent transition leading-snug truncate" data-article-title>
-                      {item.title}
-                    </p>
-                  </a>
+                    <span class="truncate">{cat.name}</span>
+                    <span class="category-check hidden text-accent font-bold text-xs shrink-0">✓</span>
+                  </button>
                 ))}
               </div>
             </div>
+
+            {/* Vertical Divider */}
+            <div class="w-px h-6 bg-border/60 shrink-0"></div>
+
+            {/* Search Icon */}
+            <div class="text-muted group-focus-within:text-accent transition-colors shrink-0 pl-0.5">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+
+            {/* Input Field */}
+            <input
+              id="command-search-input"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search exam name, post, admit card, or commission..."
+              class="w-full bg-transparent text-xs sm:text-sm md:text-base text-white placeholder-muted focus:outline-hidden py-1 px-1 font-sans"
+              aria-label="Search examinations and articles"
+            />
+
+            {/* Clear Button */}
+            <button
+              id="command-search-clear"
+              type="button"
+              class="hidden px-1.5 text-muted hover:text-white transition cursor-pointer text-base shrink-0"
+              title="Clear search"
+              aria-label="Clear search text"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Hotkey Indicator */}
+            <div class="hidden sm:flex items-center shrink-0 select-none">
+              <kbd class="px-2 py-0.5 text-[10px] font-mono font-medium text-muted bg-surface-raised border border-border/80 rounded-md">
+                Ctrl K
+              </kbd>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          3. THIRD: 3 BY 3 MINIMALISTIC BENTO GRID (REAL DATA ONLY)
+          ══════════════════════════════════════════════════════════ */}
+      <section id="bento-grid-section" class="space-y-5 mb-16" aria-label="3 by 3 Exam Categories Grid">
+        
+        <div class="flex items-center justify-between border-b border-border/50 pb-2.5">
+          <h2 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+            <span class="w-1.5 h-3.5 bg-accent rounded-full"></span>
+            9 Exam Streams
+          </h2>
+        </div>
+
+        {/* 3x3 Minimalist Cards Grid */}
+        <div id="bento-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 xl:gap-5">
+          {bentoGridData.map((cat) => (
+            <article 
+              data-bento-card
+              data-stream-slug={cat.slug}
+              data-stream-name={cat.name.toLowerCase()}
+              data-stream-keywords={cat.keywords.join(' ')}
+              class="group flex flex-col justify-between rounded-xl border border-border/70 hover:border-accent/40 bg-surface/90 hover:bg-surface p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div class="space-y-3">
+                
+                {/* Minimalist Card Header: SVG Icon + Title + Live Count */}
+                <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-border/50">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-surface-raised border border-border/60 text-accent group-hover:scale-105 transition-transform">
+                      {cat.iconType === 'monument' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'train' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="1.8"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'bank' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'building' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'book' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'shield' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'document' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'badge' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        </svg>
+                      )}
+                      {cat.iconType === 'gear' && (
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      )}
+                    </div>
+
+                    <div class="min-w-0">
+                      <a 
+                        href={`/category/${cat.slug}`}
+                        class="text-sm font-semibold text-white group-hover:text-accent transition-colors truncate block leading-snug"
+                        title={cat.name}
+                      >
+                        {cat.name}
+                      </a>
+                    </div>
+                  </div>
+
+                  <span class="text-[11px] font-mono text-muted/70 shrink-0 select-none">
+                    {cat.totalCount} {cat.totalCount === 1 ? 'post' : 'posts'}
+                  </span>
+                </div>
+
+                {/* Blog Notification Links - ONLY Real Data */}
+                <div class="space-y-1">
+                  {cat.articles.length > 0 ? (
+                    cat.articles.map((art) => (
+                      <a
+                        href={art.slug}
+                        target="_blank"
+                        rel="noopener"
+                        data-article-link={art.slugKey}
+                        data-stream-item
+                        data-stream-title={art.title.toLowerCase()}
+                        class="stream-link-row group/item flex items-start gap-2 p-1.5 rounded-lg hover:bg-surface-raised/70 transition-colors cursor-pointer"
+                      >
+                        {/* High-legibility Blog Font & Clean Line Heights */}
+                        <div class="min-w-0 flex-1">
+                          <p class="font-sans text-[13px] font-medium tracking-normal text-white/90 group-hover/item:text-accent transition-colors line-clamp-2 leading-snug">
+                            {art.isNew && (
+                              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-emerald-600 text-white mr-1.5 select-none align-baseline shrink-0 shadow-2xs">
+                                NEW
+                              </span>
+                            )}
+                            <span data-article-title>{art.title}</span>
+                          </p>
+                          <span class="text-[10px] text-muted/60 block mt-0.5 font-mono">
+                            {art.date}
+                          </span>
+                        </div>
+                      </a>
+                    ))
+                  ) : (
+                    <div class="py-3 px-1 text-left">
+                      <p class="text-xs text-muted/50">No updates published yet</p>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+
+              {/* Card Footer: View more Link */}
+              <div class="pt-2.5 mt-2 border-t border-border/40">
+                <a
+                  href={`/category/${cat.slug}`}
+                  class="flex items-center justify-between text-xs font-medium text-muted hover:text-accent transition-colors"
+                >
+                  <span>View more</span>
+                  <span class="text-accent">&rarr;</span>
+                </a>
+              </div>
+
+            </article>
+          ))}
+        </div>
+
+        {/* Dynamic Empty State for Zero Search Matches */}
+        <div id="bento-empty-state" class="hidden p-10 text-center bg-surface border border-border/80 rounded-xl space-y-2.5">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 text-accent mb-1">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <h3 class="text-sm font-bold text-white">No matching notices found</h3>
+          <p class="text-xs text-muted max-w-sm mx-auto">
+            Try adjusting your search terms or clearing the stream filter.
+          </p>
+          <button
+            id="bento-reset-all-btn"
+            type="button"
+            class="mt-1 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent text-white hover:bg-accent/90 transition shadow-2xs cursor-pointer"
+          >
+            Clear Search
+          </button>
+        </div>
+
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          4. OFFICIAL COMMISSION DIRECTORY STRIP
+          ══════════════════════════════════════════════════════════ */}
+      <section class="mb-16 bg-surface/80 border border-border/80 rounded-xl p-5 shadow-2xs backdrop-blur-md" aria-label="Official Commission Portals">
+        <div class="pb-3.5 border-b border-border/60">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+              Authentic Government Commission Portals
+            </h2>
+            <p class="text-xs text-muted mt-0.5">
+              Submit applications, verify roll numbers, and pay fees exclusively on primary official domains (.gov.in / .nic.in)
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-3.5">
+          {verifiedPortals.map((portal) => (
+            <a
+              href={portal.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/60 hover:border-accent/40 transition group cursor-pointer"
+              title={`${portal.name} Official Portal`}
+              aria-label={`${portal.name} - ${portal.url} (opens in new tab)`}
+            >
+              <div class="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center p-1 mb-2 shrink-0 overflow-hidden relative shadow-2xs group-hover:scale-105 transition-transform">
+                <Image
+                  src={portal.logo}
+                  alt={`${portal.name} emblem`}
+                  class="w-full h-full object-contain"
+                  loading="lazy"
+                  decoding="async"
+                  width={32}
+                  height={32}
+                  onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                />
+                <div class={`w-full h-full rounded-full ${portal.bg} ${portal.text} hidden items-center justify-center font-bold text-xs select-none`}>
+                  {portal.initial}
+                </div>
+              </div>
+              <p class="text-xs font-bold text-white group-hover:text-accent transition truncate w-full">
+                {portal.name}
+              </p>
+              <p class="text-[10px] text-muted truncate w-full mt-0.5">
+                {portal.url}
+              </p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          5. ALL LATEST NOTIFICATIONS (CHRONOLOGICAL FEED)
+          ══════════════════════════════════════════════════════════ */}
+      <section id="latest-updates" class="space-y-3.5 mb-16" aria-label="Latest Published Notifications">
+        <div class="flex items-center justify-between gap-3 border-b border-border/50 pb-2.5">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              <span class="w-1.5 h-3 bg-emerald-400 rounded-full"></span>
+              Live Published Notification Wire
+            </h2>
+            <p class="text-xs text-muted mt-0.5">
+              Chronological feed of recently analyzed PDFs and official recruitment alerts
+            </p>
+          </div>
+          <span class="text-xs text-muted select-none">
+            {displayArticles.length} active updates
+          </span>
+        </div>
+
+        <div class="space-y-2.5">
+          {displayArticles.length > 0 ? (
+            displayArticles.slice(0, 15).map((article, idx) => (
+              <ArticleCard
+                variant="standard"
+                title={article.title}
+                slug={article.slugKey}
+                href={article.slug}
+                category={article.category}
+                categories={article.categories}
+                date={article.date}
+                summary={article.summary}
+                headingLevel="h3"
+                prefetch={idx < 3 ? 'viewport' : 'hover'}
+              />
+            ))
+          ) : fetchError && fetchError.type !== 'empty' ? (
+            <div class="p-8 text-center bg-surface border border-border/80 rounded-xl space-y-2">
+              <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 text-amber-500 mb-1">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 class="text-sm font-semibold text-white">Temporary Feed Connectivity Hiccup</h3>
+              <p class="text-xs text-muted max-w-md mx-auto">
+                Real-time connection is refreshing. In the meantime, browse the 9 categories above or visit our Telegram channel for direct notices.
+              </p>
+            </div>
+          ) : (
+            <div class="p-8 text-center bg-surface border border-border rounded-xl">
+              <p class="text-sm text-muted">All active notifications loaded in the 9 streams above.</p>
+            </div>
           )}
+        </div>
+      </section>
 
-        </aside>
+      {/* ══════════════════════════════════════════════════════════
+          6. FAQ ACCORDION SECTION
+          ══════════════════════════════════════════════════════════ */}
+      <section id="faqs" class="pt-2" aria-label="Frequently Asked Questions">
+        <FAQSection faqs={siteFaqs} />
+      </section>
 
-      </div>
+      {/* ══════════════════════════════════════════════════════════
+          7. BOTTOM COMMUNITY CHANNELS (TELEGRAM & WHATSAPP)
+          ══════════════════════════════════════════════════════════ */}
+      <section class="mt-14 pt-8 border-t border-border/50 text-center space-y-4" aria-label="Join Community Channels">
+        <div class="max-w-md mx-auto space-y-1.5">
+          <h2 class="text-sm sm:text-base font-bold text-white tracking-tight">Stay Updated on Instant Exam Notices</h2>
+          <p class="text-xs text-muted">Join official community channels for immediate notification alerts, PDF releases, and Sarkari updates directly on your phone.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 select-none pt-1">
+          <a
+            href={telegramChannel}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#229ED9]/10 hover:bg-[#229ED9]/20 border border-[#229ED9]/30 hover:border-[#229ED9]/50 text-white transition-all duration-200 text-xs font-semibold cursor-pointer shadow-2xs"
+            title="Join Telegram Channel for instant Sarkari notice PDFs"
+          >
+            <svg class="w-4 h-4 text-[#229ED9] group-hover:scale-110 transition-transform shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+            <span>Join Telegram</span>
+            <span class="text-[10px] text-[#229ED9] bg-[#229ED9]/15 px-1.5 py-0.5 rounded font-mono font-medium">Alerts</span>
+          </a>
+
+          <a
+            href={whatsappChannel}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 hover:border-[#25D366]/50 text-white transition-all duration-200 text-xs font-semibold cursor-pointer shadow-2xs"
+            title="Join WhatsApp Channel for instant Sarkari notice updates"
+          >
+            <svg class="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+            <span>Join WhatsApp</span>
+            <span class="text-[10px] text-[#25D366] bg-[#25D366]/15 px-1.5 py-0.5 rounded font-mono font-medium">Channel</span>
+          </a>
+        </div>
+      </section>
+
     </div>
   </div>
+
+  {/* Client-Side Command Controller for Real-Time Search & Stream Filter */}
+  <script is:inline>
+    (function () {
+      function setupCommandSearch() {
+        const searchInput = document.getElementById('command-search-input');
+        const clearBtn = document.getElementById('command-search-clear');
+        const dropdownContainer = document.getElementById('category-dropdown-container');
+        const dropdownBtn = document.getElementById('category-dropdown-btn');
+        const dropdownMenu = document.getElementById('category-dropdown-menu');
+        const dropdownLabel = document.getElementById('category-dropdown-label');
+        const dropdownArrow = document.getElementById('category-dropdown-arrow');
+        const optionBtns = document.querySelectorAll('.category-option-btn');
+        const cards = document.querySelectorAll('[data-bento-card]');
+        const emptyState = document.getElementById('bento-empty-state');
+        const resetAllBtn = document.getElementById('bento-reset-all-btn');
+
+        if (!searchInput || !cards.length) return;
+
+        let activeStream = 'all';
+
+        function toggleDropdown(forceClose) {
+          if (!dropdownMenu) return;
+          const isCurrentlyHidden = dropdownMenu.classList.contains('hidden') || dropdownMenu.style.display === 'none';
+          const shouldOpen = forceClose === undefined ? isCurrentlyHidden : !forceClose;
+
+          if (shouldOpen) {
+            dropdownMenu.classList.remove('hidden');
+            dropdownMenu.style.display = 'block';
+            dropdownBtn?.setAttribute('aria-expanded', 'true');
+            dropdownArrow?.classList.add('rotate-180');
+          } else {
+            dropdownMenu.classList.add('hidden');
+            dropdownMenu.style.display = 'none';
+            dropdownBtn?.setAttribute('aria-expanded', 'false');
+            dropdownArrow?.classList.remove('rotate-180');
+          }
+        }
+
+        if (dropdownBtn) {
+          dropdownBtn.onclick = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleDropdown();
+          };
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+          if (dropdownContainer && !dropdownContainer.contains(e.target)) {
+            toggleDropdown(true);
+          }
+        });
+
+        // Close dropdown on Escape
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+            toggleDropdown(true);
+          }
+        });
+
+        function executeFilter() {
+          const query = searchInput.value.trim().toLowerCase();
+
+          if (clearBtn) {
+            clearBtn.classList.toggle('hidden', query.length === 0);
+          }
+
+          let visibleCards = 0;
+          let visibleRows = 0;
+
+          cards.forEach((card) => {
+            const streamSlug = card.getAttribute('data-stream-slug') || '';
+            const streamName = card.getAttribute('data-stream-name') || '';
+            const streamKeywords = card.getAttribute('data-stream-keywords') || '';
+            const rows = card.querySelectorAll('[data-stream-item]');
+
+            const matchesStream = activeStream === 'all' || streamSlug === activeStream;
+
+            if (!matchesStream) {
+              card.classList.add('hidden');
+              return;
+            }
+
+            if (query.length > 0) {
+              const cardMatches = streamName.includes(query) || streamKeywords.includes(query);
+              let rowMatched = false;
+
+              rows.forEach((row) => {
+                const title = row.getAttribute('data-stream-title') || '';
+                if (title.includes(query) || cardMatches) {
+                  row.classList.remove('hidden');
+                  rowMatched = true;
+                  visibleRows++;
+                } else {
+                  row.classList.add('hidden');
+                }
+              });
+
+              if (rowMatched || cardMatches || rows.length === 0) {
+                card.classList.remove('hidden');
+                visibleCards++;
+              } else {
+                card.classList.add('hidden');
+              }
+            } else {
+              card.classList.remove('hidden');
+              rows.forEach((row) => {
+                row.classList.remove('hidden');
+                visibleRows++;
+              });
+              visibleCards++;
+            }
+          });
+
+          if (emptyState) {
+            emptyState.classList.toggle('hidden', visibleCards > 0);
+          }
+        }
+
+        searchInput.addEventListener('input', executeFilter);
+
+        if (clearBtn) {
+          clearBtn.addEventListener('click', function () {
+            searchInput.value = '';
+            searchInput.focus();
+            executeFilter();
+          });
+        }
+
+        optionBtns.forEach((btn) => {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const optionSlug = this.getAttribute('data-stream-option') || 'all';
+            const optionName = this.getAttribute('data-stream-name') || 'All Streams';
+
+            activeStream = optionSlug;
+
+            if (dropdownLabel) {
+              dropdownLabel.textContent = optionName;
+            }
+
+            optionBtns.forEach((b) => {
+              const isSelected = (b.getAttribute('data-stream-option') || '') === optionSlug;
+              b.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+              b.classList.toggle('text-white', isSelected);
+              b.classList.toggle('font-semibold', isSelected);
+              b.classList.toggle('text-muted', !isSelected);
+              b.classList.toggle('font-medium', !isSelected);
+
+              const checkIcon = b.querySelector('.category-check');
+              if (checkIcon) {
+                checkIcon.classList.toggle('hidden', !isSelected);
+              }
+            });
+
+            toggleDropdown(true);
+            executeFilter();
+          });
+        });
+
+        function resetAll() {
+          searchInput.value = '';
+          activeStream = 'all';
+
+          if (dropdownLabel) {
+            dropdownLabel.textContent = 'All Streams';
+          }
+
+          optionBtns.forEach((b) => {
+            const isAll = (b.getAttribute('data-stream-option') || '') === 'all';
+            b.setAttribute('aria-selected', isAll ? 'true' : 'false');
+            b.classList.toggle('text-white', isAll);
+            b.classList.toggle('font-semibold', isAll);
+            b.classList.toggle('text-muted', !isAll);
+            b.classList.toggle('font-medium', !isAll);
+
+            const checkIcon = b.querySelector('.category-check');
+            if (checkIcon) {
+              checkIcon.classList.toggle('hidden', !isAll);
+            }
+          });
+
+          executeFilter();
+          searchInput.focus();
+        }
+
+        if (resetAllBtn) resetAllBtn.addEventListener('click', resetAll);
+
+        // Global hotkey: '/' or Ctrl+K focuses the hero search input
+        window.addEventListener('keydown', function (e) {
+          if ((e.ctrlKey && e.key.toLowerCase() === 'k') || (e.key === '/' && document.activeElement?.tagName !== 'INPUT')) {
+            e.preventDefault();
+            searchInput.focus();
+            searchInput.select();
+          } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            executeFilter();
+            searchInput.blur();
+          }
+        });
+        // Synchronize stream search titles when language switcher updates article titles in place
+        try {
+          const titleObserver = new MutationObserver(function (mutations) {
+            mutations.forEach(function (m) {
+              const el = m.target;
+              const link = el instanceof Element ? el.closest('[data-stream-item]') : el.parentElement?.closest('[data-stream-item]');
+              if (link) {
+                const titleText = link.querySelector('[data-article-title]')?.textContent || '';
+                link.setAttribute('data-stream-title', titleText.toLowerCase().trim());
+              }
+            });
+          });
+
+          document.querySelectorAll('[data-article-title]').forEach(function (el) {
+            titleObserver.observe(el, { childList: true, characterData: true, subtree: true });
+          });
+        } catch (e) {}
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupCommandSearch);
+      } else {
+        setupCommandSearch();
+      }
+
+      document.addEventListener('astro:page-load', setupCommandSearch);
+    })();
+  </script>
 
   {/* Cache top articles for instant 0ms access when opening article pages */}
   <script is:inline define:vars={{ cachedPosts: (livePosts || []).slice(0, 10).map((p: any) => ({

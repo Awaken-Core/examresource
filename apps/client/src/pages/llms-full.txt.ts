@@ -28,12 +28,15 @@ ${siteName} links directly to primary sources for all candidate submissions:
 
 ## Category Taxonomy & URL Structure
 - \`${siteUrl}/\`: Main live feed with latest notices and trending recruitment drives.
-- \`${siteUrl}/category/central-government\`: Central government ministries, PSUs, and statutory boards.
-- \`${siteUrl}/category/state-exams\`: State PSCs (UPPSC, BPSC, MPSC, RPSC, MPPSC, WBPSC, TNPSC, KPSC, OPSC), police constable/SI drives, and district courts.
-- \`${siteUrl}/category/banking\`: Commercial banks, regional rural banks, regulatory bodies (RBI, SEBI, NABARD, SIDBI), and insurance (LIC, NIACL, UIIC).
-- \`${siteUrl}/category/ssc-railways\`: Graduate and undergraduate level recruitments by SSC and Indian Railways.
-- \`${siteUrl}/category/teaching\`: School teacher (PRT, TGT, PGT), Assistant Professor, and state TET certifications.
-- \`${siteUrl}/category/defence\`: Armed forces (Indian Army, Navy, Air Force), Paramilitary (CRPF, BSF, CISF, ITBP, SSB), and Coast Guard.
+- \`${siteUrl}/category/central-government\`: Central Govt & UPSC: Central ministries, UPSC Civil Services, and national agencies.
+- \`${siteUrl}/category/ssc\`: SSC Exams: Staff Selection Commission (CGL, CHSL, MTS, CPO, GD, Steno).
+- \`${siteUrl}/category/railways\`: Railway Exams (RRB): Railway Recruitment Boards (RRB NTPC, ALP, Group D, Technician, RPF).
+- \`${siteUrl}/category/banking\`: Banking & Insurance: Commercial banks, RBI, SBI, IBPS, and insurance (LIC, NIACL).
+- \`${siteUrl}/category/state-exams\`: Latest Govt Jobs: State PSCs (UPPSC, BPSC, MPSC, RPSC, MPPSC) and state boards.
+- \`${siteUrl}/category/defence\`: Defence & Paramilitary: Armed forces (Army, Navy, Air Force), NDA, CDS, AFCAT, Coast Guard.
+- \`${siteUrl}/category/police\`: Police Recruitment Exams: State Police SI, Constable, and ASI recruitment drives.
+- \`${siteUrl}/category/teaching\`: Teaching & Education Exams: CTET, State TETs, KVS, NVS, DSSSB, and Assistant Professor posts.
+- \`${siteUrl}/category/psu-engineering\`: PSU & Engineering Exams: Central PSUs (BHEL, ISRO, DRDO, GATE), State Engineering, and technical exams.
 
 ## Article Structure & Content Standards
 Every published article on ${siteName} follows a strict, candidate-first structure:

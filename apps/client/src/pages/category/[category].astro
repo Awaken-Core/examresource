@@ -19,7 +19,10 @@ const slugAliases: Record<string, string> = {
   'police-exams': 'police',
   'railway': 'railways',
   'rrb': 'railways',
-  'admission': 'admissions',
+  'admission': 'psu-engineering',
+  'admissions': 'psu-engineering',
+  'engineering': 'psu-engineering',
+  'psu': 'psu-engineering',
   'latestupdate': 'latest-updates',
   'latest-update': 'latest-updates',
   'state-pcs': 'state-exams',
@@ -110,12 +113,15 @@ const jsonLd = {
 };
 
 const displayCategories = allCategories && allCategories.length > 0 ? allCategories : [
-  { name: 'Central Government', slug: 'central-government' },
-  { name: 'State Exams', slug: 'state-exams' },
-  { name: 'Banking', slug: 'banking' },
-  { name: 'SSC & Railways', slug: 'ssc-railways' },
-  { name: 'Teaching', slug: 'teaching' },
-  { name: 'Defence', slug: 'defence' },
+  { name: 'Central Govt & UPSC', slug: 'central-government' },
+  { name: 'SSC Exams', slug: 'ssc' },
+  { name: 'Railway Exams (RRB)', slug: 'railways' },
+  { name: 'Banking & Insurance Exams', slug: 'banking' },
+  { name: 'Latest Govt Jobs', slug: 'state-exams' },
+  { name: 'Defence & Paramilitary Exams', slug: 'defence' },
+  { name: 'Police Recruitment Exams', slug: 'police' },
+  { name: 'Teaching & Education Exams', slug: 'teaching' },
+  { name: 'PSU & Engineering Exams', slug: 'psu-engineering' },
 ];
 
 const R2_PORTAL_BASE = 'https://pub-68568854a58845bc975b176de76b1ad5.r2.dev/portals';
