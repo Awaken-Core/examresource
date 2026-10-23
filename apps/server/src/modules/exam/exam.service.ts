@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  Optional,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -12,6 +13,8 @@ import {
   type ExamDocument,
   Question,
   type QuestionDocument,
+  QuestionMapping,
+  type QuestionMappingDocument,
   TestAttempt,
   type TestAttemptDocument,
   TestSeries,
@@ -39,6 +42,9 @@ export class ExamService {
     private readonly userModel: Model<UserDocument>,
     @InjectModel(TestSeries.name)
     private readonly testSeriesModel: Model<TestSeriesDocument>,
+    @Optional()
+    @InjectModel(QuestionMapping.name)
+    private readonly questionMappingModel?: Model<QuestionMappingDocument>,
   ) {}
 
   async listPublished() {
@@ -262,6 +268,45 @@ export class ExamService {
       }
     } else {
       let directQuestions = exam.questions || [];
+
+      // Resilient fallback: if directQuestions is empty, dynamically query QuestionMapping or questions
+      if (directQuestions.length === 0 && (exam.chapterId || exam.subjectId)) {
+        let candidateIds: Types.ObjectId[] = [];
+        if (this.questionMappingModel) {
+          const mappingFilter: Record<string, any> = {};
+          if (exam.testSeriesId) mappingFilter.testSeriesId = exam.testSeriesId;
+          if (exam.subjectId) mappingFilter.subjectId = exam.subjectId;
+          if (exam.chapterId) mappingFilter.chapterId = exam.chapterId;
+
+          const mappings = await this.questionMappingModel
+            .find(mappingFilter)
+            .select('questionId')
+            .lean();
+          candidateIds = mappings.map((m: any) => m.questionId);
+        }
+
+        if (candidateIds.length === 0 && exam.chapterId) {
+          const directQs = await this.questionModel
+            .find({ chapterId: exam.chapterId, status: 'published' })
+            .select('_id')
+            .lean();
+          candidateIds = directQs.map((q: any) => q._id);
+        }
+
+        if (candidateIds.length > 0) {
+          const fetchedQuestions = await this.questionModel
+            .find({ _id: { $in: candidateIds }, status: 'published' })
+            .lean();
+
+          directQuestions = fetchedQuestions.map((doc: any, pos: number) => ({
+            questionId: doc._id,
+            position: pos,
+            marks: exam.positiveMarks ?? doc.marks ?? 1,
+            negativeMarks: exam.negativeMarkingEnabled ? (exam.negativeMarks ?? doc.negativeMarks ?? 0) : 0,
+          }));
+        }
+      }
+
       if (exam.questionOrderMode === 'randomized') {
         directQuestions = [...directQuestions].sort(() => Math.random() - 0.5);
       }
@@ -282,6 +327,10 @@ export class ExamService {
         marks: q.marks ?? exam.positiveMarks ?? 1,
         negativeMarks: exam.negativeMarkingEnabled ? (q.negativeMarks ?? exam.negativeMarks ?? 0) : 0,
       }));
+    }
+
+    if (resolvedQuestions.length === 0) {
+      throw new BadRequestException('This test does not have any questions configured yet.');
     }
 
     // Hydrate questions and snapshots
