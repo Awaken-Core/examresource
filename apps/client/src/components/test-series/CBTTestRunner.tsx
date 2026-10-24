@@ -162,8 +162,7 @@ export function CBTTestRunner({ attemptId }: Props) {
       }
 
       if (data.status === 'submitted') {
-        setSubmittedResult(data);
-        setLoading(false);
+        window.location.replace(`/test-series/results/${data.id || (data as any)._id || attemptId}`);
         return;
       }
 
@@ -573,8 +572,9 @@ export function CBTTestRunner({ attemptId }: Props) {
       }
 
       const finalized: AttemptDetail = await res.json();
-      setSubmittedResult(finalized);
       setShowSubmitModal(false);
+      window.location.replace(`/test-series/results/${finalized.id || (finalized as any)._id || attempt.id}`);
+      return;
     } catch (err: any) {
       if (isAutoExpire) {
         // Reload attempt status which autoFinalizeAttempt resolves
@@ -583,7 +583,8 @@ export function CBTTestRunner({ attemptId }: Props) {
         });
         if (recheck.ok) {
           const finalData = await recheck.json();
-          setSubmittedResult(finalData);
+          window.location.replace(`/test-series/results/${finalData.id || (finalData as any)._id || attempt.id}`);
+          return;
         }
       } else {
         const errMsg =

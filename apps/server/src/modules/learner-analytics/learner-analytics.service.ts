@@ -709,8 +709,9 @@ export class LearnerAnalyticsService {
     // Question review metadata
     const questionReview = answers.map((ans, idx) => {
       const snap = ans.questionSnapshot;
+      const userSelectedIds = (ans.optionIds || []).map((id: any) => id.toString());
       return {
-        questionId: ans.questionId?.toString() || `q_${idx}`,
+        questionId: (snap?.questionId || ans.questionId)?.toString() || `q_${idx}`,
         questionIndex: idx + 1,
         sectionId: ans.sectionId || null,
         status: ans.status || 'not_visited',
@@ -721,7 +722,24 @@ export class LearnerAnalyticsService {
         timeSpentSeconds: ans.timeSpentSeconds || 0,
         difficulty: ans.difficulty || null,
         topic: ans.topic || null,
-        snippet: snap?.content ? snap.content.slice(0, 140) : null,
+        type: snap?.type || 'single_choice',
+        content: snap?.content || '',
+        translations: snap?.translations || {},
+        explanation: snap?.explanation || null,
+        explanationTranslations: snap?.explanationTranslations || {},
+        numericalAnswer: snap?.numericalAnswer || null,
+        userNumericalValue: ans.numericalValue || null,
+        userSelectedOptionIds: userSelectedIds,
+        options: (snap?.options || []).map((opt: any, optIdx: number) => {
+          const optId = (opt?._id || opt?.id || `opt_${optIdx}`).toString();
+          return {
+            id: optId,
+            content: typeof opt === 'string' ? opt : opt?.content || '',
+            translations: opt?.translations || {},
+            isCorrect: Boolean(opt?.isCorrect),
+            isSelected: userSelectedIds.includes(optId),
+          };
+        }),
       };
     });
 

@@ -218,6 +218,6 @@ describe('LearnerAnalyticsService', () => {
     expect(analysis.needsRevisionChapters).toHaveLength(1);
     expect(analysis.needsRevisionChapters[0].name).toBe('Digital Electronics');
     expect(analysis.questionReview).toHaveLength(2);
-    expect(analysis.questionReview[0].snippet).toBe('What is binary?');
+    expect(analysis.questionReview[0].content).toBe('What is binary?');
   });
 });
