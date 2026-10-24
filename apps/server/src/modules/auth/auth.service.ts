@@ -434,7 +434,15 @@ export class AuthService {
         .map((id) => new Types.ObjectId(id));
     }
     if (input.examGoalDate !== undefined) {
-      updateData.examGoalDate = input.examGoalDate ? new Date(input.examGoalDate) : null;
+      if (input.examGoalDate) {
+        const parsed = new Date(input.examGoalDate);
+        if (isNaN(parsed.getTime())) {
+          throw new BadRequestException('examGoalDate must be a valid date.');
+        }
+        updateData.examGoalDate = parsed;
+      } else {
+        updateData.examGoalDate = null;
+      }
     }
 
     const user = await this.userModel.findByIdAndUpdate(

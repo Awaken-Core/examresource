@@ -265,6 +265,14 @@ export function ProfileHub() {
     return result.sort((a, b) => a.accuracy - b.accuracy);
   }, [stats.completedAttempts]);
 
+  // Days remaining until exam target date
+  const daysUntilGoal = useMemo(() => {
+    if (!user?.examGoalDate) return null;
+    const target = new Date(user.examGoalDate).getTime();
+    const now = Date.now();
+    return Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+  }, [user?.examGoalDate]);
+
   async function saveProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) return;
@@ -272,6 +280,9 @@ export function ProfileHub() {
     setMessage(null);
 
     try {
+      const matchedSeries = testSeriesList.find((s) => s.title === targetExam.trim());
+      const seriesIds = matchedSeries ? [matchedSeries.id || matchedSeries._id].filter(Boolean) as string[] : (user.targetSeriesIds || []);
+
       const response = await fetch(`${API_URL}/me`, {
         method: "PATCH",
         credentials: "include",
@@ -284,6 +295,7 @@ export function ProfileHub() {
           phone: phone.trim() || null,
           preferredLanguage,
           targetExam: targetExam.trim() || null,
+          targetSeriesIds: seriesIds,
           examGoalDate: examGoalDate ? new Date(examGoalDate).toISOString() : null,
         }),
       });
@@ -443,6 +455,11 @@ export function ProfileHub() {
                           year: "numeric",
                         })}
                       </span>
+                      {daysUntilGoal !== null && (
+                        <span className="rounded bg-accent/20 px-1 py-0.2 text-[10px] font-bold text-accent">
+                          {daysUntilGoal > 0 ? `${daysUntilGoal}d left` : daysUntilGoal === 0 ? "Today!" : "Passed"}
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>

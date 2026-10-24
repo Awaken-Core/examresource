@@ -35,7 +35,7 @@ export class User {
   @Prop({ type: String, default: null })
   targetExam?: string | null;
 
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [Types.ObjectId], ref: 'TestSeries', default: [] })
   targetSeriesIds?: Types.ObjectId[];
 
   @Prop({ type: Date, default: null })
