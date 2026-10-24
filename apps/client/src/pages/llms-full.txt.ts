@@ -32,7 +32,7 @@ ${siteName} links directly to primary sources for all candidate submissions:
 - \`${siteUrl}/category/ssc\`: SSC Exams: Staff Selection Commission (CGL, CHSL, MTS, CPO, GD, Steno).
 - \`${siteUrl}/category/railways\`: Railway Exams (RRB): Railway Recruitment Boards (RRB NTPC, ALP, Group D, Technician, RPF).
 - \`${siteUrl}/category/banking\`: Banking & Insurance: Commercial banks, RBI, SBI, IBPS, and insurance (LIC, NIACL).
-- \`${siteUrl}/category/state-exams\`: Latest Govt Jobs: State PSCs (UPPSC, BPSC, MPSC, RPSC, MPPSC) and state boards.
+- \`${siteUrl}/category/latest-jobs\`: Latest Govt Jobs: State PSCs (UPPSC, BPSC, MPSC, RPSC, MPPSC) and state boards.
 - \`${siteUrl}/category/defence\`: Defence & Paramilitary: Armed forces (Army, Navy, Air Force), NDA, CDS, AFCAT, Coast Guard.
 - \`${siteUrl}/category/police\`: Police Recruitment Exams: State Police SI, Constable, and ASI recruitment drives.
 - \`${siteUrl}/category/teaching\`: Teaching & Education Exams: CTET, State TETs, KVS, NVS, DSSSB, and Assistant Professor posts.

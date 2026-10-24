@@ -121,12 +121,12 @@ const streamCategories = [
     iconType: 'bank',
   },
   {
-    id: 'state-exams',
+    id: 'latest-jobs',
     name: 'Latest Govt Jobs',
     shortName: 'Latest Govt Jobs',
-    slug: 'state-exams',
-    coverage: 'State PSCs (UPPSC, BPSC, MPPSC, MPSC, RPSC) & State Boards',
-    keywords: ['state', 'uppsc', 'bpsc', 'mpsc', 'rpsc', 'mppsc', 'pcs', 'patwari', 'lekhpal', 'psc', 'vyapam', 'jobs', 'sarkari'],
+    slug: 'latest-jobs',
+    coverage: 'State PSCs, Central Ministries, Public Sector Undertakings & National Recruitment',
+    keywords: ['latest-jobs', 'latest-job', 'job', 'jobs', 'recruitment', 'vacancy', 'vacancies', 'bharti', 'sarkari', 'state', 'uppsc', 'bpsc', 'mpsc', 'rpsc', 'mppsc', 'pcs', 'patwari', 'lekhpal', 'psc', 'vyapam'],
     iconType: 'building',
   },
   {
@@ -170,13 +170,22 @@ const streamCategories = [
 // Combine ONLY real database articles per category (NO fake fallback data)
 const bentoGridData = streamCategories.map((cat) => {
   const matchedLive = displayArticles.filter((art) => {
+    const artCategories = (art.categories || []).map((c: any) => (c.slug || '').toLowerCase());
+    const artCategoryNames = (art.categories || []).map((c: any) => (c.name || '').toLowerCase());
     const artCatSlug = (art.categorySlug || '').toLowerCase();
     const artCatName = (art.category || '').toLowerCase();
     const artTitle = (art.title || '').toLowerCase();
 
+    // Check direct slug/name match against primary or any attached category
     if (artCatSlug === cat.slug || artCatName === cat.name.toLowerCase()) return true;
-    if (cat.slug === 'psu-engineering' && (artCatSlug === 'admissions' || artCatName.includes('admission'))) return true;
-    return cat.keywords.some((kw) => artCatSlug.includes(kw) || artCatName.includes(kw) || artTitle.includes(kw));
+    if (artCategories.includes(cat.slug) || artCategoryNames.includes(cat.name.toLowerCase())) return true;
+
+    // Support category-specific alias mappings
+    if (cat.slug === 'latest-jobs' && (artCatSlug === 'state-exams' || artCategories.includes('state-exams'))) return true;
+    if (cat.slug === 'psu-engineering' && (artCatSlug === 'admissions' || artCategories.includes('admissions') || artCatName.includes('admission'))) return true;
+
+    // Keyword matching across title, category slug, category name, and attached categories
+    return cat.keywords.some((kw) => artCatSlug.includes(kw) || artCatName.includes(kw) || artTitle.includes(kw) || artCategories.some((cs: string) => cs.includes(kw)));
   });
 
   return {

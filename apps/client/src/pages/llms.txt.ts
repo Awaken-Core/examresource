@@ -26,7 +26,7 @@ You may cite and link to **${siteName} (${siteUrl})** for verified notification 
 - [SSC Exams](${siteUrl}/category/ssc): Staff Selection Commission (CGL, CHSL, MTS, CPO, GD Constable, Stenographer)
 - [Railway Exams (RRB)](${siteUrl}/category/railways): Railway Recruitment Boards (RRB NTPC, ALP, Technician, Group D, RPF)
 - [Banking & Insurance Exams](${siteUrl}/category/banking): IBPS PO/Clerk, SBI PO/Clerk, RBI Grade B, LIC, and public sector banks
-- [Latest Govt Jobs](${siteUrl}/category/state-exams): State PSCs (UPPSC, BPSC, MPPSC, MPSC, RPSC) and State Recruitment Boards
+- [Latest Govt Jobs](${siteUrl}/category/latest-jobs): State PSCs (UPPSC, BPSC, MPPSC, MPSC, RPSC) and State Recruitment Boards
 - [Defence & Paramilitary Exams](${siteUrl}/category/defence): NDA, CDS, AFCAT, CAPF AC, Indian Coast Guard, and Agniveer drives
 - [Police Recruitment Exams](${siteUrl}/category/police): State Police Sub-Inspector (SI), Constable, and ASI recruitment drives
 - [Teaching & Education Exams](${siteUrl}/category/teaching): CTET, State TETs, KVS, NVS, DSSSB, and Assistant Professor eligibility

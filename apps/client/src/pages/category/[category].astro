@@ -27,6 +27,11 @@ const slugAliases: Record<string, string> = {
   'latest-update': 'latest-updates',
   'state-pcs': 'state-exams',
   'state-exam': 'state-exams',
+  'latest-job': 'latest-jobs',
+  'latestjob': 'latest-jobs',
+  'latestjobs': 'latest-jobs',
+  'jobs': 'latest-jobs',
+  'job': 'latest-jobs',
 };
 
 if (slugAliases[rawCategorySlug]) {
@@ -117,7 +122,7 @@ const displayCategories = allCategories && allCategories.length > 0 ? allCategor
   { name: 'SSC Exams', slug: 'ssc' },
   { name: 'Railway Exams (RRB)', slug: 'railways' },
   { name: 'Banking & Insurance Exams', slug: 'banking' },
-  { name: 'Latest Govt Jobs', slug: 'state-exams' },
+  { name: 'Latest Govt Jobs', slug: 'latest-jobs' },
   { name: 'Defence & Paramilitary Exams', slug: 'defence' },
   { name: 'Police Recruitment Exams', slug: 'police' },
   { name: 'Teaching & Education Exams', slug: 'teaching' },
