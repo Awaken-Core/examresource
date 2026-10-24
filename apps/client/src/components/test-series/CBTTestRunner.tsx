@@ -36,6 +36,8 @@ export interface AttemptAnswer {
   status: QuestionPaletteStatus;
   timeSpentSeconds: number;
   answeredAt?: string | null;
+  visitedAt?: string | null;
+  lastViewedAt?: string | null;
   question: QuestionDetail | null;
   isCorrect?: boolean;
   marksAwarded?: number;
@@ -104,14 +106,18 @@ export function CBTTestRunner({ attemptId }: Props) {
 
   // Saving / Network feedback
   const [isSaving, setIsSaving] = useState(false);
-  const [savingAction, setSavingAction] = useState<'save_and_next' | 'mark_review' | 'clear' | null>(null);
+  const [savingAction, setSavingAction] = useState<
+    'save_and_next' | 'mark_review' | 'clear' | null
+  >(null);
   const [networkError, setNetworkError] = useState<string | null>(null);
 
   // Submission confirmation modal
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submittedResult, setSubmittedResult] = useState<AttemptDetail | null>(null);
+  const [submittedResult, setSubmittedResult] = useState<AttemptDetail | null>(
+    null,
+  );
 
   // Countdown timer state
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
@@ -121,6 +127,8 @@ export function CBTTestRunner({ attemptId }: Props) {
 
   // Auto-submit lock ref
   const hasAutoSubmitted = useRef(false);
+  const questionOpenedAtRef = useRef(Date.now());
+  const sectionOpenedAtRef = useRef(Date.now());
 
   // Load Attempt and Test Metadata
   const loadAttempt = useCallback(async () => {
@@ -141,7 +149,9 @@ export function CBTTestRunner({ attemptId }: Props) {
       // Fetch test details for section duration / titles
       if (data.testId) {
         try {
-          const testRes = await fetch(`${API_URL}/test-series/tests/${data.testId}`);
+          const testRes = await fetch(
+            `${API_URL}/test-series/tests/${data.testId}`,
+          );
           if (testRes.ok) {
             const tMeta = await testRes.json();
             setTestMeta(tMeta);
@@ -211,6 +221,7 @@ export function CBTTestRunner({ attemptId }: Props) {
   const activeAnswer = attempt?.answers?.[currentIndex];
   useEffect(() => {
     if (!activeAnswer) return;
+    questionOpenedAtRef.current = Date.now();
     setSelectedOptionIds(activeAnswer.optionIds || []);
     setNumericalInput(activeAnswer.numericalValue || '');
     setNetworkError(null);
@@ -230,6 +241,10 @@ export function CBTTestRunner({ attemptId }: Props) {
     }
   }, [currentIndex, attempt?.answers?.length]);
 
+  useEffect(() => {
+    sectionOpenedAtRef.current = Date.now();
+  }, [activeSectionId]);
+
   // Save answer to backend - returns boolean indicating success
   const saveAnswerState = async (
     index: number,
@@ -238,7 +253,7 @@ export function CBTTestRunner({ attemptId }: Props) {
       optionIds?: string[];
       numericalValue?: string | null;
       timeSpentSeconds?: number;
-    }
+    },
   ): Promise<boolean> => {
     if (!attempt || attempt.status !== 'in_progress') return false;
     const ans = attempt.answers[index];
@@ -258,12 +273,18 @@ export function CBTTestRunner({ attemptId }: Props) {
           },
           credentials: 'include',
           body: JSON.stringify({
-            optionIds: payload.optionIds !== undefined ? payload.optionIds : ans.optionIds,
-            numericalValue: payload.numericalValue !== undefined ? payload.numericalValue : ans.numericalValue,
+            optionIds:
+              payload.optionIds !== undefined
+                ? payload.optionIds
+                : ans.optionIds,
+            numericalValue:
+              payload.numericalValue !== undefined
+                ? payload.numericalValue
+                : ans.numericalValue,
             status: payload.status || ans.status,
-            timeSpentSeconds: payload.timeSpentSeconds || 0,
+            timeSpentSeconds: payload.timeSpentSeconds ?? ans.timeSpentSeconds,
           }),
-        }
+        },
       );
 
       if (!res.ok) {
@@ -272,9 +293,12 @@ export function CBTTestRunner({ attemptId }: Props) {
 
       const updatedAttempt = await res.json();
       setAttempt(updatedAttempt);
+      if (index === currentIndex) questionOpenedAtRef.current = Date.now();
       return true;
     } catch (err: any) {
-      setNetworkError(err.message || 'Network error saving response. Please retry.');
+      setNetworkError(
+        err.message || 'Network error saving response. Please retry.',
+      );
       return false;
     } finally {
       setIsSaving(false);
@@ -297,7 +321,7 @@ export function CBTTestRunner({ attemptId }: Props) {
             'X-CSRF-Protection': '1',
           },
           credentials: 'include',
-        }
+        },
       );
 
       if (!res.ok) {
@@ -318,30 +342,111 @@ export function CBTTestRunner({ attemptId }: Props) {
 
   // Section & Last Question Calculations
   const answersList = attempt?.answers || [];
+
+  const currentQuestionTimeSpent = () => {
+    const current = attempt?.answers[currentIndex];
+    if (!current) return 0;
+    return (
+      current.timeSpentSeconds +
+      Math.max(0, Math.floor((Date.now() - questionOpenedAtRef.current) / 1000))
+    );
+  };
+
+  const saveSectionTime = async (sectionId: string | null | undefined) => {
+    if (!attempt || !sectionId) return true;
+    const section = attempt.sectionProgress.find(
+      (item) => item.sectionId === sectionId,
+    );
+    if (!section) return true;
+
+    const res = await fetch(
+      `${API_URL}/exam-attempts/${attempt.id}/section-progress`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Protection': '1',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          sectionId,
+          timeSpentSeconds:
+            section.timeSpentSeconds +
+            Math.max(
+              0,
+              Math.floor((Date.now() - sectionOpenedAtRef.current) / 1000),
+            ),
+          isCompleted: section.isCompleted,
+        }),
+      },
+    );
+    if (!res.ok) return false;
+    setAttempt(await res.json());
+    sectionOpenedAtRef.current = Date.now();
+    return true;
+  };
+
+  const navigateToQuestion = async (nextIndex: number) => {
+    if (
+      !attempt ||
+      nextIndex === currentIndex ||
+      nextIndex < 0 ||
+      nextIndex >= attempt.answers.length
+    )
+      return;
+    const current = attempt.answers[currentIndex];
+    const next = attempt.answers[nextIndex];
+    if (!current || !next) return;
+
+    if (
+      current.sectionId !== next.sectionId &&
+      !(await saveSectionTime(current.sectionId))
+    ) {
+      setNetworkError('Could not save section time. Please retry.');
+      return;
+    }
+
+    const saved = await saveAnswerState(currentIndex, {
+      status: current.status,
+      timeSpentSeconds: currentQuestionTimeSpent(),
+    });
+    if (saved) setCurrentIndex(nextIndex);
+  };
   const isFullTest = (attempt?.sectionProgress?.length || 0) > 0;
 
   // Filtered indices for current section if Full Test with active section
-  const currentSectionQuestionIndices = isFullTest && activeSectionId
-    ? answersList
-        .map((a, idx) => (a.sectionId === activeSectionId ? idx : -1))
-        .filter((idx) => idx !== -1)
-    : answersList.map((_, idx) => idx);
+  const currentSectionQuestionIndices =
+    isFullTest && activeSectionId
+      ? answersList
+          .map((a, idx) => (a.sectionId === activeSectionId ? idx : -1))
+          .filter((idx) => idx !== -1)
+      : answersList.map((_, idx) => idx);
 
   // Check if current question is last question in current section/test
-  const isLastQuestionInSection = currentSectionQuestionIndices.length > 0
-    ? currentIndex === currentSectionQuestionIndices[currentSectionQuestionIndices.length - 1]
-    : currentIndex >= answersList.length - 1;
+  const isLastQuestionInSection =
+    currentSectionQuestionIndices.length > 0
+      ? currentIndex ===
+        currentSectionQuestionIndices[currentSectionQuestionIndices.length - 1]
+      : currentIndex >= answersList.length - 1;
 
   // Next question index within section or test
-  const currentPosInSection = currentSectionQuestionIndices.indexOf(currentIndex);
-  const nextIndexInSection = currentPosInSection !== -1 && currentPosInSection < currentSectionQuestionIndices.length - 1
-    ? currentSectionQuestionIndices[currentPosInSection + 1]
-    : (currentIndex < answersList.length - 1 ? currentIndex + 1 : -1);
+  const currentPosInSection =
+    currentSectionQuestionIndices.indexOf(currentIndex);
+  const nextIndexInSection =
+    currentPosInSection !== -1 &&
+    currentPosInSection < currentSectionQuestionIndices.length - 1
+      ? currentSectionQuestionIndices[currentPosInSection + 1]
+      : currentIndex < answersList.length - 1
+        ? currentIndex + 1
+        : -1;
 
   // Previous question index within section or test
-  const prevIndexInSection = currentPosInSection > 0
-    ? currentSectionQuestionIndices[currentPosInSection - 1]
-    : (currentIndex > 0 ? currentIndex - 1 : -1);
+  const prevIndexInSection =
+    currentPosInSection > 0
+      ? currentSectionQuestionIndices[currentPosInSection - 1]
+      : currentIndex > 0
+        ? currentIndex - 1
+        : -1;
 
   // Save & Next Action
   const handleSaveAndNext = async () => {
@@ -349,13 +454,17 @@ export function CBTTestRunner({ attemptId }: Props) {
     setSavingAction('save_and_next');
 
     const hasSelection =
-      selectedOptionIds.length > 0 || (numericalInput !== '' && numericalInput !== null);
-    const newStatus: QuestionPaletteStatus = hasSelection ? 'answered' : 'not_answered';
+      selectedOptionIds.length > 0 ||
+      (numericalInput !== '' && numericalInput !== null);
+    const newStatus: QuestionPaletteStatus = hasSelection
+      ? 'answered'
+      : 'not_answered';
 
     const saved = await saveAnswerState(currentIndex, {
       status: newStatus,
       optionIds: selectedOptionIds,
       numericalValue: numericalInput.trim() ? numericalInput.trim() : null,
+      timeSpentSeconds: currentQuestionTimeSpent(),
     });
 
     setSavingAction(null);
@@ -374,7 +483,8 @@ export function CBTTestRunner({ attemptId }: Props) {
     setSavingAction('mark_review');
 
     const hasSelection =
-      selectedOptionIds.length > 0 || (numericalInput !== '' && numericalInput !== null);
+      selectedOptionIds.length > 0 ||
+      (numericalInput !== '' && numericalInput !== null);
     const newStatus: QuestionPaletteStatus = hasSelection
       ? 'answered_and_marked_for_review'
       : 'marked_for_review';
@@ -383,6 +493,7 @@ export function CBTTestRunner({ attemptId }: Props) {
       status: newStatus,
       optionIds: selectedOptionIds,
       numericalValue: numericalInput.trim() ? numericalInput.trim() : null,
+      timeSpentSeconds: currentQuestionTimeSpent(),
     });
 
     setSavingAction(null);
@@ -405,32 +516,45 @@ export function CBTTestRunner({ attemptId }: Props) {
       // If student manually confirmed submit, save any unsaved/pending answer changes first
       if (!isAutoExpire && activeAnswer) {
         const hasSelection =
-          selectedOptionIds.length > 0 || (numericalInput !== '' && numericalInput !== null);
+          selectedOptionIds.length > 0 ||
+          (numericalInput !== '' && numericalInput !== null);
         const currentSavedOptions = activeAnswer.optionIds || [];
         const currentSavedNumerical = activeAnswer.numericalValue || '';
 
         const isOptionsChanged =
           selectedOptionIds.length !== currentSavedOptions.length ||
           selectedOptionIds.some((id) => !currentSavedOptions.includes(id));
-        const isNumericalChanged = numericalInput.trim() !== currentSavedNumerical.trim();
+        const isNumericalChanged =
+          numericalInput.trim() !== currentSavedNumerical.trim();
 
-        if (isOptionsChanged || isNumericalChanged) {
+        if (
+          isOptionsChanged ||
+          isNumericalChanged ||
+          currentQuestionTimeSpent() > activeAnswer.timeSpentSeconds
+        ) {
           const statusToSave: QuestionPaletteStatus = hasSelection
-            ? (activeAnswer.status === 'marked_for_review' || activeAnswer.status === 'answered_and_marked_for_review'
-                ? 'answered_and_marked_for_review'
-                : 'answered')
-            : (activeAnswer.status === 'marked_for_review' || activeAnswer.status === 'answered_and_marked_for_review'
-                ? 'marked_for_review'
-                : 'not_answered');
+            ? activeAnswer.status === 'marked_for_review' ||
+              activeAnswer.status === 'answered_and_marked_for_review'
+              ? 'answered_and_marked_for_review'
+              : 'answered'
+            : activeAnswer.status === 'marked_for_review' ||
+                activeAnswer.status === 'answered_and_marked_for_review'
+              ? 'marked_for_review'
+              : 'not_answered';
 
           const saved = await saveAnswerState(currentIndex, {
             status: statusToSave,
             optionIds: selectedOptionIds,
-            numericalValue: numericalInput.trim() ? numericalInput.trim() : null,
+            numericalValue: numericalInput.trim()
+              ? numericalInput.trim()
+              : null,
+            timeSpentSeconds: currentQuestionTimeSpent(),
           });
 
           if (!saved) {
-            throw new Error('Failed to save latest answer changes before submitting. Your changes are preserved; please retry.');
+            throw new Error(
+              'Failed to save latest answer changes before submitting. Your changes are preserved; please retry.',
+            );
           }
         }
       }
@@ -454,13 +578,17 @@ export function CBTTestRunner({ attemptId }: Props) {
     } catch (err: any) {
       if (isAutoExpire) {
         // Reload attempt status which autoFinalizeAttempt resolves
-        const recheck = await fetch(`${API_URL}/exam-attempts/${attempt.id}`, { credentials: 'include' });
+        const recheck = await fetch(`${API_URL}/exam-attempts/${attempt.id}`, {
+          credentials: 'include',
+        });
         if (recheck.ok) {
           const finalData = await recheck.json();
           setSubmittedResult(finalData);
         }
       } else {
-        const errMsg = err.message || 'Error submitting test attempt. Please check your connection and retry.';
+        const errMsg =
+          err.message ||
+          'Error submitting test attempt. Please check your connection and retry.';
         setSubmitError(errMsg);
         setNetworkError(errMsg);
       }
@@ -487,7 +615,9 @@ export function CBTTestRunner({ attemptId }: Props) {
     return (
       <div className="min-h-[500px] flex flex-col items-center justify-center space-y-3">
         <div className="w-10 h-10 border-3 border-[#2563EB]/20 border-t-[#2563EB] rounded-full animate-spin"></div>
-        <p className="text-xs text-muted">Securing CBT test connection and decrypting paper...</p>
+        <p className="text-xs text-muted">
+          Securing CBT test connection and decrypting paper...
+        </p>
       </div>
     );
   }
@@ -495,8 +625,13 @@ export function CBTTestRunner({ attemptId }: Props) {
   if (fatalError || !attempt) {
     return (
       <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3 my-12">
-        <p className="text-sm font-semibold text-rose-200">{fatalError || 'Attempt not found.'}</p>
-        <a href="/test-series" className="inline-block text-xs font-semibold text-[#2563EB] hover:underline">
+        <p className="text-sm font-semibold text-rose-200">
+          {fatalError || 'Attempt not found.'}
+        </p>
+        <a
+          href="/test-series"
+          className="inline-block text-xs font-semibold text-[#2563EB] hover:underline"
+        >
           &larr; Return to Test Series
         </a>
       </div>
@@ -506,21 +641,35 @@ export function CBTTestRunner({ attemptId }: Props) {
   // Submitted Confirmation & Results Screen (Enhanced with GovtPariksha Design System)
   if (submittedResult) {
     const totalQ = submittedResult.answers?.length || 0;
-    const answeredCount = submittedResult.answers?.filter(
-      (a) => a.status === 'answered' || a.status === 'answered_and_marked_for_review'
-    ).length || 0;
+    const answeredCount =
+      submittedResult.answers?.filter(
+        (a) =>
+          a.status === 'answered' ||
+          a.status === 'answered_and_marked_for_review',
+      ).length || 0;
     const unansweredCount = Math.max(0, totalQ - answeredCount);
 
-    const correctCount = submittedResult.answers?.filter((a) => a.isCorrect === true).length || 0;
-    const incorrectCount = submittedResult.answers?.filter((a) => {
-      const isAttempted = a.status === 'answered' || a.status === 'answered_and_marked_for_review';
-      return isAttempted && a.isCorrect === false;
-    }).length || 0;
+    const correctCount =
+      submittedResult.answers?.filter((a) => a.isCorrect === true).length || 0;
+    const incorrectCount =
+      submittedResult.answers?.filter((a) => {
+        const isAttempted =
+          a.status === 'answered' ||
+          a.status === 'answered_and_marked_for_review';
+        return isAttempted && a.isCorrect === false;
+      }).length || 0;
 
-    const accuracyPct = answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
+    const accuracyPct =
+      answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0;
     const marksAwarded = Number((submittedResult.marksAwarded ?? 0).toFixed(2));
     const maxMarks = Number((submittedResult.maximumMarks ?? 0).toFixed(2));
-    const scorePct = maxMarks > 0 ? Math.max(0, Math.min(100, Math.round((marksAwarded / maxMarks) * 100))) : 0;
+    const scorePct =
+      maxMarks > 0
+        ? Math.max(
+            0,
+            Math.min(100, Math.round((marksAwarded / maxMarks) * 100)),
+          )
+        : 0;
     const timeSpent = submittedResult.timeSpentSeconds ?? null;
 
     return (
@@ -555,8 +704,18 @@ export function CBTTestRunner({ attemptId }: Props) {
               <div className="absolute inset-0 rounded-2xl bg-emerald-500/15 dark:bg-emerald-500/20 rotate-6" />
               <div className="absolute inset-0 rounded-2xl bg-emerald-500/25 dark:bg-emerald-500/25 -rotate-3" />
               <div className="relative w-full h-full rounded-2xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 text-white">
-                <svg className="w-9 h-9 sm:w-11 sm:h-11" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-9 h-9 sm:w-11 sm:h-11"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2.5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
             </div>
@@ -567,7 +726,9 @@ export function CBTTestRunner({ attemptId }: Props) {
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 max-w-md mx-auto">
                 {testMeta?.title ? (
-                  <span className="font-semibold text-slate-800 dark:text-zinc-200">{testMeta.title} &mdash; </span>
+                  <span className="font-semibold text-slate-800 dark:text-zinc-200">
+                    {testMeta.title} &mdash;{' '}
+                  </span>
                 ) : null}
                 Your responses have been securely computed and graded.
               </p>
@@ -593,8 +754,18 @@ export function CBTTestRunner({ attemptId }: Props) {
 
               <div className="sm:text-right">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
                   </svg>
                   {scorePct}% Score
                 </span>
@@ -619,14 +790,29 @@ export function CBTTestRunner({ attemptId }: Props) {
             <div className="bg-slate-50/80 dark:bg-zinc-800/60 border border-slate-200/80 dark:border-zinc-700/70 p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="w-6 h-6 rounded-md bg-blue-50 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
                   </svg>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">Attempted</span>
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                  Attempted
+                </span>
               </div>
               <div className="text-xl font-bold text-slate-900 dark:text-white">
-                {answeredCount} <span className="text-xs font-medium text-slate-400 dark:text-zinc-500">/ {totalQ}</span>
+                {answeredCount}{' '}
+                <span className="text-xs font-medium text-slate-400 dark:text-zinc-500">
+                  / {totalQ}
+                </span>
               </div>
               <span className="text-[10px] text-slate-500 dark:text-zinc-400 block mt-0.5">
                 {unansweredCount} skipped
@@ -637,11 +823,23 @@ export function CBTTestRunner({ attemptId }: Props) {
             <div className="bg-slate-50/80 dark:bg-zinc-800/60 border border-slate-200/80 dark:border-zinc-700/70 p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="w-6 h-6 rounded-md bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                    />
                   </svg>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">Accuracy</span>
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                  Accuracy
+                </span>
               </div>
               <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
                 {accuracyPct}%
@@ -655,16 +853,32 @@ export function CBTTestRunner({ attemptId }: Props) {
             <div className="bg-slate-50/80 dark:bg-zinc-800/60 border border-slate-200/80 dark:border-zinc-700/70 p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="w-6 h-6 rounded-md bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">Correct / Wrong</span>
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                  Correct / Wrong
+                </span>
               </div>
               <div className="text-xl font-bold flex items-baseline gap-1.5">
-                <span className="text-emerald-600 dark:text-emerald-400">{correctCount}</span>
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  {correctCount}
+                </span>
                 <span className="text-slate-300 dark:text-zinc-600">/</span>
-                <span className="text-rose-600 dark:text-rose-400">{incorrectCount}</span>
+                <span className="text-rose-600 dark:text-rose-400">
+                  {incorrectCount}
+                </span>
               </div>
               <span className="text-[10px] text-slate-500 dark:text-zinc-400 block mt-0.5">
                 Verified answers
@@ -675,11 +889,23 @@ export function CBTTestRunner({ attemptId }: Props) {
             <div className="bg-slate-50/80 dark:bg-zinc-800/60 border border-slate-200/80 dark:border-zinc-700/70 p-4 rounded-xl">
               <div className="flex items-center gap-2 mb-1.5">
                 <div className="w-6 h-6 rounded-md bg-amber-50 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                 </div>
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">Time Taken</span>
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">
+                  Time Taken
+                </span>
               </div>
               <div className="text-xl font-bold text-slate-900 dark:text-white">
                 {timeSpent !== null ? formatTime(timeSpent) : '--:--'}
@@ -696,8 +922,18 @@ export function CBTTestRunner({ attemptId }: Props) {
               href="/test-series"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-blue-600 text-white hover:bg-blue-500 active:scale-[0.98] transition shadow-md shadow-blue-600/20"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
               </svg>
               Explore More Tests
             </a>
@@ -707,8 +943,18 @@ export function CBTTestRunner({ attemptId }: Props) {
                 href={`/test-series/tests/${testMeta.id}`}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-800 dark:text-zinc-200 hover:bg-slate-200/80 dark:hover:bg-zinc-700 transition"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                  />
                 </svg>
                 View Test Overview
               </a>
@@ -732,8 +978,12 @@ export function CBTTestRunner({ attemptId }: Props) {
   const summaryCounts = {
     answered: answersList.filter((a) => a.status === 'answered').length,
     not_answered: answersList.filter((a) => a.status === 'not_answered').length,
-    marked_for_review: answersList.filter((a) => a.status === 'marked_for_review').length,
-    answered_and_marked: answersList.filter((a) => a.status === 'answered_and_marked_for_review').length,
+    marked_for_review: answersList.filter(
+      (a) => a.status === 'marked_for_review',
+    ).length,
+    answered_and_marked: answersList.filter(
+      (a) => a.status === 'answered_and_marked_for_review',
+    ).length,
     not_visited: answersList.filter((a) => a.status === 'not_visited').length,
   };
 
@@ -764,7 +1014,9 @@ export function CBTTestRunner({ attemptId }: Props) {
               disabled={isActionDisabled}
               onClick={() => setLanguage('English')}
               className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer ${
-                language === 'English' ? 'bg-[#2563EB] text-white shadow-2xs' : 'text-muted hover:text-white'
+                language === 'English'
+                  ? 'bg-[#2563EB] text-white shadow-2xs'
+                  : 'text-muted hover:text-white'
               } ${isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               EN
@@ -774,7 +1026,9 @@ export function CBTTestRunner({ attemptId }: Props) {
               disabled={isActionDisabled}
               onClick={() => setLanguage('Hindi')}
               className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer ${
-                language === 'Hindi' ? 'bg-[#2563EB] text-white shadow-2xs' : 'text-muted hover:text-white'
+                language === 'Hindi'
+                  ? 'bg-[#2563EB] text-white shadow-2xs'
+                  : 'text-muted hover:text-white'
               } ${isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               HI
@@ -783,11 +1037,26 @@ export function CBTTestRunner({ attemptId }: Props) {
 
           {/* Countdown Clock */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-raised border border-border text-xs font-mono font-bold text-slate-900 dark:text-white">
-            <svg className="w-4 h-4 text-amber-500 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-4 h-4 text-amber-500 dark:text-amber-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <circle cx="12" cy="12" r="10" strokeWidth="2" />
-              <polyline points="12 6 12 12 16 14" strokeWidth="2" strokeLinecap="round" />
+              <polyline
+                points="12 6 12 12 16 14"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
-            <span className={remainingSeconds !== null && remainingSeconds < 300 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white'}>
+            <span
+              className={
+                remainingSeconds !== null && remainingSeconds < 300
+                  ? 'text-rose-600 dark:text-rose-400'
+                  : 'text-slate-900 dark:text-white'
+              }
+            >
               {formatTime(remainingSeconds)}
             </span>
           </div>
@@ -816,17 +1085,20 @@ export function CBTTestRunner({ attemptId }: Props) {
             Sections:
           </span>
           {attempt.sectionProgress.map((sec, idx) => {
-            const isSelected = (activeSectionId || attempt.sectionProgress[0].sectionId) === sec.sectionId;
+            const isSelected =
+              (activeSectionId || attempt.sectionProgress[0].sectionId) ===
+              sec.sectionId;
             return (
               <button
                 key={sec.sectionId}
                 type="button"
                 disabled={isActionDisabled}
                 onClick={() => {
-                  setActiveSectionId(sec.sectionId);
                   // Find first question in this section
-                  const targetIdx = answersList.findIndex((a) => a.sectionId === sec.sectionId);
-                  if (targetIdx !== -1) setCurrentIndex(targetIdx);
+                  const targetIdx = answersList.findIndex(
+                    (a) => a.sectionId === sec.sectionId,
+                  );
+                  if (targetIdx !== -1) void navigateToQuestion(targetIdx);
                 }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition cursor-pointer ${
                   isSelected
@@ -858,16 +1130,20 @@ export function CBTTestRunner({ attemptId }: Props) {
                     {questionType === 'numerical'
                       ? 'Numerical Answer'
                       : questionType === 'multiple_choice'
-                      ? 'Multiple Correct MCQ'
-                      : 'Single Correct MCQ'}
+                        ? 'Multiple Correct MCQ'
+                        : 'Single Correct MCQ'}
                   </strong>
                 </span>
               </div>
 
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-emerald-400 font-semibold">+{currentQ?.marks || 1}</span>
+                <span className="text-emerald-400 font-semibold">
+                  +{currentQ?.marks || 1}
+                </span>
                 {currentQ?.negativeMarks ? (
-                  <span className="text-rose-400 font-semibold">-{currentQ.negativeMarks}</span>
+                  <span className="text-rose-400 font-semibold">
+                    -{currentQ.negativeMarks}
+                  </span>
                 ) : null}
               </div>
             </div>
@@ -880,18 +1156,28 @@ export function CBTTestRunner({ attemptId }: Props) {
                   {savingAction === 'save_and_next'
                     ? 'Saving response & loading next...'
                     : savingAction === 'mark_review'
-                    ? 'Marking for review & saving...'
-                    : savingAction === 'clear'
-                    ? 'Clearing response...'
-                    : 'Saving response to server...'}
+                      ? 'Marking for review & saving...'
+                      : savingAction === 'clear'
+                        ? 'Clearing response...'
+                        : 'Saving response to server...'}
                 </span>
               </div>
             )}
             {networkError && (
               <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="w-4 h-4 shrink-0 text-rose-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   <span>{networkError}</span>
                 </div>
@@ -916,7 +1202,9 @@ export function CBTTestRunner({ attemptId }: Props) {
               {questionType !== 'numerical' && currentQ?.options && (
                 <div className="space-y-3">
                   {currentQ.options.map((opt, optIdx) => {
-                    const isChecked = selectedOptionIds.includes(opt.id || opt._id || '');
+                    const isChecked = selectedOptionIds.includes(
+                      opt.id || opt._id || '',
+                    );
                     const optContent =
                       language === 'Hindi' && opt.translations?.['hi']
                         ? opt.translations['hi']
@@ -933,9 +1221,14 @@ export function CBTTestRunner({ attemptId }: Props) {
                           } else {
                             // Multiple Choice
                             if (isChecked) {
-                              setSelectedOptionIds(selectedOptionIds.filter((id) => id !== optId));
+                              setSelectedOptionIds(
+                                selectedOptionIds.filter((id) => id !== optId),
+                              );
                             } else {
-                              setSelectedOptionIds([...selectedOptionIds, optId]);
+                              setSelectedOptionIds([
+                                ...selectedOptionIds,
+                                optId,
+                              ]);
                             }
                           }
                         }}
@@ -954,7 +1247,9 @@ export function CBTTestRunner({ attemptId }: Props) {
                         >
                           {String.fromCharCode(65 + optIdx)}
                         </div>
-                        <span className="text-xs sm:text-sm leading-relaxed pt-0.5">{optContent}</span>
+                        <span className="text-xs sm:text-sm leading-relaxed pt-0.5">
+                          {optContent}
+                        </span>
                       </label>
                     );
                   })}
@@ -978,7 +1273,8 @@ export function CBTTestRunner({ attemptId }: Props) {
                     }`}
                   />
                   <p className="text-[11px] text-muted">
-                    Exact-match evaluation is applied upon final test submission.
+                    Exact-match evaluation is applied upon final test
+                    submission.
                   </p>
                 </div>
               )}
@@ -1023,9 +1319,9 @@ export function CBTTestRunner({ attemptId }: Props) {
                   disabled={isActionDisabled}
                   onClick={() => {
                     if (prevIndexInSection !== -1) {
-                      setCurrentIndex(prevIndexInSection);
+                      void navigateToQuestion(prevIndexInSection);
                     } else {
-                      setCurrentIndex(currentIndex - 1);
+                      void navigateToQuestion(currentIndex - 1);
                     }
                   }}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-zinc-700 transition cursor-pointer ${
@@ -1049,8 +1345,18 @@ export function CBTTestRunner({ attemptId }: Props) {
                   }`}
                 >
                   <span>Submit Test</span>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2.5"
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                 </button>
               ) : (
@@ -1065,7 +1371,11 @@ export function CBTTestRunner({ attemptId }: Props) {
                   {savingAction === 'save_and_next' && (
                     <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   )}
-                  <span>{savingAction === 'save_and_next' ? 'Saving & Next...' : 'Save & Next \u2192'}</span>
+                  <span>
+                    {savingAction === 'save_and_next'
+                      ? 'Saving & Next...'
+                      : 'Save & Next \u2192'}
+                  </span>
                 </button>
               )}
             </div>
@@ -1076,8 +1386,18 @@ export function CBTTestRunner({ attemptId }: Props) {
         <aside className="bg-surface border border-border rounded-2xl p-4 sm:p-5 shadow-sm space-y-4 flex flex-col">
           <div className="flex items-center justify-between pb-2 border-b border-border/70">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
+              <svg
+                className="w-4 h-4 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16m-7 6h7"
+                />
               </svg>
               Question Palette
             </h2>
@@ -1090,23 +1410,33 @@ export function CBTTestRunner({ attemptId }: Props) {
           <div className="grid grid-cols-2 gap-2 text-[10px] pb-3 border-b border-border/70">
             <div className="flex items-center gap-2 p-1.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
-              <span className="truncate">Answered ({summaryCounts.answered})</span>
+              <span className="truncate">
+                Answered ({summaryCounts.answered})
+              </span>
             </div>
             <div className="flex items-center gap-2 p-1.5 rounded-lg bg-rose-500/10 dark:bg-rose-950/40 border border-rose-500/20 text-rose-700 dark:text-rose-400">
               <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0"></span>
-              <span className="truncate">Not Ans ({summaryCounts.not_answered})</span>
+              <span className="truncate">
+                Not Ans ({summaryCounts.not_answered})
+              </span>
             </div>
             <div className="flex items-center gap-2 p-1.5 rounded-lg bg-purple-500/10 dark:bg-purple-950/40 border border-purple-500/20 text-purple-700 dark:text-purple-400">
               <span className="w-2.5 h-2.5 rounded-full bg-purple-500 shrink-0"></span>
-              <span className="truncate">Review ({summaryCounts.marked_for_review})</span>
+              <span className="truncate">
+                Review ({summaryCounts.marked_for_review})
+              </span>
             </div>
             <div className="flex items-center gap-2 p-1.5 rounded-lg bg-indigo-500/10 dark:bg-indigo-950/40 border border-indigo-500/20 text-indigo-700 dark:text-indigo-400">
               <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0"></span>
-              <span className="truncate">Ans & Rev ({summaryCounts.answered_and_marked})</span>
+              <span className="truncate">
+                Ans & Rev ({summaryCounts.answered_and_marked})
+              </span>
             </div>
             <div className="flex items-center gap-2 p-1.5 rounded-lg bg-slate-500/10 dark:bg-slate-800/60 border border-slate-500/20 text-slate-700 dark:text-slate-300 col-span-2">
               <span className="w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0"></span>
-              <span className="truncate">Not Visited ({summaryCounts.not_visited})</span>
+              <span className="truncate">
+                Not Visited ({summaryCounts.not_visited})
+              </span>
             </div>
           </div>
 
@@ -1117,15 +1447,20 @@ export function CBTTestRunner({ attemptId }: Props) {
                 const isCurrent = idx === currentIndex;
                 const status = ans.status || 'not_visited';
 
-                let statusStyle = 'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700/80 hover:bg-slate-300/80 dark:hover:bg-zinc-700';
+                let statusStyle =
+                  'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700/80 hover:bg-slate-300/80 dark:hover:bg-zinc-700';
                 if (status === 'answered') {
-                  statusStyle = 'bg-emerald-500 text-white border border-emerald-600 shadow-xs hover:bg-emerald-600';
+                  statusStyle =
+                    'bg-emerald-500 text-white border border-emerald-600 shadow-xs hover:bg-emerald-600';
                 } else if (status === 'not_answered') {
-                  statusStyle = 'bg-rose-500 text-white border border-rose-600 shadow-xs hover:bg-rose-600';
+                  statusStyle =
+                    'bg-rose-500 text-white border border-rose-600 shadow-xs hover:bg-rose-600';
                 } else if (status === 'marked_for_review') {
-                  statusStyle = 'bg-purple-500 text-white border border-purple-600 shadow-xs hover:bg-purple-600';
+                  statusStyle =
+                    'bg-purple-500 text-white border border-purple-600 shadow-xs hover:bg-purple-600';
                 } else if (status === 'answered_and_marked_for_review') {
-                  statusStyle = 'bg-indigo-500 text-white border border-indigo-600 shadow-xs hover:bg-indigo-600';
+                  statusStyle =
+                    'bg-indigo-500 text-white border border-indigo-600 shadow-xs hover:bg-indigo-600';
                 }
 
                 return (
@@ -1133,7 +1468,7 @@ export function CBTTestRunner({ attemptId }: Props) {
                     key={ans.questionId || idx}
                     type="button"
                     disabled={isActionDisabled}
-                    onClick={() => setCurrentIndex(idx)}
+                    onClick={() => void navigateToQuestion(idx)}
                     className={`h-9 w-full rounded-xl text-xs font-bold transition flex items-center justify-center select-none ${statusStyle} ${
                       isCurrent
                         ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 scale-105 z-10'
@@ -1153,16 +1488,20 @@ export function CBTTestRunner({ attemptId }: Props) {
       {showSubmitModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-surface border border-border rounded-2xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <h3 className="text-base font-bold text-white">Confirm Final Submission</h3>
+            <h3 className="text-base font-bold text-white">
+              Confirm Final Submission
+            </h3>
             <p className="text-xs text-muted leading-relaxed">
-              Are you sure you want to finish and submit this test? You will not be able to change any answers after submission.
+              Are you sure you want to finish and submit this test? You will not
+              be able to change any answers after submission.
             </p>
 
             <div className="grid grid-cols-3 gap-2 text-xs py-1">
               <div className="bg-surface-raised/60 p-2.5 rounded-lg border border-border/50">
                 <span className="text-[10px] text-muted block">Answered</span>
                 <span className="font-bold text-emerald-400 text-sm">
-                  {summaryCounts.answered + summaryCounts.answered_and_marked} Qs
+                  {summaryCounts.answered + summaryCounts.answered_and_marked}{' '}
+                  Qs
                 </span>
               </div>
               <div className="bg-surface-raised/60 p-2.5 rounded-lg border border-border/50">
@@ -1174,7 +1513,9 @@ export function CBTTestRunner({ attemptId }: Props) {
               <div className="bg-surface-raised/60 p-2.5 rounded-lg border border-border/50">
                 <span className="text-[10px] text-muted block">Review</span>
                 <span className="font-bold text-purple-400 text-sm">
-                  {summaryCounts.marked_for_review + summaryCounts.answered_and_marked} Qs
+                  {summaryCounts.marked_for_review +
+                    summaryCounts.answered_and_marked}{' '}
+                  Qs
                 </span>
               </div>
             </div>
@@ -1194,7 +1535,9 @@ export function CBTTestRunner({ attemptId }: Props) {
                   setShowSubmitModal(false);
                 }}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold bg-surface-raised border border-border text-muted hover:text-white transition ${
-                  submitting ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
+                  submitting
+                    ? 'opacity-60 cursor-not-allowed'
+                    : 'cursor-pointer'
                 }`}
               >
                 Continue Test
@@ -1204,13 +1547,19 @@ export function CBTTestRunner({ attemptId }: Props) {
                 disabled={submitting}
                 onClick={() => handleFinalSubmit(false)}
                 className={`px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xs flex items-center gap-2 transition ${
-                  submitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'
+                  submitting
+                    ? 'opacity-70 cursor-not-allowed'
+                    : 'cursor-pointer'
                 }`}
               >
                 {submitting && (
                   <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 )}
-                <span>{submitting ? 'Submitting & Evaluating...' : 'Yes, Submit Test'}</span>
+                <span>
+                  {submitting
+                    ? 'Submitting & Evaluating...'
+                    : 'Yes, Submit Test'}
+                </span>
               </button>
             </div>
           </div>

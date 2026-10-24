@@ -70,9 +70,7 @@ export class ExamService {
   async listManageable(user: CurrentUser) {
     this.assertEditor(user);
     const filter =
-      user.role === 'admin'
-        ? {}
-        : { createdBy: new Types.ObjectId(user.id) };
+      user.role === 'admin' ? {} : { createdBy: new Types.ObjectId(user.id) };
 
     const docs = await this.examModel
       .find(filter)
@@ -114,11 +112,13 @@ export class ExamService {
 
     const updatePayload: Record<string, any> = {};
     if (input.title !== undefined) updatePayload.title = input.title;
-    if (input.description !== undefined) updatePayload.description = input.description;
+    if (input.description !== undefined)
+      updatePayload.description = input.description;
     if (input.type !== undefined) updatePayload.type = input.type;
     if (input.status !== undefined) updatePayload.status = input.status;
     if (input.subject !== undefined) updatePayload.subject = input.subject;
-    if (input.durationMinutes !== undefined) updatePayload.durationMinutes = input.durationMinutes;
+    if (input.durationMinutes !== undefined)
+      updatePayload.durationMinutes = input.durationMinutes;
 
     if (input.questions !== undefined) {
       const questionIds = input.questions.map((q) => q.questionId);
@@ -134,7 +134,10 @@ export class ExamService {
       }));
     }
 
-    if (input.questions === undefined && (input.status ?? existing.status) === 'published') {
+    if (
+      input.questions === undefined &&
+      (input.status ?? existing.status) === 'published'
+    ) {
       await this.validateQuestionIds(
         existing.questions.map((item: any) => item.questionId.toString()),
         true,
@@ -201,7 +204,11 @@ export class ExamService {
     });
 
     // Check maxAttempts policy
-    if (exam.maxAttempts && exam.maxAttempts > 0 && prevAttemptsCount >= exam.maxAttempts) {
+    if (
+      exam.maxAttempts &&
+      exam.maxAttempts > 0 &&
+      prevAttemptsCount >= exam.maxAttempts
+    ) {
       throw new ConflictException(
         `You have reached the maximum allowed attempts (${exam.maxAttempts}) for this test.`,
       );
@@ -217,9 +224,14 @@ export class ExamService {
 
     if (activeAttempt) {
       // Check if expired while in progress
-      if (activeAttempt.expiresAt && new Date(activeAttempt.expiresAt).getTime() <= Date.now()) {
+      if (
+        activeAttempt.expiresAt &&
+        new Date(activeAttempt.expiresAt).getTime() <= Date.now()
+      ) {
         await this.autoFinalizeAttempt(activeAttempt);
-        throw new ConflictException('This exam attempt has expired and has been submitted.');
+        throw new ConflictException(
+          'This exam attempt has expired and has been submitted.',
+        );
       }
       return this.formatAttempt(activeAttempt, false);
     }
@@ -231,7 +243,8 @@ export class ExamService {
     if (exam.testMode === 'full' && exam.sections && exam.sections.length > 0) {
       // Build from sections
       for (const sec of exam.sections) {
-        const secId = (sec as any).id || (sec as any)._id?.toString() || sec.name;
+        const secId =
+          (sec as any).id || (sec as any)._id?.toString() || sec.name;
         sectionProgress.push({
           sectionId: secId,
           name: sec.name,
@@ -262,7 +275,9 @@ export class ExamService {
             ...item,
             sectionId: secId,
             marks: item.marks ?? sec.positiveMarks ?? 1,
-            negativeMarks: sec.negativeMarkingEnabled ? (item.negativeMarks ?? sec.negativeMarks ?? 0) : 0,
+            negativeMarks: sec.negativeMarkingEnabled
+              ? (item.negativeMarks ?? sec.negativeMarks ?? 0)
+              : 0,
           });
         }
       }
@@ -302,7 +317,9 @@ export class ExamService {
             questionId: doc._id,
             position: pos,
             marks: exam.positiveMarks ?? doc.marks ?? 1,
-            negativeMarks: exam.negativeMarkingEnabled ? (exam.negativeMarks ?? doc.negativeMarks ?? 0) : 0,
+            negativeMarks: exam.negativeMarkingEnabled
+              ? (exam.negativeMarks ?? doc.negativeMarks ?? 0)
+              : 0,
           }));
         }
       }
@@ -317,7 +334,9 @@ export class ExamService {
         exam.totalQuestionsCount < directQuestions.length
       ) {
         if (exam.questionOrderMode !== 'randomized') {
-          directQuestions = [...directQuestions].sort(() => Math.random() - 0.5);
+          directQuestions = [...directQuestions].sort(
+            () => Math.random() - 0.5,
+          );
         }
         directQuestions = directQuestions.slice(0, exam.totalQuestionsCount);
       }
@@ -325,27 +344,38 @@ export class ExamService {
         ...q,
         sectionId: null,
         marks: q.marks ?? exam.positiveMarks ?? 1,
-        negativeMarks: exam.negativeMarkingEnabled ? (q.negativeMarks ?? exam.negativeMarks ?? 0) : 0,
+        negativeMarks: exam.negativeMarkingEnabled
+          ? (q.negativeMarks ?? exam.negativeMarks ?? 0)
+          : 0,
       }));
     }
 
     if (resolvedQuestions.length === 0) {
-      throw new BadRequestException('This test does not have any questions configured yet.');
+      throw new BadRequestException(
+        'This test does not have any questions configured yet.',
+      );
     }
 
     // Hydrate questions and snapshots
-    const hydratedQuestions = await this.getExamQuestionsWithSnapshots(resolvedQuestions);
+    const hydratedQuestions =
+      await this.getExamQuestionsWithSnapshots(resolvedQuestions);
     const totalMaxMarks = hydratedQuestions.reduce(
       (sum: number, q: any) => sum + (q.marks || 1),
       0,
     );
 
-    const questionOrder = hydratedQuestions.map((q: any) => new Types.ObjectId(q.id));
+    const questionOrder = hydratedQuestions.map(
+      (q: any) => new Types.ObjectId(q.id),
+    );
 
     const initialAnswers = hydratedQuestions.map((q: any) => ({
       _id: new Types.ObjectId(),
       questionId: new Types.ObjectId(q.id),
       sectionId: q.sectionId || null,
+      subjectId: q.subjectId || null,
+      chapterId: q.chapterId || null,
+      topic: q.topic || null,
+      difficulty: q.difficulty || null,
       optionIds: [],
       numericalValue: null,
       status: 'not_visited',
@@ -354,28 +384,47 @@ export class ExamService {
       maximumMarks: q.marks || 1,
       negativeMarks: q.negativeMarks || 0,
       timeSpentSeconds: 0,
+      visitedAt: null,
+      lastViewedAt: null,
       answeredAt: null,
       questionSnapshot: q.snapshot || null,
     }));
 
-    const attempt = await this.testAttemptModel.create({
-      testId: examObjectId,
-      userId: userObjectId,
-      attemptNumber: prevAttemptsCount + 1,
-      testVersion: exam.version || 1,
-      status: 'in_progress',
-      marksAwarded: 0,
-      maximumMarks: totalMaxMarks,
-      startedAt: new Date(),
-      expiresAt: exam.durationMinutes
-        ? new Date(Date.now() + exam.durationMinutes * 60_000)
-        : null,
-      questionOrder,
-      sectionProgress,
-      answers: initialAnswers as any,
-    });
+    let attempt: any;
+    try {
+      attempt = await this.testAttemptModel.create({
+        testId: examObjectId,
+        userId: userObjectId,
+        attemptNumber: prevAttemptsCount + 1,
+        testVersion: exam.version || 1,
+        status: 'in_progress',
+        marksAwarded: 0,
+        maximumMarks: totalMaxMarks,
+        startedAt: new Date(),
+        expiresAt: exam.durationMinutes
+          ? new Date(Date.now() + exam.durationMinutes * 60_000)
+          : null,
+        questionOrder,
+        sectionProgress,
+        answers: initialAnswers as any,
+      });
+    } catch (error: any) {
+      if (error?.code !== 11000) throw error;
 
-    const docAttempt = (attempt as any).toObject ? (attempt as any).toObject() : attempt;
+      const concurrentAttempt = await this.testAttemptModel
+        .findOne({
+          testId: examObjectId,
+          userId: userObjectId,
+          status: 'in_progress',
+        })
+        .lean();
+      if (!concurrentAttempt) throw error;
+      return this.formatAttempt(concurrentAttempt, false);
+    }
+
+    const docAttempt = (attempt as any).toObject
+      ? (attempt as any).toObject()
+      : attempt;
     return this.formatAttempt(docAttempt, false);
   }
 
@@ -384,7 +433,9 @@ export class ExamService {
       .find({ userId: new Types.ObjectId(user.id) })
       .sort({ startedAt: -1 })
       .lean();
-    return docs.map((doc) => this.formatAttempt(doc, doc.status !== 'in_progress'));
+    return docs.map((doc) =>
+      this.formatAttempt(doc, doc.status !== 'in_progress'),
+    );
   }
 
   async getAttempt(id: string, user: CurrentUser) {
@@ -401,7 +452,11 @@ export class ExamService {
     if (!doc) throw new NotFoundException('Exam attempt was not found.');
 
     // Auto-finalize if expired
-    if (doc.status === 'in_progress' && doc.expiresAt && new Date(doc.expiresAt).getTime() <= Date.now()) {
+    if (
+      doc.status === 'in_progress' &&
+      doc.expiresAt &&
+      new Date(doc.expiresAt).getTime() <= Date.now()
+    ) {
       return this.autoFinalizeAttempt(doc);
     }
 
@@ -430,17 +485,26 @@ export class ExamService {
     // Determine pallet status
     let status = input.status || answer.status || 'not_answered';
     const hasOptions = input.optionIds && input.optionIds.length > 0;
-    const hasNumerical = input.numericalValue && input.numericalValue.trim().length > 0;
+    const hasNumerical =
+      input.numericalValue && input.numericalValue.trim().length > 0;
     const isAnswered = hasOptions || hasNumerical;
 
     if (input.status === 'marked_for_review') {
-      status = isAnswered ? 'answered_and_marked_for_review' : 'marked_for_review';
+      status = isAnswered
+        ? 'answered_and_marked_for_review'
+        : 'marked_for_review';
     } else if (!input.status) {
       status = isAnswered ? 'answered' : 'not_answered';
     }
 
-    const selectedObjectIds = (input.optionIds || []).map((optId) => new Types.ObjectId(optId));
-    const now = isAnswered ? new Date() : null;
+    const selectedObjectIds = (input.optionIds || []).map(
+      (optId) => new Types.ObjectId(optId),
+    );
+    const now = new Date();
+    const timeSpentSeconds = Math.max(
+      input.timeSpentSeconds ?? 0,
+      answer.timeSpentSeconds ?? 0,
+    );
 
     await this.testAttemptModel.updateOne(
       {
@@ -450,10 +514,15 @@ export class ExamService {
       {
         $set: {
           'answers.$.optionIds': selectedObjectIds,
-          'answers.$.numericalValue': input.numericalValue !== undefined ? input.numericalValue : answer.numericalValue,
+          'answers.$.numericalValue':
+            input.numericalValue !== undefined
+              ? input.numericalValue
+              : answer.numericalValue,
           'answers.$.status': status,
-          'answers.$.answeredAt': now,
-          'answers.$.timeSpentSeconds': input.timeSpentSeconds ?? answer.timeSpentSeconds ?? 0,
+          'answers.$.answeredAt': isAnswered ? now : null,
+          'answers.$.timeSpentSeconds': timeSpentSeconds,
+          'answers.$.visitedAt': answer.visitedAt ?? now,
+          'answers.$.lastViewedAt': now,
         },
       },
     );
@@ -488,7 +557,11 @@ export class ExamService {
 
   async updateSectionProgress(
     attemptId: string,
-    input: { sectionId: string; timeSpentSeconds: number; isCompleted: boolean },
+    input: {
+      sectionId: string;
+      timeSpentSeconds: number;
+      isCompleted: boolean;
+    },
     user: CurrentUser,
   ) {
     const attempt = await this.requireActiveAttempt(attemptId, user);
@@ -505,7 +578,12 @@ export class ExamService {
         },
         {
           $set: {
-            'sectionProgress.$.timeSpentSeconds': input.timeSpentSeconds,
+            'sectionProgress.$.timeSpentSeconds': Math.max(
+              input.timeSpentSeconds,
+              (attempt.sectionProgress || []).find(
+                (sp: any) => sp.sectionId === input.sectionId,
+              )?.timeSpentSeconds ?? 0,
+            ),
             'sectionProgress.$.isCompleted': input.isCompleted,
           },
         },
@@ -586,13 +664,14 @@ export class ExamService {
 
   private async gradeAnswers(attempt: any) {
     const rawAnswers = attempt.answers || [];
-    const questionIds = rawAnswers.map((ans: any) => ans.questionId).filter(Boolean);
-    const questions = questionIds.length > 0 ? await this.questionModel
-      .find({ _id: { $in: questionIds } })
-      .lean() : [];
-    const questionMap = new Map(
-      questions.map((q) => [q._id.toString(), q]),
-    );
+    const questionIds = rawAnswers
+      .map((ans: any) => ans.questionId)
+      .filter(Boolean);
+    const questions =
+      questionIds.length > 0
+        ? await this.questionModel.find({ _id: { $in: questionIds } }).lean()
+        : [];
+    const questionMap = new Map(questions.map((q) => [q._id.toString(), q]));
 
     let totalAwarded = 0;
     const gradedAnswers = rawAnswers.map((answer: any) => {
@@ -616,7 +695,9 @@ export class ExamService {
         const candidateValue = (answer.numericalValue || '').trim();
         const expectedValue = (qDoc.numericalAnswer || '').trim();
         isAnswered = candidateValue.length > 0;
-        isCorrect = isAnswered && candidateValue.toLowerCase() === expectedValue.toLowerCase();
+        isCorrect =
+          isAnswered &&
+          candidateValue.toLowerCase() === expectedValue.toLowerCase();
       } else {
         const selectedIds = (answer.optionIds || [])
           .map((optId: any) => optId?.toString())
@@ -624,14 +705,18 @@ export class ExamService {
           .sort();
         const correctIds = (qDoc.options || [])
           .filter((opt: any) => Boolean(opt?.isCorrect))
-          .map((opt: any, idx: number) => (opt?._id || opt?.id || `opt_${idx}`).toString())
+          .map((opt: any, idx: number) =>
+            (opt?._id || opt?.id || `opt_${idx}`).toString(),
+          )
           .sort();
 
         isAnswered = selectedIds.length > 0;
         isCorrect =
           isAnswered &&
           selectedIds.length === correctIds.length &&
-          selectedIds.every((val: string, idx: number) => val === correctIds[idx]);
+          selectedIds.every(
+            (val: string, idx: number) => val === correctIds[idx],
+          );
       }
 
       const marksAwarded = !isAnswered
@@ -658,69 +743,77 @@ export class ExamService {
     const qIds = examQuestionItems
       .map((item: any) => item?.questionId)
       .filter(Boolean);
-    const questions = qIds.length > 0
-      ? await this.questionModel.find({ _id: { $in: qIds } }).lean()
-      : [];
-    const questionMap = new Map(
-      questions.map((q) => [q._id.toString(), q]),
-    );
+    const questions =
+      qIds.length > 0
+        ? await this.questionModel.find({ _id: { $in: qIds } }).lean()
+        : [];
+    const questionMap = new Map(questions.map((q) => [q._id.toString(), q]));
 
-    return examQuestionItems.map((item: any) => {
-      const qIdStr = item?.questionId?.toString();
-      if (!qIdStr) return null;
-      const qDoc = questionMap.get(qIdStr);
-      if (!qDoc) return null;
+    return examQuestionItems
+      .map((item: any) => {
+        const qIdStr = item?.questionId?.toString();
+        if (!qIdStr) return null;
+        const qDoc = questionMap.get(qIdStr);
+        if (!qDoc) return null;
 
-      const options = (qDoc.options || []).map((opt: any, idx: number) => {
-        const optionId = (opt?._id || opt?.id || new Types.ObjectId()).toString();
-        return {
-          id: optionId,
-          _id: optionId,
-          content: typeof opt === 'string' ? opt : (opt?.content || ''),
-          translations: opt?.translations || {},
-          imageUrl: opt?.imageUrl || null,
-          position: opt?.position ?? idx,
-          isCorrect: Boolean(opt?.isCorrect),
+        const options = (qDoc.options || []).map((opt: any, idx: number) => {
+          const optionId = (
+            opt?._id ||
+            opt?.id ||
+            new Types.ObjectId()
+          ).toString();
+          return {
+            id: optionId,
+            _id: optionId,
+            content: typeof opt === 'string' ? opt : opt?.content || '',
+            translations: opt?.translations || {},
+            imageUrl: opt?.imageUrl || null,
+            position: opt?.position ?? idx,
+            isCorrect: Boolean(opt?.isCorrect),
+          };
+        });
+
+        const snapshot = item.snapshot || {
+          questionId: qDoc._id,
+          content: qDoc.content,
+          translations: qDoc.translations || {},
+          explanation: qDoc.explanation || null,
+          explanationTranslations: qDoc.explanationTranslations || {},
+          type: qDoc.type,
+          numericalAnswer: qDoc.numericalAnswer || null,
+          options,
+          marks: item.marks ?? qDoc.marks,
+          negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
         };
-      });
 
-      const snapshot = item.snapshot || {
-        questionId: qDoc._id,
-        content: qDoc.content,
-        translations: qDoc.translations || {},
-        explanation: qDoc.explanation || null,
-        explanationTranslations: qDoc.explanationTranslations || {},
-        type: qDoc.type,
-        numericalAnswer: qDoc.numericalAnswer || null,
-        options,
-        marks: item.marks ?? qDoc.marks,
-        negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
-      };
-
-      return {
-        id: qDoc._id.toString(),
-        _id: qDoc._id.toString(),
-        sectionId: item.sectionId || null,
-        content: qDoc.content,
-        translations: qDoc.translations || {},
-        subject: qDoc.subject,
-        type: qDoc.type,
-        numericalAnswer: qDoc.numericalAnswer || null,
-        difficulty: qDoc.difficulty,
-        marks: item.marks ?? qDoc.marks,
-        negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
-        position: item.position,
-        options: options.map((opt) => ({
-          id: opt.id,
-          _id: opt._id,
-          content: opt.content,
-          translations: opt.translations,
-          imageUrl: opt.imageUrl,
-          position: opt.position,
-        })),
-        snapshot,
-      };
-    }).filter(Boolean);
+        return {
+          id: qDoc._id.toString(),
+          _id: qDoc._id.toString(),
+          sectionId: item.sectionId || null,
+          content: qDoc.content,
+          translations: qDoc.translations || {},
+          subject: qDoc.subject,
+          subjectId: qDoc.subjectId?.toString() || null,
+          chapterId: qDoc.chapterId?.toString() || null,
+          topic: qDoc.topic || null,
+          type: qDoc.type,
+          numericalAnswer: qDoc.numericalAnswer || null,
+          difficulty: qDoc.difficulty,
+          marks: item.marks ?? qDoc.marks,
+          negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
+          position: item.position,
+          options: options.map((opt) => ({
+            id: opt.id,
+            _id: opt._id,
+            content: opt.content,
+            translations: opt.translations,
+            imageUrl: opt.imageUrl,
+            position: opt.position,
+          })),
+          snapshot,
+        };
+      })
+      .filter(Boolean);
   }
 
   private async getExamQuestions(examDoc: any, includePrivate = false) {
@@ -771,7 +864,9 @@ export class ExamService {
     }
     if (doc.expiresAt && new Date(doc.expiresAt).getTime() <= Date.now()) {
       await this.autoFinalizeAttempt(doc);
-      throw new ConflictException('This exam attempt has expired and was automatically finalized.');
+      throw new ConflictException(
+        'This exam attempt has expired and was automatically finalized.',
+      );
     }
     return doc;
   }
@@ -825,7 +920,10 @@ export class ExamService {
 
     const matchQuery: Record<string, any> = {};
 
-    if (params.status && ['in_progress', 'submitted', 'abandoned'].includes(params.status)) {
+    if (
+      params.status &&
+      ['in_progress', 'submitted', 'abandoned'].includes(params.status)
+    ) {
       matchQuery.status = params.status;
     }
 
@@ -1018,7 +1116,9 @@ export class ExamService {
       throw new NotFoundException('Exam attempt was not found.');
     }
 
-    const doc = await this.testAttemptModel.findById(new Types.ObjectId(id)).lean();
+    const doc = await this.testAttemptModel
+      .findById(new Types.ObjectId(id))
+      .lean();
     if (!doc) {
       throw new NotFoundException('Exam attempt was not found.');
     }
@@ -1026,12 +1126,18 @@ export class ExamService {
     // Hydrate user and test
     const [userDoc, examDoc] = await Promise.all([
       this.userModel.findById(doc.userId).select('name email role').lean(),
-      this.examModel.findById(doc.testId).select('title testMode type durationMinutes testSeriesId').lean(),
+      this.examModel
+        .findById(doc.testId)
+        .select('title testMode type durationMinutes testSeriesId')
+        .lean(),
     ]);
 
     let testSeriesDoc: any = null;
     if (examDoc?.testSeriesId) {
-      testSeriesDoc = await this.testSeriesModel.findById(examDoc.testSeriesId).select('title slug').lean();
+      testSeriesDoc = await this.testSeriesModel
+        .findById(examDoc.testSeriesId)
+        .select('title slug')
+        .lean();
     }
 
     // Show correct answers, explanations, and scores ONLY if the attempt is submitted or ended.
@@ -1082,7 +1188,9 @@ export class ExamService {
       endedAt: doc.endedAt || null,
       expiresAt: doc.expiresAt || null,
       timeSpentSeconds: doc.timeSpentSeconds || null,
-      questionOrder: (doc.questionOrder || []).map((qId: any) => qId?.toString()),
+      questionOrder: (doc.questionOrder || []).map((qId: any) =>
+        qId?.toString(),
+      ),
       sectionProgress: (doc.sectionProgress || []).map((sp: any) => ({
         sectionId: sp.sectionId,
         name: sp.name,
@@ -1101,10 +1209,16 @@ export class ExamService {
           id: ans._id?.toString(),
           questionId: ans.questionId?.toString() || '',
           sectionId: ans.sectionId || null,
+          subjectId: ans.subjectId?.toString() || null,
+          chapterId: ans.chapterId?.toString() || null,
+          topic: ans.topic || null,
+          difficulty: ans.difficulty || null,
           optionIds: (ans.optionIds || []).map((id: any) => id.toString()),
           numericalValue: ans.numericalValue || null,
           status: ans.status || 'not_visited',
           timeSpentSeconds: ans.timeSpentSeconds || 0,
+          visitedAt: ans.visitedAt || null,
+          lastViewedAt: ans.lastViewedAt || null,
           answeredAt: ans.answeredAt || null,
           question: snap
             ? {
@@ -1113,19 +1227,24 @@ export class ExamService {
                 translations: snap.translations || {},
                 type: snap.type,
                 options: (snap.options || []).map((opt: any, idx: number) => ({
-                  id: (opt?._id || opt?.id || `opt_${idx}`)?.toString() || `opt_${idx}`,
-                  content: typeof opt === 'string' ? opt : (opt?.content || ''),
+                  id:
+                    (opt?._id || opt?.id || `opt_${idx}`)?.toString() ||
+                    `opt_${idx}`,
+                  content: typeof opt === 'string' ? opt : opt?.content || '',
                   translations: opt?.translations || {},
                   imageUrl: opt?.imageUrl || null,
                   position: opt?.position ?? idx,
-                  ...(exposeScore ? { isCorrect: Boolean(opt?.isCorrect) } : {}),
+                  ...(exposeScore
+                    ? { isCorrect: Boolean(opt?.isCorrect) }
+                    : {}),
                 })),
                 marks: snap.marks,
                 negativeMarks: snap.negativeMarks,
                 ...(exposeScore
                   ? {
                       explanation: snap.explanation || null,
-                      explanationTranslations: snap.explanationTranslations || {},
+                      explanationTranslations:
+                        snap.explanationTranslations || {},
                       numericalAnswer: snap.numericalAnswer || null,
                     }
                   : {}),
@@ -1146,5 +1265,3 @@ export class ExamService {
     };
   }
 }
-
-

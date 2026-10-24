@@ -387,6 +387,18 @@ export class AttemptAnswer {
   @Prop({ type: String, default: null })
   sectionId?: string | null;
 
+  @Prop({ type: Types.ObjectId, ref: 'Subject', default: null })
+  subjectId?: Types.ObjectId | null;
+
+  @Prop({ type: Types.ObjectId, ref: 'Chapter', default: null })
+  chapterId?: Types.ObjectId | null;
+
+  @Prop({ type: String, default: null, trim: true })
+  topic?: string | null;
+
+  @Prop({ type: String, enum: ['easy', 'medium', 'hard'], default: null })
+  difficulty?: 'easy' | 'medium' | 'hard' | null;
+
   @Prop({ type: [Types.ObjectId], default: [] })
   optionIds: Types.ObjectId[];
 
@@ -427,6 +439,12 @@ export class AttemptAnswer {
 
   @Prop({ type: Number, default: null })
   timeSpentSeconds?: number | null;
+
+  @Prop({ type: Date, default: null })
+  visitedAt?: Date | null;
+
+  @Prop({ type: Date, default: null })
+  lastViewedAt?: Date | null;
 
   @Prop({ type: Date, default: null })
   answeredAt?: Date | null;
@@ -527,5 +545,6 @@ export class TestAttempt {
 export const TestAttemptSchema = SchemaFactory.createForClass(TestAttempt);
 TestAttemptSchema.index({ userId: 1, testId: 1, attemptNumber: 1 }, { unique: true });
 TestAttemptSchema.index({ userId: 1, startedAt: -1 });
+TestAttemptSchema.index({ userId: 1, status: 1, endedAt: -1 });
 TestAttemptSchema.index({ testId: 1, status: 1 });
 TestAttemptSchema.index({ testId: 1, testVersion: 1 });

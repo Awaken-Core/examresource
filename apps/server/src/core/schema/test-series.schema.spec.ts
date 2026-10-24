@@ -61,7 +61,10 @@ describe('Test Series Schema Foundation & Validation', () => {
   });
 
   it('validates Question schema with single_choice, multiple_choice, and numerical types', () => {
-    const QuestionModel = mongoose.model('TestQuestionValidation', QuestionSchema);
+    const QuestionModel = mongoose.model(
+      'TestQuestionValidation',
+      QuestionSchema,
+    );
     const userObjectId = new mongoose.Types.ObjectId();
 
     // Numerical question validation
@@ -128,10 +131,15 @@ describe('Test Series Schema Foundation & Validation', () => {
   });
 
   it('tracks question palette statuses, test version, and section progress in TestAttempt', () => {
-    const AttemptModel = mongoose.model('TestAttemptValidation', TestAttemptSchema);
+    const AttemptModel = mongoose.model(
+      'TestAttemptValidation',
+      TestAttemptSchema,
+    );
     const testId = new mongoose.Types.ObjectId();
     const userId = new mongoose.Types.ObjectId();
     const qId = new mongoose.Types.ObjectId();
+    const subjectId = new mongoose.Types.ObjectId();
+    const chapterId = new mongoose.Types.ObjectId();
 
     const attempt = new AttemptModel({
       testId,
@@ -152,16 +160,25 @@ describe('Test Series Schema Foundation & Validation', () => {
         {
           questionId: qId,
           sectionId: 'sec-1',
+          subjectId,
+          chapterId,
+          topic: 'Coding-decoding',
+          difficulty: 'medium',
           status: 'marked_for_review',
           maximumMarks: 1,
           negativeMarks: 0.25,
           timeSpentSeconds: 45,
+          visitedAt: new Date('2026-01-01T00:00:00.000Z'),
+          lastViewedAt: new Date('2026-01-01T00:00:45.000Z'),
         },
       ],
     });
 
     expect(attempt.testVersion).toBe(2);
     expect(attempt.answers[0].status).toBe('marked_for_review');
+    expect(attempt.answers[0].subjectId).toEqual(subjectId);
+    expect(attempt.answers[0].chapterId).toEqual(chapterId);
+    expect(attempt.answers[0].topic).toBe('Coding-decoding');
     expect(attempt.sectionProgress[0].name).toBe('Reasoning');
 
     const err = attempt.validateSync();
