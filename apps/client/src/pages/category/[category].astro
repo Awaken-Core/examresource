@@ -76,6 +76,13 @@ if (!categoryInfo && liveCategoryPosts.length === 0) {
 }
 
 const categoryTitle = categoryInfo?.name || categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+// Helper: is article published within last 3 days?
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+function computeIsNew(publishedAt: string | null | undefined): boolean {
+  if (!publishedAt) return false;
+  return Date.now() - new Date(publishedAt).getTime() < THREE_DAYS_MS;
+}
 const categoryDesc = categoryInfo?.description || `Verified recruitment notifications, exam dates, syllabi, admit cards, and official portal links for ${categoryTitle}.`;
 
 const pageTitle = `${categoryTitle} Exam Updates & Notifications | ${siteName}`;
@@ -184,8 +191,6 @@ const relevantPortals = [
               <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
                 {categoryDesc}
               </p>
-
-              <!-- Category Navigation Filter Pills -->
               <div class="pt-3 border-t border-border/50 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
                 <a
                   href="/"

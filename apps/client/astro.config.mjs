@@ -5,6 +5,11 @@ import tailwindcss from '@tailwindcss/vite';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 
+const isBuild = process.argv.includes('build');
+if (!isBuild && !process.env.NODE_ENV) {
+	process.env.NODE_ENV = 'development';
+}
+
 // https://astro.build/config
 export default defineConfig({
 	site: process.env.PUBLIC_SITE_URL,
@@ -35,6 +40,12 @@ export default defineConfig({
 	adapter: vercel(),
 	integrations: [react()],
   vite: {
+    cacheDir: isBuild ? 'node_modules/.vite/build' : 'node_modules/.vite/dev',
+    server: {
+      watch: {
+        ignored: ['**/.vercel/**', '**/dist/**'],
+      },
+    },
     plugins: [tailwindcss()],
     build: {
       chunkSizeWarningLimit: 750,
