@@ -11,7 +11,7 @@ import type { Request } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import type { Model } from 'mongoose';
 import { Types } from 'mongoose';
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash } from 'node:crypto';
 import { env } from '../../core/config/env.js';
 import {
   type EmailVerificationTokenDocument,
@@ -37,6 +37,10 @@ export type CurrentUser = {
   phone: string | null;
   role: 'student' | 'editor' | 'admin';
   emailVerified: boolean;
+  preferredLanguage?: 'English' | 'Hindi';
+  targetExam?: string | null;
+  targetSeriesIds?: string[];
+  examGoalDate?: string | null;
 };
 
 @Injectable()
@@ -75,6 +79,10 @@ export class AuthService {
       phone: user.phone ?? null,
       role: user.role,
       emailVerified: Boolean(user.emailVerifiedAt),
+      preferredLanguage: user.preferredLanguage || 'English',
+      targetExam: user.targetExam ?? null,
+      targetSeriesIds: (user.targetSeriesIds || []).map((id: any) => id?.toString?.() || String(id)),
+      examGoalDate: user.examGoalDate ? new Date(user.examGoalDate).toISOString() : null,
     };
   }
 
@@ -403,14 +411,35 @@ export class AuthService {
 
   async updateProfile(
     userId: string,
-    input: { name?: string; phone?: string | null },
+    input: {
+      name?: string;
+      phone?: string | null;
+      preferredLanguage?: 'English' | 'Hindi';
+      targetExam?: string | null;
+      targetSeriesIds?: string[];
+      examGoalDate?: string | null;
+    },
   ) {
     if (!Types.ObjectId.isValid(userId)) {
       throw new BadRequestException('Account was not found.');
     }
+    const updateData: Record<string, any> = {};
+    if (input.name !== undefined) updateData.name = input.name;
+    if (input.phone !== undefined) updateData.phone = input.phone;
+    if (input.preferredLanguage !== undefined) updateData.preferredLanguage = input.preferredLanguage;
+    if (input.targetExam !== undefined) updateData.targetExam = input.targetExam;
+    if (input.targetSeriesIds !== undefined) {
+      updateData.targetSeriesIds = input.targetSeriesIds
+        .filter((id) => Types.ObjectId.isValid(id))
+        .map((id) => new Types.ObjectId(id));
+    }
+    if (input.examGoalDate !== undefined) {
+      updateData.examGoalDate = input.examGoalDate ? new Date(input.examGoalDate) : null;
+    }
+
     const user = await this.userModel.findByIdAndUpdate(
       userId,
-      { $set: input },
+      { $set: updateData },
       { new: true },
     );
     if (!user) throw new BadRequestException('Account was not found.');

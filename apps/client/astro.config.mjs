@@ -30,6 +30,9 @@ export default defineConfig({
 	adapter: vercel(),
 	integrations: [react()],
   vite: {
+    resolve: {
+      preserveSymlinks: true,
+    },
     plugins: [tailwindcss()],
     build: {
       chunkSizeWarningLimit: 750,

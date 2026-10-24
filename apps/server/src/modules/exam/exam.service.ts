@@ -431,6 +431,7 @@ export class ExamService {
   async listAttempts(user: CurrentUser) {
     const docs = await this.testAttemptModel
       .find({ userId: new Types.ObjectId(user.id) })
+      .populate('testId', 'title testMode type durationMinutes totalMarks seriesId')
       .sort({ startedAt: -1 })
       .lean();
     return docs.map((doc) =>
@@ -1176,10 +1177,25 @@ export class ExamService {
 
   private formatAttempt(doc: any, exposeScore: boolean) {
     if (!doc) return null;
+    const testDoc =
+      doc.testId && typeof doc.testId === 'object' && 'title' in doc.testId
+        ? doc.testId
+        : null;
+    const testIdStr = (testDoc ? testDoc._id : doc.testId)?.toString() || '';
     return {
       id: doc._id?.toString() || '',
       _id: doc._id?.toString() || '',
-      testId: doc.testId?.toString() || '',
+      testId: testIdStr,
+      test: testDoc
+        ? {
+            id: testDoc._id?.toString() || testIdStr,
+            title: testDoc.title || 'Practice Test',
+            testMode: testDoc.testMode,
+            type: testDoc.type,
+            durationMinutes: testDoc.durationMinutes,
+            totalMarks: testDoc.totalMarks,
+          }
+        : null,
       userId: doc.userId?.toString() || '',
       attemptNumber: doc.attemptNumber || 1,
       testVersion: doc.testVersion || 1,
