@@ -1,8 +1,3 @@
 ---
-import AdminLayout from '../../layouts/AdminLayout.astro';
-import AdminApp from '../../components/admin/AdminApp';
+return Astro.redirect('/', 302);
 ---
-
-<AdminLayout title="Users" fullWidth={true}>
-  <AdminApp client:only="react" initialTab="users" />
-</AdminLayout>

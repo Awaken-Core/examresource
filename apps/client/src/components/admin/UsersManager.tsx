@@ -85,7 +85,7 @@ export function UsersManager({ currentUser }: UsersManagerProps) {
           User Access & Roles
         </h1>
         <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-          Assign roles for the CMS. Administrators can manage the whole platform; Editors can write and manage articles; Students browse public content.
+          Assign roles for the desk. Administrators manage the platform, editors write and publish, and students use the public site.
         </p>
       </div>
 

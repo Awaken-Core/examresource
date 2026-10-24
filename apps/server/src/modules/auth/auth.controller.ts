@@ -50,7 +50,7 @@ export class AuthController {
   }
 
   @Get('auth/google')
-  async google(@Res() res: Response) {
+  async google(@Req() req: SessionRequest, @Res() res: Response) {
     const { state, url } = await this.auth.createGoogleAuthorizationUrl();
     res.cookie(this.googleStateCookieName(), state, {
       httpOnly: true,
@@ -59,6 +59,18 @@ export class AuthController {
       path: '/',
       maxAge: 10 * 60_000,
     });
+    const returnTo = this.safeDeskReturn(
+      typeof req.query.returnTo === 'string' ? req.query.returnTo : undefined,
+    );
+    if (returnTo) {
+      res.cookie(this.returnCookieName(), returnTo, {
+        httpOnly: true,
+        secure: this.isHostedEnvironment(),
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 10 * 60_000,
+      });
+    }
     return res.redirect(url);
   }
 
@@ -85,7 +97,15 @@ export class AuthController {
     });
     const result = await this.auth.loginWithGoogle(code, state);
     this.setSessionCookie(res, result.token);
-    return res.redirect(new URL('/?login=success', env.CLIENT_URL).toString());
+    const returnTo = this.safeDeskReturn(req.cookies?.[this.returnCookieName()]);
+    res.clearCookie(this.returnCookieName(), {
+      path: '/',
+      secure: this.isHostedEnvironment(),
+      sameSite: 'lax',
+    });
+    const staff = result.user.role === 'admin' || result.user.role === 'editor';
+    const next = returnTo && staff ? returnTo : '/?login=success';
+    return res.redirect(new URL(next, env.CLIENT_URL).toString());
   }
 
   @Post('auth/logout')
@@ -200,6 +220,22 @@ export class AuthController {
   }
   private cookieName() {
     return this.isHostedEnvironment() ? '__Host-sid' : 'sid';
+  }
+  private returnCookieName() {
+    return 'desk_return';
+  }
+  /** Staff paths only. Rejects protocol-relative and off-site values. */
+  private safeDeskReturn(value: string | undefined) {
+    if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\') || value.includes('://')) {
+      return null;
+    }
+    const path = value.split(/[?#]/)[0];
+    const allowed =
+      path === '/administrator' ||
+      path.startsWith('/administrator/') ||
+      path === '/editor' ||
+      path.startsWith('/editor/');
+    return allowed ? value.slice(0, 240) : null;
   }
   private googleStateCookieName() {
     return this.isHostedEnvironment()

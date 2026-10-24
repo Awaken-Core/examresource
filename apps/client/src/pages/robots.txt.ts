@@ -7,6 +7,8 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /admin/
+Disallow: /administrator
+Disallow: /administrator/
 Disallow: /editor
 Disallow: /editor/
 Disallow: /login

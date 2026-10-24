@@ -23,6 +23,7 @@ export function ArticlesManager({
 
   // Filters
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [page, setPage] = useState(0);
@@ -39,7 +40,7 @@ export function ArticlesManager({
     setIsLoading(true);
     try {
       const data = await adminApi.getArticles({
-        search: search.trim() || undefined,
+        search: debouncedSearch.trim() || undefined,
         status: selectedStatus,
         categoryId: selectedCategory,
         limit,
@@ -52,7 +53,16 @@ export function ArticlesManager({
     } finally {
       setIsLoading(false);
     }
-  }, [search, selectedStatus, selectedCategory, page]);
+  }, [debouncedSearch, selectedStatus, selectedCategory, page]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(search), 250);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, selectedStatus, selectedCategory]);
 
   useEffect(() => {
     fetchArticles();

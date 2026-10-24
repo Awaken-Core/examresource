@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { siteName } from '../data/site';
 
 interface Props {
   title?: string;
@@ -43,16 +44,13 @@ const {
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0a58ca" />
-    <title>{title} · ExamPortal CMS</title>
+    <title>{title} · {siteName} Desk</title>
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
-    
-    <!-- Admin chrome follows the same saved theme as the public site -->
+
+    <!-- Admin chrome follows the same saved theme and self-hosted font as the public site -->
     <style is:inline>
       html.admin-theme, body.admin-theme-body {
-        font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+        font-family: Inter, Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         margin: 0;
         padding: 0;
         height: 100%;
@@ -126,6 +124,17 @@ const {
         color: #94A3B8 !important;
       }
       html.admin-theme .text-white {
+        color: #FFFFFF !important;
+      }
+      /* Desk shell uses the same foreground token as the public site.
+         The rule above keeps literal white on existing blue buttons. */
+      html.admin-theme .desk-fg {
+        color: var(--color-text-primary) !important;
+      }
+      html.admin-theme .desk-hover:hover {
+        color: var(--color-text-primary) !important;
+      }
+      html.admin-theme .desk-on-accent {
         color: #FFFFFF !important;
       }
       html.admin-theme:not(.theme-dark) input:not([type="checkbox"]):not([type="radio"]),
@@ -393,39 +402,30 @@ const {
 
     <!-- Auth Verification Guard -->
     <script>
-      const apiUrl = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
-      {
-        try {
-          const res = await fetch(`${apiUrl}/me`, { credentials: 'include' });
-          if (res.status === 401) {
-            const returnTo = window.location.pathname + window.location.search;
-            window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
-          } else if (!res.ok) {
-            throw new Error(`Profile request failed with ${res.status}`);
-          } else {
-            const user = await res.json();
-            const isAdminRoute = window.location.pathname === '/admin' ||
-              window.location.pathname.startsWith('/admin/');
-            const canAccess = isAdminRoute
-              ? user.role === 'admin'
-              : user.role === 'admin' || user.role === 'editor';
+      import { deskGate, loadSession, roleLabel } from '../lib/adminSession';
 
-            if (!canAccess) {
-              window.location.replace('/');
-            } else {
-              const nameEl = document.getElementById('admin-user-name');
-              const roleEl = document.getElementById('admin-user-role');
-              const avatarEl = document.getElementById('admin-user-avatar');
-              if (nameEl) nameEl.textContent = user.name || user.email || 'Administrator';
-              if (roleEl) roleEl.textContent = user.role.toUpperCase();
-              if (avatarEl) avatarEl.textContent = (user.name || user.email || 'A')[0].toUpperCase();
-              document.documentElement.classList.remove('auth-pending');
-            }
-          }
-        } catch (_) {
-          document.body.textContent = 'Unable to verify access. Please try again later.';
+      try {
+        const user = await loadSession();
+        const gate = deskGate(user, window.location.pathname);
+        if (gate === 'login') {
+          const returnTo = window.location.pathname + window.location.search;
+          window.location.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+        } else if (gate === 'home') {
+          window.location.replace('/');
+        } else if (gate === 'posts') {
+          window.location.replace('/administrator');
+        } else if (user) {
+          const nameEl = document.getElementById('admin-user-name');
+          const roleEl = document.getElementById('admin-user-role');
+          const avatarEl = document.getElementById('admin-user-avatar');
+          if (nameEl) nameEl.textContent = user.name || user.email || 'Staff';
+          if (roleEl) roleEl.textContent = roleLabel(user.role);
+          if (avatarEl) avatarEl.textContent = (user.name || user.email || 'S')[0].toUpperCase();
           document.documentElement.classList.remove('auth-pending');
         }
+      } catch (_) {
+        document.body.textContent = 'Unable to verify access. Please try again later.';
+        document.documentElement.classList.remove('auth-pending');
       }
     </script>
 
@@ -443,13 +443,13 @@ const {
         <div>
           <!-- Top CMS Brand -->
           <div class="h-14 flex items-center justify-between px-5 border-b border-slate-100">
-            <a href="/admin" class="flex items-center gap-2.5">
+            <a href="/administrator" class="flex items-center gap-2.5">
               <div class="w-7 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center font-bold text-xs tracking-tight">
                 EP
               </div>
               <div class="leading-tight">
-                <span class="block text-xs font-bold text-slate-900 tracking-tight">ExamPortal</span>
-                <span class="block text-[10px] font-medium text-slate-400">Admin CMS</span>
+                <span class="block text-xs font-bold text-slate-900 tracking-tight">{siteName}</span>
+                <span class="block text-[10px] font-medium text-slate-400">Desk</span>
               </div>
             </a>
             <button 
@@ -466,7 +466,7 @@ const {
           <!-- Navigation Links (Clean & Uncluttered) -->
           <nav class="p-3 space-y-1 text-xs font-medium">
             <a 
-              href="/admin" 
+              href="/administrator" 
               class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
                 activeNav === 'posts' 
                   ? 'bg-slate-100 text-slate-900 font-semibold' 
@@ -480,7 +480,7 @@ const {
             </a>
 
             <a 
-              href="/admin#categories-section" 
+              href="/administrator#categories-section" 
               class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
                 activeNav === 'categories' 
                   ? 'bg-slate-100 text-slate-900 font-semibold' 
@@ -508,7 +508,7 @@ const {
             </a>
 
             <a
-              href="/admin/users"
+              href="/administrator/users"
               class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
                 activeNav === 'users'
                   ? 'bg-slate-100 text-slate-900 font-semibold'
@@ -522,7 +522,7 @@ const {
             </a>
 
             <a
-              href="/admin/notifications"
+              href="/administrator/notifications"
               class={`flex items-center gap-2.5 px-3 py-2 rounded-md transition ${
                 activeNav === 'notifications'
                   ? 'bg-slate-100 text-slate-900 font-semibold'
@@ -615,7 +615,7 @@ const {
             </button>
 
             <div class="flex items-center gap-2 text-xs text-slate-500">
-              <a href="/admin" class="hover:text-slate-800 font-medium transition">Admin</a>
+              <a href="/administrator" class="hover:text-slate-800 font-medium transition">Desk</a>
               <span>/</span>
               <span class="font-semibold text-slate-900">{title}</span>
             </div>

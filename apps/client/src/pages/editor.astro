@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
-import { siteUrl } from '../data/site';
+import { siteName, siteUrl } from '../data/site';
 ---
 
 <AdminLayout title="Article Editor" activeNav="new-post" fullWidth={true}>
@@ -14,7 +14,7 @@ import { siteUrl } from '../data/site';
       <div class="flex items-center gap-1">
         <!-- Back to Articles -->
         <a 
-          href="/admin" 
+          href="/administrator" 
           id="back-to-posts-btn"
           class="p-2 rounded hover:bg-slate-100 text-slate-700 transition"
           title="Back to All Articles"
@@ -1665,7 +1665,7 @@ import { siteUrl } from '../data/site';
               <div class="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-1">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Google Search Preview</span>
                 <div id="serp-title" class="font-semibold text-blue-700 truncate text-xs">
-                  Article Title | ExamPortal
+                  Article Title | {siteName}
                 </div>
                 <div id="serp-url" class="text-[10px] text-emerald-700 font-mono truncate">
                   {siteUrl}/article-slug
@@ -3067,6 +3067,7 @@ import { siteUrl } from '../data/site';
 
   const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
   const SITE_URL = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  const SITE_NAME = import.meta.env.PUBLIC_SITE_NAME || 'GovtPariksha';
 
   async function apiFetch(endpoint: string, options: RequestInit = {}) {
     const headers = new Headers(options.headers || {});
@@ -8907,7 +8908,7 @@ ${mdContent}
     const fullPublicUrl = `/${slug}`;
     if (resultingUrlPreview) resultingUrlPreview.textContent = fullPublicUrl;
 
-    if (serpTitle) serpTitle.textContent = `${metaTitle} | ExamPortal`;
+    if (serpTitle) serpTitle.textContent = `${metaTitle} | ${SITE_NAME}`;
     if (serpUrl) serpUrl.textContent = `${SITE_URL}${fullPublicUrl}`;
     if (serpDesc) serpDesc.textContent = metaDesc;
 
@@ -9234,7 +9235,7 @@ ${mdContent}
     const res = await apiFetch(`/blogs/${currentPostId}`, { method: 'DELETE' });
     if (res.ok) {
       alert('Article deleted successfully.');
-      window.location.href = '/admin';
+      window.location.href = '/administrator';
     } else {
       const err = await res.json().catch(() => ({}));
       alert(`Failed to delete article: ${err.message || 'Error'}`);
