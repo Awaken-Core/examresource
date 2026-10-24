@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { siteDomain, siteName } from '../../data/site';
+import { readCategoryCache, writeCategoryCache } from '../../lib/deskCache';
 import {
   DESK_PATH,
   deskGate,
@@ -55,8 +56,8 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
   const [authError, setAuthError] = useState<string | null>(null);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [sessionOpen, setSessionOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+  const [categories, setCategories] = useState<Category[]>(() => readCategoryCache<Category>() ?? []);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(() => (readCategoryCache<Category>() ?? []).length === 0);
   const [isCreateCategoryModalOpen, setIsCreateCategoryModalOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
@@ -166,10 +167,12 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
   }, []);
 
   const fetchCategories = useCallback(async () => {
-    setIsLoadingCategories(true);
+    if ((readCategoryCache<Category>() ?? []).length === 0) setIsLoadingCategories(true);
     try {
       const data = await adminApi.getCategories();
-      setCategories(data || []);
+      const rows = data || [];
+      setCategories(rows);
+      writeCategoryCache(rows);
     } catch {
       /* child views surface their own empty states */
     } finally {

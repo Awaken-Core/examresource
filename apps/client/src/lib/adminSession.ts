@@ -1,4 +1,5 @@
 import { API_URL } from './api';
+import { clearDeskCache } from './deskCache';
 
 export interface DeskUser {
   id: string;
@@ -41,12 +42,32 @@ let inflight: Promise<DeskUser | null> | null = null;
 function remember(user: DeskUser | null) {
   cache = { user, at: Date.now() };
   (window as Window & { __deskUser?: DeskUser | null }).__deskUser = user;
+  try {
+    if (user) {
+      sessionStorage.setItem(
+        'desk_user',
+        JSON.stringify({ id: user.id, name: user.name, email: user.email, role: user.role }),
+      );
+    } else {
+      clearDeskCache();
+    }
+  } catch {
+    /* ignore */
+  }
 }
 
 export function peekSession(): DeskUser | null | undefined {
   if (cache && Date.now() - cache.at < FRESH_MS) return cache.user;
   const stored = (window as Window & { __deskUser?: DeskUser | null }).__deskUser;
   if (stored) return stored;
+  try {
+    const raw = sessionStorage.getItem('desk_user');
+    if (!raw) return undefined;
+    const user = JSON.parse(raw) as DeskUser;
+    if (user?.id && user.email && user.role) return user;
+  } catch {
+    /* ignore */
+  }
   return undefined;
 }
 
@@ -94,6 +115,7 @@ export async function logoutSession() {
     headers: { 'X-CSRF-Protection': '1' },
   });
   remember(null);
+  clearDeskCache();
   try {
     localStorage.removeItem('auth_active');
   } catch {

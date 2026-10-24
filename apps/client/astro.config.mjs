@@ -56,6 +56,14 @@ export default defineConfig({
       include: [
         'astro/virtual-modules/transitions-events.js',
         'astro/virtual-modules/transitions-router.js',
+        '@tiptap/core',
+        '@tiptap/starter-kit',
+        '@tiptap/extension-youtube',
+        '@tiptap/extension-table',
+        '@tiptap/extension-character-count',
+        'marked',
+        'turndown',
+        'dompurify',
       ],
       exclude: [
         'astro/runtime/client/dev-toolbar/entrypoint.js',
