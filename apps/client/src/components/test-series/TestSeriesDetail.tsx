@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { API_URL } from '../../lib/api';
 
 export interface Chapter {
@@ -71,17 +71,63 @@ export interface PublishedTestItem {
   sections?: SectionSummary[];
 }
 
+export interface LatestAttemptMeta {
+  id: string;
+  attemptNumber: number;
+  status: 'in_progress' | 'submitted' | 'abandoned';
+  startedAt: string;
+  endedAt?: string | null;
+  timeSpentSeconds: number;
+  marksAwarded?: number;
+  maximumMarks?: number;
+  scorePercent?: number;
+}
+
+export interface LearnerSeriesPrep {
+  series: {
+    id: string;
+    title: string;
+    slug: string;
+    category: string;
+    targetExam: string;
+  };
+  totalTestsCount: number;
+  completedTestsCount: number;
+  inProgressTestsCount: number;
+  unattemptedTestsCount: number;
+  averageScorePercent: number | null;
+  averageAccuracy: number | null;
+  tests: Array<{
+    id: string;
+    title: string;
+    testMode: string;
+    type: string;
+    durationMinutes: number;
+    totalMarks: number;
+    latestAttempt?: LatestAttemptMeta | null;
+  }>;
+}
+
 interface Props {
   seriesIdOrSlug: string;
 }
+
+type TabType = 'all' | 'subject' | 'chapter' | 'full';
 
 export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Tab: 'subject' | 'chapter' | 'full'
-  const [activeTab, setActiveTab] = useState<'subject' | 'chapter' | 'full'>('subject');
+  // Learner series progress state (after login)
+  const [learnerPrep, setLearnerPrep] = useState<LearnerSeriesPrep | null>(null);
+
+  // Tab: 'all' | 'subject' | 'chapter' | 'full'
+  const [activeTab, setActiveTab] = useState<TabType>('all');
+
+  // All tests state
+  const [allTests, setAllTests] = useState<PublishedTestItem[]>([]);
+  const [loadingAllTests, setLoadingAllTests] = useState(false);
 
   // Subject-wise state
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
@@ -133,6 +179,69 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
     loadSeries();
   }, [seriesIdOrSlug]);
 
+  // Load Learner's Personal Preparation Progress for this Series
+  useEffect(() => {
+    if (!series) return;
+    const seriesId = series.id || series._id;
+    if (!seriesId) return;
+
+    async function fetchPrepData() {
+      try {
+        const res = await fetch(`${API_URL}/me/preparation/series/${seriesId}`, {
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = (await res.json()) as LearnerSeriesPrep;
+          setLearnerPrep(data);
+        }
+      } catch {
+        // Non-fatal if student is not signed in
+      }
+    }
+
+    void fetchPrepData();
+  }, [series]);
+
+  // Create fast map of latest attempt by test ID
+  const testAttemptMap = useMemo(() => {
+    const map = new Map<string, LatestAttemptMeta>();
+    if (!learnerPrep?.tests) return map;
+    for (const item of learnerPrep.tests) {
+      if (item.latestAttempt) {
+        map.set(item.id, item.latestAttempt);
+      }
+    }
+    return map;
+  }, [learnerPrep]);
+
+  // Find active attempt in progress if any
+  const activeAttemptInProgress = useMemo(() => {
+    if (!learnerPrep?.tests) return null;
+    return learnerPrep.tests.find((t) => t.latestAttempt?.status === 'in_progress');
+  }, [learnerPrep]);
+
+  // Load All tests when 'all' tab is selected
+  useEffect(() => {
+    if (!series || activeTab !== 'all') return;
+    async function fetchAll() {
+      setLoadingAllTests(true);
+      try {
+        const res = await fetch(`${API_URL}/test-series/${series!.id || series!._id}/tests`);
+        if (res.ok) {
+          const tests = await res.json();
+          setAllTests(tests || []);
+        } else {
+          setAllTests([]);
+        }
+      } catch {
+        setAllTests([]);
+      } finally {
+        setLoadingAllTests(false);
+      }
+    }
+    fetchAll();
+  }, [series, activeTab]);
+
   // Load Subject-wise tests
   useEffect(() => {
     if (!series || !selectedSubjectId || activeTab !== 'subject') return;
@@ -140,7 +249,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       setLoadingSubjectTests(true);
       try {
         const res = await fetch(
-          `${API_URL}/test-series/${series!.id}/tests?testMode=subject&subjectId=${selectedSubjectId}`
+          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=subject&subjectId=${selectedSubjectId}`
         );
         if (res.ok) {
           const tests = await res.json();
@@ -164,7 +273,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       setLoadingChapterTests(true);
       try {
         const res = await fetch(
-          `${API_URL}/test-series/${series!.id}/tests?testMode=chapter&chapterId=${selectedChapterId}`
+          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=chapter&chapterId=${selectedChapterId}`
         );
         if (res.ok) {
           const tests = await res.json();
@@ -188,7 +297,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       setLoadingFullTests(true);
       try {
         const res = await fetch(
-          `${API_URL}/test-series/${series!.id}/tests?testMode=full`
+          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=full`
         );
         if (res.ok) {
           const tests = await res.json();
@@ -208,7 +317,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   if (isLoading) {
     return (
       <div className="py-16 text-center space-y-3">
-        <div className="inline-block w-8 h-8 border-3 border-[#2563EB]/20 border-t-[#2563EB] rounded-full animate-spin"></div>
+        <div className="inline-block w-8 h-8 border-3 border-accent/20 border-t-accent rounded-full animate-spin"></div>
         <p className="text-xs text-muted">Loading test series and exam papers...</p>
       </div>
     );
@@ -216,14 +325,14 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
 
   if (error || !series) {
     return (
-      <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3">
-        <svg className="w-8 h-8 text-rose-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3">
+        <svg className="w-8 h-8 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
-        <p className="text-sm font-semibold text-rose-200">{error || 'Test series could not be loaded.'}</p>
+        <p className="text-sm font-semibold text-red-200">{error || 'Test series could not be loaded.'}</p>
         <a
           href="/test-series"
-          className="inline-block text-xs font-semibold text-[#2563EB] hover:underline"
+          className="inline-block text-xs font-semibold text-accent hover:underline"
         >
           &larr; Back to all test series
         </a>
@@ -235,9 +344,16 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   const currentChapterSubject = assignedSubjects.find((s) => s.subjectId === chapterSubjectId);
   const currentSubjectChapters = currentChapterSubject?.chapters || [];
 
+  const completionPct =
+    learnerPrep && learnerPrep.totalTestsCount > 0
+      ? Math.round((learnerPrep.completedTestsCount / learnerPrep.totalTestsCount) * 100)
+      : 0;
+
   return (
     <div className="space-y-6">
-      {/* Series Hero Overview Card */}
+      {/* ─────────────────────────────────────────────────────────────
+          SERIES HERO OVERVIEW CARD
+          ───────────────────────────────────────────────────────────── */}
       <section className="bg-surface border border-border rounded-2xl p-6 sm:p-7 shadow-2xs">
         <div className="flex flex-col md:flex-row items-start justify-between gap-5">
           <div className="space-y-3 flex-1 min-w-0">
@@ -264,7 +380,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
               {series.title}
             </h1>
 
@@ -278,7 +394,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
             {/* Metadata Pills */}
             <div className="flex flex-wrap items-center gap-4 text-xs text-muted pt-1">
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
                 <span>{assignedSubjects.length} Assigned Subjects</span>
@@ -294,16 +410,113 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
         </div>
       </section>
 
-      {/* 3 Main Sections: Subject-wise, Chapter-wise, Full Tests */}
+      {/* ─────────────────────────────────────────────────────────────
+          PERSONAL LAYER: Progress & Continue Active Attempt (After Login)
+          ───────────────────────────────────────────────────────────── */}
+      {learnerPrep && (
+        <section aria-label="Personal Progress in this Series" className="space-y-4">
+          {/* Active test banner if an attempt is currently in progress */}
+          {activeAttemptInProgress && (
+            <div className="rounded-2xl border border-accent/40 bg-accent/10 p-5 shadow-xs">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-3 w-3 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
+                  </span>
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-accent">
+                      Active Test in Progress
+                    </p>
+                    <h2 className="text-base font-bold text-white">
+                      {activeAttemptInProgress.title}
+                    </h2>
+                    <p className="text-xs text-muted">
+                      Attempt in progress · Continue right where you left off.
+                    </p>
+                  </div>
+                </div>
+
+                <a
+                  href={`/exams/${activeAttemptInProgress.id}/attempt`}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:opacity-95"
+                >
+                  <span>Resume Test</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Progress Card */}
+          <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                  Your Preparation Progress
+                </p>
+                <h2 className="text-lg font-bold text-white mt-0.5">
+                  {learnerPrep.completedTestsCount} of {learnerPrep.totalTestsCount} tests completed
+                </h2>
+              </div>
+
+              <div className="flex items-center gap-3 text-xs">
+                {learnerPrep.averageScorePercent !== null && (
+                  <span className="rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
+                    Avg Score: <strong className="text-accent">{learnerPrep.averageScorePercent}%</strong>
+                  </span>
+                )}
+                {learnerPrep.averageAccuracy !== null && (
+                  <span className="rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
+                    Accuracy: <strong className="text-emerald-400">{learnerPrep.averageAccuracy}%</strong>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Visual Progress Bar */}
+            <div className="space-y-1.5">
+              <div className="h-3 w-full overflow-hidden rounded-full bg-surface-raised">
+                <div
+                  style={{ width: `${completionPct}%` }}
+                  className="h-full bg-accent transition-all duration-500 rounded-full"
+                />
+              </div>
+              <div className="flex justify-between text-[11px] text-muted">
+                <span>{completionPct}% Complete</span>
+                <span>{learnerPrep.unattemptedTestsCount} unattempted tests remaining</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────
+          FILTER TABS: All / Subject / Chapter / Full Mock
+          ───────────────────────────────────────────────────────────── */}
       <section className="space-y-4">
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-border/80 pb-2">
+        <div className="flex items-center gap-2 border-b border-border/80 pb-2 overflow-x-auto scrollbar-none">
+          <button
+            type="button"
+            onClick={() => setActiveTab('all')}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
+              activeTab === 'all'
+                ? 'bg-accent text-white shadow-2xs'
+                : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
+            }`}
+          >
+            <span>All Tests</span>
+            {learnerPrep?.totalTestsCount !== undefined && (
+              <span className="text-[11px] opacity-80">({learnerPrep.totalTestsCount})</span>
+            )}
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveTab('subject')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === 'subject'
-                ? 'bg-[#2563EB] text-white shadow-2xs'
+                ? 'bg-accent text-white shadow-2xs'
                 : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
             }`}
           >
@@ -313,9 +526,9 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
           <button
             type="button"
             onClick={() => setActiveTab('chapter')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === 'chapter'
-                ? 'bg-[#2563EB] text-white shadow-2xs'
+                ? 'bg-accent text-white shadow-2xs'
                 : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
             }`}
           >
@@ -325,19 +538,42 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
           <button
             type="button"
             onClick={() => setActiveTab('full')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 ${
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
               activeTab === 'full'
-                ? 'bg-[#2563EB] text-white shadow-2xs'
+                ? 'bg-accent text-white shadow-2xs'
                 : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
             }`}
           >
-            <span>Full Tests</span>
+            <span>Full Mock Tests</span>
           </button>
         </div>
 
-        {/* =========================================================================
-            TAB 1: SUBJECT-WISE TESTS
-            ========================================================================= */}
+        {/* ── TAB: ALL TESTS ── */}
+        {activeTab === 'all' && (
+          <div className="space-y-4">
+            {loadingAllTests ? (
+              <div className="py-12 text-center text-xs text-muted">
+                Loading all published tests...
+              </div>
+            ) : allTests.length === 0 ? (
+              <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
+                No published tests available in this series yet.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {allTests.map((t) => (
+                  <TestCard
+                    key={t.id || t._id}
+                    test={t}
+                    latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── TAB: SUBJECT-WISE TESTS ── */}
         {activeTab === 'subject' && (
           <div className="space-y-4">
             {assignedSubjects.length === 0 ? (
@@ -357,7 +593,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
                         onClick={() => setSelectedSubjectId(sub.subjectId)}
                         className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                           isSelected
-                            ? 'bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA]'
+                            ? 'bg-accent/20 border border-accent text-accent'
                             : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
                         }`}
                       >
@@ -379,7 +615,11 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {subjectTests.map((t) => (
-                      <TestCard key={t.id} test={t} />
+                      <TestCard
+                        key={t.id || t._id}
+                        test={t}
+                        latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                      />
                     ))}
                   </div>
                 )}
@@ -388,9 +628,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 2: CHAPTER-WISE TESTS
-            ========================================================================= */}
+        {/* ── TAB: CHAPTER-WISE TESTS ── */}
         {activeTab === 'chapter' && (
           <div className="space-y-4">
             {assignedSubjects.length === 0 ? (
@@ -399,89 +637,75 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
               </div>
             ) : (
               <>
-                {/* 1. Select Subject First */}
-                <div className="space-y-1.5">
-                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
-                    Step 1: Select Subject
-                  </span>
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                    {assignedSubjects.map((sub) => {
-                      const isSelected = chapterSubjectId === sub.subjectId;
+                {/* Subject Selector for Chapters */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                  {assignedSubjects.map((sub) => {
+                    const isSelected = chapterSubjectId === sub.subjectId;
+                    return (
+                      <button
+                        key={sub.subjectId}
+                        type="button"
+                        onClick={() => {
+                          setChapterSubjectId(sub.subjectId);
+                          if (sub.chapters && sub.chapters.length > 0) {
+                            setSelectedChapterId(sub.chapters[0].id || sub.chapters[0]._id || null);
+                          } else {
+                            setSelectedChapterId(null);
+                          }
+                        }}
+                        className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                          isSelected
+                            ? 'bg-accent/20 border border-accent text-accent'
+                            : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
+                        }`}
+                      >
+                        {sub.customDisplayName || sub.name}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Chapters sub-selector */}
+                {currentSubjectChapters.length > 0 && (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-t border-border/40 pt-2">
+                    {currentSubjectChapters.map((ch) => {
+                      const chId = ch.id || ch._id;
+                      const isSelected = selectedChapterId === chId;
                       return (
                         <button
-                          key={sub.subjectId}
+                          key={chId}
                           type="button"
-                          onClick={() => {
-                            setChapterSubjectId(sub.subjectId);
-                            if (sub.chapters && sub.chapters.length > 0) {
-                              setSelectedChapterId(sub.chapters[0].id || sub.chapters[0]._id || null);
-                            } else {
-                              setSelectedChapterId(null);
-                            }
-                          }}
-                          className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
+                          onClick={() => setSelectedChapterId(chId || null)}
+                          className={`shrink-0 px-3 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
                             isSelected
-                              ? 'bg-[#2563EB]/20 border border-[#2563EB] text-[#60A5FA]'
-                              : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
+                              ? 'bg-surface-raised border border-accent text-white'
+                              : 'text-muted hover:text-white hover:bg-surface-raised/40'
                           }`}
                         >
-                          {sub.customDisplayName || sub.name}
+                          {ch.name}
                         </button>
                       );
                     })}
                   </div>
-                </div>
+                )}
 
-                {/* 2. Select Chapter Next */}
-                <div className="space-y-1.5">
-                  <span className="text-[11px] uppercase tracking-wider font-semibold text-muted">
-                    Step 2: Select Chapter
-                  </span>
-                  {currentSubjectChapters.length === 0 ? (
-                    <div className="text-xs text-muted italic">
-                      No chapters defined for this subject in this test series.
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                      {currentSubjectChapters.map((chap) => {
-                        const chapId = chap.id || chap._id || '';
-                        const isSelected = selectedChapterId === chapId;
-                        return (
-                          <button
-                            key={chapId}
-                            type="button"
-                            onClick={() => setSelectedChapterId(chapId)}
-                            className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                              isSelected
-                                ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-300'
-                                : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-                            }`}
-                          >
-                            {chap.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Tests List for Selected Chapter */}
+                {/* Chapter tests grid */}
                 {loadingChapterTests ? (
                   <div className="py-12 text-center text-xs text-muted">
                     Loading chapter tests...
                   </div>
-                ) : !selectedChapterId ? (
-                  <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                    Please select a chapter to view its published tests.
-                  </div>
                 ) : chapterTests.length === 0 ? (
                   <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                    No published tests found for this chapter.
+                    No published chapter tests available for this selection.
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {chapterTests.map((t) => (
-                      <TestCard key={t.id} test={t} />
+                      <TestCard
+                        key={t.id || t._id}
+                        test={t}
+                        latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                      />
                     ))}
                   </div>
                 )}
@@ -490,9 +714,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
           </div>
         )}
 
-        {/* =========================================================================
-            TAB 3: FULL TESTS
-            ========================================================================= */}
+        {/* ── TAB: FULL MOCK TESTS ── */}
         {activeTab === 'full' && (
           <div className="space-y-4">
             {loadingFullTests ? (
@@ -506,7 +728,11 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {fullTests.map((t) => (
-                  <TestCard key={t.id} test={t} />
+                  <TestCard
+                    key={t.id || t._id}
+                    test={t}
+                    latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                  />
                 ))}
               </div>
             )}
@@ -517,12 +743,21 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   );
 }
 
-function TestCard({ test }: { test: PublishedTestItem }) {
+function TestCard({
+  test,
+  latestAttempt,
+}: {
+  test: PublishedTestItem;
+  latestAttempt?: LatestAttemptMeta | null;
+}) {
   const isFull = test.testMode === 'full';
   const sectionsCount = test.sections?.length || 0;
 
+  const isInProgress = latestAttempt?.status === 'in_progress';
+  const isSubmitted = latestAttempt?.status === 'submitted';
+
   return (
-    <div className="bg-surface border border-border hover:border-[#2563EB]/40 rounded-xl p-5 flex flex-col justify-between transition-all duration-150 shadow-2xs hover:shadow-xs">
+    <div className="bg-surface border border-border hover:border-accent/40 rounded-xl p-5 flex flex-col justify-between transition-all duration-150 shadow-2xs hover:shadow-xs">
       <div className="space-y-2.5">
         {/* Top Badges */}
         <div className="flex items-center justify-between gap-2">
@@ -530,9 +765,21 @@ function TestCard({ test }: { test: PublishedTestItem }) {
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-surface-raised border border-border text-muted">
               {test.testMode === 'full' ? 'Full Test' : test.testMode === 'chapter' ? 'Chapter Test' : 'Subject Test'}
             </span>
-            <span className="text-[10px] font-medium text-slate-400">
-              v{test.version}
-            </span>
+
+            {/* Learner Personal Status Badge */}
+            {isInProgress ? (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300">
+                ● In Progress
+              </span>
+            ) : isSubmitted ? (
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                ✓ Submitted (v{latestAttempt?.attemptNumber || 1})
+              </span>
+            ) : (
+              <span className="text-[10px] font-medium text-muted px-2 py-0.5 rounded bg-surface-raised/40 border border-border">
+                Not Started
+              </span>
+            )}
           </div>
 
           {test.access === 'free' ? (
@@ -547,32 +794,54 @@ function TestCard({ test }: { test: PublishedTestItem }) {
         </div>
 
         {/* Title */}
-        <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1 leading-snug">
+        <h3 className="text-sm font-bold text-white line-clamp-1 leading-snug">
           {test.title}
         </h3>
 
         {/* Description */}
         {test.description && (
-          <p className="text-xs text-slate-600 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-muted line-clamp-2 leading-relaxed">
             {test.description}
           </p>
+        )}
+
+        {/* Submitted Attempt Score Box (when test was submitted) */}
+        {isSubmitted && (
+          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-2.5 flex items-center justify-between text-xs">
+            <div>
+              <span className="text-[11px] text-muted block">Latest Score</span>
+              <span className="font-extrabold text-white">
+                {latestAttempt?.marksAwarded ?? 0}
+                {latestAttempt?.maximumMarks !== undefined && (
+                  <span className="text-muted font-normal"> / {latestAttempt.maximumMarks}</span>
+                )}
+              </span>
+            </div>
+
+            {latestAttempt?.scorePercent !== undefined && (
+              <div className="text-right">
+                <span className="text-[11px] text-muted block">Accuracy</span>
+                <span className="font-bold text-accent">{latestAttempt.scorePercent}%</span>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Key Metrics */}
         <div className="grid grid-cols-3 gap-2 pt-1 text-[11px] text-muted border-t border-border/60">
           <div>
-            <span className="text-[10px] text-slate-500 dark:text-zinc-400 block">Questions</span>
-            <span className="font-semibold text-slate-900 dark:text-white">{test.totalQuestionsCount} Qs</span>
+            <span className="text-[10px] text-muted block">Questions</span>
+            <span className="font-semibold text-white">{test.totalQuestionsCount} Qs</span>
           </div>
           <div>
-            <span className="text-[10px] text-slate-500 dark:text-zinc-400 block">Duration</span>
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="text-[10px] text-muted block">Duration</span>
+            <span className="font-semibold text-white">
               {test.durationMinutes ? `${test.durationMinutes} Mins` : 'Untimed'}
             </span>
           </div>
           <div>
-            <span className="text-[10px] text-slate-500 dark:text-zinc-400 block">Marking</span>
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="text-[10px] text-muted block">Marking</span>
+            <span className="font-semibold text-white">
               +{test.positiveMarks}
               {test.negativeMarkingEnabled && test.negativeMarks > 0 ? ` / -${test.negativeMarks}` : ''}
             </span>
@@ -592,17 +861,44 @@ function TestCard({ test }: { test: PublishedTestItem }) {
         )}
       </div>
 
-      {/* Action Button: Start Test / Instructions */}
-      <div className="mt-4 pt-2">
-        <a
-          href={`/test-series/instructions/${test.id}`}
-          className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-[#EFF6FF] dark:bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] hover:bg-[#2563EB] hover:text-white dark:hover:bg-[#2563EB] dark:hover:text-white transition duration-150 cursor-pointer"
-        >
-          <span>View Instructions & Start</span>
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </a>
+      {/* Relevant One-Click Action Button */}
+      <div className="mt-4 pt-2 flex flex-col gap-1.5">
+        {isInProgress ? (
+          <a
+            href={`/exams/${test.id || (test as any)._id}/attempt`}
+            className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-bold bg-accent text-white hover:opacity-90 transition duration-150 shadow-xs cursor-pointer"
+          >
+            <span>Resume Test</span>
+            <span aria-hidden="true">→</span>
+          </a>
+        ) : isSubmitted ? (
+          <div className="flex items-center gap-2">
+            <a
+              href={`/test-series/results/${latestAttempt!.id}`}
+              className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-3 rounded-lg text-xs font-semibold border border-accent bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
+            >
+              <span>View Result</span>
+              <span aria-hidden="true">→</span>
+            </a>
+            <a
+              href={`/test-series/instructions/${test.id || (test as any)._id}`}
+              className="inline-flex items-center justify-center py-2 px-3 rounded-lg text-xs font-semibold border border-border bg-surface-raised text-muted hover:text-white hover:border-accent transition duration-150 cursor-pointer"
+              title="Take a fresh attempt"
+            >
+              <span>Reattempt</span>
+            </a>
+          </div>
+        ) : (
+          <a
+            href={`/test-series/instructions/${test.id || (test as any)._id}`}
+            className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
+          >
+            <span>View Instructions & Start</span>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </a>
+        )}
       </div>
     </div>
   );
