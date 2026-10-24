@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   adminApi,
   type AdminTestSeries,
@@ -7,110 +7,137 @@ import {
   type AdminIndividualTest,
   type AdminTestSection,
   type AdminQuestion,
-} from './api';
-import { useAdminToast } from './AdminToast';
+} from "./api";
+import { useAdminToast } from "./AdminToast";
 
 interface TestBuilderManagerProps {
   currentUserRole?: string;
   initialSeriesId?: string;
 }
 
-export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBuilderManagerProps) {
+export function TestBuilderManager({
+  currentUserRole,
+  initialSeriesId,
+}: TestBuilderManagerProps) {
   const { showToast } = useAdminToast();
-  const isAdmin = currentUserRole === 'admin';
+  const isAdmin = currentUserRole === "admin";
 
   // Series & supporting data
   const [seriesList, setSeriesList] = useState<AdminTestSeries[]>([]);
-  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(initialSeriesId || '');
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(
+    initialSeriesId || "",
+  );
   const [tests, setTests] = useState<AdminIndividualTest[]>([]);
   const [isLoadingTests, setIsLoadingTests] = useState(false);
 
   // Hierarchy for filters & forms
   const [subjects, setSubjects] = useState<AdminSubject[]>([]);
   const [chapters, setChapters] = useState<AdminChapter[]>([]);
+  const [isLoadingChapters, setIsLoadingChapters] = useState(false);
+  const [chapterLoadError, setChapterLoadError] = useState("");
+  const [chapterReloadKey, setChapterReloadKey] = useState(0);
 
   // Filter state
-  const [filterMode, setFilterMode] = useState('ALL');
-  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterMode, setFilterMode] = useState("ALL");
+  const [filterStatus, setFilterStatus] = useState("ALL");
 
   // Wizard Modal state
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState<number>(1);
-  const [editingTest, setEditingTest] = useState<AdminIndividualTest | null>(null);
+  const [editingTest, setEditingTest] = useState<AdminIndividualTest | null>(
+    null,
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   // Question Picker state for manual selection
   const [isQuestionPickerOpen, setIsQuestionPickerOpen] = useState(false);
-  const [pickerTargetSectionIndex, setPickerTargetSectionIndex] = useState<number | null>(null);
+  const [pickerTargetSectionIndex, setPickerTargetSectionIndex] = useState<
+    number | null
+  >(null);
   const [bankQuestions, setBankQuestions] = useState<AdminQuestion[]>([]);
-  const [pickerSearch, setPickerSearch] = useState('');
+
   const [pickerSelectedIds, setPickerSelectedIds] = useState<string[]>([]);
   const [isLoadingBankQuestions, setIsLoadingBankQuestions] = useState(false);
 
   // Form Fields - Step 1: Type & Hierarchy
-  const [formTestMode, setFormTestMode] = useState<'subject' | 'chapter' | 'full'>('subject');
-  const [formSubjectId, setFormSubjectId] = useState<string>('');
-  const [formChapterId, setFormChapterId] = useState<string>('');
+  const [formTestMode, setFormTestMode] = useState<
+    "subject" | "chapter" | "full"
+  >("subject");
+  const [formSubjectId, setFormSubjectId] = useState<string>("");
+  const [formChapterId, setFormChapterId] = useState<string>("");
 
   // Form Fields - Step 2: Details & Access
-  const [formTitle, setFormTitle] = useState('');
-  const [formDescription, setFormDescription] = useState('');
-  const [formInstructions, setFormInstructions] = useState('');
-  const [formAccess, setFormAccess] = useState<'free' | 'premium'>('free');
-  const [formLanguages, setFormLanguages] = useState<string[]>(['Hindi', 'English']);
-  const [formAvailableFrom, setFormAvailableFrom] = useState('');
-  const [formAvailableTo, setFormAvailableTo] = useState('');
+  const [formTitle, setFormTitle] = useState("");
+  const [formDescription, setFormDescription] = useState("");
+  const [formInstructions, setFormInstructions] = useState("");
+  const [formAccess, setFormAccess] = useState<"free" | "premium">("free");
+  const [formLanguages, setFormLanguages] = useState<string[]>([
+    "Hindi",
+    "English",
+  ]);
+  const [formAvailableFrom, setFormAvailableFrom] = useState("");
+  const [formAvailableTo, setFormAvailableTo] = useState("");
 
   // Form Fields - Step 3: Question Selection & Timing / Marks (For Subject & Chapter tests)
-  const [formSelectionMode, setFormSelectionMode] = useState<'manual' | 'automatic'>('manual');
-  const [formOrderMode, setFormOrderMode] = useState<'fixed' | 'randomized'>('fixed');
-  const [formSetMode, setFormSetMode] = useState<'fixed' | 'random_per_attempt'>('fixed');
-  const [formTotalQuestionsCount, setFormTotalQuestionsCount] = useState<number>(25);
+  const [formSelectionMode, setFormSelectionMode] = useState<
+    "manual" | "automatic"
+  >("manual");
+  const [formOrderMode, setFormOrderMode] = useState<"fixed" | "randomized">(
+    "fixed",
+  );
+  const [formSetMode, setFormSetMode] = useState<
+    "fixed" | "random_per_attempt"
+  >("fixed");
+  const [formTotalQuestionsCount, setFormTotalQuestionsCount] =
+    useState<number>(25);
   const [formDurationMinutes, setFormDurationMinutes] = useState<number>(30);
   const [formMaxAttempts, setFormMaxAttempts] = useState<number>(3);
   const [formPositiveMarks, setFormPositiveMarks] = useState<number>(1);
-  const [formNegativeMarkingEnabled, setFormNegativeMarkingEnabled] = useState<boolean>(true);
+  const [formNegativeMarkingEnabled, setFormNegativeMarkingEnabled] =
+    useState<boolean>(true);
   const [formNegativeMarks, setFormNegativeMarks] = useState<number>(0.25);
-  const [formSelectedQuestionIds, setFormSelectedQuestionIds] = useState<string[]>([]);
+  const [formSelectedQuestionIds, setFormSelectedQuestionIds] = useState<
+    string[]
+  >([]);
 
   // Form Fields - Step 4: Full Test Sections (For Full test)
   const [formSections, setFormSections] = useState<AdminTestSection[]>([
     {
-      name: 'General Intelligence & Reasoning',
+      name: "General Intelligence & Reasoning",
       order: 0,
       durationMinutes: null,
       positiveMarks: 1,
       negativeMarkingEnabled: true,
       negativeMarks: 0.25,
-      selectionMode: 'manual',
-      questionOrderMode: 'fixed',
-      questionSetMode: 'fixed',
+      selectionMode: "manual",
+      questionOrderMode: "fixed",
+      questionSetMode: "fixed",
       requiredQuestionCount: 30,
       questions: [],
     },
     {
-      name: 'General Awareness',
+      name: "General Awareness",
       order: 1,
       durationMinutes: null,
       positiveMarks: 1,
       negativeMarkingEnabled: true,
       negativeMarks: 0.25,
-      selectionMode: 'manual',
-      questionOrderMode: 'fixed',
-      questionSetMode: 'fixed',
+      selectionMode: "manual",
+      questionOrderMode: "fixed",
+      questionSetMode: "fixed",
       requiredQuestionCount: 40,
       questions: [],
     },
     {
-      name: 'Mathematics',
+      name: "Mathematics",
       order: 2,
       durationMinutes: null,
       positiveMarks: 1,
       negativeMarkingEnabled: true,
       negativeMarks: 0.25,
-      selectionMode: 'manual',
-      questionOrderMode: 'fixed',
-      questionSetMode: 'fixed',
+      selectionMode: "manual",
+      questionOrderMode: "fixed",
+      questionSetMode: "fixed",
       requiredQuestionCount: 30,
       questions: [],
     },
@@ -126,7 +153,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
           setSelectedSeriesId(list[0].id || list[0]._id!);
         }
       } catch (err: any) {
-        showToast(err.message || 'Failed to load test series', 'error');
+        showToast(err.message || "Failed to load test series", "error");
       }
     }
     loadSeries();
@@ -137,17 +164,25 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
     if (!sId) return;
     setIsLoadingTests(true);
     try {
-      const [testData, subs] = await Promise.all([
+      const [testData, assignments, allSubjects] = await Promise.all([
         adminApi.getManageableTests(sId, {
-          testMode: filterMode !== 'ALL' ? filterMode : undefined,
-          status: filterStatus !== 'ALL' ? filterStatus : undefined,
+          testMode: filterMode !== "ALL" ? filterMode : undefined,
+          status: filterStatus !== "ALL" ? filterStatus : undefined,
         }),
+        adminApi.getSeriesSubjects(sId),
         adminApi.getSubjects(),
       ]);
       setTests(testData || []);
-      setSubjects(subs || []);
+      const assignedSubjectIds = new Set(
+        (assignments || []).map((assignment) => assignment.subjectId),
+      );
+      setSubjects(
+        (allSubjects || []).filter((subject) =>
+          assignedSubjectIds.has(subject.id || subject._id || ""),
+        ),
+      );
     } catch (err: any) {
-      showToast(err.message || 'Failed to load tests for series', 'error');
+      showToast(err.message || "Failed to load tests for series", "error");
     } finally {
       setIsLoadingTests(false);
     }
@@ -161,38 +196,56 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
   // Load chapters when formSubjectId changes in wizard
   useEffect(() => {
+    let isCurrent = true;
+
     async function loadChapters() {
+      setChapters([]);
+      setChapterLoadError("");
       if (selectedSeriesId && formSubjectId) {
+        setIsLoadingChapters(true);
         try {
-          const chs = await adminApi.getSeriesChapters(selectedSeriesId, formSubjectId);
-          setChapters(chs || []);
-        } catch {
-          setChapters([]);
+          const chs = await adminApi.getSeriesChapters(
+            selectedSeriesId,
+            formSubjectId,
+          );
+          if (isCurrent) setChapters(chs || []);
+        } catch (err: any) {
+          if (isCurrent) {
+            setChapterLoadError(
+              err?.message || "Could not load chapters. Please retry.",
+            );
+          }
+        } finally {
+          if (isCurrent) setIsLoadingChapters(false);
         }
       } else {
-        setChapters([]);
+        setIsLoadingChapters(false);
       }
     }
     loadChapters();
-  }, [selectedSeriesId, formSubjectId]);
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [selectedSeriesId, formSubjectId, chapterReloadKey]);
 
   // Open Wizard for New Test
   const openCreateWizard = () => {
     setEditingTest(null);
     setWizardStep(1);
-    setFormTestMode('subject');
-    setFormSubjectId(subjects[0]?.id || subjects[0]?._id || '');
-    setFormChapterId('');
-    setFormTitle('');
-    setFormDescription('');
-    setFormInstructions('');
-    setFormAccess('free');
-    setFormLanguages(['Hindi', 'English']);
-    setFormAvailableFrom('');
-    setFormAvailableTo('');
-    setFormSelectionMode('manual');
-    setFormOrderMode('fixed');
-    setFormSetMode('fixed');
+    setFormTestMode("subject");
+    setFormSubjectId(subjects[0]?.id || subjects[0]?._id || "");
+    setFormChapterId("");
+    setFormTitle("");
+    setFormDescription("");
+    setFormInstructions("");
+    setFormAccess("free");
+    setFormLanguages(["Hindi", "English"]);
+    setFormAvailableFrom("");
+    setFormAvailableTo("");
+    setFormSelectionMode("manual");
+    setFormOrderMode("fixed");
+    setFormSetMode("fixed");
     setFormTotalQuestionsCount(25);
     setFormDurationMinutes(30);
     setFormMaxAttempts(3);
@@ -202,26 +255,26 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
     setFormSelectedQuestionIds([]);
     setFormSections([
       {
-        name: 'General Awareness',
+        name: "General Awareness",
         order: 0,
         positiveMarks: 1,
         negativeMarkingEnabled: true,
         negativeMarks: 0.25,
-        selectionMode: 'manual',
-        questionOrderMode: 'fixed',
-        questionSetMode: 'fixed',
+        selectionMode: "manual",
+        questionOrderMode: "fixed",
+        questionSetMode: "fixed",
         requiredQuestionCount: 30,
         questions: [],
       },
       {
-        name: 'Mathematics',
+        name: "Mathematics",
         order: 1,
         positiveMarks: 1,
         negativeMarkingEnabled: true,
         negativeMarks: 0.25,
-        selectionMode: 'manual',
-        questionOrderMode: 'fixed',
-        questionSetMode: 'fixed',
+        selectionMode: "manual",
+        questionOrderMode: "fixed",
+        questionSetMode: "fixed",
         requiredQuestionCount: 30,
         questions: [],
       },
@@ -234,25 +287,31 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
     setEditingTest(t);
     setWizardStep(1);
     setFormTestMode(t.testMode);
-    setFormSubjectId(t.subjectId || '');
-    setFormChapterId(t.chapterId || '');
+    setFormSubjectId(t.subjectId || "");
+    setFormChapterId(t.chapterId || "");
     setFormTitle(t.title);
-    setFormDescription(t.description || '');
-    setFormInstructions(t.instructions || '');
-    setFormAccess(t.access || 'free');
-    setFormLanguages(t.languages && t.languages.length > 0 ? t.languages : ['Hindi', 'English']);
-    setFormAvailableFrom(t.availableFrom ? t.availableFrom.slice(0, 16) : '');
-    setFormAvailableTo(t.availableTo ? t.availableTo.slice(0, 16) : '');
-    setFormSelectionMode(t.questionSelectionMode || 'manual');
-    setFormOrderMode(t.questionOrderMode || 'fixed');
-    setFormSetMode(t.questionSetMode || 'fixed');
+    setFormDescription(t.description || "");
+    setFormInstructions(t.instructions || "");
+    setFormAccess(t.access || "free");
+    setFormLanguages(
+      t.languages && t.languages.length > 0
+        ? t.languages
+        : ["Hindi", "English"],
+    );
+    setFormAvailableFrom(t.availableFrom ? t.availableFrom.slice(0, 16) : "");
+    setFormAvailableTo(t.availableTo ? t.availableTo.slice(0, 16) : "");
+    setFormSelectionMode(t.questionSelectionMode || "manual");
+    setFormOrderMode(t.questionOrderMode || "fixed");
+    setFormSetMode(t.questionSetMode || "fixed");
     setFormTotalQuestionsCount(t.totalQuestionsCount || 25);
     setFormDurationMinutes(t.durationMinutes || 30);
     setFormMaxAttempts(t.maxAttempts || 3);
     setFormPositiveMarks(t.positiveMarks || 1);
     setFormNegativeMarkingEnabled(t.negativeMarkingEnabled ?? true);
     setFormNegativeMarks(t.negativeMarks || 0);
-    setFormSelectedQuestionIds(t.questions ? t.questions.map((q) => q.questionId) : []);
+    setFormSelectedQuestionIds(
+      t.questions ? t.questions.map((q) => q.questionId) : [],
+    );
 
     if (t.sections && t.sections.length > 0) {
       setFormSections(t.sections);
@@ -267,48 +326,72 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
     const tId = t.id || t._id!;
     try {
       const cloned = await adminApi.createTestVersion(tId);
-      showToast(`Created draft Version ${cloned.version} for "${cloned.title}"!`, 'success');
+      showToast(
+        `Created draft Version ${cloned.version} for "${cloned.title}"!`,
+        "success",
+      );
       fetchTestsForSeries(selectedSeriesId);
       openEditWizard(cloned);
     } catch (err: any) {
-      showToast(err.message || 'Failed to create new version', 'error');
+      showToast(err.message || "Failed to create new version", "error");
     }
   };
 
   // Update Status (Publish / Archive) - Admin Only
-  const handleStatusChange = async (t: AdminIndividualTest, newStatus: 'published' | 'archived') => {
+  const handleStatusChange = async (
+    t: AdminIndividualTest,
+    newStatus: "published" | "archived",
+  ) => {
     if (!isAdmin) {
-      showToast('Only administrators can publish or archive tests', 'error');
+      showToast("Only administrators can publish or archive tests", "error");
       return;
     }
     const tId = t.id || t._id!;
     try {
       await adminApi.updateIndividualTestStatus(tId, newStatus);
-      showToast(`Test ${newStatus === 'published' ? 'published' : 'archived'} successfully!`, 'success');
+      showToast(
+        `Test ${newStatus === "published" ? "published" : "archived"} successfully!`,
+        "success",
+      );
       fetchTestsForSeries(selectedSeriesId);
     } catch (err: any) {
-      showToast(err.message || `Failed to update status to ${newStatus}`, 'error');
+      const message = err.message || `Failed to update status to ${newStatus}`;
+      if (
+        newStatus === "published" &&
+        message.includes(
+          "not mapped to the eligible TestSeries/Subject/Chapter scope",
+        )
+      ) {
+        showToast(
+          "This draft has a question outside its mapped scope. Review and reselect its questions in Step 3.",
+          "error",
+        );
+        await openEditWizard(t);
+        setWizardStep(3);
+        return;
+      }
+      showToast(message, "error");
     }
   };
 
   // Delete Test (Lineage deletion - Admin Only)
   const handleDeleteTest = async (t: AdminIndividualTest) => {
     if (!isAdmin) {
-      showToast('Only administrators can delete tests', 'error');
+      showToast("Only administrators can delete tests", "error");
       return;
     }
     const conf = window.confirm(
-      `WARNING: Permanently deleting test "${t.title}" will delete the entire version lineage and all candidate attempts. This action CANNOT be undone. Proceed?`
+      `WARNING: Permanently deleting test "${t.title}" will delete the entire version lineage and all candidate attempts. This action CANNOT be undone. Proceed?`,
     );
     if (!conf) return;
 
     const tId = t.id || t._id!;
     try {
       await adminApi.deleteIndividualTest(tId);
-      showToast('Test lineage permanently deleted', 'success');
+      showToast("Test lineage permanently deleted", "success");
       fetchTestsForSeries(selectedSeriesId);
     } catch (err: any) {
-      showToast(err.message || 'Failed to delete test', 'error');
+      showToast(err.message || "Failed to delete test", "error");
     }
   };
 
@@ -318,21 +401,38 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
     setIsLoadingBankQuestions(true);
     setIsQuestionPickerOpen(true);
     try {
+      const section = sectionIndex === null ? null : formSections[sectionIndex];
       const qRes = await adminApi.searchQuestions({
-        subjectId: formSubjectId || undefined,
-        chapterId: formChapterId || undefined,
+        testSeriesId: selectedSeriesId,
+        subjectId: section
+          ? section.subjectId || undefined
+          : formSubjectId || undefined,
+        chapterId: section
+          ? section.chapterId || undefined
+          : formChapterId || undefined,
+        status: "published",
+        isAvailableForNewTests: "true",
         limit: 100,
       });
       setBankQuestions(qRes.questions || []);
+      const eligibleQuestionIds = new Set(
+        (qRes.questions || []).map((question) => question.id || question._id),
+      );
 
       if (sectionIndex !== null) {
         const sec = formSections[sectionIndex];
-        setPickerSelectedIds(sec.questions ? sec.questions.map((q) => q.questionId) : []);
+        setPickerSelectedIds(
+          (sec.questions || [])
+            .map((q) => q.questionId)
+            .filter((id) => eligibleQuestionIds.has(id)),
+        );
       } else {
-        setPickerSelectedIds([...formSelectedQuestionIds]);
+        setPickerSelectedIds(
+          formSelectedQuestionIds.filter((id) => eligibleQuestionIds.has(id)),
+        );
       }
     } catch (err: any) {
-      showToast(err.message || 'Failed to load question bank', 'error');
+      showToast(err.message || "Failed to load question bank", "error");
     } finally {
       setIsLoadingBankQuestions(false);
     }
@@ -340,7 +440,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
   const handleTogglePickerSelection = (qId: string) => {
     setPickerSelectedIds((prev) =>
-      prev.includes(qId) ? prev.filter((id) => id !== qId) : [...prev, qId]
+      prev.includes(qId) ? prev.filter((id) => id !== qId) : [...prev, qId],
     );
   };
 
@@ -375,9 +475,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
         positiveMarks: 1,
         negativeMarkingEnabled: true,
         negativeMarks: 0.25,
-        selectionMode: 'manual',
-        questionOrderMode: 'fixed',
-        questionSetMode: 'fixed',
+        selectionMode: "manual",
+        questionOrderMode: "fixed",
+        questionSetMode: "fixed",
         requiredQuestionCount: 20,
         questions: [],
       },
@@ -400,22 +500,31 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
   // Save Test (Draft or Submit)
   const handleSaveTest = async (autoPublish = false) => {
     if (!formTitle.trim()) {
-      showToast('Test title is required', 'error');
+      showToast("Test title is required", "error");
       setWizardStep(2);
       return;
     }
 
-    if (formTestMode === 'chapter' && !formChapterId) {
-      showToast('Chapter selection is required for chapter-wise tests', 'error');
+    if (formTestMode === "chapter" && !formChapterId) {
+      showToast(
+        "Chapter selection is required for chapter-wise tests",
+        "error",
+      );
       setWizardStep(1);
       return;
     }
 
-    if (formTestMode === 'full' && formSections.length === 0) {
-      showToast('Full tests must contain at least one configured section', 'error');
+    if (formTestMode === "full" && formSections.length === 0) {
+      showToast(
+        "Full tests must contain at least one configured section",
+        "error",
+      );
       setWizardStep(4);
       return;
     }
+
+    const supportedLanguages =
+      formLanguages.length > 0 ? formLanguages : ["Hindi", "English"];
 
     setIsSaving(true);
     try {
@@ -425,34 +534,46 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
         description: formDescription.trim() || null,
         instructions: formInstructions.trim() || null,
         testMode: formTestMode,
-        subjectId: formTestMode !== 'full' ? formSubjectId || null : null,
-        chapterId: formTestMode === 'chapter' ? formChapterId || null : null,
+        subjectId: formTestMode !== "full" ? formSubjectId || null : null,
+        chapterId: formTestMode === "chapter" ? formChapterId || null : null,
         access: formAccess,
-        languages: formLanguages,
+        languages: supportedLanguages,
         durationMinutes: Number(formDurationMinutes) || null,
         maxAttempts: Number(formMaxAttempts) || null,
         positiveMarks: Number(formPositiveMarks) || 1,
         negativeMarkingEnabled: formNegativeMarkingEnabled,
-        negativeMarks: formNegativeMarkingEnabled ? Number(formNegativeMarks) || 0 : 0,
+        negativeMarks: formNegativeMarkingEnabled
+          ? Number(formNegativeMarks) || 0
+          : 0,
         questionSelectionMode: formSelectionMode,
         questionOrderMode: formOrderMode,
         questionSetMode: formSetMode,
         totalQuestionsCount:
-          formTestMode === 'full'
-            ? formSections.reduce((acc, s) => acc + (s.questions?.length || s.requiredQuestionCount || 0), 0)
+          formTestMode === "full"
+            ? formSections.reduce(
+                (acc, s) =>
+                  acc + (s.questions?.length || s.requiredQuestionCount || 0),
+                0,
+              )
             : Number(formTotalQuestionsCount) || formSelectedQuestionIds.length,
-        availableFrom: formAvailableFrom ? new Date(formAvailableFrom).toISOString() : null,
-        availableTo: formAvailableTo ? new Date(formAvailableTo).toISOString() : null,
+        availableFrom: formAvailableFrom
+          ? new Date(formAvailableFrom).toISOString()
+          : null,
+        availableTo: formAvailableTo
+          ? new Date(formAvailableTo).toISOString()
+          : null,
         questions:
-          formTestMode !== 'full'
-            ? formSelectedQuestionIds.map((id, pos) => ({
+          formTestMode !== "full"
+            ? formSelectedQuestionIds.map((id) => ({
                 questionId: id,
                 marks: Number(formPositiveMarks),
-                negativeMarks: formNegativeMarkingEnabled ? Number(formNegativeMarks) : 0,
+                negativeMarks: formNegativeMarkingEnabled
+                  ? Number(formNegativeMarks)
+                  : 0,
               }))
             : [],
         sections:
-          formTestMode === 'full'
+          formTestMode === "full"
             ? formSections.map((sec, idx) => ({
                 name: sec.name,
                 order: idx,
@@ -461,15 +582,19 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                 durationMinutes: sec.durationMinutes || null,
                 positiveMarks: Number(sec.positiveMarks) || 1,
                 negativeMarkingEnabled: sec.negativeMarkingEnabled ?? true,
-                negativeMarks: sec.negativeMarkingEnabled ? Number(sec.negativeMarks) || 0 : 0,
-                selectionMode: sec.selectionMode || 'manual',
-                questionOrderMode: sec.questionOrderMode || 'fixed',
-                questionSetMode: sec.questionSetMode || 'fixed',
+                negativeMarks: sec.negativeMarkingEnabled
+                  ? Number(sec.negativeMarks) || 0
+                  : 0,
+                selectionMode: sec.selectionMode || "manual",
+                questionOrderMode: sec.questionOrderMode || "fixed",
+                questionSetMode: sec.questionSetMode || "fixed",
                 requiredQuestionCount: sec.requiredQuestionCount || 20,
                 questions: (sec.questions || []).map((q) => ({
                   questionId: q.questionId,
                   marks: Number(sec.positiveMarks),
-                  negativeMarks: sec.negativeMarkingEnabled ? Number(sec.negativeMarks) : 0,
+                  negativeMarks: sec.negativeMarkingEnabled
+                    ? Number(sec.negativeMarks)
+                    : 0,
                 })),
               }))
             : [],
@@ -479,28 +604,26 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
       if (editingTest) {
         const tId = editingTest.id || editingTest._id!;
         savedTest = await adminApi.updateIndividualTest(tId, payload);
-        showToast('Test draft updated successfully', 'success');
+        showToast("Test draft updated successfully", "success");
       } else {
         savedTest = await adminApi.createIndividualTest(payload);
-        showToast('New test created as draft', 'success');
+        showToast("New test created as draft", "success");
       }
 
       if (autoPublish && isAdmin) {
         const savedId = savedTest.id || savedTest._id!;
-        await adminApi.updateIndividualTestStatus(savedId, 'published');
-        showToast('Test published successfully!', 'success');
+        await adminApi.updateIndividualTestStatus(savedId, "published");
+        showToast("Test published successfully!", "success");
       }
 
       setIsWizardOpen(false);
       fetchTestsForSeries(selectedSeriesId);
     } catch (err: any) {
-      showToast(err.message || 'Failed to save test configuration', 'error');
+      showToast(err.message || "Failed to save test configuration", "error");
     } finally {
       setIsSaving(false);
     }
   };
-
-
 
   return (
     <div className="space-y-6">
@@ -514,7 +637,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
             </span>
           </h1>
           <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
-            Build Subject-wise, Chapter-wise, and multi-section Full Mock Tests with granular timing, negative marking, randomized pools, and immutable versioning.
+            Build Subject-wise, Chapter-wise, and multi-section Full Mock Tests
+            with granular timing, negative marking, randomized pools, and
+            immutable versioning.
           </p>
         </div>
 
@@ -522,7 +647,11 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
           <div className="w-56">
             <select
               value={selectedSeriesId}
-              onChange={(e) => setSelectedSeriesId(e.target.value)}
+              onChange={(e) => {
+                setSelectedSeriesId(e.target.value);
+                setFormSubjectId("");
+                setFormChapterId("");
+              }}
               className="w-full px-3 py-1.5 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-zinc-200 focus:outline-hidden"
             >
               {seriesList.map((s) => (
@@ -536,10 +665,23 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
           <button
             type="button"
             onClick={openCreateWizard}
+            disabled={
+              !selectedSeriesId || isLoadingTests || subjects.length === 0
+            }
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs rounded-xl shadow-xs transition cursor-pointer shrink-0"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             <span>Create Test</span>
           </button>
@@ -548,7 +690,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
       {/* Filter Bar */}
       <div className="flex flex-wrap items-center gap-2.5 p-3 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Filter:</span>
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+          Filter:
+        </span>
         <select
           value={filterMode}
           onChange={(e) => setFilterMode(e.target.value)}
@@ -581,8 +725,13 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
           </div>
         ) : tests.length === 0 ? (
           <div className="py-16 text-center text-xs text-slate-500 dark:text-zinc-400 space-y-2">
-            <p className="font-semibold text-slate-700 dark:text-zinc-300">No tests configured for this series yet</p>
-            <p>Click "Create Test" to build a Subject, Chapter, or Full Mock Test.</p>
+            <p className="font-semibold text-slate-700 dark:text-zinc-300">
+              No tests configured for this series yet
+            </p>
+            <p>
+              Click "Create Test" to build a Subject, Chapter, or Full Mock
+              Test.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -601,9 +750,12 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
               <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 text-slate-800 dark:text-zinc-200">
                 {tests.map((t) => {
                   const tId = t.id || t._id!;
-                  const isPublished = t.status === 'published';
+                  const isPublished = t.status === "published";
                   return (
-                    <tr key={tId} className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/30 transition">
+                    <tr
+                      key={tId}
+                      className="hover:bg-slate-50/50 dark:hover:bg-zinc-800/30 transition"
+                    >
                       <td className="py-3.5 px-4">
                         <div className="font-semibold text-slate-900 dark:text-zinc-100 text-sm">
                           {t.title}
@@ -613,7 +765,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                             {t.access}
                           </span>
                           <span>•</span>
-                          <span>{t.languages?.join(', ')}</span>
+                          <span>{t.languages?.join(", ")}</span>
                           {t.sections && t.sections.length > 0 && (
                             <>
                               <span>•</span>
@@ -626,11 +778,11 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                       <td className="py-3.5 px-4">
                         <span
                           className={`px-2 py-0.5 rounded-md font-semibold text-[10px] uppercase ${
-                            t.testMode === 'full'
-                              ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-900/60'
-                              : t.testMode === 'chapter'
-                              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/60'
-                              : 'bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60'
+                            t.testMode === "full"
+                              ? "bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-900/60"
+                              : t.testMode === "chapter"
+                                ? "bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/60"
+                                : "bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60"
                           }`}
                         >
                           {t.testMode} Test
@@ -639,17 +791,22 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
                       <td className="py-3.5 px-4">
                         <div className="font-medium">
-                          {t.totalQuestionsCount || t.questionsCount || 0} Questions
+                          {t.totalQuestionsCount || t.questionsCount || 0}{" "}
+                          Questions
                         </div>
                         <div className="text-[11px] text-slate-500 dark:text-zinc-400">
-                          {t.durationMinutes ? `${t.durationMinutes} mins` : 'Untimed'}
+                          {t.durationMinutes
+                            ? `${t.durationMinutes} mins`
+                            : "Untimed"}
                         </div>
                       </td>
 
                       <td className="py-3.5 px-4">
                         <div>+{t.positiveMarks} Marks</div>
                         <div className="text-[11px] text-slate-500 dark:text-zinc-400">
-                          {t.negativeMarkingEnabled ? `-${t.negativeMarks} Neg` : 'No Negative'}
+                          {t.negativeMarkingEnabled
+                            ? `-${t.negativeMarks} Neg`
+                            : "No Negative"}
                         </div>
                       </td>
 
@@ -662,11 +819,11 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                       <td className="py-3.5 px-4">
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                            t.status === 'published'
-                              ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400'
-                              : t.status === 'draft'
-                              ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400'
-                              : 'bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-400'
+                            t.status === "published"
+                              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
+                              : t.status === "draft"
+                                ? "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400"
+                                : "bg-slate-100 text-slate-700 dark:bg-zinc-800 dark:text-zinc-400"
                           }`}
                         >
                           {t.status}
@@ -700,7 +857,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           {isAdmin && !isPublished && (
                             <button
                               type="button"
-                              onClick={() => handleStatusChange(t, 'published')}
+                              onClick={() => handleStatusChange(t, "published")}
                               className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-xs transition cursor-pointer"
                             >
                               Publish
@@ -710,7 +867,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           {isAdmin && isPublished && (
                             <button
                               type="button"
-                              onClick={() => handleStatusChange(t, 'archived')}
+                              onClick={() => handleStatusChange(t, "archived")}
                               className="px-2 py-1 text-slate-500 hover:text-slate-800 dark:hover:text-zinc-200 transition cursor-pointer"
                             >
                               Archive
@@ -724,8 +881,18 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                               title="Delete entire test lineage"
                               className="p-1.5 text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-lg transition cursor-pointer"
                             >
-                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
                               </svg>
                             </button>
                           )}
@@ -750,7 +917,11 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
             <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-zinc-800">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-bold text-slate-900 dark:text-zinc-100 flex items-center gap-2">
-                  <span>{editingTest ? `Edit Test (v${editingTest.version || 1})` : 'New Test Wizard'}</span>
+                  <span>
+                    {editingTest
+                      ? `Edit Test (v${editingTest.version || 1})`
+                      : "New Test Wizard"}
+                  </span>
                   <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
                     Step {wizardStep} of 6
                   </span>
@@ -767,12 +938,12 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
               {/* Step indicator bar */}
               <div className="grid grid-cols-6 gap-2 text-center text-[10px] font-bold">
                 {[
-                  '1. Type & Scope',
-                  '2. Test Details',
-                  '3. Questions Pool',
-                  '4. Full Sections',
-                  '5. Marks & Timers',
-                  '6. Review & Save',
+                  "1. Type & Scope",
+                  "2. Test Details",
+                  "3. Questions Pool",
+                  "4. Full Sections",
+                  "5. Marks & Timers",
+                  "6. Review & Save",
                 ].map((st, i) => (
                   <button
                     key={i}
@@ -780,10 +951,10 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                     onClick={() => setWizardStep(i + 1)}
                     className={`py-1.5 px-1 rounded-lg border transition ${
                       wizardStep === i + 1
-                        ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                        ? "bg-blue-600 text-white border-blue-600 shadow-xs"
                         : wizardStep > i + 1
-                        ? 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200 dark:border-zinc-700'
-                        : 'text-slate-400 dark:text-zinc-600 border-transparent'
+                          ? "bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border-slate-200 dark:border-zinc-700"
+                          : "text-slate-400 dark:text-zinc-600 border-transparent"
                     }`}
                   >
                     {st}
@@ -803,61 +974,126 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { mode: 'subject', title: 'Subject-wise Test', desc: 'Focus on one subject across chapters.' },
-                      { mode: 'chapter', title: 'Chapter-wise Test', desc: 'Deep dive into a specific exam chapter.' },
-                      { mode: 'full', title: 'Full Mock Test', desc: 'Comprehensive exam with multiple sections.' },
+                      {
+                        mode: "subject",
+                        title: "Subject-wise Test",
+                        desc: "Focus on one subject across chapters.",
+                      },
+                      {
+                        mode: "chapter",
+                        title: "Chapter-wise Test",
+                        desc: "Deep dive into a specific exam chapter.",
+                      },
+                      {
+                        mode: "full",
+                        title: "Full Mock Test",
+                        desc: "Comprehensive exam with multiple sections.",
+                      },
                     ].map((item) => (
                       <div
                         key={item.mode}
                         onClick={() => setFormTestMode(item.mode as any)}
                         className={`p-3 rounded-xl border cursor-pointer transition space-y-1 ${
                           formTestMode === item.mode
-                            ? 'bg-blue-50/60 dark:bg-blue-950/40 border-blue-500 ring-2 ring-blue-500/20'
-                            : 'bg-slate-50 dark:bg-zinc-800/40 border-slate-200 dark:border-zinc-700 hover:border-slate-300'
+                            ? "bg-blue-50/60 dark:bg-blue-950/40 border-blue-500 ring-2 ring-blue-500/20"
+                            : "bg-slate-50 dark:bg-zinc-800/40 border-slate-200 dark:border-zinc-700 hover:border-slate-300"
                         }`}
                       >
-                        <div className="font-bold text-slate-900 dark:text-zinc-100">{item.title}</div>
-                        <div className="text-[11px] text-slate-500 dark:text-zinc-400">{item.desc}</div>
+                        <div className="font-bold text-slate-900 dark:text-zinc-100">
+                          {item.title}
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-zinc-400">
+                          {item.desc}
+                        </div>
                       </div>
                     ))}
                   </div>
 
-                  {formTestMode !== 'full' && (
+                  {formTestMode !== "full" && (
                     <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-zinc-800">
                       <div className="space-y-1">
                         <label className="block font-semibold text-slate-700 dark:text-zinc-300">
-                          Target Subject <span className="text-rose-500">*</span>
+                          Target Subject{" "}
+                          <span className="text-rose-500">*</span>
                         </label>
                         <select
                           value={formSubjectId}
-                          onChange={(e) => setFormSubjectId(e.target.value)}
+                          onChange={(e) => {
+                            setFormSubjectId(e.target.value);
+                            setFormChapterId("");
+                          }}
                           className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                         >
                           {subjects.map((sub) => (
-                            <option key={sub.id || sub._id} value={sub.id || sub._id}>
+                            <option
+                              key={sub.id || sub._id}
+                              value={sub.id || sub._id}
+                            >
                               {sub.name}
                             </option>
                           ))}
                         </select>
                       </div>
 
-                      {formTestMode === 'chapter' && (
+                      {formTestMode === "chapter" && (
                         <div className="space-y-1">
                           <label className="block font-semibold text-slate-700 dark:text-zinc-300">
-                            Exam-Specific Chapter <span className="text-rose-500">*</span>
+                            Exam-Specific Chapter{" "}
+                            <span className="text-rose-500">*</span>
                           </label>
                           <select
                             value={formChapterId}
                             onChange={(e) => setFormChapterId(e.target.value)}
+                            disabled={
+                              isLoadingChapters ||
+                              !formSubjectId ||
+                              chapters.length === 0
+                            }
                             className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                           >
-                            <option value="">Select Chapter...</option>
+                            <option value="">
+                              {isLoadingChapters
+                                ? "Loading chapters..."
+                                : chapterLoadError
+                                  ? "Could not load chapters"
+                                  : chapters.length
+                                    ? "Select Chapter..."
+                                    : "No chapters available"}
+                            </option>
                             {chapters.map((ch) => (
-                              <option key={ch.id || ch._id} value={ch.id || ch._id}>
+                              <option
+                                key={ch.id || ch._id}
+                                value={ch.id || ch._id}
+                              >
                                 {ch.name}
                               </option>
                             ))}
                           </select>
+                          {chapterLoadError ? (
+                            <div
+                              className="flex items-center justify-between gap-3 text-xs text-rose-500"
+                              role="alert"
+                            >
+                              <span>{chapterLoadError}</span>
+                              <button
+                                type="button"
+                                className="font-semibold underline"
+                                onClick={() =>
+                                  setChapterReloadKey((key) => key + 1)
+                                }
+                              >
+                                Retry
+                              </button>
+                            </div>
+                          ) : !isLoadingChapters &&
+                            !chapterLoadError &&
+                            !chapters.length &&
+                            formSubjectId ? (
+                            <p className="text-xs text-amber-600 dark:text-amber-400">
+                              This subject has no chapters in the selected test
+                              series. Add a chapter to this series first.
+                            </p>
+                          ) : null}
                         </div>
                       )}
                     </div>
@@ -887,7 +1123,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block font-semibold text-slate-700 dark:text-zinc-300">Description</label>
+                    <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                      Description
+                    </label>
                     <textarea
                       rows={2}
                       placeholder="Brief overview of the test syllabus or target..."
@@ -899,7 +1137,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">Access Tier</label>
+                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                        Access Tier
+                      </label>
                       <select
                         value={formAccess}
                         onChange={(e: any) => setFormAccess(e.target.value)}
@@ -911,16 +1151,18 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">Supported Languages</label>
+                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                        Supported Languages
+                      </label>
                       <input
                         type="text"
-                        value={formLanguages.join(', ')}
+                        value={formLanguages.join(", ")}
                         onChange={(e) =>
                           setFormLanguages(
                             e.target.value
-                              .split(',')
+                              .split(",")
                               .map((l) => l.trim())
-                              .filter(Boolean)
+                              .filter(Boolean),
                           )
                         }
                         className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
@@ -965,43 +1207,63 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1">
-                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">Selection Mode</label>
+                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                        Selection Mode
+                      </label>
                       <select
                         value={formSelectionMode}
-                        onChange={(e: any) => setFormSelectionMode(e.target.value)}
+                        onChange={(e: any) =>
+                          setFormSelectionMode(e.target.value)
+                        }
                         className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                       >
-                        <option value="manual">Manual Selection (Admin picks questions)</option>
-                        <option value="automatic">Automatic Selection (From eligible pool)</option>
+                        <option value="manual">
+                          Manual Selection (Admin picks questions)
+                        </option>
+                        <option value="automatic">
+                          Automatic Selection (From eligible pool)
+                        </option>
                       </select>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">Question Set Mode</label>
+                      <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                        Question Set Mode
+                      </label>
                       <select
                         value={formSetMode}
                         onChange={(e: any) => setFormSetMode(e.target.value)}
                         className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                       >
-                        <option value="fixed">Fixed Question Set (Same for every attempt)</option>
-                        <option value="random_per_attempt">Random Subset Per Attempt</option>
+                        <option value="fixed">
+                          Fixed Question Set (Same for every attempt)
+                        </option>
+                        <option value="random_per_attempt">
+                          Random Subset Per Attempt
+                        </option>
                       </select>
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block font-semibold text-slate-700 dark:text-zinc-300">Display Order Mode</label>
+                    <label className="block font-semibold text-slate-700 dark:text-zinc-300">
+                      Display Order Mode
+                    </label>
                     <select
                       value={formOrderMode}
                       onChange={(e: any) => setFormOrderMode(e.target.value)}
                       className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                     >
-                      <option value="fixed">Fixed Order (Configured Sequence)</option>
-                      <option value="randomized">Randomized Question Order</option>
+                      <option value="fixed">
+                        Fixed Order (Configured Sequence)
+                      </option>
+                      <option value="randomized">
+                        Randomized Question Order
+                      </option>
                     </select>
                   </div>
 
-                  {formTestMode !== 'full' && (
+                  {formTestMode !== "full" && (
                     <div className="p-4 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-700 rounded-2xl space-y-3">
                       <div className="flex items-center justify-between">
                         <div>
@@ -1017,12 +1279,10 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           <button
                             type="button"
                             onClick={() => {
-                              setRandomSectionIndex(null);
-                              setRandomCount(formTotalQuestionsCount || 25);
-                              setIsRandomModalOpen(true);
+                              setFormSelectionMode("automatic");
                             }}
                             className="px-3 py-1.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl font-semibold shadow-xs cursor-pointer flex items-center gap-1.5 transition"
-                            title="Automatically select random questions balanced by difficulty"
+                            title="Use automatic selection from this test's eligible mapped question pool"
                           >
                             <span>🎲 AI Smart Pick</span>
                           </button>
@@ -1045,7 +1305,11 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           min="1"
                           max="500"
                           value={formTotalQuestionsCount}
-                          onChange={(e) => setFormTotalQuestionsCount(parseInt(e.target.value, 10))}
+                          onChange={(e) =>
+                            setFormTotalQuestionsCount(
+                              parseInt(e.target.value, 10),
+                            )
+                          }
                           className="w-32 px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100 font-semibold"
                         />
                       </div>
@@ -1063,11 +1327,12 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                         Configure Full Test Sections
                       </h3>
                       <p className="text-[11px] text-slate-500 dark:text-zinc-400">
-                        Each section can have independent marking schemes, question counts, and optional section timers.
+                        Each section can have independent marking schemes,
+                        question counts, and optional section timers.
                       </p>
                     </div>
 
-                    {formTestMode === 'full' && (
+                    {formTestMode === "full" && (
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -1080,9 +1345,11 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                     )}
                   </div>
 
-                  {formTestMode !== 'full' ? (
+                  {formTestMode !== "full" ? (
                     <div className="p-6 text-center bg-slate-50 dark:bg-zinc-800/40 border border-slate-200 dark:border-zinc-800 rounded-2xl text-slate-500">
-                      Sections are only applicable to <strong>Full Mock Tests</strong>. Your current selection is a <strong>{formTestMode}-wise test</strong>.
+                      Sections are only applicable to{" "}
+                      <strong>Full Mock Tests</strong>. Your current selection
+                      is a <strong>{formTestMode}-wise test</strong>.
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -1099,7 +1366,13 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                               <input
                                 type="text"
                                 value={sec.name}
-                                onChange={(e) => updateSectionField(sIdx, 'name', e.target.value)}
+                                onChange={(e) =>
+                                  updateSectionField(
+                                    sIdx,
+                                    "name",
+                                    e.target.value,
+                                  )
+                                }
                                 className="font-bold text-sm bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg px-2.5 py-1 text-slate-900 dark:text-zinc-100"
                               />
                             </div>
@@ -1126,49 +1399,79 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-200 dark:border-zinc-700 text-[11px]">
                             <div>
-                              <label className="block text-slate-500 mb-0.5">Required Questions</label>
+                              <label className="block text-slate-500 mb-0.5">
+                                Required Questions
+                              </label>
                               <input
                                 type="number"
                                 min="1"
                                 value={sec.requiredQuestionCount || 20}
                                 onChange={(e) =>
-                                  updateSectionField(sIdx, 'requiredQuestionCount', parseInt(e.target.value, 10))
+                                  updateSectionField(
+                                    sIdx,
+                                    "requiredQuestionCount",
+                                    parseInt(e.target.value, 10),
+                                  )
                                 }
                                 className="w-full px-2 py-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-md"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-slate-500 mb-0.5">Section Timer (Mins, opt)</label>
+                              <label className="block text-slate-500 mb-0.5">
+                                Section Timer (Mins, opt)
+                              </label>
                               <input
                                 type="number"
                                 placeholder="Untimed"
-                                value={sec.durationMinutes || ''}
+                                value={sec.durationMinutes || ""}
                                 onChange={(e) =>
-                                  updateSectionField(sIdx, 'durationMinutes', e.target.value ? parseInt(e.target.value, 10) : null)
+                                  updateSectionField(
+                                    sIdx,
+                                    "durationMinutes",
+                                    e.target.value
+                                      ? parseInt(e.target.value, 10)
+                                      : null,
+                                  )
                                 }
                                 className="w-full px-2 py-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-md"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-slate-500 mb-0.5">Positive Marks</label>
+                              <label className="block text-slate-500 mb-0.5">
+                                Positive Marks
+                              </label>
                               <input
                                 type="number"
                                 step="0.25"
                                 value={sec.positiveMarks}
-                                onChange={(e) => updateSectionField(sIdx, 'positiveMarks', parseFloat(e.target.value))}
+                                onChange={(e) =>
+                                  updateSectionField(
+                                    sIdx,
+                                    "positiveMarks",
+                                    parseFloat(e.target.value),
+                                  )
+                                }
                                 className="w-full px-2 py-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-md"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-slate-500 mb-0.5">Negative Marks</label>
+                              <label className="block text-slate-500 mb-0.5">
+                                Negative Marks
+                              </label>
                               <input
                                 type="number"
                                 step="0.25"
                                 value={sec.negativeMarks}
-                                onChange={(e) => updateSectionField(sIdx, 'negativeMarks', parseFloat(e.target.value))}
+                                onChange={(e) =>
+                                  updateSectionField(
+                                    sIdx,
+                                    "negativeMarks",
+                                    parseFloat(e.target.value),
+                                  )
+                                }
                                 className="w-full px-2 py-1 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-md"
                               />
                             </div>
@@ -1197,7 +1500,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                         min="1"
                         max="1440"
                         value={formDurationMinutes}
-                        onChange={(e) => setFormDurationMinutes(parseInt(e.target.value, 10))}
+                        onChange={(e) =>
+                          setFormDurationMinutes(parseInt(e.target.value, 10))
+                        }
                         className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                       />
                     </div>
@@ -1211,13 +1516,15 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                         min="1"
                         placeholder="Unlimited"
                         value={formMaxAttempts}
-                        onChange={(e) => setFormMaxAttempts(parseInt(e.target.value, 10))}
+                        onChange={(e) =>
+                          setFormMaxAttempts(parseInt(e.target.value, 10))
+                        }
                         className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
                       />
                     </div>
                   </div>
 
-                  {formTestMode !== 'full' && (
+                  {formTestMode !== "full" && (
                     <div className="p-4 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-700 rounded-2xl space-y-3">
                       <div className="space-y-1">
                         <label className="block font-semibold text-slate-700 dark:text-zinc-300">
@@ -1228,7 +1535,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           step="0.25"
                           min="0.25"
                           value={formPositiveMarks}
-                          onChange={(e) => setFormPositiveMarks(parseFloat(e.target.value))}
+                          onChange={(e) =>
+                            setFormPositiveMarks(parseFloat(e.target.value))
+                          }
                           className="w-full sm:w-1/2 px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100"
                         />
                       </div>
@@ -1238,10 +1547,15 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                           type="checkbox"
                           id="negMarkCb"
                           checked={formNegativeMarkingEnabled}
-                          onChange={(e) => setFormNegativeMarkingEnabled(e.target.checked)}
+                          onChange={(e) =>
+                            setFormNegativeMarkingEnabled(e.target.checked)
+                          }
                           className="w-4 h-4 rounded-sm border-slate-300 text-blue-600 focus:ring-blue-500"
                         />
-                        <label htmlFor="negMarkCb" className="font-semibold text-slate-700 dark:text-zinc-300">
+                        <label
+                          htmlFor="negMarkCb"
+                          className="font-semibold text-slate-700 dark:text-zinc-300"
+                        >
                           Enable Negative Marking Penalty
                         </label>
                       </div>
@@ -1256,7 +1570,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                             step="0.05"
                             min="0"
                             value={formNegativeMarks}
-                            onChange={(e) => setFormNegativeMarks(parseFloat(e.target.value))}
+                            onChange={(e) =>
+                              setFormNegativeMarks(parseFloat(e.target.value))
+                            }
                             className="w-full sm:w-1/2 px-3 py-1.5 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-900 dark:text-zinc-100"
                           />
                         </div>
@@ -1276,36 +1592,49 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                   <div className="p-4 bg-slate-50 dark:bg-zinc-800/60 border border-slate-200 dark:border-zinc-700 rounded-2xl space-y-2.5 text-xs">
                     <div className="flex justify-between py-1 border-b border-slate-200 dark:border-zinc-700">
                       <span className="text-slate-500">Test Title:</span>
-                      <span className="font-bold text-slate-900 dark:text-zinc-100">{formTitle}</span>
+                      <span className="font-bold text-slate-900 dark:text-zinc-100">
+                        {formTitle}
+                      </span>
                     </div>
 
                     <div className="flex justify-between py-1 border-b border-slate-200 dark:border-zinc-700">
                       <span className="text-slate-500">Test Mode:</span>
-                      <span className="font-bold uppercase text-blue-600">{formTestMode} Test</span>
+                      <span className="font-bold uppercase text-blue-600">
+                        {formTestMode} Test
+                      </span>
                     </div>
 
                     <div className="flex justify-between py-1 border-b border-slate-200 dark:border-zinc-700">
                       <span className="text-slate-500">Access Tier:</span>
-                      <span className="font-bold uppercase text-emerald-600">{formAccess}</span>
+                      <span className="font-bold uppercase text-emerald-600">
+                        {formAccess}
+                      </span>
                     </div>
 
                     <div className="flex justify-between py-1 border-b border-slate-200 dark:border-zinc-700">
                       <span className="text-slate-500">Duration:</span>
-                      <span className="font-bold">{formDurationMinutes} Minutes</span>
+                      <span className="font-bold">
+                        {formDurationMinutes} Minutes
+                      </span>
                     </div>
 
                     <div className="flex justify-between py-1 border-b border-slate-200 dark:border-zinc-700">
                       <span className="text-slate-500">Languages:</span>
-                      <span>{formLanguages.join(', ')}</span>
+                      <span>{formLanguages.join(", ")}</span>
                     </div>
 
-                    {formTestMode === 'full' ? (
+                    {formTestMode === "full" ? (
                       <div className="py-1">
-                        <span className="text-slate-500 block mb-1">Sections ({formSections.length}):</span>
+                        <span className="text-slate-500 block mb-1">
+                          Sections ({formSections.length}):
+                        </span>
                         <ul className="list-disc pl-4 space-y-0.5 text-[11px]">
                           {formSections.map((s, idx) => (
                             <li key={idx}>
-                              <strong>{s.name}</strong>: {s.questions?.length || s.requiredQuestionCount} questions (+{s.positiveMarks} / -{s.negativeMarks})
+                              <strong>{s.name}</strong>:{" "}
+                              {s.questions?.length || s.requiredQuestionCount}{" "}
+                              questions (+{s.positiveMarks} / -{s.negativeMarks}
+                              )
                             </li>
                           ))}
                         </ul>
@@ -1314,7 +1643,8 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                       <div className="flex justify-between py-1 border-b border-slate-200 dark:border-zinc-700">
                         <span className="text-slate-500">Questions:</span>
                         <span className="font-bold">
-                          {formSelectedQuestionIds.length} questions ({formSelectionMode})
+                          {formSelectedQuestionIds.length} questions (
+                          {formSelectionMode})
                         </span>
                       </div>
                     )}
@@ -1338,7 +1668,9 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                 {wizardStep < 6 ? (
                   <button
                     type="button"
-                    onClick={() => setWizardStep((prev) => Math.min(6, prev + 1))}
+                    onClick={() =>
+                      setWizardStep((prev) => Math.min(6, prev + 1))
+                    }
                     className="px-5 py-2 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-xl font-semibold shadow-xs cursor-pointer"
                   >
                     Next Step →
@@ -1351,7 +1683,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                       onClick={() => handleSaveTest(false)}
                       className="px-4 py-2 border border-slate-300 dark:border-zinc-700 rounded-xl font-semibold text-slate-800 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-700 cursor-pointer"
                     >
-                      {isSaving ? 'Saving...' : 'Save Draft'}
+                      {isSaving ? "Saving..." : "Save Draft"}
                     </button>
 
                     {isAdmin && (
@@ -1361,7 +1693,7 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                         onClick={() => handleSaveTest(true)}
                         className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold shadow-xs cursor-pointer"
                       >
-                        {isSaving ? 'Saving...' : 'Publish Test'}
+                        {isSaving ? "Saving..." : "Publish Test"}
                       </button>
                     )}
                   </>
@@ -1398,9 +1730,13 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
 
             <div className="flex-1 overflow-y-auto p-4 space-y-2 text-xs">
               {isLoadingBankQuestions ? (
-                <div className="py-12 text-center text-slate-500">Loading eligible questions...</div>
+                <div className="py-12 text-center text-slate-500">
+                  Loading eligible questions...
+                </div>
               ) : bankQuestions.length === 0 ? (
-                <div className="py-12 text-center text-slate-500">No questions found in this scope.</div>
+                <div className="py-12 text-center text-slate-500">
+                  No questions found in this scope.
+                </div>
               ) : (
                 bankQuestions.map((q) => {
                   const qId = q.id || q._id!;
@@ -1411,8 +1747,8 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                       onClick={() => handleTogglePickerSelection(qId)}
                       className={`p-3 rounded-xl border flex items-start gap-3 cursor-pointer transition ${
                         isChecked
-                          ? 'bg-blue-50/70 dark:bg-blue-950/30 border-blue-400 dark:border-blue-800'
-                          : 'bg-slate-50 dark:bg-zinc-800/40 border-slate-200 dark:border-zinc-700'
+                          ? "bg-blue-50/70 dark:bg-blue-950/30 border-blue-400 dark:border-blue-800"
+                          : "bg-slate-50 dark:bg-zinc-800/40 border-slate-200 dark:border-zinc-700"
                       }`}
                     >
                       <input
@@ -1423,10 +1759,16 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-slate-700 dark:text-zinc-300">{q.subject}</span>
-                          <span className="text-[10px] uppercase font-bold text-slate-400">{q.difficulty}</span>
+                          <span className="font-semibold text-slate-700 dark:text-zinc-300">
+                            {q.subject}
+                          </span>
+                          <span className="text-[10px] uppercase font-bold text-slate-400">
+                            {q.difficulty}
+                          </span>
                         </div>
-                        <p className="text-slate-900 dark:text-zinc-100 font-medium">{q.content}</p>
+                        <p className="text-slate-900 dark:text-zinc-100 font-medium">
+                          {q.content}
+                        </p>
                       </div>
                     </div>
                   );
@@ -1453,7 +1795,6 @@ export function TestBuilderManager({ currentUserRole, initialSeriesId }: TestBui
           </div>
         </div>
       )}
-
     </div>
   );
 }

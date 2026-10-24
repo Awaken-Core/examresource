@@ -138,7 +138,9 @@ export class TestSeriesService {
       slug: input.slug.toLowerCase(),
     });
     if (existingSlug) {
-      throw new ConflictException('A test series with this slug already exists.');
+      throw new ConflictException(
+        'A test series with this slug already exists.',
+      );
     }
 
     // Only admins can publish directly; editors create as draft
@@ -164,11 +166,17 @@ export class TestSeriesService {
         _id: { $ne: existing._id },
       });
       if (slugTaken) {
-        throw new ConflictException('A test series with this slug already exists.');
+        throw new ConflictException(
+          'A test series with this slug already exists.',
+        );
       }
     }
 
-    if (input.status && input.status !== existing.status && user.role !== 'admin') {
+    if (
+      input.status &&
+      input.status !== existing.status &&
+      user.role !== 'admin'
+    ) {
       throw new ForbiddenException(
         'Only administrators can publish or archive a test series.',
       );
@@ -180,11 +188,7 @@ export class TestSeriesService {
     }
 
     const updated = await this.testSeriesModel
-      .findByIdAndUpdate(
-        existing._id,
-        { $set: updatePayload },
-        { new: true },
-      )
+      .findByIdAndUpdate(existing._id, { $set: updatePayload }, { new: true })
       .lean();
 
     if (!updated) {
@@ -202,11 +206,7 @@ export class TestSeriesService {
     const existing = await this.findSeriesById(id);
 
     const updated = await this.testSeriesModel
-      .findByIdAndUpdate(
-        existing._id,
-        { $set: { status } },
-        { new: true },
-      )
+      .findByIdAndUpdate(existing._id, { $set: { status } }, { new: true })
       .lean();
 
     if (!updated) {
@@ -220,11 +220,14 @@ export class TestSeriesService {
     const existing = await this.findSeriesById(id);
 
     // Safety checks against dependent items
-    const [dependentTests, dependentChapters, dependentMappings] = await Promise.all([
-      this.examModel.countDocuments({ testSeriesId: existing._id }),
-      this.chapterModel.countDocuments({ testSeriesId: existing._id }),
-      this.questionMappingModel.countDocuments({ testSeriesId: existing._id }),
-    ]);
+    const [dependentTests, dependentChapters, dependentMappings] =
+      await Promise.all([
+        this.examModel.countDocuments({ testSeriesId: existing._id }),
+        this.chapterModel.countDocuments({ testSeriesId: existing._id }),
+        this.questionMappingModel.countDocuments({
+          testSeriesId: existing._id,
+        }),
+      ]);
 
     if (dependentTests > 0 || dependentChapters > 0 || dependentMappings > 0) {
       throw new ConflictException(
@@ -233,7 +236,9 @@ export class TestSeriesService {
     }
 
     // Clean up subject associations for this series
-    await this.testSeriesSubjectModel.deleteMany({ testSeriesId: existing._id });
+    await this.testSeriesSubjectModel.deleteMany({
+      testSeriesId: existing._id,
+    });
     await this.testSeriesModel.findByIdAndDelete(existing._id);
   }
 
@@ -284,7 +289,11 @@ export class TestSeriesService {
     return this.formatSubject(created.toObject());
   }
 
-  async updateSubject(id: string, input: UpdateSubjectInput, user: CurrentUser) {
+  async updateSubject(
+    id: string,
+    input: UpdateSubjectInput,
+    user: CurrentUser,
+  ) {
     this.assertEditor(user);
     const existing = await this.findSubjectById(id);
 
@@ -312,11 +321,7 @@ export class TestSeriesService {
     if (input.slug) updatePayload.slug = input.slug.toLowerCase();
 
     const updated = await this.subjectModel
-      .findByIdAndUpdate(
-        existing._id,
-        { $set: updatePayload },
-        { new: true },
-      )
+      .findByIdAndUpdate(existing._id, { $set: updatePayload }, { new: true })
       .lean();
 
     if (!updated) {
@@ -330,13 +335,17 @@ export class TestSeriesService {
     const existing = await this.findSubjectById(id);
 
     // Safe deletion: verify no active usages
-    const [assignedSeries, dependentTests, dependentChapters, dependentMappings] =
-      await Promise.all([
-        this.testSeriesSubjectModel.countDocuments({ subjectId: existing._id }),
-        this.examModel.countDocuments({ subjectId: existing._id }),
-        this.chapterModel.countDocuments({ subjectId: existing._id }),
-        this.questionMappingModel.countDocuments({ subjectId: existing._id }),
-      ]);
+    const [
+      assignedSeries,
+      dependentTests,
+      dependentChapters,
+      dependentMappings,
+    ] = await Promise.all([
+      this.testSeriesSubjectModel.countDocuments({ subjectId: existing._id }),
+      this.examModel.countDocuments({ subjectId: existing._id }),
+      this.chapterModel.countDocuments({ subjectId: existing._id }),
+      this.questionMappingModel.countDocuments({ subjectId: existing._id }),
+    ]);
 
     if (
       assignedSeries > 0 ||
@@ -365,9 +374,7 @@ export class TestSeriesService {
       .populate<{ subjectId: SubjectDocument }>('subjectId')
       .lean();
 
-    const subjectIds = assignments
-      .map((a) => a.subjectId?._id)
-      .filter(Boolean);
+    const subjectIds = assignments.map((a) => a.subjectId?._id).filter(Boolean);
 
     // Fetch chapters for these subjects within this specific TestSeries
     const chapterFilter: Record<string, any> = {
@@ -520,20 +527,21 @@ export class TestSeriesService {
     }
 
     // Safety checks: ensure no chapters, tests, or question mappings depend on this series-subject combo
-    const [dependentChapters, dependentTests, dependentMappings] = await Promise.all([
-      this.chapterModel.countDocuments({
-        testSeriesId: series._id,
-        subjectId: subject._id,
-      }),
-      this.examModel.countDocuments({
-        testSeriesId: series._id,
-        subjectId: subject._id,
-      }),
-      this.questionMappingModel.countDocuments({
-        testSeriesId: series._id,
-        subjectId: subject._id,
-      }),
-    ]);
+    const [dependentChapters, dependentTests, dependentMappings] =
+      await Promise.all([
+        this.chapterModel.countDocuments({
+          testSeriesId: series._id,
+          subjectId: subject._id,
+        }),
+        this.examModel.countDocuments({
+          testSeriesId: series._id,
+          subjectId: subject._id,
+        }),
+        this.questionMappingModel.countDocuments({
+          testSeriesId: series._id,
+          subjectId: subject._id,
+        }),
+      ]);
 
     if (dependentChapters > 0 || dependentTests > 0 || dependentMappings > 0) {
       throw new ConflictException(
@@ -548,11 +556,7 @@ export class TestSeriesService {
   // 4. EXAM-SPECIFIC CHAPTER MANAGEMENT
   // =========================================================================
 
-  async listChapters(
-    seriesId: string,
-    subjectId: string,
-    user?: CurrentUser,
-  ) {
+  async listChapters(seriesId: string, subjectId: string, user?: CurrentUser) {
     const series = await this.findSeriesById(seriesId);
     const subject = await this.findSubjectById(subjectId);
 
@@ -678,11 +682,7 @@ export class TestSeriesService {
     if (input.slug) updatePayload.slug = input.slug.toLowerCase();
 
     const updated = await this.chapterModel
-      .findByIdAndUpdate(
-        chapter._id,
-        { $set: updatePayload },
-        { new: true },
-      )
+      .findByIdAndUpdate(chapter._id, { $set: updatePayload }, { new: true })
       .lean();
 
     if (!updated) {
@@ -756,10 +756,13 @@ export class TestSeriesService {
       subjectId: subject._id,
     });
     if (!isAssigned) {
-      throw new BadRequestException('Subject is not assigned to this test series.');
+      throw new BadRequestException(
+        'Subject is not assigned to this test series.',
+      );
     }
 
-    const isEditorOrAdmin = user && (user.role === 'admin' || user.role === 'editor');
+    const isEditorOrAdmin =
+      user && (user.role === 'admin' || user.role === 'editor');
     if (!isEditorOrAdmin && series.status !== 'published') {
       throw new NotFoundException('Test series was not found.');
     }
@@ -816,9 +819,9 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(input.questionId)) {
       throw new BadRequestException('Invalid question ID.');
     }
-    const question = await this.questionModel.findById(
-      new Types.ObjectId(input.questionId),
-    ).lean();
+    const question = await this.questionModel
+      .findById(new Types.ObjectId(input.questionId))
+      .lean();
     if (!question) {
       throw new NotFoundException('Question was not found.');
     }
@@ -845,11 +848,13 @@ export class TestSeriesService {
         throw new BadRequestException('Invalid chapter ID.');
       }
       chapterObjectId = new Types.ObjectId(input.chapterId);
-      const chapter = await this.chapterModel.findOne({
-        _id: chapterObjectId,
-        testSeriesId: series._id,
-        subjectId: subject._id,
-      }).lean();
+      const chapter = await this.chapterModel
+        .findOne({
+          _id: chapterObjectId,
+          testSeriesId: series._id,
+          subjectId: subject._id,
+        })
+        .lean();
 
       if (!chapter) {
         throw new BadRequestException(
@@ -898,8 +903,11 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(mappingId)) {
       throw new NotFoundException('Question mapping was not found.');
     }
-    const mapping = await this.questionMappingModel.findById(new Types.ObjectId(mappingId));
-    if (!mapping) throw new NotFoundException('Question mapping was not found.');
+    const mapping = await this.questionMappingModel.findById(
+      new Types.ObjectId(mappingId),
+    );
+    if (!mapping)
+      throw new NotFoundException('Question mapping was not found.');
 
     const updatePayload: Record<string, any> = {};
 
@@ -914,11 +922,13 @@ export class TestSeriesService {
         if (!Types.ObjectId.isValid(input.chapterId)) {
           throw new BadRequestException('Invalid chapter ID.');
         }
-        const chapter = await this.chapterModel.findOne({
-          _id: new Types.ObjectId(input.chapterId),
-          testSeriesId: mapping.testSeriesId,
-          subjectId: mapping.subjectId,
-        }).lean();
+        const chapter = await this.chapterModel
+          .findOne({
+            _id: new Types.ObjectId(input.chapterId),
+            testSeriesId: mapping.testSeriesId,
+            subjectId: mapping.subjectId,
+          })
+          .lean();
 
         if (!chapter) {
           throw new BadRequestException(
@@ -942,8 +952,11 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(mappingId)) {
       throw new NotFoundException('Question mapping was not found.');
     }
-    const mapping = await this.questionMappingModel.findById(new Types.ObjectId(mappingId));
-    if (!mapping) throw new NotFoundException('Question mapping was not found.');
+    const mapping = await this.questionMappingModel.findById(
+      new Types.ObjectId(mappingId),
+    );
+    if (!mapping)
+      throw new NotFoundException('Question mapping was not found.');
 
     // Deleting mapping strictly unlinks the relationship; does NOT delete the question
     await this.questionMappingModel.findByIdAndDelete(mapping._id);
@@ -970,40 +983,72 @@ export class TestSeriesService {
       filter.difficulty = query.difficulty;
     }
 
-    if (query.subject && query.subject.trim()) {
-      filter.subject = { $regex: query.subject.trim(), $options: 'i' };
-    }
-
-    if (query.subjectId && Types.ObjectId.isValid(query.subjectId)) {
-      const subjectObjId = new Types.ObjectId(query.subjectId);
-      const sub = await this.subjectModel.findById(subjectObjId).lean();
-      if (sub) {
-        filter.$or = filter.$or || [];
-        filter.$and = filter.$and || [];
-        filter.$and.push({
-          $or: [
-            { subjectId: subjectObjId },
-            { subject: { $regex: `^${sub.name.trim()}$`, $options: 'i' } },
-          ],
-        });
-      } else {
-        filter.subjectId = subjectObjId;
+    if (query.testSeriesId) {
+      if (!Types.ObjectId.isValid(query.testSeriesId)) {
+        throw new BadRequestException('Invalid test series ID.');
       }
-    }
+      const mappingFilter: Record<string, any> = {
+        testSeriesId: new Types.ObjectId(query.testSeriesId),
+      };
+      if (query.subjectId && Types.ObjectId.isValid(query.subjectId)) {
+        mappingFilter.subjectId = new Types.ObjectId(query.subjectId);
+      }
+      if (query.chapterId && Types.ObjectId.isValid(query.chapterId)) {
+        mappingFilter.chapterId = new Types.ObjectId(query.chapterId);
+      }
+      filter._id = {
+        $in: await this.questionMappingModel.distinct(
+          'questionId',
+          mappingFilter,
+        ),
+      };
+    } else {
+      if (query.subject && query.subject.trim()) {
+        filter.subject = { $regex: query.subject.trim(), $options: 'i' };
+      }
 
-    if (query.chapterId && Types.ObjectId.isValid(query.chapterId)) {
-      const chapterObjId = new Types.ObjectId(query.chapterId);
-      const chap = await this.chapterModel.findById(chapterObjId).lean();
-      if (chap) {
-        filter.$and = filter.$and || [];
-        filter.$and.push({
-          $or: [
-            { chapterId: chapterObjId },
-            { topic: { $regex: `^${chap.name.trim()}$`, $options: 'i' } },
-          ],
-        });
-      } else {
-        filter.chapterId = chapterObjId;
+      if (query.subjectId && Types.ObjectId.isValid(query.subjectId)) {
+        const subjectObjId = new Types.ObjectId(query.subjectId);
+        const sub = await this.subjectModel.findById(subjectObjId).lean();
+        if (sub) {
+          filter.$or = filter.$or || [];
+          filter.$and = filter.$and || [];
+          filter.$and.push({
+            $or: [
+              { subjectId: subjectObjId },
+              { subject: { $regex: `^${sub.name.trim()}$`, $options: 'i' } },
+            ],
+          });
+        } else {
+          filter.subjectId = subjectObjId;
+        }
+      }
+
+      if (query.chapterId && Types.ObjectId.isValid(query.chapterId)) {
+        const chapterObjId = new Types.ObjectId(query.chapterId);
+        const chap = await this.chapterModel.findById(chapterObjId).lean();
+        if (chap) {
+          const mappingFilter: Record<string, any> = {
+            chapterId: chapterObjId,
+          };
+          if (query.subjectId && Types.ObjectId.isValid(query.subjectId)) {
+            mappingFilter.subjectId = new Types.ObjectId(query.subjectId);
+          }
+          const mappedQuestionIds = await this.questionMappingModel.distinct(
+            'questionId',
+            mappingFilter,
+          );
+          filter.$and = filter.$and || [];
+          filter.$and.push({
+            $or: [
+              { chapterId: chapterObjId },
+              { topic: { $regex: `^${chap.name.trim()}$`, $options: 'i' } },
+              { _id: { $in: mappedQuestionIds } },
+            ],
+          });
+        } else {
+          filter.chapterId = chapterObjId;
+        }
       }
     }
 
@@ -1070,7 +1115,9 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(id)) {
       throw new NotFoundException('Test series was not found.');
     }
-    const doc = await this.testSeriesModel.findById(new Types.ObjectId(id)).lean();
+    const doc = await this.testSeriesModel
+      .findById(new Types.ObjectId(id))
+      .lean();
     if (!doc) throw new NotFoundException('Test series was not found.');
     return doc;
   }
@@ -1095,13 +1142,17 @@ export class TestSeriesService {
 
   private assertEditor(user: CurrentUser) {
     if (user.role !== 'editor' && user.role !== 'admin') {
-      throw new ForbiddenException('Editor or administrator access is required.');
+      throw new ForbiddenException(
+        'Editor or administrator access is required.',
+      );
     }
   }
 
   private assertAdmin(user: CurrentUser) {
     if (user.role !== 'admin') {
-      throw new ForbiddenException('Administrator access is required for this action.');
+      throw new ForbiddenException(
+        'Administrator access is required for this action.',
+      );
     }
   }
 
@@ -1288,12 +1339,16 @@ export class TestSeriesService {
       .lean();
 
     if (!doc) {
-      throw new NotFoundException('Test was not found or is currently unavailable.');
+      throw new NotFoundException(
+        'Test was not found or is currently unavailable.',
+      );
     }
 
     // Ensure parent series is published
     if (doc.testSeriesId) {
-      const series = await this.testSeriesModel.findById(doc.testSeriesId).lean();
+      const series = await this.testSeriesModel
+        .findById(doc.testSeriesId)
+        .lean();
       if (!series || series.status !== 'published') {
         throw new NotFoundException('Test series was not found.');
       }
@@ -1343,12 +1398,17 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(testId)) {
       throw new NotFoundException('Test was not found.');
     }
-    const doc = await this.examModel.findById(new Types.ObjectId(testId)).lean();
+    const doc = await this.examModel
+      .findById(new Types.ObjectId(testId))
+      .lean();
     if (!doc) throw new NotFoundException('Test was not found.');
     return this.formatIndividualTest(doc, true);
   }
 
-  async createIndividualTest(input: CreateIndividualTestInput, user: CurrentUser) {
+  async createIndividualTest(
+    input: CreateIndividualTestInput,
+    user: CurrentUser,
+  ) {
     this.assertEditor(user);
 
     // 1. Verify parent TestSeries exists
@@ -1416,11 +1476,15 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(testId)) {
       throw new NotFoundException('Test was not found.');
     }
-    const test = await this.examModel.findById(new Types.ObjectId(testId)).lean();
+    const test = await this.examModel
+      .findById(new Types.ObjectId(testId))
+      .lean();
     if (!test) throw new NotFoundException('Test was not found.');
 
     if (test.testMode === 'legacy') {
-      throw new BadRequestException('Legacy exams cannot be managed through the test series individual test builder.');
+      throw new BadRequestException(
+        'Legacy exams cannot be managed through the test series individual test builder.',
+      );
     }
 
     if (test.status === 'published') {
@@ -1429,13 +1493,18 @@ export class TestSeriesService {
       );
     }
 
-    const testMode = (input.testMode ?? test.testMode) as 'subject' | 'chapter' | 'full';
+    const testMode = (input.testMode ?? test.testMode) as
+      'subject' | 'chapter' | 'full';
     const seriesId = test.testSeriesId!;
 
     let subjectId = test.subjectId ?? null;
     let chapterId = test.chapterId ?? null;
 
-    if (input.subjectId !== undefined || input.chapterId !== undefined || input.testMode !== undefined) {
+    if (
+      input.subjectId !== undefined ||
+      input.chapterId !== undefined ||
+      input.testMode !== undefined
+    ) {
       const validated = await this.validateTestHierarchy(
         seriesId,
         testMode,
@@ -1451,7 +1520,11 @@ export class TestSeriesService {
     let sectionsPayload = test.sections;
     let totalQuestionsCount = test.totalQuestionsCount;
 
-    if (input.questions !== undefined || input.sections !== undefined || input.questionSelectionMode !== undefined) {
+    if (
+      input.questions !== undefined ||
+      input.sections !== undefined ||
+      input.questionSelectionMode !== undefined
+    ) {
       const assembled = await this.assembleAndValidateTestQuestions({
         seriesId,
         testMode,
@@ -1472,20 +1545,29 @@ export class TestSeriesService {
 
     const updatePayload: Record<string, any> = {};
     if (input.title !== undefined) updatePayload.title = input.title;
-    if (input.description !== undefined) updatePayload.description = input.description;
+    if (input.description !== undefined)
+      updatePayload.description = input.description;
     if (input.access !== undefined) updatePayload.access = input.access;
-    if (input.durationMinutes !== undefined) updatePayload.durationMinutes = input.durationMinutes;
-    if (input.maxAttempts !== undefined) updatePayload.maxAttempts = input.maxAttempts;
-    if (input.languages !== undefined) updatePayload.languages = input.languages;
-    if (input.instructions !== undefined) updatePayload.instructions = input.instructions;
-    if (input.positiveMarks !== undefined) updatePayload.positiveMarks = input.positiveMarks;
+    if (input.durationMinutes !== undefined)
+      updatePayload.durationMinutes = input.durationMinutes;
+    if (input.maxAttempts !== undefined)
+      updatePayload.maxAttempts = input.maxAttempts;
+    if (input.languages !== undefined)
+      updatePayload.languages = input.languages;
+    if (input.instructions !== undefined)
+      updatePayload.instructions = input.instructions;
+    if (input.positiveMarks !== undefined)
+      updatePayload.positiveMarks = input.positiveMarks;
     if (input.negativeMarkingEnabled !== undefined) {
       updatePayload.negativeMarkingEnabled = input.negativeMarkingEnabled;
       if (!input.negativeMarkingEnabled) {
         updatePayload.negativeMarks = 0;
       }
     }
-    if (input.negativeMarks !== undefined && (input.negativeMarkingEnabled ?? test.negativeMarkingEnabled)) {
+    if (
+      input.negativeMarks !== undefined &&
+      (input.negativeMarkingEnabled ?? test.negativeMarkingEnabled)
+    ) {
       updatePayload.negativeMarks = input.negativeMarks;
     }
     if (input.questionSelectionMode !== undefined) {
@@ -1498,10 +1580,14 @@ export class TestSeriesService {
       updatePayload.questionSetMode = input.questionSetMode;
     }
     if (input.availableFrom !== undefined) {
-      updatePayload.availableFrom = input.availableFrom ? new Date(input.availableFrom) : null;
+      updatePayload.availableFrom = input.availableFrom
+        ? new Date(input.availableFrom)
+        : null;
     }
     if (input.availableTo !== undefined) {
-      updatePayload.availableTo = input.availableTo ? new Date(input.availableTo) : null;
+      updatePayload.availableTo = input.availableTo
+        ? new Date(input.availableTo)
+        : null;
     }
 
     updatePayload.testMode = testMode;
@@ -1528,7 +1614,9 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(testId)) {
       throw new NotFoundException('Test was not found.');
     }
-    const test = await this.examModel.findById(new Types.ObjectId(testId)).lean();
+    const test = await this.examModel
+      .findById(new Types.ObjectId(testId))
+      .lean();
     if (!test) throw new NotFoundException('Test was not found.');
 
     if (input.status === test.status) {
@@ -1536,7 +1624,9 @@ export class TestSeriesService {
     }
 
     if (test.testMode === 'legacy') {
-      throw new BadRequestException('Legacy exams cannot be published via test series builder.');
+      throw new BadRequestException(
+        'Legacy exams cannot be published via test series builder.',
+      );
     }
 
     if (input.status === 'published') {
@@ -1619,7 +1709,9 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(testId)) {
       throw new NotFoundException('Test was not found.');
     }
-    const sourceTest = await this.examModel.findById(new Types.ObjectId(testId)).lean();
+    const sourceTest = await this.examModel
+      .findById(new Types.ObjectId(testId))
+      .lean();
     if (!sourceTest) throw new NotFoundException('Test was not found.');
 
     if (sourceTest.status !== 'published') {
@@ -1727,7 +1819,9 @@ export class TestSeriesService {
     if (!Types.ObjectId.isValid(testId)) {
       throw new NotFoundException('Test was not found.');
     }
-    const test = await this.examModel.findById(new Types.ObjectId(testId)).lean();
+    const test = await this.examModel
+      .findById(new Types.ObjectId(testId))
+      .lean();
     if (!test) throw new NotFoundException('Test was not found.');
 
     const rootTestId = test.parentTestId || test._id;
@@ -1767,7 +1861,9 @@ export class TestSeriesService {
   }> {
     if (testMode === 'subject') {
       if (!subjectIdStr || !Types.ObjectId.isValid(subjectIdStr)) {
-        throw new BadRequestException('A valid subjectId is required for a subject-wise test.');
+        throw new BadRequestException(
+          'A valid subjectId is required for a subject-wise test.',
+        );
       }
       const subjectObjectId = new Types.ObjectId(subjectIdStr);
       const isAssigned = await this.testSeriesSubjectModel.exists({
@@ -1775,17 +1871,23 @@ export class TestSeriesService {
         subjectId: subjectObjectId,
       });
       if (!isAssigned) {
-        throw new BadRequestException('The selected subject is not assigned to this test series.');
+        throw new BadRequestException(
+          'The selected subject is not assigned to this test series.',
+        );
       }
       return { subjectId: subjectObjectId, chapterId: null };
     }
 
     if (testMode === 'chapter') {
       if (!subjectIdStr || !Types.ObjectId.isValid(subjectIdStr)) {
-        throw new BadRequestException('A valid subjectId is required for a chapter-wise test.');
+        throw new BadRequestException(
+          'A valid subjectId is required for a chapter-wise test.',
+        );
       }
       if (!chapterIdStr || !Types.ObjectId.isValid(chapterIdStr)) {
-        throw new BadRequestException('A valid chapterId is required for a chapter-wise test.');
+        throw new BadRequestException(
+          'A valid chapterId is required for a chapter-wise test.',
+        );
       }
       const subjectObjectId = new Types.ObjectId(subjectIdStr);
       const chapterObjectId = new Types.ObjectId(chapterIdStr);
@@ -1795,14 +1897,18 @@ export class TestSeriesService {
         subjectId: subjectObjectId,
       });
       if (!isAssigned) {
-        throw new BadRequestException('The selected subject is not assigned to this test series.');
+        throw new BadRequestException(
+          'The selected subject is not assigned to this test series.',
+        );
       }
 
-      const chapter = await this.chapterModel.findOne({
-        _id: chapterObjectId,
-        testSeriesId: seriesId,
-        subjectId: subjectObjectId,
-      }).lean();
+      const chapter = await this.chapterModel
+        .findOne({
+          _id: chapterObjectId,
+          testSeriesId: seriesId,
+          subjectId: subjectObjectId,
+        })
+        .lean();
 
       if (!chapter) {
         throw new BadRequestException(
@@ -1829,11 +1935,14 @@ export class TestSeriesService {
     sections: any[];
     totalQuestionsCount: number;
   }> {
-    const { seriesId, testMode, subjectId, chapterId, input, isPublishing } = params;
+    const { seriesId, testMode, subjectId, chapterId, input, isPublishing } =
+      params;
 
     if (testMode === 'full') {
       if (!input.sections || input.sections.length === 0) {
-        throw new BadRequestException('A Full Test must contain at least one section.');
+        throw new BadRequestException(
+          'A Full Test must contain at least one section.',
+        );
       }
 
       const processedSections: any[] = [];
@@ -1847,7 +1956,9 @@ export class TestSeriesService {
 
         if (sec.subjectId) {
           if (!Types.ObjectId.isValid(sec.subjectId)) {
-            throw new BadRequestException(`Invalid subjectId in section "${sec.name}".`);
+            throw new BadRequestException(
+              `Invalid subjectId in section "${sec.name}".`,
+            );
           }
           secSubjectId = new Types.ObjectId(sec.subjectId);
           const isAssigned = await this.testSeriesSubjectModel.exists({
@@ -1868,7 +1979,9 @@ export class TestSeriesService {
             );
           }
           if (!Types.ObjectId.isValid(sec.chapterId)) {
-            throw new BadRequestException(`Invalid chapterId in section "${sec.name}".`);
+            throw new BadRequestException(
+              `Invalid chapterId in section "${sec.name}".`,
+            );
           }
           secChapterId = new Types.ObjectId(sec.chapterId);
           const chapterExists = await this.chapterModel.exists({
@@ -1889,14 +2002,17 @@ export class TestSeriesService {
           subjectId: secSubjectId,
           chapterId: secChapterId,
           selectionMode: sec.selectionMode,
-          requiredCount: sec.requiredQuestionCount ?? sec.questions?.length ?? 0,
+          requiredCount:
+            sec.requiredQuestionCount ?? sec.questions?.length ?? 0,
           manualQuestions: sec.questions || [],
           isPublishing,
           existingUsedIds: globalUsedQuestionIds,
         });
 
         // Add questions to global uniqueness tracker
-        sectionQuestions.forEach((q) => globalUsedQuestionIds.add(q.questionId.toString()));
+        sectionQuestions.forEach((q) =>
+          globalUsedQuestionIds.add(q.questionId.toString()),
+        );
 
         processedSections.push({
           name: sec.name,
@@ -1911,7 +2027,8 @@ export class TestSeriesService {
           selectionMode: sec.selectionMode,
           questionOrderMode: sec.questionOrderMode,
           questionSetMode: sec.questionSetMode,
-          requiredQuestionCount: sec.requiredQuestionCount ?? sectionQuestions.length,
+          requiredQuestionCount:
+            sec.requiredQuestionCount ?? sectionQuestions.length,
           questions: sectionQuestions,
         });
       }
@@ -1972,7 +2089,9 @@ export class TestSeriesService {
     if (selectionMode === 'manual') {
       if (manualQuestions.length === 0) {
         if (isPublishing) {
-          throw new BadRequestException('A test must contain at least one question to be published.');
+          throw new BadRequestException(
+            'A test must contain at least one question to be published.',
+          );
         }
         return [];
       }
@@ -1981,7 +2100,9 @@ export class TestSeriesService {
       // Check for duplicates in the current input
       const uniqueIds = new Set(questionIds);
       if (uniqueIds.size !== questionIds.length) {
-        throw new BadRequestException('Duplicate question IDs found within the same test paper.');
+        throw new BadRequestException(
+          'Duplicate question IDs found within the same test paper.',
+        );
       }
 
       // Check for collision across sections in full test
@@ -2014,7 +2135,9 @@ export class TestSeriesService {
         .select('questionId')
         .lean();
 
-      const mappedIds = new Set(validMappings.map((m) => m.questionId.toString()));
+      const mappedIds = new Set(
+        validMappings.map((m) => m.questionId.toString()),
+      );
       for (const id of questionIds) {
         if (!mappedIds.has(id)) {
           throw new BadRequestException(
@@ -2037,7 +2160,9 @@ export class TestSeriesService {
         const doc = docMap.get(item.questionId);
 
         if (!doc) {
-          throw new NotFoundException(`Question ${item.questionId} was not found.`);
+          throw new NotFoundException(
+            `Question ${item.questionId} was not found.`,
+          );
         }
         if (doc.status !== 'published') {
           throw new BadRequestException(
@@ -2065,7 +2190,9 @@ export class TestSeriesService {
     // AUTOMATIC SELECTION
     if (requiredCount <= 0) {
       if (isPublishing) {
-        throw new BadRequestException('Configured question count must be greater than 0.');
+        throw new BadRequestException(
+          'Configured question count must be greater than 0.',
+        );
       }
       return [];
     }
@@ -2166,7 +2293,9 @@ export class TestSeriesService {
       parentTestId: doc.parentTestId ? doc.parentTestId.toString() : null,
       availableFrom: doc.availableFrom || null,
       availableTo: doc.availableTo || null,
-      createdBy: includeInternalDetails ? doc.createdBy?.toString() || null : undefined,
+      createdBy: includeInternalDetails
+        ? doc.createdBy?.toString() || null
+        : undefined,
       sections: (doc.sections || []).map((s: any) => ({
         id: s._id?.toString(),
         name: s.name,
@@ -2193,21 +2322,24 @@ export class TestSeriesService {
             }))
           : undefined,
       })),
-      questions: isSubjectOrChapter && includeInternalDetails
-        ? (doc.questions || []).map((q: any) => ({
-            questionId: q.questionId.toString(),
-            position: q.position,
-            marks: q.marks,
-            negativeMarks: q.negativeMarks,
-            snapshot: q.snapshot || null,
-          }))
-        : undefined,
+      questions:
+        isSubjectOrChapter && includeInternalDetails
+          ? (doc.questions || []).map((q: any) => ({
+              questionId: q.questionId.toString(),
+              position: q.position,
+              marks: q.marks,
+              negativeMarks: q.negativeMarks,
+              snapshot: q.snapshot || null,
+            }))
+          : undefined,
       questionsCount: isSubjectOrChapter
         ? (doc.questions || []).length
-        : (doc.sections || []).reduce((acc: number, s: any) => acc + (s.questions || []).length, 0),
+        : (doc.sections || []).reduce(
+            (acc: number, s: any) => acc + (s.questions || []).length,
+            0,
+          ),
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     };
   }
 }
-

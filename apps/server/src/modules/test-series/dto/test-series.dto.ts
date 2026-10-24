@@ -9,14 +9,20 @@ export const createTestSeriesSchema = z.object({
     .trim()
     .min(2)
     .max(150)
-    .regex(slugRegex, 'Slug must contain only lowercase alphanumeric characters and hyphens.'),
+    .regex(
+      slugRegex,
+      'Slug must contain only lowercase alphanumeric characters and hyphens.',
+    ),
   description: z.string().trim().max(5_000).nullable().optional(),
   targetExam: z.string().trim().min(1).max(100),
   category: z.string().trim().min(1).max(100),
   organization: z.string().trim().max(200).nullable().optional(),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
   accessType: z.enum(['free', 'premium', 'freemium']).default('free'),
-  supportedLanguages: z.array(z.string().trim().min(1)).min(1).default(['Hindi', 'English']),
+  supportedLanguages: z
+    .array(z.string().trim().min(1))
+    .min(1)
+    .default(['Hindi', 'English']),
   badge: z.string().trim().max(50).nullable().optional(),
   logoUrl: z.string().trim().max(2_000).nullable().optional(),
   order: z.number().int().min(0).default(0),
@@ -36,7 +42,10 @@ export const createSubjectSchema = z.object({
     .trim()
     .min(2)
     .max(150)
-    .regex(slugRegex, 'Slug must contain only lowercase alphanumeric characters and hyphens.'),
+    .regex(
+      slugRegex,
+      'Slug must contain only lowercase alphanumeric characters and hyphens.',
+    ),
   description: z.string().trim().max(2_000).nullable().optional(),
   iconUrl: z.string().trim().max(2_000).nullable().optional(),
 });
@@ -54,13 +63,15 @@ export const assignSubjectSchema = z.object({
   customDisplayName: z.string().trim().max(150).nullable().optional(),
 });
 
-export const updateSubjectAssignmentSchema = z.object({
-  order: z.number().int().min(0).optional(),
-  customDisplayName: z.string().trim().max(150).nullable().optional(),
-}).refine(
-  (input) => Object.keys(input).length > 0,
-  'At least one field is required for update.',
-);
+export const updateSubjectAssignmentSchema = z
+  .object({
+    order: z.number().int().min(0).optional(),
+    customDisplayName: z.string().trim().max(150).nullable().optional(),
+  })
+  .refine(
+    (input) => Object.keys(input).length > 0,
+    'At least one field is required for update.',
+  );
 
 export const createChapterSchema = z.object({
   name: z.string().trim().min(2).max(150),
@@ -69,37 +80,47 @@ export const createChapterSchema = z.object({
     .trim()
     .min(2)
     .max(150)
-    .regex(slugRegex, 'Slug must contain only lowercase alphanumeric characters and hyphens.'),
+    .regex(
+      slugRegex,
+      'Slug must contain only lowercase alphanumeric characters and hyphens.',
+    ),
   subjectId: z.string().min(1),
   description: z.string().trim().max(2_000).nullable().optional(),
   order: z.number().int().min(0).default(0),
   status: z.enum(['draft', 'published', 'archived']).default('published'),
 });
 
-export const updateChapterSchema = z.object({
-  name: z.string().trim().min(2).max(150).optional(),
-  slug: z
-    .string()
-    .trim()
-    .min(2)
-    .max(150)
-    .regex(slugRegex, 'Slug must contain only lowercase alphanumeric characters and hyphens.')
-    .optional(),
-  description: z.string().trim().max(2_000).nullable().optional(),
-  order: z.number().int().min(0).optional(),
-  status: z.enum(['draft', 'published', 'archived']).optional(),
-}).refine(
-  (input) => Object.keys(input).length > 0,
-  'At least one field is required for update.',
-);
+export const updateChapterSchema = z
+  .object({
+    name: z.string().trim().min(2).max(150).optional(),
+    slug: z
+      .string()
+      .trim()
+      .min(2)
+      .max(150)
+      .regex(
+        slugRegex,
+        'Slug must contain only lowercase alphanumeric characters and hyphens.',
+      )
+      .optional(),
+    description: z.string().trim().max(2_000).nullable().optional(),
+    order: z.number().int().min(0).optional(),
+    status: z.enum(['draft', 'published', 'archived']).optional(),
+  })
+  .refine(
+    (input) => Object.keys(input).length > 0,
+    'At least one field is required for update.',
+  );
 
 export const reorderChaptersSchema = z.object({
-  orders: z.array(
-    z.object({
-      chapterId: z.string().min(1),
-      order: z.number().int().min(0),
-    }),
-  ).min(1),
+  orders: z
+    .array(
+      z.object({
+        chapterId: z.string().min(1),
+        order: z.number().int().min(0),
+      }),
+    )
+    .min(1),
 });
 
 export const createQuestionMappingSchema = z.object({
@@ -110,18 +131,21 @@ export const createQuestionMappingSchema = z.object({
   order: z.number().int().min(0).default(0),
 });
 
-export const updateQuestionMappingSchema = z.object({
-  chapterId: z.string().min(1).nullable().optional(),
-  order: z.number().int().min(0).optional(),
-}).refine(
-  (input) => Object.keys(input).length > 0,
-  'At least one field is required for update.',
-);
+export const updateQuestionMappingSchema = z
+  .object({
+    chapterId: z.string().min(1).nullable().optional(),
+    order: z.number().int().min(0).optional(),
+  })
+  .refine(
+    (input) => Object.keys(input).length > 0,
+    'At least one field is required for update.',
+  );
 
 export const questionBankQuerySchema = z.object({
   search: z.string().trim().optional(),
   type: z.enum(['single_choice', 'multiple_choice', 'numerical']).optional(),
   difficulty: z.enum(['easy', 'medium', 'hard']).optional(),
+  testSeriesId: z.string().trim().optional(),
   subject: z.string().trim().optional(),
   subjectId: z.string().trim().optional(),
   chapterId: z.string().trim().optional(),
@@ -138,12 +162,18 @@ export type UpdateTestSeriesInput = z.infer<typeof updateTestSeriesSchema>;
 export type CreateSubjectInput = z.infer<typeof createSubjectSchema>;
 export type UpdateSubjectInput = z.infer<typeof updateSubjectSchema>;
 export type AssignSubjectInput = z.infer<typeof assignSubjectSchema>;
-export type UpdateSubjectAssignmentInput = z.infer<typeof updateSubjectAssignmentSchema>;
+export type UpdateSubjectAssignmentInput = z.infer<
+  typeof updateSubjectAssignmentSchema
+>;
 export type CreateChapterInput = z.infer<typeof createChapterSchema>;
 export type UpdateChapterInput = z.infer<typeof updateChapterSchema>;
 export type ReorderChaptersInput = z.infer<typeof reorderChaptersSchema>;
-export type CreateQuestionMappingInput = z.infer<typeof createQuestionMappingSchema>;
-export type UpdateQuestionMappingInput = z.infer<typeof updateQuestionMappingSchema>;
+export type CreateQuestionMappingInput = z.infer<
+  typeof createQuestionMappingSchema
+>;
+export type UpdateQuestionMappingInput = z.infer<
+  typeof updateQuestionMappingSchema
+>;
 export type QuestionBankQueryInput = z.infer<typeof questionBankQuerySchema>;
 
 // =========================================================================
@@ -170,7 +200,13 @@ export const testSectionInputSchema = z.object({
   selectionMode: z.enum(['manual', 'automatic']).default('manual'),
   questionOrderMode: z.enum(['fixed', 'randomized']).default('fixed'),
   questionSetMode: z.enum(['fixed', 'random_per_attempt']).default('fixed'),
-  requiredQuestionCount: z.number().int().positive().max(500).nullable().optional(),
+  requiredQuestionCount: z
+    .number()
+    .int()
+    .positive()
+    .max(500)
+    .nullable()
+    .optional(),
   questions: z.array(testQuestionItemInputSchema).default([]),
 });
 
@@ -184,7 +220,10 @@ export const createIndividualTestSchema = z.object({
   access: z.enum(['free', 'premium']).default('free'),
   durationMinutes: z.number().int().positive().max(1_440).nullable().optional(),
   maxAttempts: z.number().int().positive().nullable().optional(),
-  languages: z.array(z.string().trim().min(1)).min(1).default(['Hindi', 'English']),
+  languages: z
+    .array(z.string().trim().min(1))
+    .min(1)
+    .default(['Hindi', 'English']),
   instructions: z.string().trim().max(10_000).nullable().optional(),
   positiveMarks: z.number().positive().max(100).default(1),
   negativeMarkingEnabled: z.boolean().default(false),
@@ -192,7 +231,13 @@ export const createIndividualTestSchema = z.object({
   questionSelectionMode: z.enum(['manual', 'automatic']).default('manual'),
   questionOrderMode: z.enum(['fixed', 'randomized']).default('fixed'),
   questionSetMode: z.enum(['fixed', 'random_per_attempt']).default('fixed'),
-  totalQuestionsCount: z.number().int().positive().max(1_000).nullable().optional(),
+  totalQuestionsCount: z
+    .number()
+    .int()
+    .positive()
+    .max(1_000)
+    .nullable()
+    .optional(),
   availableFrom: z.string().datetime().nullable().optional(),
   availableTo: z.string().datetime().nullable().optional(),
   questions: z.array(testQuestionItemInputSchema).default([]),
@@ -221,7 +266,13 @@ export const listIndividualTestsQuerySchema = z.object({
 
 export type TestQuestionItemInput = z.infer<typeof testQuestionItemInputSchema>;
 export type TestSectionInput = z.infer<typeof testSectionInputSchema>;
-export type CreateIndividualTestInput = z.infer<typeof createIndividualTestSchema>;
-export type UpdateIndividualTestInput = z.infer<typeof updateIndividualTestSchema>;
+export type CreateIndividualTestInput = z.infer<
+  typeof createIndividualTestSchema
+>;
+export type UpdateIndividualTestInput = z.infer<
+  typeof updateIndividualTestSchema
+>;
 export type UpdateTestStatusInput = z.infer<typeof updateTestStatusSchema>;
-export type ListIndividualTestsQueryInput = z.infer<typeof listIndividualTestsQuerySchema>;
+export type ListIndividualTestsQueryInput = z.infer<
+  typeof listIndividualTestsQuerySchema
+>;

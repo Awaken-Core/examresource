@@ -1,0 +1,2322 @@
+[
+  {
+    "content": "Which of the following is an impact printer?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Impact printers create images by physically striking an inked ribbon against paper. Dot-matrix printers function this way, whereas Inkjet and Laser printers use non-impact methods like spraying ink or fusing toner. Consequently, the dot-matrix printer is identified as the valid impact printer.",
+    "options": [
+      {
+        "content": "Inkjet Printer",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Dot-Matrix Printer",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Laser Printer",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Thermal Printer",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is an input device?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Joystick (Input Device): It is used to send signals to computers or gaming consoles (such as controlling movement in gaming).",
+    "options": [
+      {
+        "content": "Plotter",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Printer",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Joystick",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Speaker",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Arrange the following memory units in descending order.\n Gigabyte, Megabyte, Exabyte, Zettabyte, Petabyte, Yottabyte",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "To arrange the memory units in descending order, recall the standard binary prefixes used for digital storage:\nThe units in ascending order are: Megabyte (MB), Gigabyte (GB), Terabyte (TB), Petabyte (PB), Exabyte (EB), Zettabyte (ZB), Yottabyte (YB).\nTherefore, in descending order, the sequence is: Yottabyte, Zettabyte, Exabyte, Petabyte, Gigabyte, Megabyte.\nEach unit is 1024 times larger than the previous one, so the order is based on increasing magnitude.",
+    "options": [
+      {
+        "content": "Yottabyte, Zettabyte, Exabyte, Petabyte, Gigabyte, Megabyte",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Zettabyte, Yottabyte, Petabyte, Exabyte, Megabyte, Gigabyte",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Yottabyte, Exabyte, Petabyte, Zettabyte, Gigabyte, Megabyte",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Zettabyte, Petabyte, Yottabyte, Exabyte, Gigabyte, Megabyte",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many 16 K × 1 bit RAM chips are needed to provide a memory capacity of 128 K × 1 byte?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Correct answer: 64 RAM chips.\nConvert bytes to bits: 128 K × 1 byte = 128 K × 8 bits = 1024 K bits.\nCapacity of one chip: 16 K × 1 bit = 16 K bits.\nNumber of chips: 1024 K bits ÷ 16 K bits = 64.\nThe answer is not 8 because 8 chips would only handle the byte-width conversion for one 16 K address block; the required memory has 128 K addresses, so the depth expansion is also needed.",
+    "options": [
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "32",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "64",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "128",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Select the option that best describes the truthfulness of the following statements.\n i) RAM is a volatile memory having a limited storage capacity.\n ii) Secondary memory is storage other than the RAM and ROM.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "To evaluate the truthfulness of the statements:\nStatement i: RAM is a volatile memory, meaning it loses stored data when the power is turned off. It also has limited storage capacity compared to secondary storage devices. Therefore, this statement is true.\nStatement ii: Secondary memory refers to storage devices such as hard disk drives (HDDs), solid-state drives (SSDs), and optical disks. These are external to the main memory (RAM) and ROM. Hence, this statement is also true.\nBoth statements are true, so the correct option is the one that marks both as true.",
+    "options": [
+      {
+        "content": "i-True, ii-True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statement(s) is/are NOT true about magnetic tapes?\n I. Direct access device\n II. Store large volume of data\n III. Use for backup purpose",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Only I",
+    "options": [
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many address lines and input-output data lines are needed for the 64k × 8 memory unit?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "1. Address LinesThe number of address lines is determined by the total number of addressable locations (words).\n• Total Locations: 64{k} =     64  * 1024 = 65,536\n• We use the formula  2^n = {Total Locations}, where n is the number of address lines.\n• Since 64 = 2^6 and 1{k} = 2^{10}, then 64{k} = 2^6  and  2^{10} = 2^{16}.\n• Therefore, n = 16 address lines.\n2. Data LinesThe number of data lines corresponds directly to the word size (the number of bits stored at each address).\n• The memory unit is specified as dots 8, meaning each location stores 8 bits.\n• Therefore, 8 data lines are needed to transfer one word at a time.",
+    "options": [
+      {
+        "content": "16 address lines, 3 data lines",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "6 address lines, 3 data lines",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "16 address lines, 8 data lines",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "10 address lines, 8 data lines",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following refers to a memory access mechanism in which the time to access a given location is constant and independent of the sequence of prior accesses?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "The question defines a memory access mechanism where retrieval time remains constant regardless of the sequence of prior accesses. This characteristic is the fundamental definition of Random Access, distinguishing it from sequential methods.",
+    "options": [
+      {
+        "content": "Random access",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Direct access",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Sequential access",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Associative",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The number of addressable memory units for a 10-bit size address bus is:",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "An n-bit address bus identifies 2^n memory locations. For a 10-bit bus, calculate 2 to the power of 10. This equals 1024 distinct addresses available for memory access.",
+    "options": [
+      {
+        "content": "512",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "256",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1023",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1024",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "State whether the following statements are true or false.\nStatements:\n(i) For main memory, the unit of transfer is the number of bytes read out of or written into memory at a time.\n(ii) The unit of transfer for need not equal a word or an addressable unit.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "medium",
+    "explanation": "Statement 1\nEnglish:\n“Unit of transfer = number of bytes read/written at a time” → ❌ False\n• In main memory, data is transferred in words (word size), not arbitrary bytes.\n• Example: If word size = 32 bits → transfer = 4 bytes at once\nStatement 2\nEnglish:\n“Unit of transfer need not equal word or addressable unit” → ✅ True\n• Transfer unit can differ depending on architecture.\n• Example: Cache/memory may transfer blocks, not just single words.",
+    "options": [
+      {
+        "content": "(i) True, (ii) True",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(i) True, (ii) False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) False, (ii) True",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "(i) False, (ii) False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is a correct statement about RAM?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "RAM stands for Random Access Memory, which is a crucial component in computer architecture. The correct statement is that RAM can be directly accessed by the CPU. This means the processor reads data from and writes data to RAM without needing intermediate steps, allowing for fast execution of active programs and processes. Option A is incorrect because RAM stands for Random Access Memory, not Read Access Memory. Option B is also wrong since RAM is volatile memory, meaning it loses all stored data when the computer's power is turned off. Option D is false because Cache memory is actually faster than RAM; it sits closer to the CPU and stores frequently used data for quicker access. Therefore, Option C is the only accurate description of RAM's function in a computer system.",
+    "options": [
+      {
+        "content": "It stands for Read Access Memory.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It is a non-volatile memory.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It can be directly accessed by the CPU.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Its speed is greater than Cache memory.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A cell of the SRAM is made with ______.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "SRAM (Static Random Access Memory) cells are constructed using flip-flop circuits, specifically a latch configuration made of cross-coupled inverters. This design allows the cell to maintain its stored data state as long as power is supplied, without needing periodic refreshing. A standard SRAM bit cell typically uses six transistors to form this stable latch, ensuring fast access times and high reliability. In contrast, DRAM (Dynamic Random Access Memory) cells store data using capacitors that leak charge over time and require refreshing. Magnetic dipoles or magnetic cores are associated with older technologies like magnetic core memory or modern MRAM, not standard SRAM. Therefore, identifying flip-flops as the fundamental building block of an SRAM cell is technically accurate.",
+    "options": [
+      {
+        "content": "flip-flops",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "magnetic dipoles",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "capacitors",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "magnetic core",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements about DRAM memory is correct?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Dynamic Random Access Memory (DRAM) stores data in capacitors that leak charge over time. This requires periodic refreshing to maintain data integrity, unlike Static RAM which uses flip-flops. Additionally, DRAM is generally slower and denser compared to SRAM technology.",
+    "options": [
+      {
+        "content": "It stands for Data Random Access Memory.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It does not require refreshing.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It is faster than SRAM.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Its cells are usually made with capacitors.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "What is the full form of ‘The EDVAC’, the first generation computer?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "The electronic discrete variable automatic computer",
+    "options": [
+      {
+        "content": "The electronic discrete variable automatic computer",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "The electronic discrete value  automatic computer",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The electronic discrete variable automatic calculator",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The electronic digital variable automatic calculator",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which generation of computer used transistor?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "The use of transistors marks the second generation of computers (roughly 1959–1965).\nFirst generation computers used vacuum tubes; they were large and generated a lot of heat.\nSecond generation computers replaced vacuum tubes with transistors, making them smaller, faster, more reliable, and more energy-efficient.\nThird generation computers used integrated circuits (ICs), and fourth generation computers use microprocessors.\nTherefore, transistors were used in the second generation of computers.",
+    "options": [
+      {
+        "content": "First",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Second",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Third",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Fourth",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the full form of ‘The ENIAC’ the first all electronics computer?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "The electronic numerical integrator and computer",
+    "options": [
+      {
+        "content": "The electronic numerical integrator automatic calculator",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "The electronic numerical integrator automatic computer",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The electronic numerical integrator and computer",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "The electronic numerical integrator and calculator",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The speed of supercomputer is measured in ____ .",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Answer: Floating-point operations per second (FLOPS) / फ्लोटिंग-पॉइंट ऑपरेशन प्रति सेकंड\nExplanation: FLOPS measures how many floating-point calculations a computer can perform each second. This is the standard way to express supercomputer performance.\n• Definition: One FLOP = one floating-point operation; FLOPS = floating-point operations per second.\n• Common scales: teraFLOPS = 10^12 FLOPS, petaFLOPS = 10^15 FLOPS, exaFLOPS = 10^18 FLOPS.\n• Why not per minute/hour/day: Measuring per second gives a standard, fine-grained rate for comparing performance; larger time units are not used as the standard metric.\nShort note: When asked about supercomputer speed, answer with FLOPS and, if relevant, mention the appropriate prefix (e.g., petaFLOPS).",
+    "options": [
+      {
+        "content": "Floating-point operations per hour",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Floating-point operations per day",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Floating-point operations per second",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Floating-point operations per minute",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the full form of MISD in Flynn’s taxonomy?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Correct answer: Multiple Instruction stream and Single Data stream\nIn Flynn’s taxonomy, MISD expands as Multiple Instruction stream, Single Data stream. It describes an architecture where multiple instruction streams operate on the same data stream.\nFinal answer: Multiple Instruction stream and Single Data stream.",
+    "options": [
+      {
+        "content": "Multiple Interrupt stream and Single Data stream",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Multiple Instruction stream and Single Data stream",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Many Interrupt stream and Single Digital stream",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Many Instruction stream and Single Digital stream",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In which of the following type of computers do the programs and data often reside in a different memory system?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "medium",
+    "explanation": "This question refers to computer architecture types where program and data memory are physically separate. This design is known as Harvard architecture, which is commonly found in embedded systems for efficiency. In contrast, Von Neumann architectures share memory for both instructions and data.",
+    "options": [
+      {
+        "content": "Stored program computers",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "RISC computers",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "CISC computers",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Embedded computers",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which component of computer act as nervous system?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "To determine which component acts as the nervous system, consider the function of the nervous system: it coordinates and controls all body activities by sending signals.\nNow evaluate each component:\n• Arithmetic Logic Unit (ALU): Performs calculations and logical operations. It does not coordinate or control other components.\n• Input Unit: Receives data from external sources. It does not manage or direct system operations.\n• Control Unit: Coordinates and directs all operations in the CPU. It sends control signals to other components to execute instructions.\n• Storage Unit: Holds data and instructions. It does not control or communicate with other components.\nThe component that coordinates and controls operations is analogous to the nervous system.",
+    "options": [
+      {
+        "content": "Arithmetic Logic Unit",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Input unit",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Control unit",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Storage unit",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\n i) A compiler translates the entire source code line by line.\n ii) Computer architecture refers to those attributes of a system which are visible to a programmer.\n iii) The Reduced Instruction Set Architecture (RISC) computer organisation reduces the cycles per instruction at the cost of the number of instructions per program to increase the CPU performance.\n iv) All the arithmetic and logical processing is performed by the Arithmetic Logic Unit under the supervision of a control unit.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "medium",
+    "explanation": "Statement\nTruth Value\nKey Reason\ni\nFalse\nCompilers translate the whole code at once, not line-by-line.\nii\nTrue\nArchitecture defines the \"programmer's view\" of the system.\niii\nTrue\nRISC prioritizes low CPI over instruction count.\niv\nTrue\nThe ALU is the core calculator of the CPU.",
+    "options": [
+      {
+        "content": "i-True, ii-True, iii-True, iv-True",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True, iii-True, iv-True",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False, iii-True, iv-True",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False, iii-True, iv-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statements is/are true about components of CPU?\n(i) A CPU has only 2 components.\n(ii) Control Unit is a CPU’s component.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "A Central Processing Unit typically contains three main functional units: the Control Unit, Arithmetic Logic Unit, and Registers. Statement (i) is incorrect because it claims there are only two components. Statement (ii) is correct as the Control Unit manages instruction execution within the processor structure.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following registers of a CPU stores the address of the next instruction to be executed?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "The Program Counter (PC) specifically stores the memory address of the next instruction to be executed by the CPU. Other registers like the Instruction Register hold current instructions, while the PC manages flow control. Thus, it is the correct register for this function.",
+    "options": [
+      {
+        "content": "IR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "MAR",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "AC",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "PC",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Assigned ordering among the characters used by the computer is known as ______.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Answer:  collating sequence",
+    "options": [
+      {
+        "content": "character sequence",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "linear sequence",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "collating sequence",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "data sequence",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is false regarding the machine language?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Basics of COA",
+    "chapterSlug": "dsssb-coa-basics",
+    "difficulty": "easy",
+    "explanation": "Machine language is the lowest-level programming language, consisting of binary code (1s and 0s) that the CPU can execute directly. It is machine-dependent, meaning it varies across different processor architectures. Because it is not human-readable, programming in machine language is difficult and error-prone. Modifying machine code requires detailed knowledge of hardware and is not straightforward.",
+    "options": [
+      {
+        "content": "It is machine dependent",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It is easier to modify",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "It is made up of 1’s and 0’s",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It is difficult to program",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which component of the computer is used to resolve the difference between CPU and the peripheral device?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Answer: Interface unit / इंटरफेस यूनिट\nExplanation:\n• The interface unit acts as an intermediary between the CPU and peripheral devices, converting signal formats and handling differences in data rates and timing. (इंटरफेस यूनिट CPU और पेरिफेरल के बीच मध्यस्थ के रूप में सिग्नल रूपांतरण, डेटा दर और समय अंतर संभालती है।)\n• It provides buffering and handshaking so that fast CPU operations and slower peripheral devices can exchange data reliably; it often includes device controllers or works with device drivers. (यह बफरिंग और हैंडशेकिंग प्रदान करती है ताकि तेज CPU और धीमे पेरिफेरल विश्वसनीय रूप से डेटा आदान-प्रदान कर सकें; इसमें डिवाइस कंट्रोलर्स या ड्राइवर शामिल होते हैं।)\n• Therefore the interface unit resolves the practical differences between CPU and peripherals for communication and control.\nWhy the other components are not correct:\n• Memory unit stores data and instructions but does not manage signal conversion or device communication. (मेमोरी यूनिट डेटा संग्रहीत करती है; यह डिवाइस संचार या सिग्नल रूपांतरण नहीं करती।)\n• Arithmetic Logic Unit performs arithmetic and logical operations inside the CPU and is not responsible for interfacing with peripherals. (ALU CPU के अंदर अंकगणित और तार्किक संचालन करती है; यह पेरिफेरल इंटरफेसिंग के लिए जिम्मेदार नहीं है।)\n• Control unit coordinates CPU activities but does not perform the signal translation and buffering needed for peripheral communication. (कंट्रोल यूनिट CPU गतिविधियों का समन्वय करती है; यह पेरिफेरल संचार के लिए आवश्यक सिग्नल रूपांतरण और बफरिंग नहीं करती।)",
+    "options": [
+      {
+        "content": "Memory unit",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Arithmetic Logic Unit",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Interface unit",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Control unit",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the function of data input command in I/O command?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Key point: The data input command causes the device/interface to place data from one of its internal registers onto the system bus so the CPU can read it.\nडेटा इनपुट कमांड का सारः डिवाइस अपने किसी रजिस्टर से डेटा बस पर रखता है ताकि CPU उस डेटा को पढ़ सके।\n• Data flow for input: device register → system bus → CPU register.\n• Contrast with output: an output/write operation moves data from the bus into a device register (bus → device register).\n• Other command types such as activating the peripheral or checking status are control/status operations, not data input operations.\nTherefore, the correct description of the data input command is: it causes the interface to transfer data from one of its registers to the bus so the CPU can read it.",
+    "options": [
+      {
+        "content": "Activate the peripheral and to inform it what to do",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "To check status conditions in the interface and the peripheral",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It cause the interface to respond by transferring data from bus into one of its registers",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It cause the interface to respond by transferring data from one of its register to bus",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a communication pathway connecting two or more devices of a computer?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "A bus is a communication system that transfers data between components inside a computer. Memory stores information, UPS provides power backup, and the Control Unit manages instructions.",
+    "options": [
+      {
+        "content": "Bus",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Memory",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "UPS",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Control Unit (CU)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "With respect to system buses, SCSI stands for:",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "SCSI stands for Small Computer System Interface. This standard defines the physical connections and protocols used to connect computers to peripheral devices.",
+    "options": [
+      {
+        "content": "Small Computer Side Interface",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Small Computer System Interface",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Solid Computer System Interface",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Synchronous Computer System Interface",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "With respect to Peripheral Component Interconnect (PCI), the letter 'e' in PCIe stands for:",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "PCIe stands for Peripheral Component Interconnect Express. Therefore, the letter \"e\" in PCIe represents Express.",
+    "options": [
+      {
+        "content": "Extreme",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Express",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Excess",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Element",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "With respect to system bus, ________ are used to control the access to and the use of the data and address lines.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Control lines manage the flow of information on the system bus. They coordinate access to data and address lines between components like the CPU and memory.",
+    "options": [
+      {
+        "content": "Address lines",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Decoders",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Encoders",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Control lines",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following determines the time it takes for devices to coordinate the use of the bus?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Propagation delay determines the time devices need to coordinate bus usage because it defines signal travel time across the shared medium. This duration sets the necessary window for collision detection and access control mechanisms.",
+    "options": [
+      {
+        "content": "Propagation delay",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Clock delay",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Cycle delay",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data transfer delay",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "State whether the following statements are true or false.\nStatements:\n(i) SCSI is itself a type of bus used to support local disk drives and other peripherals.\n(ii) A serial port could be used to support a printer or scanner.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Statement (i) is true because SCSI defines a standard bus interface for connecting peripherals like disk drives. Statement (ii) is also true as serial ports were historically used to connect printers or scanners via protocols like RS-232.",
+    "options": [
+      {
+        "content": "(i) True, (ii) True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "(i) True, (ii) False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) False, (ii) True",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(i) False, (ii) False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following data transfer schemes requires constant monitoring by the CPU of the peripheral devices?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Programmed I/O, also known as polling, requires the CPU to continuously check peripheral status registers until data is ready. This constant monitoring ensures synchronization but reduces efficiency compared to interrupt-driven or DMA methods where the CPU performs other tasks. Thus, Programmed I/O is the scheme necessitating constant CPU monitoring.",
+    "options": [
+      {
+        "content": "Programmed IO",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Interrupt-driven IO",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Direct Memory Access (DMA)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both, Interrupt-driven IO and DMA",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following data transfer modes between CPU and I/O devices has the data transfer initiated by the instruction of a computer program executed by the CPU?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Programmed I/O is the correct mode because it requires the CPU to execute specific instructions to manage data transfer directly. In contrast, Interrupt-driven I/O relies on hardware signals to initiate transfers, while DMA uses a dedicated controller that bypasses the CPU for data movement.",
+    "options": [
+      {
+        "content": "Programmed I/O mode",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Interrupt initiated I/O mode",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Direct Memory Access (DMA) mode",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Direct Register Access (DRA) mode",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In which of the following data transfer modes does the CPU constantly monitor the peripheral and stay in a program loop until the peripheral device becomes ready for data transfer?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "The described mode is programmed I/O. The CPU continuously polls the peripheral status register and remains in a loop until the device becomes ready for data transfer.",
+    "options": [
+      {
+        "content": "Direct Memory Access (DMA) mode",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Direct Register Access (DRA) mode",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Programmed I/O mode",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Interrupt initiated I/O mode",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements about programmed I/O mode of data transfer between CPU and I/O devices is correct?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "In programmed I/O, the CPU repeatedly checks the I/O device status. This polling keeps the CPU occupied while waiting, so CPU cycles are wasted. Hence, option B is correct.",
+    "options": [
+      {
+        "content": "The programmed I/O mode of data transfer is faster than interrupt mode of data transfer.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "In this mode, there is wastage of the CPU cycles.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "In this mode, the CPU can do other works when I/O devices are not ready for data transfer.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "In this mode, the data transfer is initiated by the interrupt signal issued to the CPU.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "If there are three I/O devices A, B, and C such that A is connected to B; B connected to C, and C connected to the computer, then this arrangement is called ______.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "This arrangement describes a sequential connection where devices are linked one after another. In computer architecture, this specific topology is known as a Daisy chain configuration.",
+    "options": [
+      {
+        "content": "linked connection",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Daisy chain",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "parallel connection",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "star connection",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "When Bus Grant (BG) = 1 in direct memory access (DMA) transfer, then what function read line and write lines perform?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "When Bus Grant (BG) = 1, the DMA controller gains control of the system bus. During this state, the DMA manages data transfer between memory and I/O devices without CPU intervention. The read line and write line are used to transfer data. The read line outputs data from the DMA controller to memory, while the write line inputs data from memory to the DMA controller. This means both lines function as output lines from the DMA controller's perspective during the transfer.",
+    "options": [
+      {
+        "content": "Read line and write line act as input line allowing CPU to communicate with internal DMA register",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Read line act as input line and write line act as output line from DMA",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Read line act as output line and write line act as input line from DMA controller",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Read line and write line act as output lines from DMA controller",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ is used to transfer the data directly to main memory without using CPU.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "The correct mechanism for transferring data directly to main memory without using the CPU is the DMA controller.\nDevice driver / डिवाइस ड्राइवर: This manages communication between the operating system and hardware devices. However, it relies on the CPU to handle data transfer, so it cannot bypass the CPU.\nInput/Output interface / इनपुट/आउटपुट इंटरफेस: This facilitates data exchange between the CPU and peripheral devices. It still requires CPU control and cannot perform direct memory transfers.\nDMA controller / डी.एम.ए. कंट्रोलर: This allows data to be transferred directly between memory and a peripheral device without CPU intervention. It manages the system bus and handles the data transfer independently.\nMemory Address Register / मेमोरी एड्रेस रजिस्टर: This register holds the address of a memory location. It is used during memory access but does not perform data transfer on its own.",
+    "options": [
+      {
+        "content": "Device driver",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Input/Output interface",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "DMA controller",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Memory Address Register",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In Direct Memory Access (DMA) _____, a block sequence consisting of a number of memory words is transferred in a continuous burst.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "In DMA burst transfer, a continuous block of memory words is transferred in one burst.",
+    "options": [
+      {
+        "content": "Bus granting",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Burst transfer",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Cycle stealing",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Controller count",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "A disk consists of ____ , ____ , ____ .",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Input Output Organisation",
+    "chapterSlug": "dsssb-coa-io",
+    "difficulty": "easy",
+    "explanation": "Option 4: cylinder, tracks and sectors\nIn computer storage architecture, a hard disk drive is organized into a specific geometric hierarchy:\n• Tracks: Concentric circles on the surface of a disk platter.\n• Sectors: Small segments that each track is divided into (typically the smallest unit of data that can be read or written).\n• Cylinders: A set of tracks at the same distance from the center across all platter surfaces.",
+    "options": [
+      {
+        "content": "track, segment and circle",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "track, circle and cone",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "drum, track and segment",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "cylinder, tracks and sectors",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the function of the program counter register?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Register Transfer and Microoperations",
+    "chapterSlug": "dsssb-coa-register-transfer",
+    "difficulty": "easy",
+    "explanation": "The program counter (PC) is a special register in the CPU that keeps track of the memory address of the next instruction to be executed. After fetching an instruction, the PC is updated to point to the subsequent instruction, enabling sequential execution of program code. This ensures the CPU knows where to fetch the next command in the program flow.",
+    "options": [
+      {
+        "content": "It holds the operand address",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It holds the address of current instruction",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It holds the address of previous instruction",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It holds the address of next instruction",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The number of lines used in a data bus is referred to as the ____ of the data bus.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Register Transfer and Microoperations",
+    "chapterSlug": "dsssb-coa-register-transfer",
+    "difficulty": "easy",
+    "explanation": "The width of a data bus is the number of lines or bits it can carry in parallel at one time. For example, a 32-bit data bus has 32 lines and can transfer 32 bits simultaneously. Therefore, the correct term is width.",
+    "options": [
+      {
+        "content": "length",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "density",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "width",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "volatility",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following part of the CPU has the necessary electronic circuitry to perform binary addition and shift operations in computer system?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Register Transfer and Microoperations",
+    "chapterSlug": "dsssb-coa-register-transfer",
+    "difficulty": "easy",
+    "explanation": "The ALU performs arithmetic and logic operations, including binary addition and shift operations.",
+    "options": [
+      {
+        "content": "Arithmetic Logic Unit (ALU)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Memory Buses",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Registers",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Control Unit",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "In CPU, which of the following type of register is required by the control unit and contains the instruction currently being executed?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Register Transfer and Microoperations",
+    "chapterSlug": "dsssb-coa-register-transfer",
+    "difficulty": "easy",
+    "explanation": "The instruction register holds the instruction currently being executed by the CPU control unit.",
+    "options": [
+      {
+        "content": "Instruction register",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Accumulator",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Program register",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Memory data register",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "The 4-bit registers R1 and R2 initially have the following values.\n R1 : 1010\n R2 : 1100\n What is the content of R1 and R2 after execution of this micro-operation?\n R1 ← R1 ⊕ R2\n ⊕ is a symbol of Ex-OR.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Register Transfer and Microoperations",
+    "chapterSlug": "dsssb-coa-register-transfer",
+    "difficulty": "easy",
+    "explanation": "Step 1: Perform Ex-OR operation between R1 (1010) and R2 (1100).\nStep 2: Bit-by-bit Ex-OR: 1⊕1=0, 0⊕1=1, 1⊕0=1, 0⊕0=0.\nStep 3: Result is 0110, which updates R1.\nStep 4: R2 remains unchanged as 1100.",
+    "options": [
+      {
+        "content": "R1 : 0110, R2 : 1100",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "R1 : 1010, R2 : 0110",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "R1 : 0110, R2 : 0110",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "R1 : 1010, R2 : 1100",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "By how many different ways micro-operations encountered in digital computers are classified?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Register Transfer and Microoperations",
+    "chapterSlug": "dsssb-coa-register-transfer",
+    "difficulty": "medium",
+    "explanation": "Micro-operations in digital computers are classified into four categories.\nThe Four Types\n1. Register Transfer Micro-operations\n2. Arithmetic Micro-operations\n3. Logic Micro-operations\n4. Shift Micro-operations",
+    "options": [
+      {
+        "content": "One",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Two",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Three",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Four",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many address lines and input-output data lines are needed in 2K × 16 memory unit?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Cache Memory Organization",
+    "chapterSlug": "dsssb-coa-cache",
+    "difficulty": "easy",
+    "explanation": "Given: 2{K} * 16 memory unit.\n1. Calculating Address Lines\nThe number of words is 2{K}.\n• We know that $1\\text{K} = 1024 = 2^{10}.\n• Therefore, 2{K} = 2 * 2^{10} = 2^{11}.\n• Since the number of words is 2^{11}, we need 11 address lines.\n2. Calculating Data Lines\nThe second part of the notation ($16$) represents the number of bits stored in each memory location.\n• The input-output data lines are always equal to the word size.\n• Therefore, we need 16 data lines.",
+    "options": [
+      {
+        "content": "10 address lines, 16 data lines",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "10 address lines, 4 data lines",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "11 address lines, 4 data lines",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "11 address lines, 16 data lines",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "With respect to size, which of the following represents the correct relationships between different categories of cache memory?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Cache Memory Organization",
+    "chapterSlug": "dsssb-coa-cache",
+    "difficulty": "medium",
+    "explanation": "In computer architecture, cache memory sizes increase as we move down the hierarchy. Level 1 (L1) cache is the smallest and fastest, while Level 2 (L2) and Level 3 (L3) caches are progressively larger but slower. Therefore, the correct size relationship is L1 < L2 < L3.",
+    "options": [
+      {
+        "content": "L1 < L2 < L3",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "L1 < L3 < L2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "L2 < L1 < L3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "L3 < L2 < L1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Identify the valid cache organization techniques:\n(i) Direct\n(ii) Associative\n(iii) Set-associative",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Cache Memory Organization",
+    "chapterSlug": "dsssb-coa-cache",
+    "difficulty": "easy",
+    "explanation": "Cache memory organization relies on three standard mapping techniques to store data efficiently. Direct, fully associative, and set-associative mappings are the fundamental methods used in computer architecture. All three options listed represent valid techniques, making the selection of all items correct.",
+    "options": [
+      {
+        "content": "(i) and (ii) only",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(ii) and (iii) only",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) and (iii) only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(i), (ii) and (iii)",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "With respect to cache organisation, direct mapping maps each block of main memory into ________ possible cache line.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Cache Memory Organization",
+    "chapterSlug": "dsssb-coa-cache",
+    "difficulty": "medium",
+    "explanation": "In direct mapping, each block of main memory maps to exactly one specific cache line. This differs from set-associative or fully associative mapping where multiple lines are possible.",
+    "options": [
+      {
+        "content": "Only one",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Two",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Four",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Eight",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statement(s) is/are true about control unit?\n I. It manages and coordinate the entire computer system.\n II. It does not perform any actual processing  on data.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Control Unit Design",
+    "chapterSlug": "dsssb-coa-control-unit",
+    "difficulty": "easy",
+    "explanation": "Step 1: The control unit is responsible for managing and coordinating all components of the computer system, including the CPU, memory, and input/output devices. This makes statement I correct.\nStep 2: The control unit does not perform actual data processing such as arithmetic or logical operations. These tasks are handled by the ALU. Therefore, statement II is also correct.\nStep 3: Since both statements I and II are accurate descriptions of the control unit's functions, the correct choice is the one that includes both.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The 8-bit register A and B initially have the following values:\n A = 01110110\n B = 10000101\n What is the 8-bit value in each register after execution of the following micro-operation?\n A ← A + B\n B ← B + 1",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Control Unit Design",
+    "chapterSlug": "dsssb-coa-control-unit",
+    "difficulty": "easy",
+    "explanation": "Step 1: Perform binary addition of A and B: 01110110 + 10000101.\nStep 2: Add bit by bit from right to left, including carry.\nStep 3: The sum is 11111011 with a carry-out of 1, which is discarded in 8-bit arithmetic.\nStep 4: Increment B by 1: 10000101 + 1 = 10000110.\nFinal values: A = 11111011, B = 10000110.",
+    "options": [
+      {
+        "content": "A = 11111110, B = 10000101",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A = 11110111, B = 10001110",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A = 11111011, B = 10000110",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "A = 11111101, B = 10000101",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the meaning of this arithmetic micro-operation?\n R3 ← R1 + R̅2 + 1",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Control Unit Design",
+    "chapterSlug": "dsssb-coa-control-unit",
+    "difficulty": "easy",
+    "explanation": "The given micro-operation is: R3 ← R1 + R̅2 + 1.\nStep 1: R̅2 represents the 1’s complement of R2. This means each bit of R2 is inverted (0 becomes 1 and 1 becomes 0).\nStep 2: Adding 1 to the 1’s complement of R2 gives the 2’s complement of R2. This is a standard method to represent negative numbers in binary arithmetic.\nStep 3: Therefore, R3 gets the sum of R1 and the 2’s complement of R2. This operation effectively performs R1 - R2 in binary arithmetic.\nहिन्दी उत्तर:\nदिया गया माइक्रो-ऑपरेशन है: R3 ← R1 + R̅2 + 1।\nचरण 1: R̅2, R2 का 1 की पूरक है। इसका अर्थ है कि R2 के प्रत्येक बिट को उलटा किया जाता है (0 को 1 और 1 को 0 में बदला जाता है)।\nचरण 2: R̅2 में 1 जोड़ने से R2 का 2 का पूरक प्राप्त होता है। यह बाइनरी अंकगणित में ऋणात्मक संख्याओं का प्रतिनिधित्व करने की एक मानक विधि है।\nचरण 3: इसलिए, R3 में R1 और R2 के 2 के पूरक का योग प्राप्त होता है। यह संचालन बाइनरी अंकगणित में R1 - R2 को प्रदर्शित करता है।",
+    "options": [
+      {
+        "content": "Content of R1 plus R2 transferred to R3",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Content of R1 plus the 2’s complement of R2 transferred to R3",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Content of R1 plus the 1’s complement of R2 transferred to R3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Content of R1 plus R2 after increments transferred to R3",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is characteristic of a RISC (Reduced Instruction Set Computer) processor?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Control Unit Design",
+    "chapterSlug": "dsssb-coa-control-unit",
+    "difficulty": "easy",
+    "explanation": "RISC processors typically use fixed-length, easily decoded instruction formats and a simpler instruction set.",
+    "options": [
+      {
+        "content": "Microprogrammed control",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Instruction that manipulate operands in memory",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Fixed-length, easily decoded instruction format",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "A large number (typically from 100 to 250) of instructions",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Pseudo instruction is given to ______.",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Programming the Basic Computer",
+    "chapterSlug": "dsssb-coa-programming",
+    "difficulty": "easy",
+    "explanation": "Pseudo instructions are special commands used in assembly language that do not translate directly into machine code. Instead, they are processed by the assembler during translation to handle tasks like memory allocation or data definition.",
+    "options": [
+      {
+        "content": "Compiler",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Linker",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Assembler",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Loader",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following symbols is used to write a comment in assembly program?",
+    "type": "single_choice",
+    "subject": "Computer Organisation & Architecture",
+    "subjectSlug": "computer-org-arch",
+    "topic": "Programming the Basic Computer",
+    "chapterSlug": "dsssb-coa-programming",
+    "difficulty": "easy",
+    "explanation": "In assembly programming, the semicolon symbol (;) is used to denote comments. Any text following a semicolon on a line is ignored by the assembler and does not affect program execution.",
+    "options": [
+      {
+        "content": "@",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "$",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": ";",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "%",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-org-arch",
+      "2022"
+    ],
+    "examYear": 2022
+  }
+]

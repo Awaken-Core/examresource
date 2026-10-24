@@ -1,0 +1,1042 @@
+[
+  {
+    "content": "What is the complexity of selection sort algorithms?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "For each position, Selection Sort scans the remaining unsorted portion to find the minimum element.\nTotal comparisons:\n(n−1)+(n−2)+⋯+1=(n(n−1))/2\nThus, the complexity is quadratic.",
+    "options": [
+      {
+        "content": "O(n)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "O(n log₂ n)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "O(n²)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "O(2n)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Sort the following list using the selection sort algorithm.\n H, V, A, T, L, N, K\n What is the output of the algorithm after the 3rd pass?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "medium",
+    "explanation": "ConceptSelection sort builds the sorted part one position at a time. On each pass it scans the entire unsorted region, finds the single minimum element there, and swaps that minimum into the first unsorted slot. After k passes, the k smallest elements of the whole list occupy the first k positions in order, and the rest of the list is whatever the swaps left behind.\nApplying it to H, V, A, T, L, N, K1. Scan all of H, V, A, T, L, N, K; the minimum is A. Swap A with the first element H, giving A, V, H, T, L, N, K.\n2. Scan the unsorted part V, H, T, L, N, K; the minimum is H. Swap H with the first unsorted element V, giving A, H, V, T, L, N, K.\n3. Scan the unsorted part V, T, L, N, K; the minimum is K. Swap K with the first unsorted element V, giving A, H, K, T, L, N, V.\nAfter the 3rd pass the list is A, H, K, T, L, N, V.\nCross-checkEach pass advances the boundary of the sorted region by one and places the smallest remaining letter there, so after three passes exactly three letters are finalised at the front and the tail is still the unsorted remainder. Re-running a single pass on the result above would only touch that tail, confirming the front three are already settled.",
+    "options": [
+      {
+        "content": "A, V, H, T, L, N, K",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A, H, K, T, L, N, V",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "A, V, T, H, L, N, K",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A, T, H, K, L, N, V",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Sort the following elements using Bubble sort in ascending order. What is the intermediate sequence of\n 37, 54, 21, 85, 68, 12, 9, 57 after second pass?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Initial Array\n37, 54, 21, 85, 68, 12, 9, 57\nPass 1\nCompare adjacent elements:\n• 37 and 54 → no swap\n• 54 and 21 → swap\n• 54 and 85 → no swap\n• 85 and 68 → swap\n• 85 and 12 → swap\n• 85 and 9 → swap\n• 85 and 57 → swap\nAfter Pass 1:\n37, 21, 54, 68, 12, 9, 57, 85\nPass 2\nNow compare up to the second-last unsorted element:\n• 37 and 21 → swap\n• 37 and 54 → no swap\n• 54 and 68 → no swap\n• 68 and 12 → swap\n• 68 and 9 → swap\n• 68 and 57 → swap\nAfter Pass 2:\n21, 37, 54, 12, 9, 57, 68, 85\nSo, the intermediate sequence after the second pass is:\n21, 37, 54, 12, 9, 57, 68, 85",
+    "options": [
+      {
+        "content": "21, 37, 12, 9, 54, 57, 68, 85",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "37, 21, 54, 68, 12, 9, 57, 85",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "21, 37, 54, 12, 9, 57, 68, 85",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "21, 12, 9, 37, 54, 57, 68, 85",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the worst case time complexity of bubble sort?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "In the worst case (when the array is sorted in reverse order), Bubble Sort performs: x−1 comparisons in the first pass , x−2 in the second pass , and so on.\nTotal comparisons:\n(x−1)+(x−2)+⋯+1 = (x(x−1))/2\nThus, the growth rate is quadratic.",
+    "options": [
+      {
+        "content": "O(x)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "O(log2 x)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "O(x2)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "O(x log2 x)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many interchanges will happen when the sequence of letters of \"SORTED\" is sorted using bubble sort?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "To determine the number of interchanges in Bubble Sort, we count the total number of inversions in the initial sequence.\nAn inversion occurs when a larger element appears before a smaller element in the list.\nSequence: S, O, R, T, E, D\nS is greater than O, R, E, D (4 inversions).\nO is greater than E, D (2 inversions).\nR is greater than E, D (2 inversions).\nT is greater than E, D (2 inversions).\nE is greater than D (1 inversion).\nTotal interchanges = 4 + 2 + 2 + 2 + 1 = 11.",
+    "options": [
+      {
+        "content": "36",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "11",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "18",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "6",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the worst-case time complexity of Bubble Sort?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "In Bubble Sort, each pass compares adjacent elements and swaps them if needed. In the worst case, such as a reverse-sorted array, it performs comparisons over nested passes, giving quadratic time complexity O(n^2).",
+    "options": [
+      {
+        "content": "O(n)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "O(n^2)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "O(n log n)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "O(n^3)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the order of these elements after second pass of the merge sort algorithm?\n 200, 470, 150, 80, 90, 300, 400, 70, 120",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "medium",
+    "explanation": "Merge sort works by recursively dividing the array into smaller subarrays, sorting them, and then merging them back together.\nInitial array: 200, 470, 150, 80, 90, 300, 400, 70, 120\nFirst pass: Sort adjacent pairs into subarrays of size 2.\nAfter first pass: 200, 470, 80, 150, 90, 300, 70, 400, 120\nSecond pass: Merge adjacent subarrays of size 2 into sorted subarrays of size 4.\nAfter second pass: 80, 150, 200, 470, 70, 90, 120, 300, 400\nFinal state after two passes: 80, 150, 200, 470, 70, 90, 120, 300, 400",
+    "options": [
+      {
+        "content": "40, 70, 80, 90, 120, 150, 200, 300, 400, 470",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "200, 470, 80, 150, 40, 90, 300, 400, 70, 120",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "80, 150, 200, 470, 70, 90, 300, 400, 120",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "40, 80, 90, 150, 200, 300, 400, 470, 70, 120",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the worst-case time complexity of the Heap sort?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Heap sort has a worst-case time complexity of O(n log n). This occurs because building the heap takes O(n) and extracting elements takes O(log n) for each of the n elements.",
+    "options": [
+      {
+        "content": "O(n)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "O(n2)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "O(n log n)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "O(n3)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Quicksort algorithm is based on which algorithm design technique?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Quicksort uses the Divide and Conquer technique. It works by selecting a pivot element and partitioning the array into two subarrays: one with elements less than the pivot and one with elements greater than the pivot. This process is applied recursively to each subarray until the entire array is sorted.",
+    "options": [
+      {
+        "content": "Greedy Algorithm",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Brute Force",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Divide and Conquer",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Dynamic Programming",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the worst-case running time of the Quick Sort algorithm?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Instead of dividing the array roughly in half, each partition leaves one subarray of size n−1 :\nT(n)=T(n−1)+(n−1)\nSolving this recurrence gives:\n1+2+3+⋯+(n−1)=O(n2)",
+    "options": [
+      {
+        "content": "Θ(n)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Θ(n²)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Θ(n log n)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Θ(n log² n)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is stable sort?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Merge sort is a stable sorting algorithm because it preserves the relative order of equal elements during the merge process. When merging two sorted subarrays, if two elements are equal, the element from the left subarray is placed first. This ensures that the original order of equal elements is maintained. In contrast, selection sort, quick sort, and heap sort are not stable because they may swap or reorder equal elements during their operations, disrupting their original sequence.",
+    "options": [
+      {
+        "content": "Selection sort",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Quick sort",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Heap sort",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Merge sort",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Sort the following list using Radix sort algorithm.\n 329, 457, 839, 436, 720, 355, 657\n What is the output of the algorithm after 2nd pass?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "medium",
+    "explanation": "Radix sort processes digits from least significant to most significant. We perform sorting in passes based on each digit.\n Initial list: 329, 457, 839, 436, 720, 355, 657\n First Pass (Units Digit)\n Sort by the units digit (last digit):\n Digits: 9, 7, 9, 6, 0, 5, 7\n After sorting by units digit: 720 (0), 436 (6), 457 (7), 657 (7), 329 (9), 839 (9), 355 (5)\n Wait, correction: 355 has units digit 5, so it should come before 436 (6).\n Correct order after first pass: 720 (0), 355 (5), 436 (6), 457 (7), 657 (7), 329 (9), 839 (9)\n Second Pass (Tens Digit)\n Now sort by the tens digit (middle digit):\n Digits: 2, 5, 3, 5, 2, 2, 3\n Group by tens digit: 2 → 720, 329, 355; 3 → 436, 839; 5 → 457, 657\n Within each group, maintain original relative order from first pass (stable sort):\n Tens digit 2: 720, 329, 355\n Tens digit 3: 436, 839\n Tens digit 5: 457, 657\n Final order after second pass: 720, 329, 355, 436, 839, 457, 657\n Note: The correct output after the second pass is 720, 329, 355, 436, 839, 457, 657.",
+    "options": [
+      {
+        "content": "720, 355, 436, 457, 657, 329, 839",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "720, 329, 436, 839, 355, 457, 657",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "329, 355, 436, 457, 657, 720, 839",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "355, 329, 457, 436, 720, 657, 839",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are true about binary search algorithm?\n I. It is implemented on sorted array.\n II. One must have direct access to the middle element in any sub-list.\n III. It is implemented on sorted linked list.",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Binary search algorithm works efficiently only on sorted arrays. It requires direct access to any element in the array, which is possible due to indexing in arrays. This allows the algorithm to repeatedly divide the search space in half by accessing the middle element directly.\nStatement I is correct because binary search is implemented on sorted arrays.\nStatement II is correct because the algorithm must access the middle element of any sub-list directly, which is possible in arrays but not in linked lists.\nStatement III is incorrect because linked lists do not support direct access to the middle element. Traversing to the middle requires O(n) time, which defeats the purpose of binary search's O(log n) efficiency.",
+    "options": [
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the condition for binary search to be unsuccessful where Beg is the beginning and End is ending location of sorted array?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "medium",
+    "explanation": "Binary search terminates when the search range becomes invalid. This happens when the beginning index (Beg) becomes greater than the ending index (End). At this point, the target element cannot exist in the array, and the search is unsuccessful.\nThe condition for failure is: End < Beg.",
+    "options": [
+      {
+        "content": "End > Beg",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "End == Beg",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "End < Beg",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "End != Beg",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Arrange in increasing order of average case complexity\n Selection-sort, Quick-sort, Linear search, Binary search",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "easy",
+    "explanation": "Step 1: Analyze average case complexity of each algorithm.\nBinary search: O(log n) – divides search space in half each step.\nLinear search: O(n) – checks each element sequentially.\nQuick-sort: O(n log n) – divides and conquers with average partitioning.\nSelection-sort: O(n²) – finds minimum element in each pass.\nStep 2: Order by increasing complexity: O(log n) < O(n) < O(n log n) < O(n²).\nThus, the correct order is: Binary search, Linear search, Quick-sort, Selection-sort.",
+    "options": [
+      {
+        "content": "Quick-sort, Selection-sort, Binary search, Linear search",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Linear search, Binary search, Selection-sort, Quick-sort",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Binary search, Linear search, Quick-sort, Selection-sort",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Selection-sort, Quick-sort, Linear search, Binary search",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the maximum running time of binary search algorithm, when n = 12,000?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Sorting Algorithms",
+    "chapterSlug": "dsssb-algo-sorting",
+    "difficulty": "medium",
+    "explanation": "",
+    "options": [
+      {
+        "content": "12",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "13",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "14",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "15",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Efficiency of an algorithm is measured in terms of _____.",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Algorithm Analysis",
+    "chapterSlug": "dsssb-algo-analysis",
+    "difficulty": "easy",
+    "explanation": "Efficiency of an algorithm is measured in terms of time and space complexity. Time complexity refers to the amount of time an algorithm takes to complete, while space complexity refers to the amount of memory it uses. These metrics help compare algorithms independently of hardware, making them standard in algorithm analysis.",
+    "options": [
+      {
+        "content": "Memory and processor speed",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Time and space",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Response time and completion time",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data and space",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are true about Algorithm?\n I. It is step by step solution of problem.\n II. It is difficult to debug.\n III. It is not dependent on the programming language.",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Algorithm Analysis",
+    "chapterSlug": "dsssb-algo-analysis",
+    "difficulty": "easy",
+    "explanation": "I - True . That is the very definition of an algorithm.\nII - False . Algorithms are generally easier to analyze and debug than actual program code because they are language-independent and focus on logic.\nIII - True. An algorithm describes the logic, not the syntax of any specific programming language.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which symbol in flowchart is used for representing start and end?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Algorithm Analysis",
+    "chapterSlug": "dsssb-algo-analysis",
+    "difficulty": "easy",
+    "explanation": "Flowchart Symbols ExplanationIn flowcharting, specific shapes represent different types of actions or steps:\n• Oval (Terminator): Represents the Start or End of a process.\n• Circle (Connector): Usually used within more complex charts, this symbol connects separate elements across one page.\n• Rectangle: Represents a Process or Action.\n• Diamond: Represents a Decision point (yes/no or true/false).\n• Arrow: Represents the Flow line or direction of the process.\nTherefore, the oval symbol is used to represent the start and end of a process.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following properties ensures that an algorithm must always terminate after a finite number of steps?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Algorithm Analysis",
+    "chapterSlug": "dsssb-algo-analysis",
+    "difficulty": "easy",
+    "explanation": "The property that ensures an algorithm must always terminate after a finite number of steps is Finiteness. This is the specific requirement that the algorithm must end after a limited number of steps. It cannot run in an infinite loop.",
+    "options": [
+      {
+        "content": "Effectiveness",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Definiteness",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Finiteness",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Output",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following asymptotic notation is used to provide lower boundary constraints?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Algorithm Analysis",
+    "chapterSlug": "dsssb-algo-analysis",
+    "difficulty": "easy",
+    "explanation": "Asymptotic notations are used to describe the growth rate of functions. The notation that provides a lower boundary constraint is Ω (Omega).\nO (Big O) notation gives an upper bound, meaning the function grows no faster than the given rate.\nΘ (Theta) notation gives a tight bound, meaning the function grows at the same rate as the given expression.\nΩ (Omega) notation gives a lower bound, meaning the function grows at least as fast as the given rate.\nω (Little omega) notation gives a strict lower bound, meaning the function grows strictly faster than the given rate.\nTherefore, the notation used to provide lower boundary constraints is Ω.",
+    "options": [
+      {
+        "content": "O",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Θ",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Ω",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "ω",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Arrange the following complexity of the algorithm in ascending order.\n O(2ⁿ), O(n), O(log₂ n), O(n log₂ n), O(n²)",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Algorithm Analysis",
+    "chapterSlug": "dsssb-algo-analysis",
+    "difficulty": "easy",
+    "explanation": "As nnn becomes very large:\n• Logarithmic functions grow the slowest.\n• Linear functions grow faster than logarithmic.\n• nlog⁡n grows faster than linear but slower than quadratic.\n• Quadratic growth outpaces all polynomial terms listed above.\n• Exponential growth eventually dwarfs everything else.",
+    "options": [
+      {
+        "content": "O(log₂ n), O(n), O(n log₂ n), O(n²), O(2ⁿ)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "O(n), O(log₂ n), O(n log₂ n), O(n²), O(2ⁿ)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "O(n), O(n²), O(log₂ n), O(n log₂ n), O(2ⁿ)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "O(log₂ n), O(n log₂ n), O(n), O(n²), O(2ⁿ)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following.",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Greedy Algorithms",
+    "chapterSlug": "dsssb-algo-greedy",
+    "difficulty": "medium",
+    "explanation": "Step 1: The Longest Common Subsequence problem is solved using dynamic programming. This is because it involves overlapping subproblems and optimal substructure, which are key characteristics of dynamic programming.\nStep 2: Huffman code uses a greedy approach to build an optimal prefix code based on character frequencies.\nStep 3: Quick sort is a divide and conquer algorithm that recursively divides the array into smaller subarrays.\nStep 4: Simplex algorithm is used for linear programming problems, which involve optimizing a linear objective function subject to linear constraints.",
+    "options": [
+      {
+        "content": "1-iv, 2-i, 3-ii, 4-iii",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1-iii, 2-ii, 3-iv, 4-i",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1-iv, 2-iii, 3-i, 4-ii",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "1-iii, 2-iv, 3-iii, 4-i",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What should be the Huffman code of the following characters, if the characters and their frequencies are given as follows?\na:16, b:5, c:12, d:17, e:10, f:25\n[Assuming that in Huffman tree, the label of the edge to the left child is 0 and that of the edge to the right child is 1.]",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Greedy Algorithms",
+    "chapterSlug": "dsssb-algo-greedy",
+    "difficulty": "medium",
+    "explanation": "Combine the two smallest frequencies each time: b(5)+e(10)=15; c(12)+15=27; a(16)+d(17)=33; f(25)+27=52; finally 33+52=85. With left edge 0 and right edge 1, the codes are a=00, d=01, f=10, c=110, b=1110, e=1111. Therefore, option C is correct.",
+    "options": [
+      {
+        "content": "a:11, b:1010, c:111, d:01, e:1111, f:00",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "a:11, b:1010, c:111, d:01, e:1100, f:01",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a:00, b:1110, c:110, d:01, e:1111, f:10",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "a:11, b:1010, c:001, d:10, e:0011, f:01",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Consider the following segment of C++ code.\nint j, n;\nfor(j = 1; j <= n; )\n    j = j * 2;\nWhat is the number of comparisons made in the execution of the loop for any n > 0?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Time Complexity Analysis",
+    "chapterSlug": "dsssb-algo-complexity",
+    "difficulty": "medium",
+    "explanation": "Analysis of Loop ComparisonsThe given C++ code segment is:\nfor(j = 1; j <= n; ) j = j * 2;\nLet's trace the execution to count the number of comparisons made in the condition (j <= n).\nStep-by-Step Execution1. Initialization: j starts at 1.\n2. Iteration 1: Check if 1 <= n. (Comparison 1). If true, j becomes 1 * 2 = 2.\n3. Iteration 2: Check if 2 <= n. (Comparison 2). If true, j becomes 2 * 2 = 4.\n4. Iteration 3: Check if 4 <= n. (Comparison 3). If true, j becomes 4 * 2 = 8.\nIn general, after k successful iterations, j becomes 2^k. The loop continues as long as 2^k <= n.\nCalculating Total ComparisonsThe loop terminates when j > n. Let the number of successful iterations be k. Then:\n2^k <= n < 2^(k+1)\nTaking log base 2 on both sides:\nk <= log2(n) < k + 1\nThis implies k is the integer part of log2(n), or more precisely, the number of times we can double 1 before exceeding n is floor(log2(n)).\nHowever, we must count the final comparison that fails. The loop performs a comparison for every iteration (including the one that fails).\nIf the loop runs k times successfully, it performs k successful comparisons and 1 final failed comparison.\nTotal comparisons = k + 1.\nSince k is approximately log2(n), the total number of comparisons is log2(n) + 1.\nNote: In discrete math contexts for this specific problem type, the answer is often expressed as log2(n) + 1, assuming n is a power of 2 or using ceiling/floor logic that results in this form.\nThus, the correct option is D: log2(n) + 1.",
+    "options": [
+      {
+        "content": "n + 1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(n + 1)/2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "log2(n + 1)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "log2 n + 1",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider the following graph.\nWhat is the weight of minimum spanning tree?",
+    "type": "single_choice",
+    "subject": "Algorithms",
+    "subjectSlug": "algorithms",
+    "topic": "Minimum Spanning Trees",
+    "chapterSlug": "dsssb-algo-mst",
+    "difficulty": "medium",
+    "explanation": "To find the weight of the minimum spanning tree (MST), apply Kruskal's algorithm:\nStep 1: List all edges and their weights: Q-R (5), S-T (10), Q-T (15), Q-S (20), P-Q (30), P-S (40).\nStep 2: Sort the edges in ascending order of weight: 5, 10, 15, 20, 30, 40.\nStep 3: Select edges in order, avoiding cycles:\n• Add edge Q-R (weight 5).\n• Add edge S-T (weight 10).\n• Add edge Q-T (weight 15).\n• we cannnot Add edge Q-S (weight 20). as it forms a cycle .\n• add edge  P-Q (weight 30)\nStep 4: The selected edges form a spanning tree with no cycles. The total weight is 5 + 10 + 15 + 30 = 60.",
+    "options": [
+      {
+        "content": "50",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "60",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "70",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "80",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "algorithms",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

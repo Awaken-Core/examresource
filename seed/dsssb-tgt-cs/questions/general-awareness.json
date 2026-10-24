@@ -1,0 +1,562 @@
+[
+  {
+    "content": "Which option best describes the truthfulness of the following statements?\n• i) Physical quantities which have magnitude only are called scalar quantities.\n• ii) Physical quantities which have both magnitude and direction are called vector quantities.\n• iii) Two equal and opposite parallel forces acting at different points in a body constitute a couple.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Check each statement:\n• i) True: a scalar quantity has magnitude only.\n• ii) True: a vector quantity has both magnitude and direction.\n• iii) True: a couple is formed by two equal and opposite parallel forces acting at different points.\nAnswer: i-True, ii-True, iii-True",
+    "options": [
+      {
+        "content": "i-True, ii-True, iii-True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True, iii-True",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-True, iii-False",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-True, ii-False, iii-True",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "1 picosecond = __________",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "In SI prefixes, pico represents 10^-12. Therefore, 1 picosecond = 10^-12 seconds. The correct option is 10^-12 seconds.",
+    "options": [
+      {
+        "content": "10-9 seconds",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "10-12 seconds",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "10-15 seconds",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "10-18 seconds",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following correctly defines coplanar force?",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Coplanar forces are forces whose lines of action lie in the same plane. Therefore, the statement \"When the lines of action of all forces lie in one plane\" correctly defines coplanar force. The other options define concurrent force, equilibrant force, and resultant force.",
+    "options": [
+      {
+        "content": "When the lines of action of all forces lie in one plane.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Two or more than two forces acting at a point.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A single force which, acting along with other forces, keeps the body in equilibrium.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A single force which produces the same effect as that produced by two or more forces acting on the body.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is correct?\n I. Sliding friction > static friction\n II. Rolling friction > sliding friction",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "For the same pair of surfaces in standard school physics, the usual order is: static friction > sliding friction > rolling friction. Therefore statement I is false, and statement II is also false. Hence, the correct answer is Neither I nor II.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Malus’ Law is related to which of the following subjects?",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Malus' Law deals with the intensity of plane-polarized light after it passes through an analyzer, so it is related to light.",
+    "options": [
+      {
+        "content": "Light",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Gravity",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Surface Tension",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Inertia",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "In a convex lens, when the object is at infinity, then where is the position of the image?",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "For a convex lens, an object at infinity forms its image at the second principal focus, F2.",
+    "options": [
+      {
+        "content": "At F₂",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "At 2F₂",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "At infinity",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "At F₁",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In a concave mirror, when object is at C then size of image is _____.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "For a concave mirror, when the object is at the centre of curvature C, the image is formed at C, real, inverted and of the same size.",
+    "options": [
+      {
+        "content": "Of same size",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Highly diminished",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Enlarged",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Highly enlarged",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In a concave mirror, when an object is at infinity, the image is _____.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "When an object is at infinity, the rays reaching a concave mirror are nearly parallel to the principal axis. After reflection, these parallel rays converge at the principal focus F. Thus, the image is formed at F; it is real, inverted and highly diminished.",
+    "options": [
+      {
+        "content": "at C",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "at F",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "beyond C",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "at infinity",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following happens due to atmospheric refraction?\nI. Twinkling of stars\nII. Advanced sunrise and delayed sunset",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Atmospheric refraction causes both twinkling of stars and the apparent early sunrise and delayed sunset. Therefore, both statements are correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Unlike sound waves, electromagnetic waves can travel through _________.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Sound waves need a material medium, but electromagnetic waves can travel through vacuum.",
+    "options": [
+      {
+        "content": "Only solids",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only air",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Vacuum",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Only water",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "According to ________ law, the force between two charges is directly proportional to the product of their charges.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Coulomb's law states that the electrostatic force between two point charges is directly proportional to the product of the magnitudes of the charges and inversely proportional to the square of the distance between them. In symbolic form, F ∝ q1q2/r^2.\nSince the question asks for the law in which force is directly proportional to the product of the charges, the correct answer is Coulomb's law.",
+    "options": [
+      {
+        "content": "Coulomb's",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Gauss's",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Kirchhoff's",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Ohm's",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is/are associated with turbulent flow?\n i) Flow of liquid is orderly.\n ii) Flow of liquid is zigzag and random.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Turbulent flow is irregular, zigzag, and random. Orderly layer-wise flow describes laminar flow, not turbulent flow.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Match the column ‘Moduli of elasticity’ with the column ‘Descriptions’.\n Moduli of elasticity\n a) Young’s modulus\n b) Bulk (or) Volume modulus\n c) Shearing (or) Rigidity modulus\n Descriptions\n i) It is the ratio of the shearing stress produced to the body by the shearing strain produced.\n ii) It is defined as the ratio of linear stress to linear strain.\n iii) It is defined as the ratio of bulk stress to bulk strain.",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "Young's modulus is the ratio of linear stress to linear strain. Bulk modulus is the ratio of bulk stress to bulk strain. Shearing modulus is the ratio of shearing stress to shearing strain. Thus the matching is a-ii, b-iii, c-i.",
+    "options": [
+      {
+        "content": "a-ii, b-iii, c-i",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "a-i, b-iii, c-ii",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a-ii, b-i, c-iii",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a-iii, b-ii, c-i",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is 'u' in the equation of s = ut +1/2 at2 ?",
+    "type": "single_choice",
+    "subject": "General Awareness",
+    "subjectSlug": "general-awareness",
+    "topic": "Physics",
+    "chapterSlug": "dsssb-ga-physics",
+    "difficulty": "easy",
+    "explanation": "In the equation s = ut + 1/2 at^2, u denotes the initial velocity.",
+    "options": [
+      {
+        "content": "Initial time",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Uniform acceleration",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Initial velocity",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Velocity",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "general-awareness",
+      "2022"
+    ],
+    "examYear": 2022
+  }
+]

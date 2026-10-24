@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   adminApi,
   type AdminTestSeries,
   type AdminSubject,
   type AdminTestSeriesSubject,
   type AdminChapter,
-} from './api';
-import { useAdminToast } from './AdminToast';
+} from "./api";
+import { useAdminToast } from "./AdminToast";
 
 interface HierarchyManagerProps {
   initialSeriesId?: string;
@@ -20,34 +20,44 @@ export function HierarchyManager({
   const { showToast } = useAdminToast();
 
   const [seriesList, setSeriesList] = useState<AdminTestSeries[]>([]);
-  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(initialSeriesId || '');
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string>('');
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(
+    initialSeriesId || "",
+  );
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string>("");
 
   // Global Subjects
   const [globalSubjects, setGlobalSubjects] = useState<AdminSubject[]>([]);
-  const [seriesSubjects, setSeriesSubjects] = useState<AdminTestSeriesSubject[]>([]);
+  const [seriesSubjects, setSeriesSubjects] = useState<
+    AdminTestSeriesSubject[]
+  >([]);
   const [chapters, setChapters] = useState<AdminChapter[]>([]);
+  const requestIds = useRef({ series: 0, chapters: 0 });
 
   const [isLoading, setIsLoading] = useState(false);
 
   // Modals
   const [isAssignSubjectOpen, setIsAssignSubjectOpen] = useState(false);
-  const [isCreateGlobalSubjectOpen, setIsCreateGlobalSubjectOpen] = useState(false);
+  const [isCreateGlobalSubjectOpen, setIsCreateGlobalSubjectOpen] =
+    useState(false);
   const [isChapterModalOpen, setIsChapterModalOpen] = useState(false);
-  const [editingChapter, setEditingChapter] = useState<AdminChapter | null>(null);
+  const [editingChapter, setEditingChapter] = useState<AdminChapter | null>(
+    null,
+  );
 
   // Form states
-  const [newSubjectName, setNewSubjectName] = useState('');
-  const [newSubjectSlug, setNewSubjectSlug] = useState('');
-  const [assignSubjectId, setAssignSubjectId] = useState('');
-  const [assignCustomName, setAssignCustomName] = useState('');
+  const [newSubjectName, setNewSubjectName] = useState("");
+  const [newSubjectSlug, setNewSubjectSlug] = useState("");
+  const [assignSubjectId, setAssignSubjectId] = useState("");
+  const [assignCustomName, setAssignCustomName] = useState("");
   const [assignOrder, setAssignOrder] = useState(0);
 
-  const [chapterName, setChapterName] = useState('');
-  const [chapterSlug, setChapterSlug] = useState('');
+  const [chapterName, setChapterName] = useState("");
+  const [chapterSlug, setChapterSlug] = useState("");
   const [chapterOrder, setChapterOrder] = useState(0);
-  const [chapterStatus, setChapterStatus] = useState<'draft' | 'published' | 'archived'>('published');
-  const [chapterDescription, setChapterDescription] = useState('');
+  const [chapterStatus, setChapterStatus] = useState<
+    "draft" | "published" | "archived"
+  >("published");
+  const [chapterDescription, setChapterDescription] = useState("");
 
   // Load series & global subjects
   useEffect(() => {
@@ -63,7 +73,7 @@ export function HierarchyManager({
           setSelectedSeriesId(sList[0].id || sList[0]._id!);
         }
       } catch (err: any) {
-        showToast(err.message || 'Failed to load initial data', 'error');
+        showToast(err.message || "Failed to load initial data", "error");
       }
     }
     loadInitial();
@@ -72,20 +82,27 @@ export function HierarchyManager({
   // When series selection changes, load assigned subjects
   const fetchSeriesSubjects = async (sId: string) => {
     if (!sId) return;
+    const requestId = ++requestIds.current.series;
+    requestIds.current.chapters++;
+    setSelectedSubjectId("");
+    setChapters([]);
     setIsLoading(true);
     try {
       const data = await adminApi.getSeriesSubjects(sId);
+      if (requestId !== requestIds.current.series) return;
       setSeriesSubjects(data || []);
       if (data && data.length > 0) {
         setSelectedSubjectId(data[0].subjectId);
       } else {
-        setSelectedSubjectId('');
-        setChapters([]);
+        setSeriesSubjects([]);
       }
     } catch (err: any) {
-      showToast(err.message || 'Failed to load assigned subjects', 'error');
+      if (requestId === requestIds.current.series) {
+        setSeriesSubjects([]);
+        showToast(err.message || "Failed to load assigned subjects", "error");
+      }
     } finally {
-      setIsLoading(false);
+      if (requestId === requestIds.current.series) setIsLoading(false);
     }
   };
 
@@ -97,12 +114,19 @@ export function HierarchyManager({
 
   // When selected subject changes, load chapters
   const fetchChapters = async (sId: string, subId: string) => {
-    if (!sId || !subId) return;
+    const requestId = ++requestIds.current.chapters;
+    if (!sId || !subId) {
+      setChapters([]);
+      return;
+    }
     try {
       const data = await adminApi.getSeriesChapters(sId, subId);
-      setChapters(data || []);
+      if (requestId === requestIds.current.chapters) setChapters(data || []);
     } catch (err: any) {
-      showToast(err.message || 'Failed to load chapters', 'error');
+      if (requestId === requestIds.current.chapters) {
+        setChapters([]);
+        showToast(err.message || "Failed to load chapters", "error");
+      }
     }
   };
 
@@ -123,14 +147,14 @@ export function HierarchyManager({
         name: newSubjectName.trim(),
         slug: newSubjectSlug.trim(),
       });
-      showToast('Global Subject created.', 'success');
+      showToast("Global Subject created.", "success");
       setGlobalSubjects((prev) => [...prev, created]);
       setAssignSubjectId(created.id || created._id!);
       setIsCreateGlobalSubjectOpen(false);
-      setNewSubjectName('');
-      setNewSubjectSlug('');
+      setNewSubjectName("");
+      setNewSubjectSlug("");
     } catch (err: any) {
-      showToast(err.message || 'Failed to create subject', 'error');
+      showToast(err.message || "Failed to create subject", "error");
     }
   };
 
@@ -144,37 +168,41 @@ export function HierarchyManager({
         customDisplayName: assignCustomName.trim() || null,
         order: Number(assignOrder) || 0,
       });
-      showToast('Subject assigned to Test Series.', 'success');
+      showToast("Subject assigned to Test Series.", "success");
       setIsAssignSubjectOpen(false);
-      setAssignSubjectId('');
-      setAssignCustomName('');
+      setAssignSubjectId("");
+      setAssignCustomName("");
       fetchSeriesSubjects(selectedSeriesId);
     } catch (err: any) {
-      showToast(err.message || 'Failed to assign subject', 'error');
+      showToast(err.message || "Failed to assign subject", "error");
     }
   };
 
   const handleRemoveSubject = async (subjectId: string) => {
-    if (!confirm('Unassign this subject from this Test Series? Existing question mappings and chapters for this series will be affected.')) {
+    if (
+      !confirm(
+        "Unassign this subject from this Test Series? Existing question mappings and chapters for this series will be affected.",
+      )
+    ) {
       return;
     }
     try {
       await adminApi.removeSubjectFromSeries(selectedSeriesId, subjectId);
-      showToast('Subject unassigned from Test Series.', 'success');
+      showToast("Subject unassigned from Test Series.", "success");
       fetchSeriesSubjects(selectedSeriesId);
     } catch (err: any) {
-      showToast(err.message || 'Failed to unassign subject', 'error');
+      showToast(err.message || "Failed to unassign subject", "error");
     }
   };
 
   // Actions: Chapter Create / Edit
   const openCreateChapter = () => {
     setEditingChapter(null);
-    setChapterName('');
-    setChapterSlug('');
+    setChapterName("");
+    setChapterSlug("");
     setChapterOrder(chapters.length);
-    setChapterStatus('published');
-    setChapterDescription('');
+    setChapterStatus("published");
+    setChapterDescription("");
     setIsChapterModalOpen(true);
   };
 
@@ -184,7 +212,7 @@ export function HierarchyManager({
     setChapterSlug(c.slug);
     setChapterOrder(c.order ?? 0);
     setChapterStatus(c.status);
-    setChapterDescription(c.description || '');
+    setChapterDescription(c.description || "");
     setIsChapterModalOpen(true);
   };
 
@@ -194,15 +222,21 @@ export function HierarchyManager({
       setChapterSlug(
         val
           .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-|-$/g, ''),
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, ""),
       );
     }
   };
 
   const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chapterName.trim() || !chapterSlug.trim() || !selectedSubjectId || !selectedSeriesId) return;
+    if (
+      !chapterName.trim() ||
+      !chapterSlug.trim() ||
+      !selectedSubjectId ||
+      !selectedSeriesId
+    )
+      return;
 
     try {
       if (editingChapter) {
@@ -213,7 +247,7 @@ export function HierarchyManager({
           status: chapterStatus,
           description: chapterDescription.trim() || null,
         });
-        showToast('Chapter updated.', 'success');
+        showToast("Chapter updated.", "success");
       } else {
         await adminApi.createChapter(selectedSeriesId, {
           name: chapterName.trim(),
@@ -223,28 +257,37 @@ export function HierarchyManager({
           status: chapterStatus,
           description: chapterDescription.trim() || null,
         });
-        showToast('Chapter created.', 'success');
+        showToast("Chapter created.", "success");
       }
       setIsChapterModalOpen(false);
       fetchChapters(selectedSeriesId, selectedSubjectId);
     } catch (err: any) {
-      showToast(err.message || 'Failed to save chapter', 'error');
+      showToast(err.message || "Failed to save chapter", "error");
     }
   };
 
   const handleDeleteChapter = async (chapterId: string) => {
-    if (!confirm('Delete this chapter? This operation fails if tests are linked to it.')) return;
+    if (
+      !confirm(
+        "Delete this chapter? This operation fails if tests are linked to it.",
+      )
+    )
+      return;
     try {
       await adminApi.deleteChapter(chapterId);
-      showToast('Chapter deleted.', 'success');
+      showToast("Chapter deleted.", "success");
       fetchChapters(selectedSeriesId, selectedSubjectId);
     } catch (err: any) {
-      showToast(err.message || 'Failed to delete chapter', 'error');
+      showToast(err.message || "Failed to delete chapter", "error");
     }
   };
 
-  const selectedSeries = seriesList.find((s) => (s.id || s._id) === selectedSeriesId);
-  const selectedSubject = seriesSubjects.find((s) => s.subjectId === selectedSubjectId);
+  const selectedSeries = seriesList.find(
+    (s) => (s.id || s._id) === selectedSeriesId,
+  );
+  const selectedSubject = seriesSubjects.find(
+    (s) => s.subjectId === selectedSubjectId,
+  );
 
   return (
     <div className="space-y-5">
@@ -253,14 +296,17 @@ export function HierarchyManager({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 text-[11px] font-medium text-slate-500 dark:text-zinc-400">
-              <span className="text-blue-600 dark:text-blue-400 font-bold">Hierarchy</span>
+              <span className="text-blue-600 dark:text-blue-400 font-bold">
+                Hierarchy
+              </span>
               <span>›</span>
-              <span>{selectedSeries?.title || 'Select Series'}</span>
+              <span>{selectedSeries?.title || "Select Series"}</span>
               {selectedSubject && (
                 <>
                   <span>›</span>
                   <span className="font-semibold text-slate-800 dark:text-zinc-200">
-                    {selectedSubject.customDisplayName || selectedSubject.subject?.name}
+                    {selectedSubject.customDisplayName ||
+                      selectedSubject.subject?.name}
                   </span>
                 </>
               )}
@@ -290,7 +336,13 @@ export function HierarchyManager({
           </label>
           <select
             value={selectedSeriesId}
-            onChange={(e) => setSelectedSeriesId(e.target.value)}
+            onChange={(e) => {
+              requestIds.current.chapters++;
+              setSelectedSubjectId("");
+              setSeriesSubjects([]);
+              setChapters([]);
+              setSelectedSeriesId(e.target.value);
+            }}
             className="w-full sm:w-80 px-3 py-2 text-xs bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl focus:ring-2 focus:ring-blue-600 dark:text-zinc-100"
           >
             {seriesList.map((s) => (
@@ -327,10 +379,13 @@ export function HierarchyManager({
 
             <div className="p-2 divide-y divide-slate-100 dark:divide-zinc-800">
               {isLoading ? (
-                <div className="p-6 text-center text-xs text-slate-400">Loading subjects...</div>
+                <div className="p-6 text-center text-xs text-slate-400">
+                  Loading subjects...
+                </div>
               ) : seriesSubjects.length === 0 ? (
                 <div className="p-6 text-center text-slate-400 text-xs">
-                  No subjects assigned to this Test Series yet. Click &quot;+ Assign Subject&quot; above.
+                  No subjects assigned to this Test Series yet. Click &quot;+
+                  Assign Subject&quot; above.
                 </div>
               ) : (
                 seriesSubjects.map((sub) => {
@@ -341,16 +396,16 @@ export function HierarchyManager({
                       onClick={() => setSelectedSubjectId(sub.subjectId)}
                       className={`p-2.5 rounded-xl flex items-center justify-between cursor-pointer transition ${
                         isSelected
-                          ? 'bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60'
-                          : 'hover:bg-slate-50 dark:hover:bg-zinc-800/40'
+                          ? "bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-900/60"
+                          : "hover:bg-slate-50 dark:hover:bg-zinc-800/40"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div
                           className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
                             isSelected
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400'
+                              ? "bg-blue-600 text-white"
+                              : "bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400"
                           }`}
                         >
                           {sub.order ?? 0}
@@ -399,7 +454,7 @@ export function HierarchyManager({
                 <p className="text-[10px] text-slate-500 dark:text-zinc-400">
                   {selectedSubject
                     ? `For ${selectedSubject.customDisplayName || selectedSubject.subject?.name} in ${selectedSeries?.targetExam}`
-                    : 'Select a subject from the left panel'}
+                    : "Select a subject from the left panel"}
                 </p>
               </div>
 
@@ -417,11 +472,14 @@ export function HierarchyManager({
             <div className="p-3">
               {!selectedSubjectId ? (
                 <div className="p-10 text-center text-slate-400 text-xs">
-                  Please select a subject from the left panel to manage its exam-specific chapters.
+                  Please select a subject from the left panel to manage its
+                  exam-specific chapters.
                 </div>
               ) : chapters.length === 0 ? (
                 <div className="p-10 text-center text-slate-400 text-xs space-y-2">
-                  <p>No chapters created for this subject in this Test Series.</p>
+                  <p>
+                    No chapters created for this subject in this Test Series.
+                  </p>
                   <button
                     type="button"
                     onClick={openCreateChapter}
@@ -454,9 +512,9 @@ export function HierarchyManager({
                       <div className="flex items-center gap-2 shrink-0">
                         <span
                           className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
-                            chap.status === 'published'
-                              ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                              : 'bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
+                            chap.status === "published"
+                              ? "bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300"
+                              : "bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300"
                           }`}
                         >
                           {chap.status}
@@ -466,17 +524,39 @@ export function HierarchyManager({
                           onClick={() => openEditChapter(chap)}
                           className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 rounded cursor-pointer"
                         >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          <svg
+                            className="w-3.5 h-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.8"
+                              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                            />
                           </svg>
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDeleteChapter(chap.id || chap._id!)}
+                          onClick={() =>
+                            handleDeleteChapter(chap.id || chap._id!)
+                          }
                           className="p-1 text-rose-500 hover:text-rose-700 rounded cursor-pointer"
                         >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          <svg
+                            className="w-3.5 h-3.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.8"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -600,7 +680,10 @@ export function HierarchyManager({
               </button>
             </div>
 
-            <form onSubmit={handleCreateGlobalSubject} className="space-y-3 text-xs">
+            <form
+              onSubmit={handleCreateGlobalSubject}
+              className="space-y-3 text-xs"
+            >
               <div>
                 <label className="block font-medium text-slate-700 dark:text-zinc-300 mb-1">
                   Subject Name *
@@ -614,8 +697,8 @@ export function HierarchyManager({
                     setNewSubjectSlug(
                       e.target.value
                         .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/^-|-$/g, ''),
+                        .replace(/[^a-z0-9]+/g, "-")
+                        .replace(/^-|-$/g, ""),
                     );
                   }}
                   placeholder="e.g. Mathematics"
@@ -663,7 +746,7 @@ export function HierarchyManager({
           <div className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-2">
               <h2 className="text-sm font-bold text-slate-900 dark:text-zinc-100">
-                {editingChapter ? 'Edit Chapter' : 'Add Chapter'}
+                {editingChapter ? "Edit Chapter" : "Add Chapter"}
               </h2>
               <button
                 type="button"

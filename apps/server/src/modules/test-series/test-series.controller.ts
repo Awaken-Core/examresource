@@ -77,7 +77,7 @@ export class TestSeriesController {
     return this.service.getManageable(id, await this.auth.requireUser(req));
   }
 
-  @Post('test-series')
+  @Post(['test-series', 'me/test-series'])
   async create(@Req() req: Request) {
     return this.service.create(
       this.parse(createTestSeriesSchema, req.body),
@@ -85,7 +85,7 @@ export class TestSeriesController {
     );
   }
 
-  @Patch('test-series/:id')
+  @Patch(['test-series/:id', 'me/test-series/:id'])
   async update(@Param('id') id: string, @Req() req: Request) {
     return this.service.update(
       id,
@@ -94,7 +94,7 @@ export class TestSeriesController {
     );
   }
 
-  @Patch('test-series/:id/status')
+  @Patch(['test-series/:id/status', 'me/test-series/:id/status'])
   async updateStatus(
     @Param('id') id: string,
     @Req() req: Request,
@@ -107,7 +107,7 @@ export class TestSeriesController {
     return this.service.updateStatus(id, status, user);
   }
 
-  @Delete('test-series/:id')
+  @Delete(['test-series/:id', 'me/test-series/:id'])
   @HttpCode(204)
   async remove(@Param('id') id: string, @Req() req: Request) {
     await this.service.remove(id, await this.auth.requireUser(req));

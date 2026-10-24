@@ -1,0 +1,82 @@
+[
+  {
+    "content": "When contacting a large number of people for some information, which of the following methods of data collection is considered to be convenient?",
+    "type": "single_choice",
+    "subject": "Research Aptitude",
+    "subjectSlug": "research-aptitude",
+    "topic": "Research Process Steps",
+    "chapterSlug": "dsssb-ra-process",
+    "difficulty": "easy",
+    "explanation": "Questionnaires are convenient for collecting information from a large number of people because they can be distributed and processed at scale.",
+    "options": [
+      {
+        "content": "Personal Observation",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Questionnaires",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Interview",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Official Records",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "research-aptitude",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Scientific argument involves three components. Which of the following are these components?\n Statements:\n I. Hypothesis\n II. Predictions\n III. The evidence",
+    "type": "single_choice",
+    "subject": "Research Aptitude",
+    "subjectSlug": "research-aptitude",
+    "topic": "Research Process Steps",
+    "chapterSlug": "dsssb-ra-process",
+    "difficulty": "easy",
+    "explanation": "A scientific argument uses a hypothesis, predictions and evidence. All three listed components are part of scientific argumentation.",
+    "options": [
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "research-aptitude",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

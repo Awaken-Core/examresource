@@ -1,0 +1,4722 @@
+[
+  {
+    "content": "If  b  is the base of the positional number system. What is the range of symbols it consists of?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "Starting Point: Every positional number system starts with the symbol 0.\nTotal Count: The total number of unique symbols is exactly equal to the base b.\nMaximum Symbol: Because the count starts at 0, the largest single digit is always one less than the base (b-1).",
+    "options": [
+      {
+        "content": "0 to b",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1 to b",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "0 to (b − 1)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "1 to (b − 1)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many bits are required to represent any decimal number in the range from 0 to 2n -1 in base 2?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "The maximum value that can be represented by n binary bits is calculated using the formula:\nMax Value = 2n-1\nExample: If n = 3 bits, the range is 0 to 23 - 1, which is 0 to 7.\nBinary range for 3 bits: 000 to 111",
+    "options": [
+      {
+        "content": "n",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "n-1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2n-1",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "n+1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a non-positional number system?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "Roman numerals represent a non-positional system where symbol value remains constant regardless of position. Unlike decimal, octal, or binary systems, place value does not determine the total magnitude in Roman notation.",
+    "options": [
+      {
+        "content": "Decimal",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Roman",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Octal",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Binary",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is the base-4 representation of the decimal number 213?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "To convert decimal 213 to base-4, divide by 4 repeatedly. 213 ÷ 4 = 53 remainder 1. 53 ÷ 4 = 13 remainder 1. 13 ÷ 4 = 3 remainder 1. 3 ÷ 4 = 0 remainder 3. Reading remainders bottom-up gives (3111)₄.",
+    "options": [
+      {
+        "content": "(1111)4",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(3113)4",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(3133)4",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(3111)4",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "How many bits should there be in a binary number that is equivalent to decimal number 780?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "To find the number of bits, determine the smallest power of two greater than or equal to 780. Since 2^9 = 512 and 2^10 = 1024, the number requires ten bits to represent in binary format.",
+    "options": [
+      {
+        "content": "10",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "9",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "11",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is the least significant digit of the hexa-decimal number that is equivalent to decimal number 780?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "medium",
+    "explanation": "To find the least significant digit, divide the decimal number by 16 repeatedly. The first remainder obtained represents the least significant hexadecimal digit. For 780, dividing by 16 yields a remainder of 12, which converts to the character C.",
+    "options": [
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "B",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "C",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "0",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is correct about binary number that is equivalent to decimal number 780?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "medium",
+    "explanation": "Convert decimal 780 to binary using repeated division by two. The result is 1100001100, containing six zeros and four ones. This matches the correct option identifying the zero count.",
+    "options": [
+      {
+        "content": "It has 9 bits.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It has five 1's.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It has six 0's.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Its 2nd bit from the right is 1.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In scientific notation, decimal numbers use the concepts of mantissa and exponent, and are written using powers of __________.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "Scientific notation expresses numbers as a product of a mantissa and 10 raised to an exponent. The base is always 10 because it represents the decimal system used for scientific calculations.",
+    "options": [
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "10",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "16",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following could be a natural interpretation of an 8-bit value such as 10001011?\n(i) 139\n(ii) -117",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "The bit pattern 10001011 can be interpreted in more than one natural way.\nUnsigned interpretation:\n10001011₂ = 128 + 8 + 2 + 1 = 139. So statement (i) is valid.\n8-bit signed two’s-complement interpretation:\nSince the MSB is 1, the value is negative. Its value is 139 - 256 = -117. So statement (ii) is also valid.\nTherefore, both (i) and (ii) are valid interpretations. Hence, Option C is correct.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "What is the value of (3564)₈ + (32332)₄?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "Convert both numbers to decimal: (3564)₈ = 3×8³ + 5×8² + 6×8 + 4 = 1908₁₀. (32332)₄ = 3×4⁴ + 2×4³ + 3×4² + 3×4 + 2 = 958₁₀. Sum = 2866₁₀. Converting 2866 to hexadecimal gives B32, so the answer is (B32)₁₆.",
+    "options": [
+      {
+        "content": "(B32)₁₆",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "(1662)₁₆",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(1762)₁₆",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(1562)₁₆",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The binary equivalent of (25.625)₁₀ is _____.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "To convert (25.625)10​ to binary, we need to convert the integer and fractional parts separately.\nInteger Part: 25\n25=16+8+1\nSo,\n(25)10=(11001)2\nFractional Part: 0.625\nMultiply repeatedly by 2:\n• 0.625×2=1.25→ 1\n• 0.25×2=0.5 → 0\n• 0.5×2=1.0 → 1\nThus,\n(0.625)10=(0.101)2\n(25.625)10=(11001.101)2",
+    "options": [
+      {
+        "content": "(10001.11)₂",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(11101.001)₂",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(11011.100)₂",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(11001.101)₂",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement is/are correct?\nI. (1071)10 = (2057)8\nII. (1AF)16 = (413)10",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "medium",
+    "explanation": "To convert (1071)10 to Octal (base 8), we divide the decimal number by 8 and track the remainders:\n1. 1071 / 8 = 133 with a remainder of 7\n2. 133 / 8 = 16 with a remainder of 5\n3. 16 / 8 = 2 with a remainder of 0\n4. 2 / 8 = 0 with a remainder of 2\nReading the remainders from bottom to top, we get (2057)8 .\nStatement I is correct.\nTo convert (1AF)16 to Decimal (base 10), we use the positional weights of hexadecimal, where A = 10 and F = 15:\n1. 1 X 162 = 1 X 256 = 256\n2. A X 161 = 10 X 16 = 160\n3. F X 160 = 15 X 1 = 15\n4. Total: 256 + 160 + 15 = 431\nSince (1AF)16 = (413)10, the statement (1AF)16 = (413)10 is incorrect.\nStatement II is incorrect.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If (10011)x​=(631)10​ then what is the value of x?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "To find the base x, expand (10011)x using powers of x: 1*x^4 + 0*x^3 + 0*x^2 + 1*x^1 + 1*x^0 = 631. This simplifies to x^4 + x - 630 = 0. Testing integer values, we find that when x equals 5, the equation holds true since 625 + 5 - 630 equals zero.",
+    "options": [
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "5",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "If (1101)x = (241)16, then what is the value of x?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "medium",
+    "explanation": "(241)₁₆ converts to decimal as 2×256 + 4×16 + 1 = 577.\n(1101)ₓ expands to x³ + x² + 1. Equating gives x³ + x² = 576.\nSubstituting x=8 yields 512 + 64 = 576, confirming the value.",
+    "options": [
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "8",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "10",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the value of (1715)₁₀ in base 12?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "Let's convert (1715)₁₀ to base 12.\nWe repeatedly divide by 12:\n1715 / 12 = 142 remainder 11\n142 / 12 = 11  remainder 10\n11 / 12 = 0  remainder  11\nNow we write the remainders from bottom to top:\n11, 10, 11\nIn base 12, the digits after 9 are represented as: (10 = A) ,(11 = B)\nTherefore,\n(1715)₁₀ = (BAB)₁₂",
+    "options": [
+      {
+        "content": "(BAA)₁₂",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(ABA)₁₂",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(BCB)₁₂",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(BAB)₁₂",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct?\n I.  (4052)₇ = (1409)₁₀\n II.  (1715)₁₀ = (BAB)₁₂",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "Step 1: Convert (4052)₇ to base 10. Use the formula: 4×7³ + 0×7² + 5×7¹ + 2×7⁰. Calculate: 4×343 = 1372, 0×49 = 0, 5×7 = 35, 2×1 = 2. Sum: 1372 + 0 + 35 + 2 = 1409. So, (4052)₇ = (1409)₁₀. This statement is correct.\nStep 2: Convert (1715)₁₀ to base 12. Divide 1715 by 12: 1715 ÷ 12 = 142 remainder 11 (B). 142 ÷ 12 = 11 remainder 10 (A). 11 ÷ 12 = 0 remainder 11 (B). Reading remainders from bottom to top gives (BAB)₁₂. This statement is correct.\nBoth statements are correct. Therefore, the correct option is C.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Write the binary code for EXAM in ASCII-7. (decimal code of A is 65)",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "First, find the ASCII decimal values for each letter: E is 69, X is 88, A is 65, and M is 77. Next, convert each decimal value to its 7-bit binary equivalent: E becomes 1000101, X is 1011000, A is 1000001, and M is 1001101. Finally, concatenate these binary strings in order to get the complete code.",
+    "options": [
+      {
+        "content": "1001101101100010000011001101",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1000101101100010000011001101",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "1011000100000110110001000001",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1000001101100010011011011000",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If (12?07)8 = (1010110000111)2, then what is the missing digit in (12?07)8?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "First, group the binary number 1010110000111 into sets of three bits from right to left: 001, 010, 110, 000, and 111.\nConvert each group to octal: 001 is 1, 010 is 2, 110 is 6, 000 is 0, and 111 is 7. This gives the octal number 12607.\nComparing 12607 with the given format 12?07, the missing digit represented by ? is clearly 6.",
+    "options": [
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "6",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is minuend value in the following?\n subtract (011100) 2 ​ from (1011100) 2",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "In any subtraction operation (A - B = C):\n• Minuend (A): The number from which another number is being subtracted (the larger value in basic subtraction).\n• Subtrahend (B): The number that is being subtracted.\n• Difference (C): The result of the operation.\nSince the instruction says to subtract (011100)₂ from (1011100)₂, the value (1011100)₂ is the starting point (the minuend).",
+    "options": [
+      {
+        "content": "(111000)2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(1011100)2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(100100)2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(100101)2",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the value of product of (10110)₂ and (10011)₂?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "easy",
+    "explanation": "First, convert the binary numbers to decimal:\n(10110)2=16+4+2=22\n(10011)2=16+2+1=19\nNow multiply:\n22×19=418\nConvert 418 back to binary:\n418=256+128+32+2\n418=(110100010)2",
+    "options": [
+      {
+        "content": "(11011010)₂",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(110100010)₂",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(110100001)₂",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(110100100)₂",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What will be the quotient when (10000)₂ is divided by (110)₂?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "medium",
+    "explanation": "To find the quotient of (10000)₂ divided by (110)₂, first convert both binary numbers to decimal. The dividend (10000)₂ equals 2⁴, which is 16 in decimal. The divisor (110)₂ equals 2² + 2¹, which is 4 + 2 = 6 in decimal. Dividing the decimal values gives 16 ÷ 6, resulting in a quotient of 2 with a remainder. Converting the quotient 2 back to binary yields (10)₂. However, reviewing the provided options reveals a discrepancy: Option A is listed as (101)₂ (decimal 5), which does not match the calculated quotient of 2. Despite this mathematical inconsistency in the question's options, Option A is marked as correct in the source material. If we assume a typo where the dividend was intended to be (1010)₂ (decimal 10), then 10 ÷ 6 would still not yield 5. Alternatively, if the divisor was (10)₂ (decimal 2), then 16 ÷ 2 = 8, which is (1000)₂. Given the strict constraint to explain why Option A is right, we must acknowledge that (101)₂ equals 5. If the dividend were actually (110)₂ + (101)₂ = 11, or if the operation was multiplication where 6 × 5 = 30 (not 16), no standard division fits. Therefore, the provided solution assumes a potential error in the question's options or values but selects Option A as the designated correct answer based on the provided key, noting that mathematically 16 ÷ 6 = 2 (binary 10), which is not listed.",
+    "options": [
+      {
+        "content": "(10)₂",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "(110)₂",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(001)₂",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(100)₂",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Identify the missing digits in the following expression so that the left hand side is equal to the right hand side.\n(1010?)2 + (?7)8 = (24)16",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number System",
+    "chapterSlug": "dsssb-de-number-system",
+    "difficulty": "medium",
+    "explanation": "Convert the right side hexadecimal (24)16 to decimal, which is 36. Test digit 1 for the binary (1010?)2, yielding 21 in decimal. Test digit 1 for the octal (?7)8, yielding 15 in decimal. Adding 21 and 15 equals 36, confirming the missing digits are both 1.",
+    "options": [
+      {
+        "content": "1, 2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1, 1",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "1, 6",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "0, 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the correct answer of the given statements in the given order?\n I.  Gate in which output of logical gate is high when all inputs are high is ____\n II.  Half of byte is known as ____\n III.  A flip-flop whose output follows the input when triggered is ____",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "To determine the correct answer, analyze each statement separately:\nI. The gate that outputs high only when all inputs are high is an AND gate. This is because the AND operation requires all inputs to be true (high) to produce a high output.\nII. A byte consists of 8 bits. Half of a byte is 4 bits, which is known as a nibble. This is a standard unit in digital systems.\nIII. A flip-flop whose output follows the input when triggered is a D-flip-flop. The D stands for 'data', and the output changes to match the input on the clock edge.\nBy matching these concepts to the options, the correct sequence can be determined.",
+    "options": [
+      {
+        "content": "NAND gate, bit, T–flip-flop",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "OR gate, nibble, T–flip-flop",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "AND gate, nibble, D–flip-flop",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "NOR gate, byte, S–R flip-flop",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The mask logical micro operation is equivalent to which logical gate?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "The mask logical micro operation involves applying a binary mask to data to select specific bits. This is done using a bitwise AND operation, where each bit of the result is 1 only if both the corresponding bits of the data and mask are 1. This behavior matches the function of an AND gate. For example, if the data is 1101 and the mask is 1011, the result is 1001, which is the same as performing a bitwise AND. Therefore, the mask operation is equivalent to an AND gate.",
+    "options": [
+      {
+        "content": "OR gate",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "NOR gate",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "AND gate",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "NAND gate",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which gate is represented by the following truth table?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "To identify the logic gate from the truth table, compare the given inputs and outputs with the standard behavior of common logic gates.\n Step 1: Analyze the truth table.\n- When A = 0 and B = 0, Output = 0.\n- When A = 0 and B = 1, Output = 1.\n- When A = 1 and B = 0, Output = 1.\n- When A = 1 and B = 1, Output = 1.\n Step 2: Compare with OR gate.\n- OR gate output is 1 if at least one input is 1.\n- This matches the given truth table.\n Step 3: Compare with AND gate.\n- AND gate output is 1 only when both inputs are 1.\n- This does not match the given truth table.\n Step 4: Compare with XOR gate.\n- XOR gate output is 1 when inputs are different.\n- This does not match the given truth table.\n Step 5: Consider NOT gate.\n- NOT gate has only one input.\n- This truth table has two inputs, so it cannot be a NOT gate.\n Conclusion: The truth table matches the behavior of an OR gate.",
+    "options": [
+      {
+        "content": "OR",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "AND",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "XOR",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "NOT",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which gate is represented by the following truth table?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "To identify the logic gate from the truth table, analyze the output for all possible input combinations.\n Step 1: When A = 0 and B = 0, output = 0.\n Step 2: When A = 0 and B = 1, output = 0.\n Step 3: When A = 1 and B = 0, output = 0.\n Step 4: When A = 1 and B = 1, output = 1.\n This behavior matches the AND gate, where the output is 1 only when both inputs are 1.",
+    "options": [
+      {
+        "content": "OR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AND",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "NAND",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "NOR",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A railway crossing has 4 railway tracks. If a train comes on atleast 1 of the tracks, the crossing has to be closed. Which gate can be used to implement this?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "An OR gate produces a high output (1) if any of its inputs are high. In this scenario:\n• Inputs: Each of the 4 railway tracks acts as an input (A, B, C, D). A \"1\" represents a train detected on that track.\n• Logic: The output (Y) will be 1 (close the crossing) if track A OR track B OR track C OR track D has a train.\n• Boolean Expression: Y = A + B + C + D.",
+    "options": [
+      {
+        "content": "NAND",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "NOR",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "OR",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "AND",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding AND logic gate?\nI. The AND gate produces the output value 1 if input A and input B are both equal to 1.\nII. The algebraic operation symbol of the AND function is the same as the multiplication symbol of ordinary arithmetic.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "An AND gate outputs 1 only when both inputs are 1, and Boolean AND is commonly represented by multiplication. Therefore both statements are correct.",
+    "options": [
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which logical gate is known as Universal gate?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "The NAND gate is known as a Universal gate because it can be used to construct all other basic logic gates (AND, OR, NOT).\nStep 1: To create a NOT gate, connect both inputs of a NAND gate together. This gives the inverse of the input.\nStep 2: To create an AND gate, use a NAND gate followed by a NOT gate (made from another NAND).\nStep 3: To create an OR gate, use De Morgan's theorem: A OR B = NOT((NOT A) AND (NOT B)). This can be implemented using NAND gates.\nSince NAND can implement NOT, AND, and OR, it is universal.",
+    "options": [
+      {
+        "content": "AND",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Ex-OR",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "NOT",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "NAND",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which gate is represented by the following truth table?\nA B C | Q\n0 0 0 | 1\n0 0 1 | 1\n0 1 0 | 1\n0 1 1 | 1\n1 0 0 | 1\n1 0 1 | 1\n1 1 0 | 1\n1 1 1 | 0",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "Answer: NAND gate\nA 3-input NAND gate is the complement of the AND operation. Its output is 0 only when all inputs are 1; otherwise its output is 1.\nFrom the truth table:\n- For 000, 001, 010, 011, 100, 101, and 110, the output Q is 1.\n- For 111, the output Q is 0.\nThis exactly matches a NAND gate.\nNOR would be 1 only for 000 and 0 for all other combinations, so NOR is not correct. XOR/XNOR parity patterns also do not match this table.",
+    "options": [
+      {
+        "content": "NOR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "NAND",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "XOR",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "XNOR",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Both the inputs of NAND gate are connected to A. What will be the output?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "When both inputs of a NAND gate are connected to the same signal ($A$), the gate functions as a NOT gate, and the output will be \\overline{A} (the complement of A).",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A'",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many NOR gates are used to get AND gate from them?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "medium",
+    "explanation": "To implement an AND gate using only NOR gates, you require 3 NOR gates.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "3",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following symbol represent the NOR gate?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "Symbol I: This is the standard NOR gate symbol. It consists of an OR gate (curved input side and pointed output side) followed by a small circle (inversion bubble) at the output. Symbol II: This is an \"inverted-input AND gate.\" According to De Morgan's Law, \\overline{A + B} = \\overline{A} \\cdot \\overline{B}. Inverting both inputs of an AND gate produces an output functionally identical to a NOR gate.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following represents XNOR gate?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "Option 2 is the correct representation of XNOR gate",
+    "options": [
+      {
+        "content": "Y=A⊕B",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Y=A⊙B",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "By including which logical gate, binary adder circuit is used for both binary addition and subtraction?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "To perform both binary addition and subtraction, a binary adder circuit uses an Ex-OR gate in combination with a control signal. The Ex-OR gate is used to generate the sum bit in addition. For subtraction, the control signal inverts the second operand using the Ex-OR gate, effectively converting the subtraction into addition of the two's complement. This allows the same circuit to perform both operations.",
+    "options": [
+      {
+        "content": "Ex-AND gate",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AND gate",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Ex-OR gate",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "OR gate",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The XOR gate gives ______ as output when both inputs are different and ______ when both inputs are same.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "medium",
+    "explanation": "An XOR gate produces a high output (1) when inputs differ and a low output (0) when inputs are identical. Thus, the sequence for different then same inputs is 1 followed by 0.",
+    "options": [
+      {
+        "content": "0, 0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "0, 1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1, 0",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "1, 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The following logic diagram is equivalent to ______ gate.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "XNOR gate.",
+    "options": [
+      {
+        "content": "XOR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "NAND",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "NOR",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "XNOR",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following logic gate is shown in the given Graphic Symbol? (where, A and B = inputs, x = output)",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "• The correct answer is Option D, the Exclusive-OR (XOR) gate.\n• The graphic symbol shown features a distinctive curved input line combined with a double-curved back, which is the standard IEEE/ANSI representation for an XOR gate.\n• This specific shape differentiates it from other gates: an OR gate has a single curved back, while a NAND or NOR gate includes a small circle (bubble) at the output to indicate inversion.\n• The XOR gate produces a high output only when its inputs are different, meaning one is true and the other is false. Recognizing this unique double-curve symbol allows you to immediately identify it as an XOR gate, ruling out the OR, NAND, and NOR options which have different structural features. Therefore, based on standard logic gate symbols, the correct identification is Option D.",
+    "options": [
+      {
+        "content": "OR gate",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "NAND gate",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "NOR gate",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Exclusive - OR (XOR) gate",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "What is the full form of DCTL in logic family?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "DCTL stands for Direct-coupled transistor logic. In this logic family, transistors are directly connected to each other without the use of coupling components like capacitors or transformers. This allows for faster switching and simpler circuit design compared to other logic families. The term 'direct-coupled' refers to the direct connection between stages, and 'transistor logic' indicates that transistors are used as the primary switching elements.",
+    "options": [
+      {
+        "content": "Direct-coupled transistor logic",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Diode-coupled transistor logic",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Direct-circuit transistor logic",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Direct-circuit threshold logic",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is correct regarding electric power?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "Electric power (P) is the rate at which electrical energy is transferred in a circuit. The standard formula for power is P = V × I, where V is voltage and I is current. This formula is derived from the definition of power as the product of voltage and current. Other forms, such as P = I²V or P = V/I, do not represent the correct relationship and are not used in standard electrical calculations. Therefore, the correct expression for electric power is P = VI.",
+    "options": [
+      {
+        "content": "P = I²V",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "P = I / V",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "P = VI",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "P = V / I",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is correct regarding figure of merit of an IC?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Logic Gates & Hardware",
+    "chapterSlug": "dsssb-de-logic-gates",
+    "difficulty": "easy",
+    "explanation": "ENGLISH SOLUTION\n==================================================\nQuestion:\nWhich of the following is correct regarding\nfigure of merit of an IC?\n--------------------------------------------------\nConcept\n--------------------------------------------------\nThe figure of merit of a digital IC is defined as:\nFigure of Merit\n= Propagation Delay Time × Power Dissipation\nIt is also known as the:\nSpeed-Power Product\nA lower value indicates a better IC because\nit provides high speed with low power consumption.\n--------------------------------------------------\nTherefore\n--------------------------------------------------\nCorrect relation:\nPropagation delay time × power\n--------------------------------------------------\nFinal Answer\n--------------------------------------------------\nCorrect Option: C",
+    "options": [
+      {
+        "content": "Propagation delay time − power",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Propagation delay time ÷ power",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Propagation delay time × power",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Propagation delay time + power",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many full adders are required for n-bit binary adder?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "To add two n-bit binary numbers, each bit position requires a full adder to compute the sum and handle carry-in and carry-out. A full adder takes three inputs: two bits (one from each number) and a carry-in from the previous bit position. It produces a sum bit and a carry-out to the next position. Since there are n bit positions, n full adders are needed—one for each bit. The carry-in for the least significant bit (LSB) is typically 0, and the carry-out from the most significant bit (MSB) is the final carry. Therefore, the number of full adders required is n.",
+    "options": [
+      {
+        "content": "2n",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "n/2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "n",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "n2",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following represents carry in half adder?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "For inputs A and B, the carry output is represented by the following Boolean expression:\nCarry = A \\cdot B",
+    "options": [
+      {
+        "content": "AB",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "A B̄",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ĀB",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Ā B̄",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following represents the borrow in a half subtraction?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "The borrow output for a half subtractor with inputs A (minuend) and B (subtrahend) is represented by the following Boolean expression:\nBorrow = A'B",
+    "options": [
+      {
+        "content": "AB",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AB'",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A'B",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "A'B'",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is the Boolean function for carry (C) of the half-adder with inputs x and y?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "For a half-adder, the carry output C represents whether both inputs are high. This corresponds to the logical AND operation between x and y, expressed as C = xy.",
+    "options": [
+      {
+        "content": "C = x + y",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "C = xy",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "C = xy'",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "C = x⊕y",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about Half-Subtractor?\n(i) D = x⊕y, where D is difference, and x, y are inputs.\n(ii) B = xy, where B is borrow, and x, y are inputs.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "ConceptA half-subtractor subtracts one binary bit (subtrahend y) from another (minuend x), producing two outputs: the Difference (D) and the Borrow (B). By definition the Difference is the XOR of the inputs, D = x ⊕ y, and the Borrow is asserted only when a 0 has 1 subtracted from it, giving B = x' · y (NOT-x AND y).\nApplicationBuild the truth table for every input combination of x and y:\nx\ny\nD = x ⊕ y\nB (actual borrow)\n0\n0\n0\n0\n0\n1\n1\n1\n1\n0\n1\n0\n1\n1\n0\n0\nReading the columns: D is 1 exactly when x and y differ, which matches x ⊕ y. The borrow B is 1 only in the row x = 0, y = 1, which is exactly x' · y.\nEvaluate the two statements1. Statement (i): D = x ⊕ y. This matches the Difference column exactly, so (i) is true.\n2. Statement (ii): B = xy (plain AND). Plain AND gives 1 only when x = 1 and y = 1, but the borrow column shows 1 at x = 0, y = 1. So B = xy is false; the correct borrow is x' · y. (B = xy is actually the carry of a half-adder, not the borrow of a half-subtractor.)\nCross-checkDifference holds; borrow as written (xy) does not. Hence exactly one statement is valid — statement (i) only.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following represents the borrow in a half subtractor?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "medium",
+    "explanation": "In a half subtractor computing A − B, a borrow is generated only when the minuend bit A is smaller than the subtrahend bit B, i.e. when A=0 and B=1. From the truth table, the borrow output is high only for the input combination A=0, B=1. Therefore Borrow = Ā·B (NOT A AND B), while the difference output is A ⊕ B.",
+    "options": [
+      {
+        "content": "AB",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AB̄",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ĀB",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "ĀB̄",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the relation between N select inputs and M input lines in a multiplexer?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "In a multiplexer (MUX), the relationship between the number of select inputs (N) and the number of input lines (M) is defined by the following equation:\nM = 2N",
+    "options": [
+      {
+        "content": "2ᴹ = N",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2ᴺ = M",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "2M = N",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2N = M",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In a multiplexer, the number of input lines is ‘n’ and the number of select lines is ‘m’. Which of the following is correct?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "In a multiplexer (MUX), the correct relationship between the number of input lines (n) and the number of select lines (m) is:\nn = 2m",
+    "options": [
+      {
+        "content": "2m=n",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "2n=m",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2m-n",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2n-m",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is an advantage of use of multiplexers?\nI. Logic design is simplified.\nII. Minimizes IC package count.\nIII. Simplification of logic expression is not required.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "medium",
+    "explanation": "All three statements correctly describe the advantages of using multiplexers (MUX) in digital logic design.\n• I. Logic design is simplified: Multiplexers allow for a more structured approach to design by selecting one of many inputs, which is often more intuitive than building complex gates from scratch.\n• II. Minimizes IC package count: A single multiplexer IC can replace several discrete logic gates (AND, OR, NOT), reducing the physical footprint on a circuit board.\n• III. Simplification of logic expression is not required: When implementing a Boolean function with a MUX, you can directly connect variables to the select lines and constants (0 or 1) to the data inputs based on the truth table, bypassing the need for K-map or algebraic simplification.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many selection lines will there be in an 8×1 multiplexer?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "An 8×1 multiplexer has 8 input lines. The number of selection lines is calculated using the formula log2(N), where N is the number of inputs. Substituting 8 for N gives log2(8) = 3 selection lines.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "3",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which type of multiplexer has 5 selection lines?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "A multiplexer with n selection lines supports 2^n input channels. With 5 selection lines, the calculation is 2^5, which equals 32 total inputs. This configuration corresponds to a standard 32 × 1 MUX.",
+    "options": [
+      {
+        "content": "5 × 1 MUX",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "32 × 1 MUX",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "32 × 5 MUX",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1 × 5 MUX",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is INCORRECT about 8×1 multiplexer?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "A multiplexer (MUX) uses selection lines to determine which input line gets directed to the single output line. The relationship between the number of input lines (n) and the number of selection lines (s) is governed by the formula:\n2s = n\nFor an 8 X 1 multiplexer:\n• Inputs (n): 8\n• Selection lines (s): Since 23 = 8, it requires 3 selection lines, not 2.",
+    "options": [
+      {
+        "content": "It has 8 input lines.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It has only one output line.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It receives binary information from one of 8 input lines and sends it to output line.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It has 2 selection lines.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A Decimal to Binary Coded Encoder have _____ inputs and _____ outputs.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "A Decimal to BCD (Binary Coded Decimal) Encoder has 10 inputs and 4 outputs. When one of the decimal input lines is activated, the encoder logic generates the specific 4-bit combination that represents that digit in binary.",
+    "options": [
+      {
+        "content": "4; 4",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "10; 4",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "4; 10",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2; 10",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A logic circuit that accepts one input and distributes it over several outputs is known as _____.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "A logic circuit that accepts one input and distributes it over several outputs is known as a Demultiplexer (or DEMUX).",
+    "options": [
+      {
+        "content": "Multiplexer",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Encoder",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Flip-flop",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Demultiplexer",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In a demultiplexer, the number of output lines is n and the number of select lines is m. Which of the following is correct?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "In a demultiplexer (DEMUX), the relationship between the number of output lines ($n$) and the number of select lines (m) is defined by the equation n = 2m.",
+    "options": [
+      {
+        "content": "n = 2ᵐ",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "m = 2ⁿ",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "n = 2m",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "m = 2n",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a combinational circuit?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "Combinational circuits generate outputs based only on current inputs without memory. Sequential circuits like flip-flops, registers, and counters require clock signals and state storage. Thus, the Decoder represents a combinational circuit.",
+    "options": [
+      {
+        "content": "Flip flop",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Register",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Decoder",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Binary counter",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is correct about 2 to 4 decoder?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "A 2-to-4 decoder has two input lines and four output lines. When enabled, exactly one output becomes active corresponding to the binary value of the inputs.",
+    "options": [
+      {
+        "content": "It has 2 inputs, 2 enable lines, and 4 outputs.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "When the decoder is enabled, one of its outputs will be active (i.e. 1) based on the values of its inputs.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "When the decoder is disabled, its two outputs will be active (i.e. 1).",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It can be implemented by using four AND gates having two inputs each and two inverters (NOT gates).",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A 2-way switch works as follows:\n Both switches ON → Light OFF\nBoth switches OFF → Light OFF\nOne switch ON and the other OFF → Light ON\nWhich logic gate can be used to implement this?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "In binary logic, the XOR gate follows the rule that the output is \"High\" (1) if and only if the inputs are different. When the inputs are the same (both 0 or both 1), the output is \"Low\" (0).",
+    "options": [
+      {
+        "content": "OR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AND",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "NAND",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "XOR",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is/are correct?\nI. RTL is a saturated bipolar logic family.\nII. ECL is a non-saturated bipolar logic family.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Combinational Circuit",
+    "chapterSlug": "dsssb-de-combinational-circuits",
+    "difficulty": "easy",
+    "explanation": "RTL (Resistor-Transistor Logic) is a saturated bipolar logic family because its transistors operate in saturation during switching. ECL (Emitter-Coupled Logic) avoids saturation to achieve high-speed switching, so it is classified as a non-saturated bipolar logic family. Therefore, both statements I and II are correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\n i) The clock signal is required for sequential circuits.\n ii) In the sequential circuit, memory elements play an important role and are required.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "• i) The clock signal is required for sequential circuits.\n• True. While some asynchronous sequential circuits exist, the vast majority of practical sequential circuits are synchronous.\n• In these systems, a clock signal is used to trigger state changes, ensuring all memory elements (like flip-flops) update their values at the same time.\n• ii) In the sequential circuit, memory elements play an important role and are required.\n• True. The defining feature of a sequential circuit is that its output depends not only on the current inputs but also on the past history of inputs.\n• Memory elements (such as latches or flip-flops) are essential to store this history, which is referred to as the \"state\" of the system.",
+    "options": [
+      {
+        "content": "i-True, ii-True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "A monostable multivibrator has which of the following state(s)?\n I. One stable state\n II. One quasi-stable state",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "A monostable multivibrator has: One stable state and One quasi-stable (temporary) state . After receiving a trigger, it moves from its stable state to the quasi-stable state, stays there for a fixed duration, and then automatically returns to the stable state. So, Both I and II are true.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following pair is/are correct?\nI. Astable multivibrator – Flip Flop\nII. Bistable multivibrator – Free running",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "Astable multivibrator is a free-running oscillator. It has no stable state and continuously switches between two states on its own.\nBistable multivibrator is a flip-flop. It has two stable states and remains in one state until an external trigger changes it.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Astable multivibrator has ______ quasi-stable states.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "ENGLISH SOLUTION\n==================================================\nQuestion:\nAstable multivibrator has _____ quasi-stable states.\n--------------------------------------------------\nConcept\n--------------------------------------------------\nA multivibrator can be of three types:\n1. Monostable\n - One stable state\n - One quasi-stable state\n2. Bistable\n - Two stable states\n3. Astable\n - No stable state\n - Two quasi-stable states\nAn astable multivibrator continuously switches\nbetween two quasi-stable states automatically.\n--------------------------------------------------\nTherefore\n--------------------------------------------------\nNumber of quasi-stable states = 2\n--------------------------------------------------\nFinal Answer\n--------------------------------------------------\nCorrect Option: C\n2",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In a JK flip-flop, if J = K, then resulting flip-flop is _____.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "If, in a JK flip-flop, the inputs are tied together so that\nJ=K=T\nthen the JK flip-flop behaves exactly like a T (Toggle) flip-flop.",
+    "options": [
+      {
+        "content": "SR / SR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Clocked SR",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "T / T",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "D / D",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following flip-flops has indeterminate condition (i.e. the output is unpredictable)?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "The RS flip-flop enters an indeterminate state when both Set and Reset inputs are logic 1 simultaneously. This forbidden condition makes the output unpredictable, unlike JK or T flip-flops which toggle instead.",
+    "options": [
+      {
+        "content": "RS flip-flop",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "JK flip-flop",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Master slave JK flip-flop",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "T flip-flop",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following inputs of JK flip-flop clear it (i.e. stores 0)?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "In a JK flip-flop, the clear or reset function occurs when J is set to 0 and K is set to 1. This input combination forces the output Q to logic 0 regardless of the previous state.",
+    "options": [
+      {
+        "content": "J = 0, K = 0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "J = 0, K = 1",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "J = 1, K = 0",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "J = 1, K = 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is correct about D flip-flop?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "A D flip-flop is constructed from an SR flip-flop by adding an inverter between the S and R inputs. This ensures valid operation where D determines the next state directly rather than forcing specific set or clear actions.",
+    "options": [
+      {
+        "content": "It is obtained from RS flip-flop.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "It sets the flip-flop (i.e. stores 1) by applying D = 0.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It clears the flip-flop (i.e. stores 0) by applying D = 1.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It retains the value of the flip-flop (i.e. Qt+1 = Qt ) by applying D = 0.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about flip-flop?\n(i) It is a combinational circuit.\n(ii) It is a memory cell capable of storing one bit of information.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "Flip-flops are sequential circuits, not combinational ones, because their output depends on previous states. They function as memory cells that store exactly one bit of binary information. Therefore, statement (i) is incorrect while statement (ii) accurately describes their fundamental property.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "How many flip-flops are needed in the design of a sequential circuit that has 3 states?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "To determine the number of flip-flops needed for a sequential circuit, use the formula 2^n >= N, where N is the number of states. For a circuit with 3 states, we solve for n such that 2^n >= 3. Since 2^1 equals 2 and 2^2 equals 4, the minimum number of flip-flops required is 2.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A clocked sequential circuit is to be designed (using D flip-flops) that goes through sequence of repeated binary states 00, 01, 10, and 11 when value of external input x = 1. The state of the circuit remains unchanged when x = 0. Which statement is correct about the design of this circuit?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "hard",
+    "explanation": "This circuit functions as a 2-bit synchronous counter controlled by input x. When x=1, the state advances through 00 to 11; when x=0, it holds. The least significant bit toggles every clock cycle if counting is enabled, requiring D_LSB = Q_LSB XOR x. This dependency on input x distinguishes the correct design choice.",
+    "options": [
+      {
+        "content": "It requires 3 flip-flops.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It has one external output.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The input of the left-most flip flop (corresponding to most significant bit of the state) does not depend on external input x.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The input of the right-most flip flop (corresponding to least significant bit of the state) depends on external input x.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A ______ counter is a cascaded arrangement of flip-flops where the output of one flip-flop drives the clock input of the following flip-flop.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "A ripple counter (also called an asynchronous counter) is a cascaded arrangement of flip-flops in which the output of one flip-flop is connected to the clock input of the next flip-flop.",
+    "options": [
+      {
+        "content": "Ripple",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Synchronous",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Ring",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Cascaded",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "In the given sequential circuit if the initial value of Q₁Q₀ = 00, then what are the next three values of Q₁Q₀?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "Starting with the initial state Q1Q0 = 00:\n1. First Clock Pulse:\n• Q0 receives the pulse and toggles from 0 to 1.\n• Since Q0 went from 0 to 1 (a positive edge), it triggers Q1.\n• Q1 toggles from 0 to 1.\n• New State: 11\n2. Second Clock Pulse:\n• Q0 receives the pulse and toggles from 1 to 0.\n• Since Q0 went from 1 to 0 (a negative edge), it does not trigger the positive edge-triggered Q1.\n• Q1 remains 1.\n• New State: 10\n3. Third Clock Pulse:\n1. Q0 receives the pulse and toggles from 0 to 1.\n2. Since Q0 went from 0 to 1 (positive edge), it triggers Q1.\n3. Q1 toggles from 1 to 0.\n4. New State: 01\nFinal Answer\nIf the initial value is 00, the next three values of Q1Q0 are:\n11, 10, 01",
+    "options": [
+      {
+        "content": "11, 10, 00",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "11, 10, 01",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "10, 11, 01",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "10, 00, 01",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A ripple counter is a(n) ______ counter where only the ______ flip-flop is clocked by an external clock.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "medium",
+    "explanation": "A ripple counter is classified as an asynchronous counter since its flip-flops do not change state simultaneously. In this specific architecture, only the first flip-flop receives the external clock pulse directly.",
+    "options": [
+      {
+        "content": "Synchronous, First",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Asynchronous, Second",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Asynchronous, First",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Synchronous, Second",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "If n flip-flops are used in a ripple counter, then it will count from ______ to ______.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "medium",
+    "explanation": "A ripple counter with n flip-flops acts as an n-bit binary counter. It has 2^n total states, starting from 0 and ending at 2^n - 1 before resetting to zero.",
+    "options": [
+      {
+        "content": "0, 2n",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "0, 2n - 1",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "1, 2n",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1, 2n - 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "State whether the following statements are true or false.\nStatements:\n(i) The JK flip-flop is a basic building block of combinational logic circuits.\n(ii) In a ripple counter, if the uncomplemented output counts up, then the complemented output counts down.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "medium",
+    "explanation": "Statement (i) is false because JK flip-flops are sequential elements with memory, unlike combinational circuits.\nStatement (ii) is true because the complemented output Q' represents the inverse binary sequence, effectively counting down when Q counts up.",
+    "options": [
+      {
+        "content": "(i) True, (ii) True",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(i) True, (ii) False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) False, (ii) True",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "(i) False, (ii) False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is a sequential circuit?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "Sequential circuits depend on past inputs and require memory elements like flip-flops. A binary ripple counter uses flip-flops to track state sequences, making it sequential. In contrast, Full-Adders, Decoders, and Multiplexers are combinational circuits without memory.",
+    "options": [
+      {
+        "content": "Full-Adder",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Decoder",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Binary ripple counter",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Multiplexer",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "The given diagram expresses ______.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "A PIPO (Parallel-In, Parallel-Out) shift register is a type of digital logic circuit where data is loaded into all stages simultaneously and is also available at the outputs of all stages at the same time.",
+    "options": [
+      {
+        "content": "Parallel-In Parallel-Out Shift Register",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Serial-In Parallel-Out Shift Register",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Serial-In Serial-Out Shift Register",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Parallel-In Serial-Out Shift Register",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which counter is a shift register with its complement output of the last stage connected to the D-input of the first stage?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Sequential Circuits",
+    "chapterSlug": "dsssb-de-sequential-circuits",
+    "difficulty": "easy",
+    "explanation": "The counter described is a Johnson counter (also known as a Twisted Ring counter or Switch-tail counter).It consists of a shift register where the inverted output Q' of the final flip-flop is fed back into the D input of the first flip-flop. For a register with n flip-flops, a Johnson counter provides 2n distinct states. Unlike a standard Ring counter, which requires n flip-flops for n states, the Johnson counter is more hardware-efficient.",
+    "options": [
+      {
+        "content": "Synchronous",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Twisted Ring",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Up",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Down",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is 6’s complement of (1543)₇ of the computer?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "Solution\nGiven number:\n(1543)7\nWe need to find the 6's complement.\n--------------------------------------------------\nStep 1: Use the Complement Rule\n--------------------------------------------------\nFor a number in base r:\n(r-1)'s complement is obtained by\nsubtracting each digit from (r-1).\nHere:\nBase = 7\nTherefore:\n(r-1) = 6\nSo subtract each digit from 6.\n--------------------------------------------------\nStep 2: Perform Digit-wise Subtraction\n--------------------------------------------------\nDigits of (1543)_7:\n1 5 4 3\nCompute:\n6 - 1 = 5\n6 - 5 = 1\n6 - 4 = 2\n6 - 3 = 3\nThus:\n6's diminished complement:\n(5123)7\n--------------------------------------------------\nFinal Answer\n--------------------------------------------------\n(5123)7\nCorrect Option: Option 3",
+    "options": [
+      {
+        "content": "(6132)7",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(5132)7",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(5123)7",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "(5432)7",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the 15's complement of the hexadecimal number (C00D0)16?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "To find the 15's complement of a hexadecimal number, subtract each digit from F (representing 15). For C00D0, compute F-C=3, F-0=F, and F-D=2. This calculation results in the final complement value of 3FF2F.",
+    "options": [
+      {
+        "content": "(2FF3F)16",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(3FF2F)16",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(3EE2E)16",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(2EE3E)16",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the 2’s complement of (−28)₁₀ in 16-bit representation?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "To find the 16-bit 2’s complement representation of $(-28)_{10}$, we follow a standard three-step process:\n1. Convert the absolute value to binary\nFirst, find the binary representation of 28.\n28 = 16 + 8 + 4\nIn binary: 11100\nFor a 16-bit representation, pad with leading zeros:\n0000 0000 0001 1100\n2. Find the 1's complement\nInvert all the bits (change 0s to 1s and 1s to 0s):\n1111 1111 1110 0011\n3. Find the 2's complement\nAdd 1 to the 1's complement result:\n1111 1111 1110 0011 + 1 = 1111 1111 1110 0100.\nThe 16-bit 2’s complement of  (−28)₁₀ is 1111 1111 1110 0100.",
+    "options": [
+      {
+        "content": "1000000000011100",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1111111111100011",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1111111111100100",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "1111111111100101",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the 10's complement of the decimal number 20100?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "The 10's complement of a decimal number N with n digits is calculated as 10^n - N. For the number 20100, which has 5 digits, n=5, so we calculate 10^5 - 20100. This equals 100000 - 20100, resulting in 79900.",
+    "options": [
+      {
+        "content": "79899",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "89999",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "79900",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "79800",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Considering 2's complement representation for negative numbers, what is the decimal equivalent of an 8-bit register content 10000000?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "In 8-bit two's complement representation, the most significant bit has a negative weight of -128. Since only this bit is set in 10000000, the decimal equivalent is exactly negative one hundred twenty-eight.",
+    "options": [
+      {
+        "content": "-0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "+0",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "+128",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "-128",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is the 2's complement of the binary number (101100)2?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "To find the 2's complement of (101100)₂, first invert all bits to get the 1's complement: (010011).\nNext, add binary 1 to this result: (010011) + 1 equals (010100). Thus, the 2's complement is (010100)₂.",
+    "options": [
+      {
+        "content": "(010011)2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(101111)2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(010100)2",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "(111100)2",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is the 2’s complement of the binary number 0101010100?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "To find the two's complement, first invert all bits of the original binary number to get the one's complement. Inverting 0101010100 results in 1010101011. Finally, add one to this value to obtain the final two's complement of 1010101100.",
+    "options": [
+      {
+        "content": "1010101100",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1010101011",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1010101010",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1110101100",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is the 4's complement of (1011)₅, that is in base 5 number system?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "To find the r's complement of a number in base r, we first calculate the (r-1)'s complement and then add 1 to it. Here, we need the 4's complement of (1011)₅ in base 5. First, determine the number of digits: there are 4 digits. The (r-1)'s complement in base r is found by subtracting each digit from (r-1). Since the base is 5, we subtract each digit of (1011)₅ from 4. Subtracting the first digit: 4 - 1 = 3. Second digit: 4 - 0 = 4. Third digit: 4 - 1 = 3. Fourth digit: 4 - 1 = 3. This gives the 4's complement as (3433)₅ directly because in base r, the r's complement is often defined as (r^n - N), but for digit-wise operations in base 5, the complement of a number with n digits is (r^n - N). However, strictly speaking, the 4's complement usually refers to the diminished radix complement (base-1) in some contexts, but here it implies finding the value such that adding it to the original yields 10000₅ (which is 5^4). Let's re-evaluate: The standard definition for r's complement of an n-digit number N in base r is (r^n - N). For 4's complement of a base-5 number, this phrasing is slightly ambiguous. Usually, we calculate the (r-1)'s complement first. If '4's complement' means the complement with respect to base 5 (which is r=5), then it's the 5's complement. If it literally means base 4, that doesn't make sense for a base-5 number. Assuming the question asks for the 5's complement (often confused or typoed as r's where r is base), let's calculate 5's complement: (10000)₅ - (1011)₅. 5-1=4, borrow... actually simpler: (r^n - N). 5^4 = 10000₅. 10000₅ - 1011₅ = (4-1)(4-0)(4-1)(5-1) -> 3, 4, 3, 4? No. Let's do subtraction: 10000 - 1011. Last digit: 5-1=4 (borrow). Next: 4-1=3. Next: 4-0=4. First: 4-1=3. Result (3434)₅? Wait, the correct answer is B: (3433)₅. This implies the question asks for the 4's complement where '4' is (r-1). So it is asking for the diminished radix complement (base 5, r-1 = 4). The rule is: subtract each digit from (r-1) = 4. Digit 1: 4-1=3. Digit 2: 4-0=4. Digit 3: 4-1=3. Digit 4: 4-1=3. Result is (3433)₅. This matches Option B. Options A, C, and D are incorrect because they do not follow the digit-wise subtraction from 4 rule. Option A is too small, C and D contain digits invalid for base 5 (8, 9) or incorrect values.",
+    "options": [
+      {
+        "content": "(0100)₅",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(3433)₅",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(8988)₅",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(4544)₅",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is the result of (-13)₅ + (34)₅, when it is performed using 5's complement?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "First, interpret the values in decimal: (-13)₅ is -8₁₀ and (34)₅ is 19₁₀.\nTo find the 5's complement of -13₅, invert digits (4-1=3, 4-3=1) to get 31₅, then add 1 for 32₅.\nAdd 32₅ and 34₅ to get 121₅. Discard the end-around carry, leaving 21₅ as the final result.\nVerification: -8 + 19 = 11₁₀, which converts back to (21)₅.",
+    "options": [
+      {
+        "content": "(-11)₁₀",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(21)₅",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(21)₁₀",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(21)₉",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "What is the representation of (4589)₁₀ in Binary Coded Decimal (BCD) form?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "Step 1: Understand BCD\n--------------------------------------------------\nIn BCD, each decimal digit is represented\nseparately using 4 bits.\n--------------------------------------------------\nStep 2: Convert Each Digit\n--------------------------------------------------\n4 = 0100\n5 = 0101\n8 = 1000\n9 = 1001\n--------------------------------------------------\nStep 3: Combine All BCD Codes\n--------------------------------------------------\n(4589)10\n= 0100 0101 1000 1001\n--------------------------------------------------\nFinal Answer\n--------------------------------------------------\n0100010110001001\nCorrect Option: B",
+    "options": [
+      {
+        "content": "0100011001100101",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "0100 0101 1000 1001",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "1001011000100100",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1011001000100100",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Gray code representation of (27)₁₀ is ____",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "First, convert (27)₁₀ to binary:\n(27)₁₀ = 110112\nNow we convert binary to Gray code using the rule:\n1. The first Gray bit is the same as the first binary bit.\n2. Each subsequent Gray bit is obtained by XORing adjacent binary bits.\nB = 11011\nG1 = 1\nG2 = 1 ⊕ 1 = 0\nG3 = 1 ⊕ 0 = 1\nG4 = 0 ⊕ 1 = 1\nG5 = 1 ⊕ 1 = 0\nSo, Binary (11011) converts to Gray (10110), so the answer is correct.",
+    "options": [
+      {
+        "content": "11011",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "11100",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "10110",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "11010",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A code in which only one bit changes between successive numbers is known as ____ code.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "A code in which only one bit changes between successive numbers is known as a Gray code. Gray code is also known as a unit distance code because only a single bit toggles as you move from one number to the next.",
+    "options": [
+      {
+        "content": "ASCII",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Hamming",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "GRAY",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "BCD",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many bits are required to represent (1000)₁₀ in BCD code?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "In BCD, each individual decimal digit is represented by a fixed 4-bit binary sequence:\nThe digit 1 is represented as 0001.\nThe digit 0 is represented as 0000.\nThe digit 0 is represented as 0000.\nThe digit 0 is represented as 0000.\nSince (1000)₁₀ consists of 4 decimal digits, the total number of bits is 4X4 = 16.",
+    "options": [
+      {
+        "content": "16 bits",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "10 bits",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "32 bits",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "4 bits",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the full form of EBCDIC?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "The full form of EBCDIC is Extended Binary Coded Decimal Interchange Code",
+    "options": [
+      {
+        "content": "External Binary Coded Digit Interchange Code",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "External Bit Code Digit Internal Code",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "External Bit Code Decimal Interchange Code",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Extended Binary Coded Decimal Interchange Code",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the difference between the ASCII codes of 'A' and 'Z'?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "easy",
+    "explanation": "The ASCII code for uppercase 'A' is 65, and the ASCII code for 'Z' is 90.\nTo find the difference, subtract 65 from 90, which equals 25.",
+    "options": [
+      {
+        "content": "26",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "25",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "27",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "24",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statements is INCORRECT about BCD adder?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "A BCD adder is a digital circuit designed to add two decimal digits encoded in Binary Coded Decimal format. It typically processes nine input lines representing two 4-bit numbers and a carry-in, generating five output lines for the sum and carry. Crucially, the final result must always be a valid BCD digit to maintain decimal accuracy in subsequent processing. Therefore, any statement suggesting the output need not be in BCD is factually incorrect.",
+    "options": [
+      {
+        "content": "It is a used to add two decimal digits in BCD.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It has 9 input lines.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It has 5 output lines.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Its output should be a decimal digit that need not be in BCD.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is correct about BCD code of decimal number 85?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "To convert decimal 85 to BCD, represent each digit separately in 4-bit binary. The digit 8 becomes 1000 and the digit 5 becomes 0101. Combining these gives 10000101. Counting the ones in this sequence results in exactly three set bits.",
+    "options": [
+      {
+        "content": "It has 9 bits.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It has three 1's.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "It has six 0's.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Its most significant is 0.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about Excess-3 code of the decimal number 85?\n(i) It has five 1's.\n(ii) Its least significant bit is 1.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Number Representation",
+    "chapterSlug": "dsssb-de-number-representation",
+    "difficulty": "medium",
+    "explanation": "To find the Excess-3 code for decimal 85, add 3 to each digit. The digit 8 becomes 11 (binary 1011), and the digit 5 becomes 8 (binary 1000). The resulting code is 1011 1000. Counting the ones gives four, so statement (i) is false. The least significant bit is 0, making statement (ii) false as well.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the logic equation is the represented canonical Sum of Product (SOP) form for the given K-Map?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "easy",
+    "explanation": "In canonical SOP, we write one minterm for each cell containing 1 in the K-map.\nSteps:\n1. Identify all the 1s in the K-map.\n2. For each 1, write the corresponding minterm using A, B, C, D\n(use complemented variable if the bit is 0, uncomplemented if it is 1).\n3. Add (OR) all the minterms together.\nSince the question asks for canonical SOP (not simplified), no grouping is done—every 1 contributes one minterm.",
+    "options": [
+      {
+        "content": "A'B'CD+A'BCD+ A'BCD'+ ABCD + A'BCD",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A'B'C'D'+ABC'D'+A'BC'D+ABCD+  AB'C'D",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "A'B'CD+A'BCD'+A'BCD+  ABC'D+A'BCD",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A'BCD+ABCD'+A'BCD+  ABC'D",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Minimize the three variable logic function using the following K-Map.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "To minimize the logic function f(A, B, C) = m(0, 2, 5, 7) using the provided K-Map, we group the minterms to find the simplest Boolean expression.\n1. Plotting the Minterms:\n• The variables are AB (columns) and C (rows).\n• Minterms are at positions 0,2,5,7.\n2. Forming Groups (Pairs):\n• Group 1 (Corner Pair): Minterms 0 and 2.\n• A is constant at 0.\n• C is constant at 0.\n• B changes from 0 to 1, so it is eliminated.\n• Result: A'C'\n• Group 2 (Vertical/Horizontal Pair): Minterms 5 and 7.\n• A is constant at 1(A)\n• C is constant at 1(C)\n• B changes from 0 to 1, so it is eliminated.\n• Result: AC\n3. Final Minimized Expression:\n• Combining the results of the groups gives: A'C' + AC\nCorrect AnswerThe correct option is 2) A'C' + AC.",
+    "options": [
+      {
+        "content": "A'C' + AB",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A'C' + AC",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "AC + B",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A'C'B'",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is output of Y in the given circuit?\n  I. BC+AC'\n II. (A+C)(B+C')",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "easy",
+    "explanation": "Both statements are correct.\nThe circuit simplifies to:\nY=(A+BC)(B+C′)\nExpanding:\nY=AB+AC′+BBC+BCC′\nSince BB=B and CC′=0,\nY=AB+AC′+BC\nNow notice that AB is redundant:\nAB=AB(C+C′)=ABC+ABC′\n• ABC is already covered by BC\n• ABC′ is already covered by AC′\nTherefore,\nY=BC+AC′\nY=(A+BC)(B+C′)=AB+AC′+BC=BC+AC′\nAlso, factoring gives:\nBC+AC′=(A+C)(B+C′)",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "For A = 1, B = 0 and C = 1, what will be the value of Q in the following logic diagram?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "First, evaluate the top AND gate with inputs A=1 and B=0. Since one input is 0, the output is 0. Next, analyze the lower section where an OR gate takes B=0 and C=1 to produce 1, while a bottom AND gate takes the same inputs to produce 0. These results feed into another AND gate, resulting in 1 AND 0 which is 0. Finally, the output Q combines the top result (0) and lower section result (0) via an OR gate, yielding a final value of 0.",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Cannot be determined",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both 0 and 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the output of the following logic diagram? In the given options, ⊕ represents XOR operation, whereas ⊗ represents XNOR operation.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "The logic circuit has two parallel paths feeding into a final OR gate. The top path inverts A to get not-A, which is ANDed with B to produce not-A times B. The bottom path inverts B to get not-B, which is ANDed with A to produce A times not-B. The OR gate combines these outputs into not-A times B plus A times not-B, which corresponds to the XOR operation.",
+    "options": [
+      {
+        "content": "A⊕B",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "A⊗B",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "AB",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A'B'",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The Boolean expression\n AB+A'C+BC=____",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "easy",
+    "explanation": "To simplify the Boolean expression AB + A'C + BC, apply the consensus theorem.\nThe consensus theorem states that AB + A'C + BC = AB + A'C, because BC is the consensus term of AB and A'C and is redundant.\nThus, the simplified expression is AB + A'C.",
+    "options": [
+      {
+        "content": "AB",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AC + A'B",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "AB + A'C",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "A'B+A'C",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Simplify the following Boolean Expression?\n(1 + A).(A + B).(A' + B)",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "First, simplify (1 + A) using the Annulment Law: 1 + A = 1.\nThe expression reduces to (A + B)(A' + B). Expanding this gives AA' + AB + A'B + BB.\nApply Boolean laws: AA' = 0 and BB = B. The expression becomes AB + A'B + B.\nFactor out B: B(A + A') + B. Since (A + A') = 1, this simplifies to B(1) + B.\nUsing the Idempotent Law (B + B = B), the final simplified expression is B.",
+    "options": [
+      {
+        "content": "B",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "AB",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A'B",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A+B",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Simplify the following expression:\n(A + B + 1) . (A' +B' + 1) . (A + B + C) . (A' +B' + C')",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "Step 1: Simplify terms involving the constant '1'In Boolean algebra, the Identity Law states that X + 1 = 1.\n• The first term (A + B + 1) simplifies to 1.\n• The second term (A' + B' + 1) simplifies to 1.\nThe expression now becomes: 1 \\cdot 1 \\cdot (A + B + C) \\cdot (A' + B' + C')\nSince 1 \\cdot X = X, we are left with:\n(A + B + C) \\cdot (A' + B' + C')\nStep 2: Expand the remaining terms\nWe distribute (A + B + C) over (A' + B' + C'): (A \\cdot A') + (A \\cdot B') + (A \\cdot C') + (B \\cdot A') + (B \\cdot B') + (B \\cdot C') + (C \\cdot A') + (C \\cdot B') + (C \\cdot C')\nStep 3: Apply the Complement Law\nThe Complement Law states that X \\cdot X' = 0.\n• A \\cdot A' = 0\n• B \\cdot B' = 0\n• C \\cdot C' = 0\nThe expression simplifies to:\nAB' + AC' + BA' + BC' + CA' + CB'\nStep 4: Group and Factor\nGroup the terms to match the requested format:\n(AB' + CB') + (BA' + CA') + (AC' + BC')\nFactor out the common variables:\nB'(A + C) + A'(B + C) + C'(A + B)\nFinal AnswerThe simplified expression is [(A + C)B'] + [(B + C)A'] + [(A + B)C'], which corresponds to Option 2.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "[(A + C)B'] + [(B + C)A'] + [(A + B)C']",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "[(A+C)B'] + [(B+C)A']",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A+B+C",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following options is equivalent to the Boolean expression A'C+A'BC'+A'B'C'?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "Factor out A' to get A'(C + BC' + B'C'). Inside, factor C' from the last two terms: A'(C + C'(B+B')). Since B+B'=1, this becomes A'(C+C'). As C+C'=1, the result is A'. Thus, Option 1 matches.",
+    "options": [
+      {
+        "content": "A",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A'",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "AC",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "BC'",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is the simplified form of the Boolean expression (AB)'(A'+B)(B'+B)?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "Apply De Morgan's Law to (AB)' to get A' + B'. Since (B'+B) equals 1, the expression simplifies to (A' + B')(A' + B). Expanding yields A' + A'B, which further simplifies to A'. Therefore, the correct simplified form is A'.",
+    "options": [
+      {
+        "content": "A",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A'",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "B",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "B'",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Using K-map, simplify the Boolean function: F(x, y, z) = S (0, 2, 4, 5, 6)\nWhich of the following is simplified function?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "Minterms 0, 2, 4, and 6 have z = 0, so they form the term z'.\nMinterms 4 and 5 have x = 1 and y = 0, so they form the term xy'.\nTherefore, F = z' + xy'.",
+    "options": [
+      {
+        "content": "F = z + x'y'",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "F = z' + xy'",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "F = z + x'y",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "F = z' + xy",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Simplify the following Boolean expression.\nE(E + F) + DE + D(E + F)",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Minimization",
+    "chapterSlug": "dsssb-de-boolean-minimization",
+    "difficulty": "medium",
+    "explanation": "Simplify E(E + F) + DE + D(E + F) step by step using Boolean algebra.\n1) Expand E(E + F) = E·E + E·F = E + E·F  (since E·E = E, idempotent law).\n2) E + E·F = E  (absorption law). So the first term reduces to E.\n3) Expand D(E + F) = D·E + D·F.\n4) Now combine all terms: E + DE + (DE + DF) = E + DE + DF.\n5) E + DE = E·(1 + D) = E  (absorption law, since 1 + D = 1).\n6) The expression reduces to E + DF.\nHence the simplified form is E + DF.",
+    "options": [
+      {
+        "content": "E + DF",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "F + DE",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "D + EF",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "D + E + F",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many rows are there in a truth table having n variables?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Digital Systems & Boolean Basics",
+    "chapterSlug": "dsssb-de-boolean-basics",
+    "difficulty": "easy",
+    "explanation": "Concept: A truth table lists every possible combination of input values. Each variable is binary, so it can take exactly two values (0 or 1). Because the variables are independent, the product rule applies: the total number of combinations is the product of the choices per variable, i.e. 2 × 2 × … × 2 (n times) = 2n. So a table with n variables always has 2n rows.\nApplication — count the rows step by step:\n1. With 1 variable there are 21 = 2 rows: 0 and 1.\n2. With 2 variables each row of the previous table splits into two, giving 22 = 4 rows: 00, 01, 10, 11.\n3. With 3 variables every combination again doubles, giving 23 = 8 rows: 000 through 111.\nCross-check: Adding one more variable doubles the row count (each existing row appears once with the new variable = 0 and once with it = 1). Doubling from a base of 1 combination, n times, gives the row count — confirming the formula. The other choices fail this doubling test: 2n adds only a fixed amount each time, n2 pairs variables with one another, and log2n shrinks instead of growing, so none of them enumerate all input patterns.",
+    "options": [
+      {
+        "content": "2n",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "n2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "log2n",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2n",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The input-output relationship of the binary variable for each gate can be represented in tabular form by a __________.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Digital Systems & Boolean Basics",
+    "chapterSlug": "dsssb-de-boolean-basics",
+    "difficulty": "easy",
+    "explanation": "A truth table is a mathematical table used in logic—specifically in connection with Boolean algebra and digital circuits—to compute the functional values of logical expressions on each of their functional arguments.",
+    "options": [
+      {
+        "content": "symbol table",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "decision table",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "truth table",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "characteristic table",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement(s) is/are correct regarding the Boolean algebra?\nI. It facilitate the analysis and design of digital circuits.\nII. Expresses in algebraic form the input-output relationship of logic diagram.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Digital Systems & Boolean Basics",
+    "chapterSlug": "dsssb-de-boolean-basics",
+    "difficulty": "easy",
+    "explanation": "Statement I: Boolean algebra is a fundamental mathematical system used to facilitate the analysis and design of digital circuits. It allows engineers and developers to simplify complex logic into manageable expressions. Statement II: It expresses in algebraic form the input-output relationship of a logic diagram. By converting gates (like the NOR gate discussed earlier) into variables and operators, it defines exactly how a system responds to binary inputs.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is equivalent of the following Boolean expression?\n(X+Y)'",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Digital Systems & Boolean Basics",
+    "chapterSlug": "dsssb-de-boolean-basics",
+    "difficulty": "easy",
+    "explanation": "According to De Morgan's Law, the complement of a sum is equal to the product of the complements. Therefore:\n$$(X+Y)' = X' \\cdot Y'$$",
+    "options": [
+      {
+        "content": "X'+Y'",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "XY",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "X'Y'",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "X",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following represents the Idempotent law in Boolean Algebra?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Digital Systems & Boolean Basics",
+    "chapterSlug": "dsssb-de-boolean-basics",
+    "difficulty": "easy",
+    "explanation": "The Idempotent Law in Boolean Algebra states that a variable combined with itself using OR or AND operations yields the same variable. Specifically, A + A = A and A * A = A hold true for any boolean value of A. Therefore, the option stating A + A = A correctly represents this fundamental law.",
+    "options": [
+      {
+        "content": "A + 0 = A",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A + A = A",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "A + A' = 1",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(A')' = A",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is a NOT a correct identity in Boolean Algebra?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Digital Systems & Boolean Basics",
+    "chapterSlug": "dsssb-de-boolean-basics",
+    "difficulty": "easy",
+    "explanation": "Option 1 states A(A+B) = B. Using the distributive law, this expands to AA + AB. Since AA equals A and A + AB simplifies to A via absorption, the expression equals A, not B. Therefore, this identity is incorrect.",
+    "options": [
+      {
+        "content": "A + AB = A",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A(A+B) = B",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "AB + AB' = A",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(A+B)(A+B') = A",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "A product of sum (POS) form of logic function consists of only _____\n while a sum of product (SOP) form of logic function consists of only _____.",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Expression",
+    "chapterSlug": "dsssb-de-boolean-expression",
+    "difficulty": "easy",
+    "explanation": "Answer: A product of sums (POS) consists only of maxterms, while a sum of products (SOP) consists only of minterms.\n• Maxterm: an OR (sum) term that evaluates to 0 for exactly one input combination. POS is the product (AND) of such maxterms.\n• Minterm: an AND (product) term that evaluates to 1 for exactly one input combination. SOP is the sum (OR) of such minterms.\n• Example: For variables A and B, the minterm for A=0, B=0 is A'B' (a product), while the corresponding maxterm is (A + B) (a sum).",
+    "options": [
+      {
+        "content": "maxterms; maxterms",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "minterms; minterms",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "minterms; maxterms",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "maxterms; minterms",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which logical gate is used to represent product of sum expression?",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Expression",
+    "chapterSlug": "dsssb-de-boolean-expression",
+    "difficulty": "easy",
+    "explanation": "A Product of Sum (POS) expression is a Boolean expression where multiple sum terms (OR operations) are multiplied together (AND operation).\n For example, (A + B) · (C + D) is a POS expression. Here, (A + B) and (C + D) are sum terms, and the dot (·) represents the AND operation.\n To implement a POS expression, we first use OR gates to form the sum terms, and then use an AND gate to combine these sum terms.\n Therefore, the AND gate is used to represent the final product operation in a Product of Sum expression.",
+    "options": [
+      {
+        "content": "EX-OR gate",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AND gate",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "OR gate",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "NOR gate",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the degree of the following function?\n F(A,B,C,D) = A'B'C'D'",
+    "type": "single_choice",
+    "subject": "Digital Electronics",
+    "subjectSlug": "digital-electronics",
+    "topic": "Boolean Expression",
+    "chapterSlug": "dsssb-de-boolean-expression",
+    "difficulty": "easy",
+    "explanation": "• The degree of a Boolean function is the number of variables in a term (highest number of literals multiplied together).\n• Here, the term contains:\n• A′\n• B′\n• C′\n• D′\nTotal variables in the product term = 4.\nFinal AnswerDegree = 4",
+    "options": [
+      {
+        "content": "4",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "0",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "digital-electronics",
+      "2023"
+    ],
+    "examYear": 2023
+  }
+]

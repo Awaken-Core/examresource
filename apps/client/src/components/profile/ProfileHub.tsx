@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import { API_URL } from "../../lib/api";
 
 type User = {
@@ -59,7 +60,8 @@ type TestSeriesItem = {
   category?: string;
 };
 
-type TabKey = "overview" | "my-tests" | "performance" | "weak-topics" | "settings";
+type TabKey =
+  "overview" | "my-tests" | "performance" | "weak-topics" | "settings";
 type LoadState = "loading" | "ready" | "signed-out" | "error";
 
 export function ProfileHub() {
@@ -72,14 +74,21 @@ export function ProfileHub() {
   // Settings form state
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [preferredLanguage, setPreferredLanguage] = useState<"English" | "Hindi">("English");
+  const [preferredLanguage, setPreferredLanguage] = useState<
+    "English" | "Hindi"
+  >("English");
   const [targetExam, setTargetExam] = useState("");
   const [examGoalDate, setExamGoalDate] = useState("");
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [message, setMessage] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
   // Test list filter state
-  const [testFilter, setTestFilter] = useState<"all" | "in_progress" | "submitted">("all");
+  const [testFilter, setTestFilter] = useState<
+    "all" | "in_progress" | "submitted"
+  >("all");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -124,8 +133,8 @@ export function ProfileHub() {
           loadedSeries = Array.isArray(seriesData)
             ? seriesData
             : Array.isArray(seriesData?.data)
-            ? seriesData.data
-            : [];
+              ? seriesData.data
+              : [];
         }
 
         setUser(me);
@@ -133,9 +142,7 @@ export function ProfileHub() {
         setPhone(me.phone || "");
         setPreferredLanguage(me.preferredLanguage || "English");
         setTargetExam(me.targetExam || "");
-        setExamGoalDate(
-          me.examGoalDate ? me.examGoalDate.slice(0, 10) : ""
-        );
+        setExamGoalDate(me.examGoalDate ? me.examGoalDate.slice(0, 10) : "");
         setAttempts(loadedAttempts);
         setTestSeriesList(loadedSeries);
         setState("ready");
@@ -153,7 +160,15 @@ export function ProfileHub() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const hash = window.location.hash.replace("#", "") as TabKey;
-    if (["overview", "my-tests", "performance", "weak-topics", "settings"].includes(hash)) {
+    if (
+      [
+        "overview",
+        "my-tests",
+        "performance",
+        "weak-topics",
+        "settings",
+      ].includes(hash)
+    ) {
       setActiveTab(hash);
     }
   }, []);
@@ -169,14 +184,19 @@ export function ProfileHub() {
   const stats = useMemo(() => {
     const totalTests = attempts.length;
     const completedAttempts = attempts.filter((a) => a.status === "submitted");
-    const inProgressAttempts = attempts.filter((a) => a.status === "in_progress");
+    const inProgressAttempts = attempts.filter(
+      (a) => a.status === "in_progress",
+    );
 
     let totalSeconds = 0;
     for (const a of attempts) {
       if (typeof a.timeSpentSeconds === "number" && a.timeSpentSeconds > 0) {
         totalSeconds += a.timeSpentSeconds;
       } else if (a.startedAt && a.endedAt) {
-        const diff = Math.floor((new Date(a.endedAt).getTime() - new Date(a.startedAt).getTime()) / 1000);
+        const diff = Math.floor(
+          (new Date(a.endedAt).getTime() - new Date(a.startedAt).getTime()) /
+            1000,
+        );
         if (diff > 0) totalSeconds += diff;
       }
     }
@@ -188,14 +208,20 @@ export function ProfileHub() {
     let totalMaxMarks = 0;
 
     for (const a of completedAttempts) {
-      if (typeof a.marksAwarded === "number" && typeof a.maximumMarks === "number" && a.maximumMarks > 0) {
+      if (
+        typeof a.marksAwarded === "number" &&
+        typeof a.maximumMarks === "number" &&
+        a.maximumMarks > 0
+      ) {
         totalMarks += a.marksAwarded;
         totalMaxMarks += a.maximumMarks;
       }
 
       if (a.answers && a.answers.length > 0) {
         for (const ans of a.answers) {
-          const isAnswered = ans.status === "answered" || ans.status === "marked_for_review_answered";
+          const isAnswered =
+            ans.status === "answered" ||
+            ans.status === "marked_for_review_answered";
           if (isAnswered || ans.isCorrect !== undefined) {
             totalAnswered++;
             if (ans.isCorrect) totalCorrect++;
@@ -204,8 +230,12 @@ export function ProfileHub() {
       }
     }
 
-    const accuracyPercent = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : null;
-    const averageScorePercent = totalMaxMarks > 0 ? Math.round((totalMarks / totalMaxMarks) * 100) : null;
+    const accuracyPercent =
+      totalAnswered > 0
+        ? Math.round((totalCorrect / totalAnswered) * 100)
+        : null;
+    const averageScorePercent =
+      totalMaxMarks > 0 ? Math.round((totalMarks / totalMaxMarks) * 100) : null;
 
     return {
       totalTests,
@@ -231,14 +261,24 @@ export function ProfileHub() {
       accuracy: number;
     };
 
-    const map = new Map<string, { total: number; correct: number; subjectId?: string | null }>();
+    const map = new Map<
+      string,
+      { total: number; correct: number; subjectId?: string | null }
+    >();
 
     for (const attempt of stats.completedAttempts) {
       if (!attempt.answers) continue;
       for (const ans of attempt.answers) {
         const key = ans.topic || ans.chapterId || ans.subjectId || "General";
-        const current = map.get(key) || { total: 0, correct: 0, subjectId: ans.subjectId };
-        const isAnswered = ans.status === "answered" || ans.status === "marked_for_review_answered" || ans.isCorrect !== undefined;
+        const current = map.get(key) || {
+          total: 0,
+          correct: 0,
+          subjectId: ans.subjectId,
+        };
+        const isAnswered =
+          ans.status === "answered" ||
+          ans.status === "marked_for_review_answered" ||
+          ans.isCorrect !== undefined;
         if (isAnswered) {
           current.total += 1;
           if (ans.isCorrect) current.correct += 1;
@@ -280,8 +320,12 @@ export function ProfileHub() {
     setMessage(null);
 
     try {
-      const matchedSeries = testSeriesList.find((s) => s.title === targetExam.trim());
-      const seriesIds = matchedSeries ? [matchedSeries.id || matchedSeries._id].filter(Boolean) as string[] : (user.targetSeriesIds || []);
+      const matchedSeries = testSeriesList.find(
+        (s) => s.title === targetExam.trim(),
+      );
+      const seriesIds = matchedSeries
+        ? ([matchedSeries.id || matchedSeries._id].filter(Boolean) as string[])
+        : user.targetSeriesIds || [];
 
       const response = await fetch(`${API_URL}/me`, {
         method: "PATCH",
@@ -296,7 +340,9 @@ export function ProfileHub() {
           preferredLanguage,
           targetExam: targetExam.trim() || null,
           targetSeriesIds: seriesIds,
-          examGoalDate: examGoalDate ? new Date(examGoalDate).toISOString() : null,
+          examGoalDate: examGoalDate
+            ? new Date(examGoalDate).toISOString()
+            : null,
         }),
       });
 
@@ -311,11 +357,17 @@ export function ProfileHub() {
       setPhone(updated.phone ?? "");
       setPreferredLanguage(updated.preferredLanguage || "English");
       setTargetExam(updated.targetExam || "");
-      setExamGoalDate(updated.examGoalDate ? updated.examGoalDate.slice(0, 10) : "");
-      setMessage({ text: "Profile settings saved successfully.", type: "success" });
+      setExamGoalDate(
+        updated.examGoalDate ? updated.examGoalDate.slice(0, 10) : "",
+      );
+      setMessage({
+        text: "Profile settings saved successfully.",
+        type: "success",
+      });
     } catch (error) {
       setMessage({
-        text: error instanceof Error ? error.message : "Unable to save profile.",
+        text:
+          error instanceof Error ? error.message : "Unable to save profile.",
         type: "error",
       });
     } finally {
@@ -347,13 +399,26 @@ export function ProfileHub() {
     return (
       <section className="mx-auto max-w-xl rounded-2xl border border-border bg-surface p-8 text-center shadow-xs">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/30 bg-accent/10 text-accent">
-          <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 12a4 4 0 100-8 4 4 0 000 8zm7 8a7 7 0 00-14 0" />
+          <svg
+            className="h-8 w-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 12a4 4 0 100-8 4 4 0 000 8zm7 8a7 7 0 00-14 0"
+            />
           </svg>
         </div>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-white">Your Personal Preparation Hub</h1>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-white">
+          Your Personal Preparation Hub
+        </h1>
         <p className="mt-2 text-sm leading-6 text-muted">
-          Sign in to track your mock tests, monitor chapter weaknesses, review accuracy trends, and manage your exam goals.
+          Sign in to track your mock tests, monitor chapter weaknesses, review
+          accuracy trends, and manage your exam goals.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <a
@@ -376,8 +441,12 @@ export function ProfileHub() {
   if (state === "error" || !user) {
     return (
       <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-center text-sm text-red-400">
-        <p className="font-semibold text-white">Could not load your preparation profile</p>
-        <p className="mt-1">Please check your connection and refresh the page.</p>
+        <p className="font-semibold text-white">
+          Could not load your preparation profile
+        </p>
+        <p className="mt-1">
+          Please check your connection and refresh the page.
+        </p>
         <button
           onClick={() => window.location.reload()}
           className="mt-4 inline-flex rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white"
@@ -425,11 +494,15 @@ export function ProfileHub() {
                     {user.role}
                   </span>
                 </div>
-                <p className="mt-0.5 truncate text-xs text-muted sm:text-sm">{user.email}</p>
+                <p className="mt-0.5 truncate text-xs text-muted sm:text-sm">
+                  {user.email}
+                </p>
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
                   {/* Target Exam Tag */}
                   <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    <span className="text-accent" aria-hidden="true">🎯</span>
+                    <span className="text-accent" aria-hidden="true">
+                      🎯
+                    </span>
                     <span className="text-muted">Target:</span>
                     <span className="font-semibold text-white">
                       {user.targetExam || "Not set yet"}
@@ -438,26 +511,39 @@ export function ProfileHub() {
 
                   {/* Preferred Language Tag */}
                   <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    <span className="text-accent" aria-hidden="true">🌐</span>
+                    <span className="text-accent" aria-hidden="true">
+                      🌐
+                    </span>
                     <span className="text-muted">Language:</span>
-                    <span className="font-semibold text-white">{user.preferredLanguage || "English"}</span>
+                    <span className="font-semibold text-white">
+                      {user.preferredLanguage || "English"}
+                    </span>
                   </div>
 
                   {/* Goal Date if set */}
                   {user.examGoalDate && (
                     <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                      <span className="text-accent" aria-hidden="true">📅</span>
+                      <span className="text-accent" aria-hidden="true">
+                        📅
+                      </span>
                       <span className="text-muted">Goal:</span>
                       <span className="font-semibold text-white">
-                        {new Date(user.examGoalDate).toLocaleDateString(undefined, {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
+                        {new Date(user.examGoalDate).toLocaleDateString(
+                          undefined,
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )}
                       </span>
                       {daysUntilGoal !== null && (
                         <span className="rounded bg-accent/20 px-1 py-0.2 text-[10px] font-bold text-accent">
-                          {daysUntilGoal > 0 ? `${daysUntilGoal}d left` : daysUntilGoal === 0 ? "Today!" : "Passed"}
+                          {daysUntilGoal > 0
+                            ? `${daysUntilGoal}d left`
+                            : daysUntilGoal === 0
+                              ? "Today!"
+                              : "Passed"}
                         </span>
                       )}
                     </div>
@@ -473,8 +559,18 @@ export function ProfileHub() {
                 onClick={() => handleTabChange("settings")}
                 className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-raised px-3.5 py-2 text-xs font-semibold text-white transition hover:border-accent hover:text-accent"
               >
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                <svg
+                  className="h-3.5 w-3.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
                 </svg>
                 <span>Edit Profile</span>
               </button>
@@ -499,23 +595,39 @@ export function ProfileHub() {
           />
           <MetricBlock
             label="Overall Accuracy"
-            value={stats.accuracyPercent !== null ? `${stats.accuracyPercent}%` : "--"}
-            subtitle={stats.totalAnswered > 0 ? `${stats.totalCorrect}/${stats.totalAnswered} correct` : "No submissions"}
+            value={
+              stats.accuracyPercent !== null
+                ? `${stats.accuracyPercent}%`
+                : "--"
+            }
+            subtitle={
+              stats.totalAnswered > 0
+                ? `${stats.totalCorrect}/${stats.totalAnswered} correct`
+                : "No submissions"
+            }
             icon="🎯"
             valueClass={
               stats.accuracyPercent !== null
                 ? stats.accuracyPercent >= 75
                   ? "text-emerald-400"
                   : stats.accuracyPercent >= 50
-                  ? "text-amber-400"
-                  : "text-red-400"
+                    ? "text-amber-400"
+                    : "text-red-400"
                 : "text-white"
             }
           />
           <MetricBlock
             label="Average Score"
-            value={stats.averageScorePercent !== null ? `${stats.averageScorePercent}%` : "--"}
-            subtitle={stats.completedCount > 0 ? `Across ${stats.completedCount} mock${stats.completedCount === 1 ? "" : "s"}` : "Start a test"}
+            value={
+              stats.averageScorePercent !== null
+                ? `${stats.averageScorePercent}%`
+                : "--"
+            }
+            subtitle={
+              stats.completedCount > 0
+                ? `Across ${stats.completedCount} mock${stats.completedCount === 1 ? "" : "s"}`
+                : "Start a test"
+            }
             icon="📊"
           />
           <MetricBlock
@@ -530,15 +642,28 @@ export function ProfileHub() {
       {/* ─────────────────────────────────────────────────────────────
           NAVIGATION TABS: Overview | My Tests | Performance | Weak Topics | Profile & Settings
           ───────────────────────────────────────────────────────────── */}
-      <nav aria-label="Preparation Navigation" className="flex overflow-x-auto border-b border-border pb-1">
+      <nav
+        aria-label="Preparation Navigation"
+        className="flex overflow-x-auto border-b border-border pb-1"
+      >
         <div className="flex gap-2">
           <TabButton
             active={activeTab === "overview"}
             onClick={() => handleTabChange("overview")}
             label="Overview"
             icon={
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
               </svg>
             }
           />
@@ -548,8 +673,18 @@ export function ProfileHub() {
             label="My Tests"
             badge={attempts.length > 0 ? attempts.length : undefined}
             icon={
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                />
               </svg>
             }
           />
@@ -558,8 +693,18 @@ export function ProfileHub() {
             onClick={() => handleTabChange("performance")}
             label="Performance"
             icon={
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                />
               </svg>
             }
           />
@@ -567,11 +712,25 @@ export function ProfileHub() {
             active={activeTab === "weak-topics"}
             onClick={() => handleTabChange("weak-topics")}
             label="Weak Topics"
-            badge={weakTopics.filter((t) => t.accuracy < 60).length > 0 ? `${weakTopics.filter((t) => t.accuracy < 60).length}` : undefined}
+            badge={
+              weakTopics.filter((t) => t.accuracy < 60).length > 0
+                ? `${weakTopics.filter((t) => t.accuracy < 60).length}`
+                : undefined
+            }
             badgeColor="bg-amber-500/20 text-amber-300"
             icon={
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
             }
           />
@@ -580,9 +739,23 @@ export function ProfileHub() {
             onClick={() => handleTabChange("settings")}
             label="Profile & Settings"
             icon={
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
               </svg>
             }
           />
@@ -604,12 +777,21 @@ export function ProfileHub() {
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
                   </span>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">Active Test in Progress</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                      Active Test in Progress
+                    </p>
                     <h2 className="text-base font-bold text-white">
-                      {stats.inProgressAttempts[0]?.test?.title || "Exam in progress"}
+                      {stats.inProgressAttempts[0]?.test?.title ||
+                        "Exam in progress"}
                     </h2>
                     <p className="text-xs text-muted">
-                      Started: {new Date(stats.inProgressAttempts[0]?.startedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      Started:{" "}
+                      {new Date(
+                        stats.inProgressAttempts[0]?.startedAt,
+                      ).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
                   </div>
                 </div>
@@ -627,7 +809,9 @@ export function ProfileHub() {
             {/* Recent test activity */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-white">Recent Test Activity</h2>
+                <h2 className="text-base font-bold text-white">
+                  Recent Test Activity
+                </h2>
                 <button
                   type="button"
                   onClick={() => handleTabChange("my-tests")}
@@ -639,9 +823,12 @@ export function ProfileHub() {
 
               {attempts.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
-                  <p className="text-base font-semibold text-white">No mock tests attempted yet</p>
+                  <p className="text-base font-semibold text-white">
+                    No mock tests attempted yet
+                  </p>
                   <p className="mt-1 text-xs text-muted">
-                    Take your first test to start generating accuracy and chapter diagnostics.
+                    Take your first test to start generating accuracy and
+                    chapter diagnostics.
                   </p>
                   <a
                     href="/test-series"
@@ -662,7 +849,9 @@ export function ProfileHub() {
 
             {/* Preparation Roadmap & Quick Shortcuts */}
             <div className="space-y-4">
-              <h2 className="text-base font-bold text-white">Target & Readiness</h2>
+              <h2 className="text-base font-bold text-white">
+                Target & Readiness
+              </h2>
               <div className="rounded-2xl border border-border bg-surface p-5 space-y-4 shadow-xs">
                 <div>
                   <p className="text-xs font-medium text-muted">Target Exam</p>
@@ -681,7 +870,9 @@ export function ProfileHub() {
                 </div>
 
                 <div className="border-t border-border pt-3">
-                  <p className="text-xs font-medium text-muted">Study Language</p>
+                  <p className="text-xs font-medium text-muted">
+                    Study Language
+                  </p>
                   <p className="mt-0.5 text-sm font-semibold text-white">
                     {user.preferredLanguage || "English"}
                   </p>
@@ -689,26 +880,34 @@ export function ProfileHub() {
 
                 {user.examGoalDate && (
                   <div className="border-t border-border pt-3">
-                    <p className="text-xs font-medium text-muted">Exam Target Date</p>
+                    <p className="text-xs font-medium text-muted">
+                      Exam Target Date
+                    </p>
                     <p className="mt-0.5 text-sm font-semibold text-white">
-                      {new Date(user.examGoalDate).toLocaleDateString(undefined, {
-                        weekday: "short",
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
+                      {new Date(user.examGoalDate).toLocaleDateString(
+                        undefined,
+                        {
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )}
                     </p>
                   </div>
                 )}
 
                 <div className="rounded-xl border border-border bg-surface-raised/40 p-4">
-                  <p className="text-xs font-bold text-white">Next Step for You</p>
+                  <p className="text-xs font-bold text-white">
+                    Next Step for You
+                  </p>
                   <p className="mt-1 text-xs text-muted leading-relaxed">
                     {stats.completedCount === 0
                       ? "Attempt a full-length mock test to assess your speed and timing baseline."
-                      : stats.accuracyPercent !== null && stats.accuracyPercent < 70
-                      ? "Review the questions you missed in Weak Topics and revisit foundational notes."
-                      : "Great accuracy! Continue practicing timed sectionals to improve question speed."}
+                      : stats.accuracyPercent !== null &&
+                          stats.accuracyPercent < 70
+                        ? "Review the questions you missed in Weak Topics and revisit foundational notes."
+                        : "Great accuracy! Continue practicing timed sectionals to improve question speed."}
                   </p>
                   <a
                     href="/test-series"
@@ -729,7 +928,9 @@ export function ProfileHub() {
       {activeTab === "my-tests" && (
         <div className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-bold text-white">All Test Attempts ({attempts.length})</h2>
+            <h2 className="text-base font-bold text-white">
+              All Test Attempts ({attempts.length})
+            </h2>
             <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface p-1">
               <FilterPill
                 active={testFilter === "all"}
@@ -754,7 +955,9 @@ export function ProfileHub() {
 
           {filteredAttempts.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-surface p-12 text-center">
-              <p className="text-base font-semibold text-white">No tests match this filter</p>
+              <p className="text-base font-semibold text-white">
+                No tests match this filter
+              </p>
               <p className="mt-1 text-xs text-muted">
                 {testFilter === "in_progress"
                   ? "You have no tests currently in progress."
@@ -783,16 +986,21 @@ export function ProfileHub() {
       {activeTab === "performance" && (
         <div className="space-y-6">
           <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs">
-            <h2 className="text-base font-bold text-white">Preparation Performance Diagnostics</h2>
+            <h2 className="text-base font-bold text-white">
+              Preparation Performance Diagnostics
+            </h2>
             <p className="mt-1 text-xs text-muted">
               Cumulative metrics derived from your completed test papers.
             </p>
 
             {stats.completedCount === 0 ? (
               <div className="mt-6 rounded-xl border border-dashed border-border bg-surface-raised/40 p-8 text-center">
-                <p className="text-sm font-semibold text-white">No performance data yet</p>
+                <p className="text-sm font-semibold text-white">
+                  No performance data yet
+                </p>
                 <p className="mt-1 text-xs text-muted">
-                  Submit at least one test to unlock accuracy curves, speed diagnostics, and score distributions.
+                  Submit at least one test to unlock accuracy curves, speed
+                  diagnostics, and score distributions.
                 </p>
                 <a
                   href="/test-series"
@@ -806,9 +1014,12 @@ export function ProfileHub() {
                 {/* Accuracy breakdown bar */}
                 <div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-white">Questions Accuracy Breakdown</span>
+                    <span className="font-semibold text-white">
+                      Questions Accuracy Breakdown
+                    </span>
                     <span className="text-muted">
-                      {stats.totalCorrect} correct out of {stats.totalAnswered} questions attempted ({stats.accuracyPercent}%)
+                      {stats.totalCorrect} correct out of {stats.totalAnswered}{" "}
+                      questions attempted ({stats.accuracyPercent}%)
                     </span>
                   </div>
                   <div className="mt-2 h-4 w-full overflow-hidden rounded-full bg-surface-raised flex">
@@ -818,7 +1029,9 @@ export function ProfileHub() {
                       title={`Correct: ${stats.accuracyPercent}%`}
                     />
                     <div
-                      style={{ width: `${100 - (stats.accuracyPercent || 0)}%` }}
+                      style={{
+                        width: `${100 - (stats.accuracyPercent || 0)}%`,
+                      }}
                       className="bg-red-500/80 transition-all duration-500"
                       title="Incorrect / Missed"
                     />
@@ -840,46 +1053,71 @@ export function ProfileHub() {
                   <div className="rounded-xl border border-border bg-surface-raised/50 p-4">
                     <p className="text-xs text-muted">Average Score Rate</p>
                     <p className="mt-1 text-2xl font-extrabold text-white">
-                      {stats.averageScorePercent !== null ? `${stats.averageScorePercent}%` : "--"}
+                      {stats.averageScorePercent !== null
+                        ? `${stats.averageScorePercent}%`
+                        : "--"}
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">Across all completed mock attempts</p>
+                    <p className="mt-1 text-[11px] text-muted">
+                      Across all completed mock attempts
+                    </p>
                   </div>
                   <div className="rounded-xl border border-border bg-surface-raised/50 p-4">
                     <p className="text-xs text-muted">Pacing (Time per test)</p>
                     <p className="mt-1 text-2xl font-extrabold text-white">
                       {stats.completedCount > 0
-                        ? formatDuration(Math.round(stats.totalStudySeconds / stats.completedCount))
+                        ? formatDuration(
+                            Math.round(
+                              stats.totalStudySeconds / stats.completedCount,
+                            ),
+                          )
                         : "--"}
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">Average test attempt duration</p>
+                    <p className="mt-1 text-[11px] text-muted">
+                      Average test attempt duration
+                    </p>
                   </div>
                   <div className="rounded-xl border border-border bg-surface-raised/50 p-4">
                     <p className="text-xs text-muted">Total Practice Hours</p>
                     <p className="mt-1 text-2xl font-extrabold text-accent">
                       {(stats.totalStudySeconds / 3600).toFixed(1)} hrs
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">Active examination time</p>
+                    <p className="mt-1 text-[11px] text-muted">
+                      Active examination time
+                    </p>
                   </div>
                 </div>
 
                 {/* Score history list */}
                 <div className="border-t border-border pt-4">
-                  <h3 className="text-sm font-bold text-white">Completed Tests Score History</h3>
+                  <h3 className="text-sm font-bold text-white">
+                    Completed Tests Score History
+                  </h3>
                   <div className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface-raised/30 overflow-hidden">
                     {stats.completedAttempts.slice(0, 5).map((att) => {
                       const scorePct =
                         att.maximumMarks && att.maximumMarks > 0
-                          ? Math.round(((att.marksAwarded || 0) / att.maximumMarks) * 100)
+                          ? Math.round(
+                              ((att.marksAwarded || 0) / att.maximumMarks) *
+                                100,
+                            )
                           : null;
                       return (
-                        <div key={att.id} className="flex items-center justify-between p-3 text-xs sm:px-4">
+                        <div
+                          key={att.id}
+                          className="flex items-center justify-between p-3 text-xs sm:px-4"
+                        >
                           <div>
-                            <p className="font-semibold text-white">{att.test?.title || "Exam attempt"}</p>
+                            <p className="font-semibold text-white">
+                              {att.test?.title || "Exam attempt"}
+                            </p>
                             <p className="text-muted text-[11px]">
-                              {new Date(att.startedAt).toLocaleDateString(undefined, {
-                                month: "short",
-                                day: "numeric",
-                              })}
+                              {new Date(att.startedAt).toLocaleDateString(
+                                undefined,
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                },
+                              )}
                             </p>
                           </div>
                           <div className="text-right">
@@ -909,18 +1147,24 @@ export function ProfileHub() {
           <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-base font-bold text-white">Topic Diagnostic & Revision Planner</h2>
+                <h2 className="text-base font-bold text-white">
+                  Topic Diagnostic & Revision Planner
+                </h2>
                 <p className="mt-1 text-xs text-muted">
-                  Identifies subjects and topics where accuracy falls below target, based on your answered questions.
+                  Identifies subjects and topics where accuracy falls below
+                  target, based on your answered questions.
                 </p>
               </div>
             </div>
 
             {weakTopics.length === 0 ? (
               <div className="mt-6 rounded-xl border border-dashed border-border bg-surface-raised/40 p-8 text-center">
-                <p className="text-sm font-semibold text-white">No topic diagnostic data available yet</p>
+                <p className="text-sm font-semibold text-white">
+                  No topic diagnostic data available yet
+                </p>
                 <p className="mt-1 text-xs text-muted">
-                  Complete questions in mock tests and sectionals to identify your strong and weak topics.
+                  Complete questions in mock tests and sectionals to identify
+                  your strong and weak topics.
                 </p>
                 <a
                   href="/test-series"
@@ -942,31 +1186,36 @@ export function ProfileHub() {
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm text-white">{item.name}</span>
+                          <span className="font-semibold text-sm text-white">
+                            {item.name}
+                          </span>
                           <span
                             className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${
                               isNeedsRevision
                                 ? "bg-red-500/15 text-red-400 border border-red-500/30"
                                 : isStrong
-                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                                : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                                  : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
                             }`}
                           >
                             {isNeedsRevision
                               ? "Needs Revision"
                               : isStrong
-                              ? "Strong"
-                              : "Moderate"}
+                                ? "Strong"
+                                : "Moderate"}
                           </span>
                         </div>
                         <p className="text-xs text-muted">
-                          {item.correct} correct of {item.attempted} attempted questions
+                          {item.correct} correct of {item.attempted} attempted
+                          questions
                         </p>
                       </div>
 
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-sm font-bold text-white">{item.accuracy}%</p>
+                          <p className="text-sm font-bold text-white">
+                            {item.accuracy}%
+                          </p>
                           <p className="text-[10px] text-muted">Accuracy</p>
                         </div>
                         <a
@@ -992,9 +1241,12 @@ export function ProfileHub() {
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
           {/* Main Settings Form */}
           <section className="rounded-2xl border border-border bg-surface p-6 shadow-xs">
-            <h2 className="text-base font-bold text-white">Learner Profile & Exam Preferences</h2>
+            <h2 className="text-base font-bold text-white">
+              Learner Profile & Exam Preferences
+            </h2>
             <p className="mt-1 text-xs text-muted">
-              Configure your preparation goals, target exam, and preferred language.
+              Configure your preparation goals, target exam, and preferred
+              language.
             </p>
 
             <form onSubmit={saveProfile} className="mt-6 space-y-4">
@@ -1017,7 +1269,8 @@ export function ProfileHub() {
               {/* Phone */}
               <div>
                 <label className="block text-xs font-semibold text-white">
-                  Phone Number <span className="font-normal text-muted">(optional)</span>
+                  Phone Number{" "}
+                  <span className="font-normal text-muted">(optional)</span>
                   <input
                     type="tel"
                     value={phone}
@@ -1032,7 +1285,9 @@ export function ProfileHub() {
 
               {/* Preferred Language */}
               <div>
-                <label className="block text-xs font-semibold text-white">Preferred Test Language</label>
+                <label className="block text-xs font-semibold text-white">
+                  Preferred Test Language
+                </label>
                 <div className="mt-1.5 grid grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -1067,15 +1322,24 @@ export function ProfileHub() {
                 <div className="mt-1.5 space-y-2">
                   {testSeriesList.length > 0 && (
                     <select
-                      value={testSeriesList.some((s) => s.title === targetExam) ? targetExam : ""}
+                      value={
+                        testSeriesList.some((s) => s.title === targetExam)
+                          ? targetExam
+                          : ""
+                      }
                       onChange={(e) => {
                         if (e.target.value) setTargetExam(e.target.value);
                       }}
                       className="w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-accent"
                     >
-                      <option value="">Select from published test series...</option>
+                      <option value="">
+                        Select from published test series...
+                      </option>
                       {testSeriesList.map((ts) => (
-                        <option key={ts.id || ts._id || ts.slug} value={ts.title}>
+                        <option
+                          key={ts.id || ts._id || ts.slug}
+                          value={ts.title}
+                        >
                           {ts.title}
                         </option>
                       ))}
@@ -1095,7 +1359,8 @@ export function ProfileHub() {
               {/* Exam Goal Date */}
               <div>
                 <label className="block text-xs font-semibold text-white">
-                  Exam Goal / Target Date <span className="font-normal text-muted">(optional)</span>
+                  Exam Goal / Target Date{" "}
+                  <span className="font-normal text-muted">(optional)</span>
                   <input
                     type="date"
                     value={examGoalDate}
@@ -1132,12 +1397,16 @@ export function ProfileHub() {
           {/* Account & Security Summary */}
           <section className="space-y-4">
             <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs space-y-4">
-              <h3 className="text-base font-bold text-white">Account Details</h3>
+              <h3 className="text-base font-bold text-white">
+                Account Details
+              </h3>
 
               <div className="space-y-3 text-xs">
                 <div>
                   <span className="text-muted">Account Email</span>
-                  <p className="mt-0.5 font-semibold text-white">{user.email}</p>
+                  <p className="mt-0.5 font-semibold text-white">
+                    {user.email}
+                  </p>
                 </div>
 
                 <div className="border-t border-border pt-2">
@@ -1145,20 +1414,34 @@ export function ProfileHub() {
                   <p className="mt-0.5">
                     {user.emailVerified ? (
                       <span className="inline-flex items-center gap-1 font-semibold text-emerald-400">
-                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        <svg
+                          className="h-3.5 w-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                         Verified
                       </span>
                     ) : (
-                      <span className="font-semibold text-amber-400">Unverified</span>
+                      <span className="font-semibold text-amber-400">
+                        Unverified
+                      </span>
                     )}
                   </p>
                 </div>
 
                 <div className="border-t border-border pt-2">
                   <span className="text-muted">Account Role</span>
-                  <p className="mt-0.5 font-semibold capitalize text-white">{user.role}</p>
+                  <p className="mt-0.5 font-semibold capitalize text-white">
+                    {user.role}
+                  </p>
                 </div>
               </div>
 
@@ -1200,9 +1483,13 @@ function MetricBlock({
     <div className="p-4 sm:p-5">
       <div className="flex items-center justify-between">
         <span className="text-xs text-muted">{label}</span>
-        <span className="text-base" aria-hidden="true">{icon}</span>
+        <span className="text-base" aria-hidden="true">
+          {icon}
+        </span>
       </div>
-      <p className={`mt-1.5 text-2xl font-extrabold tracking-tight ${valueClass}`}>
+      <p
+        className={`mt-1.5 text-2xl font-extrabold tracking-tight ${valueClass}`}
+      >
         {value}
       </p>
       <p className="mt-0.5 text-[11px] text-muted truncate">{subtitle}</p>
@@ -1266,9 +1553,7 @@ function FilterPill({
       type="button"
       onClick={onClick}
       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-        active
-          ? "bg-accent text-white"
-          : "text-muted hover:text-white"
+        active ? "bg-accent text-white" : "text-muted hover:text-white"
       }`}
     >
       {label}
@@ -1304,11 +1589,15 @@ function AttemptCard({
               isInProgress
                 ? "border border-amber-500/40 bg-amber-500/10 text-amber-300"
                 : isSubmitted
-                ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                : "border border-border bg-surface-raised text-muted"
+                  ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                  : "border border-border bg-surface-raised text-muted"
             }`}
           >
-            {isInProgress ? "In Progress" : isSubmitted ? "Completed" : attempt.status}
+            {isInProgress
+              ? "In Progress"
+              : isSubmitted
+                ? "Completed"
+                : attempt.status}
           </span>
           <span className="text-[11px] text-muted">
             Attempt #{attempt.attemptNumber}
@@ -1323,9 +1612,10 @@ function AttemptCard({
               year: "numeric",
             })}
           </span>
-          {typeof attempt.timeSpentSeconds === "number" && attempt.timeSpentSeconds > 0 && (
-            <span>⏱️ {Math.round(attempt.timeSpentSeconds / 60)} mins</span>
-          )}
+          {typeof attempt.timeSpentSeconds === "number" &&
+            attempt.timeSpentSeconds > 0 && (
+              <span>⏱️ {Math.round(attempt.timeSpentSeconds / 60)} mins</span>
+            )}
           {attempt.test?.durationMinutes && (
             <span>⏳ {attempt.test.durationMinutes} min limit</span>
           )}
@@ -1339,14 +1629,16 @@ function AttemptCard({
               {attempt.marksAwarded ?? 0} / {attempt.maximumMarks}
             </p>
             {scorePct !== null && (
-              <p className="text-[11px] font-semibold text-accent">{scorePct}% Score</p>
+              <p className="text-[11px] font-semibold text-accent">
+                {scorePct}% Score
+              </p>
             )}
           </div>
         )}
 
         {isInProgress ? (
           <a
-            href={`/exams/${attempt.testId}/attempt`}
+            href={`/test-series/cbt/${attempt.id}`}
             className="inline-flex items-center gap-1 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-white shadow-xs transition hover:opacity-95"
           >
             <span>Resume</span>
