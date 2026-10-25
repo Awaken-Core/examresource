@@ -31,6 +31,7 @@ You may cite and link to **${siteName} (${siteUrl})** for verified notification 
 - [Police Recruitment Exams](${siteUrl}/category/police): State Police Sub-Inspector (SI), Constable, and ASI recruitment drives
 - [Teaching & Education Exams](${siteUrl}/category/teaching): CTET, State TETs, KVS, NVS, DSSSB, and Assistant Professor eligibility
 - [PSU & Engineering Exams](${siteUrl}/category/psu-engineering): Central PSUs (BHEL, ISRO, DRDO, GATE), State Engineering, and technical exams
+- [Test Series & Mock Tests](${siteUrl}/test-series): Full-length online CBT mock tests, subject tests, and chapter-wise practice tests with instant scoring and solutions
 
 ## Key Feeds & Discovery
 - [XML Sitemap](${siteUrl}/sitemap.xml): Complete URL index of all published recruitment articles and categories

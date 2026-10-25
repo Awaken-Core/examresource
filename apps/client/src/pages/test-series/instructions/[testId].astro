@@ -14,6 +14,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, sta
 
 interface TestSeo {
   title?: string;
+  slug?: string | null;
   description?: string | null;
   durationMinutes?: number | null;
   totalQuestionsCount?: number;
@@ -25,6 +26,16 @@ interface TestSeo {
 }
 
 const testSeo = await fetchPublicJson<TestSeo>(`/test-series/tests/${encodeURIComponent(testId)}`);
+
+if (!testSeo) {
+  return Astro.redirect('/test-series');
+}
+
+// 301 Permanent Redirect to canonical SEO slug if accessed via MongoDB ObjectId
+if (testSeo.slug && testId.toLowerCase() !== testSeo.slug.toLowerCase()) {
+  return Astro.redirect(`/test-series/instructions/${testSeo.slug}`, 301);
+}
+
 const testTitle = testSeo?.title?.trim();
 const durationText = testSeo?.durationMinutes ? `${testSeo.durationMinutes} minutes` : 'the allotted time';
 const questionText = testSeo?.totalQuestionsCount ? `${testSeo.totalQuestionsCount} questions` : 'the published question set';
@@ -32,13 +43,13 @@ const markingText = testSeo?.negativeMarkingEnabled
   ? `A correct answer scores +${testSeo.positiveMarks ?? 1}. An incorrect answer scores -${testSeo.negativeMarks ?? 0}.`
   : `A correct answer scores +${testSeo?.positiveMarks ?? 1}. There is no negative marking.`;
 const pageTitle = testTitle
-  ? `${testTitle} instructions | ${siteName}`
-  : `Test instructions | ${siteName}`;
+  ? `${testTitle} Instructions & Exam Pattern | ${siteName}`
+  : `Test Instructions & Exam Pattern | ${siteName}`;
 const pageDescription = testSeo?.description?.trim()
   || (testTitle
-    ? `Read the rules for ${testTitle} before the timed paper. ${questionText} in ${durationText}. Agree to the code of conduct before any answer is saved.`
+    ? `Read the instructions and marking scheme for ${testTitle} before the timed paper. ${questionText} in ${durationText} on ${siteName}.`
     : `Read the official examination guidelines, section breakdown, and marking scheme before starting your timed test on ${siteDomain}.`);
-const canonicalUrl = `${siteUrl}/test-series/instructions/${testId}`;
+const canonicalUrl = `${siteUrl}/test-series/instructions/${testSeo?.slug || testId}`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -51,6 +62,29 @@ const jsonLd = {
       inLanguage: testSeo?.languages?.length ? testSeo.languages : ['English', 'Hindi'],
       provider: { '@type': 'Organization', name: siteName, url: siteUrl },
       timeRequired: testSeo?.durationMinutes ? `PT${testSeo.durationMinutes}M` : undefined,
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: siteUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Test Series',
+          item: `${siteUrl}/test-series`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: testTitle || 'Instructions',
+          item: canonicalUrl,
+        },
+      ],
     },
     {
       '@type': 'FAQPage',

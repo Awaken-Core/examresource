@@ -25,33 +25,70 @@ interface SeriesSeo {
 }
 
 const seriesSeo = await fetchPublicJson<SeriesSeo>(`/test-series/${encodeURIComponent(id)}`);
+
+if (!seriesSeo) {
+  return Astro.redirect('/test-series');
+}
+
+// 301 Permanent Redirect to canonical SEO slug if accessed via MongoDB ObjectId or alternate casing
+if (seriesSeo.slug && id.toLowerCase() !== seriesSeo.slug.toLowerCase()) {
+  return Astro.redirect(`/test-series/${seriesSeo.slug}`, 301);
+}
+
 const seriesTitle = seriesSeo?.title?.trim();
 const subjectNames = (seriesSeo?.subjects ?? [])
   .map((subject) => subject.customDisplayName?.trim() || subject.name?.trim())
   .filter((name): name is string => Boolean(name))
   .slice(0, 12);
 const pageTitle = seriesTitle
-  ? `${seriesTitle} mock tests | ${siteName}`
-  : `Test series overview | ${siteName}`;
+  ? `${seriesTitle} Mock Tests & CBT Practice | ${siteName}`
+  : `Test Series Overview & Mock Tests | ${siteName}`;
 const pageDescription = seriesSeo?.description?.trim()
   || (seriesTitle
-    ? `${seriesTitle} is a ${seriesSeo?.targetExam || 'competitive exam'} practice series on ${siteName}, with subject tests, chapter tests, and full mock tests.`
+    ? `${seriesTitle} complete online practice test series on ${siteName}. Includes subject tests, chapter tests, and full-length CBT mock tests with instant analysis.`
     : `Explore subject-wise, chapter-wise and full tests for this competitive exam on ${siteDomain}.`);
 const canonicalUrl = `${siteUrl}/test-series/${seriesSeo?.slug || id}`;
 const jsonLd = seriesTitle
   ? {
       '@context': 'https://schema.org',
-      '@type': 'LearningResource',
-      name: seriesTitle,
-      description: pageDescription,
-      url: canonicalUrl,
-      learningResourceType: 'Quiz',
-      educationalUse: 'practice',
-      inLanguage: seriesSeo?.supportedLanguages?.length ? seriesSeo.supportedLanguages : ['en', 'hi'],
-      about: seriesSeo?.targetExam ? { '@type': 'Thing', name: seriesSeo.targetExam } : undefined,
-      provider: { '@type': 'Organization', name: siteName, url: siteUrl },
-      isAccessibleForFree: seriesSeo?.accessType === 'free' ? true : undefined,
-      teaches: subjectNames.length ? subjectNames.join(', ') : undefined,
+      '@graph': [
+        {
+          '@type': 'LearningResource',
+          name: seriesTitle,
+          description: pageDescription,
+          url: canonicalUrl,
+          learningResourceType: 'Quiz',
+          educationalUse: 'practice',
+          inLanguage: seriesSeo?.supportedLanguages?.length ? seriesSeo.supportedLanguages : ['en', 'hi'],
+          about: seriesSeo?.targetExam ? { '@type': 'Thing', name: seriesSeo.targetExam } : undefined,
+          provider: { '@type': 'Organization', name: siteName, url: siteUrl },
+          isAccessibleForFree: seriesSeo?.accessType === 'free' ? true : undefined,
+          teaches: subjectNames.length ? subjectNames.join(', ') : undefined,
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: siteUrl,
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Test Series',
+              item: `${siteUrl}/test-series`,
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: seriesTitle,
+              item: canonicalUrl,
+            },
+          ],
+        },
+      ],
     }
   : undefined;
 ---

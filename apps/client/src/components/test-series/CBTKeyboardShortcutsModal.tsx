@@ -15,7 +15,6 @@ export function CBTKeyboardShortcutsModal({ isOpen, onClose }: Props) {
     { key: 'F  M', desc: 'Flag this question for review' },
     { key: 'C', desc: 'Clear the current response' },
     { key: 'Enter on the conduct page', desc: 'Agree and open the questions' },
-    { key: 'F11', desc: 'Toggle full screen mode' },
     { key: '?', desc: 'Open or close this guide' },
   ];
 

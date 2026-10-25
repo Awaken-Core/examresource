@@ -213,6 +213,11 @@ export const testSectionInputSchema = z.object({
 export const createIndividualTestSchema = z.object({
   testSeriesId: z.string().min(1),
   title: z.string().trim().min(1).max(250),
+  slug: z
+    .string()
+    .trim()
+    .regex(slugRegex, 'Slug must contain only lowercase alphanumeric characters and hyphens.')
+    .optional(),
   description: z.string().trim().max(5_000).nullable().optional(),
   testMode: z.enum(['subject', 'chapter', 'full']),
   subjectId: z.string().trim().nullable().optional(),

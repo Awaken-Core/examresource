@@ -23,11 +23,13 @@ export const GET: APIRoute = async () => {
 
   let sitemapEntries: any[] = [];
   let categories: any[] = [];
+  let testSeriesList: any[] = [];
 
   try {
-    const [entriesRes, catRes] = await Promise.all([
+    const [entriesRes, catRes, testSeriesRes] = await Promise.all([
       fetch(`${API_URL}/sitemap-entries`, { signal: AbortSignal.timeout(6000) }).catch(() => null),
       fetch(`${API_URL}/categories`, { signal: AbortSignal.timeout(6000) }).catch(() => null),
+      fetch(`${API_URL}/test-series`, { signal: AbortSignal.timeout(6000) }).catch(() => null),
     ]);
 
     if (entriesRes && entriesRes.ok) {
@@ -43,6 +45,10 @@ export const GET: APIRoute = async () => {
     if (catRes && catRes.ok) {
       categories = await catRes.json();
     }
+
+    if (testSeriesRes && testSeriesRes.ok) {
+      testSeriesList = await testSeriesRes.json();
+    }
   } catch (e) {
     sitemapEntries = [];
   }
@@ -57,6 +63,16 @@ export const GET: APIRoute = async () => {
       image: {
         loc: `${siteUrl}/og-image.jpg`,
         title: `${siteName} | Government Exam Updates & Sarkari Jobs`,
+      },
+    },
+    {
+      loc: `${siteUrl}/test-series`,
+      changefreq: 'daily',
+      priority: '0.95',
+      lastmod: currentDate,
+      image: {
+        loc: `${siteUrl}/testimage.png`,
+        title: `${siteName} | Free Online Test Series & CBT Mock Tests`,
       },
     },
     { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
@@ -126,6 +142,34 @@ export const GET: APIRoute = async () => {
           lastmod: currentDate,
           changefreq: 'weekly',
           priority: '0.9',
+        });
+      }
+    }
+  }
+
+  // Dynamic Test Series URLs
+  if (Array.isArray(testSeriesList) && testSeriesList.length > 0) {
+    for (const ts of testSeriesList) {
+      if (!ts?.slug || ts.status === 'draft' || ts.status === 'archived') continue;
+      const loc = `${siteUrl}/test-series/${ts.slug}`;
+      if (!seenUrls.has(loc)) {
+        seenUrls.add(loc);
+        const seriesMod = ts.updatedAt
+          ? new Date(ts.updatedAt).toISOString().split('T')[0]
+          : currentDate;
+        dynamicUrls.push({
+          loc,
+          lastmod: seriesMod,
+          changefreq: 'weekly',
+          priority: '0.85',
+          image: ts.logoUrl
+            ? {
+                loc: ts.logoUrl.startsWith('http')
+                  ? ts.logoUrl
+                  : `${siteUrl}${ts.logoUrl.startsWith('/') ? '' : '/'}${ts.logoUrl}`,
+                title: `${ts.title || 'Mock Test'} | ${siteName}`,
+              }
+            : undefined,
         });
       }
     }

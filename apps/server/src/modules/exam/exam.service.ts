@@ -622,8 +622,27 @@ export class ExamService {
   }
 
   async submit(id: string, user: CurrentUser) {
-    const attempt = await this.requireActiveAttempt(id, user);
-    return this.scoreAndFinalizeAttempt(attempt, user);
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Exam attempt was not found.');
+    }
+    const doc = await this.testAttemptModel
+      .findOne({
+        _id: new Types.ObjectId(id),
+        userId: new Types.ObjectId(user.id),
+      })
+      .lean();
+    if (!doc) throw new NotFoundException('Exam attempt was not found.');
+
+    // Idempotent: If attempt is already submitted, return it directly without conflict
+    if (doc.status === 'submitted') {
+      return this.getAttempt(id, user);
+    }
+
+    if (doc.status !== 'in_progress') {
+      throw new ConflictException('This exam attempt has already ended.');
+    }
+
+    return this.scoreAndFinalizeAttempt(doc, user);
   }
 
   private async autoFinalizeAttempt(attempt: any) {
@@ -751,6 +770,19 @@ export class ExamService {
     return { gradedAnswers, totalAwarded };
   }
 
+  private sanitizeStringMap(input: any): Record<string, string> {
+    if (!input || typeof input !== 'object') return {};
+    const res: Record<string, string> = {};
+    for (const [k, v] of Object.entries(input)) {
+      if (typeof v === 'string') {
+        res[k] = v;
+      } else if (v && typeof v === 'object' && (v as any).content) {
+        res[k] = String((v as any).content);
+      }
+    }
+    return res;
+  }
+
   private async getExamQuestionsWithSnapshots(examQuestionItems: any[]) {
     if (!examQuestionItems || examQuestionItems.length === 0) return [];
 
@@ -780,14 +812,14 @@ export class ExamService {
             id: optionId,
             _id: optionId,
             content: typeof opt === 'string' ? opt : opt?.content || '',
-            translations: opt?.translations || {},
+            translations: this.sanitizeStringMap(opt?.translations),
             imageUrl: opt?.imageUrl || null,
             position: opt?.position ?? idx,
             isCorrect: Boolean(opt?.isCorrect),
           };
         });
 
-        const snapshot = item.snapshot || {
+        const rawSnapshot = item.snapshot || {
           questionId: qDoc._id,
           content: qDoc.content,
           translations: qDoc.translations || {},
@@ -798,6 +830,22 @@ export class ExamService {
           options,
           marks: item.marks ?? qDoc.marks,
           negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
+        };
+
+        const snapshot = {
+          ...rawSnapshot,
+          translations: this.sanitizeStringMap(rawSnapshot.translations),
+          explanationTranslations: this.sanitizeStringMap(rawSnapshot.explanationTranslations),
+          options: (rawSnapshot.options && rawSnapshot.options.length > 0 ? rawSnapshot.options : options).map(
+            (opt: any, idx: number) => ({
+              _id: opt?._id || new Types.ObjectId(),
+              content: typeof opt === 'string' ? opt : opt?.content ?? opt?.text ?? `Option ${idx + 1}`,
+              translations: this.sanitizeStringMap(opt?.translations),
+              imageUrl: opt?.imageUrl || null,
+              position: typeof opt?.position === 'number' && opt.position !== null ? opt.position : idx,
+              isCorrect: Boolean(opt?.isCorrect),
+            }),
+          ),
         };
 
         return {

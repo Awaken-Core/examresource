@@ -77,12 +77,11 @@ export function useProctoringMonitor(active: boolean, onWarning: (reason: string
     const onKey = (event: KeyboardEvent) => {
       const key = event.key;
       const lower = key.toLowerCase();
-      if (key === 'F11' || lower === 'f11' || event.code === 'F11') {
-        (window as Window & { __cbtFullscreenUntil?: number }).__cbtFullscreenUntil = Date.now() + 1500;
+      if (key === 'F11' || lower === 'f11' || event.code === 'F11' || key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
         return;
       }
-      if (fullscreenQuiet()) return;
-      if (key === 'Escape') return;
       const shortcut =
         key === 'Tab' ||
         key === 'Meta' ||
@@ -110,7 +109,7 @@ export function useProctoringMonitor(active: boolean, onWarning: (reason: string
     document.addEventListener('cut', blockClipboard);
     document.addEventListener('paste', blockClipboard);
     document.addEventListener('dragstart', blockMenu);
-    document.addEventListener('keydown', onKey);
+    document.addEventListener('keydown', onKey, true);
 
     return () => {
       clearTimeout(armTimer);
@@ -127,7 +126,7 @@ export function useProctoringMonitor(active: boolean, onWarning: (reason: string
       document.removeEventListener('cut', blockClipboard);
       document.removeEventListener('paste', blockClipboard);
       document.removeEventListener('dragstart', blockMenu);
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('keydown', onKey, true);
     };
   }, [active]);
 }

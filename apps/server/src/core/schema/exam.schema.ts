@@ -176,6 +176,9 @@ export class Exam {
   @Prop({ required: true, trim: true })
   title: string;
 
+  @Prop({ type: String, default: null, trim: true, lowercase: true, index: true })
+  slug?: string | null;
+
   @Prop({ type: String, default: null, trim: true })
   description?: string | null;
 

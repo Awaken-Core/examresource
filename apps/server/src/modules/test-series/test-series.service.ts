@@ -1111,12 +1111,16 @@ export class TestSeriesService {
   // HELPER METHODS
   // =========================================================================
 
-  private async findSeriesById(id: string) {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new NotFoundException('Test series was not found.');
+  private async findSeriesById(idOrSlug: string) {
+    if (Types.ObjectId.isValid(idOrSlug)) {
+      const doc = await this.testSeriesModel
+        .findById(new Types.ObjectId(idOrSlug))
+        .lean();
+      if (!doc) throw new NotFoundException('Test series was not found.');
+      return doc;
     }
     const doc = await this.testSeriesModel
-      .findById(new Types.ObjectId(id))
+      .findOne({ slug: idOrSlug.toLowerCase() })
       .lean();
     if (!doc) throw new NotFoundException('Test series was not found.');
     return doc;
@@ -1310,14 +1314,15 @@ export class TestSeriesService {
     return docs.map((doc) => this.formatIndividualTest(doc, false));
   }
 
-  async getPublishedTest(testId: string) {
-    if (!Types.ObjectId.isValid(testId)) {
-      throw new NotFoundException('Test was not found.');
-    }
+  async getPublishedTest(testIdOrSlug: string) {
+    const isObjectId = Types.ObjectId.isValid(testIdOrSlug);
+    const idFilter: Record<string, any> = isObjectId
+      ? { _id: new Types.ObjectId(testIdOrSlug) }
+      : { slug: testIdOrSlug.toLowerCase() };
     const now = new Date();
     const doc = await this.examModel
       .findOne({
-        _id: new Types.ObjectId(testId),
+        ...idFilter,
         status: 'published',
         $and: [
           {
@@ -1433,8 +1438,15 @@ export class TestSeriesService {
         isPublishing: false,
       });
 
+    const baseSlug = (input.slug || input.title)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 100);
+
     const created = await this.examModel.create({
       title: input.title,
+      slug: baseSlug || null,
       description: input.description ?? null,
       type: input.testMode,
       testMode: input.testMode,
@@ -2268,6 +2280,7 @@ export class TestSeriesService {
       id: doc._id.toString(),
       _id: doc._id.toString(),
       title: doc.title,
+      slug: doc.slug || null,
       description: doc.description || null,
       testMode: doc.testMode,
       type: doc.type,

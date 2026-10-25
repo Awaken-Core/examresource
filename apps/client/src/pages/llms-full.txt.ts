@@ -37,6 +37,7 @@ ${siteName} links directly to primary sources for all candidate submissions:
 - \`${siteUrl}/category/police\`: Police Recruitment Exams: State Police SI, Constable, and ASI recruitment drives.
 - \`${siteUrl}/category/teaching\`: Teaching & Education Exams: CTET, State TETs, KVS, NVS, DSSSB, and Assistant Professor posts.
 - \`${siteUrl}/category/psu-engineering\`: PSU & Engineering Exams: Central PSUs (BHEL, ISRO, DRDO, GATE), State Engineering, and technical exams.
+- \`${siteUrl}/test-series\`: Online Test Series & CBT Mock Tests: Subject-wise, chapter-wise, and full-length exam practice with authentic CBT examination simulator and score analytics.
 
 ## Article Structure & Content Standards
 Every published article on ${siteName} follows a strict, candidate-first structure:

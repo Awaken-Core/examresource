@@ -1,5 +1,6 @@
 import React from 'react';
 import type { PaletteSummaryCounts } from './types/cbt';
+import { CBTFlagIcon } from './CBTFlagIcon';
 
 interface Props {
   readonly counts: PaletteSummaryCounts;
@@ -30,7 +31,9 @@ export const CBTLegend = React.memo(function CBTLegend({
           {rows.map((row) => (
             <li key={row.label} className="flex h-5 items-center justify-between gap-2 overflow-hidden text-[11px] whitespace-nowrap">
               <span className="flex min-w-0 items-center gap-1.5 text-slate-900 dark:text-slate-100">
-                <span className={`h-2.5 w-2.5 shrink-0 ${row.swatch}`} />
+                <span className={`relative flex h-2.5 w-2.5 shrink-0 items-center justify-center ${row.swatch}`}>
+                  {row.label.includes('Marked') && <CBTFlagIcon className="h-1.5 w-1.5 text-white" />}
+                </span>
                 <span className="truncate">{row.label}</span>
               </span>
               <span className="w-8 text-right font-semibold tabular-nums text-slate-900 dark:text-slate-100">

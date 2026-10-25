@@ -46,6 +46,7 @@
   --color-surface: var(--color-surface);
   --color-surface-raised: var(--color-surface-raised);
   --color-text-body: var(--color-text-body);
+  --color-heading: var(--color-heading);
   --color-muted: var(--color-muted);
   --color-border: var(--color-border);
   --color-subtle: var(--color-subtle);
@@ -164,6 +165,8 @@
   --color-canvas: #F8FAFC;
   --color-surface: #FFFFFF;
   --color-surface-raised: #F1F5F9;
+  --color-text-body: #1E293B;
+  --color-heading: #0F172A;
   --color-white: #0F172A;
   /* slate-900, stronger than gray-900, ~18:1 on white */
   --color-muted: #64748B;
@@ -181,6 +184,8 @@
   --color-canvas: #0C0E14;
   --color-surface: #141820;
   --color-surface-raised: #1C2030;
+  --color-text-body: #E2E8F0;
+  --color-heading: #F1F5F9;
   --color-white: #F1F5F9;
   /* slate-100 for softer large-text rendering */
   --color-muted: #94A3B8;

@@ -287,7 +287,7 @@ const jsonLd = {
   ogType="website"
   jsonLd={jsonLd}
 >
-  <div class="bg-canvas text-white transition-colors duration-200 relative">
+  <div class="bg-canvas text-slate-800 dark:text-slate-100 transition-colors duration-200 relative">
     <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 relative z-10">
 
       <h1 class="sr-only">GovtPariksha — Verified Government Exam Notifications, Admit Cards &amp; Results</h1>
@@ -299,8 +299,8 @@ const jsonLd = {
 
         {/* Section label */}
         <div class="mb-4">
-          <p class="text-[12px] font-semibold uppercase tracking-widest text-muted">Find your exam</p>
-          <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight mt-1">
+          <p class="text-[12px] font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Find your exam</p>
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight mt-1">
             Search <span class="text-accent">9 exam streams</span> in real-time
           </h2>
         </div>
@@ -316,7 +316,7 @@ const jsonLd = {
               <button
                 id="category-dropdown-btn"
                 type="button"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-raised hover:bg-surface-raised/80 border border-border/80 text-white text-[12px] font-semibold cursor-pointer transition-all duration-150 select-none"
+                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-raised hover:bg-surface-raised/80 border border-border/80 text-slate-800 dark:text-slate-100 text-[12px] font-semibold cursor-pointer transition-all duration-150 select-none"
                 aria-expanded="false"
                 aria-haspopup="listbox"
                 title="Filter by Exam Category"
@@ -336,7 +336,7 @@ const jsonLd = {
                   type="button"
                   data-stream-option="all"
                   data-stream-name="All Streams"
-                  class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-semibold text-white hover:bg-surface-raised transition-colors text-left cursor-pointer"
+                  class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-semibold text-slate-800 dark:text-slate-100 hover:bg-surface-raised transition-colors text-left cursor-pointer"
                   role="option"
                   aria-selected="true"
                 >
@@ -354,7 +354,7 @@ const jsonLd = {
                     type="button"
                     data-stream-option={cat.slug}
                     data-stream-name={cat.shortName}
-                    class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-medium text-muted hover:text-white hover:bg-surface-raised transition-colors text-left cursor-pointer"
+                    class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-surface-raised transition-colors text-left cursor-pointer"
                     role="option"
                     aria-selected="false"
                   >
@@ -379,7 +379,7 @@ const jsonLd = {
               autocomplete="off"
               spellcheck="false"
               placeholder="Search exam, post, admit card..."
-              class="w-full bg-transparent text-[13px] sm:text-sm text-white placeholder-muted focus:outline-none py-1 px-1 font-sans"
+              class="w-full bg-transparent text-[13px] sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none py-1 px-1 font-sans"
               aria-label="Search examinations and articles"
             />
 
@@ -412,9 +412,9 @@ const jsonLd = {
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-2.5">
             <div class="w-1 h-5 bg-accent rounded-full"></div>
-            <h2 class="text-[15px] sm:text-base font-bold text-white tracking-tight">Exam Streams</h2>
+            <h2 class="text-[15px] sm:text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">Exam Streams</h2>
           </div>
-          <span class="text-[11px] text-muted font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
             {displayArticles.length} active notices
           </span>
         </div>
@@ -489,12 +489,12 @@ const jsonLd = {
                     )}
                   </div>
                   <div class="min-w-0">
-                    <span class="text-[13.5px] font-bold text-white group-hover/title:text-accent transition-colors duration-150 leading-tight block truncate">{cat.name}</span>
-                    <span class="text-[10px] text-muted/60 leading-none">{cat.coverage.slice(0, 40)}{cat.coverage.length > 40 ? '…' : ''}</span>
+                    <span class="text-[13.5px] font-bold text-slate-900 dark:text-slate-100 group-hover/title:text-accent transition-colors duration-150 leading-tight block truncate">{cat.name}</span>
+                    <span class="text-[10px] text-slate-500 dark:text-slate-400 leading-none">{cat.coverage.slice(0, 40)}{cat.coverage.length > 40 ? '…' : ''}</span>
                   </div>
                 </a>
 
-                <span class="text-[10px] font-bold text-muted/40 shrink-0 select-none tabular-nums bg-surface-raised px-2 py-0.5 rounded-md border border-border/40">
+                <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400 shrink-0 select-none tabular-nums bg-surface-raised px-2 py-0.5 rounded-md border border-border/40">
                   {cat.totalCount}
                 </span>
               </div>
@@ -517,7 +517,7 @@ const jsonLd = {
                     >
                       <div class="w-1 h-1 rounded-full bg-border mt-2 shrink-0 group-hover/item:bg-accent transition-colors duration-150"></div>
                       <div class="min-w-0 flex-1">
-                        <p class="text-[12.5px] font-medium text-white/80 group-hover/item:text-accent transition-colors duration-150 line-clamp-2 leading-[1.45]">
+                        <p class="text-[12.5px] font-semibold text-slate-800 dark:text-slate-200 group-hover/item:text-accent transition-colors duration-150 line-clamp-2 leading-[1.45]">
                           {art.isNew && (
                             <span class="badge-new inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/12 text-emerald-500 border border-emerald-500/20 mr-1.5 select-none align-middle -translate-y-px">
                               New
@@ -525,7 +525,7 @@ const jsonLd = {
                           )}
                           <span data-article-title>{art.title}</span>
                         </p>
-                        <time class="text-[10px] text-muted/50 mt-0.5 block tabular-nums">{art.date}</time>
+                        <time class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 block tabular-nums">{art.date}</time>
                       </div>
                       <svg class="w-3 h-3 text-border group-hover/item:text-accent/60 shrink-0 mt-1.5 transition-colors duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -539,7 +539,7 @@ const jsonLd = {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                       </svg>
                     </div>
-                    <p class="text-[11px] text-muted/40">No updates yet</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">No updates yet</p>
                   </div>
                 )}
               </div>
@@ -567,8 +567,8 @@ const jsonLd = {
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3 class="text-sm font-bold text-white">No matching notices found</h3>
-          <p class="text-xs text-muted max-w-sm mx-auto mt-1">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">No matching notices found</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-400 max-w-sm mx-auto mt-1">
             Try adjusting your search terms or clearing the stream filter.
           </p>
           <button
@@ -589,8 +589,8 @@ const jsonLd = {
           <div class="flex items-center gap-2.5 mb-5">
             <div class="w-1 h-5 bg-accent rounded-full"></div>
             <div>
-              <h2 class="text-[15px] font-bold text-white tracking-tight">Official Commission Portals</h2>
-              <p class="text-[11px] text-muted mt-0.5">Apply, verify roll numbers and pay fees on official domains</p>
+              <h2 class="text-[15px] font-bold text-slate-900 dark:text-slate-100 tracking-tight">Official Commission Portals</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Apply, verify roll numbers and pay fees on official domains</p>
             </div>
           </div>
 
@@ -619,8 +619,8 @@ const jsonLd = {
                     {portal.initial}
                   </div>
                 </div>
-                <p class="text-[12px] font-semibold text-white group-hover:text-accent transition-colors duration-150 truncate w-full">{portal.name}</p>
-                <p class="text-[9px] text-muted/50 truncate w-full mt-0.5">{portal.url}</p>
+                <p class="text-[12px] font-semibold text-slate-800 dark:text-slate-200 group-hover:text-accent transition-colors duration-150 truncate w-full">{portal.name}</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400 truncate w-full mt-0.5">{portal.url}</p>
               </a>
             ))}
           </div>
@@ -638,11 +638,11 @@ const jsonLd = {
               <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-75"></span>
             </div>
             <div>
-              <h2 class="text-[15px] sm:text-base font-bold text-white tracking-tight">Latest Notifications</h2>
-              <p class="text-[11px] text-muted mt-0.5">Recently published official recruitment alerts</p>
+              <h2 class="text-[15px] sm:text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">Latest Notifications</h2>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Recently published official recruitment alerts</p>
             </div>
           </div>
-          <span class="text-[11px] text-muted font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
+          <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
             {displayArticles.length} updates
           </span>
         </div>
@@ -672,14 +672,14 @@ const jsonLd = {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <h3 class="text-sm font-bold text-white">Temporary Feed Connectivity Hiccup</h3>
-            <p class="text-xs text-muted max-w-md mx-auto mt-1">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Temporary Feed Connectivity Hiccup</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400 max-w-md mx-auto mt-1">
               Real-time connection is refreshing. Browse the categories above or visit our Telegram channel.
             </p>
           </div>
         ) : (
           <div class="p-8 text-center bg-surface border border-border/60 rounded-2xl">
-            <p class="text-sm text-muted">All active notifications loaded in the streams above.</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400">All active notifications loaded in the streams above.</p>
           </div>
         )}
       </section>
@@ -697,8 +697,8 @@ const jsonLd = {
       <section class="pt-8 border-t border-border/40" aria-label="Join Community Channels">
         <div class="bg-surface rounded-2xl border border-border/60 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div class="text-center sm:text-left">
-            <h2 class="text-base font-bold text-white tracking-tight">Stay Updated Instantly</h2>
-            <p class="text-[13px] text-muted mt-1 max-w-sm">
+            <h2 class="text-base font-bold text-slate-900 dark:text-slate-100 tracking-tight">Stay Updated Instantly</h2>
+            <p class="text-[13px] text-slate-600 dark:text-slate-300 mt-1 max-w-sm">
               Join official community channels for immediate notification alerts. Never miss a deadline.
             </p>
           </div>
@@ -708,7 +708,7 @@ const jsonLd = {
                 href={telegramChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/40 text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
+                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/40 text-slate-800 dark:text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
                 title="Join Telegram Channel"
               >
                 <svg class="w-4 h-4 text-[#229ED9] shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -722,7 +722,7 @@ const jsonLd = {
                 href={whatsappChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/40 text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
+                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/40 text-slate-800 dark:text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
                 title="Join WhatsApp Channel"
               >
                 <svg class="w-4 h-4 text-[#25D366] shrink-0" viewBox="0 0 24 24" fill="currentColor">

@@ -6,6 +6,23 @@ import type {
   QuestionPaletteStatus,
 } from '../types/cbt';
 
+function leaveExamFullscreen() {
+  const keyboard = (navigator as Navigator & { keyboard?: { unlock?: () => void } }).keyboard;
+  keyboard?.unlock?.();
+  const doc = document as Document & {
+    webkitExitFullscreen?: () => void;
+    mozCancelFullScreen?: () => void;
+    msExitFullscreen?: () => void;
+  };
+  if (document.fullscreenElement) {
+    void document.exitFullscreen?.().catch(() => undefined);
+    return;
+  }
+  doc.webkitExitFullscreen?.();
+  doc.mozCancelFullScreen?.();
+  doc.msExitFullscreen?.();
+}
+
 interface UseCBTAttemptProps {
   readonly attemptId: string;
 }
@@ -71,6 +88,7 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
 
       if (data.status === 'submitted') {
         const targetId = data.id || data._id || attemptId;
+        leaveExamFullscreen();
         window.location.replace(`/test-series/results/${targetId}`);
         return;
       }
@@ -145,7 +163,21 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
 
           const updatedAttempt: AttemptDetail = await res.json();
           if (generation === saveGenerationRef.current) {
-            setAttempt(updatedAttempt);
+            setAttempt((prev) => {
+              if (!prev) return updatedAttempt;
+              const serverAnswerMap = new Map(
+                updatedAttempt.answers.map((a) => [a.questionId, a]),
+              );
+              return {
+                ...updatedAttempt,
+                answers: prev.answers.map((prevAns) => {
+                  if (prevAns.questionId === ans.questionId) {
+                    return serverAnswerMap.get(prevAns.questionId) ?? prevAns;
+                  }
+                  return prevAns;
+                }),
+              };
+            });
             questionOpenedAtRef.current = Date.now();
           }
           return true;
@@ -187,7 +219,23 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
           }
 
           const updatedAttempt: AttemptDetail = await res.json();
-          if (generation === saveGenerationRef.current) setAttempt(updatedAttempt);
+          if (generation === saveGenerationRef.current) {
+            setAttempt((prev) => {
+              if (!prev) return updatedAttempt;
+              const serverAnswerMap = new Map(
+                updatedAttempt.answers.map((a) => [a.questionId, a]),
+              );
+              return {
+                ...updatedAttempt,
+                answers: prev.answers.map((prevAns) => {
+                  if (prevAns.questionId === activeAnswer.questionId) {
+                    return serverAnswerMap.get(prevAns.questionId) ?? prevAns;
+                  }
+                  return prevAns;
+                }),
+              };
+            });
+          }
           return true;
         } catch (err: unknown) {
           const msg = err instanceof Error ? err.message : 'Error clearing response. Please retry.';
@@ -260,24 +308,36 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
           credentials: 'include',
         });
 
-        if (!res.ok) {
-          throw new Error('Unable to submit attempt. Re-trying status check...');
+        if (res.ok || res.status === 409) {
+          const finalized: AttemptDetail | null = res.ok
+            ? await res.json().catch(() => null)
+            : null;
+          const targetId = finalized?.id || finalized?._id || attempt.id;
+          (window as any).__cbtNavigatingFromUI = true;
+          leaveExamFullscreen();
+          window.location.replace(`/test-series/results/${targetId}`);
+          return;
         }
 
-        const finalized: AttemptDetail = await res.json();
-        const targetId = finalized.id || finalized._id || attempt.id;
-        window.location.replace(`/test-series/results/${targetId}`);
+        throw new Error('Unable to submit attempt. Re-trying status check...');
       } catch (err: unknown) {
-        if (isAutoExpire) {
+        // Fallback: check if the attempt is already finalized in database
+        try {
           const recheck = await fetch(`${API_URL}/exam-attempts/${attempt.id}`, {
             credentials: 'include',
           });
           if (recheck.ok) {
             const finalData: AttemptDetail = await recheck.json();
-            const targetId = finalData.id || finalData._id || attempt.id;
-            window.location.replace(`/test-series/results/${targetId}`);
-            return;
+            if (finalData.status === 'submitted') {
+              const targetId = finalData.id || finalData._id || attempt.id;
+              (window as any).__cbtNavigatingFromUI = true;
+              leaveExamFullscreen();
+              window.location.replace(`/test-series/results/${targetId}`);
+              return;
+            }
           }
+        } catch {
+          // ignore background check failure
         }
         const errMsg =
           err instanceof Error

@@ -66,13 +66,13 @@ const cardHoverClass = 'hover:border-accent/40 hover:-translate-y-0.5 active:tra
         </span>
       )}
       <HeadingTag
-        class="text-[13px] font-semibold text-white group-hover:text-accent line-clamp-2 leading-snug transition-colors duration-150"
+        class="text-[13px] font-semibold text-slate-900 dark:text-slate-100 group-hover:text-accent line-clamp-2 leading-snug transition-colors duration-150"
         data-article-title
       >
         {title}
       </HeadingTag>
       {formattedDate && (
-        <span class="text-[10px] text-muted mt-1 block font-medium tabular-nums">
+        <span class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block font-medium tabular-nums">
           {formattedDate}
         </span>
       )}
@@ -117,7 +117,7 @@ const cardHoverClass = 'hover:border-accent/40 hover:-translate-y-0.5 active:tra
           )}
         </div>
         {formattedDate && (
-          <time class="text-[11px] text-muted font-medium shrink-0 tabular-nums mt-0.5">
+          <time class="text-[11px] text-slate-500 dark:text-slate-400 font-medium shrink-0 tabular-nums mt-0.5">
             {formattedDate}
           </time>
         )}
@@ -125,7 +125,7 @@ const cardHoverClass = 'hover:border-accent/40 hover:-translate-y-0.5 active:tra
 
       {/* Title */}
       <HeadingTag
-        class="text-[15px] sm:text-base font-bold text-white group-hover:text-accent transition-colors duration-150 leading-snug line-clamp-2 mb-2 tracking-tight"
+        class="text-[15px] sm:text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-accent transition-colors duration-150 leading-snug line-clamp-2 mb-2 tracking-tight"
         data-article-title
       >
         {title}
@@ -133,7 +133,7 @@ const cardHoverClass = 'hover:border-accent/40 hover:-translate-y-0.5 active:tra
 
       {/* Summary */}
       {summary && (
-        <p class="text-[13px] text-muted leading-relaxed line-clamp-2 flex-1" data-article-summary>
+        <p class="text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-2 flex-1" data-article-summary>
           {summary}
         </p>
       )}

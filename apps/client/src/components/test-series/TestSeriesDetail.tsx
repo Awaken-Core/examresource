@@ -112,7 +112,7 @@ interface Props {
   seriesIdOrSlug: string;
 }
 
-type TabType = 'all' | 'subject' | 'chapter' | 'full';
+type TabType = 'full' | 'subject' | 'chapter';
 
 export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(null);
@@ -122,12 +122,8 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   // Learner series progress state (after login)
   const [learnerPrep, setLearnerPrep] = useState<LearnerSeriesPrep | null>(null);
 
-  // Tab: 'all' | 'subject' | 'chapter' | 'full'
-  const [activeTab, setActiveTab] = useState<TabType>('all');
-
-  // All tests state
-  const [allTests, setAllTests] = useState<PublishedTestItem[]>([]);
-  const [loadingAllTests, setLoadingAllTests] = useState(false);
+  // Tab: 'full' | 'subject' | 'chapter'
+  const [activeTab, setActiveTab] = useState<TabType>('full');
 
   // Subject-wise state
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
@@ -220,27 +216,6 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
     return learnerPrep.tests.find((t) => t.latestAttempt?.status === 'in_progress');
   }, [learnerPrep]);
 
-  // Load All tests when 'all' tab is selected
-  useEffect(() => {
-    if (!series || activeTab !== 'all') return;
-    async function fetchAll() {
-      setLoadingAllTests(true);
-      try {
-        const res = await fetch(`${API_URL}/test-series/${series!.id || series!._id}/tests`);
-        if (res.ok) {
-          const tests = await res.json();
-          setAllTests(tests || []);
-        } else {
-          setAllTests([]);
-        }
-      } catch {
-        setAllTests([]);
-      } finally {
-        setLoadingAllTests(false);
-      }
-    }
-    fetchAll();
-  }, [series, activeTab]);
 
   // Load Subject-wise tests
   useEffect(() => {
@@ -526,23 +501,20 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          FILTER TABS: All / Subject / Chapter / Full Mock
+          FILTER TABS: Full Mock / Subject / Chapter
           ───────────────────────────────────────────────────────────── */}
       <section className="space-y-4">
         <div className="flex items-center gap-2 border-b border-border/80 pb-2 overflow-x-auto scrollbar-none">
           <button
             type="button"
-            onClick={() => setActiveTab('all')}
+            onClick={() => setActiveTab('full')}
             className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'all'
+              activeTab === 'full'
                 ? 'bg-accent text-white shadow-2xs'
                 : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
             }`}
           >
-            <span>All Tests</span>
-            {learnerPrep?.totalTestsCount !== undefined && (
-              <span className="text-[11px] opacity-80">({learnerPrep.totalTestsCount})</span>
-            )}
+            <span>Full Mock Tests</span>
           </button>
 
           <button
@@ -568,44 +540,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
           >
             <span>Chapter-wise</span>
           </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('full')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'full'
-                ? 'bg-accent text-white shadow-2xs'
-                : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-            }`}
-          >
-            <span>Full Mock Tests</span>
-          </button>
         </div>
-
-        {/* ── TAB: ALL TESTS ── */}
-        {activeTab === 'all' && (
-          <div className="space-y-4">
-            {loadingAllTests ? (
-              <div className="py-12 text-center text-xs text-muted">
-                Loading all published tests...
-              </div>
-            ) : allTests.length === 0 ? (
-              <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                No published tests available in this series yet.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {allTests.map((t) => (
-                  <TestCard
-                    key={t.id || t._id}
-                    test={t}
-                    latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* ── TAB: SUBJECT-WISE TESTS ── */}
         {activeTab === 'subject' && (
@@ -913,7 +848,7 @@ function TestCard({
               <span aria-hidden="true">→</span>
             </a>
             <a
-              href={`/test-series/instructions/${test.id || (test as any)._id}`}
+              href={`/test-series/instructions/${(test as any).slug || test.id || (test as any)._id}`}
               className="inline-flex items-center justify-center py-2 px-3 rounded-lg text-xs font-semibold border border-border bg-surface-raised text-muted hover:text-white hover:border-accent transition duration-150 cursor-pointer"
               title="Take a fresh attempt"
             >
@@ -922,7 +857,7 @@ function TestCard({
           </div>
         ) : (
           <a
-            href={`/test-series/instructions/${test.id || (test as any)._id}`}
+            href={`/test-series/instructions/${(test as any).slug || test.id || (test as any)._id}`}
             className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
           >
             <span>View Instructions & Start</span>

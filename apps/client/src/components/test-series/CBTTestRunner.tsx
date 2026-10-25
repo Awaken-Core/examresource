@@ -77,8 +77,6 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
 
-  const [fullscreen, setFullscreen] = useState(false);
-
   const setPageFullscreen = useCallback((enabled: boolean) => {
     const doc = document as Document & {
       webkitFullscreenElement?: Element | null;
@@ -127,30 +125,24 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
         root.webkitRequestFullscreen?.() ??
         root.mozRequestFullScreen?.() ??
         root.msRequestFullscreen?.();
-      if (p && typeof (p as Promise<void>).catch === 'function') {
-        (p as Promise<void>).catch((err: unknown) => {
-          console.warn('Fullscreen request failed:', err);
-        });
+      if (p && typeof (p as Promise<void>).then === 'function') {
+        void (p as Promise<void>)
+          .then(() => {
+            const keyboard = (
+              navigator as Navigator & {
+                keyboard?: { lock?: (keys?: string[]) => Promise<void> };
+              }
+            ).keyboard;
+            return keyboard?.lock?.(['Escape', 'F11']);
+          })
+          .catch((err: unknown) => {
+            console.warn('Fullscreen request failed:', err);
+          });
       }
     } catch (err) {
       console.warn('Fullscreen request threw:', err);
     }
   }, []);
-
-  const toggleFullscreen = useCallback(() => {
-    const doc = document as Document & {
-      webkitFullscreenElement?: Element | null;
-      mozFullScreenElement?: Element | null;
-      msFullscreenElement?: Element | null;
-    };
-    const isFs = Boolean(
-      document.fullscreenElement ||
-      doc.webkitFullscreenElement ||
-      doc.mozFullScreenElement ||
-      doc.msFullscreenElement
-    );
-    setPageFullscreen(!isFs);
-  }, [setPageFullscreen]);
 
   useProctoringMonitor(
     conductAgreed && view === 'questions' && attempt?.status === 'in_progress' && !integrityWarning,
@@ -161,47 +153,10 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
     if (!conductAgreed || view !== 'questions') return;
     const node = shellRef.current;
     if (!node) return;
-    const onPointer = (event: PointerEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target?.closest('[data-fullscreen-toggle]')) return;
-      setPageFullscreen(true);
-    };
+    const onPointer = () => setPageFullscreen(true);
     node.addEventListener('pointerdown', onPointer);
     return () => node.removeEventListener('pointerdown', onPointer);
   }, [conductAgreed, view, setPageFullscreen]);
-
-  useEffect(() => {
-    const sync = () => {
-      const doc = document as Document & {
-        webkitFullscreenElement?: Element | null;
-        mozFullScreenElement?: Element | null;
-        msFullscreenElement?: Element | null;
-      };
-      setFullscreen(
-        Boolean(
-          document.fullscreenElement ||
-          doc.webkitFullscreenElement ||
-          doc.mozFullScreenElement ||
-          doc.msFullscreenElement
-        )
-      );
-    };
-
-    sync();
-
-    document.addEventListener('fullscreenchange', sync);
-    document.addEventListener('webkitfullscreenchange', sync);
-    document.addEventListener('mozfullscreenchange', sync);
-    document.addEventListener('MSFullscreenChange', sync);
-    window.addEventListener('resize', sync);
-    return () => {
-      document.removeEventListener('fullscreenchange', sync);
-      document.removeEventListener('webkitfullscreenchange', sync);
-      document.removeEventListener('mozfullscreenchange', sync);
-      document.removeEventListener('MSFullscreenChange', sync);
-      window.removeEventListener('resize', sync);
-    };
-  }, []);
 
   const answersList = useMemo(() => attempt?.answers ?? [], [attempt?.answers]);
   const activeAnswer = answersList[currentIndex] ?? null;
@@ -275,19 +230,18 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
     if (activeAnswer.sectionId && activeAnswer.sectionId !== activeSectionId) {
       setActiveSectionId(activeAnswer.sectionId);
     }
-    if (activeAnswer.status !== 'not_visited') return;
-    patchAnswer(currentIndex, activeAnswer.questionId, { status: 'not_answered' });
-  }, [currentIndex, activeAnswer?.questionId, conductAgreed, view]);
+  }, [activeAnswer?.sectionId, activeSectionId, conductAgreed, view]);
 
   useEffect(() => {
-    if (!conductAgreed || !attempt || attempt.status !== 'in_progress') return;
+    if (!conductAgreed || !attempt || attempt.status !== 'in_progress' || submitting) return;
     const onLeave = (event: BeforeUnloadEvent) => {
+      if ((window as any).__cbtNavigatingFromUI) return;
       event.preventDefault();
       event.returnValue = '';
     };
     window.addEventListener('beforeunload', onLeave);
     return () => window.removeEventListener('beforeunload', onLeave);
-  }, [conductAgreed, attempt]);
+  }, [conductAgreed, attempt, submitting]);
 
   const navigateToQuestion = useCallback(
     (nextIndex: number) => {
@@ -355,37 +309,62 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
 
   const handleToggleOption = useCallback(
     (optionId: string) => {
-      if (!conductAgreed || view !== 'questions') return;
-      const qType = activeAnswer?.question?.type ?? 'single_choice';
-      setDraft((prev) => {
-        const base = prev.key === draftKey ? prev.optionIds : selectedOptionIds;
-        const optionIds =
-          qType === 'single_choice'
-            ? base.includes(optionId)
-              ? []
-              : [optionId]
-            : base.includes(optionId)
-              ? base.filter((id) => id !== optionId)
-              : [...base, optionId];
-        return {
-          key: draftKey,
-          optionIds,
-          numerical: prev.key === draftKey ? prev.numerical : numericalInput,
-        };
+      if (!conductAgreed || view !== 'questions' || !activeAnswer) return;
+      const qType = activeAnswer.question?.type ?? 'single_choice';
+      const base = draft.key === draftKey ? draft.optionIds : selectedOptionIds;
+      const optionIds =
+        qType === 'single_choice'
+          ? base.includes(optionId)
+            ? []
+            : [optionId]
+          : base.includes(optionId)
+            ? base.filter((id) => id !== optionId)
+            : [...base, optionId];
+      const hasSelection = optionIds.length > 0 || numericalInput.trim() !== '';
+      const nextStatus = responseStatus(activeAnswer.status, hasSelection);
+
+      setDraft({
+        key: draftKey,
+        optionIds,
+        numerical: draft.key === draftKey ? draft.numerical : numericalInput,
+      });
+
+      patchAnswer(currentIndex, activeAnswer.questionId, {
+        status: nextStatus,
+        optionIds,
       });
     },
-    [conductAgreed, view, activeAnswer?.question?.type, draftKey, selectedOptionIds, numericalInput],
+    [
+      conductAgreed,
+      view,
+      activeAnswer,
+      draft,
+      draftKey,
+      selectedOptionIds,
+      numericalInput,
+      currentIndex,
+      patchAnswer,
+    ],
   );
 
   const onNumericalChange = useCallback(
     (value: string) => {
+      if (!activeAnswer) return;
+      const hasSelection = selectedOptionIds.length > 0 || value.trim() !== '';
+      const nextStatus = responseStatus(activeAnswer.status, hasSelection);
+
       setDraft((prev) => ({
         key: draftKey,
         optionIds: prev.key === draftKey ? prev.optionIds : selectedOptionIds,
         numerical: value,
       }));
+
+      patchAnswer(currentIndex, activeAnswer.questionId, {
+        status: nextStatus,
+        numericalValue: value.trim() || null,
+      });
     },
-    [draftKey, selectedOptionIds],
+    [activeAnswer, selectedOptionIds, draftKey, currentIndex, patchAnswer],
   );
 
   const onClear = useCallback(() => {
@@ -494,13 +473,16 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'F11' || event.code === 'F11') {
         event.preventDefault();
-        toggleFullscreen();
+        event.stopPropagation();
         return;
       }
       const target = event.target as HTMLElement | null;
       if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA') return;
       if (event.key === 'Escape') {
-        if (conductAgreed && view === 'questions') return;
+        if (conductAgreed && view === 'questions') {
+          event.preventDefault();
+          return;
+        }
         if (calculatorOpen) setCalculatorOpen(false);
         else if (showSubmitModal) setShowSubmitModal(false);
         else if (showShortcutsModal) setShowShortcutsModal(false);
@@ -545,8 +527,8 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
         }
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
   }, [
     showSubmitModal,
     showConductModal,
@@ -562,7 +544,6 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
     handleToggleFlag,
     activeAnswer?.question,
     handleToggleOption,
-    toggleFullscreen,
   ]);
 
   const summaryCounts: PaletteSummaryCounts = useMemo(
@@ -611,8 +592,6 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
         }
         canPause={!viewingConduct && !paused && !submitting && !integrityWarning}
         onPause={() => void pauseTest()}
-        fullscreen={fullscreen}
-        onToggleFullscreen={toggleFullscreen}
       />
       {calculatorOpen && (
         <div className="absolute top-20 left-3 z-30">

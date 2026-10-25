@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { BrandMark } from '../BrandMark';
 
 interface Props {
   readonly portalName: string;
@@ -15,8 +16,6 @@ interface Props {
   readonly onZoomOut: () => void;
   readonly canPause: boolean;
   readonly onPause: () => void;
-  readonly fullscreen: boolean;
-  readonly onToggleFullscreen: () => void;
 }
 
 function formatTime(secs: number | null): string {
@@ -42,8 +41,6 @@ export function CBTHeader({
   onZoomOut,
   canPause,
   onPause,
-  fullscreen,
-  onToggleFullscreen,
 }: Props) {
   const lowTime = remainingSeconds !== null && remainingSeconds < 300;
   const [dark, setDark] = useState(false);
@@ -64,11 +61,14 @@ export function CBTHeader({
   return (
     <div className="grid h-20 grid-rows-[48px_32px] border-b border-border bg-surface">
       <header className="grid h-12 grid-cols-[minmax(0,1.2fr)_auto_minmax(0,1fr)] items-center gap-3 px-3">
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
-            {portalName} Exam Portal
-          </p>
-          <p className="truncate text-[11px] text-muted">{testTitle}</p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <BrandMark size={28} className="shrink-0" />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+              {portalName} Exam Portal
+            </p>
+            <p className="truncate text-[11px] text-muted">{testTitle}</p>
+          </div>
         </div>
         <p
           className={`font-mono text-sm font-bold tabular-nums ${
@@ -187,39 +187,6 @@ export function CBTHeader({
                 <path
                   fill="currentColor"
                   d="M14.5 3.2a8.2 8.2 0 1 0 6.3 12.6 7 7 0 0 1-8.4-9.5 6 6 0 0 1 2.1-3.1Z"
-                />
-              </svg>
-            )}
-          </button>
-          <button
-            type="button"
-            data-fullscreen-toggle=""
-            onClick={onToggleFullscreen}
-            aria-pressed={fullscreen}
-            aria-label={fullscreen ? 'Exit full screen' : 'Full screen'}
-            title={fullscreen ? 'Exit full screen' : 'Full screen'}
-            className="inline-flex h-6 w-6 items-center justify-center rounded border border-border text-slate-900 dark:text-slate-100"
-          >
-            {fullscreen ? (
-              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" className="h-3.5 w-3.5">
-                <path
-                  d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" className="h-3.5 w-3.5">
-                <path
-                  d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 />
               </svg>
             )}

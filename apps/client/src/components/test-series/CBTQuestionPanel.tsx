@@ -218,7 +218,7 @@ export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
                     <span
                       aria-hidden="true"
                       className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-current text-[10px] ${
-                        multiple ? 'rounded-sm' : 'rounded-full'
+                        multiple ? 'rounded-none' : 'rounded-full'
                       } ${checked ? 'bg-accent text-on-accent' : ''}`}
                     >
                       {checked ? (multiple ? '✓' : '') : ''}

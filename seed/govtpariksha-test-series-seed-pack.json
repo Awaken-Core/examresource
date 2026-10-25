@@ -410,26 +410,61 @@
       "slug": "qa-004",
       "subjectSlug": "quantitative-aptitude",
       "subjectName": "Quantitative Aptitude",
-      "content": "What is 15% of 200? Enter the number only.",
+      "content": "What is 15% of 200?",
       "translations": {
-        "hi": "200 का 15% कितना है? केवल संख्या दर्ज करें।"
+        "hi": "200 का 15% कितना है?"
       },
-      "type": "numerical",
+      "type": "single_choice",
       "difficulty": "easy",
       "status": "published",
       "isAvailableForNewTests": true,
-      "options": [],
-      "correctOptionKeys": [],
-      "numericalAnswer": "30",
-      "explanation": "10% of 200 is 20 and 5% is 10. Together, 15% is 30.",
+      "options": [
+        {
+          "key": "A",
+          "content": "25",
+          "translations": {
+            "hi": "25"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "30",
+          "translations": {
+            "hi": "30"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "C",
+          "content": "35",
+          "translations": {
+            "hi": "35"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "D",
+          "content": "40",
+          "translations": {
+            "hi": "40"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "B"
+      ],
+      "numericalAnswer": null,
+      "explanation": "10% of 200 is 20 and 5% is 10. Together, 15% of 200 is 30.",
       "explanationTranslations": {
-        "hi": "200 का 10% = 20 और 5% = 10। इसलिए 15% = 30।"
+        "hi": "200 का 10% = 20 और 5% = 10। इसलिए 200 का 15% = 30।"
       },
       "marks": 1,
-      "negativeMarks": 0,
+      "negativeMarks": 0.25,
       "tags": [
         "percentage",
-        "numerical-answer"
+        "arithmetic"
       ],
       "source": "Original GovtPariksha demo question"
     },
@@ -624,26 +659,61 @@
       "slug": "rs-004",
       "subjectSlug": "reasoning",
       "subjectName": "Reasoning",
-      "content": "Find the next number: 3, 8, 15, 24, __. Enter the number only.",
+      "content": "Find the next number in the series: 3, 8, 15, 24, __.",
       "translations": {
-        "hi": "अगली संख्या ज्ञात करें: 3, 8, 15, 24, __। केवल संख्या दर्ज करें।"
+        "hi": "श्रृंखला में अगली संख्या ज्ञात करें: 3, 8, 15, 24, __।"
       },
-      "type": "numerical",
+      "type": "single_choice",
       "difficulty": "medium",
       "status": "published",
       "isAvailableForNewTests": true,
-      "options": [],
-      "correctOptionKeys": [],
-      "numericalAnswer": "35",
+      "options": [
+        {
+          "key": "A",
+          "content": "32",
+          "translations": {
+            "hi": "32"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "B",
+          "content": "34",
+          "translations": {
+            "hi": "34"
+          },
+          "isCorrect": false
+        },
+        {
+          "key": "C",
+          "content": "35",
+          "translations": {
+            "hi": "35"
+          },
+          "isCorrect": true
+        },
+        {
+          "key": "D",
+          "content": "37",
+          "translations": {
+            "hi": "37"
+          },
+          "isCorrect": false
+        }
+      ],
+      "correctOptionKeys": [
+        "C"
+      ],
+      "numericalAnswer": null,
       "explanation": "The differences are 5, 7, and 9. The next difference is 11, so 24 + 11 = 35.",
       "explanationTranslations": {
         "hi": "अंतर 5, 7 और 9 हैं। अगला अंतर 11 होगा, इसलिए 24 + 11 = 35।"
       },
       "marks": 1,
-      "negativeMarks": 0,
+      "negativeMarks": 0.25,
       "tags": [
         "number-series",
-        "numerical-answer"
+        "logical-reasoning"
       ],
       "source": "Original GovtPariksha demo question"
     },

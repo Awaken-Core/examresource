@@ -102,13 +102,18 @@ All questions below include their answer keys and explanations for administrator
 - **Tags:** simple-interest, arithmetic
 
 #### qa-004
-- **Type:** `numerical`; **Difficulty:** easy
-- **Question (EN):** What is 15% of 200? Enter the number only.
-- **Question (HI):** 200 का 15% कितना है? केवल संख्या दर्ज करें।
-- **Exact numerical answer:** `30`
-- **Explanation (EN):** 10% of 200 is 20 and 5% is 10. Together, 15% is 30.
-- **Explanation (HI):** 200 का 10% = 20 और 5% = 10। इसलिए 15% = 30।
-- **Tags:** percentage, numerical-answer
+- **Type:** `single_choice`; **Difficulty:** easy
+- **Question (EN):** What is 15% of 200?
+- **Question (HI):** 200 का 15% कितना है?
+- **Options:**
+  - A. 25 / 25
+  - B. 30 / 30 **[CORRECT]**
+  - C. 35 / 35
+  - D. 40 / 40
+- **Correct option key(s):** B
+- **Explanation (EN):** 10% of 200 is 20 and 5% is 10. Together, 15% of 200 is 30.
+- **Explanation (HI):** 200 का 10% = 20 और 5% = 10। इसलिए 200 का 15% = 30।
+- **Tags:** percentage, arithmetic
 
 ### Reasoning (`reasoning`)
 
@@ -155,13 +160,18 @@ All questions below include their answer keys and explanations for administrator
 - **Tags:** divisibility, multiple-correct
 
 #### rs-004
-- **Type:** `numerical`; **Difficulty:** medium
-- **Question (EN):** Find the next number: 3, 8, 15, 24, __. Enter the number only.
-- **Question (HI):** अगली संख्या ज्ञात करें: 3, 8, 15, 24, __। केवल संख्या दर्ज करें।
-- **Exact numerical answer:** `35`
+- **Type:** `single_choice`; **Difficulty:** medium
+- **Question (EN):** Find the next number in the series: 3, 8, 15, 24, __.
+- **Question (HI):** श्रृंखला में अगली संख्या ज्ञात करें: 3, 8, 15, 24, __।
+- **Options:**
+  - A. 32 / 32
+  - B. 34 / 34
+  - C. 35 / 35 **[CORRECT]**
+  - D. 37 / 37
+- **Correct option key(s):** C
 - **Explanation (EN):** The differences are 5, 7, and 9. The next difference is 11, so 24 + 11 = 35.
 - **Explanation (HI):** अंतर 5, 7 और 9 हैं। अगला अंतर 11 होगा, इसलिए 24 + 11 = 35।
-- **Tags:** number-series, numerical-answer
+- **Tags:** number-series, logical-reasoning
 
 ### General Awareness (`general-awareness`)
 

@@ -12,35 +12,63 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, sta
 
 
 
-const pageTitle = `Test Series - Practice Smarter | ${siteName}`;
-const pageDescription = `Get exam-ready with structured mock tests, previous year papers and chapter-wise practice for all major government exams on ${siteDomain}.`;
+const pageTitle = `Online Test Series & Free Mock Tests 2026 | ${siteName}`;
+const pageDescription = `Practice online mock test series for SSC, RRB Railways, Banking, UPSC, and State Govt Exams on ${siteDomain}. Free subject-wise, chapter-wise & full CBT mock tests with instant score analysis.`;
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
+  '@graph': [
     {
-      '@type': 'Question',
-      name: 'How does a live mock test work?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'The live paper fills the screen. The question stays on the left, the choices stay on the right, and the palette shows which questions are answered, unanswered, marked for review, or not visited.',
-      },
+      '@type': 'CollectionPage',
+      name: pageTitle,
+      description: pageDescription,
+      url: `${siteUrl}/test-series`,
+      provider: { '@type': 'Organization', name: siteName, url: siteUrl },
     },
     {
-      '@type': 'Question',
-      name: 'When are mock test answers saved?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Save and next stores the current response. On the last question, save and end asks you to confirm that you are ready to end. The latest saved response is graded.',
-      },
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: siteUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Test Series',
+          item: `${siteUrl}/test-series`,
+        },
+      ],
     },
     {
-      '@type': 'Question',
-      name: 'What happens before the questions open?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'You agree to the code of conduct first. Until then, the test questions do not accept answers.',
-      },
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'How does a live mock test work?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The live paper fills the screen. The question stays on the left, the choices stay on the right, and the palette shows which questions are answered, unanswered, marked for review, or not visited.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'When are mock test answers saved?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Save and next stores the current response. On the last question, save and end asks you to confirm that you are ready to end. The latest saved response is graded.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'What happens before the questions open?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'You agree to the code of conduct first. Until then, the test questions do not accept answers.',
+          },
+        },
+      ],
     },
   ],
 };

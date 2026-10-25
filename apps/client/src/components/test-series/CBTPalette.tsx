@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { AttemptAnswer } from './types/cbt';
+import { CBTFlagIcon } from './CBTFlagIcon';
 
 interface Props {
   readonly answers: readonly AttemptAnswer[];
@@ -14,12 +15,20 @@ const VISIBLE = 20;
 function chipClass(status: string, current: boolean): string {
   if (status === 'marked_for_review' || status === 'answered_and_marked_for_review') {
     return current
-      ? 'bg-orange-500 text-white border-orange-600 ring-2 ring-slate-900 dark:ring-white'
+      ? 'bg-orange-500 text-white border-orange-600 ring-2 ring-blue-500 shadow-sm font-black'
       : 'bg-orange-500 text-white border-orange-600';
   }
-  if (current) return 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent';
-  if (status === 'answered') return 'bg-emerald-600 text-on-accent border-emerald-700';
-  if (status === 'not_answered') return 'bg-rose-600/90 text-on-accent border-rose-700';
+  if (current) {
+    if (status === 'answered') {
+      return 'bg-emerald-600 text-white border-emerald-700 ring-2 ring-blue-500 shadow-sm font-black';
+    }
+    if (status === 'not_answered') {
+      return 'bg-rose-600 text-white border-rose-700 ring-2 ring-blue-500 shadow-sm font-black';
+    }
+    return 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-300 dark:ring-blue-700 shadow-sm font-black';
+  }
+  if (status === 'answered') return 'bg-emerald-600 text-white border-emerald-700';
+  if (status === 'not_answered') return 'bg-rose-600 text-white border-rose-700';
   return 'bg-surface text-slate-700 border-border dark:text-slate-200';
 }
 
@@ -99,13 +108,13 @@ export const CBTPalette = React.memo(function CBTPalette({
         </span>
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-start gap-1.5">
         <button
           type="button"
           onClick={() => slide(-1)}
           disabled={disabled || start === 0}
           aria-label="Slide questions left"
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border text-slate-900 disabled:opacity-40 dark:text-slate-100"
+          className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border text-slate-900 disabled:opacity-40 dark:text-slate-100"
         >
           <Chevron direction="left" />
         </button>
@@ -119,7 +128,7 @@ export const CBTPalette = React.memo(function CBTPalette({
             }}
           >
             <div
-              className="grid h-9 items-center"
+              className="grid h-11 items-center pt-1"
               style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
             >
               {answers.map((answer, index) => {
@@ -133,9 +142,18 @@ export const CBTPalette = React.memo(function CBTPalette({
                     onClick={() => onSelectQuestion(index)}
                     aria-current={current ? 'true' : undefined}
                     aria-label={`Question ${index + 1}${flagged ? ', flagged' : ''}, ${answer.status}`}
-                    className={`mx-auto flex aspect-square w-[86%] max-w-9 items-center justify-center rounded-full border text-[10px] font-bold tabular-nums disabled:opacity-40 sm:text-[11px] ${chipClass(answer.status, current)}`}
+                    className={`relative mx-auto flex aspect-square w-[84%] max-w-[34px] items-center justify-center rounded-full border text-[10px] font-bold tabular-nums disabled:opacity-40 sm:text-[11px] ${chipClass(answer.status, current)}`}
                   >
                     {index + 1}
+                    {flagged && (
+                      <span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute -top-1.5 -right-1 z-10 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]"
+                        title="Marked for review"
+                      >
+                        <CBTFlagIcon className="h-3.5 w-3.5" />
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -149,7 +167,7 @@ export const CBTPalette = React.memo(function CBTPalette({
               aria-valuemax={Math.max(answers.length, 1)}
               aria-valuenow={answers.length === 0 ? 1 : activeIndex + 1}
               aria-disabled={disabled}
-              className="relative mt-1 h-4 cursor-pointer touch-none"
+              className="relative mt-3 h-5 cursor-pointer touch-none"
               onPointerDown={(event) => {
                 if (disabled) return;
                 event.currentTarget.setPointerCapture(event.pointerId);
@@ -181,7 +199,7 @@ export const CBTPalette = React.memo(function CBTPalette({
               {showDot && (
                 <span
                   aria-hidden="true"
-                  className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 shadow-sm"
+                  className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 shadow-sm dark:border-slate-900"
                   style={{ left: `calc((${activeIndex} + 0.5) * 100% / ${columns})` }}
                 />
               )}
@@ -194,7 +212,7 @@ export const CBTPalette = React.memo(function CBTPalette({
           onClick={() => slide(1)}
           disabled={disabled || start >= maxStart}
           aria-label="Slide questions right"
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border text-slate-900 disabled:opacity-40 dark:text-slate-100"
+          className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border text-slate-900 disabled:opacity-40 dark:text-slate-100"
         >
           <Chevron direction="right" />
         </button>
