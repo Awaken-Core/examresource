@@ -253,8 +253,7 @@ export class Exam {
   durationMinutes?: number | null;
 
   /**
-   * Configurable attempt policy:
-   * null or 0 = unlimited attempts allowed; positive integer = max allowed attempts.
+   * Attempts are unlimited. Stored as null. Older papers may still have a number.
    */
   @Prop({ type: Number, default: null })
   maxAttempts?: number | null;
@@ -515,9 +514,12 @@ export class TestAttempt {
   @Prop({ type: Date, default: null })
   endedAt?: Date | null;
 
-  // Deadline snapshot at attempt start
+  // Deadline snapshot at attempt start. While pausedAt is set, this deadline is frozen.
   @Prop({ type: Date, default: null, index: true })
   expiresAt?: Date | null;
+
+  @Prop({ type: Date, default: null })
+  pausedAt?: Date | null;
 
   @Prop({ type: Number, default: null })
   timeSpentSeconds?: number | null;

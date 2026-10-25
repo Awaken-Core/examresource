@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { siteName, siteDomain } from '../../data/site';
+import { siteName, siteDomain, siteUrl } from '../../data/site';
 import {
   heroStats,
   featureShortcuts,
@@ -14,12 +14,43 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, sta
 
 const pageTitle = `Test Series - Practice Smarter | ${siteName}`;
 const pageDescription = `Get exam-ready with structured mock tests, previous year papers and chapter-wise practice for all major government exams on ${siteDomain}.`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How does a live mock test work?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The live paper fills the screen. The question stays on the left, the choices stay on the right, and the palette shows which questions are answered, unanswered, marked for review, or not visited.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'When are mock test answers saved?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Save and next stores the current response. On the last question, save and end asks you to confirm that you are ready to end. The latest saved response is graded.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What happens before the questions open?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'You agree to the code of conduct first. Until then, the test questions do not accept answers.',
+      },
+    },
+  ],
+};
 ---
 
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonicalUrl={`${Astro.url.origin}/test-series`}
+  canonicalUrl={`${siteUrl}/test-series`}
+  jsonLd={jsonLd}
 >
   {/* Common Hero Wrapper: light and dark mode images and seamless matching backgrounds */}
   <section class="test-series-hero-wrapper relative overflow-hidden bg-[#EEF5FF] dark:bg-[#182648] border-b border-[#DBEAFE] dark:border-blue-900/40 w-full shadow-xs">
@@ -157,6 +188,24 @@ const pageDescription = `Get exam-ready with structured mock tests, previous yea
 
     {/* Real Published Test Series Explorer Island */}
     <TestSeriesExplorer client:load />
+
+    <section class="max-w-3xl space-y-3 pt-2" aria-labelledby="cbt-faq-heading">
+      <h2 id="cbt-faq-heading" class="text-lg font-bold text-slate-900 dark:text-white">
+        How the computer-based mock test works
+      </h2>
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white">How does a live mock test work?</h3>
+      <p class="text-sm leading-6 text-muted">
+        The live paper fills the screen. The question stays on the left, the choices stay on the right, and the palette shows which questions are answered, unanswered, marked for review, or not visited.
+      </p>
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white">When are answers saved?</h3>
+      <p class="text-sm leading-6 text-muted">
+        Save and next stores the current response. On the last question, save and end asks you to confirm that you are ready to end. The latest saved response is graded.
+      </p>
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white">What happens before the questions open?</h3>
+      <p class="text-sm leading-6 text-muted">
+        You agree to the code of conduct first. Until then, the test questions do not accept answers.
+      </p>
+    </section>
 
   </div>
 

@@ -223,8 +223,9 @@ const isTestSeries = currentPath.startsWith('/test-series');
     {/* Logged Out State */}
     <div class="sidebar-auth-logged-out block">
       <a 
-        href="/login" 
-        class="flex items-center justify-center gap-2.5 w-full py-2.5 px-4 rounded-xl bg-surface-raised hover:bg-surface-elevated text-white font-semibold text-body-sm border border-border transition shadow-xs group"
+        href="/login"
+        data-login-link
+        class="auth-login-link flex items-center justify-center gap-2.5 w-full py-2.5 px-4 rounded-xl bg-surface-raised hover:bg-surface-elevated text-white font-semibold text-body-sm border border-border transition shadow-xs group"
         title="Log in / Sign up"
       >
         <svg class="w-4 h-4 text-muted group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">

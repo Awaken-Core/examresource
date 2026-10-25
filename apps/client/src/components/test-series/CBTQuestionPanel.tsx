@@ -1,7 +1,9 @@
 import React from 'react';
 import type { QuestionDetail } from './types/cbt';
+import { CBTFlagIcon } from './CBTFlagIcon';
 
 interface Props {
+  readonly mode: 'conduct' | 'question';
   readonly currentIndex: number;
   readonly totalQuestions: number;
   readonly question: QuestionDetail | null;
@@ -9,37 +11,35 @@ interface Props {
   readonly selectedOptionIds: readonly string[];
   readonly numericalInput: string;
   readonly isFlagged: boolean;
-  readonly isSaving: boolean;
-  readonly savingAction: 'save_and_next' | 'mark_review' | 'clear' | null;
   readonly networkError: string | null;
   readonly isActionDisabled: boolean;
-  readonly isLastQuestion: boolean;
+  readonly isEndOfExam: boolean;
   readonly hasPrevious: boolean;
+  readonly zoom: number;
   readonly onToggleOption: (optionId: string) => void;
   readonly onNumericalChange: (value: string) => void;
   readonly onToggleFlag: () => void;
-  readonly onClearResponse: () => void;
-  readonly onMarkForReviewAndNext: () => void;
   readonly onPrevious: () => void;
   readonly onSaveAndNext: () => void;
-  readonly onOpenSubmit: () => void;
+  readonly onAgree: () => void;
+  readonly onOpenInstructions: () => void;
   readonly onDismissError: () => void;
 }
 
-function getQuestionTypeLabel(type: string): string {
-  if (type === 'numerical') return 'Numerical Answer';
-  if (type === 'multiple_choice') return 'Multiple Correct MCQ';
-  return 'Single Correct MCQ';
+function typeLabel(type: string): string {
+  if (type === 'numerical') return 'Numerical';
+  if (type === 'multiple_choice') return 'MSQ';
+  return 'MCQ';
 }
 
-function getSavingActionText(action: 'save_and_next' | 'mark_review' | 'clear' | null): string {
-  if (action === 'save_and_next') return 'Saving response & advancing...';
-  if (action === 'mark_review') return 'Marking for review & saving...';
-  if (action === 'clear') return 'Clearing response on server...';
-  return 'Saving response to server...';
+function questionText(question: QuestionDetail | null, language: 'English' | 'Hindi'): string {
+  if (!question) return 'The question will appear here.';
+  if (language === 'Hindi' && question.translations?.hi) return question.translations.hi;
+  return question.content;
 }
 
-export function CBTQuestionPanel({
+export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
+  mode,
   currentIndex,
   totalQuestions,
   question,
@@ -47,314 +47,236 @@ export function CBTQuestionPanel({
   selectedOptionIds,
   numericalInput,
   isFlagged,
-  isSaving,
-  savingAction,
   networkError,
   isActionDisabled,
-  isLastQuestion,
+  isEndOfExam,
   hasPrevious,
+  zoom,
   onToggleOption,
   onNumericalChange,
   onToggleFlag,
-  onClearResponse,
-  onMarkForReviewAndNext,
   onPrevious,
   onSaveAndNext,
-  onOpenSubmit,
+  onAgree,
+  onOpenInstructions,
   onDismissError,
 }: Props) {
   const questionType = question?.type ?? 'single_choice';
-  const questionTypeLabel = getQuestionTypeLabel(questionType);
-
-  let questionContent = question?.content ?? 'Loading question...';
-  if (language === 'Hindi' && question?.translations?.['hi']) {
-    questionContent = question.translations['hi'];
-  }
-
-  const flagBtnClass = isFlagged
-    ? 'bg-purple-500/20 border-purple-500 text-purple-300'
-    : 'bg-surface-raised border-border text-muted hover:text-white';
+  const multiple = questionType === 'multiple_choice';
+  const saveLabel = isEndOfExam ? 'Save & end' : 'Save & next';
 
   return (
-    <div className="flex flex-col justify-between bg-surface border border-border rounded-2xl p-5 sm:p-6 shadow-xs space-y-6 min-h-[480px]">
-      <div className="space-y-4">
-        {/* Question Header Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="px-2.5 py-1 rounded-md text-xs font-bold bg-blue-600/15 text-blue-400 border border-blue-500/30">
-              Question {currentIndex + 1} of {totalQuestions}
-            </span>
-            <span className="text-[11px] text-muted">
-              Type: <strong className="text-slate-200 font-medium">{questionTypeLabel}</strong>
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Flag / Review Quick Toggle */}
-            <button
-              type="button"
-              disabled={isActionDisabled}
-              onClick={onToggleFlag}
-              aria-label={isFlagged ? 'Remove question flag' : 'Flag question for review'}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer flex items-center gap-1.5 ${flagBtnClass}`}
-            >
-              <svg
-                className="w-3.5 h-3.5"
-                fill={isFlagged ? 'currentColor' : 'none'}
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
-                />
-              </svg>
-              <span>{isFlagged ? 'Flagged' : 'Flag'}</span>
-            </button>
-
-            {/* Marking Scheme */}
-            <div className="flex items-center gap-1.5 text-xs font-mono font-bold">
-              <span className="text-emerald-400">+{question?.marks ?? 1}</span>
-              {(question?.negativeMarks ?? 0) > 0 && (
-                <span className="text-rose-400">-{question?.negativeMarks}</span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Network / Saving Feedback */}
-        {isSaving && (
-          <div className="flex items-center gap-2 text-[11px] text-blue-400 font-medium">
-            <div className="w-3 h-3 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-            <span>{getSavingActionText(savingAction)}</span>
-          </div>
-        )}
-
-        {networkError && (
-          <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <svg
-                className="w-4 h-4 shrink-0 text-rose-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{networkError}</span>
-            </div>
-            <button
-              type="button"
-              onClick={onDismissError}
-              className="text-[11px] font-semibold text-rose-400 hover:text-rose-200 underline ml-auto shrink-0"
-            >
-              Dismiss
-            </button>
-          </div>
-        )}
-
-        {/* NPTEL Official Split Layout: Left Question Stem, Right Options */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 items-start">
-          {/* Left Column: Official Question Text */}
-          <div className="space-y-4 pr-0 md:pr-4 md:border-r md:border-border/60 min-h-[220px]">
-            <div className="text-[11px] uppercase tracking-wider text-muted font-bold">
-              Question Statement:
-            </div>
-            <div className="text-sm sm:text-base font-normal text-slate-100 leading-relaxed whitespace-pre-wrap select-text">
-              {questionContent}
-            </div>
-          </div>
-
-          {/* Right Column: Options & Answer Input */}
-          <div className="space-y-3 min-h-[220px]">
-            <div className="text-[11px] uppercase tracking-wider text-muted font-bold">
-              Select Response:
-            </div>
-
-            {/* Type 1 & 2: Single or Multiple Choice MCQ */}
-            {questionType !== 'numerical' && question?.options && (
-              <div className="space-y-2.5">
-                {question.options.map((opt, optIdx) => {
-                  const optId = opt.id || opt._id || String(optIdx);
-                  const isChecked = selectedOptionIds.includes(optId);
-                  const optLetter = String.fromCodePoint(65 + optIdx);
-                  let optContent = opt.content;
-                  if (language === 'Hindi' && opt.translations?.['hi']) {
-                    optContent = opt.translations['hi'];
-                  }
-
-                  const inputType = questionType === 'multiple_choice' ? 'checkbox' : 'radio';
-
-                  const cardClass = isChecked
-                    ? 'bg-blue-600/15 border-blue-500 text-white font-medium shadow-xs ring-1 ring-blue-500/50'
-                    : 'bg-surface-raised border-border text-slate-200 hover:border-border/80 hover:bg-surface-raised/80';
-
-                  const badgeClass = isChecked
-                    ? 'bg-blue-600 border-blue-500 text-white shadow-xs'
-                    : 'border-border text-muted bg-surface';
-
-                  return (
-                    <label
-                      key={optId}
-                      className={`w-full text-left flex items-start gap-3.5 p-3.5 rounded-xl border transition select-none cursor-pointer active:scale-[0.99] ${cardClass} ${
-                        isActionDisabled ? 'opacity-70 cursor-not-allowed' : ''
-                      }`}
-                    >
-                      <input
-                        type={inputType}
-                        name={`question-option-${currentIndex}`}
-                        value={optId}
-                        checked={isChecked}
-                        disabled={isActionDisabled}
-                        onChange={() => onToggleOption(optId)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`w-6 h-6 rounded-${questionType === 'single_choice' ? 'full' : 'md'} border flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold transition ${badgeClass}`}
-                      >
-                        {optLetter}
-                      </div>
-                      <span className="text-xs sm:text-sm leading-relaxed pt-0.5">
-                        {optContent}
-                      </span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Type 3: Numerical Answer */}
-            {questionType === 'numerical' && (
-              <div className="space-y-2 pt-1">
-                <label
-                  htmlFor="numerical-answer-input"
-                  className="text-xs text-muted block font-medium"
-                >
-                  Enter the exact numerical value:
-                </label>
-                <input
-                  id="numerical-answer-input"
-                  type="text"
+    <div className="grid h-full min-h-0 grid-rows-[minmax(0,1fr)_52px]">
+      <div
+        className="grid min-h-0 grid-cols-1 grid-rows-2 overflow-auto lg:grid-cols-2 lg:grid-rows-1"
+        style={{ zoom }}
+      >
+        <article className="relative flex min-h-0 flex-col border-border lg:border-r">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5">
+          <div className="mb-3 flex h-8 items-center justify-between gap-2">
+            <h2 className="truncate text-sm font-bold text-slate-900 dark:text-slate-100">
+              {mode === 'conduct'
+                ? 'Code of conduct'
+                : `Question ${currentIndex + 1} of ${totalQuestions} · ${typeLabel(questionType)}`}
+            </h2>
+            {mode === 'question' && (
+              <div className="flex shrink-0 items-center gap-2">
+                <span className="font-mono text-xs whitespace-nowrap tabular-nums text-emerald-700 dark:text-emerald-300">
+                  +{question?.marks ?? 1}
+                  {(question?.negativeMarks ?? 0) > 0 ? ` / -${question?.negativeMarks}` : ''}
+                </span>
+                <button
+                  type="button"
                   disabled={isActionDisabled}
-                  value={numericalInput}
-                  onChange={(e) => onNumericalChange(e.target.value)}
-                  placeholder="e.g. 42 or 3.14"
-                  className={`w-full bg-surface-raised border border-border rounded-xl px-4 py-2.5 text-sm text-white font-mono focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-hidden ${
-                    isActionDisabled ? 'opacity-70 cursor-not-allowed' : ''
+                  onClick={onToggleFlag}
+                  aria-pressed={isFlagged}
+                  aria-label={isFlagged ? 'Flagged' : 'Flag'}
+                  className={`inline-flex h-7 w-7 items-center justify-center rounded-full border ${
+                    isFlagged
+                      ? 'border-orange-500 bg-orange-500 text-white'
+                      : 'border-orange-400 text-orange-600 dark:text-orange-300'
                   }`}
-                />
-                <p className="text-[11px] text-muted">
-                  Official CBT numerical evaluation is applied upon submission.
-                </p>
+                >
+                  <CBTFlagIcon className="h-3.5 w-3.5" />
+                  <span className="sr-only">{isFlagged ? 'Flagged' : 'Flag'}</span>
+                </button>
               </div>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Official CBT Action Toolbar Footer */}
-      <div className="pt-4 border-t border-border flex flex-wrap items-center justify-between gap-3 select-none">
-        <div className="flex items-center gap-2">
-          {/* Clear Response */}
-          <button
-            type="button"
-            disabled={isActionDisabled}
-            onClick={onClearResponse}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold bg-surface-raised border border-border text-slate-300 hover:text-white hover:bg-surface-raised/80 transition cursor-pointer flex items-center gap-1.5 ${
-              isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''
-            }`}
-          >
-            {savingAction === 'clear' && (
-              <div className="w-3 h-3 border-2 border-slate-400 border-t-white rounded-full animate-spin" />
+          <div className="h-8">
+            {networkError && (
+              <div className="flex h-8 items-center justify-between gap-2 rounded border border-rose-500/40 bg-rose-500/10 px-2 text-[11px] text-rose-700 dark:text-rose-200">
+                <span className="truncate">{networkError}</span>
+                <button type="button" onClick={onDismissError} className="shrink-0 font-semibold underline">
+                  Dismiss
+                </button>
+              </div>
             )}
-            <span>Clear Response</span>
-          </button>
+          </div>
 
-          {/* Mark for Review & Next */}
-          <button
-            type="button"
-            disabled={isActionDisabled}
-            onClick={onMarkForReviewAndNext}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold bg-purple-500/15 border border-purple-500/40 text-purple-300 hover:bg-purple-500/25 transition cursor-pointer flex items-center gap-1.5 ${
-              isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''
-            }`}
-          >
-            {savingAction === 'mark_review' && (
-              <div className="w-3 h-3 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
-            )}
-            <span>Mark for Review & Next</span>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 ml-auto">
-          {/* Previous Question */}
-          {hasPrevious && (
-            <button
-              type="button"
-              disabled={isActionDisabled}
-              onClick={onPrevious}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold bg-surface-raised border border-border text-slate-300 hover:text-white hover:bg-surface-raised/80 transition cursor-pointer ${
-                isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''
-              }`}
-            >
-              &larr; Previous
-            </button>
-          )}
-
-          {/* Save & Next or End Test */}
-          {isLastQuestion ? (
-            <button
-              type="button"
-              disabled={isActionDisabled}
-              onClick={onOpenSubmit}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition cursor-pointer shadow-md shadow-emerald-600/20 flex items-center gap-2 ${
-                isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''
-              }`}
-            >
-              <span>Submit Test</span>
-              <svg
-                className="w-3.5 h-3.5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+          {mode === 'conduct' ? (
+            <div className="space-y-3 text-sm leading-7 text-slate-900 sm:text-base dark:text-slate-100">
+              <p className="font-semibold">General information</p>
+              <p>
+                This computer-based examination keeps the question on the left and the response on
+                the right. The clock in the header is the time remaining. It does not pause while
+                you read.
+              </p>
+              <p>
+                Single-correct questions use a round control. Multiple-correct questions use a
+                square control. Select every option that applies. Numerical answers are typed in
+                the response panel. The scientific calculator opens from the header icon and sits
+                on the left. The question circles stay in the bottom bar.
+              </p>
+              <p>
+                Save & next stores the response before the next question. On the last question,
+                Save & end stores it and asks whether you are ready to end. Only the latest saved
+                response is considered. Do not wait until the clock expires.
+              </p>
+              <p>
+                The questions stay closed until you agree, and the paper then opens in full screen.
+                Question text cannot be selected. Leaving this window reminds you to practise in
+                good faith. The paper stays open. Pause stops the clock until you resume.
+              </p>
+              <button
+                type="button"
+                onClick={onOpenInstructions}
+                className="h-8 text-sm font-semibold text-accent"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </button>
+                Read the full instructions
+              </button>
+            </div>
           ) : (
+            <div className="text-base leading-7 whitespace-pre-wrap text-slate-900 sm:text-[17px] dark:text-slate-100">
+              {questionText(question, language)}
+            </div>
+          )}
+
+          </div>
+        </article>
+
+        <section className="min-h-0 overflow-y-auto overscroll-contain bg-surface p-4 sm:p-5" aria-label="Options">
+          <p className="mb-3 h-5 text-[11px] font-bold tracking-wider text-muted uppercase">
+            {mode === 'conduct' ? 'Agreement' : multiple ? 'Select all that apply' : 'Options'}
+          </p>
+          {mode === 'conduct' ? (
             <button
               type="button"
-              disabled={isActionDisabled}
-              onClick={onSaveAndNext}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition cursor-pointer shadow-md shadow-blue-600/20 flex items-center gap-2 ${
-                isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''
-              }`}
+              onClick={onAgree}
+              className="flex min-h-11 w-full items-center gap-3 rounded border border-border px-3 py-2 text-left text-sm text-slate-900 hover:border-accent dark:text-slate-100"
             >
-              {savingAction === 'save_and_next' && (
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              )}
-              <span>
-                {savingAction === 'save_and_next' ? 'Saving & Next...' : 'Save & Next \u2192'}
+              <span className="flex h-5 w-5 items-center justify-center rounded-full border border-current">
+                <span className="h-2.5 w-2.5 rounded-full bg-transparent" />
               </span>
+              <span>A. I agree</span>
             </button>
+          ) : questionType === 'numerical' ? (
+            <label className="block space-y-2 text-sm text-slate-900 dark:text-slate-100">
+              <span className="text-xs text-muted">Enter the numerical value</span>
+              <input
+                id="numerical-answer-input"
+                value={numericalInput}
+                disabled={isActionDisabled}
+                onChange={(event) => onNumericalChange(event.target.value)}
+                inputMode="decimal"
+                autoComplete="off"
+                className="h-11 w-full select-text rounded border border-border bg-canvas px-3 font-mono text-sm text-slate-900 outline-none focus:border-accent dark:text-slate-100"
+              />
+            </label>
+          ) : (
+            <div className="space-y-2">
+              {(question?.options ?? []).map((option, index) => {
+                const optionId = option.id || option._id || String(index);
+                const checked = selectedOptionIds.includes(optionId);
+                const letter = String.fromCodePoint(65 + index);
+                const content =
+                  language === 'Hindi' && option.translations?.hi ? option.translations.hi : option.content;
+                return (
+                  <label
+                    key={optionId}
+                    onClick={(event) => {
+                      if (isActionDisabled) return;
+                      event.preventDefault();
+                      onToggleOption(optionId);
+                    }}
+                    className={`flex min-h-11 cursor-pointer items-start gap-3 rounded border px-3 py-2 text-sm transition-colors ${
+                      checked
+                        ? 'border-accent bg-accent/10 text-slate-900 dark:text-slate-100'
+                        : 'border-border text-slate-900 dark:text-slate-100'
+                    }`}
+                  >
+                    <input
+                      type={multiple ? 'checkbox' : 'radio'}
+                      name={`question-${currentIndex}`}
+                      value={optionId}
+                      checked={checked}
+                      disabled={isActionDisabled}
+                      readOnly
+                      className="sr-only"
+                    />
+                    <span
+                      aria-hidden="true"
+                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border border-current text-[10px] ${
+                        multiple ? 'rounded-sm' : 'rounded-full'
+                      } ${checked ? 'bg-accent text-on-accent' : ''}`}
+                    >
+                      {checked ? (multiple ? '✓' : '') : ''}
+                      {!multiple && checked && <span className="h-2.5 w-2.5 rounded-full bg-on-accent" />}
+                    </span>
+                    <span className="min-w-0 leading-6">
+                      <span className="font-semibold">{letter}. </span>
+                      {content}
+                      {option.imageUrl && (
+                        <img
+                          src={option.imageUrl}
+                          alt=""
+                          width={320}
+                          height={180}
+                          className="mt-2 h-auto max-h-40 w-full object-contain"
+                        />
+                      )}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
           )}
-        </div>
+        </section>
       </div>
+
+      <footer className="grid h-[52px] grid-cols-3 border-t border-border">
+        <button
+          type="button"
+          disabled={isActionDisabled || !hasPrevious || mode === 'conduct'}
+          onClick={onPrevious}
+          className="h-[52px] border-r border-border text-sm font-semibold text-slate-900 disabled:opacity-40 dark:text-slate-100"
+        >
+          Previous
+        </button>
+        <button
+          type="button"
+          disabled={isActionDisabled || mode === 'conduct'}
+          onClick={onToggleFlag}
+          aria-pressed={isFlagged}
+          className={`h-[52px] border-r border-border text-sm font-semibold disabled:opacity-40 ${
+            isFlagged ? 'text-orange-600 dark:text-orange-300' : 'text-slate-900 dark:text-slate-100'
+          }`}
+        >
+          <span className="inline-flex items-center justify-center gap-1.5">
+            <CBTFlagIcon className="h-4 w-4 text-orange-500" />
+            {isFlagged ? 'Flagged' : 'Mark for review'}
+          </span>
+        </button>
+        <button
+          type="button"
+          disabled={isActionDisabled || mode === 'conduct'}
+          onClick={onSaveAndNext}
+          className="h-[52px] bg-accent text-sm font-bold text-on-accent disabled:opacity-40"
+        >
+          {mode === 'conduct' ? 'Save & next' : saveLabel}
+        </button>
+      </footer>
     </div>
   );
-}
+});

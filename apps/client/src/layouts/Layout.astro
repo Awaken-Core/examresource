@@ -452,7 +452,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <div class="p-3 border-t border-border/60 shrink-0">
         {/* Logged Out */}
         <div class="sidebar-auth-logged-out block">
-          <a href="/login" data-mobile-sidebar-close
+          <a href="/login" data-login-link data-mobile-sidebar-close
             class="flex items-center justify-center gap-2.5 w-full py-3 px-4 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold text-sm transition shadow-sm"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1735,6 +1735,17 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         // --- Global One-Time Event Listeners & Lifecycles ---
         if (!(window as any).__APP_GLOBAL_LISTENERS_INITIALIZED__) {
           (window as any).__APP_GLOBAL_LISTENERS_INITIALIZED__ = true;
+
+          document.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            const link = target.closest('a[data-login-link], a.auth-login-link, a#header-login-btn');
+            if (!(link instanceof HTMLAnchorElement)) return;
+            const path = window.location.pathname;
+            if (path !== '/test-series' && !path.startsWith('/test-series/')) return;
+            const here = `${path}${window.location.search}`;
+            link.href = `/login?redirect=${encodeURIComponent(here)}`;
+          }, true);
 
           // Central Click Event Delegation
           document.addEventListener('click', handleGlobalClick);

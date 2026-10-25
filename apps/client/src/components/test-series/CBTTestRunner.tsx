@@ -1,35 +1,59 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import type { QuestionPaletteStatus, PaletteSummaryCounts } from './types/cbt';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { API_URL } from '../../lib/api';
+import type { AttemptAnswer, QuestionPaletteStatus, PaletteSummaryCounts } from './types/cbt';
 import { useCBTAttempt } from './hooks/useCBTAttempt';
 import { useProctoringMonitor } from './hooks/useProctoringMonitor';
 import { CBTHeader } from './CBTHeader';
 import { CBTQuestionPanel } from './CBTQuestionPanel';
 import { CBTPalette } from './CBTPalette';
+import { CBTOutline } from './CBTOutline';
+import { CBTLegend } from './CBTLegend';
 import { CBTCodeOfConductModal } from './CBTCodeOfConductModal';
 import { CBTSubmitModal } from './CBTSubmitModal';
 import { CBTKeyboardShortcutsModal } from './CBTKeyboardShortcutsModal';
+import { CBTCalculator } from './CBTCalculator';
 
 interface Props {
   readonly attemptId: string;
+  readonly siteName: string;
 }
 
-export function CBTTestRunner({ attemptId }: Props) {
+function responseStatus(
+  current: QuestionPaletteStatus | undefined,
+  hasSelection: boolean,
+): QuestionPaletteStatus {
+  const flagged =
+    current === 'marked_for_review' || current === 'answered_and_marked_for_review';
+  if (flagged) return hasSelection ? 'answered_and_marked_for_review' : 'marked_for_review';
+  return hasSelection ? 'answered' : 'not_answered';
+}
+
+function readConduct(attemptId: string): boolean {
+  try {
+    return sessionStorage.getItem(`cbt-conduct:${attemptId}`) === '1';
+  } catch {
+    return false;
+  }
+}
+
+export function CBTTestRunner({ attemptId, siteName }: Props) {
   const {
     attempt,
     testMeta,
     loading,
     fatalError,
     remainingSeconds,
+    paused,
+    pauseTest,
+    resumeTest,
     activeSectionId,
     setActiveSectionId,
-    isSaving,
-    savingAction,
-    setSavingAction,
     networkError,
     setNetworkError,
     submitting,
     submitError,
     setSubmitError,
+    setAttempt,
     saveAnswerState,
     handleClearResponse,
     saveSectionTime,
@@ -37,457 +61,678 @@ export function CBTTestRunner({ attemptId }: Props) {
     calculateQuestionElapsedSeconds,
   } = useCBTAttempt({ attemptId });
 
-  const proctoring = useProctoringMonitor();
+  const shellRef = useRef<HTMLDivElement>(null);
+  const [integrityWarning, setIntegrityWarning] = useState(false);
 
-  // Active question index & language
+  const [conductAgreed, setConductAgreed] = useState(() => readConduct(attemptId));
+  const [view, setView] = useState<'conduct' | 'questions'>(() =>
+    readConduct(attemptId) ? 'questions' : 'conduct',
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [language, setLanguage] = useState<'English' | 'Hindi'>('English');
-
-  // Input states for the active question
-  const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
-  const [numericalInput, setNumericalInput] = useState<string>('');
-
-  // Modals state
+  const [candidateName, setCandidateName] = useState('Candidate');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showConductModal, setShowConductModal] = useState(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+
+  const [fullscreen, setFullscreen] = useState(false);
+
+  const setPageFullscreen = useCallback((enabled: boolean) => {
+    const doc = document as Document & {
+      webkitFullscreenElement?: Element | null;
+      mozFullScreenElement?: Element | null;
+      msFullscreenElement?: Element | null;
+      webkitExitFullscreen?: () => Promise<void> | void;
+      mozCancelFullScreen?: () => Promise<void> | void;
+      msExitFullscreen?: () => Promise<void> | void;
+    };
+    const root = document.documentElement as HTMLElement & {
+      webkitRequestFullscreen?: () => Promise<void> | void;
+      mozRequestFullScreen?: () => Promise<void> | void;
+      msRequestFullscreen?: () => Promise<void> | void;
+    };
+    const active =
+      document.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement;
+
+    (window as Window & { __cbtFullscreenUntil?: number }).__cbtFullscreenUntil = Date.now() + 1500;
+
+    if (enabled && active) return;
+    if (!enabled && !active) return;
+
+    if (!enabled) {
+      try {
+        if (document.exitFullscreen) {
+          void document.exitFullscreen().catch(() => undefined);
+        } else if (doc.webkitExitFullscreen) {
+          doc.webkitExitFullscreen();
+        } else if (doc.mozCancelFullScreen) {
+          doc.mozCancelFullScreen();
+        } else if (doc.msExitFullscreen) {
+          doc.msExitFullscreen();
+        }
+      } catch {
+        /* Storage or fullscreen exit error ignored */
+      }
+      return;
+    }
+
+    try {
+      const p =
+        root.requestFullscreen?.() ??
+        root.webkitRequestFullscreen?.() ??
+        root.mozRequestFullScreen?.() ??
+        root.msRequestFullscreen?.();
+      if (p && typeof (p as Promise<void>).catch === 'function') {
+        (p as Promise<void>).catch((err: unknown) => {
+          console.warn('Fullscreen request failed:', err);
+        });
+      }
+    } catch (err) {
+      console.warn('Fullscreen request threw:', err);
+    }
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    const doc = document as Document & {
+      webkitFullscreenElement?: Element | null;
+      mozFullScreenElement?: Element | null;
+      msFullscreenElement?: Element | null;
+    };
+    const isFs = Boolean(
+      document.fullscreenElement ||
+      doc.webkitFullscreenElement ||
+      doc.mozFullScreenElement ||
+      doc.msFullscreenElement
+    );
+    setPageFullscreen(!isFs);
+  }, [setPageFullscreen]);
+
+  useProctoringMonitor(
+    conductAgreed && view === 'questions' && attempt?.status === 'in_progress' && !integrityWarning,
+    () => setIntegrityWarning(true),
+  );
+
+  useEffect(() => {
+    if (!conductAgreed || view !== 'questions') return;
+    const node = shellRef.current;
+    if (!node) return;
+    const onPointer = (event: PointerEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('[data-fullscreen-toggle]')) return;
+      setPageFullscreen(true);
+    };
+    node.addEventListener('pointerdown', onPointer);
+    return () => node.removeEventListener('pointerdown', onPointer);
+  }, [conductAgreed, view, setPageFullscreen]);
+
+  useEffect(() => {
+    const sync = () => {
+      const doc = document as Document & {
+        webkitFullscreenElement?: Element | null;
+        mozFullScreenElement?: Element | null;
+        msFullscreenElement?: Element | null;
+      };
+      setFullscreen(
+        Boolean(
+          document.fullscreenElement ||
+          doc.webkitFullscreenElement ||
+          doc.mozFullScreenElement ||
+          doc.msFullscreenElement
+        )
+      );
+    };
+
+    sync();
+
+    document.addEventListener('fullscreenchange', sync);
+    document.addEventListener('webkitfullscreenchange', sync);
+    document.addEventListener('mozfullscreenchange', sync);
+    document.addEventListener('MSFullscreenChange', sync);
+    window.addEventListener('resize', sync);
+    return () => {
+      document.removeEventListener('fullscreenchange', sync);
+      document.removeEventListener('webkitfullscreenchange', sync);
+      document.removeEventListener('mozfullscreenchange', sync);
+      document.removeEventListener('MSFullscreenChange', sync);
+      window.removeEventListener('resize', sync);
+    };
+  }, []);
 
   const answersList = useMemo(() => attempt?.answers ?? [], [attempt?.answers]);
   const activeAnswer = answersList[currentIndex] ?? null;
-  const currentQ = activeAnswer?.question ?? null;
+  const draftKey = `${currentIndex}:${activeAnswer?.questionId ?? ''}`;
+  const [draft, setDraft] = useState({ key: '', optionIds: [] as string[], numerical: '' });
+  if (attempt && draft.key !== draftKey) {
+    setDraft({
+      key: draftKey,
+      optionIds: Array.from(activeAnswer?.optionIds ?? []),
+      numerical: activeAnswer?.numericalValue ?? '',
+    });
+  }
+  const selectedOptionIds = draft.key === draftKey ? draft.optionIds : Array.from(activeAnswer?.optionIds ?? []);
+  const numericalInput = draft.key === draftKey ? draft.numerical : (activeAnswer?.numericalValue ?? '');
 
-  // Sync inputs when active question changes
   useEffect(() => {
-    if (!activeAnswer) return;
-    setSelectedOptionIds(Array.from(activeAnswer.optionIds ?? []));
-    setNumericalInput(activeAnswer.numericalValue ?? '');
-    setNetworkError(null);
+    const html = document.documentElement;
+    const previousHtml = html.style.overflow;
+    const previousBody = document.body.style.overflow;
+    html.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      html.style.overflow = previousHtml;
+      document.body.style.overflow = previousBody;
+    };
+  }, []);
 
+  useEffect(() => {
+    const blockSelect = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea')) return;
+      event.preventDefault();
+    };
+    document.addEventListener('selectstart', blockSelect);
+    return () => document.removeEventListener('selectstart', blockSelect);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetch(`${API_URL}/me`, { credentials: 'include' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((user: { name?: string } | null) => {
+        if (cancelled || !user?.name?.trim()) return;
+        setCandidateName(user.name.trim());
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const patchAnswer = useCallback(
+    (index: number, questionId: string, patch: Partial<AttemptAnswer>) => {
+      setAttempt((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          answers: prev.answers.map((answer, answerIndex) =>
+            answerIndex === index && answer.questionId === questionId
+              ? { ...answer, ...patch }
+              : answer,
+          ),
+        };
+      });
+    },
+    [setAttempt],
+  );
+
+  useEffect(() => {
+    if (!conductAgreed || view !== 'questions' || !activeAnswer) return;
     if (activeAnswer.sectionId && activeAnswer.sectionId !== activeSectionId) {
       setActiveSectionId(activeAnswer.sectionId);
     }
+    if (activeAnswer.status !== 'not_visited') return;
+    patchAnswer(currentIndex, activeAnswer.questionId, { status: 'not_answered' });
+  }, [currentIndex, activeAnswer?.questionId, conductAgreed, view]);
 
-    if (activeAnswer.status === 'not_visited') {
-      void saveAnswerState(currentIndex, {
-        status: 'not_answered',
-        optionIds: [],
-        numericalValue: null,
-      });
-    }
-  }, [currentIndex, activeAnswer?.questionId]);
+  useEffect(() => {
+    if (!conductAgreed || !attempt || attempt.status !== 'in_progress') return;
+    const onLeave = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onLeave);
+    return () => window.removeEventListener('beforeunload', onLeave);
+  }, [conductAgreed, attempt]);
 
-  // Navigate to Question
   const navigateToQuestion = useCallback(
-    async (nextIndex: number) => {
-      if (
-        !attempt ||
-        nextIndex === currentIndex ||
-        nextIndex < 0 ||
-        nextIndex >= answersList.length
-      ) {
+    (nextIndex: number) => {
+      if (!conductAgreed || !attempt || nextIndex === currentIndex || nextIndex < 0 || nextIndex >= answersList.length) {
         return;
       }
       const current = answersList[currentIndex];
       const next = answersList[nextIndex];
       if (!current || !next) return;
-
-      if (current.sectionId !== next.sectionId && !(await saveSectionTime(current.sectionId))) {
-        setNetworkError('Could not save section time. Please retry.');
-        return;
-      }
-
-      const saved = await saveAnswerState(currentIndex, {
-        status: current.status,
-        timeSpentSeconds: calculateQuestionElapsedSeconds(currentIndex),
+      if (current.sectionId !== next.sectionId) void saveSectionTime(current.sectionId);
+      const hasSelection = selectedOptionIds.length > 0 || numericalInput.trim() !== '';
+      const status = responseStatus(current.status, hasSelection);
+      patchAnswer(currentIndex, current.questionId, {
+        status,
+        optionIds: selectedOptionIds,
+        numericalValue: numericalInput.trim() || null,
       });
-      if (saved) setCurrentIndex(nextIndex);
+      void saveAnswerState(currentIndex, {
+        status,
+        optionIds: selectedOptionIds,
+        numericalValue: numericalInput.trim() || null,
+        timeSpentSeconds: calculateQuestionElapsedSeconds(currentIndex),
+        background: true,
+      });
+      setView('questions');
+      setCurrentIndex(nextIndex);
     },
     [
+      conductAgreed,
       attempt,
       currentIndex,
       answersList,
+      selectedOptionIds,
+      numericalInput,
       saveSectionTime,
       saveAnswerState,
       calculateQuestionElapsedSeconds,
-      setNetworkError,
+      patchAnswer,
     ],
   );
 
-  // Filter questions for active section if full test
-  const isFullTest = (attempt?.sectionProgress?.length ?? 0) > 0;
   const currentSectionIndices = useMemo(() => {
-    if (isFullTest && activeSectionId) {
+    if ((attempt?.sectionProgress?.length ?? 0) > 0 && activeSectionId) {
       return answersList
-        .map((a, idx) => (a.sectionId === activeSectionId ? idx : -1))
-        .filter((idx) => idx !== -1);
+        .map((answer, index) => (answer.sectionId === activeSectionId ? index : -1))
+        .filter((index) => index !== -1);
     }
-    return answersList.map((_, idx) => idx);
-  }, [isFullTest, activeSectionId, answersList]);
+    return answersList.map((_, index) => index);
+  }, [attempt?.sectionProgress, activeSectionId, answersList]);
 
   const currentPosInSection = currentSectionIndices.indexOf(currentIndex);
-  let nextIndexInSection = -1;
+  let nextIndex = -1;
   if (currentPosInSection !== -1 && currentPosInSection < currentSectionIndices.length - 1) {
-    nextIndexInSection = currentSectionIndices[currentPosInSection + 1] ?? -1;
+    nextIndex = currentSectionIndices[currentPosInSection + 1] ?? -1;
   } else if (currentIndex < answersList.length - 1) {
-    nextIndexInSection = currentIndex + 1;
+    nextIndex = currentIndex + 1;
   }
-
-  let prevIndexInSection = -1;
+  let prevIndex = -1;
   if (currentPosInSection > 0) {
-    prevIndexInSection = currentSectionIndices[currentPosInSection - 1] ?? -1;
+    prevIndex = currentSectionIndices[currentPosInSection - 1] ?? -1;
   } else if (currentIndex > 0) {
-    prevIndexInSection = currentIndex - 1;
+    prevIndex = currentIndex - 1;
   }
+  const isEndOfExam = answersList.length > 0 && currentIndex === answersList.length - 1;
 
-  const isLastQuestion =
-    currentSectionIndices.length > 0
-      ? currentIndex === currentSectionIndices.at(-1)
-      : currentIndex >= answersList.length - 1;
-
-  // Toggle Option Selection
   const handleToggleOption = useCallback(
     (optionId: string) => {
-      const qType = currentQ?.type ?? 'single_choice';
-      if (qType === 'single_choice') {
-        setSelectedOptionIds([optionId]);
-      } else {
-        setSelectedOptionIds((prev) =>
-          prev.includes(optionId) ? prev.filter((id) => id !== optionId) : [...prev, optionId],
-        );
-      }
+      if (!conductAgreed || view !== 'questions') return;
+      const qType = activeAnswer?.question?.type ?? 'single_choice';
+      setDraft((prev) => {
+        const base = prev.key === draftKey ? prev.optionIds : selectedOptionIds;
+        const optionIds =
+          qType === 'single_choice'
+            ? base.includes(optionId)
+              ? []
+              : [optionId]
+            : base.includes(optionId)
+              ? base.filter((id) => id !== optionId)
+              : [...base, optionId];
+        return {
+          key: draftKey,
+          optionIds,
+          numerical: prev.key === draftKey ? prev.numerical : numericalInput,
+        };
+      });
     },
-    [currentQ?.type],
+    [conductAgreed, view, activeAnswer?.question?.type, draftKey, selectedOptionIds, numericalInput],
   );
 
-  // Clear current response
-  const onClear = useCallback(async () => {
-    const cleared = await handleClearResponse(currentIndex);
-    if (cleared) {
-      setSelectedOptionIds([]);
-      setNumericalInput('');
-    }
-  }, [handleClearResponse, currentIndex]);
+  const onNumericalChange = useCallback(
+    (value: string) => {
+      setDraft((prev) => ({
+        key: draftKey,
+        optionIds: prev.key === draftKey ? prev.optionIds : selectedOptionIds,
+        numerical: value,
+      }));
+    },
+    [draftKey, selectedOptionIds],
+  );
 
-  // Save & Next
-  const handleSaveAndNext = useCallback(async () => {
-    if (!attempt || !activeAnswer || isSaving || submitting) return;
-    setSavingAction('save_and_next');
-
-    const hasSelection = selectedOptionIds.length > 0 || numericalInput.trim() !== '';
-    const newStatus: QuestionPaletteStatus = hasSelection ? 'answered' : 'not_answered';
-
-    const saved = await saveAnswerState(currentIndex, {
-      status: newStatus,
-      optionIds: selectedOptionIds,
-      numericalValue: numericalInput.trim() || null,
-      timeSpentSeconds: calculateQuestionElapsedSeconds(currentIndex),
+  const onClear = useCallback(() => {
+    if (!conductAgreed || !activeAnswer) return;
+    setDraft({ key: draftKey, optionIds: [], numerical: '' });
+    patchAnswer(currentIndex, activeAnswer.questionId, {
+      status: 'not_answered',
+      optionIds: [],
+      numericalValue: null,
     });
+    void handleClearResponse(currentIndex);
+  }, [conductAgreed, activeAnswer, handleClearResponse, currentIndex, draftKey, patchAnswer]);
 
-    setSavingAction(null);
-    if (saved && nextIndexInSection !== -1) {
-      setCurrentIndex(nextIndexInSection);
-    }
-  }, [
-    attempt,
-    activeAnswer,
-    isSaving,
-    submitting,
-    selectedOptionIds,
-    numericalInput,
-    saveAnswerState,
-    currentIndex,
-    calculateQuestionElapsedSeconds,
-    setSavingAction,
-    nextIndexInSection,
-  ]);
+  const persistCurrent = useCallback(
+    (status: QuestionPaletteStatus) => {
+      if (!attempt || !activeAnswer || submitting || !conductAgreed) return;
+      patchAnswer(currentIndex, activeAnswer.questionId, {
+        status,
+        optionIds: selectedOptionIds,
+        numericalValue: numericalInput.trim() || null,
+      });
+      void saveAnswerState(currentIndex, {
+        status,
+        optionIds: selectedOptionIds,
+        numericalValue: numericalInput.trim() || null,
+        timeSpentSeconds: calculateQuestionElapsedSeconds(currentIndex),
+        background: true,
+      });
+    },
+    [
+      attempt,
+      activeAnswer,
+      submitting,
+      conductAgreed,
+      saveAnswerState,
+      currentIndex,
+      selectedOptionIds,
+      numericalInput,
+      calculateQuestionElapsedSeconds,
+      patchAnswer,
+    ],
+  );
 
-  // Mark for Review & Next
-  const handleMarkForReviewAndNext = useCallback(async () => {
-    if (!attempt || !activeAnswer || isSaving || submitting) return;
-    setSavingAction('mark_review');
-
+  const handleSaveAndNext = useCallback(() => {
     const hasSelection = selectedOptionIds.length > 0 || numericalInput.trim() !== '';
-    const newStatus: QuestionPaletteStatus = hasSelection
-      ? 'answered_and_marked_for_review'
-      : 'marked_for_review';
-
-    const saved = await saveAnswerState(currentIndex, {
-      status: newStatus,
-      optionIds: selectedOptionIds,
-      numericalValue: numericalInput.trim() || null,
-      timeSpentSeconds: calculateQuestionElapsedSeconds(currentIndex),
-    });
-
-    setSavingAction(null);
-    if (saved && nextIndexInSection !== -1) {
-      setCurrentIndex(nextIndexInSection);
+    persistCurrent(responseStatus(activeAnswer?.status, hasSelection));
+    if (isEndOfExam) {
+      setSubmitError(null);
+      setShowSubmitModal(true);
+      return;
     }
-  }, [
-    attempt,
-    activeAnswer,
-    isSaving,
-    submitting,
-    selectedOptionIds,
-    numericalInput,
-    saveAnswerState,
-    currentIndex,
-    calculateQuestionElapsedSeconds,
-    setSavingAction,
-    nextIndexInSection,
-  ]);
+    if (nextIndex !== -1) setCurrentIndex(nextIndex);
+  }, [selectedOptionIds, numericalInput, persistCurrent, activeAnswer?.status, isEndOfExam, setSubmitError, nextIndex]);
 
-  // Toggle Flag on Question Header
-  const handleToggleFlag = useCallback(async () => {
-    if (!attempt || !activeAnswer || isSaving || submitting) return;
-    const isCurrentlyFlagged =
-      activeAnswer.status === 'marked_for_review' ||
-      activeAnswer.status === 'answered_and_marked_for_review';
+  const handleToggleFlag = useCallback(() => {
+    const flagged =
+      activeAnswer?.status === 'marked_for_review' ||
+      activeAnswer?.status === 'answered_and_marked_for_review';
     const hasSelection = selectedOptionIds.length > 0 || numericalInput.trim() !== '';
-
     let nextStatus: QuestionPaletteStatus;
-    if (isCurrentlyFlagged) {
-      nextStatus = hasSelection ? 'answered' : 'not_answered';
-    } else {
-      nextStatus = hasSelection ? 'answered_and_marked_for_review' : 'marked_for_review';
+    if (flagged) nextStatus = hasSelection ? 'answered' : 'not_answered';
+    else nextStatus = hasSelection ? 'answered_and_marked_for_review' : 'marked_for_review';
+    persistCurrent(nextStatus);
+  }, [activeAnswer?.status, selectedOptionIds, numericalInput, persistCurrent]);
+
+  const openEndDialog = useCallback(() => {
+    if (!conductAgreed) return;
+    const hasSelection = selectedOptionIds.length > 0 || numericalInput.trim() !== '';
+    persistCurrent(responseStatus(activeAnswer?.status, hasSelection));
+    setSubmitError(null);
+    setShowSubmitModal(true);
+  }, [conductAgreed, selectedOptionIds, numericalInput, activeAnswer?.status, persistCurrent, setSubmitError]);
+
+  const agreeToConduct = useCallback(() => {
+    try {
+      sessionStorage.setItem(`cbt-conduct:${attemptId}`, '1');
+    } catch {
+      /* Storage can be unavailable. Agreement still applies for this view. */
     }
+    setPageFullscreen(true);
+    setConductAgreed(true);
+    setView('questions');
+  }, [attemptId, setPageFullscreen]);
 
-    await saveAnswerState(currentIndex, {
-      status: nextStatus,
-      optionIds: selectedOptionIds,
-      numericalValue: numericalInput.trim() || null,
-      timeSpentSeconds: calculateQuestionElapsedSeconds(currentIndex),
-    });
-  }, [
-    attempt,
-    activeAnswer,
-    isSaving,
-    submitting,
-    selectedOptionIds,
-    numericalInput,
-    saveAnswerState,
-    currentIndex,
-    calculateQuestionElapsedSeconds,
-  ]);
+  const openQuestion = useCallback(
+    (index: number) => {
+      if (!conductAgreed) return;
+      setView('questions');
+      if (index !== currentIndex) void navigateToQuestion(index);
+    },
+    [conductAgreed, currentIndex, navigateToQuestion],
+  );
 
-  // Keyboard navigation shortcuts
+  const openSection = useCallback(
+    (sectionId: string | null) => {
+      if (!conductAgreed) return;
+      const target = sectionId
+        ? answersList.findIndex((answer) => answer.sectionId === sectionId)
+        : 0;
+      openQuestion(target === -1 ? 0 : target);
+    },
+    [conductAgreed, answersList, openQuestion],
+  );
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is focused inside a text input or modal is open
-      const target = e.target as HTMLElement;
-      if (
-        target?.tagName === 'INPUT' ||
-        target?.tagName === 'TEXTAREA' ||
-        showSubmitModal ||
-        showConductModal ||
-        showShortcutsModal
-      ) {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'F11' || event.code === 'F11') {
+        event.preventDefault();
+        toggleFullscreen();
         return;
       }
-
-      if (e.key === '?') {
-        e.preventDefault();
-        setShowShortcutsModal((prev) => !prev);
+      const target = event.target as HTMLElement | null;
+      if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA') return;
+      if (event.key === 'Escape') {
+        if (conductAgreed && view === 'questions') return;
+        if (calculatorOpen) setCalculatorOpen(false);
+        else if (showSubmitModal) setShowSubmitModal(false);
+        else if (showShortcutsModal) setShowShortcutsModal(false);
+        else if (showConductModal) setShowConductModal(false);
         return;
       }
-
-      if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'n') {
-        e.preventDefault();
+      if (calculatorOpen || showSubmitModal || showConductModal || showShortcutsModal) return;
+      if (!conductAgreed || view !== 'questions') {
+        if (event.key === 'Enter' || event.key.toLowerCase() === 'a') {
+          event.preventDefault();
+          agreeToConduct();
+        }
+        return;
+      }
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const key = event.key.toLowerCase();
+      if (event.key === '?' ) {
+        event.preventDefault();
+        setShowShortcutsModal((open) => !open);
+        return;
+      }
+      if (event.key === 'ArrowRight' || key === 'n' || event.key === 'Enter') {
+        event.preventDefault();
         void handleSaveAndNext();
-      } else if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'p') {
-        e.preventDefault();
-        if (prevIndexInSection !== -1) {
-          void navigateToQuestion(prevIndexInSection);
-        }
-      } else if (e.key.toLowerCase() === 'c') {
-        e.preventDefault();
+      } else if ((event.key === 'ArrowLeft' || key === 'p') && prevIndex !== -1) {
+        event.preventDefault();
+        void navigateToQuestion(prevIndex);
+      } else if (key === 'c') {
+        event.preventDefault();
         void onClear();
-      } else if (e.key.toLowerCase() === 'f' || e.key.toLowerCase() === 'm') {
-        e.preventDefault();
+      } else if (key === 'f' || key === 'm') {
+        event.preventDefault();
         void handleToggleFlag();
-      } else if (['1', '2', '3', '4'].includes(e.key)) {
-        const optIdx = Number.parseInt(e.key, 10) - 1;
-        const opt = currentQ?.options?.[optIdx];
-        if (opt) {
-          e.preventDefault();
-          handleToggleOption(opt.id || opt._id || String(optIdx));
-        }
-      } else if (['a', 'b', 'c', 'd'].includes(e.key.toLowerCase())) {
-        const optIdx = (e.key.toLowerCase().codePointAt(0) ?? 97) - 97;
-        const opt = currentQ?.options?.[optIdx];
-        if (opt) {
-          e.preventDefault();
-          handleToggleOption(opt.id || opt._id || String(optIdx));
+      } else if (activeAnswer?.question?.type !== 'numerical') {
+        let optionIndex = -1;
+        if (['1', '2', '3', '4'].includes(event.key)) optionIndex = Number.parseInt(event.key, 10) - 1;
+        if (['a', 'b', 'c', 'd'].includes(key)) optionIndex = key.codePointAt(0)! - 97;
+        const option = activeAnswer?.question?.options?.[optionIndex];
+        if (option && optionIndex >= 0) {
+          event.preventDefault();
+          handleToggleOption(option.id || option._id || String(optionIndex));
         }
       }
     };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [
-    handleSaveAndNext,
-    prevIndexInSection,
-    navigateToQuestion,
-    onClear,
-    handleToggleFlag,
-    currentQ?.options,
-    handleToggleOption,
     showSubmitModal,
     showConductModal,
     showShortcutsModal,
+    calculatorOpen,
+    conductAgreed,
+    view,
+    agreeToConduct,
+    handleSaveAndNext,
+    prevIndex,
+    navigateToQuestion,
+    onClear,
+    handleToggleFlag,
+    activeAnswer?.question,
+    handleToggleOption,
+    toggleFullscreen,
   ]);
 
   const summaryCounts: PaletteSummaryCounts = useMemo(
     () => ({
-      answered: answersList.filter((a) => a.status === 'answered').length,
-      not_answered: answersList.filter((a) => a.status === 'not_answered').length,
-      marked_for_review: answersList.filter((a) => a.status === 'marked_for_review').length,
-      answered_and_marked: answersList.filter((a) => a.status === 'answered_and_marked_for_review')
-        .length,
-      not_visited: answersList.filter((a) => a.status === 'not_visited').length,
+      answered: answersList.filter((answer) => answer.status === 'answered').length,
+      not_answered: answersList.filter((answer) => answer.status === 'not_answered').length,
+      marked_for_review: answersList.filter((answer) => answer.status === 'marked_for_review').length,
+      answered_and_marked: answersList.filter((answer) => answer.status === 'answered_and_marked_for_review').length,
+      not_visited: answersList.filter((answer) => answer.status === 'not_visited').length,
     }),
     [answersList],
   );
 
-  const isActionDisabled = isSaving || submitting;
   const isFlagged =
     activeAnswer?.status === 'marked_for_review' ||
     activeAnswer?.status === 'answered_and_marked_for_review';
-
-  if (loading) {
-    return (
-      <div className="min-h-[500px] flex flex-col items-center justify-center space-y-3">
-        <div className="w-10 h-10 border-3 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-        <p className="text-xs text-muted">
-          Securing CBT candidate session and loading official questions...
-        </p>
-      </div>
-    );
-  }
-
-  if (fatalError || !attempt) {
-    return (
-      <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3 my-12">
-        <p className="text-sm font-semibold text-rose-200">
-          {fatalError ?? 'Attempt not found or expired.'}
-        </p>
-        <a
-          href="/test-series"
-          className="inline-block text-xs font-semibold text-blue-500 hover:underline"
-        >
-          &larr; Return to Test Series
-        </a>
-      </div>
-    );
-  }
+  const actionsDisabled = submitting;
+  const viewingConduct = view === 'conduct' || !conductAgreed;
 
   return (
-    <div className="space-y-4 max-w-7xl mx-auto">
-      {/* Top Header */}
+    <div ref={shellRef} className="fixed inset-0 z-[10050] flex flex-col overflow-hidden bg-canvas text-slate-900 select-none dark:text-slate-100">
       <CBTHeader
-        testTitle={testMeta?.title ?? 'GovtPariksha Computer-Based Test'}
-        attemptNumber={attempt.attemptNumber}
+        portalName={siteName}
+        testTitle={loading ? 'Loading examination' : (testMeta?.title ?? 'Computer-based test')}
+        candidateName={candidateName}
         language={language}
         remainingSeconds={remainingSeconds}
-        isActionDisabled={isActionDisabled}
-        proctoring={proctoring}
         onLanguageChange={setLanguage}
-        onOpenInstructions={() => setShowConductModal(true)}
         onOpenShortcuts={() => setShowShortcutsModal(true)}
-        onOpenSubmit={() => {
-          setSubmitError(null);
-          setShowSubmitModal(true);
-        }}
+        calculatorOpen={calculatorOpen}
+        onToggleCalculator={() => setCalculatorOpen((open) => !open)}
+        zoom={zoom}
+        onZoomIn={() =>
+          setZoom((current) => {
+            const steps = [0.8, 0.9, 1, 1.1, 1.25, 1.5];
+            const index = steps.findIndex((step) => step > current + 0.001);
+            return index === -1 ? current : steps[index];
+          })
+        }
+        onZoomOut={() =>
+          setZoom((current) => {
+            const steps = [0.8, 0.9, 1, 1.1, 1.25, 1.5];
+            const smaller = steps.filter((step) => step < current - 0.001);
+            return smaller.length === 0 ? current : smaller[smaller.length - 1];
+          })
+        }
+        canPause={!viewingConduct && !paused && !submitting && !integrityWarning}
+        onPause={() => void pauseTest()}
+        fullscreen={fullscreen}
+        onToggleFullscreen={toggleFullscreen}
       />
-
-      {/* Section Tabs for Full Tests */}
-      {isFullTest && (
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-border/80">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-muted shrink-0 mr-1">
-            Sections:
-          </span>
-          {attempt.sectionProgress.map((sec, idx) => {
-            const isSelected =
-              (activeSectionId || attempt.sectionProgress[0].sectionId) === sec.sectionId;
-            return (
-              <button
-                key={sec.sectionId}
-                type="button"
-                disabled={isActionDisabled}
-                onClick={() => {
-                  const targetIdx = answersList.findIndex((a) => a.sectionId === sec.sectionId);
-                  if (targetIdx !== -1) void navigateToQuestion(targetIdx);
-                }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition cursor-pointer ${
-                  isSelected
-                    ? 'bg-blue-600 text-white shadow-2xs'
-                    : 'bg-surface border border-border text-muted hover:text-white'
-                } ${isActionDisabled ? 'opacity-60 cursor-not-allowed' : ''}`}
-              >
-                <span>{sec.name || `Section ${idx + 1}`}</span>
-              </button>
-            );
-          })}
+      {calculatorOpen && (
+        <div className="absolute top-20 left-3 z-30">
+          <CBTCalculator
+            onClose={() => setCalculatorOpen(false)}
+            onUseValue={
+              !viewingConduct && activeAnswer?.question?.type === 'numerical'
+                ? (value) => {
+                    if (value) onNumericalChange(value);
+                  }
+                : undefined
+            }
+          />
         </div>
       )}
 
-      {/* Main CBT Grid: Left Question Panel, Right Palette */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-start">
-        <div className="lg:col-span-3">
-          <CBTQuestionPanel
-            currentIndex={currentIndex}
-            totalQuestions={answersList.length}
-            question={currentQ}
-            language={language}
-            selectedOptionIds={selectedOptionIds}
-            numericalInput={numericalInput}
-            isFlagged={isFlagged}
-            isSaving={isSaving}
-            savingAction={savingAction}
-            networkError={networkError}
-            isActionDisabled={isActionDisabled}
-            isLastQuestion={isLastQuestion}
-            hasPrevious={currentIndex > 0}
-            onToggleOption={handleToggleOption}
-            onNumericalChange={setNumericalInput}
-            onToggleFlag={() => void handleToggleFlag()}
-            onClearResponse={() => void onClear()}
-            onMarkForReviewAndNext={() => void handleMarkForReviewAndNext()}
-            onPrevious={() => {
-              if (prevIndexInSection !== -1) {
-                void navigateToQuestion(prevIndexInSection);
-              } else if (currentIndex > 0) {
-                void navigateToQuestion(currentIndex - 1);
-              }
-            }}
-            onSaveAndNext={() => void handleSaveAndNext()}
-            onOpenSubmit={() => {
-              setSubmitError(null);
-              setShowSubmitModal(true);
-            }}
-            onDismissError={() => setNetworkError(null)}
-          />
+      <div className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_216px] lg:grid-rows-[minmax(0,1fr)_176px]">
+          <div className="grid min-h-0 grid-cols-1 grid-rows-[40px_minmax(0,1fr)] lg:grid-cols-[252px_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)]">
+            <CBTOutline
+              conductAgreed={conductAgreed}
+              viewingConduct={viewingConduct}
+              sections={attempt?.sectionProgress ?? []}
+              activeSectionId={activeSectionId}
+              currentNumber={answersList.length === 0 ? 0 : currentIndex + 1}
+              totalQuestions={answersList.length}
+              locked={!conductAgreed || loading || Boolean(fatalError)}
+              onShowConduct={() => setView('conduct')}
+              onOpenSection={openSection}
+            />
+            {viewingConduct ? (
+              <CBTQuestionPanel
+                mode="conduct"
+                currentIndex={0}
+                totalQuestions={answersList.length}
+                question={null}
+                language={language}
+                selectedOptionIds={[]}
+                numericalInput=""
+                isFlagged={false}
+                networkError={fatalError}
+                isActionDisabled={false}
+                isEndOfExam={false}
+                hasPrevious={false}
+                zoom={zoom}
+                onToggleOption={() => undefined}
+                onNumericalChange={() => undefined}
+                onToggleFlag={() => undefined}
+                onPrevious={() => undefined}
+                onSaveAndNext={() => undefined}
+                onAgree={agreeToConduct}
+                onOpenInstructions={() => setShowConductModal(true)}
+                onDismissError={() => undefined}
+              />
+            ) : loading ? (
+              <div className="flex items-center justify-center text-sm text-muted">
+                Loading the examination paper
+              </div>
+            ) : !attempt ? (
+              <div className="flex items-center justify-center p-6 text-center">
+                <div className="max-w-md space-y-3">
+                  <p className="text-sm font-semibold text-rose-700 dark:text-rose-200">
+                    {fatalError ?? 'This examination session could not be opened.'}
+                  </p>
+                  <a href="/test-series" className="text-sm font-semibold text-accent">
+                    Return to test series
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <CBTQuestionPanel
+                mode={viewingConduct ? 'conduct' : 'question'}
+                currentIndex={currentIndex}
+                totalQuestions={answersList.length}
+                question={activeAnswer?.question ?? null}
+                language={language}
+                selectedOptionIds={selectedOptionIds}
+                numericalInput={numericalInput}
+                isFlagged={isFlagged}
+                networkError={networkError}
+                isActionDisabled={actionsDisabled}
+                isEndOfExam={isEndOfExam}
+                hasPrevious={prevIndex !== -1}
+                zoom={zoom}
+                onToggleOption={handleToggleOption}
+                onNumericalChange={onNumericalChange}
+                onToggleFlag={() => void handleToggleFlag()}
+                onPrevious={() => {
+                  if (prevIndex !== -1) void navigateToQuestion(prevIndex);
+                }}
+                onSaveAndNext={() => void handleSaveAndNext()}
+                onAgree={agreeToConduct}
+                onOpenInstructions={() => setShowConductModal(true)}
+                onDismissError={() => setNetworkError(null)}
+              />
+            )}
+          </div>
+          <div className="grid h-[232px] grid-cols-1 grid-rows-[112px_120px] border-t border-border lg:h-[176px] lg:grid-cols-[minmax(0,1fr)_300px] lg:grid-rows-[minmax(0,1fr)]">
+            <CBTPalette
+              answers={answersList}
+              currentIndex={currentIndex}
+              isActionDisabled={actionsDisabled}
+              locked={!conductAgreed || loading}
+              onSelectQuestion={openQuestion}
+            />
+            <CBTLegend
+              counts={summaryCounts}
+              isActionDisabled={actionsDisabled}
+              canSubmit={conductAgreed && !loading}
+              onFinalSubmit={() => void openEndDialog()}
+            />
+          </div>
         </div>
 
-        <div className="lg:col-span-1">
-          <CBTPalette
-            answers={answersList}
-            currentIndex={currentIndex}
-            isActionDisabled={isActionDisabled}
-            summaryCounts={summaryCounts}
-            onSelectQuestion={(idx) => void navigateToQuestion(idx)}
-          />
-        </div>
-      </div>
-
-      {/* Official Modals */}
       <CBTCodeOfConductModal
         isOpen={showConductModal}
         onClose={() => setShowConductModal(false)}
-        testTitle={testMeta?.title ?? 'Computer Based Examination'}
-        positiveMarks={currentQ?.marks ?? 1}
-        negativeMarks={currentQ?.negativeMarks ?? 0}
+        testTitle={testMeta?.title ?? 'Computer-based examination'}
+        positiveMarks={activeAnswer?.question?.marks ?? 1}
+        negativeMarks={activeAnswer?.question?.negativeMarks ?? 0}
       />
-
       <CBTSubmitModal
         isOpen={showSubmitModal}
         submitting={submitting}
@@ -500,11 +745,47 @@ export function CBTTestRunner({ attemptId }: Props) {
         }}
         onConfirmSubmit={() => void handleFinalSubmit(false)}
       />
-
-      <CBTKeyboardShortcutsModal
-        isOpen={showShortcutsModal}
-        onClose={() => setShowShortcutsModal(false)}
-      />
+      <CBTKeyboardShortcutsModal isOpen={showShortcutsModal} onClose={() => setShowShortcutsModal(false)} />
+      {paused && !integrityWarning && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/80 p-6">
+          <div className="w-full max-w-md rounded-lg border border-border bg-surface p-5 text-center">
+            <p className="text-base font-bold text-slate-900 dark:text-slate-100">Test paused</p>
+            <p className="mt-2 text-sm leading-6 text-slate-900 dark:text-slate-100">
+              The clock is stopped. Resume when you are ready to continue.
+            </p>
+            <button
+              type="button"
+              onClick={() => void resumeTest()}
+              className="mt-4 h-10 rounded bg-accent px-4 text-sm font-bold text-on-accent"
+            >
+              Resume test
+            </button>
+          </div>
+        </div>
+      )}
+      {integrityWarning && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/80 p-6">
+          <div className="w-full max-w-md rounded-lg border border-border bg-surface p-5 text-center" role="alertdialog" aria-labelledby="integrity-title">
+            <p id="integrity-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
+              Practise in good faith
+            </p>
+            <p className="mt-2 text-sm leading-6 text-slate-900 dark:text-slate-100">
+              Learn each question honestly, and carry the same discipline into the real examination.
+              Stay on this screen. The paper is still open.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setIntegrityWarning(false);
+                setPageFullscreen(true);
+              }}
+              className="mt-4 h-10 rounded bg-accent px-4 text-sm font-bold text-on-accent"
+            >
+              Continue the examination
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

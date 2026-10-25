@@ -1,6 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import { siteName } from '../../../data/site';
+import { siteName, siteUrl } from '../../../data/site';
 import { CBTTestRunner } from '../../../components/test-series/CBTTestRunner';
 
 const { attemptId } = Astro.params;
@@ -9,21 +9,19 @@ if (!attemptId) {
   return Astro.redirect('/test-series');
 }
 
-// Disable caching for live exam attempt screen
 Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
 
-const pageTitle = `CBT Candidate Examination Session | ${siteName}`;
+const pageTitle = `Computer-based mock test session | ${siteName}`;
 const pageDescription =
-  'Secure Computer-Based Testing environment with real-time proctoring and official examination protocol.';
+  'Private examination session. The code of conduct is accepted before any answer is saved. This candidate session is not indexed.';
 ---
 
 <Layout
   title={pageTitle}
   description={pageDescription}
+  canonicalUrl={`${siteUrl}/test-series`}
   hideHeaderFooter={true}
   noindex={true}
 >
-  <main class="w-full max-w-none px-3 sm:px-5 lg:px-6 py-3 min-h-screen">
-    <CBTTestRunner client:only="react" attemptId={attemptId} />
-  </main>
+  <CBTTestRunner client:only="react" attemptId={attemptId} siteName={siteName} />
 </Layout>

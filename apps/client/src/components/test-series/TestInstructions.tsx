@@ -90,7 +90,7 @@ export function TestInstructions({ testId }: Props) {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(
-          data.message || 'Unable to start test attempt. Check permissions or attempt limits.',
+          data.message || 'Unable to start this test. Please try again.',
         );
       }
 

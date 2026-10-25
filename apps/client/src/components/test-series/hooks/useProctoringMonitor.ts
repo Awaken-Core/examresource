@@ -1,228 +1,133 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 
-export interface ProctoringState {
-  readonly isLive: boolean;
-  readonly isScreenSharing: boolean;
-  readonly movementDetected: boolean;
-  readonly motionScore: number;
-  readonly tabWarningCount: number;
-  readonly movementWarningCount: number;
-  readonly lastAlertMessage: string | null;
-  readonly permissionDenied: boolean;
-}
+/**
+ * Reminds the candidate to stay with the paper. Leaving the window does not submit it.
+ */
+export function useProctoringMonitor(active: boolean, onWarning: (reason: string) => void) {
+  const onWarningRef = useRef(onWarning);
+  onWarningRef.current = onWarning;
 
-export function useProctoringMonitor() {
-  const [isLive, setIsLive] = useState(false);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [movementDetected, setMovementDetected] = useState(false);
-  const [motionScore, setMotionScore] = useState(0);
-  const [tabWarningCount, setTabWarningCount] = useState(0);
-  const [movementWarningCount, setMovementWarningCount] = useState(0);
-  const [lastAlertMessage, setLastAlertMessage] = useState<string | null>(null);
-  const [permissionDenied, setPermissionDenied] = useState(false);
-
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const prevFrameDataRef = useRef<Uint8ClampedArray | null>(null);
-  const alertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastIncidentTimeRef = useRef<number>(0);
-
-  // Stop active media stream tracks
-  const stopStream = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    setIsLive(false);
-    setIsScreenSharing(false);
-    prevFrameDataRef.current = null;
-  }, []);
-
-  // Trigger brief alert with cooldown
-  const triggerMovementAlert = useCallback((msg: string) => {
-    const now = Date.now();
-    if (now - lastIncidentTimeRef.current > 3000) {
-      lastIncidentTimeRef.current = now;
-      setMovementWarningCount((prev) => prev + 1);
-      setLastAlertMessage(msg);
-    }
-    setMovementDetected(true);
-    if (alertTimeoutRef.current) clearTimeout(alertTimeoutRef.current);
-    alertTimeoutRef.current = setTimeout(() => {
-      setMovementDetected(false);
-    }, 1800);
-  }, []);
-
-  // Start webcam monitoring
-  const startCamera = useCallback(async () => {
-    try {
-      stopStream();
-      setPermissionDenied(false);
-      if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error('Camera device access not supported in this browser.');
-      }
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 320 },
-          height: { ideal: 240 },
-          facingMode: 'user',
-        },
-        audio: false,
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(() => {});
-      }
-      setIsLive(true);
-      setIsScreenSharing(false);
-    } catch {
-      setPermissionDenied(true);
-      setIsLive(false);
-    }
-  }, [stopStream]);
-
-  // Start screen share monitoring
-  const startScreenShare = useCallback(async () => {
-    try {
-      stopStream();
-      setPermissionDenied(false);
-      if (!navigator.mediaDevices?.getDisplayMedia) {
-        throw new Error('Screen sharing not supported in this browser.');
-      }
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          displaySurface: 'monitor',
-        },
-        audio: false,
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(() => {});
-      }
-      // Listen to user ending stream via browser UI
-      stream.getVideoTracks()[0]?.addEventListener('ended', () => {
-        stopStream();
-      });
-      setIsLive(true);
-      setIsScreenSharing(true);
-    } catch {
-      setPermissionDenied(true);
-      setIsLive(false);
-    }
-  }, [stopStream]);
-
-  // Auto-request webcam on mount for CBT examination
   useEffect(() => {
-    void startCamera();
-    return () => {
-      stopStream();
-      if (alertTimeoutRef.current) clearTimeout(alertTimeoutRef.current);
+    if (!active) return;
+
+    let blurArmed = false;
+    let quietUntil = 0;
+    const armTimer = setTimeout(() => {
+      blurArmed = true;
+    }, 400);
+
+    const fullscreenQuiet = () =>
+      Date.now() <
+      ((window as Window & { __cbtFullscreenUntil?: number }).__cbtFullscreenUntil ?? 0);
+
+    const warn = (reason: string, fromKey = false) => {
+      if (Date.now() < quietUntil || fullscreenQuiet()) return;
+      if (!fromKey && !blurArmed) return;
+      quietUntil = Date.now() + 1500;
+      onWarningRef.current(reason);
     };
-  }, [startCamera, stopStream]);
 
-  // Motion Detection Loop (Canvas Pixel Diffing)
-  useEffect(() => {
-    if (!isLive) return;
+    const onFullscreen = () => {
+      const doc = document as Document & {
+        webkitFullscreenElement?: Element | null;
+        mozFullScreenElement?: Element | null;
+        msFullscreenElement?: Element | null;
+      };
+      if (
+        document.fullscreenElement ||
+        doc.webkitFullscreenElement ||
+        doc.mozFullScreenElement ||
+        doc.msFullscreenElement
+      ) {
+        (window as Window & { __cbtFullscreenUntil?: number }).__cbtFullscreenUntil = Date.now() + 1500;
+        return;
+      }
+      warn('The examination left full screen.', true);
+    };
 
-    if (!canvasRef.current) {
-      canvasRef.current = document.createElement('canvas');
-      canvasRef.current.width = 64;
-      canvasRef.current.height = 48;
-    }
+    let blurTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) return;
+    const onVisibility = () => {
+      if (document.hidden) warn('The examination window was hidden or switched.');
+    };
 
-    const interval = setInterval(() => {
-      const video = videoRef.current;
-      if (!video || video.readyState < 2) return;
-
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = frame.data;
-      const prevData = prevFrameDataRef.current;
-
-      if (prevData?.length === data.length) {
-        let totalDiff = 0;
-        const totalPixels = data.length / 4;
-
-        // Sample every 4th pixel for performance
-        for (let i = 0; i < data.length; i += 16) {
-          const rDiff = Math.abs(data[i] - prevData[i]);
-          const gDiff = Math.abs(data[i + 1] - prevData[i + 1]);
-          const bDiff = Math.abs(data[i + 2] - prevData[i + 2]);
-          const pixelDiff = (rDiff + gDiff + bDiff) / 3;
-          if (pixelDiff > 25) {
-            totalDiff += 1;
-          }
+    const onBlur = () => {
+      if (blurTimer) clearTimeout(blurTimer);
+      blurTimer = setTimeout(() => {
+        if (!document.hasFocus() || document.hidden) {
+          warn('The examination window lost focus.');
         }
-
-        const sampledPixels = totalPixels / 4;
-        const diffRatio = totalDiff / sampledPixels;
-        const score = Math.min(100, Math.round(diffRatio * 300));
-        setMotionScore(score);
-
-        // Movement Threshold
-        if (score > 35) {
-          triggerMovementAlert(
-            isScreenSharing
-              ? 'Rapid screen movement detected!'
-              : 'Unusual candidate movement detected!',
-          );
-        }
-      }
-
-      // Store clone of current frame
-      prevFrameDataRef.current = new Uint8ClampedArray(data);
-    }, 250);
-
-    return () => clearInterval(interval);
-  }, [isLive, isScreenSharing, triggerMovementAlert]);
-
-  // Tab switch & Unwanted screen blur tracking
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setTabWarningCount((prev) => prev + 1);
-        setLastAlertMessage('Warning: Browser tab switched or minimized!');
-        setMovementDetected(true);
-      }
+      }, 200);
     };
 
-    const handleWindowBlur = () => {
-      setTabWarningCount((prev) => prev + 1);
-      setLastAlertMessage('Warning: Exam window lost focus!');
-      setMovementDetected(true);
+    const onFocus = () => {
+      if (blurTimer) clearTimeout(blurTimer);
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('blur', handleWindowBlur);
+    const blockMenu = (event: Event) => {
+      event.preventDefault();
+    };
+
+    const blockClipboard = (event: Event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('[data-allow-copy]')) return;
+      event.preventDefault();
+    };
+
+    const onKey = (event: KeyboardEvent) => {
+      const key = event.key;
+      const lower = key.toLowerCase();
+      if (key === 'F11' || lower === 'f11' || event.code === 'F11') {
+        (window as Window & { __cbtFullscreenUntil?: number }).__cbtFullscreenUntil = Date.now() + 1500;
+        return;
+      }
+      if (fullscreenQuiet()) return;
+      if (key === 'Escape') return;
+      const shortcut =
+        key === 'Tab' ||
+        key === 'Meta' ||
+        key === 'OS' ||
+        event.metaKey ||
+        event.altKey ||
+        key === 'PrintScreen' ||
+        lower === 'f12' ||
+        ((event.ctrlKey || event.metaKey) &&
+          (lower === 't' || lower === 'n' || lower === 'w' || lower === 'r' || key === 'Tab'));
+      if (!shortcut) return;
+      event.preventDefault();
+      warn('A restricted key was used.', true);
+    };
+
+    document.addEventListener('visibilitychange', onVisibility);
+    document.addEventListener('fullscreenchange', onFullscreen);
+    document.addEventListener('webkitfullscreenchange', onFullscreen);
+    document.addEventListener('mozfullscreenchange', onFullscreen);
+    document.addEventListener('MSFullscreenChange', onFullscreen);
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('contextmenu', blockMenu);
+    document.addEventListener('copy', blockClipboard);
+    document.addEventListener('cut', blockClipboard);
+    document.addEventListener('paste', blockClipboard);
+    document.addEventListener('dragstart', blockMenu);
+    document.addEventListener('keydown', onKey);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('blur', handleWindowBlur);
+      clearTimeout(armTimer);
+      if (blurTimer) clearTimeout(blurTimer);
+      document.removeEventListener('visibilitychange', onVisibility);
+      document.removeEventListener('fullscreenchange', onFullscreen);
+      document.removeEventListener('webkitfullscreenchange', onFullscreen);
+      document.removeEventListener('mozfullscreenchange', onFullscreen);
+      document.removeEventListener('MSFullscreenChange', onFullscreen);
+      window.removeEventListener('blur', onBlur);
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('contextmenu', blockMenu);
+      document.removeEventListener('copy', blockClipboard);
+      document.removeEventListener('cut', blockClipboard);
+      document.removeEventListener('paste', blockClipboard);
+      document.removeEventListener('dragstart', blockMenu);
+      document.removeEventListener('keydown', onKey);
     };
-  }, []);
-
-  return {
-    videoRef,
-    isLive,
-    isScreenSharing,
-    movementDetected,
-    motionScore,
-    tabWarningCount,
-    movementWarningCount,
-    lastAlertMessage,
-    permissionDenied,
-    startCamera,
-    startScreenShare,
-    stopStream,
-  };
+  }, [active]);
 }

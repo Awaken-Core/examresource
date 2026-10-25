@@ -1444,7 +1444,7 @@ export class TestSeriesService {
       subjectId,
       chapterId,
       durationMinutes: input.durationMinutes ?? null,
-      maxAttempts: input.maxAttempts ?? null,
+      maxAttempts: null,
       languages: input.languages,
       instructions: input.instructions ?? null,
       positiveMarks: input.positiveMarks,
@@ -1550,8 +1550,7 @@ export class TestSeriesService {
     if (input.access !== undefined) updatePayload.access = input.access;
     if (input.durationMinutes !== undefined)
       updatePayload.durationMinutes = input.durationMinutes;
-    if (input.maxAttempts !== undefined)
-      updatePayload.maxAttempts = input.maxAttempts;
+    updatePayload.maxAttempts = null;
     if (input.languages !== undefined)
       updatePayload.languages = input.languages;
     if (input.instructions !== undefined)
@@ -1791,7 +1790,7 @@ export class TestSeriesService {
       subjectId: sourceTest.subjectId,
       chapterId: sourceTest.chapterId,
       durationMinutes: sourceTest.durationMinutes,
-      maxAttempts: sourceTest.maxAttempts,
+      maxAttempts: null,
       languages: sourceTest.languages,
       instructions: sourceTest.instructions,
       positiveMarks: sourceTest.positiveMarks,
@@ -2278,7 +2277,7 @@ export class TestSeriesService {
       subjectId: doc.subjectId ? doc.subjectId.toString() : null,
       chapterId: doc.chapterId ? doc.chapterId.toString() : null,
       durationMinutes: doc.durationMinutes || null,
-      maxAttempts: doc.maxAttempts ?? null,
+      maxAttempts: null,
       languages: doc.languages || ['Hindi', 'English'],
       instructions: doc.instructions || null,
       positiveMarks: doc.positiveMarks ?? 1,

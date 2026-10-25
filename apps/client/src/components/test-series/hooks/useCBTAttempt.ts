@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { API_URL } from '../../../lib/api';
-import type { AttemptDetail, PublishedTestMetadata, QuestionPaletteStatus } from '../types/cbt';
+import type {
+  AttemptDetail,
+  PublishedTestMetadata,
+  QuestionPaletteStatus,
+} from '../types/cbt';
 
 interface UseCBTAttemptProps {
   readonly attemptId: string;
@@ -12,13 +16,9 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
   const [loading, setLoading] = useState(true);
   const [fatalError, setFatalError] = useState<string | null>(null);
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
+  const [paused, setPaused] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
-  // Saving state
-  const [isSaving, setIsSaving] = useState(false);
-  const [savingAction, setSavingAction] = useState<
-    'save_and_next' | 'mark_review' | 'clear' | null
-  >(null);
   const [networkError, setNetworkError] = useState<string | null>(null);
 
   // Submit modal state
@@ -26,8 +26,20 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const hasAutoSubmitted = useRef(false);
+  const submitLockRef = useRef(false);
   const questionOpenedAtRef = useRef(Date.now());
   const sectionOpenedAtRef = useRef(Date.now());
+  const saveGenerationRef = useRef(0);
+  const saveChainRef = useRef(Promise.resolve());
+
+  const enqueueSave = useCallback((job: () => Promise<boolean>) => {
+    const run = saveChainRef.current.then(job, job);
+    saveChainRef.current = run.then(
+      () => undefined,
+      () => undefined,
+    );
+    return run;
+  }, []);
 
   // Load Attempt and Test Metadata
   const loadAttempt = useCallback(async () => {
@@ -63,10 +75,14 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
         return;
       }
 
-      if (data.expiresAt) {
+      if (data.pausedAt && data.expiresAt) {
+        const frozen = new Date(data.expiresAt).getTime() - new Date(data.pausedAt).getTime();
+        setRemainingSeconds(Math.max(0, Math.floor(frozen / 1000)));
+        setPaused(true);
+      } else if (data.expiresAt) {
         const diffMs = new Date(data.expiresAt).getTime() - Date.now();
-        const diffSecs = Math.max(0, Math.floor(diffMs / 1000));
-        setRemainingSeconds(diffSecs);
+        setRemainingSeconds(Math.max(0, Math.floor(diffMs / 1000)));
+        setPaused(false);
       }
 
       if (data.sectionProgress?.length) {
@@ -87,26 +103,115 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
 
   // Save single question answer state
   const saveAnswerState = useCallback(
-    async (
+    (
       index: number,
       payload: {
         readonly status?: QuestionPaletteStatus;
         readonly optionIds?: readonly string[];
         readonly numericalValue?: string | null;
         readonly timeSpentSeconds?: number;
+        readonly quiet?: boolean;
+        readonly background?: boolean;
       },
     ): Promise<boolean> => {
-      if (attempt?.status !== 'in_progress') return false;
-      const ans = attempt.answers[index];
-      if (!ans) return false;
+      return enqueueSave(async () => {
+        if (attempt?.status !== 'in_progress') return false;
+        const ans = attempt.answers[index];
+        if (!ans) return false;
+        const generation = ++saveGenerationRef.current;
 
-      setIsSaving(true);
-      setNetworkError(null);
+        try {
+          const res = await fetch(
+            `${API_URL}/exam-attempts/${attempt.id}/questions/${ans.questionId}/answer`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Protection': '1',
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                optionIds: payload.optionIds ?? ans.optionIds,
+                numericalValue: payload.numericalValue ?? ans.numericalValue,
+                status: payload.status ?? ans.status,
+                timeSpentSeconds: payload.timeSpentSeconds ?? ans.timeSpentSeconds,
+              }),
+            },
+          );
 
-      try {
-        const res = await fetch(
-          `${API_URL}/exam-attempts/${attempt.id}/questions/${ans.questionId}/answer`,
-          {
+          if (!res.ok) {
+            throw new Error('Failed to save response to server. Please retry.');
+          }
+
+          const updatedAttempt: AttemptDetail = await res.json();
+          if (generation === saveGenerationRef.current) {
+            setAttempt(updatedAttempt);
+            questionOpenedAtRef.current = Date.now();
+          }
+          return true;
+        } catch (err: unknown) {
+          const msg =
+            err instanceof Error ? err.message : 'Network error saving response. Please retry.';
+          if (generation === saveGenerationRef.current) setNetworkError(msg);
+          return false;
+        }
+      });
+    },
+    [attempt, enqueueSave],
+  );
+
+  // Clear Response
+  const handleClearResponse = useCallback(
+    (currentIndex: number): Promise<boolean> => {
+      return enqueueSave(async () => {
+        if (!attempt || attempt.status !== 'in_progress') return false;
+        const activeAnswer = attempt.answers[currentIndex];
+        if (!activeAnswer) return false;
+        const generation = ++saveGenerationRef.current;
+
+        try {
+          const res = await fetch(
+            `${API_URL}/exam-attempts/${attempt.id}/questions/${activeAnswer.questionId}/answer`,
+            {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-Protection': '1',
+              },
+              credentials: 'include',
+            },
+          );
+
+          if (!res.ok) {
+            throw new Error('Could not clear response. Please retry.');
+          }
+
+          const updatedAttempt: AttemptDetail = await res.json();
+          if (generation === saveGenerationRef.current) setAttempt(updatedAttempt);
+          return true;
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Error clearing response. Please retry.';
+          if (generation === saveGenerationRef.current) setNetworkError(msg);
+          return false;
+        }
+      });
+    },
+    [attempt, enqueueSave],
+  );
+
+  // Save Section Time
+  const saveSectionTime = useCallback(
+    (sectionId: string | null | undefined): Promise<boolean> => {
+      return enqueueSave(async () => {
+        if (!attempt || !sectionId) return true;
+        const section = attempt.sectionProgress.find((item) => item.sectionId === sectionId);
+        if (!section) return true;
+
+        const elapsed = Math.max(0, Math.floor((Date.now() - sectionOpenedAtRef.current) / 1000));
+        const generation = ++saveGenerationRef.current;
+
+        try {
+          const res = await fetch(`${API_URL}/exam-attempts/${attempt.id}/section-progress`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -114,119 +219,36 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
             },
             credentials: 'include',
             body: JSON.stringify({
-              optionIds: payload.optionIds ?? ans.optionIds,
-              numericalValue:
-                payload.numericalValue !== undefined ? payload.numericalValue : ans.numericalValue,
-              status: payload.status ?? ans.status,
-              timeSpentSeconds: payload.timeSpentSeconds ?? ans.timeSpentSeconds,
+              sectionId,
+              timeSpentSeconds: section.timeSpentSeconds + elapsed,
+              isCompleted: section.isCompleted,
             }),
-          },
-        );
-
-        if (!res.ok) {
-          throw new Error('Failed to save response to server. Please retry.');
+          });
+          if (!res.ok) return false;
+          const updated: AttemptDetail = await res.json();
+          if (generation === saveGenerationRef.current) {
+            setAttempt((prev) =>
+              prev ? { ...prev, sectionProgress: updated.sectionProgress } : updated,
+            );
+            sectionOpenedAtRef.current = Date.now();
+          }
+          return true;
+        } catch {
+          return false;
         }
-
-        const updatedAttempt: AttemptDetail = await res.json();
-        setAttempt(updatedAttempt);
-        questionOpenedAtRef.current = Date.now();
-        return true;
-      } catch (err: unknown) {
-        const msg =
-          err instanceof Error ? err.message : 'Network error saving response. Please retry.';
-        setNetworkError(msg);
-        return false;
-      } finally {
-        setIsSaving(false);
-      }
+      });
     },
-    [attempt],
-  );
-
-  // Clear Response
-  const handleClearResponse = useCallback(
-    async (currentIndex: number): Promise<boolean> => {
-      if (!attempt || isSaving || submitting) return false;
-      const activeAnswer = attempt.answers[currentIndex];
-      if (!activeAnswer) return false;
-
-      setIsSaving(true);
-      setSavingAction('clear');
-      setNetworkError(null);
-
-      try {
-        const res = await fetch(
-          `${API_URL}/exam-attempts/${attempt.id}/questions/${activeAnswer.questionId}/answer`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-Protection': '1',
-            },
-            credentials: 'include',
-          },
-        );
-
-        if (!res.ok) {
-          throw new Error('Could not clear response. Please retry.');
-        }
-
-        const updatedAttempt: AttemptDetail = await res.json();
-        setAttempt(updatedAttempt);
-        return true;
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Error clearing response. Please retry.';
-        setNetworkError(msg);
-        return false;
-      } finally {
-        setIsSaving(false);
-        setSavingAction(null);
-      }
-    },
-    [attempt, isSaving, submitting],
-  );
-
-  // Save Section Time
-  const saveSectionTime = useCallback(
-    async (sectionId: string | null | undefined): Promise<boolean> => {
-      if (!attempt || !sectionId) return true;
-      const section = attempt.sectionProgress.find((item) => item.sectionId === sectionId);
-      if (!section) return true;
-
-      const elapsed = Math.max(0, Math.floor((Date.now() - sectionOpenedAtRef.current) / 1000));
-
-      try {
-        const res = await fetch(`${API_URL}/exam-attempts/${attempt.id}/section-progress`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Protection': '1',
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            sectionId,
-            timeSpentSeconds: section.timeSpentSeconds + elapsed,
-            isCompleted: section.isCompleted,
-          }),
-        });
-        if (!res.ok) return false;
-        const updated: AttemptDetail = await res.json();
-        setAttempt(updated);
-        sectionOpenedAtRef.current = Date.now();
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    [attempt],
+    [attempt, enqueueSave],
   );
 
   // Final Submit
   const handleFinalSubmit = useCallback(
     async (isAutoExpire = false) => {
-      if (!attempt || submitting) return;
+      if (!attempt || submitLockRef.current) return;
+      submitLockRef.current = true;
       setSubmitting(true);
       setSubmitError(null);
+      await saveChainRef.current;
 
       try {
         const res = await fetch(`${API_URL}/exam-attempts/${attempt.id}/submit`, {
@@ -264,15 +286,16 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
         setSubmitError(errMsg);
         setNetworkError(errMsg);
       } finally {
+        submitLockRef.current = false;
         setSubmitting(false);
       }
     },
-    [attempt, submitting],
+    [attempt],
   );
 
-  // Auto-expire countdown timer
+  // Auto-expire countdown timer. A pause freezes the displayed clock.
   useEffect(() => {
-    if (remainingSeconds === null) return;
+    if (paused || remainingSeconds === null) return;
     if (remainingSeconds <= 0) {
       if (!hasAutoSubmitted.current) {
         hasAutoSubmitted.current = true;
@@ -296,7 +319,49 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [remainingSeconds, handleFinalSubmit]);
+  }, [remainingSeconds, handleFinalSubmit, paused]);
+
+  const applyClock = useCallback((data: AttemptDetail) => {
+    if (data.pausedAt && data.expiresAt) {
+      const frozen = new Date(data.expiresAt).getTime() - new Date(data.pausedAt).getTime();
+      setRemainingSeconds(Math.max(0, Math.floor(frozen / 1000)));
+      setPaused(true);
+      return;
+    }
+    setPaused(false);
+    if (data.expiresAt) {
+      const diffMs = new Date(data.expiresAt).getTime() - Date.now();
+      setRemainingSeconds(Math.max(0, Math.floor(diffMs / 1000)));
+    }
+  }, []);
+
+  const setClockFromAttempt = useCallback(
+    async (path: 'pause' | 'resume') => {
+      if (!attempt || attempt.status !== 'in_progress') return false;
+      if (path === 'pause') setPaused(true);
+      try {
+        const res = await fetch(`${API_URL}/exam-attempts/${attempt.id}/${path}`, {
+          method: 'POST',
+          headers: { 'X-CSRF-Protection': '1' },
+          credentials: 'include',
+        });
+        if (!res.ok) throw new Error(path === 'pause' ? 'Could not pause the test.' : 'Could not resume the test.');
+        const updated: AttemptDetail = await res.json();
+        setAttempt(updated);
+        applyClock(updated);
+        return true;
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'The clock could not be updated.';
+        setNetworkError(msg);
+        if (path === 'pause') setPaused(false);
+        return false;
+      }
+    },
+    [attempt, applyClock],
+  );
+
+  const pauseTest = useCallback(() => setClockFromAttempt('pause'), [setClockFromAttempt]);
+  const resumeTest = useCallback(() => setClockFromAttempt('resume'), [setClockFromAttempt]);
 
   const calculateQuestionElapsedSeconds = useCallback(
     (index: number) => {
@@ -315,11 +380,11 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
     loading,
     fatalError,
     remainingSeconds,
+    paused,
+    pauseTest,
+    resumeTest,
     activeSectionId,
     setActiveSectionId,
-    isSaving,
-    savingAction,
-    setSavingAction,
     networkError,
     setNetworkError,
     submitting,

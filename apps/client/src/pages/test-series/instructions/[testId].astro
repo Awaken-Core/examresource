@@ -1,6 +1,7 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import { siteName, siteDomain } from '../../../data/site';
+import { siteName, siteDomain, siteUrl } from '../../../data/site';
+import { fetchPublicJson } from '../../../lib/publicFetch';
 import { TestInstructions } from '../../../components/test-series/TestInstructions';
 
 const { testId } = Astro.params;
@@ -9,17 +10,86 @@ if (!testId) {
   return Astro.redirect('/test-series');
 }
 
-// Edge CDN caching: 60s
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
 
-const pageTitle = `Test Instructions | ${siteName}`;
-const pageDescription = `Read the official examination guidelines, section breakdown, and marking scheme before starting your timed test on ${siteDomain}.`;
+interface TestSeo {
+  title?: string;
+  description?: string | null;
+  durationMinutes?: number | null;
+  totalQuestionsCount?: number;
+  positiveMarks?: number;
+  negativeMarks?: number;
+  negativeMarkingEnabled?: boolean;
+  languages?: string[];
+  testMode?: string;
+}
+
+const testSeo = await fetchPublicJson<TestSeo>(`/test-series/tests/${encodeURIComponent(testId)}`);
+const testTitle = testSeo?.title?.trim();
+const durationText = testSeo?.durationMinutes ? `${testSeo.durationMinutes} minutes` : 'the allotted time';
+const questionText = testSeo?.totalQuestionsCount ? `${testSeo.totalQuestionsCount} questions` : 'the published question set';
+const markingText = testSeo?.negativeMarkingEnabled
+  ? `A correct answer scores +${testSeo.positiveMarks ?? 1}. An incorrect answer scores -${testSeo.negativeMarks ?? 0}.`
+  : `A correct answer scores +${testSeo?.positiveMarks ?? 1}. There is no negative marking.`;
+const pageTitle = testTitle
+  ? `${testTitle} instructions | ${siteName}`
+  : `Test instructions | ${siteName}`;
+const pageDescription = testSeo?.description?.trim()
+  || (testTitle
+    ? `Read the rules for ${testTitle} before the timed paper. ${questionText} in ${durationText}. Agree to the code of conduct before any answer is saved.`
+    : `Read the official examination guidelines, section breakdown, and marking scheme before starting your timed test on ${siteDomain}.`);
+const canonicalUrl = `${siteUrl}/test-series/instructions/${testId}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Quiz',
+      name: testTitle || 'Mock test',
+      description: pageDescription,
+      url: canonicalUrl,
+      educationalUse: 'assessment',
+      inLanguage: testSeo?.languages?.length ? testSeo.languages : ['English', 'Hindi'],
+      provider: { '@type': 'Organization', name: siteName, url: siteUrl },
+      timeRequired: testSeo?.durationMinutes ? `PT${testSeo.durationMinutes}M` : undefined,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'When do the test questions open?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The questions open after you agree to the code of conduct. Until then, responses are not recorded.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Which response is graded?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Save and next stores the current response. On the last question, save and end asks you to confirm that you are ready to end. The latest saved response is graded.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How is the paper laid out?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'The question stays on the left and the options stay on the right. Single-correct choices use a round control. Multiple-correct choices use a square control. The palette marks the current question.',
+          },
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonicalUrl={`${Astro.url.origin}/test-series/instructions/${testId}`}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
 >
   <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
     {/* Breadcrumbs */}
@@ -37,5 +107,24 @@ const pageDescription = `Read the official examination guidelines, section break
 
     {/* Dynamic Test Instructions Island */}
     <TestInstructions client:load testId={testId} />
+
+    <section class="max-w-3xl mt-8 space-y-4" aria-labelledby="exam-rules-heading">
+      <h2 id="exam-rules-heading" class="text-lg font-bold text-slate-900 dark:text-white">
+        How this computer-based paper runs
+      </h2>
+      <p class="text-sm leading-6 text-muted">
+        {testTitle ? `${testTitle} contains ${questionText} and runs for ${durationText}.` : `This paper contains ${questionText} and runs for ${durationText}.`}
+        {' '}{markingText}
+        The question stays on the left. The options stay on the right. A round control means one answer. A square control means every correct option must be selected.
+      </p>
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white">When do the questions open?</h3>
+      <p class="text-sm leading-6 text-muted">
+        After you agree to the code of conduct. Until that agreement, the question palette does not record an answer.
+      </p>
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white">Which response is graded?</h3>
+      <p class="text-sm leading-6 text-muted">
+        Save and next stores the response before the next question. On the last question, save and end asks whether you are ready to end the examination. The latest saved response is the one that counts.
+      </p>
+    </section>
   </div>
 </Layout>

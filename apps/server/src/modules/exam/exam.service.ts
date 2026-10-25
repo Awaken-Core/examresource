@@ -203,17 +203,6 @@ export class ExamService {
       userId: userObjectId,
     });
 
-    // Check maxAttempts policy
-    if (
-      exam.maxAttempts &&
-      exam.maxAttempts > 0 &&
-      prevAttemptsCount >= exam.maxAttempts
-    ) {
-      throw new ConflictException(
-        `You have reached the maximum allowed attempts (${exam.maxAttempts}) for this test.`,
-      );
-    }
-
     const activeAttempt = await this.testAttemptModel
       .findOne({
         testId: examObjectId,
@@ -226,6 +215,7 @@ export class ExamService {
       // Check if expired while in progress
       if (
         activeAttempt.expiresAt &&
+        !activeAttempt.pausedAt &&
         new Date(activeAttempt.expiresAt).getTime() <= Date.now()
       ) {
         await this.autoFinalizeAttempt(activeAttempt);
@@ -456,6 +446,7 @@ export class ExamService {
     if (
       doc.status === 'in_progress' &&
       doc.expiresAt &&
+      !doc.pausedAt &&
       new Date(doc.expiresAt).getTime() <= Date.now()
     ) {
       return this.autoFinalizeAttempt(doc);
@@ -606,6 +597,28 @@ export class ExamService {
     }
 
     return this.getAttempt(attemptId, user);
+  }
+
+  async pauseAttempt(id: string, user: CurrentUser) {
+    const attempt = await this.requireActiveAttempt(id, user);
+    if (attempt.pausedAt) return this.formatAttempt(attempt, false);
+    const updated = await this.testAttemptModel
+      .findByIdAndUpdate(attempt._id, { pausedAt: new Date() }, { new: true })
+      .lean();
+    return this.formatAttempt(updated, false);
+  }
+
+  async resumeAttempt(id: string, user: CurrentUser) {
+    const attempt = await this.requireActiveAttempt(id, user);
+    if (!attempt.pausedAt) return this.formatAttempt(attempt, false);
+    const pausedMs = Math.max(0, Date.now() - new Date(attempt.pausedAt).getTime());
+    const expiresAt = attempt.expiresAt
+      ? new Date(new Date(attempt.expiresAt).getTime() + pausedMs)
+      : null;
+    const updated = await this.testAttemptModel
+      .findByIdAndUpdate(attempt._id, { pausedAt: null, expiresAt }, { new: true })
+      .lean();
+    return this.formatAttempt(updated, false);
   }
 
   async submit(id: string, user: CurrentUser) {
@@ -863,7 +876,11 @@ export class ExamService {
     if (doc.status !== 'in_progress') {
       throw new ConflictException('This exam attempt has already ended.');
     }
-    if (doc.expiresAt && new Date(doc.expiresAt).getTime() <= Date.now()) {
+    if (
+      doc.expiresAt &&
+      !doc.pausedAt &&
+      new Date(doc.expiresAt).getTime() <= Date.now()
+    ) {
       await this.autoFinalizeAttempt(doc);
       throw new ConflictException(
         'This exam attempt has expired and was automatically finalized.',
@@ -1203,6 +1220,7 @@ export class ExamService {
       startedAt: doc.startedAt,
       endedAt: doc.endedAt || null,
       expiresAt: doc.expiresAt || null,
+      pausedAt: doc.pausedAt || null,
       timeSpentSeconds: doc.timeSpentSeconds || null,
       questionOrder: (doc.questionOrder || []).map((qId: any) =>
         qId?.toString(),

@@ -47,18 +47,17 @@ export function CBTSubmitModal({
             </svg>
           </div>
           <div>
-            <h3 id="submit-modal-title" className="text-base font-bold text-white">
-              Confirm Final Submission
+            <h3 id="submit-modal-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
+              End examination
             </h3>
-            <p className="text-[11px] text-muted">
-              Are you sure you are ready to end this examination?
-            </p>
+            <p className="text-[11px] text-muted">Are you ready to end this examination?</p>
           </div>
         </div>
 
-        <p className="text-xs text-slate-300 leading-relaxed">
-          Please review your attempt summary below. Once submitted, your answers will be locked for
-          evaluation and you will not be able to return to this test.
+        <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+          The latest saved response on each question is the one that will be graded. After you end
+          the examination, the answer sheet is locked and this session cannot be reopened. If you
+          are not ready, return to the paper and keep working.
         </p>
 
         {/* Official Assessment Summary Grid */}
@@ -68,7 +67,7 @@ export function CBTSubmitModal({
               <span className="text-[10px] text-muted block uppercase font-medium">
                 Total Questions
               </span>
-              <span className="text-base font-bold text-white">{totalQuestions}</span>
+              <span className="text-base font-bold text-slate-900 tabular-nums dark:text-slate-100">{totalQuestions}</span>
             </div>
 
             <div className="p-3 bg-emerald-500/5">
@@ -131,7 +130,7 @@ export function CBTSubmitModal({
               submitting ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'
             }`}
           >
-            Return to Exam
+            Return to the examination
           </button>
           <button
             type="button"
@@ -144,7 +143,7 @@ export function CBTSubmitModal({
             {submitting && (
               <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             )}
-            <span>{submitting ? 'Submitting & Evaluating...' : 'Yes, End Test'}</span>
+            <span>{submitting ? 'Ending examination…' : 'Yes, I am ready to end'}</span>
           </button>
         </div>
       </div>

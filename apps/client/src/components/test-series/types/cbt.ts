@@ -5,6 +5,8 @@ export type QuestionPaletteStatus =
   | 'marked_for_review'
   | 'answered_and_marked_for_review';
 
+export type SavingActionType = 'save_and_next' | 'mark_review' | 'clear' | null;
+
 export interface QuestionOption {
   readonly id: string;
   readonly _id?: string;
@@ -60,6 +62,7 @@ export interface AttemptDetail {
   readonly startedAt: string;
   readonly endedAt?: string | null;
   readonly expiresAt?: string | null;
+  readonly pausedAt?: string | null;
   readonly timeSpentSeconds?: number | null;
   readonly questionOrder: readonly string[];
   readonly sectionProgress: readonly SectionProgressItem[];

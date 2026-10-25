@@ -27,7 +27,7 @@ export function CBTCodeOfConductModal({
         <div className="flex items-center justify-between pb-3 border-b border-border/80">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-            <h2 id="conduct-title" className="text-base font-bold text-white">
+            <h2 id="conduct-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
               Official Examination Instructions & Code of Conduct
             </h2>
           </div>
@@ -35,7 +35,7 @@ export function CBTCodeOfConductModal({
             type="button"
             onClick={onClose}
             aria-label="Close Instructions"
-            className="w-8 h-8 rounded-lg bg-surface-raised border border-border text-muted hover:text-white flex items-center justify-center cursor-pointer transition"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-raised text-muted hover:text-slate-900 dark:hover:text-slate-100"
           >
             <svg
               className="w-4 h-4"
@@ -54,19 +54,19 @@ export function CBTCodeOfConductModal({
           </button>
         </div>
 
-        <div className="space-y-4 text-xs text-slate-300 max-h-[60vh] overflow-y-auto pr-2 leading-relaxed">
+        <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-2 text-xs leading-relaxed text-slate-700 dark:text-slate-300">
           <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200">
-            <p className="font-semibold text-white mb-0.5">{testTitle}</p>
+            <p className="mb-0.5 font-semibold text-slate-900 dark:text-slate-100">{testTitle}</p>
             <p className="text-[11px] text-blue-300">
               Candidate Examination Session &bull; Standard NPTEL / National CBT Protocol
             </p>
           </div>
 
           <section className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+            <h3 className="text-xs font-bold tracking-wider text-slate-900 uppercase dark:text-slate-100">
               1. General Instructions
             </h3>
-            <ul className="list-disc pl-5 space-y-1 text-slate-300">
+            <ul className="list-disc space-y-1 pl-5 text-slate-700 dark:text-slate-300">
               <li>
                 The countdown clock in the top bar indicates the remaining time. When the timer
                 reaches zero, the examination ends automatically.
@@ -88,7 +88,7 @@ export function CBTCodeOfConductModal({
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+            <h3 className="text-xs font-bold tracking-wider text-slate-900 uppercase dark:text-slate-100">
               2. Question Palette Legend
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
@@ -105,14 +105,14 @@ export function CBTCodeOfConductModal({
                 <span>You have not answered the question.</span>
               </div>
               <div className="flex items-center gap-2.5 p-2 rounded-lg bg-surface-raised border border-border">
-                <span className="w-5 h-5 rounded-md bg-purple-500 text-white font-bold flex items-center justify-center text-[10px]">
-                  ⚐
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-[10px] text-white">
+                  ●
                 </span>
                 <span>Marked for review without answering.</span>
               </div>
               <div className="flex items-center gap-2.5 p-2 rounded-lg bg-surface-raised border border-border">
-                <span className="w-5 h-5 rounded-md bg-indigo-500 text-white font-bold flex items-center justify-center text-[10px]">
-                  ★
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-600 text-[10px] text-white">
+                  ●
                 </span>
                 <span>Answered & marked for review (evaluated).</span>
               </div>
@@ -126,17 +126,16 @@ export function CBTCodeOfConductModal({
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+            <h3 className="text-xs font-bold tracking-wider text-slate-900 uppercase dark:text-slate-100">
               3. Academic Integrity & Proctoring Code of Conduct
             </h3>
-            <ul className="list-disc pl-5 space-y-1 text-slate-300">
+            <ul className="list-disc space-y-1 pl-5 text-slate-700 dark:text-slate-300">
               <li>
-                <strong>Tab Switching:</strong> Do not navigate away from the examination tab.
-                Window blur and tab switches are logged automatically.
+                The paper opens in full screen. Switching tabs or leaving this window shows a reminder
+                to practise in good faith. The examination stays open.
               </li>
               <li>
-                <strong>Movement Monitoring:</strong> Excessive body or screen movement outside
-                normal answering actions triggers proctoring flags.
+                Copying the paper and screenshots stay blocked.
               </li>
               <li>
                 <strong>External Assistance:</strong> Use of secondary devices, browsers, or AI

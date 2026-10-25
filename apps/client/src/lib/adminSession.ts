@@ -21,7 +21,7 @@ export type DeskGate = 'login' | 'home' | 'posts' | 'ok';
 /** Public desk path. `/admin` stays unused so a casual visit does not open the login screen. */
 export const DESK_PATH = '/administrator';
 
-/** Only staff destinations may be used as a post-login return path. */
+/** Staff desk paths and the test-series pages a learner was already viewing. */
 export function safeDeskReturn(value: string | null | undefined): string | null {
   if (!value) return null;
   if (!value.startsWith('/') || value.startsWith('//') || value.includes('\\') || value.includes('://')) return null;
@@ -30,7 +30,9 @@ export function safeDeskReturn(value: string | null | undefined): string | null 
     path === DESK_PATH ||
     path.startsWith(`${DESK_PATH}/`) ||
     path === '/editor' ||
-    path.startsWith('/editor/');
+    path.startsWith('/editor/') ||
+    path === '/test-series' ||
+    path.startsWith('/test-series/');
   return allowed ? value.slice(0, 240) : null;
 }
 

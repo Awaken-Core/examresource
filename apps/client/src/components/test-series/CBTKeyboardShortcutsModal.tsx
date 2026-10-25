@@ -9,13 +9,14 @@ export function CBTKeyboardShortcutsModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   const shortcuts = [
-    { key: '1, 2, 3, 4 / A, B, C, D', desc: 'Select option A, B, C, or D' },
-    { key: '→ or N', desc: 'Save & Next Question' },
-    { key: '← or P', desc: 'Previous Question' },
-    { key: 'F or M', desc: 'Toggle Flag / Mark for Review & Next' },
-    { key: 'C', desc: 'Clear Current Response' },
-    { key: 'Enter', desc: 'Confirm Save & Advance' },
-    { key: '?', desc: 'Open / Close this shortcuts guide' },
+    { key: 'A B C D or 1 2 3 4', desc: 'Choose that option. Square boxes accept more than one.' },
+    { key: '→  N  Enter', desc: 'Save and open the next question' },
+    { key: '←  P', desc: 'Previous question' },
+    { key: 'F  M', desc: 'Flag this question for review' },
+    { key: 'C', desc: 'Clear the current response' },
+    { key: 'Enter on the conduct page', desc: 'Agree and open the questions' },
+    { key: 'F11', desc: 'Toggle full screen mode' },
+    { key: '?', desc: 'Open or close this guide' },
   ];
 
   return (
@@ -28,7 +29,7 @@ export function CBTKeyboardShortcutsModal({ isOpen, onClose }: Props) {
         <div className="flex items-center justify-between pb-2 border-b border-border">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-            <h3 id="shortcuts-title" className="text-sm font-bold text-white">
+            <h3 id="shortcuts-title" className="text-sm font-bold text-slate-900 dark:text-slate-100">
               Keyboard Shortcuts Guide
             </h3>
           </div>
@@ -48,7 +49,7 @@ export function CBTKeyboardShortcutsModal({ isOpen, onClose }: Props) {
               key={sc.key}
               className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-surface-raised border border-border/70 text-xs"
             >
-              <span className="text-slate-300">{sc.desc}</span>
+              <span className="text-slate-700 dark:text-slate-300">{sc.desc}</span>
               <kbd className="px-2 py-1 rounded-md bg-black/40 border border-border/80 font-mono text-[11px] font-bold text-white shrink-0">
                 {sc.key}
               </kbd>

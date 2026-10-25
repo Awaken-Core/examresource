@@ -149,6 +149,16 @@ export class ExamController {
     );
   }
 
+  @Post('exam-attempts/:id/pause')
+  async pause(@Param('id') id: string, @Req() req: Request) {
+    return this.service.pauseAttempt(id, await this.auth.requireUser(req));
+  }
+
+  @Post('exam-attempts/:id/resume')
+  async resume(@Param('id') id: string, @Req() req: Request) {
+    return this.service.resumeAttempt(id, await this.auth.requireUser(req));
+  }
+
   @Post('exam-attempts/:id/submit')
   async submit(@Param('id') id: string, @Req() req: Request) {
     return this.service.submit(id, await this.auth.requireUser(req));

@@ -91,7 +91,6 @@ export function TestBuilderManager({
   const [formTotalQuestionsCount, setFormTotalQuestionsCount] =
     useState<number>(25);
   const [formDurationMinutes, setFormDurationMinutes] = useState<number>(30);
-  const [formMaxAttempts, setFormMaxAttempts] = useState<number>(3);
   const [formPositiveMarks, setFormPositiveMarks] = useState<number>(1);
   const [formNegativeMarkingEnabled, setFormNegativeMarkingEnabled] =
     useState<boolean>(true);
@@ -248,7 +247,6 @@ export function TestBuilderManager({
     setFormSetMode("fixed");
     setFormTotalQuestionsCount(25);
     setFormDurationMinutes(30);
-    setFormMaxAttempts(3);
     setFormPositiveMarks(1);
     setFormNegativeMarkingEnabled(true);
     setFormNegativeMarks(0.25);
@@ -305,7 +303,6 @@ export function TestBuilderManager({
     setFormSetMode(t.questionSetMode || "fixed");
     setFormTotalQuestionsCount(t.totalQuestionsCount || 25);
     setFormDurationMinutes(t.durationMinutes || 30);
-    setFormMaxAttempts(t.maxAttempts || 3);
     setFormPositiveMarks(t.positiveMarks || 1);
     setFormNegativeMarkingEnabled(t.negativeMarkingEnabled ?? true);
     setFormNegativeMarks(t.negativeMarks || 0);
@@ -539,7 +536,7 @@ export function TestBuilderManager({
         access: formAccess,
         languages: supportedLanguages,
         durationMinutes: Number(formDurationMinutes) || null,
-        maxAttempts: Number(formMaxAttempts) || null,
+        maxAttempts: null,
         positiveMarks: Number(formPositiveMarks) || 1,
         negativeMarkingEnabled: formNegativeMarkingEnabled,
         negativeMarks: formNegativeMarkingEnabled
@@ -1509,18 +1506,11 @@ export function TestBuilderManager({
 
                     <div className="space-y-1">
                       <label className="block font-semibold text-slate-700 dark:text-zinc-300">
-                        Max Attempt Limit
+                        Attempts
                       </label>
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="Unlimited"
-                        value={formMaxAttempts}
-                        onChange={(e) =>
-                          setFormMaxAttempts(parseInt(e.target.value, 10))
-                        }
-                        className="w-full px-3 py-2 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-slate-900 dark:text-zinc-100"
-                      />
+                      <p className="flex h-[42px] items-center rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm text-slate-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100">
+                        Unlimited
+                      </p>
                     </div>
                   </div>
 

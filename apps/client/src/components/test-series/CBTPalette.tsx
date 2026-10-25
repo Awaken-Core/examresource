@@ -1,112 +1,204 @@
-import React from 'react';
-import type { AttemptAnswer, PaletteSummaryCounts } from './types/cbt';
+import React, { useEffect, useRef, useState } from 'react';
+import type { AttemptAnswer } from './types/cbt';
 
 interface Props {
   readonly answers: readonly AttemptAnswer[];
   readonly currentIndex: number;
   readonly isActionDisabled: boolean;
-  readonly summaryCounts: PaletteSummaryCounts;
+  readonly locked: boolean;
   readonly onSelectQuestion: (index: number) => void;
 }
 
-export function CBTPalette({
+const VISIBLE = 20;
+
+function chipClass(status: string, current: boolean): string {
+  if (status === 'marked_for_review' || status === 'answered_and_marked_for_review') {
+    return current
+      ? 'bg-orange-500 text-white border-orange-600 ring-2 ring-slate-900 dark:ring-white'
+      : 'bg-orange-500 text-white border-orange-600';
+  }
+  if (current) return 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent';
+  if (status === 'answered') return 'bg-emerald-600 text-on-accent border-emerald-700';
+  if (status === 'not_answered') return 'bg-rose-600/90 text-on-accent border-rose-700';
+  return 'bg-surface text-slate-700 border-border dark:text-slate-200';
+}
+
+function isFlaggedStatus(status: string): boolean {
+  return status === 'marked_for_review' || status === 'answered_and_marked_for_review';
+}
+
+function Chevron({ direction }: { readonly direction: 'left' | 'right' }) {
+  const path = direction === 'left' ? 'M14.5 5 8 12l6.5 7' : 'M9.5 5 16 12l-6.5 7';
+  return (
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="h-4 w-4">
+      <path
+        d={path}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export const CBTPalette = React.memo(function CBTPalette({
   answers,
   currentIndex,
   isActionDisabled,
-  summaryCounts,
+  locked,
   onSelectQuestion,
 }: Props) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [windowStart, setWindowStart] = useState(0);
+  const [scrub, setScrub] = useState<number | null>(null);
+  const disabled = isActionDisabled || locked || answers.length === 0;
+  const columns = Math.max(answers.length, VISIBLE);
+  const maxStart = Math.max(0, answers.length - VISIBLE);
+  const start = Math.min(windowStart, maxStart);
+  const activeIndex = scrub ?? currentIndex;
+  const showDot = answers.length > 0 && activeIndex >= 0 && activeIndex < answers.length;
+
+  useEffect(() => {
+    setWindowStart((current) => {
+      const limit = Math.max(0, answers.length - VISIBLE);
+      if (answers.length === 0) return 0;
+      if (currentIndex < current) return currentIndex;
+      if (currentIndex >= current + VISIBLE) return Math.min(currentIndex - VISIBLE + 1, limit);
+      return Math.min(current, limit);
+    });
+  }, [currentIndex, answers.length]);
+
+  const slide = (delta: number) => {
+    setScrub(null);
+    setWindowStart((current) => Math.min(maxStart, Math.max(0, Math.min(current, maxStart) + delta)));
+  };
+
+  const indexFromClientX = (clientX: number) => {
+    const rect = viewportRef.current?.getBoundingClientRect();
+    if (!rect || rect.width <= 0 || answers.length === 0) return null;
+    const ratio = Math.min(0.999, Math.max(0, (clientX - rect.left) / rect.width));
+    const index = start + Math.floor(ratio * VISIBLE);
+    if (index < 0 || index >= answers.length) return null;
+    return index;
+  };
+
+  const commit = (index: number | null) => {
+    setScrub(null);
+    if (index !== null) onSelectQuestion(index);
+  };
+
   return (
-    <aside
-      aria-label="Question Navigation Palette"
-      className="bg-surface border border-border rounded-2xl p-4 sm:p-5 shadow-xs space-y-4 flex flex-col"
-    >
-      <div className="flex items-center justify-between pb-2 border-b border-border/70">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-1.5">
-          <svg
-            className="w-4 h-4 text-blue-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
-          Question Palette
-        </h2>
-        <span className="text-[11px] font-semibold text-muted px-2 py-0.5 rounded-md bg-surface-raised border border-border/50">
-          {currentIndex + 1} of {answers.length}
+    <section className="flex h-full min-h-0 flex-col justify-center gap-1.5 border-border px-2 py-2 lg:border-r lg:px-3" aria-label="Question palette">
+      <div className="flex h-5 items-center justify-between">
+        <h2 className="text-[10px] font-bold tracking-wider text-muted uppercase">Question slider</h2>
+        <span className="font-mono text-[11px] tabular-nums text-slate-900 dark:text-slate-100">
+          {answers.length === 0 ? '0' : currentIndex + 1}
+          <span className="text-muted"> / {answers.length}</span>
         </span>
       </div>
 
-      {/* Official 5-State Legend */}
-      <div className="grid grid-cols-2 gap-1.5 text-[10px] pb-3 border-b border-border/70">
-        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-          <span className="truncate">Answered ({summaryCounts.answered})</span>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => slide(-1)}
+          disabled={disabled || start === 0}
+          aria-label="Slide questions left"
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border text-slate-900 disabled:opacity-40 dark:text-slate-100"
+        >
+          <Chevron direction="left" />
+        </button>
+
+        <div ref={viewportRef} className="min-w-0 flex-1 overflow-hidden">
+          <div
+            className="motion-safe:transition-transform motion-safe:duration-200"
+            style={{
+              width: `${(columns / VISIBLE) * 100}%`,
+              transform: `translateX(calc(${-start} * 100% / ${columns}))`,
+            }}
+          >
+            <div
+              className="grid h-9 items-center"
+              style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
+            >
+              {answers.map((answer, index) => {
+                const current = index === currentIndex && !locked;
+                const flagged = isFlaggedStatus(answer.status);
+                return (
+                  <button
+                    key={answer.questionId || index}
+                    type="button"
+                    disabled={isActionDisabled || locked}
+                    onClick={() => onSelectQuestion(index)}
+                    aria-current={current ? 'true' : undefined}
+                    aria-label={`Question ${index + 1}${flagged ? ', flagged' : ''}, ${answer.status}`}
+                    className={`mx-auto flex aspect-square w-[86%] max-w-9 items-center justify-center rounded-full border text-[10px] font-bold tabular-nums disabled:opacity-40 sm:text-[11px] ${chipClass(answer.status, current)}`}
+                  >
+                    {index + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div
+              role="slider"
+              tabIndex={disabled ? -1 : 0}
+              aria-label="Jump to question. Release to open it."
+              aria-valuemin={1}
+              aria-valuemax={Math.max(answers.length, 1)}
+              aria-valuenow={answers.length === 0 ? 1 : activeIndex + 1}
+              aria-disabled={disabled}
+              className="relative mt-1 h-4 cursor-pointer touch-none"
+              onPointerDown={(event) => {
+                if (disabled) return;
+                event.currentTarget.setPointerCapture(event.pointerId);
+                const index = indexFromClientX(event.clientX);
+                if (index !== null) setScrub(index);
+              }}
+              onPointerMove={(event) => {
+                if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+                const index = indexFromClientX(event.clientX);
+                if (index !== null) setScrub(index);
+              }}
+              onPointerUp={(event) => {
+                if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+                commit(indexFromClientX(event.clientX) ?? scrub);
+              }}
+              onKeyUp={(event) => {
+                if (disabled) return;
+                const current = scrub ?? currentIndex;
+                let next = current;
+                if (event.key === 'ArrowLeft') next = Math.max(0, current - 1);
+                else if (event.key === 'ArrowRight') next = Math.min(answers.length - 1, current + 1);
+                else if (event.key === 'Home') next = 0;
+                else if (event.key === 'End') next = Math.max(0, answers.length - 1);
+                else return;
+                commit(next);
+              }}
+            >
+              <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-orange-100 dark:bg-orange-950" />
+              {showDot && (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-orange-500 shadow-sm"
+                  style={{ left: `calc((${activeIndex} + 0.5) * 100% / ${columns})` }}
+                />
+              )}
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400">
-          <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
-          <span className="truncate">Not Ans ({summaryCounts.not_answered})</span>
-        </div>
-        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">
-          <span className="w-2.5 h-2.5 rounded-full bg-purple-500 shrink-0" />
-          <span className="truncate">Review ({summaryCounts.marked_for_review})</span>
-        </div>
-        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
-          <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shrink-0" />
-          <span className="truncate">Ans & Rev ({summaryCounts.answered_and_marked})</span>
-        </div>
-        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-slate-500/10 border border-slate-500/20 text-slate-300 col-span-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-slate-500 shrink-0" />
-          <span className="truncate">Not Visited ({summaryCounts.not_visited})</span>
-        </div>
+
+        <button
+          type="button"
+          onClick={() => slide(1)}
+          disabled={disabled || start >= maxStart}
+          aria-label="Slide questions right"
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-border text-slate-900 disabled:opacity-40 dark:text-slate-100"
+        >
+          <Chevron direction="right" />
+        </button>
       </div>
-
-      {/* Palette Grid Buttons */}
-      <div className="p-1 max-h-[380px] overflow-y-auto overflow-x-hidden pr-2">
-        <div className="grid grid-cols-5 gap-2">
-          {answers.map((ans, idx) => {
-            const isCurrent = idx === currentIndex;
-            const status = ans.status ?? 'not_visited';
-
-            let statusStyle =
-              'bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700 hover:bg-slate-300';
-            if (status === 'answered') {
-              statusStyle =
-                'bg-emerald-500 text-white border border-emerald-600 hover:bg-emerald-600';
-            } else if (status === 'not_answered') {
-              statusStyle = 'bg-rose-500 text-white border border-rose-600 hover:bg-rose-600';
-            } else if (status === 'marked_for_review') {
-              statusStyle = 'bg-purple-500 text-white border border-purple-600 hover:bg-purple-600';
-            } else if (status === 'answered_and_marked_for_review') {
-              statusStyle = 'bg-indigo-500 text-white border border-indigo-600 hover:bg-indigo-600';
-            }
-
-            return (
-              <button
-                key={ans.questionId || idx}
-                type="button"
-                disabled={isActionDisabled}
-                onClick={() => onSelectQuestion(idx)}
-                aria-label={`Jump to Question ${idx + 1}, status: ${status}`}
-                className={`h-9 w-full rounded-xl text-xs font-bold transition flex items-center justify-center select-none ${statusStyle} ${
-                  isCurrent
-                    ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 scale-105 z-10'
-                    : ''
-                } ${
-                  isActionDisabled
-                    ? 'opacity-70 cursor-not-allowed'
-                    : 'cursor-pointer active:scale-95'
-                }`}
-              >
-                {idx + 1}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    </aside>
+    </section>
   );
-}
+});

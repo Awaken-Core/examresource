@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { siteName, siteDomain } from '../../data/site';
+import { siteName, siteDomain, siteUrl } from '../../data/site';
+import { fetchPublicJson } from '../../lib/publicFetch';
 import { TestSeriesDetail } from '../../components/test-series/TestSeriesDetail';
 
 const { id } = Astro.params;
@@ -9,17 +10,57 @@ if (!id) {
   return Astro.redirect('/test-series');
 }
 
-// Edge CDN caching: 60s
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
 
-const pageTitle = `Test Series Overview | ${siteName}`;
-const pageDescription = `Explore subject-wise, chapter-wise and full tests for this competitive exam on ${siteDomain}.`;
+interface SeriesSeo {
+  title?: string;
+  description?: string | null;
+  targetExam?: string;
+  category?: string;
+  organization?: string | null;
+  slug?: string;
+  accessType?: string;
+  supportedLanguages?: string[];
+  subjects?: Array<{ name?: string; customDisplayName?: string | null }>;
+}
+
+const seriesSeo = await fetchPublicJson<SeriesSeo>(`/test-series/${encodeURIComponent(id)}`);
+const seriesTitle = seriesSeo?.title?.trim();
+const subjectNames = (seriesSeo?.subjects ?? [])
+  .map((subject) => subject.customDisplayName?.trim() || subject.name?.trim())
+  .filter((name): name is string => Boolean(name))
+  .slice(0, 12);
+const pageTitle = seriesTitle
+  ? `${seriesTitle} mock tests | ${siteName}`
+  : `Test series overview | ${siteName}`;
+const pageDescription = seriesSeo?.description?.trim()
+  || (seriesTitle
+    ? `${seriesTitle} is a ${seriesSeo?.targetExam || 'competitive exam'} practice series on ${siteName}, with subject tests, chapter tests, and full mock tests.`
+    : `Explore subject-wise, chapter-wise and full tests for this competitive exam on ${siteDomain}.`);
+const canonicalUrl = `${siteUrl}/test-series/${seriesSeo?.slug || id}`;
+const jsonLd = seriesTitle
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'LearningResource',
+      name: seriesTitle,
+      description: pageDescription,
+      url: canonicalUrl,
+      learningResourceType: 'Quiz',
+      educationalUse: 'practice',
+      inLanguage: seriesSeo?.supportedLanguages?.length ? seriesSeo.supportedLanguages : ['en', 'hi'],
+      about: seriesSeo?.targetExam ? { '@type': 'Thing', name: seriesSeo.targetExam } : undefined,
+      provider: { '@type': 'Organization', name: siteName, url: siteUrl },
+      isAccessibleForFree: seriesSeo?.accessType === 'free' ? true : undefined,
+      teaches: subjectNames.length ? subjectNames.join(', ') : undefined,
+    }
+  : undefined;
 ---
 
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonicalUrl={`${Astro.url.origin}/test-series/${id}`}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
 >
   <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-5">
     {/* Breadcrumbs */}
@@ -32,8 +73,17 @@ const pageDescription = `Explore subject-wise, chapter-wise and full tests for t
       <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-      <span class="text-white font-medium truncate max-w-[200px] sm:max-w-md">Detail</span>
+      <span class="text-slate-900 dark:text-white font-medium truncate max-w-[200px] sm:max-w-md">{seriesTitle || 'Detail'}</span>
     </nav>
+
+    {seriesTitle && (
+      <p class="max-w-3xl text-sm leading-6 text-muted">
+        {pageDescription}
+        {seriesSeo?.organization ? ` Prepared for ${seriesSeo.organization}.` : ''}
+        {subjectNames.length ? ` Subjects include ${subjectNames.join(', ')}.` : ''}
+        The live paper keeps each question on the left and the choices on the right. Answers open only after the code of conduct is accepted, and the latest saved response is the one that counts.
+      </p>
+    )}
 
     {/* Dynamic Test Series Detail Island */}
     <TestSeriesDetail client:load seriesIdOrSlug={id} />
