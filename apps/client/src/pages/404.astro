@@ -9,12 +9,12 @@ const pageTitle = `404 - Page Not Found | ${siteName}`;
 const pageDescription = `The page, exam notification, or resource you are looking for could not be found on ${siteDomain}. Search or explore active recruitment categories.`;
 
 const popularCategories = [
-  { name: 'Central Government', slug: 'central-government', icon: '🏛️', count: 'UPSC, SSC, Railways' },
-  { name: 'State Exams', slug: 'state-exams', icon: '🏢', count: 'UPPSC, BPSC, MPSC' },
-  { name: 'Banking', slug: 'banking', icon: '🏦', count: 'IBPS, SBI, RBI' },
-  { name: 'SSC & Railways', slug: 'ssc-railways', icon: '🚆', count: 'CGL, CHSL, RRB NTPC' },
-  { name: 'Teaching', slug: 'teaching', icon: '📚', count: 'CTET, KVS, UPTET' },
-  { name: 'Defence', slug: 'defence', icon: '🎖️', count: 'NDA, CDS, AFCAT' },
+  { name: 'Central Govt & UPSC', slug: 'central-government', icon: '🏛️', count: 'UPSC Civil Services & PSUs' },
+  { name: 'SSC Exams', slug: 'ssc', icon: '📄', count: 'CGL, CHSL, MTS, CPO' },
+  { name: 'Railway Exams (RRB)', slug: 'railways', icon: '🚆', count: 'RRB NTPC, ALP, Group D' },
+  { name: 'Banking & Insurance Exams', slug: 'banking', icon: '🏦', count: 'IBPS, SBI, RBI' },
+  { name: 'Latest Govt Jobs', slug: 'latest-jobs', icon: '🏢', count: 'Recruitment & Vacancies' },
+  { name: 'Defence & Paramilitary Exams', slug: 'defence', icon: '🎖️', count: 'NDA, CDS, AFCAT, Coast Guard' },
 ];
 ---
 
@@ -90,6 +90,9 @@ const popularCategories = [
           {popularCategories.map((cat) => (
             <a
               href={`/category/${cat.slug}`}
+              target="_blank"
+              rel="noopener"
+              data-astro-prefetch="false"
               class="group flex items-center gap-3 p-3 rounded-xl bg-surface border border-border hover:border-accent/40 hover:bg-surface-raised transition-all duration-150 cursor-pointer"
             >
               <span class="text-xl shrink-0 group-hover:scale-110 transition-transform duration-150">{cat.icon}</span>

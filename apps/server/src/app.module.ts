@@ -11,6 +11,7 @@ import { MediaModule } from './modules/media/media.module.js';
 import { NotificationModule } from './modules/notifications/notification.module.js';
 import { QuestionModule } from './modules/question/question.module.js';
 import { TestSeriesModule } from './modules/test-series/test-series.module.js';
+import { CommentsModule } from './modules/comments/comments.module.js';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TestSeriesModule } from './modules/test-series/test-series.module.js';
     NotificationModule,
     QuestionModule,
     TestSeriesModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

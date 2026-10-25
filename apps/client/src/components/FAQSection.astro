@@ -6,30 +6,37 @@ interface Props {
 const { faqs } = Astro.props;
 ---
 
-<section id="faqs" class="mt-10 mb-8 scroll-mt-20">
-  <div class="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-    <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <h2 class="text-heading-lg font-bold text-white !my-0 !border-0 !p-0">Frequently Asked Questions (FAQs)</h2>
+<section id="faqs" class="scroll-mt-20">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="flex items-center justify-center w-8 h-8 rounded-xl bg-accent/10 text-accent shrink-0">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-lg font-bold text-white tracking-tight">Frequently Asked Questions</h2>
+      <p class="text-[12px] text-muted mt-0.5">Common questions about exam notifications & portals</p>
+    </div>
   </div>
 
-  <div class="space-y-3">
+  <div class="faq-accordion-root rounded-2xl border border-border/60 overflow-hidden bg-surface">
     {faqs.map((faq, i) => (
-      <details class="group bg-surface-raised/40 border border-border rounded-xl transition-all duration-200 hover:border-accent/60">
-        <summary class="flex justify-between items-center font-semibold text-white cursor-pointer text-body-md list-none min-h-[44px] p-4">
-          <span class="flex items-start gap-2.5">
-            <span class="text-accent font-bold">Q{i + 1}.</span>
-            <span>{faq.question}</span>
+      <details class="faq-accordion-item group border-b border-border/50 last:border-b-0">
+        <summary class="flex justify-between items-center gap-4 cursor-pointer px-5 py-4 hover:bg-surface-raised/50 transition-colors duration-150 list-none select-none">
+          <span class="flex items-start gap-3 min-w-0">
+            <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-accent/10 text-accent text-[10px] font-bold shrink-0 mt-0.5 tabular-nums">
+              {i + 1}
+            </span>
+            <span class="text-[14px] font-semibold text-white leading-snug">{faq.question}</span>
           </span>
-          <span class="ml-2 text-muted group-open:rotate-180 transition-transform duration-200">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </span>
+          <svg class="faq-chevron w-4 h-4 shrink-0 text-muted group-open:text-accent transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
         </summary>
-        <div class="px-4 pb-4 text-body-sm text-white/70 leading-relaxed pl-7 border-t border-border/50 pt-3">
-          {faq.answer}
+        <div class="faq-answer px-5 pb-5 pt-1 pl-13 text-[13.5px] text-muted leading-relaxed border-t border-border/40 bg-surface-raised/20">
+          <div class="pl-8">
+            {faq.answer}
+          </div>
         </div>
       </details>
     ))}

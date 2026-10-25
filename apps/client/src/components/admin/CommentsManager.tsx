@@ -1,0 +1,216 @@
+import { useCallback, useEffect, useState } from "react";
+import {
+  adminApi,
+  type CommentArticleSummary,
+  type ModerationComment,
+} from "./api";
+
+const filters = ["ALL", "APPROVED", "REJECTED", "SPAM"] as const;
+type Filter = (typeof filters)[number];
+
+export function CommentsManager() {
+  const [articles, setArticles] = useState<CommentArticleSummary[]>([]);
+  const [selected, setSelected] = useState<CommentArticleSummary | null>(null);
+  const [comments, setComments] = useState<ModerationComment[]>([]);
+  const [filter, setFilter] = useState<Filter>("ALL");
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const loadArticles = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setArticles((await adminApi.getCommentArticles(search)).articles);
+    } catch (e: any) {
+      setError(e.message || "Could not load articles.");
+    } finally {
+      setLoading(false);
+    }
+  }, [search]);
+
+  const loadComments = useCallback(async () => {
+    if (!selected) return;
+    setLoading(true);
+    setError(null);
+    try {
+      setComments(
+        (
+          await adminApi.getComments(
+            filter,
+            selected.translationGroupId ? undefined : selected.id,
+            selected.translationGroupId,
+          )
+        ).comments,
+      );
+    } catch (e: any) {
+      setError(e.message || "Could not load comments.");
+    } finally {
+      setLoading(false);
+    }
+  }, [filter, selected]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(loadArticles, 180);
+    return () => window.clearTimeout(timer);
+  }, [loadArticles]);
+
+  useEffect(() => {
+    if (selected) void loadComments();
+  }, [selected, loadComments]);
+
+  async function remove(comment: ModerationComment) {
+    if (
+      !window.confirm(
+        comment.parentCommentId
+          ? "Permanently delete this reply?"
+          : "Permanently delete this comment and all replies?",
+      )
+    )
+      return;
+    setBusy(comment.id);
+    try {
+      await adminApi.deleteComment(comment.id);
+      setComments((rows) =>
+        rows.filter(
+          (row) => row.id !== comment.id && row.parentCommentId !== comment.id,
+        ),
+      );
+      void loadArticles();
+    } catch (e: any) {
+      setError(e.message || "Could not delete comment.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  if (!selected)
+    return (
+      <div className="max-w-5xl space-y-5">
+        <div>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-zinc-100">
+            Comment activity by article
+          </h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-zinc-400">
+            Search an article, see its counts, then moderate its discussion.
+          </p>
+        </div>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="min-h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm dark:border-zinc-800 dark:bg-zinc-900"
+          placeholder="Search article title or slug…"
+          aria-label="Search articles with comments"
+        />
+        {error && <p className="text-sm text-rose-600">{error}</p>}
+        <div className="space-y-2">
+          {loading ? (
+            <p>Loading articles…</p>
+          ) : articles.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500">
+              No articles have comments yet.
+            </p>
+          ) : (
+            articles.map((article) => (
+              <button
+                key={article.id}
+                type="button"
+                onClick={() => {
+                  setSelected(article);
+                  setFilter("ALL");
+                }}
+                className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left hover:border-blue-300 dark:border-zinc-800 dark:bg-zinc-900"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+                  <div>
+                    <strong className="block text-sm text-slate-900 dark:text-zinc-100">
+                      {article.title}
+                    </strong>
+                    <span className="text-xs text-slate-500">
+                      /{article.slug}
+                    </span>
+                  </div>
+                  <div className="flex gap-2 text-xs font-semibold">
+                    <span>{article.total} total</span>
+                    <span className="text-amber-600">
+                      {article.pending} pending
+                    </span>
+                    <span className="text-emerald-600">
+                      {article.approved} approved
+                    </span>
+                  </div>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+    );
+
+  return (
+    <div className="max-w-5xl space-y-5">
+      <button
+        type="button"
+        onClick={() => setSelected(null)}
+        className="min-h-10 text-sm font-semibold text-blue-600"
+      >
+        ← All commented articles
+      </button>
+      <div>
+        <h2 className="text-lg font-bold">{selected.title}</h2>
+        <p className="text-sm text-slate-500">
+          {selected.total} comments in this article.
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {filters.map((status) => (
+          <button
+            key={status}
+            type="button"
+            onClick={() => setFilter(status)}
+            className={`min-h-10 rounded-lg px-3 text-xs font-semibold ${filter === status ? "bg-blue-600 text-white" : "bg-slate-100 dark:bg-zinc-800"}`}
+          >
+            {status.toLowerCase()}
+          </button>
+        ))}
+      </div>
+      {error && <p className="text-sm text-rose-600">{error}</p>}
+      {loading ? (
+        <p>Loading comments…</p>
+      ) : comments.length === 0 ? (
+        <p>No {filter.toLowerCase()} comments.</p>
+      ) : (
+        <div className="space-y-3">
+          {comments.map((comment) => (
+            <article
+              key={comment.id}
+              className="rounded-xl border border-slate-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
+                <div>
+                  <strong>{comment.authorName}</strong>
+                  {comment.parentCommentId && (
+                    <span className="ml-2 text-xs text-slate-500">Reply</span>
+                  )}
+                  <p className="mt-2 whitespace-pre-wrap text-sm">
+                    {comment.content}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    disabled={busy === comment.id}
+                    onClick={() => remove(comment)}
+                    className="text-rose-600"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

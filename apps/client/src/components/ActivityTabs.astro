@@ -1,9 +1,10 @@
 ---
 interface Props {
-  activeTab: 'notifications' | 'bookmarks';
+  activeTab: 'notifications' | 'bookmarks' | 'favorites';
 }
 
 const { activeTab } = Astro.props;
+const isFavorites = activeTab === 'favorites' || activeTab === 'bookmarks';
 ---
 
 <header class="mb-6 sm:mb-8">
@@ -24,10 +25,10 @@ const { activeTab } = Astro.props;
 
       <div class="min-w-0">
         <h1 class="text-lg sm:text-2xl font-bold text-white tracking-tight leading-tight truncate">
-          {activeTab === 'notifications' ? 'Notifications' : 'Saved Bookmarks'}
+          {activeTab === 'notifications' ? 'Notifications' : 'Saved Favorites'}
         </h1>
         <p class="text-xs text-muted leading-tight mt-0.5 truncate hidden xs:block">
-          {activeTab === 'notifications' ? 'Exam alerts, admit card updates & announcements' : 'Important articles and notifications you have bookmarked'}
+          {activeTab === 'notifications' ? 'Exam alerts, admit card updates & announcements' : 'Important articles and notifications you have saved'}
         </p>
       </div>
     </div>
@@ -39,7 +40,7 @@ const { activeTab } = Astro.props;
       <svg class="w-3.5 h-3.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
-      <span class="hidden sm:inline">Explore Exams</span>
+      <span class="hidden sm:inline">Home</span>
       <span class="sm:hidden">Home</span>
     </a>
   </div>
@@ -47,11 +48,12 @@ const { activeTab } = Astro.props;
   {/* Segmented Navigation Tabs */}
   <nav 
     class="flex p-1 rounded-2xl bg-surface border border-border shadow-2xs" 
-    aria-label="Notifications and Bookmarks navigation"
+    aria-label="Notifications and Favorites navigation"
     role="tablist"
   >
     <a
       href="/notifications"
+      data-astro-prefetch="hover"
       role="tab"
       aria-selected={activeTab === 'notifications'}
       class={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 select-none ${
@@ -70,20 +72,21 @@ const { activeTab } = Astro.props;
     </a>
 
     <a
-      href="/bookmarks"
+      href="/favorites"
+      data-astro-prefetch="hover"
       role="tab"
-      aria-selected={activeTab === 'bookmarks'}
+      aria-selected={isFavorites}
       class={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 select-none ${
-        activeTab === 'bookmarks'
+        isFavorites
           ? 'bg-surface-raised text-white border border-border/80 shadow-xs'
           : 'text-muted hover:text-white hover:bg-surface-raised/40'
       }`}
     >
-      <svg class={`w-4 h-4 shrink-0 transition-colors ${activeTab === 'bookmarks' ? 'text-accent fill-accent/20' : 'text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+      <svg class={`w-4 h-4 shrink-0 transition-colors ${isFavorites ? 'text-rose-400 fill-rose-500/20' : 'text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
       </svg>
-      <span>Saved Bookmarks</span>
-      <span class="favorites-count-badge hidden px-1.5 py-0.5 rounded-full bg-accent text-[10px] font-bold text-white leading-none shadow-2xs">
+      <span>Saved Favorites</span>
+      <span class="favorites-count-badge hidden px-1.5 py-0.5 rounded-full bg-rose-500 text-[10px] font-bold text-white leading-none shadow-2xs">
         0
       </span>
     </a>

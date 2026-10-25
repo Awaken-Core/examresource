@@ -278,9 +278,14 @@ export class AuthService {
   }
 
   async requireUser(req: Request): Promise<CurrentUser> {
+    const user = await this.optionalUser(req);
+    if (!user) throw new UnauthorizedException('Authentication is required.');
+    return user;
+  }
+
+  async optionalUser(req: Request): Promise<CurrentUser | null> {
     const current = await this.getSession(req.cookies?.[this.cookieName()]);
-    if (!current) throw new UnauthorizedException('Authentication is required.');
-    return current.user;
+    return current?.user ?? null;
   }
 
   async listAuthors(req: Request) {

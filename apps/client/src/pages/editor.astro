@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
-import { siteUrl } from '../data/site';
+import { siteName, siteUrl } from '../data/site';
 ---
 
 <AdminLayout title="Article Editor" activeNav="new-post" fullWidth={true}>
@@ -14,7 +14,7 @@ import { siteUrl } from '../data/site';
       <div class="flex items-center gap-1">
         <!-- Back to Articles -->
         <a 
-          href="/admin" 
+          href="/administrator" 
           id="back-to-posts-btn"
           class="p-2 rounded hover:bg-slate-100 text-slate-700 transition"
           title="Back to All Articles"
@@ -1640,15 +1640,32 @@ import { siteUrl } from '../data/site';
           <div class="accordion-item" data-accordion="seo">
             <button type="button" class="accordion-trigger w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-slate-50 transition">
               <svg class="w-4 h-4 text-slate-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7" /><path stroke-linecap="round" d="M20 20l-3-3" /></svg>
-              <span class="font-semibold text-slate-900">SEO</span>
-              <svg class="accordion-chevron w-4 h-4 text-slate-400 ml-auto shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              <span class="font-semibold text-slate-900">SEO &amp; AEO</span>
+              <span id="summary-seo-status" class="ml-auto text-[10px] px-2 py-0.5 rounded-full font-medium bg-slate-100 text-slate-600">Metadata</span>
+              <svg class="accordion-chevron w-4 h-4 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </button>
 
             <div class="accordion-content hidden px-5 pb-5 pt-1 space-y-3.5">
+              <!-- AI Article Metadata Card -->
+              <div id="seo-ai-summary-card" class="p-3 bg-gradient-to-br from-indigo-50/70 to-blue-50/70 border border-indigo-200/60 rounded-lg space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-900">Article Intelligence</span>
+                  </div>
+                  <span id="seo-ai-model-badge" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-white text-indigo-700 border border-indigo-200 font-medium">Ready</span>
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-600">
+                  <span>Assigned Category:</span>
+                  <span id="seo-ai-detected-type" class="font-semibold text-slate-900">Auto-Labeled</span>
+                </div>
+              </div>
+
+              <!-- Google Search Preview Card -->
               <div class="bg-slate-50 border border-slate-200 rounded-md p-3 space-y-1">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Google Search Preview</span>
                 <div id="serp-title" class="font-semibold text-blue-700 truncate text-xs">
-                  Article Title | ExamPortal
+                  Article Title | {siteName}
                 </div>
                 <div id="serp-url" class="text-[10px] text-emerald-700 font-mono truncate">
                   {siteUrl}/article-slug
@@ -1658,6 +1675,7 @@ import { siteUrl } from '../data/site';
                 </div>
               </div>
 
+              <!-- SEO Title -->
               <div>
                 <div class="flex items-center justify-between mb-1">
                   <label class="font-semibold text-slate-700">SEO Title</label>
@@ -1671,6 +1689,7 @@ import { siteUrl } from '../data/site';
                 />
               </div>
 
+              <!-- Meta Description -->
               <div>
                 <div class="flex items-center justify-between mb-1">
                   <label class="font-semibold text-slate-700">Meta Description</label>
@@ -1684,6 +1703,33 @@ import { siteUrl } from '../data/site';
                 ></textarea>
               </div>
 
+              <!-- Target Keywords & AEO Entities Manager -->
+              <div>
+                <div class="flex items-center justify-between mb-1">
+                  <label class="font-semibold text-slate-700">Target Keywords &amp; AEO Entities</label>
+                  <span id="keywords-count-badge" class="text-[10px] text-slate-400 font-mono">0 keywords</span>
+                </div>
+                <div id="seo-keywords-chips" class="flex flex-wrap gap-1.5 p-2 bg-white border border-slate-300 rounded-md min-h-[42px] max-h-32 overflow-y-auto">
+                  <span class="text-[11px] text-slate-400 italic py-0.5">No target keywords added yet</span>
+                </div>
+                <div class="mt-1.5 flex gap-1.5">
+                  <input 
+                    type="text" 
+                    id="field-add-keyword" 
+                    placeholder="Add keyword or entity &amp; press Enter..." 
+                    class="min-w-0 flex-1 bg-white border border-slate-300 rounded-md px-2 py-1 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  />
+                  <button 
+                    type="button" 
+                    id="btn-add-keyword" 
+                    class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <!-- Canonical URL -->
               <div>
                 <label class="block font-semibold text-slate-700 mb-1">Canonical URL</label>
                 <input 
@@ -1694,6 +1740,7 @@ import { siteUrl } from '../data/site';
                 />
               </div>
 
+              <!-- Search Indexing Checkbox -->
               <div class="flex items-center gap-2 pt-1">
                 <input type="checkbox" id="field-noindex" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer" />
                 <label for="field-noindex" class="text-slate-700 cursor-pointer select-none">
@@ -2156,6 +2203,52 @@ import { siteUrl } from '../data/site';
     </div>
   </div>
 
+  <!-- Dedicated FAQ Section Dialog -->
+  <div id="faq-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-2xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-lg w-full p-5 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2 shrink-0">
+        <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+          <span class="w-5 h-5 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[11px] font-bold">?</span>
+          <span>Frequently Asked Questions (FAQs)</span>
+        </h3>
+        <button type="button" id="close-faq-modal" class="text-slate-400 hover:text-slate-600 font-bold p-1">✕</button>
+      </div>
+
+      <div class="space-y-3 overflow-y-auto flex-1 pr-1" id="faq-modal-scroll">
+        <div>
+          <label for="faq-modal-heading" class="block text-xs font-semibold text-slate-700 mb-1">Section Heading</label>
+          <input type="text" id="faq-modal-heading" value="Frequently Asked Questions (FAQs)" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" />
+        </div>
+
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-xs font-bold text-slate-700">Questions & Answers</span>
+          <button type="button" id="add-faq-row-btn" class="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer">
+            <span>+ Add Question</span>
+          </button>
+        </div>
+
+        <div id="faq-rows-container" class="space-y-3">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-1">
+          <label class="flex items-start gap-2 cursor-pointer">
+            <input type="checkbox" id="faq-modal-enclose" checked class="mt-0.5 rounded text-blue-600 focus:ring-blue-500" />
+            <div>
+              <span class="text-xs font-semibold text-slate-800 block">Enclose in Collapsible Accordion</span>
+              <span class="text-[11px] text-slate-500 block">Automatically transforms into interactive expandable cards with Close/Expand All toggle. Compatible with database articles.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 shrink-0">
+        <button type="button" id="cancel-faq-modal" class="px-3 py-1.5 border border-slate-200 rounded-md text-xs text-slate-700 hover:bg-slate-50">Cancel</button>
+        <button type="button" id="confirm-faq-modal" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-semibold">Insert FAQs</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Dedicated Video Embed Dialog -->
   <div id="video-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-2xs z-50 hidden items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
@@ -2612,28 +2705,43 @@ import { siteUrl } from '../data/site';
                   id="ai-ref-model-select"
                   class="aim-select bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-800 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer shadow-2xs"
                 >
-                  <option value="gemini-3.8-flash" selected>Gemini 3.8 Flash (Recommended · Fastest)</option>
-                  <option value="gemini-3.5-flash">Gemini 3.5 Flash (Fast &amp; Resilient)</option>
-                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview (In-depth Analysis)</option>
-                  <option value="gemini-flash-latest">Gemini Flash Latest</option>
+                  <optgroup label="⚡ DeepSeek AI (Direct API)">
+                    <option value="deepseek-chat" selected>DeepSeek: DeepSeek V3 (Ultra-Fast)</option>
+                    <option value="deepseek-reasoner">DeepSeek: DeepSeek R1 (Deep Reasoning)</option>
+                  </optgroup>
+                  <optgroup label="🌐 OpenRouter (Multi-LLM Gateway)">
+                    <option value="openrouter:deepseek/deepseek-chat">OpenRouter: DeepSeek V3</option>
+                    <option value="openrouter:deepseek/deepseek-r1">OpenRouter: DeepSeek R1</option>
+                    <option value="openrouter:nvidia/nemotron-3-ultra-550b-a55b:free">OpenRouter: NVIDIA Nemotron 3 Ultra 550B (Free)</option>
+                    <option value="openrouter:nvidia/nemotron-3.5-super-vl:free">OpenRouter: NVIDIA Nemotron 3.5 Super VL (Free)</option>
+                    <option value="openrouter:google/gemma-4-31b-it:free">OpenRouter: Google Gemma 4 31B (Free)</option>
+                    <option value="openrouter:anthropic/claude-3.7-sonnet">OpenRouter: Claude 3.7 Sonnet</option>
+                    <option value="openrouter:meta-llama/llama-3.3-70b-instruct">OpenRouter: Llama 3.3 70B</option>
+                  </optgroup>
+                  <optgroup label="✨ Google Gemini (Direct API)">
+                    <option value="gemini-3.8-flash">Google Gemini: Gemini 3.8 Flash (Multimodal &amp; Fast)</option>
+                    <option value="gemini-3.5-flash">Google Gemini: Gemini 3.5 Flash (Resilient)</option>
+                    <option value="gemini-3.1-pro-preview">Google Gemini: Gemini 3.1 Pro Preview</option>
+                  </optgroup>
                 </select>
               </div>
 
               <!-- Category Selector -->
               <div class="flex items-center gap-1.5">
-                <label for="ai-ref-category" class="aim-label text-[11px] font-semibold text-slate-700">Category:</label>
+                <label for="ai-ref-category" class="aim-label text-[11px] font-semibold text-slate-700">Topic Type:</label>
                 <select 
                   id="ai-ref-category"
                   class="aim-select bg-white border border-slate-300 rounded-md px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-600 cursor-pointer shadow-2xs"
                 >
-                  <option value="auto-detect">Auto-Detect</option>
-                  <option value="notifications">Notification / Vacancy</option>
-                  <option value="syllabus">Syllabus &amp; Pattern</option>
-                  <option value="admit-card">Admit Card</option>
-                  <option value="answer-key">Answer Key</option>
-                  <option value="cut-off">Cut-off Marks</option>
+                  <option value="auto-detect">Auto-Detect Topic &amp; Intent</option>
+                  <option value="general-knowledge">General Knowledge (GK / GS)</option>
+                  <option value="current-affairs">Current Affairs &amp; Daily Updates</option>
+                  <option value="study-material">Subject Guide &amp; Study Material</option>
+                  <option value="notifications">Govt Job / Vacancy Notification</option>
+                  <option value="admit-card">Admit Card / Hall Ticket</option>
+                  <option value="answer-key">Answer Key &amp; Cut-Off</option>
                   <option value="results">Results / Merit List</option>
-                  <option value="study-material">Study Material</option>
+                  <option value="syllabus">Syllabus &amp; Exam Pattern</option>
                 </select>
               </div>
             </div>
@@ -2791,8 +2899,7 @@ import { siteUrl } from '../data/site';
               <span id="ai-ref-result-category" class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">Notification</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="aim-muted text-[11px] text-slate-500">SEO Score:</span>
-              <span id="ai-ref-result-seo-score" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">88/100</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">✓ Complete Bilingual Draft</span>
             </div>
           </div>
 
@@ -2858,16 +2965,16 @@ import { siteUrl } from '../data/site';
 <script>
   import { Editor } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
-  import Link from '@tiptap/extension-link';
   import { ArticleBulletList, ArticleImage } from '../lib/editor-nodes';
   import { collectDocMatches, FindReplace, findReplaceKey, findStringMatches, type FindMatch } from '../lib/find-replace';
   import Youtube from '@tiptap/extension-youtube';
   import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
-  import Underline from '@tiptap/extension-underline';
   import CharacterCount from '@tiptap/extension-character-count';
   import { marked } from 'marked';
   import TurndownService from 'turndown';
   import DOMPurify from 'dompurify';
+  import { transformFaqSection } from '../lib/article-lang';
+  import { bindFaqAccordion } from '../lib/article-reading';
 
   // Configure marked for GitHub flavored markdown with tables and standard rules
   const markedRenderer = new marked.Renderer();
@@ -2901,14 +3008,15 @@ import { siteUrl } from '../data/site';
       'ul', 'ol', 'li',
       'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td',
       'a', 'img', 'figure', 'figcaption',
-      'div', 'iframe'
+      'div', 'iframe', 'details', 'summary', 'section', 'button', 'svg', 'path'
     ],
     ALLOWED_ATTR: [
       'href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel',
       'width', 'height', 'loading', 'data-align', 'data-layout', 'data-bullet', 'style',
-      'allow', 'allowfullscreen', 'frameborder', 'referrerpolicy'
+      'allow', 'allowfullscreen', 'frameborder', 'referrerpolicy',
+      'data-faq-toggle-all', 'data-state', 'aria-label', 'open', 'viewBox', 'fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'd'
     ],
-    ADD_TAGS: ['iframe'],
+    ADD_TAGS: ['iframe', 'details', 'summary', 'section', 'button', 'svg', 'path'],
     ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
   };
 
@@ -2969,6 +3077,7 @@ import { siteUrl } from '../data/site';
 
   const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
   const SITE_URL = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
+  const SITE_NAME = import.meta.env.PUBLIC_SITE_NAME || 'GovtPariksha';
 
   async function apiFetch(endpoint: string, options: RequestInit = {}) {
     const headers = new Headers(options.headers || {});
@@ -3379,6 +3488,8 @@ import { siteUrl } from '../data/site';
   let currentPostId = editId;
   let hinglishBlogId: string | null = null;
   let englishBlogId: string | null = null;
+  let hinglishVersion: number = 1;
+  let englishVersion: number = 1;
   let currentTranslationGroupId: string | null = null;
   let currentVersion = 1;
   let isDirty = false;
@@ -3391,17 +3502,83 @@ import { siteUrl } from '../data/site';
   let currentEditorMode: 'visual' | 'markdown' | 'compare' = 'visual';
   let tagCatalog: { id: string; name: string }[] = [];
 
+  let activeFocusKeywords: string[] = [];
+
+  function renderSeoKeywordChips() {
+    const chipsContainer = document.getElementById('seo-keywords-chips');
+    const countBadge = document.getElementById('keywords-count-badge');
+    if (!chipsContainer) return;
+
+    if (countBadge) {
+      countBadge.textContent = `${activeFocusKeywords.length} keywords`;
+    }
+
+    if (activeFocusKeywords.length === 0) {
+      chipsContainer.innerHTML = '<span class="text-[11px] text-slate-400 italic py-0.5">No target keywords added yet</span>';
+      return;
+    }
+
+    chipsContainer.innerHTML = '';
+    activeFocusKeywords.forEach((kw, index) => {
+      const chip = document.createElement('span');
+      chip.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-2xs';
+      chip.innerHTML = `<span>${kw}</span><button type="button" data-kw-index="${index}" class="text-indigo-400 hover:text-indigo-800 font-bold ml-0.5 leading-none cursor-pointer" title="Remove keyword">✕</button>`;
+      chip.querySelector('button')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeFocusKeywords.splice(index, 1);
+        renderSeoKeywordChips();
+        updateSerp();
+      });
+      chipsContainer.appendChild(chip);
+    });
+  }
+
+  function addSeoKeyword(keyword: string) {
+    const trimmed = keyword.trim().replace(/^,+|,+$/g, '');
+    if (!trimmed) return;
+    if (!activeFocusKeywords.some((k) => k.toLowerCase() === trimmed.toLowerCase())) {
+      activeFocusKeywords.push(trimmed);
+      renderSeoKeywordChips();
+      updateSerp();
+    }
+  }
+
+  const addKeywordInput = document.getElementById('field-add-keyword') as HTMLInputElement | null;
+  const addKeywordBtn = document.getElementById('btn-add-keyword');
+
+  if (addKeywordBtn && addKeywordInput) {
+    addKeywordBtn.addEventListener('click', () => {
+      addSeoKeyword(addKeywordInput.value);
+      addKeywordInput.value = '';
+      addKeywordInput.focus();
+    });
+
+    addKeywordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        addSeoKeyword(addKeywordInput.value);
+        addKeywordInput.value = '';
+      }
+    });
+  }
+
   function applyKeywordsAndTags(keywords: string[]) {
     if (!keywords || !keywords.length) return;
     const cleanKeywords = keywords
-      .map((k) => k.trim().toLowerCase())
+      .map((k) => k.trim())
       .filter(Boolean);
+
+    // Update active focus keywords in SEO panel
+    activeFocusKeywords = Array.from(new Set([...activeFocusKeywords, ...cleanKeywords]));
+    renderSeoKeywordChips();
+
+    const cleanLower = cleanKeywords.map((k) => k.toLowerCase());
     const matchedTagIds: string[] = [];
 
     for (const tag of tagCatalog) {
       const tagNameLower = tag.name.trim().toLowerCase();
       const tagWords = tagNameLower.split(/\s+/);
-      const isMatched = cleanKeywords.some((kw) => {
+      const isMatched = cleanLower.some((kw) => {
         if (kw === tagNameLower || kw.includes(tagNameLower) || tagNameLower.includes(kw)) return true;
         const kwWords = kw.split(/\s+/);
         return tagWords.some((tw) => tw.length > 2 && kwWords.includes(tw));
@@ -3523,14 +3700,13 @@ import { siteUrl } from '../data/site';
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4] },
         bulletList: false,
+        link: {
+          openOnClick: false,
+          autolink: true,
+        },
       }),
       ArticleBulletList,
       FindReplace,
-      Underline,
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-      }),
       ArticleImage,
       Youtube.configure({
         controls: true,
@@ -3576,7 +3752,7 @@ import { siteUrl } from '../data/site';
   // ==========================================
 
   let lastSavedMarkdownCursorPos = 0;
-  let previewSourceMode: 'visual' | 'markdown' = 'visual';
+  let previewSourceMode: 'visual' | 'markdown' | 'compare' = 'visual';
 
   async function showArticlePreview() {
     if (!previewRenderedBody) return;
@@ -3624,7 +3800,9 @@ import { siteUrl } from '../data/site';
     }
 
     // Populate rendered preview body
-    previewRenderedBody.innerHTML = cleanHtml || '<p class="text-slate-400 italic">No content to preview.</p>';
+    const finalHtml = transformFaqSection(cleanHtml);
+    previewRenderedBody.innerHTML = finalHtml || '<p class="text-slate-400 italic">No content to preview.</p>';
+    bindFaqAccordion();
 
     // Hide editing surfaces, show dedicated reading preview surface
     markdownEditorSurface?.classList.add('hidden');
@@ -3876,6 +4054,9 @@ import { siteUrl } from '../data/site';
   async function setActiveLanguage(targetLang: 'HINGLISH' | 'ENGLISH', forceRefresh = false) {
     if (!forceRefresh && languageSelect?.value === targetLang && currentEditorMode !== 'compare') return;
 
+    // Cancel any pending autosave timer for previous language to prevent cross-language saving race conditions
+    clearTimeout(autosaveTimer);
+
     // 1. Save whatever is currently typed in active editor into current language draft
     syncCurrentEditorToState();
 
@@ -3894,6 +4075,22 @@ import { siteUrl } from '../data/site';
       topLangEnglishBtn?.classList.remove('font-medium', 'text-slate-600');
       topLangHindiBtn?.classList.remove('font-bold', 'text-slate-900', 'bg-white', 'shadow-xs');
       topLangHindiBtn?.classList.add('font-medium', 'text-slate-600');
+    }
+
+    // 3.5. Update active post ID and version to match target language
+    if (targetLang === 'ENGLISH') {
+      currentPostId = englishBlogId;
+      currentVersion = englishVersion;
+    } else {
+      currentPostId = hinglishBlogId;
+      currentVersion = hinglishVersion;
+    }
+    if (docVersionDisplay) docVersionDisplay.textContent = `${currentVersion}`;
+
+    if (currentPostId) {
+      window.history.replaceState({}, '', `/editor?edit=${currentPostId}`);
+    } else {
+      window.history.replaceState({}, '', `/editor`);
     }
 
     // 4. Retrieve target language content
@@ -3920,15 +4117,16 @@ import { siteUrl } from '../data/site';
       return;
     }
 
-    // 6. Populate current surface
+    // 6. Populate current surface without triggering false isDirty or autosave
     if (currentEditorMode === 'markdown' && markdownTextarea) {
       markdownTextarea.value = targetMd;
       updateLineNumbers();
     } else if (currentEditorMode === 'visual') {
       const cleanHtml = targetMd ? DOMPurify.sanitize(String(await marked.parse(targetMd)), DOMPURIFY_CONFIG) : '<p></p>';
-      editor.commands.setContent(cleanHtml);
+      editor.commands.setContent(cleanHtml, { emitUpdate: false });
     }
 
+    isDirty = false;
     updateSerp();
     updateMetrics();
     updateDocumentOutline();
@@ -4023,21 +4221,27 @@ import { siteUrl } from '../data/site';
         if (compareEnglishTitle) compareEnglishTitle.value = data.title || '';
         if (compareEnglishMarkdown) compareEnglishMarkdown.value = data.markdown || '';
         if (compareEnglishExcerpt) compareEnglishExcerpt.value = data.excerpt || '';
-        if (compareEnglishSlug && data.slugSuggestion) {
-          compareEnglishSlug.value = data.slugSuggestion.endsWith('-english') ? data.slugSuggestion : `${data.slugSuggestion}-english`;
+        const cleanSug = (data.slugSuggestion || slugInput?.value || '')
+          .toLowerCase()
+          .replace(/-(hinglish|english)$/i, '');
+        if (compareEnglishSlug && cleanSug) {
+          compareEnglishSlug.value = cleanSug;
         }
-        if (compareHinglishSlug && !compareHinglishSlug.value.trim() && slugInput?.value) {
-          compareHinglishSlug.value = slugInput.value.endsWith('-hinglish') ? slugInput.value : `${slugInput.value}-hinglish`;
+        if (compareHinglishSlug && !compareHinglishSlug.value.trim() && cleanSug) {
+          compareHinglishSlug.value = cleanSug;
         }
       } else {
         if (compareHinglishTitle) compareHinglishTitle.value = data.title || '';
         if (compareHinglishMarkdown) compareHinglishMarkdown.value = data.markdown || '';
         if (compareHinglishExcerpt) compareHinglishExcerpt.value = data.excerpt || '';
-        if (compareHinglishSlug && data.slugSuggestion) {
-          compareHinglishSlug.value = data.slugSuggestion.endsWith('-hinglish') ? data.slugSuggestion : `${data.slugSuggestion}-hinglish`;
+        const cleanSug = (data.slugSuggestion || slugInput?.value || '')
+          .toLowerCase()
+          .replace(/-(hinglish|english)$/i, '');
+        if (compareHinglishSlug && cleanSug) {
+          compareHinglishSlug.value = cleanSug;
         }
-        if (compareEnglishSlug && !compareEnglishSlug.value.trim() && slugInput?.value) {
-          compareEnglishSlug.value = slugInput.value.endsWith('-english') ? slugInput.value : `${slugInput.value}-english`;
+        if (compareEnglishSlug && !compareEnglishSlug.value.trim() && cleanSug) {
+          compareEnglishSlug.value = cleanSug;
         }
       }
 
@@ -4104,6 +4308,17 @@ import { siteUrl } from '../data/site';
       const hHtml = DOMPurify.sanitize(String(await marked.parse(hMd)), DOMPURIFY_CONFIG);
       const eHtml = DOMPurify.sanitize(String(await marked.parse(eMd)), DOMPURIFY_CONFIG);
 
+      const canonicalBilingualSlug = (compareEnglishSlug?.value.trim() || compareHinglishSlug?.value.trim() || slugInput?.value.trim() || slugify(eTitle || hTitle || 'article'))
+        .toLowerCase()
+        .replace(/-(hinglish|english)$/i, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'article';
+
+      if (compareEnglishSlug) compareEnglishSlug.value = canonicalBilingualSlug;
+      if (compareHinglishSlug) compareHinglishSlug.value = canonicalBilingualSlug;
+      if (slugInput) slugInput.value = canonicalBilingualSlug;
+
       const payload = {
         categoryId: categorySelect?.value || null,
         coverImage: coverImageInput?.value || null,
@@ -4114,7 +4329,7 @@ import { siteUrl } from '../data/site';
         hinglish: {
           id: hinglishBlogId || (languageSelect?.value === 'HINGLISH' && currentPostId ? currentPostId : undefined),
           title: hTitle,
-          slug: compareHinglishSlug?.value.trim() || hTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-hinglish',
+          slug: canonicalBilingualSlug,
           markdown: hMd,
           htmlContent: hHtml,
           excerpt: compareHinglishExcerpt?.value.trim() || '',
@@ -4122,7 +4337,7 @@ import { siteUrl } from '../data/site';
         english: {
           id: englishBlogId || (languageSelect?.value === 'ENGLISH' && currentPostId ? currentPostId : undefined),
           title: eTitle,
-          slug: compareEnglishSlug?.value.trim() || eTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-english',
+          slug: canonicalBilingualSlug,
           markdown: eMd,
           htmlContent: eHtml,
           excerpt: compareEnglishExcerpt?.value.trim() || '',
@@ -4144,14 +4359,17 @@ import { siteUrl } from '../data/site';
 
       if (data.hinglish?.id) hinglishBlogId = data.hinglish.id;
       if (data.english?.id) englishBlogId = data.english.id;
+      if (data.hinglish?.version !== undefined) hinglishVersion = data.hinglish.version;
+      if (data.english?.version !== undefined) englishVersion = data.english.version;
       if (data.translationGroupId) currentTranslationGroupId = data.translationGroupId;
 
-      if (languageSelect?.value === 'ENGLISH' && data.english?.id) {
-        currentPostId = data.english.id;
-        window.history.replaceState({}, '', `/editor?edit=${data.english.id}`);
-      } else if (data.hinglish?.id) {
-        currentPostId = data.hinglish.id;
-        window.history.replaceState({}, '', `/editor?edit=${data.hinglish.id}`);
+      const activeLang = languageSelect?.value === 'ENGLISH' ? 'ENGLISH' : 'HINGLISH';
+      currentPostId = activeLang === 'ENGLISH' ? englishBlogId : hinglishBlogId;
+      currentVersion = activeLang === 'ENGLISH' ? englishVersion : hinglishVersion;
+      if (docVersionDisplay) docVersionDisplay.textContent = `${currentVersion}`;
+
+      if (currentPostId) {
+        window.history.replaceState({}, '', `/editor?edit=${currentPostId}`);
       }
 
       if (data.hinglish?.slug && compareHinglishSlug) compareHinglishSlug.value = data.hinglish.slug;
@@ -4223,7 +4441,6 @@ import { siteUrl } from '../data/site';
   const aiRefLoadingStatus = document.getElementById('ai-ref-loading-status');
   const aiRefResultsCard = document.getElementById('ai-ref-results-card');
   const aiRefResultCategory = document.getElementById('ai-ref-result-category');
-  const aiRefResultSeoScore = document.getElementById('ai-ref-result-seo-score');
   const aiResHTitle = document.getElementById('ai-res-h-title');
   const aiResHExcerpt = document.getElementById('ai-res-h-excerpt');
   const aiResHSlug = document.getElementById('ai-res-h-slug');
@@ -4404,7 +4621,7 @@ import { siteUrl } from '../data/site';
       base64: undefined as string | undefined,
       mimeType: file.type,
       altText: cleanAlt,
-      status: 'uploading' as const,
+      status: 'uploading' as 'uploading' | 'ready' | 'error',
     };
     stagedPastedImages.push(entry);
     renderBottomStagedImages();
@@ -4454,7 +4671,7 @@ import { siteUrl } from '../data/site';
       base64: cleanSrc.startsWith('data:image/') ? cleanSrc : undefined,
       mimeType: 'image/webp',
       altText: alt || `Reference Notice Image #${stagedPastedImages.length + 1}`,
-      status: 'uploading' as const,
+      status: 'uploading' as 'uploading' | 'ready' | 'error',
     };
     stagedPastedImages.push(entry);
     renderBottomStagedImages();
@@ -5079,6 +5296,11 @@ import { siteUrl } from '../data/site';
           category: category !== 'auto-detect' ? category : undefined,
           additionalInstructions: instructions,
           model: selectedModel,
+          availableCategories: categoriesCache.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+          })),
           images: stagedPastedImages.map((img) => ({
             url: img.url,
             base64: img.base64,
@@ -5128,6 +5350,11 @@ import { siteUrl } from '../data/site';
             category: category !== 'auto-detect' ? category : undefined,
             additionalInstructions: instructions,
             model: selectedModel,
+            availableCategories: categoriesCache.map((c: any) => ({
+              id: c.id,
+              name: c.name,
+              slug: c.slug,
+            })),
             images: stagedPastedImages.map((img) => ({ url: img.url, altText: img.altText })),
           }),
         });
@@ -5155,11 +5382,7 @@ import { siteUrl } from '../data/site';
 
       // Populate Result Preview Card
       if (aiRefResultCategory) {
-        aiRefResultCategory.textContent = data.detectedCategory || category || 'Exam Notification';
-      }
-      if (aiRefResultSeoScore) {
-        const score = typeof data.seoScore === 'number' ? data.seoScore : 85;
-        aiRefResultSeoScore.textContent = `${score}/100`;
+        aiRefResultCategory.textContent = data.detectedCategory || category || 'General';
       }
 
       if (aiResHTitle) aiResHTitle.textContent = data.hinglish?.title || '';
@@ -5191,7 +5414,7 @@ import { siteUrl } from '../data/site';
 
     } catch (err: any) {
       console.error('Failed to generate from reference:', err);
-      alert(`AI Generation Failed: ${err.message || 'Please check Gemini API configuration.'}`);
+      alert(`AI Generation Failed: ${err.message || 'Please check AI provider configuration.'}`);
       aiRefLoadingCard?.classList.add('hidden');
     } finally {
       clearInterval(timerInterval);
@@ -5231,8 +5454,6 @@ import { siteUrl } from '../data/site';
     if (compareEnglishSlug) compareEnglishSlug.value = cleanSlug;
     if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
     if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
-    if (compareEnglishExcerpt && english?.excerpt) compareEnglishExcerpt.value = english.excerpt;
-    if (compareEnglishMarkdown && english?.content) compareEnglishMarkdown.value = english.content;
 
     // Determine active language
     const isEnglish = languageSelect?.value === 'ENGLISH';
@@ -5260,24 +5481,59 @@ import { siteUrl } from '../data/site';
     }
     if (targetMd) {
       const cleanHtml = DOMPurify.sanitize(String(await marked.parse(targetMd)), DOMPURIFY_CONFIG);
-      editor.commands.setContent(cleanHtml);
+      editor.commands.setContent(cleanHtml, { emitUpdate: false });
     }
 
-    // Category matching if available
+    // Strictly match existing system categories (Do NOT add any new category)
     const categorySelect = document.getElementById('field-category') as HTMLSelectElement | null;
     if (categorySelect && detectedCategory) {
       const match = Array.from(categorySelect.options).find(
-        (opt) => opt.text.toLowerCase().includes(detectedCategory.toLowerCase()) || opt.value.toLowerCase().includes(detectedCategory.toLowerCase())
+        (opt) => opt.text.trim().toLowerCase() === detectedCategory.trim().toLowerCase() ||
+                 opt.value.trim().toLowerCase() === detectedCategory.trim().toLowerCase() ||
+                 opt.text.toLowerCase().includes(detectedCategory.toLowerCase()) ||
+                 detectedCategory.toLowerCase().includes(opt.text.toLowerCase())
       );
-      if (match) categorySelect.value = match.value;
+      if (match) {
+        categorySelect.value = match.value;
+        refreshSidebarSummaries();
+      }
     }
 
-    // Auto-match keywords to tags
+    // Update SEO panel elements
+    const seoAiType = document.getElementById('seo-ai-detected-type');
+    if (seoAiType) seoAiType.textContent = detectedCategory || 'Auto-Labeled';
+
+    const seoAiModel = document.getElementById('seo-ai-model-badge');
+    if (seoAiModel && lastGeneratedBilingual.modelUsed) {
+      seoAiModel.textContent = lastGeneratedBilingual.modelUsed;
+    }
+
+    const summarySeoStatus = document.getElementById('summary-seo-status');
+    if (summarySeoStatus) {
+      summarySeoStatus.textContent = 'Auto-Populated';
+      summarySeoStatus.className = 'ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+    }
+
+    // Auto-match keywords to tags and render chips in SEO panel
     const allKeywords = [
       ...(hinglish?.keywords || []),
       ...(english?.keywords || []),
     ];
+    activeFocusKeywords = [];
     applyKeywordsAndTags(allKeywords);
+
+    // Auto-expand the SEO Accordion so author can immediately view & tweak metadata manually
+    const seoAccordion = document.querySelector<HTMLElement>('.accordion-item[data-accordion="seo"]');
+    if (seoAccordion) {
+      const content = seoAccordion.querySelector<HTMLElement>('.accordion-content');
+      const chevron = seoAccordion.querySelector<HTMLElement>('.accordion-chevron');
+      if (content) content.classList.remove('hidden');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    }
+
+    // Ensure right sidebar is open so metadata is visible
+    editorSidebar?.classList.remove('hidden');
+    updateDrawerBackdrop();
 
     isDirty = true;
     updateCompareStats();
@@ -5690,6 +5946,9 @@ ${mdContent}
       } else if (type === 'video') {
         openVideoModal(targetPos);
         return;
+      } else if (type === 'faq' || type === 'faqs') {
+        openFaqModal(targetPos);
+        return;
       }
       insertMarkdownSnippet(type);
       inserterDrawer?.classList.add('hidden');
@@ -5713,6 +5972,9 @@ ${mdContent}
       return;
     } else if (type === 'video') {
       openVideoModal(targetPos);
+      return;
+    } else if (type === 'faq' || type === 'faqs') {
+      openFaqModal(targetPos);
       return;
     } else if (type === 'toc') {
       insertTableOfContentsBlock(targetPos);
@@ -5816,12 +6078,28 @@ ${mdContent}
         snippet = `\n\n## Eligibility Criteria\n\n- **Nationality:** Must be a citizen of India.\n- **Age Limit:** 21 to 30 years.\n- **Educational Qualification:** Bachelor's Degree in relevant discipline.\n\n> **Note:** Final year students must present degree before interview.\n\n`;
       } else if (pattern === 'fees') {
         snippet = `\n\n## Application Fee Structure\n\n| Category | Application Fee |\n| --- | --- |\n| General / OBC / EWS | ₹500 |\n| SC / ST / PwD / Female | Exempted / ₹100 |\n\n`;
+      } else if (pattern === 'vacancies') {
+        snippet = `\n\n## Vacancy Details & Category Reservation\n\n| Post Name | Category | Total Vacancies |\n| --- | --- | --- |\n| Primary Post | UR / EWS / OBC | To be announced |\n| Reserved Post | SC / ST / PwD | As per reservation |\n\n`;
+      } else if (pattern === 'links') {
+        snippet = `\n\n## Important Links & Official Portals\n\n| Document / Portal | Direct Official Link |\n| --- | --- |\n| Official Notification PDF | [Download PDF](https://) |\n| Online Application Form | [Apply Online](https://) |\n| Official Website | [Visit Portal](https://) |\n\n`;
+      } else if (pattern === 'howto') {
+        snippet = `\n\n## How to Apply Online (Step-by-Step Guide)\n\n1. Visit the official website at [Portal URL].\n2. Locate the recruitment notification link under 'Latest Announcements'.\n3. Complete Candidate Profile or One-Time Registration (OTR).\n4. Fill in all personal and educational details accurately.\n5. Upload scanned photograph and signature in prescribed format.\n6. Pay the applicable application fee through online gateway.\n7. Submit the form and download the confirmation page for reference.\n\n`;
+      } else if (pattern === 'faqs') {
+        openFaqModal();
+        inserterDrawer?.classList.add('hidden');
+        return;
       }
       if (snippet && markdownTextarea) {
         insertMarkdownSnippet(snippet);
         inserterDrawer?.classList.add('hidden');
         return;
       }
+    }
+
+    if (pattern === 'faqs') {
+      openFaqModal();
+      inserterDrawer?.classList.add('hidden');
+      return;
     }
 
     if (!editor) return;
@@ -5892,6 +6170,77 @@ ${mdContent}
             </tbody>
           </table>
         </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'vacancies') {
+      editor.chain().focus().insertContent(`
+        <h2>Vacancy Details & Category Reservation</h2>
+        <div class="overflow-x-auto my-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Post Name</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Category</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900">Total Vacancies</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Primary Post</td>
+                <td class="p-2 text-xs border-r border-slate-200">UR / EWS / OBC</td>
+                <td class="p-2 text-xs">To be announced</td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Reserved Post</td>
+                <td class="p-2 text-xs border-r border-slate-200">SC / ST / PwD</td>
+                <td class="p-2 text-xs">As per norms</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'links') {
+      editor.chain().focus().insertContent(`
+        <h2>Important Links & Official Portals</h2>
+        <div class="overflow-x-auto my-4">
+          <table class="min-w-full border border-slate-200">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200">
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900 border-r border-slate-200">Document / Portal</th>
+                <th class="p-2.5 text-left font-bold text-xs text-slate-900">Direct Official Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Official Notification PDF</td>
+                <td class="p-2 text-xs"><a href="https://" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Download PDF</a></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Online Application Form</td>
+                <td class="p-2 text-xs"><a href="https://" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Apply Online</a></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="p-2 text-xs border-r border-slate-200">Official Website</td>
+                <td class="p-2 text-xs"><a href="https://" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Visit Portal</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p></p>
+      `).run();
+    } else if (pattern === 'howto') {
+      editor.chain().focus().insertContent(`
+        <h2>How to Apply Online (Step-by-Step Guide)</h2>
+        <ol>
+          <li>Visit the official recruitment portal of the examination board.</li>
+          <li>Locate the notification link under 'Latest Updates' or 'Active Recruitment'.</li>
+          <li>Complete Candidate Profile or One-Time Registration (OTR).</li>
+          <li>Fill in all required personal, educational, and contact details carefully.</li>
+          <li>Upload your recent passport-size photograph and signature in required format.</li>
+          <li>Pay the online application fee via Debit Card, Credit Card, Net Banking, or UPI.</li>
+          <li>Review the application preview, submit the form, and download confirmation page.</li>
+        </ol>
         <p></p>
       `).run();
     }
@@ -6001,6 +6350,12 @@ ${mdContent}
     { title: 'Video Embed', desc: 'YouTube or direct video player', action: () => insertBlock('video') },
     { title: 'Table of Contents', desc: 'Heading links', action: () => insertBlock('toc') },
     { title: 'Important Dates Pattern', desc: 'Exam timeline table', action: () => insertExamPattern('dates') },
+    { title: 'Eligibility Pattern', desc: 'Criteria and age limits', action: () => insertExamPattern('eligibility') },
+    { title: 'Application Fees Pattern', desc: 'Category fee structure', action: () => insertExamPattern('fees') },
+    { title: 'Vacancies Pattern', desc: 'Category-wise vacancy table', action: () => insertExamPattern('vacancies') },
+    { title: 'Important Links Pattern', desc: 'Official notifications & portals', action: () => insertExamPattern('links') },
+    { title: 'How to Apply Pattern', desc: 'Step-by-step registration guide', action: () => insertExamPattern('howto') },
+    { title: 'FAQs Pattern', desc: 'Frequently asked questions (collapsible accordion)', action: () => openFaqModal() },
   ];
 
   function renderSlashMenuItems() {
@@ -7381,8 +7736,8 @@ ${mdContent}
         title: caption,
         align,
         layout,
-        width,
-        height: null,
+        width: width ?? undefined,
+        height: undefined,
       };
       if (typeof articleImageTargetPos === 'number') {
         editor.chain().focus().insertContentAt(articleImageTargetPos, [
@@ -7489,8 +7844,8 @@ ${mdContent}
     const tester = new Image();
     tester.onload = () => {
       if (imgMetaDimsLabel) imgMetaDimsLabel.textContent = `Natural: ${tester.naturalWidth} x ${tester.naturalHeight} px`;
-      if (!imgMetaWidthInput?.value && tester.naturalWidth) imgMetaWidthInput.value = String(tester.naturalWidth);
-      if (!imgMetaHeightInput?.value && tester.naturalHeight) imgMetaHeightInput.value = String(tester.naturalHeight);
+      if (imgMetaWidthInput && !imgMetaWidthInput.value && tester.naturalWidth) imgMetaWidthInput.value = String(tester.naturalWidth);
+      if (imgMetaHeightInput && !imgMetaHeightInput.value && tester.naturalHeight) imgMetaHeightInput.value = String(tester.naturalHeight);
     };
     tester.src = attrs.src;
 
@@ -7544,7 +7899,7 @@ ${mdContent}
       const data = await res.json().catch(() => null);
       if (data?.alt) {
         imgMetaAltInput.value = data.alt;
-        if (!imgMetaCaptionInput?.value && data.caption) {
+        if (imgMetaCaptionInput && !imgMetaCaptionInput.value && data.caption) {
           imgMetaCaptionInput.value = data.caption;
         }
       } else {
@@ -7689,6 +8044,9 @@ ${mdContent}
   let activeClickedImgEl: HTMLImageElement | null = null;
 
   function getArticleFocusKeywords(): string[] {
+    if (activeFocusKeywords && activeFocusKeywords.length > 0) {
+      return activeFocusKeywords;
+    }
     const title = (document.getElementById('field-title') as HTMLInputElement | null)?.value || '';
     const clean = title.replace(/[^\w\s\u0900-\u097F]/gi, ' ').trim();
     const words = clean.split(/\s+/).filter((w) => w.length >= 4);
@@ -7834,9 +8192,10 @@ ${mdContent}
   // Single click on image in editor to trigger popover
   editorElement?.addEventListener('click', (event) => {
     const img = (event.target as HTMLElement | null)?.closest('img');
+    const clickedTarget = event.target as HTMLElement | null;
     if (img && currentEditorMode === 'visual') {
       showImageClickPopover(img as HTMLImageElement);
-    } else if (!event.target?.closest('#image-click-popover')) {
+    } else if (!clickedTarget?.closest('#image-click-popover')) {
       closeImageClickPopover();
     }
   });
@@ -7859,7 +8218,7 @@ ${mdContent}
 
   function refreshSidebarArticleImages() {
     if (!sidebarArticleImagesList) return;
-    const images: Array<{ src: string; alt: string; align: string; el: HTMLImageElement }> = [];
+    const images: Array<{ src: string; alt: string; caption?: string; align: string; el: HTMLImageElement }> = [];
 
     if (currentEditorMode === 'visual') {
       editor.view.dom.querySelectorAll('img').forEach((img) => {
@@ -7935,7 +8294,7 @@ ${mdContent}
             <label class="text-[9px] font-semibold text-slate-500 block uppercase">Bottom Caption (Visible Under Image)</label>
             <input 
               type="text" 
-              value="${imgObj.caption.replace(/"/g, '&quot;')}" 
+              value="${(imgObj.caption || '').replace(/"/g, '&quot;')}" 
               placeholder="e.g. AFCAT 2026 Exam Pattern & Selection Structure" 
               class="sidebar-img-caption-field w-full bg-white border border-slate-200 rounded px-2.5 py-1 text-[11px] text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 transition"
             />
@@ -7996,7 +8355,7 @@ ${mdContent}
   setTimeout(refreshSidebarArticleImages, 1000);
 
   sidebarInsertImageTrigger?.addEventListener('click', () => {
-    openMediaLibraryModal();
+    openArticleImageModal();
   });
 
   // ==========================================
@@ -8161,6 +8520,154 @@ ${mdContent}
     }
 
     closeCalloutModal();
+  });
+
+  // ==========================================
+  // FAQ Setup Dialog Implementation
+  // ==========================================
+  const faqModal = document.getElementById('faq-modal');
+  const faqModalHeading = document.getElementById('faq-modal-heading') as HTMLInputElement | null;
+  const faqRowsContainer = document.getElementById('faq-rows-container');
+  const addFaqRowBtn = document.getElementById('add-faq-row-btn');
+  let faqTargetPos: number | null = null;
+
+  const defaultFaqPairs = [
+    {
+      q: 'What is the application deadline for this recruitment?',
+      a: 'The online application window is open until [Closing Date] at 11:59 PM. Aspirants are advised not to wait until the last day to submit their form.',
+    },
+    {
+      q: 'What is the educational qualification and eligibility criteria?',
+      a: 'Candidates must possess a Bachelor\'s Degree or 10+2 from a recognized board/university. Minimum age is 18-21 years with relaxations for reserved categories.',
+    },
+    {
+      q: 'What is the application fee structure?',
+      a: 'General / OBC / EWS candidates are charged the standard portal fee (approx. ₹500), while SC / ST / PwD / Female candidates are either exempted or charged a concession fee.',
+    },
+    {
+      q: 'Where can I download the official notification PDF and syllabus?',
+      a: 'The complete detailed notification PDF and subject-wise exam syllabus are available on the official recruitment board portal and via direct links in the table above.',
+    },
+  ];
+
+  function renderFaqRows(pairs = defaultFaqPairs) {
+    if (!faqRowsContainer) return;
+    faqRowsContainer.innerHTML = pairs.map((pair, idx) => `
+      <div class="faq-row-card p-3 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 relative" data-row-idx="${idx}">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+            <span class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">Q${idx + 1}</span>
+            <span>Question ${idx + 1}</span>
+          </span>
+          <button type="button" class="remove-faq-row-btn text-slate-400 hover:text-red-500 text-xs px-1" title="Remove question">✕</button>
+        </div>
+        <input type="text" class="faq-q-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" value="${escapeHtmlSnippet(pair.q)}" placeholder="Enter question..." />
+        <textarea rows="2" class="faq-a-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none" placeholder="Enter answer...">${escapeHtmlSnippet(pair.a)}</textarea>
+      </div>
+    `).join('');
+
+    faqRowsContainer.querySelectorAll('.remove-faq-row-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const row = (e.currentTarget as HTMLElement).closest('.faq-row-card');
+        row?.remove();
+        renumberFaqRows();
+      });
+    });
+  }
+
+  function renumberFaqRows() {
+    if (!faqRowsContainer) return;
+    const rows = faqRowsContainer.querySelectorAll('.faq-row-card');
+    rows.forEach((row, idx) => {
+      const label = row.querySelector('.text-\\[11px\\]');
+      if (label) {
+        label.innerHTML = `
+          <span class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">Q${idx + 1}</span>
+          <span>Question ${idx + 1}</span>
+        `;
+      }
+    });
+  }
+
+  function openFaqModal(targetPos: number | null = null) {
+    faqTargetPos = typeof targetPos === 'number' ? targetPos : blockInsertTargetPos;
+    renderFaqRows();
+    faqModal?.classList.remove('hidden');
+    faqModal?.classList.add('flex');
+    faqModalHeading?.focus();
+  }
+
+  function closeFaqModal() {
+    faqModal?.classList.add('hidden');
+    faqModal?.classList.remove('flex');
+  }
+
+  addFaqRowBtn?.addEventListener('click', () => {
+    if (!faqRowsContainer) return;
+    const currentCount = faqRowsContainer.querySelectorAll('.faq-row-card').length;
+    const newIdx = currentCount;
+    const div = document.createElement('div');
+    div.className = 'faq-row-card p-3 rounded-lg border border-slate-200 bg-slate-50/70 space-y-2 relative';
+    div.dataset.rowIdx = `${newIdx}`;
+    div.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-bold text-slate-700 flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-[10px] font-bold">Q${newIdx + 1}</span>
+          <span>Question ${newIdx + 1}</span>
+        </span>
+        <button type="button" class="remove-faq-row-btn text-slate-400 hover:text-red-500 text-xs px-1" title="Remove question">✕</button>
+      </div>
+      <input type="text" class="faq-q-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600" value="" placeholder="Enter question..." />
+      <textarea rows="2" class="faq-a-input w-full bg-white border border-slate-300 rounded px-2.5 py-1 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 leading-relaxed resize-none" placeholder="Enter answer..."></textarea>
+    `;
+    div.querySelector('.remove-faq-row-btn')?.addEventListener('click', () => {
+      div.remove();
+      renumberFaqRows();
+    });
+    faqRowsContainer.appendChild(div);
+    div.querySelector('input')?.focus();
+  });
+
+  document.getElementById('close-faq-modal')?.addEventListener('click', closeFaqModal);
+  document.getElementById('cancel-faq-modal')?.addEventListener('click', closeFaqModal);
+  document.getElementById('confirm-faq-modal')?.addEventListener('click', () => {
+    const heading = faqModalHeading?.value.trim() || 'Frequently Asked Questions (FAQs)';
+    const rows = faqRowsContainer?.querySelectorAll('.faq-row-card') || [];
+    const pairs: { q: string; a: string }[] = [];
+
+    rows.forEach((row) => {
+      const q = (row.querySelector('.faq-q-input') as HTMLInputElement | null)?.value.trim();
+      const a = (row.querySelector('.faq-a-input') as HTMLTextAreaElement | null)?.value.trim();
+      if (q && a) pairs.push({ q, a });
+    });
+
+    if (pairs.length === 0) {
+      alert('Please enter at least one question and answer.');
+      return;
+    }
+
+    if (currentEditorMode === 'markdown' && markdownTextarea) {
+      let mdContent = `\n\n## ${heading}\n\n`;
+      pairs.forEach((p, idx) => {
+        mdContent += `**Q${idx + 1}: ${p.q}**<br>Ans: ${p.a}\n\n`;
+      });
+      insertMarkdownSnippet('faqs', mdContent);
+    } else if (editor) {
+      let htmlContent = `<h2>${escapeHtmlSnippet(heading)}</h2>`;
+      pairs.forEach((p, idx) => {
+        htmlContent += `<p><strong>Q${idx + 1}: ${escapeHtmlSnippet(p.q)}</strong><br>Ans: ${escapeHtmlSnippet(p.a)}</p>`;
+      });
+      htmlContent += `<p></p>`;
+
+      if (typeof faqTargetPos === 'number') {
+        editor.chain().focus().insertContentAt(faqTargetPos, htmlContent).run();
+      } else {
+        editor.chain().focus().insertContent(htmlContent).run();
+      }
+    }
+
+    closeFaqModal();
+    inserterDrawer?.classList.add('hidden');
   });
 
   // ==========================================
@@ -8450,7 +8957,7 @@ ${mdContent}
     const fullPublicUrl = `/${slug}`;
     if (resultingUrlPreview) resultingUrlPreview.textContent = fullPublicUrl;
 
-    if (serpTitle) serpTitle.textContent = `${metaTitle} | ExamPortal`;
+    if (serpTitle) serpTitle.textContent = `${metaTitle} | ${SITE_NAME}`;
     if (serpUrl) serpUrl.textContent = `${SITE_URL}${fullPublicUrl}`;
     if (serpDesc) serpDesc.textContent = metaDesc;
 
@@ -8486,6 +8993,30 @@ ${mdContent}
   });
 
   slugInput?.addEventListener('input', updateSerp);
+  slugInput?.addEventListener('blur', () => {
+    if (slugInput && slugInput.value.trim()) {
+      slugInput.value = slugify(slugInput.value);
+      updateSerp();
+    }
+  });
+  compareEnglishSlug?.addEventListener('blur', () => {
+    if (compareEnglishSlug && compareEnglishSlug.value.trim()) {
+      const clean = slugify(compareEnglishSlug.value);
+      compareEnglishSlug.value = clean;
+      if (compareHinglishSlug) compareHinglishSlug.value = clean;
+      if (slugInput) slugInput.value = clean;
+      updateSerp();
+    }
+  });
+  compareHinglishSlug?.addEventListener('blur', () => {
+    if (compareHinglishSlug && compareHinglishSlug.value.trim()) {
+      const clean = slugify(compareHinglishSlug.value);
+      compareHinglishSlug.value = clean;
+      if (compareEnglishSlug) compareEnglishSlug.value = clean;
+      if (slugInput) slugInput.value = clean;
+      updateSerp();
+    }
+  });
   excerptInput?.addEventListener('input', updateSerp);
   metaTitleInput?.addEventListener('input', updateSerp);
   metaDescInput?.addEventListener('input', updateSerp);
@@ -8564,9 +9095,14 @@ ${mdContent}
         slug = languageSelect?.value === 'ENGLISH'
           ? (compareEnglishSlug?.value.trim() || '')
           : (compareHinglishSlug?.value.trim() || '');
-        if (slugInput && slug) slugInput.value = slug;
       }
-      slug = slug || slugify(title || 'untitled');
+      slug = (slug || slugify(title || 'untitled'))
+        .toLowerCase()
+        .replace(/-(hinglish|english)$/i, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'article';
+      if (slugInput) slugInput.value = slug;
 
       if (!title) {
         if (!isAutosave) alert('Please enter an article title before saving.');
@@ -8647,8 +9183,13 @@ ${mdContent}
         currentVersion = saved.version;
         isDirty = false;
         if (saved.translationGroupId) currentTranslationGroupId = saved.translationGroupId;
-        if (saved.language === 'ENGLISH') englishBlogId = saved.id;
-        else if (saved.language === 'HINGLISH') hinglishBlogId = saved.id;
+        if (saved.language === 'ENGLISH') {
+          englishBlogId = saved.id;
+          englishVersion = saved.version;
+        } else if (saved.language === 'HINGLISH') {
+          hinglishBlogId = saved.id;
+          hinglishVersion = saved.version;
+        }
 
         if (statusSelect) statusSelect.value = saved.status || effectiveStatus;
         if (docVersionDisplay) docVersionDisplay.textContent = `${saved.version}`;
@@ -8662,8 +9203,26 @@ ${mdContent}
           window.history.replaceState({}, '', `/editor?edit=${saved.id}`);
         }
       } else if (res.status === 409) {
-        const err = await res.json();
-        alert(`Version Conflict: ${err.message}`);
+        const err = await res.json().catch(() => ({}));
+        if (err.serverVersion !== undefined) {
+          // Synchronize client version with server version
+          currentVersion = err.serverVersion;
+          if (languageSelect?.value === 'ENGLISH') {
+            englishVersion = err.serverVersion;
+          } else {
+            hinglishVersion = err.serverVersion;
+          }
+          if (docVersionDisplay) docVersionDisplay.textContent = `${err.serverVersion}`;
+          if (isAutosave) {
+            if (saveStatusEl) {
+              saveStatusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span><span>Version synced</span>`;
+            }
+          } else {
+            alert(`Version Conflict: ${err.message || 'This article was modified by another editor. Please refresh.'}`);
+          }
+        } else {
+          alert(`Conflict: ${err.message || 'This blog slug is already in use.'}`);
+        }
       } else {
         const err = await res.json().catch(() => ({}));
         const details = err.errors ? Object.entries(err.errors).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('; ') : '';
@@ -8725,7 +9284,7 @@ ${mdContent}
     const res = await apiFetch(`/blogs/${currentPostId}`, { method: 'DELETE' });
     if (res.ok) {
       alert('Article deleted successfully.');
-      window.location.href = '/admin';
+      window.location.href = '/administrator';
     } else {
       const err = await res.json().catch(() => ({}));
       alert(`Failed to delete article: ${err.message || 'Error'}`);
@@ -8882,11 +9441,13 @@ ${mdContent}
     return text
       .toLowerCase()
       .trim()
+      .replace(/-(english|hinglish)$/i, '')
       .replace(/\\+/g, '')
       .replace(/\s+/g, '-')
       .replace(/[^\p{L}\p{N}\s\-]+/gu, '')
       .replace(/\-\-+/g, '-')
-      .replace(/(^-|-$)/g, '');
+      .replace(/(^-|-$)/g, '')
+      .replace(/-(english|hinglish)$/i, '');
   }
 
   // Initialization
@@ -9429,10 +9990,14 @@ ${mdContent}
         const isPostEnglish = post.language === 'ENGLISH';
         if (isPostEnglish) {
           englishBlogId = post.id;
+          englishVersion = post.version || 1;
           hinglishBlogId = post.linkedBlog?.id || null;
+          hinglishVersion = post.linkedBlog?.version || 1;
         } else {
           hinglishBlogId = post.id;
+          hinglishVersion = post.version || 1;
           englishBlogId = post.linkedBlog?.id || null;
+          englishVersion = post.linkedBlog?.version || 1;
         }
 
         const postMd = post.htmlContent ? turndownService.turndown(post.htmlContent) : '';

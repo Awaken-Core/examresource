@@ -20,6 +20,8 @@ interface Props {
   modifiedTime?: string;
   jsonLd?: object;
   hideHeaderFooter?: boolean;
+  hideHeader?: boolean;
+  hideDesktopSidebar?: boolean;
   alternateLinks?: { hreflang: string; href: string }[];
   noindex?: boolean;
   useClientRouter?: boolean;
@@ -44,6 +46,8 @@ const {
   modifiedTime,
   jsonLd,
   hideHeaderFooter = false,
+  hideHeader = false,
+  hideDesktopSidebar = false,
   alternateLinks = [],
   noindex = false,
   useClientRouter = false,
@@ -149,7 +153,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     </script>
 
     {/* Preload Self-Hosted Geist Latin Font for zero external TLS latency, zero CLS & instant text render */}
-    <link rel="preload" href="/fonts/geist-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" fetchpriority="high" />
+    <link rel="preload" href="/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" fetchpriority="high" />
+    <link rel="preload" href="/fonts/geist-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+
 
     {/* DNS prefetch for the media CDN without holding an unused TLS socket */}
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
@@ -255,7 +261,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right */}
     <div class="flex-1 flex min-h-screen relative">
       {/* Desktop Left Navigation Sidebar (Full height on left) */}
-      {!hideHeaderFooter && (
+      {!hideHeaderFooter && !hideDesktopSidebar && (
         <div 
           id="desktop-sidebar-wrapper" 
           class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300"
@@ -264,9 +270,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         </div>
       )}
 
-      {/* Main Area: Header (Header width decreases when sidebar is open!) + Content + Footer */}
+      {/* Main Area: Header + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
-        {!hideHeaderFooter && <Header />}
+        {!hideHeaderFooter && !hideHeader && <Header hideDesktopSidebar={hideDesktopSidebar} />}
+
         <main id="main-content" class="flex-grow">
           <slot />
         </main>
@@ -378,6 +385,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               </svg>
               <span>Test Series</span>
             </a>
+
           </div>
         </div>
 
@@ -1709,14 +1717,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         let authProfileQueued = false;
         function queueSyncAuthProfile() {
-          const hasAuthHint = (function() {
-            try {
-              return localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
-            } catch (e) {
-              return false;
-            }
-          })();
-          if (!hasAuthHint) return;
+          // API-host cookies are unreadable here in production; always verify the session.
 
           if (authProfileQueued) return;
           authProfileQueued = true;

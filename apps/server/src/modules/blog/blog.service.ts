@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -94,6 +95,7 @@ function escapeRegex(text: string): string {
 
 @Injectable()
 export class BlogService {
+  private readonly logger = new Logger(BlogService.name);
   private cache = new MemoryCache();
 
   constructor(
@@ -413,9 +415,11 @@ export class BlogService {
 
     const now = new Date();
     const requestedLang = language || 'HINGLISH';
+    const cleanSlug = slug.replace(/-(english|hinglish)$/i, '');
+    const slugCandidates = Array.from(new Set([slug, cleanSlug, `${cleanSlug}-english`, `${cleanSlug}-hinglish`]));
 
     const baseCondition: any = {
-      slug,
+      slug: { $in: slugCandidates },
       language: requestedLang,
       $or: [
         { status: 'PUBLISHED' },
@@ -432,7 +436,7 @@ export class BlogService {
     if (!rawBlog) {
       const anyBlogWithSlug = await this.blogModel
         .findOne({
-          slug,
+          slug: { $in: slugCandidates },
           $or: [
             { status: 'PUBLISHED' },
             { status: 'SCHEDULED', scheduledAt: { $lte: now } },
@@ -462,7 +466,7 @@ export class BlogService {
     if (!rawBlog) {
       const fallback = await this.blogModel
         .findOne({
-          slug,
+          slug: { $in: slugCandidates },
           $or: [
             { status: 'PUBLISHED' },
             { status: 'SCHEDULED', scheduledAt: { $lte: now } },
@@ -495,7 +499,7 @@ export class BlogService {
     const blog: any = {
       id: rawBlog._id.toString(),
       title: rawBlog.title,
-      slug: rawBlog.slug,
+      slug: (rawBlog.slug || '').replace(/-(english|hinglish)$/i, ''),
       language: rawBlog.language,
       translationGroupId: rawBlog.translationGroupId ?? null,
       description: rawBlog.description ?? null,
@@ -602,7 +606,7 @@ export class BlogService {
       .lean();
 
     return items.map((i: any) => ({
-      slug: i.slug,
+      slug: (i.slug || '').replace(/-(english|hinglish)$/i, ''),
       language: i.language,
       categorySlug: i.categoryId?.slug ?? null,
       updatedAt: i.updatedAt,
@@ -846,6 +850,7 @@ export class BlogService {
     this.assertCanWrite(currentUser);
     const authorId = await this.resolveAuthorId(input.authorId, currentUser);
 
+    input.slug = input.slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
     const language = input.language ?? 'HINGLISH';
     const existingDraft = await this.blogModel
       .findOne({
@@ -987,8 +992,13 @@ export class BlogService {
       });
     }
 
-    if (input.slug && input.slug !== existing.slug) {
-      await this.assertSlugAvailable(input.slug, existing.id, existing.language);
+    if (input.slug) {
+      input.slug = input.slug.trim().toLowerCase().replace(/-(english|hinglish)$/i, '');
+    }
+
+    const targetLanguage = input.language || existing.language;
+    if (input.slug && (input.slug !== existing.slug || (input.language && input.language !== existing.language))) {
+      await this.assertSlugAvailable(input.slug, existing.id, targetLanguage);
     }
 
     const authorId =
@@ -1139,6 +1149,7 @@ export class BlogService {
             sharedFieldsToSync.categoryId = updateFields.categoryId;
           }
           if (input.noindex !== undefined) sharedFieldsToSync.noindex = blogDoc.noindex;
+          if (input.slug !== undefined) sharedFieldsToSync.slug = blogDoc.slug;
 
           if (Object.keys(sharedFieldsToSync).length > 0) {
             await this.blogModel.updateMany(
@@ -2070,7 +2081,15 @@ export class BlogService {
     const translationGroupId = input.translationGroupId || crypto.randomUUID();
     const status = input.status || 'DRAFT';
 
-    const sharedSlug = input.english.slug || input.hinglish.slug;
+    const rawSharedSlug = input.english.slug || input.hinglish.slug || '';
+    const cleanSharedSlug = rawSharedSlug
+      .toLowerCase()
+      .replace(/-(hinglish|english)$/i, '')
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '') || 'article';
+
+    const sharedSlug = cleanSharedSlug;
     input.hinglish.slug = sharedSlug;
     input.english.slug = sharedSlug;
 
@@ -2107,7 +2126,6 @@ export class BlogService {
         .findOne({
           slug: sharedSlug,
           language: 'HINGLISH',
-          authorId: new Types.ObjectId(currentUser.id),
         })
         .select({ _id: 1 })
         .lean();
@@ -2121,7 +2139,6 @@ export class BlogService {
         .findOne({
           slug: sharedSlug,
           language: 'ENGLISH',
-          authorId: new Types.ObjectId(currentUser.id),
         })
         .select({ _id: 1 })
         .lean();
@@ -2228,12 +2245,29 @@ export class BlogService {
       additionalInstructions?: string;
       images?: Array<{ url: string; base64?: string; mimeType?: string }>;
       model?: string;
+      availableCategories?: Array<{ id: string; name: string; slug: string }>;
     },
     currentUser?: CurrentUser,
     onStage?: (stage: string, message: string) => void,
   ) {
     if (currentUser) this.assertCanWrite(currentUser);
-    return this.gemini.generateBilingualFromReference(input, onStage);
+
+    // Read real existing categories from database to ensure AI labels strictly within existing list
+    let availableCategories = input.availableCategories;
+    if (!availableCategories || availableCategories.length === 0) {
+      try {
+        const dbCats = await this.categoryModel.find({}, 'name slug').lean();
+        availableCategories = dbCats.map((c: any) => ({
+          id: String(c._id),
+          name: c.name,
+          slug: c.slug,
+        }));
+      } catch (err) {
+        this.logger.warn('Failed to fetch existing categories from DB for AI rewriter', err);
+      }
+    }
+
+    return this.gemini.generateBilingualFromReference({ ...input, availableCategories }, onStage);
   }
 
   private assertCanWrite(currentUser: CurrentUser) {
@@ -2253,6 +2287,10 @@ export class BlogService {
       (error as { code?: number | string })?.code === 11000 ||
       (error as { code?: number | string })?.code === 'P2002'
     ) {
+      const keyPattern = (error as { keyPattern?: Record<string, number> })?.keyPattern;
+      if (keyPattern && !keyPattern.slug) {
+        throw new ConflictException(`Duplicate record error on ${Object.keys(keyPattern).join(', ')}.`);
+      }
       throw new ConflictException('This blog slug is already in use.');
     }
     throw error;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { adminApi, type Post, type Category } from './api';
+import { articleCacheKey, readArticleCache, writeArticleCache } from '../../lib/deskCache';
 import { useAdminToast } from './AdminToast';
 import { DeleteConfirmModal } from './DeleteConfirmModal';
 import { AssignCategoriesModal } from './AssignCategoriesModal';
@@ -17,12 +18,17 @@ export function ArticlesManager({
 }: ArticlesManagerProps) {
   const { showToast } = useAdminToast();
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const initialKey = articleCacheKey('', 'ALL', 'ALL', 0);
+  const cachedPosts = typeof window === 'undefined' ? null : readArticleCache<Post>(initialKey);
+
+  const [posts, setPosts] = useState<Post[]>(cachedPosts ?? []);
+  const [isLoading, setIsLoading] = useState(cachedPosts == null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Filters
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [page, setPage] = useState(0);
@@ -36,23 +42,44 @@ export function ArticlesManager({
 
   // Fetch articles
   const fetchArticles = useCallback(async () => {
-    setIsLoading(true);
+    const key = articleCacheKey(debouncedSearch, selectedStatus, selectedCategory, page);
+    const cached = readArticleCache<Post>(key);
+    if (cached) {
+      setPosts(cached);
+      setIsLoading(false);
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+      setIsRefreshing(false);
+    }
     try {
       const data = await adminApi.getArticles({
-        search: search.trim() || undefined,
+        search: debouncedSearch.trim() || undefined,
         status: selectedStatus,
         categoryId: selectedCategory,
         limit,
         offset: page * limit,
       });
-      setPosts(data || []);
+      const rows = data || [];
+      setPosts(rows);
+      writeArticleCache(key, rows);
       setError(null);
     } catch (err: any) {
-      setError(err?.message || 'Unable to load articles from the server.');
+      if (!cached) setError(err?.message || 'Unable to load articles from the server.');
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
-  }, [search, selectedStatus, selectedCategory, page]);
+  }, [debouncedSearch, selectedStatus, selectedCategory, page]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearch(search), 250);
+    return () => window.clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, selectedStatus, selectedCategory]);
 
   useEffect(() => {
     fetchArticles();
@@ -157,6 +184,7 @@ export function ArticlesManager({
             </h1>
             <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
               Organize topics into blog categories (Java, Civil Engineering, Government Jobs) and write articles inside them.
+              {isRefreshing ? ' Updating the list…' : ''}
             </p>
           </div>
 

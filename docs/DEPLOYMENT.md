@@ -6,42 +6,57 @@ This document provides the standard operating procedure for deploying the **Govt
 
 ## 🚀 The Production Deployment Workflow
 
-Deployment to production is triggered automatically via Git branch tracking. The production branch is **`release/prod`**.
+Deployment to production is triggered automatically via Git branch tracking. The production branch is **`main`**.
 
 ### Standard Release Sequence
 
 Execute the following commands from the project root:
 
 ```bash
-# Step 1: Ensure your local working tree is clean and push all verified changes to main
+# Step 1: Run pre-flight verification locally
+bun run typecheck
+bunx astro check
+bun run lint
+bun run test
+bun run build
+
+# Step 2: Ensure your local working tree is clean and push verified changes to main
 git checkout main
 git add .
 git commit -m "feat/fix: descriptive summary of release changes"
 git push origin main
-
-# Step 2: Switch to the release branch and pull the latest changes from main
-git checkout release/prod
-git pull origin main
-
-# Step 3: Push to release/prod to trigger production builds
-git push origin release/prod
-
-# Step 4: Return to main (or your feature branch) for continued development
-git checkout main
 ```
 
 ---
 
-## ⚙️ What Happens When You Push to `release/prod`?
+## 📚 Version 2 Architecture & Development (`feat/textbook-v2`)
+
+All development for **Version 2** of the platform (textbooks, subject/topic learning portals, mock test series, and question banks) is centralized on the **`feat/textbook-v2`** branch:
+
+- **Branch URL**: [https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2](https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2)
+
+### Version 2 Workflow:
+1. **Branch off v2**:
+   ```bash
+   git fetch origin
+   git checkout -b feat/v2-my-feature origin/feat/textbook-v2
+   ```
+2. **Develop & Test**: Verify with `bun run typecheck`, `bunx astro check`, `bun run lint`, and `bun run test`.
+3. **Open PR against `feat/textbook-v2`**: Version 2 PRs should target `feat/textbook-v2`.
+4. **Promotion to Production (`main`)**: Once v2 milestones are verified and stable, `feat/textbook-v2` is merged into `main` to trigger the production deployment.
+
+---
+
+## ⚙️ What Happens When You Push to `main`?
 
 1. **Frontend (`apps/client`) on Vercel**:
-   - Vercel is connected to the GitHub repository with the **Production Branch** configured to `release/prod`.
+   - Vercel is connected to the GitHub repository with the **Production Branch** configured to `main`.
    - Vercel triggers a production deployment using `@astrojs/vercel` running Astro SSR on the Vercel Edge/Serverless Network.
    - Build command: `astro build` (defined in `apps/client/package.json`).
    - Output directory: `.vercel/output`.
 
 2. **Backend (`apps/server`) on Cloudflare Workers / Node.js**:
-   - Cloudflare Workers / CI monitors `release/prod`.
+   - Cloudflare Workers / CI monitors `main`.
    - Builds the worker using `nest build` and `wrangler deploy` (or runs `bun run start:prod` on a production Node container).
    - Bundles `worker.ts` with Cloudflare `nodejs_compat` runtime and binds the `MONGO_DO` Durable Object for database proxying.
 
@@ -49,24 +64,27 @@ git checkout main
 
 ## 📋 Pre-Flight Checklist
 
-Before merging into `release/prod`, ALWAYS verify the following locally:
+Before pushing or merging into `main`, ALWAYS verify the following locally:
 
 ```bash
 # 1. Typecheck the backend NestJS application
 bun run typecheck
 
-# 2. Run linter across backend
+# 2. Typecheck and validate Astro frontend
+bunx astro check
+
+# 3. Run linter across backend
 bun run lint
 
-# 3. Execute unit and integration tests
+# 4. Execute unit and integration tests
 bun run test
 
-# 4. Run production build test for both client and server
+# 5. Run production build test for both client and server
 bun run build
 ```
 
 > [!CAUTION]
-> Never skip the pre-flight checks. Pushing broken TypeScript code to `release/prod` will cause production build failures and disrupt live traffic.
+> Never skip the pre-flight checks. Pushing broken TypeScript code to `main` will cause production build failures and disrupt live traffic.
 
 ---
 
@@ -142,20 +160,16 @@ If an unexpected defect occurs in production:
 3. Click the three dots `...` and select **Rollback to this deployment**.
 4. Traffic is routed to the healthy deployment instantly (< 10 seconds).
 
-### Option B: Git Revert on `release/prod`
+### Option B: Git Revert on `main`
 ```bash
-# Switch to release/prod
-git checkout release/prod
+# Ensure you are on main
+git checkout main
 
-# Revert the latest merge commit
+# Revert the faulty commit or merge
 git revert HEAD -m 1
 
-# Push the reverted commit to production
-git push origin release/prod
-
-# Sync main branch with the revert
-git checkout main
-git pull origin release/prod
+# Push the reverted commit to trigger production redeployment
+git push origin main
 ```
 
 ### Option C: Cloudflare Workers Rollback (Backend)
@@ -166,7 +180,7 @@ git pull origin release/prod
 
 ## 🔍 Post-Deployment Verification
 
-After pushing to `release/prod`:
+After pushing to `main`:
 1. Check the Vercel and Cloudflare dashboard logs for successful build output.
 2. Visit `https://govtpariksha.com` in Incognito:
    - Check that the homepage loads instantly without hydration errors.

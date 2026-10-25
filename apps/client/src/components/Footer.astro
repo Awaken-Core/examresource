@@ -6,64 +6,134 @@ const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 ---
 
-<footer class="bg-surface text-muted mt-16 border-t border-border text-body-xs">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<footer class="bg-surface border-t border-border/60 mt-16">
+  <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    {/* Main grid */}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+
       {/* Brand Column */}
-      <div class="md:col-span-1 space-y-3">
-        <div class="flex items-center gap-2.5">
-          <BrandLogo size={32} class="shrink-0" />
-          <span class="text-heading-sm font-bold text-white tracking-tight">
+      <div class="sm:col-span-2 lg:col-span-1 space-y-4">
+        <a href="/" class="flex items-center gap-2.5 group w-fit">
+          <BrandLogo size={32} class="shrink-0 group-hover:scale-105 transition-transform" />
+          <span class="font-bold text-base tracking-tight text-white">
             {brandPrefix}<span class="text-accent">{brandSuffix}</span>
           </span>
-        </div>
-        <p class="text-caption-sm text-muted leading-relaxed">
-          Your trusted source for verified government job notifications, admit cards, exam answer keys, and college admission counselling updates across India.
+        </a>
+        <p class="text-[13px] text-muted leading-relaxed max-w-xs">
+          Verified government job notifications, admit cards, exam answer keys, and counselling updates across India.
         </p>
+        {/* Social channels */}
+        <div class="flex items-center gap-2 pt-1">
+          {whatsappChannel && (
+            <a
+              href={whatsappChannel}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/35 text-[11px] font-semibold text-white transition-all duration-150 cursor-pointer"
+              title="Join WhatsApp Channel"
+            >
+              <svg class="w-3.5 h-3.5 text-[#25D366] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+              </svg>
+              WhatsApp
+            </a>
+          )}
+          {telegramChannel && (
+            <a
+              href={telegramChannel}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/35 text-[11px] font-semibold text-white transition-all duration-150 cursor-pointer"
+              title="Join Telegram Channel"
+            >
+              <svg class="w-3.5 h-3.5 text-[#229ED9] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+              </svg>
+              Telegram
+            </a>
+          )}
+        </div>
       </div>
 
-      {/* Quick Links 1 */}
+      {/* Exam Portals */}
       <div>
-        <h3 class="text-white font-semibold text-caption-xs uppercase tracking-wider mb-3">Exam portals</h3>
-        <ul class="space-y-1 text-caption-sm text-muted">
-          <li><a href="https://ssc.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">SSC</a></li>
-          <li><a href="https://www.upsc.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">UPSC</a></li>
-          <li><a href="https://rrb.indianrailways.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">Railway RRB</a></li>
-          <li><a href="https://www.ibps.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">IBPS</a></li>
-          <li><a href="https://nta.ac.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">NTA</a></li>
+        <h3 class="text-[11px] font-bold uppercase tracking-widest text-muted/70 mb-4">Exam Portals</h3>
+        <ul class="space-y-2">
+          {[
+            { label: 'SSC', href: 'https://ssc.gov.in/' },
+            { label: 'UPSC', href: 'https://www.upsc.gov.in/' },
+            { label: 'Railway RRB', href: 'https://rrb.indianrailways.gov.in/' },
+            { label: 'IBPS', href: 'https://www.ibps.in/' },
+            { label: 'NTA', href: 'https://nta.ac.in/' },
+          ].map(({ label, href }) => (
+            <li>
+              <a
+                href={href}
+                class="flex items-center gap-1.5 text-[13px] text-muted hover:text-white transition-colors duration-150 min-h-[32px]"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <svg class="w-3 h-3 text-accent/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                {label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
+      {/* Government Portals */}
       <div>
-        <h3 class="text-white font-semibold text-caption-xs uppercase tracking-wider mb-3">Government portals</h3>
-        <ul class="space-y-1 text-caption-sm text-muted">
-          <li><a href="https://www.india.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">National Portal of India</a></li>
-          <li><a href="https://www.digilocker.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">DigiLocker</a></li>
-          <li><a href="https://www.uidai.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">UIDAI</a></li>
-          <li><a href="https://www.ncs.gov.in/" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1" rel="noopener noreferrer" target="_blank">National Career Service</a></li>
-          <li><a href="/#important-links" class="hover:text-white transition inline-flex items-center min-h-[32px] py-1">All important links</a></li>
+        <h3 class="text-[11px] font-bold uppercase tracking-widest text-muted/70 mb-4">Gov Portals</h3>
+        <ul class="space-y-2">
+          {[
+            { label: 'National Portal', href: 'https://www.india.gov.in/' },
+            { label: 'DigiLocker', href: 'https://www.digilocker.gov.in/' },
+            { label: 'UIDAI', href: 'https://www.uidai.gov.in/' },
+            { label: 'National Career Service', href: 'https://www.ncs.gov.in/' },
+            { label: 'All links', href: '/#important-links' },
+          ].map(({ label, href }) => (
+            <li>
+              <a
+                href={href}
+                class="flex items-center gap-1.5 text-[13px] text-muted hover:text-white transition-colors duration-150 min-h-[32px]"
+                rel="noopener noreferrer"
+                target={href.startsWith('http') ? '_blank' : undefined}
+              >
+                <svg class="w-3 h-3 text-accent/50 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d={href.startsWith('http') ? 'M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14' : 'M9 5l7 7-7 7'} />
+                </svg>
+                {label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
 
       {/* Disclaimer */}
       <div>
-        <h3 class="text-white font-semibold text-caption-xs uppercase tracking-wider mb-3">Disclaimer</h3>
-        <p class="text-caption-sm text-muted leading-relaxed">
-          Guides published on this site are summaries. Apply, pay fees, and download admit cards only from the official portal named in the notice. {siteDomain} is an informational education portal and is not associated with any government department or recruitment commission.
+        <h3 class="text-[11px] font-bold uppercase tracking-widest text-muted/70 mb-4">Disclaimer</h3>
+        <p class="text-[12.5px] text-muted leading-relaxed">
+          Guides published here are summaries. Apply, pay fees, and download admit cards only from the official portal named in the notice.
+          <br /><br />
+          <span class="text-muted/70">{siteDomain} is an independent informational portal — not affiliated with any government department or recruitment commission.</span>
         </p>
       </div>
     </div>
 
-    <div class="border-t border-border mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-caption-xs text-muted gap-4">
-      <p>© 2026 {siteDomain}. All rights reserved.</p>
-      <div class="flex flex-wrap items-center gap-4">
-        <a href={whatsappChannel} target="_blank" rel="noopener noreferrer" class="hover:text-[#25D366] transition inline-flex items-center gap-1 font-medium min-h-[44px] py-2">WhatsApp</a>
-        <a href={telegramChannel} target="_blank" rel="noopener noreferrer" class="hover:text-[#2AABEE] transition inline-flex items-center gap-1 font-medium min-h-[44px] py-2">Telegram</a>
-        <a href="/privacy-policy" class="hover:text-white transition min-h-[44px] py-2 inline-flex items-center">Privacy Policy</a>
-        <a href="/terms-of-service" class="hover:text-white transition min-h-[44px] py-2 inline-flex items-center">Terms of Service</a>
-        <a href="/contact-us" class="hover:text-white transition min-h-[44px] py-2 inline-flex items-center">Contact Us</a>
-        <a href="/sitemap" class="hover:text-white transition min-h-[44px] py-2 inline-flex items-center">Sitemap</a>
-      </div>
+    {/* Bottom bar */}
+    <div class="border-t border-border/50 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-[12px] text-muted/60">
+        © {new Date().getFullYear()} {siteDomain}. All rights reserved.
+      </p>
+      <nav class="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Footer links">
+        <a href="/privacy-policy" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Privacy Policy</a>
+        <a href="/terms-of-service" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Terms</a>
+        <a href="/contact-us" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Contact</a>
+        <a href="/sitemap" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Sitemap</a>
+      </nav>
     </div>
   </div>
 </footer>

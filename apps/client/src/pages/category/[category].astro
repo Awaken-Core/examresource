@@ -11,7 +11,34 @@ import {
 } from '../../lib/preferred-lang';
 
 const { category: categoryParam } = Astro.params;
-const categorySlug = (categoryParam || '').toLowerCase();
+const rawCategorySlug = (categoryParam || '').toLowerCase();
+
+// Common category slug aliases redirect cleanly to canonical category URL
+const slugAliases: Record<string, string> = {
+  'notifications': 'notification',
+  'police-exams': 'police',
+  'railway': 'railways',
+  'rrb': 'railways',
+  'admission': 'psu-engineering',
+  'admissions': 'psu-engineering',
+  'engineering': 'psu-engineering',
+  'psu': 'psu-engineering',
+  'latestupdate': 'latest-updates',
+  'latest-update': 'latest-updates',
+  'state-pcs': 'state-exams',
+  'state-exam': 'state-exams',
+  'latest-job': 'latest-jobs',
+  'latestjob': 'latest-jobs',
+  'latestjobs': 'latest-jobs',
+  'jobs': 'latest-jobs',
+  'job': 'latest-jobs',
+};
+
+if (slugAliases[rawCategorySlug]) {
+  return Astro.redirect(`/category/${slugAliases[rawCategorySlug]}`, 301);
+}
+
+const categorySlug = rawCategorySlug;
 const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
 const listLanguage = appLangToBlogLanguage(preferredAppLang);
 
@@ -43,22 +70,19 @@ try {
   liveCategoryPosts = [];
 }
 
-// Fallback category titles if categories endpoint returns empty
-const defaultCategoryNames: Record<string, string> = {
-  'central-government': 'Central Government',
-  'state-exams': 'State Exams',
-  'banking': 'Banking',
-  'ssc-railways': 'SSC & Railways',
-  'teaching': 'Teaching',
-  'defence': 'Defence',
-};
-
-// If the category does not exist in the database, is not a known category, and has no posts, return 404
-if (!categoryInfo && !defaultCategoryNames[categorySlug] && liveCategoryPosts.length === 0) {
+// If the category does not exist in the database and has no posts, return 404
+if (!categoryInfo && liveCategoryPosts.length === 0) {
   return Astro.rewrite('/404');
 }
 
-const categoryTitle = categoryInfo?.name || defaultCategoryNames[categorySlug] || categorySlug.replace(/-/g, ' ').toUpperCase();
+const categoryTitle = categoryInfo?.name || categorySlug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+
+// Helper: is article published within last 3 days?
+const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+function computeIsNew(publishedAt: string | null | undefined): boolean {
+  if (!publishedAt) return false;
+  return Date.now() - new Date(publishedAt).getTime() < THREE_DAYS_MS;
+}
 const categoryDesc = categoryInfo?.description || `Verified recruitment notifications, exam dates, syllabi, admit cards, and official portal links for ${categoryTitle}.`;
 
 const pageTitle = `${categoryTitle} Exam Updates & Notifications | ${siteName}`;
@@ -101,12 +125,15 @@ const jsonLd = {
 };
 
 const displayCategories = allCategories && allCategories.length > 0 ? allCategories : [
-  { name: 'Central Government', slug: 'central-government' },
-  { name: 'State Exams', slug: 'state-exams' },
-  { name: 'Banking', slug: 'banking' },
-  { name: 'SSC & Railways', slug: 'ssc-railways' },
-  { name: 'Teaching', slug: 'teaching' },
-  { name: 'Defence', slug: 'defence' },
+  { name: 'Central Govt & UPSC', slug: 'central-government' },
+  { name: 'SSC Exams', slug: 'ssc' },
+  { name: 'Railway Exams (RRB)', slug: 'railways' },
+  { name: 'Banking & Insurance Exams', slug: 'banking' },
+  { name: 'Latest Govt Jobs', slug: 'latest-jobs' },
+  { name: 'Defence & Paramilitary Exams', slug: 'defence' },
+  { name: 'Police Recruitment Exams', slug: 'police' },
+  { name: 'Teaching & Education Exams', slug: 'teaching' },
+  { name: 'PSU & Engineering Exams', slug: 'psu-engineering' },
 ];
 
 const R2_PORTAL_BASE = 'https://pub-68568854a58845bc975b176de76b1ad5.r2.dev/portals';
@@ -131,7 +158,7 @@ const relevantPortals = [
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
         
         {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7" transition:name="main-content">
+        <div class="min-w-0 space-y-7">
           
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
@@ -164,8 +191,6 @@ const relevantPortals = [
               <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
                 {categoryDesc}
               </p>
-
-              <!-- Category Navigation Filter Pills -->
               <div class="pt-3 border-t border-border/50 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
                 <a
                   href="/"
@@ -178,6 +203,9 @@ const relevantPortals = [
                   return (
                     <a
                       href={`/category/${c.slug}`}
+                      target="_blank"
+                      rel="noopener"
+                      data-astro-prefetch="false"
                       class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 border ${
                         isActive
                           ? 'bg-surface-raised text-white border-border shadow-xs'
@@ -352,6 +380,9 @@ const relevantPortals = [
               {displayCategories.filter(c => c.slug !== categorySlug).map((c) => (
                 <a
                   href={`/category/${c.slug}`}
+                  target="_blank"
+                  rel="noopener"
+                  data-astro-prefetch="false"
                   class="flex items-center justify-between p-2 rounded hover:bg-surface-raised text-xs text-muted hover:text-white transition group"
                 >
                   <span class="truncate">{c.name}</span>

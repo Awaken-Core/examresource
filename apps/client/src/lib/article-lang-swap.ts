@@ -28,18 +28,18 @@ function renderBodyHtml(version: ArticleLangVersion): string {
   if (version.coverImage) {
     const alt = escapeAttr(version.imageAlt || version.title);
     const src = escapeAttr(version.coverImage);
-    parts.push(`<figure class="my-2" data-article-cover>
+    parts.push(`<figure class="my-1 sm:my-3" data-article-cover>
       <img
         src="${src}"
         alt="${alt}"
-        class="max-h-[28rem] w-full rounded-xl border border-border object-cover"
+        class="max-h-56 sm:max-h-80 md:max-h-[28rem] w-full rounded-xl border border-border object-cover"
         loading="eager"
         fetchpriority="high"
         decoding="async"
         width="800"
         height="420"
       />
-      ${version.imageCaption ? `<figcaption class="mt-2 text-center text-xs text-muted">${escapeAttr(version.imageCaption)}</figcaption>` : ''}
+      ${version.imageCaption ? `<figcaption class="mt-1.5 text-center text-xs text-muted">${escapeAttr(version.imageCaption)}</figcaption>` : ''}
     </figure>`);
   }
   parts.push(`<div class="prose-markdown markdown-preview-content max-w-none" data-article-html>${version.htmlBody}</div>`);
@@ -116,6 +116,10 @@ export function swapArticleLanguage(lang: string): boolean {
 
   document.querySelectorAll<HTMLElement>('[data-article-lang]').forEach((el) => {
     el.dataset.articleLang = normalized;
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-share-btn]').forEach((el) => {
+    el.setAttribute('data-share-title', version.title);
   });
 
   updateSwitcherUi(langKey);

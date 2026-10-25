@@ -22,7 +22,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
   id={`${prefix}-sidebar`} 
   class="w-64 bg-canvas border-r border-border h-screen sticky top-0 flex flex-col justify-between shrink-0 select-none z-[1050] transition-all duration-300 overflow-visible"
 >
-  {/* Top Logo, Logoname & Collapse/Close Button in Sidebar */}
+  {/* Top Logo & Collapse/Close Button */}
   <div>
     <div class="sidebar-header h-16 px-4 flex items-center justify-between border-b border-border/60">
       <a href="/" class="flex items-center gap-2.5 group truncate" aria-label={`${siteDomain} home`}>
@@ -54,32 +54,30 @@ const isTestSeries = currentPath.startsWith('/test-series');
             class="text-muted hover:text-white p-1.5 rounded-lg hover:bg-surface-raised border border-border/60 hover:border-border transition cursor-pointer shrink-0 flex items-center justify-center"
             aria-label="Collapse sidebar (Alt+B)"
           >
-            {/* ◫ icon matching reference */}
-            <svg class="w-4 h-4 text-muted hover:text-white transition" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <svg class="w-4 h-4 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <rect x="3" y="3" width="18" height="18" rx="3" stroke-width="2"/>
               <line x1="9" y1="3" x2="9" y2="21" stroke-width="2"/>
             </svg>
           </button>
-
           {/* Attached Tooltip */}
           <Tooltip text="Collapse sidebar" shortcut={['Alt', 'B']} position="bottom" />
         </div>
       )}
     </div>
 
-    {/* Navigation Scrollable Body (Clean minimal educational layout matching reference) */}
-    <nav class="pt-0 px-3 pb-3 space-y-1 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-none">
+    {/* Navigation */}
+    <nav class="pt-2 px-3 pb-3 space-y-0.5 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-none">
       {/* 1. Home */}
       <a 
         href="/" 
         class={`sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs transition ${
           isHome 
-            ? 'bg-[#EBF2FE] text-[#2563EB] font-semibold dark:bg-[#2563EB]/20 dark:text-[#60A5FA]' 
-            : 'text-muted hover:text-white hover:bg-surface-raised font-medium'
+            ? 'bg-accent/10 text-accent font-semibold border border-accent/20' 
+            : 'text-muted hover:text-white hover:bg-surface-raised font-medium border border-transparent'
         }`}
         title="Home"
       >
-        <svg class={`w-4 h-4 shrink-0 ${isHome ? 'text-[#2563EB] dark:text-[#60A5FA]' : ''}`} viewBox="0 0 24 24" fill="currentColor">
+        <svg class={`w-4 h-4 shrink-0`} viewBox="0 0 24 24" fill="currentColor">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
         <span class="sidebar-text truncate">Home</span>
@@ -88,13 +86,13 @@ const isTestSeries = currentPath.startsWith('/test-series');
       {/* 2. Latest updates */}
       <a 
         href="/#latest-updates" 
-        class="sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium" 
+        class="sidebar-nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium border border-transparent" 
         title="Latest updates"
       >
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
         </svg>
-        <span class="sidebar-text truncate">Latest updates</span>
+        <span class="sidebar-text truncate">Latest Updates</span>
       </a>
 
       {/* 3. PYQs (Previous Year Questions) */}
@@ -131,14 +129,15 @@ const isTestSeries = currentPath.startsWith('/test-series');
       </a>
 
 
+
       {/* Channels Section */}
-      <div class="pt-2 border-t border-border/40 mt-2 space-y-0.5">
-        <p class="sidebar-text px-3.5 mb-1 text-[10px] font-bold uppercase tracking-widest text-muted">Channels</p>
+      <div class="pt-3 border-t border-border/40 mt-2 space-y-0.5">
+        <p class="sidebar-text px-3.5 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted">Channels</p>
         <a 
           href={whatsappChannel} 
           target="_blank" 
           rel="noopener noreferrer"
-          class="flex items-center gap-3 px-3.5 py-2 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium group" 
+          class="flex items-center gap-3 px-3.5 py-2 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium group border border-transparent" 
           title="WhatsApp Channel"
         >
           <svg class="w-4 h-4 shrink-0 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
@@ -150,7 +149,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
           href={telegramChannel} 
           target="_blank" 
           rel="noopener noreferrer"
-          class="flex items-center gap-3 px-3.5 py-2 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium group" 
+          class="flex items-center gap-3 px-3.5 py-2 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition text-xs font-medium group border border-transparent" 
           title="Telegram Channel"
         >
           <svg class="w-4 h-4 shrink-0 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
@@ -162,9 +161,9 @@ const isTestSeries = currentPath.startsWith('/test-series');
     </nav>
   </div>
 
-  {/* BOTTOM PROFILE / AUTH SECTION (Exact match to Image 2) */}
+  {/* BOTTOM PROFILE / AUTH SECTION */}
   <div class="p-3 border-t border-border/60 relative overflow-visible space-y-2">
-    {/* Popover Dropdown (Positioned Bottom-Up on Desktop or Mobile) */}
+    {/* Popover Dropdown */}
     <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} />
 
     {/* Quick Preferences: Theme & Language */}
@@ -221,7 +220,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
       </div>
     </div>
 
-    {/* Logged Out State: Log in / Sign up Button (Exact match to Image 2) */}
+    {/* Logged Out State */}
     <div class="sidebar-auth-logged-out block">
       <a 
         href="/login" 
@@ -235,15 +234,15 @@ const isTestSeries = currentPath.startsWith('/test-series');
       </a>
     </div>
 
-    {/* Logged In State: User Profile Card & Notification Pill (Exact match to Images 3 & 4) */}
+    {/* Logged In State */}
     <div class="sidebar-auth-logged-in hidden space-y-2">
-      {/* Notification Pill Button (Opens Notification Popup matching ss) */}
+      {/* Notification Pill Button */}
       <div class="relative">
         <button 
           id={`${prefix}-notification-trigger`}
           data-notification-trigger={`${prefix}-notification-popup`}
           type="button"
-          class="sidebar-notification-pill-btn w-full px-3 py-2 rounded-xl bg-surface-raised/50 hover:bg-surface-raised border border-border/60 hover:border-border transition flex items-center justify-between text-body-sm text-white/90 cursor-pointer text-left group"
+          class="sidebar-notification-pill-btn w-full px-3 py-2 rounded-xl bg-surface-raised/50 hover:bg-surface-raised border border-border/60 hover:border-border transition flex items-center justify-between text-body-sm text-white cursor-pointer text-left group"
           title="Open Notifications"
           aria-haspopup="dialog"
           aria-expanded="false"
@@ -263,7 +262,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
           </span>
         </button>
 
-        {/* Popover Notification Popup anchored beside sidebar */}
+        {/* Notification Popup */}
         <NotificationPopup id={`${prefix}-notification-popup`} prefix={prefix} />
       </div>
 

@@ -8,8 +8,8 @@ export const GET: APIRoute = async () => {
 
   let livePosts: any[] = [];
   try {
-    const res = await fetch(`${API_URL}/blogs?limit=50`);
-    if (res.ok) {
+    const res = await fetch(`${API_URL}/blogs?limit=50`, { signal: AbortSignal.timeout(6000) }).catch(() => null);
+    if (res && res.ok) {
       livePosts = await res.json();
     }
   } catch (e) {
@@ -19,7 +19,9 @@ export const GET: APIRoute = async () => {
   const buildDate = new Date().toUTCString();
 
   const itemsXml = (livePosts || []).map((post) => {
-    const cleanSlug = String(post.slug || '').replace(/^\//, '');
+    const cleanSlug = String(post.slug || '')
+      .replace(/^\//, '')
+      .replace(/-(english|hinglish)$/i, '');
     const postUrl = `${siteUrl}/${cleanSlug}`;
     const pubDate = new Date(post.publishedAt || post.updatedAt || Date.now()).toUTCString();
     const category = post.category?.name || post.categories?.[0]?.name || 'Government Exam';

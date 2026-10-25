@@ -22,8 +22,8 @@ function readingPercent() {
 function detectLanguage(pre: HTMLElement) {
   const code = pre.querySelector('code');
   const fromClass = `${pre.className} ${code?.className || ''}`;
-  const match = fromClass.match(/language-([\w#+]+)/i);
-  return match?.[1] || pre.getAttribute('data-language') || '';
+  const match = /language-([\w#+]+)/i.exec(fromClass);
+  return match?.[1] || pre.dataset.language || '';
 }
 
 function promoteInlineCode() {
@@ -34,8 +34,8 @@ function promoteInlineCode() {
     const codeText = (code.textContent || '').trim();
     if (!codeText || paragraphText !== codeText) return;
     const formatted = formatSnippet(codeText);
-    const language =
-      (code.className.match(/language-([\w#+-]+)/i)?.[1] || guessLanguage(formatted) || 'text');
+    const langMatch = /language-([\w#+-]+)/i.exec(code.className);
+    const language = langMatch?.[1] || guessLanguage(formatted) || 'text';
     const pre = document.createElement('pre');
     pre.className = `language-${language}`;
     const next = document.createElement('code');
@@ -167,18 +167,49 @@ export function bindCodeCopy() {
   });
 }
 
-function updateReading() {
+function updateReadingProgress() {
   const percent = readingPercent();
   const label = document.getElementById('reading-progress-num');
   const bar = document.getElementById('reading-progress-bar');
   if (label) label.textContent = `${percent}%`;
   if (bar) bar.style.transform = `scaleX(${percent / 100})`;
+}
+
+function syncTocHighlight(activeLink: HTMLAnchorElement, activeId: string) {
+  const highlight = document.getElementById('toc-highlight');
+  const wash = document.getElementById('toc-highlight-bg');
+  if (!highlight || !wash) return;
+
+  const top = activeLink.offsetTop;
+  const height = activeLink.offsetHeight;
+  highlight.style.top = `${top}px`;
+  highlight.style.height = `${height}px`;
+  highlight.style.opacity = '1';
+  wash.style.top = `${top}px`;
+  wash.style.height = `${height}px`;
+  wash.style.opacity = '1';
+
+  if (activeId !== lastTocId) {
+    lastTocId = activeId;
+    const scroller = document.getElementById('toc-scroll');
+    if (scroller) {
+      const bottom = top + height;
+      if (top < scroller.scrollTop) scroller.scrollTop = top;
+      else if (bottom > scroller.scrollTop + scroller.clientHeight) {
+        scroller.scrollTop = bottom - scroller.clientHeight;
+      }
+    }
+  }
+}
+
+function updateReading() {
+  updateReadingProgress();
 
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.toc-link'));
   if (!links.length) return;
   const headings = links
     .map((link) => {
-      const id = link.getAttribute('data-toc-id');
+      const id = link.dataset.tocId;
       return id ? document.getElementById(id) : null;
     })
     .filter((heading): heading is HTMLElement => Boolean(heading));
@@ -193,37 +224,20 @@ function updateReading() {
   }
 
   links.forEach((link) => {
-    const active = link.getAttribute('data-toc-id') === activeId;
+    const active = link.dataset.tocId === activeId;
     link.classList.toggle('is-active', active);
     if (active) link.setAttribute('aria-current', 'true');
     else link.removeAttribute('aria-current');
   });
 
-  const activeLink = links.find((link) => link.getAttribute('data-toc-id') === activeId);
-  const highlight = document.getElementById('toc-highlight');
-  const wash = document.getElementById('toc-highlight-bg');
-  if (activeLink && highlight && wash) {
-    const top = activeLink.offsetTop;
-    const height = activeLink.offsetHeight;
-    highlight.style.top = `${top}px`;
-    highlight.style.height = `${height}px`;
-    highlight.style.opacity = '1';
-    wash.style.top = `${top}px`;
-    wash.style.height = `${height}px`;
-    wash.style.opacity = '1';
-
-    if (activeId !== lastTocId) {
-      lastTocId = activeId;
-      const scroller = document.getElementById('toc-scroll');
-      if (scroller) {
-        const bottom = top + height;
-        if (top < scroller.scrollTop) scroller.scrollTop = top;
-        else if (bottom > scroller.scrollTop + scroller.clientHeight) {
-          scroller.scrollTop = bottom - scroller.clientHeight;
-        }
-      }
-    }
+  const activeLink = links.find((link) => link.dataset.tocId === activeId);
+  if (activeLink) {
+    syncTocHighlight(activeLink, activeId);
   }
+}
+
+export function bindFaqAccordion() {
+  // Radix UI / Shadcn Accordion: Native details & summary handles smooth state toggling
 }
 
 export function bindArticleReading() {
@@ -231,9 +245,11 @@ export function bindArticleReading() {
   enhanceCodeBlocks();
   bindLightbox();
   bindCodeCopy();
+  bindFaqAccordion();
   updateReading();
   if (listening) return;
   listening = true;
   window.addEventListener('scroll', updateReading, { passive: true });
   window.addEventListener('resize', updateReading);
 }
+

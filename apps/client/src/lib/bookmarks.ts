@@ -1,4 +1,4 @@
-export type BookmarkedArticle = {
+export type FavoriteArticle = {
   slug: string;
   title: string;
   category?: string;
@@ -6,12 +6,22 @@ export type BookmarkedArticle = {
   savedAt: string;
 };
 
-const STORAGE_KEY = 'exam_saved_bookmarks';
+export type BookmarkedArticle = FavoriteArticle;
 
-function safeGetStorage(): BookmarkedArticle[] {
+const PRIMARY_STORAGE_KEY = 'exam_saved_favorites';
+const LEGACY_STORAGE_KEY = 'exam_saved_bookmarks';
+
+function safeGetStorage(): FavoriteArticle[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(PRIMARY_STORAGE_KEY);
+    if (!raw) {
+      // Migrate from legacy bookmarks storage if available
+      raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (raw) {
+        localStorage.setItem(PRIMARY_STORAGE_KEY, raw);
+      }
+    }
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -20,25 +30,29 @@ function safeGetStorage(): BookmarkedArticle[] {
   }
 }
 
-function safeSetStorage(items: BookmarkedArticle[]): void {
+function safeSetStorage(items: FavoriteArticle[]): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    localStorage.setItem(PRIMARY_STORAGE_KEY, JSON.stringify(items));
   } catch {}
 }
 
-export function getBookmarks(): BookmarkedArticle[] {
+export function getFavorites(): FavoriteArticle[] {
   return safeGetStorage();
 }
 
-export function isBookmarked(slug: string): boolean {
+export const getBookmarks = getFavorites;
+
+export function isFavorite(slug: string): boolean {
   if (!slug) return false;
   const items = safeGetStorage();
   const normalized = slug.trim().toLowerCase();
   return items.some((item) => item.slug.trim().toLowerCase() === normalized);
 }
 
-export function toggleBookmark(data: { slug: string; title: string; category?: string; url?: string }): boolean {
+export const isBookmarked = isFavorite;
+
+export function toggleFavorite(data: { slug: string; title: string; category?: string; url?: string }): boolean {
   if (!data?.slug) return false;
   const items = safeGetStorage();
   const normalized = data.slug.trim().toLowerCase();
@@ -61,25 +75,34 @@ export function toggleBookmark(data: { slug: string; title: string; category?: s
 
   safeSetStorage(items);
   updateFavoritesUI();
+  window.dispatchEvent(new CustomEvent('favorites-updated', { detail: { isNowSaved, slug: data.slug } }));
   window.dispatchEvent(new CustomEvent('bookmarks-updated', { detail: { isNowSaved, slug: data.slug } }));
   return isNowSaved;
 }
 
-export function removeBookmark(slug: string): void {
+export const toggleBookmark = toggleFavorite;
+
+export function removeFavorite(slug: string): void {
   if (!slug) return;
   const items = safeGetStorage();
   const normalized = slug.trim().toLowerCase();
   const updated = items.filter((i) => i.slug.trim().toLowerCase() !== normalized);
   safeSetStorage(updated);
   updateFavoritesUI();
+  window.dispatchEvent(new CustomEvent('favorites-updated', { detail: { isNowSaved: false, slug } }));
   window.dispatchEvent(new CustomEvent('bookmarks-updated', { detail: { isNowSaved: false, slug } }));
 }
 
-export function clearAllBookmarks(): void {
+export const removeBookmark = removeFavorite;
+
+export function clearAllFavorites(): void {
   safeSetStorage([]);
   updateFavoritesUI();
+  window.dispatchEvent(new CustomEvent('favorites-updated', { detail: { cleared: true } }));
   window.dispatchEvent(new CustomEvent('bookmarks-updated', { detail: { cleared: true } }));
 }
+
+export const clearAllBookmarks = clearAllFavorites;
 
 export function timeAgo(isoString: string): string {
   try {
@@ -100,8 +123,8 @@ export function timeAgo(isoString: string): string {
 export function updateFavoritesUI(): void {
   if (typeof window === 'undefined') return;
 
-  const bookmarks = safeGetStorage();
-  const count = bookmarks.length;
+  const favorites = safeGetStorage();
+  const count = favorites.length;
 
   // 1. Update count badges
   document.querySelectorAll<HTMLElement>('.favorites-count-badge').forEach((el) => {
@@ -122,28 +145,45 @@ export function updateFavoritesUI(): void {
     }
   });
 
-  // 3. Update active state of in-page article bookmark buttons
-  document.querySelectorAll<HTMLElement>('[data-bookmark-slug]').forEach((btn) => {
-    const slug = btn.getAttribute('data-bookmark-slug');
+  // 3. Update active state of in-page article favorite & bookmark buttons
+  document.querySelectorAll<HTMLElement>('[data-favorite-slug], [data-bookmark-slug]').forEach((btn) => {
+    const slug = btn.getAttribute('data-favorite-slug') || btn.getAttribute('data-bookmark-slug');
     if (!slug) return;
-    const active = isBookmarked(slug);
+    const active = isFavorite(slug);
+    btn.setAttribute('data-favorite-active', active ? 'true' : 'false');
     btn.setAttribute('data-bookmarked', active ? 'true' : 'false');
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
 
-    const icon = btn.querySelector('.bookmark-icon');
-    if (icon) {
+    const favIcon = btn.querySelector('.favorite-icon');
+    if (favIcon) {
       if (active) {
-        icon.classList.remove('text-muted');
-        icon.classList.add('text-accent', 'fill-current');
+        favIcon.classList.remove('text-muted');
+        favIcon.classList.add('text-red-500', 'fill-current');
       } else {
-        icon.classList.remove('text-accent', 'fill-current');
-        icon.classList.add('text-muted');
+        favIcon.classList.remove('text-red-500', 'fill-current');
+        favIcon.classList.add('text-muted');
       }
     }
 
-    const label = btn.querySelector('.bookmark-label');
-    if (label) {
-      label.textContent = active ? 'Saved' : 'Bookmark';
+    const bookmarkIcon = btn.querySelector('.bookmark-icon');
+    if (bookmarkIcon) {
+      if (active) {
+        bookmarkIcon.classList.remove('text-muted');
+        bookmarkIcon.classList.add('text-accent', 'fill-current');
+      } else {
+        bookmarkIcon.classList.remove('text-accent', 'fill-current');
+        bookmarkIcon.classList.add('text-muted');
+      }
+    }
+
+    const favLabel = btn.querySelector('.favorite-label');
+    if (favLabel) {
+      favLabel.textContent = active ? 'Favorited' : 'Favorite';
+    }
+
+    const bookmarkLabel = btn.querySelector('.bookmark-label');
+    if (bookmarkLabel) {
+      bookmarkLabel.textContent = active ? 'Saved' : 'Favorite';
     }
   });
 
@@ -151,18 +191,18 @@ export function updateFavoritesUI(): void {
   document.querySelectorAll<HTMLElement>('[data-favorites-list]').forEach((container) => {
     container.innerHTML = '';
 
-    if (bookmarks.length === 0) {
+    if (favorites.length === 0) {
       const emptyDiv = document.createElement('div');
       emptyDiv.className = 'py-7 px-4 text-center select-none';
       emptyDiv.innerHTML = `
         <div class="w-10 h-10 rounded-full bg-surface-raised border border-border/80 flex items-center justify-center mx-auto mb-2.5 text-muted">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         </div>
-        <p class="text-xs font-semibold text-white">No bookmarked articles yet</p>
+        <p class="text-xs font-semibold text-white">No favorite articles yet</p>
         <p class="text-[11px] text-muted mt-1 leading-relaxed max-w-[220px] mx-auto">
-          Save articles while reading to quickly access them here anytime.
+          Add articles to your favorites while reading to quickly access them here anytime.
         </p>
       `;
       container.appendChild(emptyDiv);
@@ -172,7 +212,7 @@ export function updateFavoritesUI(): void {
     const list = document.createElement('div');
     list.className = 'space-y-1.5 max-h-[360px] overflow-y-auto pr-0.5 scrollbar-thin';
 
-    bookmarks.forEach((item) => {
+    favorites.forEach((item) => {
       const itemRow = document.createElement('div');
       itemRow.className = 'flex items-center justify-between gap-2 p-2 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/40 hover:border-accent/40 transition group';
 
@@ -191,9 +231,10 @@ export function updateFavoritesUI(): void {
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.className = 'p-1.5 rounded-lg text-muted hover:text-red-400 hover:bg-surface-raised border border-transparent hover:border-border/60 transition cursor-pointer shrink-0';
+      removeBtn.setAttribute('data-remove-favorite', item.slug);
       removeBtn.setAttribute('data-remove-bookmark', item.slug);
-      removeBtn.setAttribute('title', 'Remove bookmark');
-      removeBtn.setAttribute('aria-label', `Remove ${item.title} from bookmarks`);
+      removeBtn.setAttribute('title', 'Remove favorite');
+      removeBtn.setAttribute('aria-label', `Remove ${item.title} from favorites`);
       removeBtn.innerHTML = `
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -209,7 +250,7 @@ export function updateFavoritesUI(): void {
   });
 
   // 5. Toggle visibility of "Clear all" buttons
-  document.querySelectorAll<HTMLElement>('[data-clear-bookmarks]').forEach((btn) => {
+  document.querySelectorAll<HTMLElement>('[data-clear-favorites], [data-clear-bookmarks]').forEach((btn) => {
     btn.classList.toggle('hidden', count === 0);
   });
 }

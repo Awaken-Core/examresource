@@ -1,0 +1,8 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import AdminApp from '../../components/admin/AdminApp';
+---
+
+<AdminLayout title="Notices" fullWidth={true}>
+  <AdminApp client:only="react" initialTab="notifications" />
+</AdminLayout>

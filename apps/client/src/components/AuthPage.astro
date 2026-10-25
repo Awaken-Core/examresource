@@ -51,12 +51,16 @@ const googleAuthUrl = `${API_URL}/auth/google`;
 
 <script>
   import { API_URL } from '../lib/api';
+  import { safeDeskReturn } from '../lib/adminSession';
 
   function setupGoogleAuth() {
     const link = document.getElementById('google-continue-btn') as HTMLAnchorElement | null;
     if (!link || link.dataset.ready === 'true') return;
     link.dataset.ready = 'true';
-    link.href = `${API_URL}/auth/google`;
+    const returnTo = safeDeskReturn(new URLSearchParams(window.location.search).get('returnTo'));
+    link.href = returnTo
+      ? `${API_URL}/auth/google?returnTo=${encodeURIComponent(returnTo)}`
+      : `${API_URL}/auth/google`;
     link.addEventListener('click', () => {
       link.setAttribute('aria-disabled', 'true');
       link.classList.add('pointer-events-none', 'opacity-70');

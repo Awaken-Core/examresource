@@ -107,4 +107,4 @@ When writing new features or UI components, follow these rules:
 - [ ] **No Unbounded Client Bundles**: Avoid importing large npm packages in client components. Prefer native browser APIs.
 - [ ] **Strict Image Dimensions**: Ensure every new image element has explicit `width` and `height`.
 - [ ] **Astro Prefetch Strategy**: Ensure internal navigation links benefit from Astro's hover-based prefetching.
-- [ ] **Validate Core Web Vitals**: Run Lighthouse or PageSpeed Insights before merging any UI changes to `release/prod`.
+- [ ] **Validate Core Web Vitals**: Run Lighthouse or PageSpeed Insights before merging any UI changes to `main`.

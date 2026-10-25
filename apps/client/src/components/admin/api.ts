@@ -50,10 +50,31 @@ export interface CurrentUser {
   role: "admin" | "editor" | "student";
 }
 
-export async function apiFetch<T = any>(
-  endpoint: string,
-  options: RequestInit = {},
-): Promise<T> {
+export interface ModerationComment {
+  id: string;
+  parentCommentId: string | null;
+  authorName: string;
+  content: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SPAM';
+  createdAt: string;
+  blog: { id: string; title: string; slug: string } | null;
+}
+
+export interface CommentArticleSummary {
+  id: string;
+  translationGroupId: string | null;
+  title: string;
+  slug: string;
+  total: number;
+  pending: number;
+  approved: number;
+  rejected: number;
+  spam: number;
+  latestCommentAt: string;
+}
+
+export async function apiFetch<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
+
   const headers = new Headers(options.headers || {});
   if (
     options.body &&
@@ -100,7 +121,23 @@ export async function apiFetch<T = any>(
 
 export const adminApi = {
   // Current user
-  getCurrentUser: () => apiFetch<CurrentUser>("/me"),
+  getCurrentUser: () => apiFetch<CurrentUser>('/me'),
+  getComments: (status = 'ALL', blogId?: string, translationGroupId?: string | null) =>
+    apiFetch<{ comments: ModerationComment[] }>(
+      `/admin/comments?status=${status}` +
+        `${blogId ? `&blogId=${encodeURIComponent(blogId)}` : ''}` +
+        `${translationGroupId ? `&translationGroupId=${encodeURIComponent(translationGroupId)}` : ''}`,
+    ),
+  getCommentArticles: (search?: string) =>
+    apiFetch<{ articles: CommentArticleSummary[] }>(
+      `/admin/comment-articles${search ? `?search=${encodeURIComponent(search)}` : ''}`,
+    ),
+  moderateComment: (id: string, status: 'APPROVED' | 'REJECTED' | 'SPAM') =>
+    apiFetch<{ comment: ModerationComment }>(
+      `/admin/comments/${id}`,
+      { method: 'PATCH', body: JSON.stringify({ status }) },
+    ),
+  deleteComment: (id: string) => apiFetch(`/admin/comments/${id}`, { method: 'DELETE' }),
 
   // Articles
   getArticles: (params: {

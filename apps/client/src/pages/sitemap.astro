@@ -14,13 +14,27 @@ interface LivePost {
 }
 
 let livePosts: LivePost[] = [];
+let liveCategories: any[] = [];
 try {
-  const res = await fetch(`${API_URL}/blogs?limit=100`, { credentials: 'omit' });
-  if (res.ok) {
-    livePosts = await res.json();
+  const [postRes, catRes] = await Promise.all([
+    fetch(`${API_URL}/blogs?limit=100`, { 
+      credentials: 'omit',
+      signal: AbortSignal.timeout(6000),
+    }).catch(() => null),
+    fetch(`${API_URL}/categories`, { 
+      credentials: 'omit',
+      signal: AbortSignal.timeout(6000),
+    }).catch(() => null),
+  ]);
+  if (postRes && postRes.ok) {
+    livePosts = await postRes.json();
+  }
+  if (catRes && catRes.ok) {
+    liveCategories = await catRes.json();
   }
 } catch (e) {
   livePosts = [];
+  liveCategories = [];
 }
 
 const fallbackArticles = [
@@ -36,7 +50,7 @@ const fallbackArticles = [
   },
   {
     title: 'RRB NTPC Graduate Recruitment 2026',
-    slug: 'rrb-ntpc-graduate-recruitment-2026-english',
+    slug: 'rrb-ntpc-graduate-recruitment-2026',
     category: 'Railways',
   }
 ];
@@ -44,19 +58,18 @@ const fallbackArticles = [
 const articlesList = (livePosts && livePosts.length > 0)
   ? livePosts.map(p => ({
       title: p.title,
-      slug: p.slug?.replace(/^\//, ''),
+      slug: p.slug?.replace(/^\//, '')?.replace(/-(english|hinglish)$/i, ''),
       category: p.category?.name || p.categories?.[0]?.name || 'Exam Guide',
     }))
   : fallbackArticles;
 
-const examCategories = [
-  { name: 'SSC Exams', path: '/category/ssc', desc: 'CGL, CHSL, MTS, GD Constable guides' },
-  { name: 'Banking & IBPS', path: '/category/banking', desc: 'PO, Clerk, SBI, RBI Grade B updates' },
-  { name: 'Railways (RRB)', path: '/category/railways', desc: 'NTPC, Group D, ALP, JE notices' },
-  { name: 'State PCS', path: '/category/state-pcs', desc: 'UPPSC, MPPSC, BPSC exam guides' },
-  { name: 'Police Exams', path: '/category/police', desc: 'UP Police, SSC GD, CISF notices' },
-  { name: 'Teaching Eligibility', path: '/category/teaching', desc: 'CTET, UPTET, DSSSB syllabus' }
-];
+const examCategories = (liveCategories && liveCategories.length > 0)
+  ? liveCategories.map((c: any) => ({
+      name: c.name,
+      path: `/category/${c.slug}`,
+      desc: c.description || `${c.name} exam notifications, eligibility, and updates`,
+    }))
+  : [];
 
 const corePages = [
   { name: 'Home', path: '/', desc: 'Exam notifications, notices, and guides' },
@@ -120,7 +133,7 @@ const jsonLd = {
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
         
         {/* MAIN FEED CONTENT */}
-        <div class="min-w-0 space-y-7" transition:name="main-content">
+        <div class="min-w-0 space-y-7">
           
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
@@ -199,6 +212,9 @@ const jsonLd = {
               {examCategories.map((cat) => (
                 <a
                   href={cat.path}
+                  target="_blank"
+                  rel="noopener"
+                  data-astro-prefetch="false"
                   class="sitemap-link p-3 rounded-lg bg-surface-raised border border-border/60 hover:border-accent/40 transition block group"
                 >
                   <div class="text-xs font-semibold text-white group-hover:text-accent transition flex items-center justify-between">

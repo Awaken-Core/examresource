@@ -14,16 +14,16 @@ interface Props {
 const { subjectSlug, prevTopic, nextTopic } = Astro.props;
 ---
 
-<nav aria-label="Topic Navigation" class="topic-navigation mt-12 grid grid-cols-1 gap-4 border-t border-border/80 pt-8 sm:grid-cols-2">
+<nav aria-label="Topic Navigation" class="topic-navigation mt-6 pt-5 sm:mt-12 sm:pt-8 grid grid-cols-1 gap-2.5 sm:gap-4 border-t border-border/80 sm:grid-cols-2">
   {prevTopic ? (
     <a
       href={`/${prevTopic.slug}`}
-      class="group p-4 rounded-lg border border-border bg-surface hover:bg-surface-raised transition-colors flex flex-col justify-between"
+      class="group p-3 sm:p-4 rounded-xl border border-border bg-surface hover:bg-surface-raised transition-colors flex flex-col justify-between"
     >
-      <span class="text-[11px] font-mono uppercase tracking-wider text-muted group-hover:text-accent">
+      <span class="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted group-hover:text-accent">
         ← Previous Topic
       </span>
-      <span class="text-sm font-semibold text-white group-hover:text-accent mt-1 transition-colors">
+      <span class="text-xs sm:text-sm font-semibold text-white group-hover:text-accent mt-1 transition-colors leading-snug">
         {prevTopic.title}
       </span>
     </a>
@@ -34,12 +34,12 @@ const { subjectSlug, prevTopic, nextTopic } = Astro.props;
   {nextTopic && (
     <a
       href={`/${nextTopic.slug}`}
-      class="group p-4 rounded-lg border border-border bg-surface hover:bg-surface-raised transition-colors flex flex-col justify-between text-right sm:col-start-2"
+      class="group p-3 sm:p-4 rounded-xl border border-border bg-surface hover:bg-surface-raised transition-colors flex flex-col justify-between text-right sm:col-start-2"
     >
-      <span class="text-[11px] font-mono uppercase tracking-wider text-muted group-hover:text-accent">
+      <span class="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted group-hover:text-accent">
         Next Topic →
       </span>
-      <span class="text-sm font-semibold text-white group-hover:text-accent mt-1 transition-colors">
+      <span class="text-xs sm:text-sm font-semibold text-white group-hover:text-accent mt-1 transition-colors leading-snug">
         {nextTopic.title}
       </span>
     </a>

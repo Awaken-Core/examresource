@@ -21,6 +21,10 @@ This file contains **mandatory instructions and context** for any AI agent or de
    - **Frontend & UI/UX**: Always check and adhere to:
      - `.agents/skills/astra-frontend-design/SKILL.md` (Design systems, layout hierarchy, visual polish).
      - `.agents/skills/ui-ux-pro-max/SKILL.md` (Design intelligence, color palettes, typography, spacing).
+     - `.agents/skills/mobile-responsive/SKILL.md` (Mobile responsiveness, touch targets, mobile PageSpeed & LCP optimization).
+   - **AEO & SEO Optimization**:
+     - `.agents/skills/aeo-audit/SKILL.md` (Answer Engine Optimization for Google AI Overviews, ChatGPT, Perplexity, citation readiness, query fan-out, entity grounding, and non-commodity content).
+     - `.agents/skills/seo-audit/SKILL.md` (Technical SEO checklist, Schema.org structured data, and Core Web Vitals).
    - **Backend NestJS**: Always follow:
      - `.agents/skills/nestjs-best-practices/SKILL.md` (Architecture, modular dependency injection, security, transaction safety, exception filters, DTO validation).
 
@@ -32,29 +36,35 @@ This file contains **mandatory instructions and context** for any AI agent or de
 
 ## 🚢 Production Deployment Protocol
 
-Production deployments are automated via Git. Pushing to `release/prod` triggers the production build and deployment pipeline on **Vercel** (for `apps/client`) and **Cloudflare Workers** (for `apps/server`).
+Production deployments are automated via Git. Pushing to **`main`** triggers the production build and deployment pipeline on **Vercel** (for `apps/client`) and **Cloudflare Workers** (for `apps/server`).
 
 ### The Standard Deployment Sequence
 ```bash
-# 1. Commit and push your verified changes to main
+# 1. Run local pre-flight checks
+bun run typecheck
+bunx astro check
+bun run lint
+bun run test
+bun run build
+
+# 2. Commit and push your verified changes to main (production)
 git checkout main
 git add <files>
 git commit -m "feat/fix: descriptive message"
 git push origin main
-
-# 2. Switch to release/prod and sync with main
-git checkout release/prod
-git pull origin main
-
-# 3. Trigger production release
-git push origin release/prod
-
-# 4. Switch back to your working branch
-git checkout main
 ```
 
 > [!IMPORTANT]
-> Never push untested or breaking changes directly to `release/prod`. Always test locally using `bun run typecheck`, `bun run lint`, and `bun run test` before merging into `release/prod`.
+> **`main` is the production branch.** Never push untested or breaking changes directly to `main`. Always test locally using `bun run typecheck`, `bunx astro check`, `bun run lint`, `bun run test`, and `bun run build` before pushing to `main`.
+
+---
+
+## 📚 Version 2 Architecture & Branching (`feat/textbook-v2`)
+
+All Version 2 features (textbooks, mock tests, subject/topic exam modules, question banks) are actively developed on the **`feat/textbook-v2`** branch:
+- **Repository Branch URL**: [https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2](https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2)
+- Feature development for v2 should branch off and merge into `feat/textbook-v2`.
+- When stabilizing v2 features for production release, changes are merged into `main`.
 
 See detailed procedures in [docs/DEPLOYMENT.md](file:///c:/Users/Devil/Desktop/examresource/docs/DEPLOYMENT.md).
 
@@ -137,6 +147,9 @@ Before concluding any task or pushing to git:
 ```bash
 # Typecheck backend
 bun run typecheck
+
+# Check Astro client types & components
+bunx astro check
 
 # Lint backend
 bun run lint

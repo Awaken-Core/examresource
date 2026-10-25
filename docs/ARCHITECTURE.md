@@ -199,3 +199,18 @@ sequenceDiagram
 2. **Cookie Hardening**: In production, the session cookie is named `__Host-sid`, enforcing `Secure`, `HttpOnly`, `SameSite=Lax`, and `Path=/`.
 3. **CSRF Protection**: State-changing requests (`POST`, `PUT`, `DELETE`) require the `X-CSRF-Protection: 1` header and validate the `Origin` header against `CLIENT_URL`.
 4. **Argon2id Hashing**: Passwords use memory-hard Argon2id hashing algorithms.
+
+---
+
+## 🔮 Version 2 Architecture & Roadmap (`feat/textbook-v2`)
+
+The next phase of platform evolution is actively designed and maintained on the **`feat/textbook-v2`** branch:
+- **Repository Branch**: [https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2](https://github.com/Awaken-Core/examresource/tree/feat/textbook-v2)
+- **Production Target**: `main` (auto-deploys to Vercel and Cloudflare Workers)
+
+### Version 2 Core Initiatives:
+1. **Textbook & Curriculum Modules**: Dedicated chapters, subject breakdowns, topic hierarchies, and interactive study guides.
+2. **Comprehensive Exam Portals**: Live test series engine, mock test execution with timer countdowns, and question-by-question scoring.
+3. **Expanded Question Bank**: Rich-text questions with bilingual explanations, formula formatting, and diagram embeds.
+4. **Client-Side Ergonomics**: Zero-auth local favorites, seamless Web Share API integration, and instant language swapping without URL pollution.
+

@@ -1,4 +1,5 @@
 import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { jsonrepair } from 'jsonrepair';
 import { env } from '../../core/config/env.js';
 
 export interface TranslateArticleInput {
@@ -65,6 +66,44 @@ function extractCandidateText(data: unknown): string | undefined {
   return typeof parts[0].text === 'string' ? parts[0].text : undefined;
 }
 
+function parseRobustJson(raw: string): any {
+  // 1. Strip DeepSeek R1 reasoning block <think>...</think>
+  let cleaned = raw.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+  // 2. Strip Markdown code fences ```json ... ```
+  cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  // 3. Extract the outermost JSON object boundaries { ... }
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    cleaned = cleaned.slice(firstBrace, lastBrace + 1);
+  }
+
+  // Attempt 1: Direct JSON.parse
+  try {
+    return JSON.parse(cleaned);
+  } catch (initialErr) {
+    // Attempt 2: jsonrepair (fixes unescaped quotes inside strings, trailing commas, missing closing tags)
+    try {
+      const repaired = jsonrepair(cleaned);
+      return JSON.parse(repaired);
+    } catch {
+      // Attempt 3: Sanitize literal unescaped control characters inside strings and re-repair
+      try {
+        const sanitized = cleaned.replace(/[\x00-\x1F\x7F]/g, (char) => {
+          if (char === '\n') return '\\n';
+          if (char === '\r') return '\\r';
+          if (char === '\t') return '\\t';
+          return '';
+        });
+        const secondRepaired = jsonrepair(sanitized);
+        return JSON.parse(secondRepaired);
+      } catch {
+        throw initialErr;
+      }
+    }
+  }
+}
+
 @Injectable()
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name);
@@ -91,13 +130,7 @@ export class GeminiService {
   }
 
   private getApiKeys(): string[] {
-    const keys = [env.GEMINI_API_KEY, env.GEMINI_BACKUP_API_KEY].filter((k): k is string => Boolean(k));
-    if (keys.length === 0) {
-      throw new BadRequestException(
-        'GEMINI_API_KEY is not configured in server environment. Please set GEMINI_API_KEY in apps/server/.env',
-      );
-    }
-    return keys;
+    return [env.GEMINI_API_KEY, env.GEMINI_BACKUP_API_KEY].filter((k): k is string => Boolean(k));
   }
 
   private lastUsedModel = 'gemini-3.8-flash';
@@ -142,6 +175,7 @@ export class GeminiService {
       generationConfig: {
         responseMimeType: 'application/json',
         temperature: 0.2,
+        maxOutputTokens: 65536,
       },
     };
   }
@@ -159,6 +193,7 @@ export class GeminiService {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        signal: AbortSignal.timeout(180000),
       });
 
       if (response.ok) {
@@ -213,6 +248,11 @@ export class GeminiService {
     requestedModel?: string,
   ): Promise<string> {
     const apiKeys = this.getApiKeys();
+    if (apiKeys.length === 0) {
+      throw new BadRequestException(
+        'GEMINI_API_KEY is not configured in server environment. Please set GEMINI_API_KEY in apps/server/.env',
+      );
+    }
     const candidateModels = requestedModel ? [requestedModel] : this.getCandidateModels();
     const payload = this.buildGeminiPayload(systemPrompt, userPrompt, images);
     const maxRetries = requestedModel ? 2 : 1;
@@ -241,6 +281,217 @@ export class GeminiService {
     throw new BadRequestException(
       `Gemini API request failed on ${requestedModel || 'all candidate models'}: ${lastError}`,
     );
+  }
+
+  private async callDeepSeek(
+    systemPrompt: string,
+    userPrompt: string,
+    model = 'deepseek-chat',
+    onModelSwitch?: (model: string) => void,
+  ): Promise<string> {
+    const apiKey = env.DEEPSEEK_API_KEY;
+    if (!apiKey) {
+      throw new BadRequestException(
+        'DEEPSEEK_API_KEY is not configured in server environment. Please set DEEPSEEK_API_KEY in apps/server/.env or select another model.',
+      );
+    }
+    const baseUrl = (env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
+    const url = `${baseUrl}/chat/completions`;
+
+    this.logger.log(`Calling DeepSeek API with model: ${model}...`);
+    onModelSwitch?.(`DeepSeek (${model})`);
+
+    const isReasoner = model.toLowerCase().includes('reasoner') || model.toLowerCase().includes('r1');
+    const body: Record<string, any> = {
+      model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 8192,
+    };
+
+    if (!isReasoner) {
+      body.response_format = { type: 'json_object' };
+      body.temperature = 0.2;
+    }
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(180000),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new BadRequestException(`DeepSeek API error (${res.status}): ${errText.slice(0, 300)}`);
+    }
+
+    const data: any = await res.json();
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content || typeof content !== 'string') {
+      throw new BadRequestException('DeepSeek returned response without content text.');
+    }
+
+    this.lastUsedModel = `DeepSeek (${model})`;
+    return content;
+  }
+
+  private async callOpenRouter(
+    systemPrompt: string,
+    userPrompt: string,
+    model = 'deepseek/deepseek-chat',
+    onModelSwitch?: (model: string) => void,
+  ): Promise<string> {
+    const apiKey = env.OPENROUTER_API_KEY;
+    if (!apiKey) {
+      throw new BadRequestException(
+        'OPENROUTER_API_KEY is not configured in server environment. Please set OPENROUTER_API_KEY in apps/server/.env or select another model.',
+      );
+    }
+    const baseUrl = (env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1').replace(/\/+$/, '');
+    const url = `${baseUrl}/chat/completions`;
+
+    this.logger.log(`Calling OpenRouter API with model: ${model}...`);
+    onModelSwitch?.(`OpenRouter (${model})`);
+
+    const isReasoner = model.toLowerCase().includes('reasoner') || model.toLowerCase().includes('r1');
+    const body: Record<string, any> = {
+      model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 8192,
+    };
+
+    if (!isReasoner) {
+      body.response_format = { type: 'json_object' };
+      body.temperature = 0.2;
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+      'HTTP-Referer': env.CLIENT_URL || 'http://localhost:3000',
+      'X-Title': 'ExamResource Reference Rewriter',
+    };
+
+    let res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(180000),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      // If the model does not support response_format (common on free/open-weight models), retry without it
+      if (body.response_format && (res.status === 400 || errText.toLowerCase().includes('response_format') || errText.toLowerCase().includes('json'))) {
+        this.logger.warn(`OpenRouter model ${model} rejected response_format. Retrying without structured output flag...`);
+        delete body.response_format;
+        res = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(180000),
+        });
+      }
+
+      if (!res.ok) {
+        const finalErrText = await res.text();
+        throw new BadRequestException(`OpenRouter API error (${res.status}): ${finalErrText.slice(0, 300)}`);
+      }
+    }
+
+    const data: any = await res.json();
+    const content = data?.choices?.[0]?.message?.content;
+    if (!content || typeof content !== 'string') {
+      throw new BadRequestException('OpenRouter returned response without content text.');
+    }
+
+    this.lastUsedModel = `OpenRouter (${model})`;
+    return content;
+  }
+
+  private async callAiModel(
+    systemPrompt: string,
+    userPrompt: string,
+    images?: Array<{ mimeType: string; data: string; url?: string }>,
+    onModelSwitch?: (model: string) => void,
+    requestedModel?: string,
+  ): Promise<{ text: string; modelUsed: string }> {
+    const rawReq = (requestedModel || 'gemini-3.8-flash').trim();
+
+    // 1. Explicit OpenRouter request
+    if (rawReq.startsWith('openrouter:') || rawReq.startsWith('openrouter/')) {
+      const orModel = rawReq.replace(/^openrouter[:/]/, '').trim() || 'deepseek/deepseek-chat';
+      try {
+        const text = await this.callOpenRouter(systemPrompt, userPrompt, orModel, onModelSwitch);
+        return { text, modelUsed: this.lastUsedModel };
+      } catch (err: any) {
+        this.logger.warn(`OpenRouter execution failed: ${err.message}. Checking failovers...`);
+        if (env.DEEPSEEK_API_KEY && orModel.includes('deepseek')) {
+          const dsModel = orModel.includes('r1') ? 'deepseek-reasoner' : 'deepseek-chat';
+          onModelSwitch?.(`Failover: Direct DeepSeek (${dsModel})...`);
+          const text = await this.callDeepSeek(systemPrompt, userPrompt, dsModel, onModelSwitch);
+          return { text, modelUsed: this.lastUsedModel };
+        }
+        if (env.GEMINI_API_KEY) {
+          onModelSwitch?.('Failover: Google Gemini Flash...');
+          const text = await this.callGemini(systemPrompt, userPrompt, images, onModelSwitch);
+          return { text, modelUsed: this.lastUsedModel };
+        }
+        throw err;
+      }
+    }
+
+    // 2. Explicit DeepSeek Direct request
+    if (rawReq.startsWith('deepseek')) {
+      const dsModel =
+        rawReq === 'deepseek-r1' || rawReq === 'deepseek-reasoner' ? 'deepseek-reasoner' : 'deepseek-chat';
+      try {
+        const text = await this.callDeepSeek(systemPrompt, userPrompt, dsModel, onModelSwitch);
+        return { text, modelUsed: this.lastUsedModel };
+      } catch (err: any) {
+        this.logger.warn(`Direct DeepSeek failed: ${err.message}. Checking failovers...`);
+        if (env.OPENROUTER_API_KEY) {
+          const orModel = dsModel === 'deepseek-reasoner' ? 'deepseek/deepseek-r1' : 'deepseek/deepseek-chat';
+          onModelSwitch?.(`Failover: OpenRouter (${orModel})...`);
+          const text = await this.callOpenRouter(systemPrompt, userPrompt, orModel, onModelSwitch);
+          return { text, modelUsed: this.lastUsedModel };
+        }
+        if (env.GEMINI_API_KEY) {
+          onModelSwitch?.('Failover: Google Gemini Flash...');
+          const text = await this.callGemini(systemPrompt, userPrompt, images, onModelSwitch);
+          return { text, modelUsed: this.lastUsedModel };
+        }
+        throw err;
+      }
+    }
+
+    // 3. Google Gemini (default or explicitly requested)
+    try {
+      const text = await this.callGemini(systemPrompt, userPrompt, images, onModelSwitch, rawReq);
+      return { text, modelUsed: this.lastUsedModel };
+    } catch (err: any) {
+      this.logger.warn(`Gemini call failed: ${err.message}. Checking failovers...`);
+      if (env.DEEPSEEK_API_KEY) {
+        onModelSwitch?.('Failover: DeepSeek V3 (Ultra-Fast)...');
+        const text = await this.callDeepSeek(systemPrompt, userPrompt, 'deepseek-chat', onModelSwitch);
+        return { text, modelUsed: this.lastUsedModel };
+      }
+      if (env.OPENROUTER_API_KEY) {
+        onModelSwitch?.('Failover: OpenRouter (DeepSeek V3)...');
+        const text = await this.callOpenRouter(systemPrompt, userPrompt, 'deepseek/deepseek-chat', onModelSwitch);
+        return { text, modelUsed: this.lastUsedModel };
+      }
+      throw err;
+    }
   }
 
   /**
@@ -337,7 +588,7 @@ Output must be valid JSON matching this schema:
 {
   "title": "translated title string",
   "description": "translated short excerpt string",
-  "slugSuffix": "-hinglish" or "-english",
+  "slugSuffix": "",
   "metaTitle": "translated SEO meta title string (under 60 chars)",
   "metaDescription": "translated SEO meta description string (under 160 chars)",
   "imageAlt": "translated image alt text string",
@@ -527,6 +778,7 @@ Return ONLY valid JSON:
       additionalInstructions?: string;
       images?: Array<{ url: string; base64?: string; mimeType?: string; altText?: string }>;
       model?: string;
+      availableCategories?: Array<{ id: string; name: string; slug: string }>;
     },
     onStage?: (stage: string, message: string) => void,
   ): Promise<{
@@ -548,11 +800,10 @@ Return ONLY valid JSON:
       metaDescription: string;
       keywords: string[];
     };
-    seoScore: number;
     detectedCategory?: string;
     modelUsed: string;
   }> {
-    onStage?.('INGEST', 'Validating reference content and uploaded images...');
+    onStage?.('INGEST', 'Validating reference content, categories and attached media...');
 
     const validImages = (input.images || []).filter((img) => img && (img.url || img.base64));
 
@@ -565,6 +816,7 @@ Return ONLY valid JSON:
           ? `Analyzing attached notification document & images with Gemini Multimodal Pipeline...`
           : `Analyzing ${validImages.length} attached image(s) with Gemini Vision...`,
       );
+
       const imageDescriptions = validImages
         .map((img, i) => {
           if (img.mimeType === 'application/pdf') {
@@ -591,90 +843,141 @@ INSTRUCTIONS FOR ATTACHMENTS:
 `;
     }
 
-    const systemPrompt = `You are an elite bilingual content writer and SEO specialist for an Indian government exam portal, strictly following the editorial format of top Indian education websites like BiharHelp.in and SarkariResult.com.
+    const categoryList = (input.availableCategories || [])
+      .map((c) => `- "${c.name}" (slug: ${c.slug})`)
+      .join('\n');
+    const categorySection = categoryList
+      ? `
+══════════════════════════════════════════════════════════════════════════════
+STRICT CATEGORY LABELING (EXISTING SYSTEM CATEGORIES ONLY)
+══════════════════════════════════════════════════════════════════════════════
+You MUST classify and label this article under EXACTLY ONE of the existing system categories listed below:
+${categoryList}
 
-Your task: Read the REFERENCE article (notification PDF, syllabus, or competitor post) and REWRITE it as TWO complete, publication-ready, search-engine-dominating blog articles.
+CRITICAL CATEGORY RULES:
+- Select the single best matching category from this list.
+- NEVER invent, create, or output any new category name not present in the list.
+- Return the exact category name in "detectedCategory".
+`
+      : '';
+
+    const systemPrompt = `You are an elite bilingual content writer, subject matter authority, and Answer Engine Optimization (AEO/GEO/SEO) specialist for an Indian educational portal. You strictly adhere to the high editorial standards of premier Indian educational platforms (like BiharHelp.in, SarkariResult, Testbook, and JagranJosh).
+
+Your task: Read the REFERENCE content (official notification, syllabus, GK topic, current affairs article, or study guide) and REWRITE it as TWO complete, publication-ready, search-engine-dominating bilingual blog articles (Hindi/Hinglish in Devanagari with technical terms + Authoritative English).
 ${imageInstructions}
+${categorySection}
+══════════════════════════════════════════════════════════════════════════════
+INTELLIGENT TOPIC CLASSIFICATION & ADAPTIVE STRUCTURE (MANDATORY)
+══════════════════════════════════════════════════════════════════════════════
+First, detect the true nature of the reference content from these 5 archetypes and adapt your structure accordingly:
+
+TYPE 1: GOVT JOB & VACANCY RECRUITMENT NOTIFICATION
+- Focus: Post names, vacancy counts, 7th CPC pay levels, eligibility, age limits, selection stages, how to apply.
+- Tables: Overview Table, Important Dates Table, Post-wise Vacancy Breakdown Table, Application Fee Table, Direct Links Table.
+
+TYPE 2: EXAM SCHEDULE, ADMIT CARD, ANSWER KEY, RESULTS & CUT-OFF
+- Focus: Exam dates, shift timings, hall ticket download steps, answer key objection window, minimum qualifying/cut-off marks, scorecard download.
+- Tables: Exam Overview Table, Important Dates & Shift Schedule, Category-wise Cut-off Marks / Minimum Qualifying Marks Table, Direct Links Table (Admit Card / Result / Answer Key).
+
+TYPE 3: GENERAL KNOWLEDGE (STATIC GK, POLITY, HISTORY, GEOGRAPHY, SCIENCE, ECONOMY)
+- Focus: Clear conceptual master-guide, historical origins, constitutional provisions/articles, scientific principles, geographical features.
+- DO NOT invent fake vacancies, fake salaries, or application fees!
+- Tables: Key Facts / Quick Summary Table, Chronology / Timeline Table, Comparison / Classification Table, Important Constitutional Articles / Scientific Formulas.
+- Special Section: Key Takeaways for Competitive Exams & Practice MCQs / Q&A.
+
+TYPE 4: CURRENT AFFAIRS & CONTEMPORARY UPDATES (NATIONAL/GLOBAL, SCHEMES, AWARDS, DEFENSE)
+- Focus: What happened, who is involved, date/venue, background context, national/global significance, scheme objectives, beneficiaries, budget allocations.
+- DO NOT invent fake job vacancies or salary tables!
+- Tables: Event / Scheme Overview Table, Important Dates & Milestones, Key Highlights / Beneficiaries / Awardees Matrix, Official Sources.
+
+TYPE 5: SUBJECT NOTES & STUDY MATERIAL (MATHEMATICS, REASONING, ENGLISH, GENERAL SCIENCE)
+- Focus: Theory, core definitions, rules, shortcut formulas, solved examples, classification, weightage in competitive exams.
+- Tables: Topic Syllabus Breakdown Table, Important Formulas / Rules Table, Exam-wise Weightage Table.
+
+══════════════════════════════════════════════════════════════════════════════
+CORE EDITORIAL, SEO, AEO & GEO PRINCIPLES (APPLIES TO ALL TOPIC TYPES)
+══════════════════════════════════════════════════════════════════════════════
+1. BLUF STRUCTURE (Bottom Line Up Front):
+   Under EVERY major '##' heading, the VERY FIRST SENTENCE must be a direct, self-contained, definitive answer before any tables, bullets, or paragraphs.
+   (e.g., Under Fundamental Rights: "Fundamental Rights are enshrined in Part III (Articles 12 to 35) of the Constitution of India and are justiciable in nature, guaranteeing six basic freedoms to every citizen.")
+   This ensures AI Answer Engines (Perplexity, Google AI Overviews, SearchGPT, Claude) extract your exact sentence for direct citation snippets.
+
+2. SYNTHETIC QUERY FAN-OUT COVERAGE (AEO):
+   Explicitly answer the most commonly asked student questions related to the topic (e.g., eligibility/relaxations for exams, amendments/exceptions for GK, objectives/eligibility for schemes, formulas/shortcuts for study notes).
+
+3. ENTITY GROUNDING (GEO):
+   Ground all facts in authoritative entities: Official Government Ministries, Commissions (UPSC, SSC, RRB, NTA), Gazette / Act numbers, Constitutional Articles, Verified Domains, and exact official statistics.
+
+4. MANDATORY GFM MARKDOWN TABLES:
+   Every article MUST include at least 3-5 rich Markdown tables tailored to the detected topic type (Overview, Dates/Timeline, Breakdown/Comparison, Links/Formulas).
+
+5. PAA FAQS (PEOPLE ALSO ASK):
+   Include 4-5 high-intent FAQs with explicit "### Q: ..." heading and direct, authoritative 2-3 sentence answers ("**Ans:** ...").
+
 ══════════════════════════════════════════════════════════════════════════════
 1. HINDI / HINGLISH VERSION (DEVANAGARI + ENGLISH KEYWORDS — BiharHelp & SarkariResult Style)
 ══════════════════════════════════════════════════════════════════════════════
 - SCRIPT: Write the text in natural, engaging DEVANAGARI HINDI (देवनागरी लिपि).
   NEVER write purely Romanized Hindi (do NOT write "Railway me sarkari naukri...").
-  DO write like BiharHelp:
-  "अगर आप भी रेलवे में सरकारी नौकरी की तैयारी कर रहे हैं और NTPC के नए पदों के लिए आवेदन करना चाहते हैं, तो आपके लिए एक बहुत अच्छी खबर है। Railway Recruitment Boards (RRBs) ने CEN No. 05/2026 के तहत Full Notification जारी कर दी है। इस भर्ती के तहत Graduate और Under-Graduate लेवल के कुल 11,558 पदों पर बहाली की जाएगी..."
-
-- English Terms inside Hindi Text:
-  Keep exam names, post names, organizations, stages, and official terms in ENGLISH letters:
-  "Railway Recruitment Boards (RRBs)", "CEN No. 05/2026", "NTPC Graduate Level", "Under-Graduate Level", "Online Application", "Eligibility Criteria", "Age Limit", "Selection Process", "Admit Card", "Syllabus", "Answer Key", "Cut-off", "Direct Link", "Official Website", "Computer Based Test (CBT-1)".
-
-- Mandatory Sections & GFM Markdown Tables for Hindi version:
-  1. Title: Catchy bilingual title (e.g. "RRB NTPC New Vacancy 2026: 11,558 पदों पर नोटिफिकेशन जारी, जानें योग्यता, उम्र सीमा और आवेदन प्रक्रिया")
-  2. Friendly intro paragraph in Hindi
-  3. ## जाने इस पोस्ट में क्या क्या है: (Table of contents / quick overview list)
-  4. ## [Exam Name] : Overview (Must include Markdown Table)
-     | Organization | Railway Recruitment Board (RRB) |
-     | Post Name | Non-Technical Popular Categories (NTPC) |
-     | Total Vacancies | 11,558 Posts |
-     | Pay Level | Level 2, 3, 5 & 6 (7th CPC) |
-     | Application Mode | Online |
-     | Official Website | rrbapply.gov.in |
-  5. ## [Exam Name] : Notification Details (विस्तृत जानकारी)
-  6. ## Important Dates of [Exam Name] (Markdown Table: Event | Date)
-  7. ## Post-Wise Vacancy Details (पदों का विवरण) (Markdown Table: Post Name | Pay Level | Total Vacancy)
-  8. ## Application Fee (आवेदन शुल्क) (Markdown Table: Category | Fee)
-  9. ## Eligibility Criteria (पात्रता एवं शैक्षणिक योग्यता) (Educational Qualification & Age Limit)
-  10. ## Selection Process (चयन प्रक्रिया) (Numbered steps: CBT-1, CBT-2, Skill Test, DV, Medical)
-  11. ## How to Apply Online? (ऑनलाइन आवेदन कैसे करें - Step-by-step Hindi guide)
-  12. ## महत्वपूर्ण लिंक्स / Quick Links (Markdown Table with Direct Apply Link, Notification PDF, Official Website)
-  13. ## FAQs – अक्सर पूछे जाने वाले सवाल (3-4 common student queries with answers)
+  Keep all official names, organizations, stages, legal terms, and technical keywords in clean ENGLISH Latin letters:
+  "Railway Recruitment Boards (RRBs)", "Constitution of India", "Fundamental Rights", "Current Affairs 2026", "Online Application", "Eligibility Criteria", "Syllabus", "Direct Link", "Official Website".
+- TITLE & HEADLINE REQUIREMENT (CRITICAL):
+  The "title" in "hinglish" MUST be an engaging bilingual headline pairing English technical keywords with a Devanagari Hindi hook (BiharHelp / SarkariResult style).
+  DO NOT make the Hinglish title identical to the English title!
+  Good Hinglish Title Examples:
+  • "Upcoming Central Government Exams 2026–2027: प्रमुख भर्ती कैलेंडर, पात्रता, तिथियां और संपूर्ण विवरण"
+  • "RRB NTPC 2026 Notification: ऑनलाइन आवेदन, परीक्षा तिथि, पात्रता व संपूर्ण चयन प्रक्रिया"
+  • "SSC CGL 2026 Exam Date: परीक्षा शेड्यूल, नए दिशानिर्देश और एडमिट कार्ड डाउनलोड लिंक"
 
 ══════════════════════════════════════════════════════════════════════════════
 2. ENGLISH VERSION (Authoritative, Comprehensive, High-Intent SEO)
 ══════════════════════════════════════════════════════════════════════════════
-- Written in clear, comprehensive, professional English.
-- Complete GFM Markdown with:
-  - Overview Table
-  - Notification Summary
-  - Important Dates Table
-  - Vacancy Breakdown Table
-  - Eligibility & Age Limit
-  - Application Fee Table
-  - Selection Process Stages
-  - Step-by-step How to Apply Guide
-  - Quick Links Table (Direct Link to Apply, Official Notification PDF, Official Website)
-  - FAQs Section
+- SCRIPT: Written 100% in clear, comprehensive, professional English with complete markdown formatting, tables, and FAQs.
+- TITLE & HEADLINE REQUIREMENT (CRITICAL):
+  The "title" in "english" MUST be a formal, authoritative English SEO title targeting high-intent national search queries.
+  Good English Title Examples:
+  • "Upcoming Central Government Exams 2026–2027: Exam Calendar, Eligibility, Notification Dates & Schedule"
+  • "RRB NTPC 2026 Notification: Exam Dates, Vacancies, Eligibility & Selection Process"
+  • "SSC CGL 2026 Exam Date Out: Tier 1 Schedule, Shift Timings & Admit Card Guidelines"
 
 ══════════════════════════════════════════════════════════════════════════════
 SEO METADATA FOR BOTH:
 ══════════════════════════════════════════════════════════════════════════════
-- metaTitle: Under 60 chars, high-intent keywords (Year, Exam Name, Vacancy Count)
-- metaDescription: Under 155 chars, clear call-to-action
-- slug: clean, lowercase, hyphens only — use the SAME slug for both hinglish and english (they share one URL)
-- keywords: 5-8 target keywords array
+- metaTitle: Under 60 chars, starts with high-intent primary keyword + year/topic + CTR trigger
+- metaDescription: Under 155 chars, summary of core topic with clear call-to-action
+- slug: clean, lowercase, hyphens only — use the SAME canonical slug for both versions
+- keywords: 6-10 target keywords and AEO entity phrases
 - excerpt: 1-2 compelling summary sentences
+
+══════════════════════════════════════════════════════════════════════════════
+WORD COUNT & DEPTH MANDATE: MINIMUM 1,500 WORDS TO MAXIMUM 3,500 WORDS:
+══════════════════════════════════════════════════════════════════════════════
+- Length Target: Each article (both "hinglish" and "english") MUST be between 1,500 words (minimum) and 3,500 words (maximum), scaling adaptively depending on topic complexity, completeness of details, and language nuance.
+- For focused notices (e.g. admit cards, answer keys, results, short updates): aim for ~1,500–2,000 words covering all instructions, steps, portal links, and troubleshooting FAQs.
+- For major recruitment notices, calendars, study material, and comprehensive guides: write deeply (~2,000–3,500 words) with complete post/category breakdown tables, full eligibility clauses, syllabus topics, and 6–10 detailed FAQs.
+- CRITICAL: BOTH "hinglish" AND "english" versions must be 100% complete, fully articulated, and standalone publication-ready articles. NEVER truncate, summarize, or leave either edition incomplete.
 
 Output ONLY valid JSON (no markdown fences, no extra text):
 {
   "hinglish": {
-    "title": "Bilingual Title in English & Hindi",
+    "title": "Upcoming Central Government Exams 2026–2027: प्रमुख भर्ती कैलेंडर, पात्रता, तिथियां और संपूर्ण विवरण",
     "slug": "slug-name",
     "excerpt": "Short excerpt in Hindi with English keywords",
     "content": "Full GFM markdown string with Devanagari text, English terms, and markdown tables",
-    "metaTitle": "SEO title under 60 chars",
-    "metaDescription": "SEO description under 155 chars",
+    "metaTitle": "SEO title under 60 chars in Hindi + English",
+    "metaDescription": "SEO description under 155 chars in Hindi",
     "keywords": ["keyword 1", "keyword 2"]
   },
   "english": {
-    "title": "English Title",
+    "title": "Upcoming Central Government Exams 2026–2027: Exam Calendar, Eligibility, Notification Dates & Schedule",
     "slug": "slug-name",
     "excerpt": "Short excerpt in English",
     "content": "Full GFM markdown string in English with tables",
-    "metaTitle": "SEO title under 60 chars",
-    "metaDescription": "SEO description under 155 chars",
+    "metaTitle": "SEO title under 60 chars in English",
+    "metaDescription": "SEO description under 155 chars in English",
     "keywords": ["keyword 1", "keyword 2"]
   },
-  "seoScore": 92,
-  "detectedCategory": "notification"
+  "detectedCategory": "Exact Name From Existing System Categories"
 }`;
 
     const userPrompt = JSON.stringify({
@@ -687,7 +990,7 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       })),
     });
 
-    onStage?.('DRAFTING', 'Generating bilingual articles & intelligent image placements...');
+    onStage?.('DRAFTING', 'Generating bilingual articles, metadata & category classification in unified pass...');
 
     const imageParts = validImages.map((img) => ({
       mimeType: img.mimeType || 'image/jpeg',
@@ -695,8 +998,8 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       url: img.url,
     }));
 
-    const requestedModel = input.model || 'gemini-3.8-flash';
-    const rawJson = await this.callGemini(
+    const requestedModel = input.model || 'deepseek-chat';
+    const result = await this.callAiModel(
       systemPrompt,
       userPrompt,
       imageParts,
@@ -706,37 +1009,92 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       requestedModel,
     );
 
-    onStage?.('FINALIZING', 'Parsing structure and validating keyword density...');
+    onStage?.('FINALIZING', 'Parsing structure, extracting keywords and validating metadata...');
 
     try {
-      const cleaned = rawJson.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
-      const parsed = JSON.parse(cleaned);
+      const parsed = parseRobustJson(result.text);
+
+      let englishTitle = parsed.english?.title || '';
+      let englishExcerpt = parsed.english?.excerpt || '';
+      let englishContent = parsed.english?.content || '';
+      let englishMetaTitle = parsed.english?.metaTitle || '';
+      let englishMetaDescription = parsed.english?.metaDescription || '';
+      let englishKeywords = Array.isArray(parsed.english?.keywords) ? parsed.english.keywords : [];
+
+      // If the English version was truncated or incomplete (< 300 words while Hinglish is long):
+      const hinglishWordCount = (parsed.hinglish?.content || '').trim().split(/\s+/).length;
+      const englishWordCount = englishContent.trim().split(/\s+/).filter(Boolean).length;
+
+      if (!englishContent || englishWordCount < 300 && hinglishWordCount >= 600) {
+        this.logger.warn(`AI returned incomplete English edition (${englishWordCount} words vs ${hinglishWordCount} Hinglish words). Auto-completing full English edition...`);
+        onStage?.('TRANSLATING', 'Auto-completing full 1.5k–3.5k word English edition from draft...');
+        try {
+          const completionPrompt = `Translate and adapt the following comprehensive Indian educational/job article from Hindi/Hinglish into high-authority, publication-ready English with complete GitHub Flavored Markdown (tables, headings, FAQs intact).
+Target Length: Minimum 1,500 words to maximum 3,500 words matching the depth of the source draft.
+Article Title: ${parsed.hinglish?.title || ''}
+Article Content (Markdown):
+${parsed.hinglish?.content || ''}
+
+Output ONLY valid JSON matching this schema:
+{
+  "title": "Clear English Title",
+  "excerpt": "Compelling English excerpt (1-2 sentences)",
+  "content": "Complete 1,500 to 3,500 words English markdown with tables and FAQs",
+  "metaTitle": "SEO title under 60 chars",
+  "metaDescription": "SEO description under 155 chars",
+  "keywords": ["keyword 1", "keyword 2"]
+}`;
+          const fallbackRes = await this.callAiModel(
+            'You are an expert bilingual editor for exam and educational portals. Output ONLY valid JSON.',
+            completionPrompt,
+            undefined,
+            undefined,
+            requestedModel,
+          );
+          const parsedEnglishFallback = parseRobustJson(fallbackRes.text);
+          if (parsedEnglishFallback?.content) {
+            englishTitle = parsedEnglishFallback.title || englishTitle;
+            englishExcerpt = parsedEnglishFallback.excerpt || englishExcerpt;
+            englishContent = parsedEnglishFallback.content;
+            englishMetaTitle = parsedEnglishFallback.metaTitle || englishTitle;
+            englishMetaDescription = parsedEnglishFallback.metaDescription || englishExcerpt;
+            if (Array.isArray(parsedEnglishFallback.keywords) && parsedEnglishFallback.keywords.length > 0) {
+              englishKeywords = parsedEnglishFallback.keywords;
+            }
+          }
+        } catch (recoveryErr) {
+          this.logger.error('Failed to auto-complete English article fallback', recoveryErr);
+        }
+      }
+
+      const hinglishTitle = parsed.hinglish?.title || 'Untitled Hinglish Article';
+      const canonicalSlug = parsed.hinglish?.slug || parsed.english?.slug || 'article';
+
       return {
         hinglish: {
-          title: parsed.hinglish?.title || 'Untitled Hinglish Article',
-          slug: parsed.hinglish?.slug || parsed.english?.slug || 'article',
+          title: hinglishTitle,
+          slug: canonicalSlug,
           excerpt: parsed.hinglish?.excerpt || '',
           content: parsed.hinglish?.content || '',
-          metaTitle: parsed.hinglish?.metaTitle || parsed.hinglish?.title || '',
+          metaTitle: parsed.hinglish?.metaTitle || hinglishTitle,
           metaDescription: parsed.hinglish?.metaDescription || parsed.hinglish?.excerpt || '',
           keywords: Array.isArray(parsed.hinglish?.keywords) ? parsed.hinglish.keywords : [],
         },
         english: {
-          title: parsed.english?.title || 'Untitled English Article',
-          slug: parsed.english?.slug || parsed.hinglish?.slug || 'article',
-          excerpt: parsed.english?.excerpt || '',
-          content: parsed.english?.content || '',
-          metaTitle: parsed.english?.metaTitle || parsed.english?.title || '',
-          metaDescription: parsed.english?.metaDescription || parsed.english?.excerpt || '',
-          keywords: Array.isArray(parsed.english?.keywords) ? parsed.english.keywords : [],
+          title: englishTitle || hinglishTitle,
+          slug: canonicalSlug,
+          excerpt: englishExcerpt || parsed.hinglish?.excerpt || '',
+          content: englishContent || parsed.hinglish?.content || '',
+          metaTitle: englishMetaTitle || englishTitle || hinglishTitle,
+          metaDescription: englishMetaDescription || englishExcerpt || '',
+          keywords: englishKeywords.length > 0 ? englishKeywords : (parsed.hinglish?.keywords || []),
         },
-        seoScore: typeof parsed.seoScore === 'number' ? parsed.seoScore : 75,
         detectedCategory: parsed.detectedCategory || input.category,
-        modelUsed: this.lastUsedModel,
+        modelUsed: result.modelUsed || this.lastUsedModel,
       };
-    } catch (err) {
-      this.logger.error('Failed to parse Gemini generate-from-reference response', err);
-      throw new BadRequestException('Failed to parse AI blog generation output. Please try again.');
+    } catch (err: any) {
+      this.logger.error(`Failed to parse AI blog generation response: ${err.message}. Text preview (first 500 chars): ${result.text.slice(0, 500)}`);
+      throw new BadRequestException(`Failed to parse AI blog generation output: ${err.message}. Please try again.`);
     }
   }
 
