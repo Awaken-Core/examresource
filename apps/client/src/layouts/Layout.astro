@@ -166,7 +166,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0a58ca" />
+    <meta name="theme-color" content="#FF4D00" />
     <meta name="generator" content={Astro.generator} />
 
     {/* Primary SEO Meta Tags */}
@@ -1612,17 +1612,17 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const svg = link.querySelector('svg');
 
             if (isActive) {
-              link.classList.add('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
+              link.classList.add('bg-accent/10', 'text-accent', 'font-semibold', 'border', 'border-accent/20');
               link.classList.remove('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
               if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
-                svg.classList.add('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
+                svg.classList.add('text-accent');
                 svg.classList.remove('text-muted');
               }
             } else {
-              link.classList.remove('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
+              link.classList.remove('bg-accent/10', 'text-accent', 'font-semibold', 'border', 'border-accent/20');
               link.classList.add('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
               if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
-                svg.classList.remove('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
+                svg.classList.remove('text-accent');
               }
             }
           });

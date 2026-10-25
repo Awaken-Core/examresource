@@ -19,7 +19,7 @@ export const GET: APIRoute = () => {
         type: 'image/png',
       },
     ],
-    theme_color: '#0a58ca',
+    theme_color: '#FF4D00',
     background_color: '#ffffff',
     display: 'standalone',
   };
