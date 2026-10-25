@@ -45,24 +45,24 @@ const pageDescription = `Get exam-ready with structured mock tests, previous yea
     <div class="relative z-10 w-full max-w-none px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5 space-y-2.5">
       {/* Breadcrumbs covered by the continuous background */}
       <nav class="flex items-center gap-1.5 text-xs" aria-label="Breadcrumb">
-        <a href="/" class="text-[#2563EB] dark:text-[#60A5FA] font-medium hover:underline">Home</a>
-        <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <a href="/" class="text-accent font-medium hover:underline">Home</a>
+        <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
         </svg>
-        <span class="text-slate-600 dark:text-slate-300 font-medium">Test Series</span>
+        <span class="text-white font-medium">Test Series</span>
       </nav>
 
       {/* Hero Content Left */}
       <div class="w-full max-w-2xl lg:max-w-3xl space-y-2 pt-0.5 pb-1.5">
-        <span class="inline-block text-[11px] font-bold tracking-wider uppercase text-[#2563EB] dark:text-[#60A5FA]">
+        <span class="inline-block text-[11px] font-bold tracking-wider uppercase text-accent">
           PRACTICE SMARTER
         </span>
 
-        <h1 class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-[#0F172A] dark:text-white leading-tight">
+        <h1 class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-white leading-tight">
           Test Series
         </h1>
 
-        <p class="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed max-w-lg">
+        <p class="text-xs sm:text-[13px] text-muted leading-relaxed max-w-lg">
           Get exam-ready with structured mock tests, previous year papers and chapter-wise practice for all major government exams.
         </p>
 
@@ -70,7 +70,7 @@ const pageDescription = `Get exam-ready with structured mock tests, previous yea
         <div class="pt-2.5 flex items-center gap-x-5 gap-y-2 overflow-x-auto scrollbar-none">
           {heroStats.map((st) => (
             <div class="flex items-center gap-2 shrink-0">
-              <div class="w-7 h-7 rounded-lg bg-[#DBEAFE]/70 dark:bg-blue-950/70 border border-[#BFDBFE] dark:border-blue-800 flex items-center justify-center shrink-0 text-[#2563EB] dark:text-[#60A5FA]">
+              <div class="w-7 h-7 rounded-lg bg-accent/15 border border-accent/25 flex items-center justify-center shrink-0 text-accent">
                 {st.icon === 'categories' && (
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -93,8 +93,8 @@ const pageDescription = `Get exam-ready with structured mock tests, previous yea
                 )}
               </div>
               <div class="flex items-baseline gap-1">
-                <span class="text-xs sm:text-[13px] font-bold text-[#0F172A] dark:text-white leading-none">{st.value}</span>
-                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-none">{st.label}</span>
+                <span class="text-xs sm:text-[13px] font-bold text-white leading-none">{st.value}</span>
+                <span class="text-[11px] text-muted font-medium leading-none">{st.label}</span>
               </div>
             </div>
           ))}
@@ -111,14 +111,14 @@ const pageDescription = `Get exam-ready with structured mock tests, previous yea
       {featureShortcuts.map((item) => (
         <a
           href={item.href}
-          class="group flex items-center justify-between p-3.5 rounded-xl bg-surface border border-border hover:border-[#2563EB]/40 hover:shadow-xs transition duration-150 shadow-2xs"
+          class="group flex items-center justify-between p-3.5 rounded-xl bg-surface border border-border hover:border-accent/50 hover:shadow-md transition-all duration-200 shadow-2xs"
         >
           <div class="flex items-center gap-3 min-w-0">
             <div class={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-              item.id === 'mock-tests' ? 'bg-[#EFF6FF] text-[#2563EB]' :
-              item.id === 'chapter-tests' ? 'bg-[#ECFDF5] text-[#059669]' :
-              item.id === 'ai-generator' ? 'bg-[#F5F3FF] text-[#7C3AED]' :
-              'bg-[#FFFBEB] text-[#D97706]'
+              item.id === 'mock-tests' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20' :
+              item.id === 'chapter-tests' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' :
+              item.id === 'ai-generator' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20' :
+              'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
             }`}>
               {item.icon === 'doc' && (
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -142,13 +142,13 @@ const pageDescription = `Get exam-ready with structured mock tests, previous yea
               )}
             </div>
             <div class="min-w-0">
-              <h2 class="text-xs sm:text-[13px] font-bold text-[#0F172A] dark:text-white group-hover:text-[#2563EB] transition-colors truncate">
+              <h2 class="text-xs sm:text-[13px] font-bold text-white group-hover:text-accent transition-colors truncate">
                 {item.title}
               </h2>
               <p class="text-[11px] text-muted truncate">{item.description}</p>
             </div>
           </div>
-          <svg class="w-4 h-4 text-muted group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </a>

@@ -676,7 +676,7 @@ export function CBTTestRunner({ attemptId }: Props) {
     return (
       <div className="w-full max-w-3xl mx-auto py-8 sm:py-12 px-4 space-y-6">
         {/* Main Card */}
-        <div className="bg-white dark:bg-zinc-900 border border-slate-200/90 dark:border-zinc-800 rounded-3xl p-6 sm:p-9 shadow-xl shadow-slate-900/5 dark:shadow-black/40 relative overflow-hidden">
+        <div className="bg-surface border border-border rounded-3xl p-6 sm:p-9 shadow-xl relative overflow-hidden">
           {/* Subtle Accent Glow Ring */}
           <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 dark:bg-emerald-600/10 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
@@ -1235,15 +1235,15 @@ export function CBTTestRunner({ attemptId }: Props) {
                         }}
                         className={`flex items-start gap-3.5 p-4 rounded-2xl border transition-all select-none ${
                           isChecked
-                            ? 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-500 text-slate-900 dark:text-white font-medium shadow-sm ring-1 ring-blue-500/50'
-                            : 'bg-white dark:bg-zinc-800/50 border-slate-200 dark:border-zinc-700/80 text-slate-700 dark:text-zinc-200 hover:border-slate-300 dark:hover:border-zinc-600 hover:bg-slate-50 dark:hover:bg-zinc-800/80'
+                            ? 'bg-accent/10 border-accent text-white font-medium shadow-sm ring-1 ring-accent/50'
+                            : 'bg-surface border-border text-white hover:border-accent/40 hover:bg-surface-raised'
                         } ${isActionDisabled ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer active:scale-[0.99]'}`}
                       >
                         <div
                           className={`w-6 h-6 rounded-${questionType === 'single_choice' ? 'full' : 'lg'} border flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold transition ${
                             isChecked
-                              ? 'bg-blue-600 border-blue-600 text-white shadow-xs'
-                              : 'border-slate-300 dark:border-zinc-600 text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-700/40'
+                              ? 'bg-accent border-accent text-white shadow-xs'
+                              : 'border-border text-muted bg-surface-raised'
                           }`}
                         >
                           {String.fromCharCode(65 + optIdx)}
@@ -1269,7 +1269,7 @@ export function CBTTestRunner({ attemptId }: Props) {
                     value={numericalInput}
                     onChange={(e) => setNumericalInput(e.target.value)}
                     placeholder="e.g. 42 or 3.14"
-                    className={`w-full bg-white dark:bg-zinc-800/80 border border-slate-300 dark:border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-white font-mono focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-hidden ${
+                    className={`w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm text-white font-mono focus:border-accent focus:ring-1 focus:ring-accent focus:outline-hidden ${
                       isActionDisabled ? 'opacity-70 cursor-not-allowed' : ''
                     }`}
                   />
