@@ -12,15 +12,18 @@ if (!attemptId) {
 // Disable caching for live exam attempt screen
 Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
 
-const pageTitle = `CBT Test Runner | ${siteName}`;
+const pageTitle = `CBT Candidate Examination Session | ${siteName}`;
+const pageDescription =
+  'Secure Computer-Based Testing environment with real-time proctoring and official examination protocol.';
 ---
 
 <Layout
   title={pageTitle}
-  description="Computer-based timed examination testing environment"
+  description={pageDescription}
   hideHeaderFooter={true}
+  noindex={true}
 >
-  <div class="w-full max-w-none px-3 sm:px-5 lg:px-6 py-3 min-h-screen">
+  <main class="w-full max-w-none px-3 sm:px-5 lg:px-6 py-3 min-h-screen">
     <CBTTestRunner client:only="react" attemptId={attemptId} />
-  </div>
+  </main>
 </Layout>

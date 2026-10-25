@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { API_URL } from "../../lib/api";
+import { useEffect, useMemo, useState } from 'react';
+import { API_URL } from '../../lib/api';
 
 type OptionReview = {
   id: string;
@@ -77,13 +77,13 @@ type AnalysisData = {
   questionReview: QuestionReviewItem[];
 };
 
-type FilterKey = "all" | "correct" | "incorrect" | "skipped" | "marked";
+type FilterKey = 'all' | 'correct' | 'incorrect' | 'skipped' | 'marked';
 
 export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
   const [data, setData] = useState<AnalysisData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<FilterKey>("all");
+  const [filter, setFilter] = useState<FilterKey>('all');
   const [expandedSolutions, setExpandedSolutions] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
         setError(null);
 
         const res = await fetch(`${API_URL}/me/exam-attempts/${attemptId}/analysis`, {
-          credentials: "include",
+          credentials: 'include',
           signal: controller.signal,
         });
 
@@ -105,16 +105,16 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             return;
           }
           if (res.status === 404) {
-            throw new Error("This test attempt analysis was not found.");
+            throw new Error('This test attempt analysis was not found.');
           }
-          throw new Error("Unable to load test attempt analysis.");
+          throw new Error('Unable to load test attempt analysis.');
         }
 
         const payload = (await res.json()) as AnalysisData;
         setData(payload);
       } catch (err: any) {
         if (controller.signal.aborted) return;
-        setError(err.message || "Failed to load attempt analysis.");
+        setError(err.message || 'Failed to load attempt analysis.');
       } finally {
         setLoading(false);
       }
@@ -125,7 +125,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
   }, [attemptId]);
 
   function formatTime(totalSeconds: number) {
-    if (!totalSeconds || totalSeconds <= 0) return "0s";
+    if (!totalSeconds || totalSeconds <= 0) return '0s';
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     if (minutes > 0) {
@@ -146,13 +146,21 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
     if (!data?.questionReview) return [];
     return data.questionReview.filter((q) => {
       const isMarked =
-        q.status === "marked_for_review" ||
-        q.status === "answered_and_marked_for_review";
+        q.status === 'marked_for_review' || q.status === 'answered_and_marked_for_review';
 
-      if (filter === "correct") return q.isCorrect === true;
-      if (filter === "incorrect") return q.isCorrect === false && (q.status === "answered" || q.status === "answered_and_marked_for_review");
-      if (filter === "skipped") return q.status === "not_answered" || q.status === "not_visited" || (q.isCorrect === null && !isMarked);
-      if (filter === "marked") return isMarked;
+      if (filter === 'correct') return q.isCorrect === true;
+      if (filter === 'incorrect')
+        return (
+          q.isCorrect === false &&
+          (q.status === 'answered' || q.status === 'answered_and_marked_for_review')
+        );
+      if (filter === 'skipped')
+        return (
+          q.status === 'not_answered' ||
+          q.status === 'not_visited' ||
+          (q.isCorrect === null && !isMarked)
+        );
+      if (filter === 'marked') return isMarked;
       return true;
     });
   }, [data?.questionReview, filter]);
@@ -176,12 +184,22 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
     return (
       <div className="mx-auto max-w-xl rounded-2xl border border-red-500/30 bg-surface p-8 text-center shadow-xs">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-red-500/30 bg-red-500/10 text-red-400">
-          <svg className="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg
+            className="h-7 w-7"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
           </svg>
         </div>
         <h1 className="mt-4 text-xl font-bold text-white">Analysis Not Available</h1>
-        <p className="mt-2 text-sm text-muted">{error || "Could not retrieve attempt analysis."}</p>
+        <p className="mt-2 text-sm text-muted">{error || 'Could not retrieve attempt analysis.'}</p>
         <div className="mt-6 flex justify-center gap-3">
           <a
             href="/profile"
@@ -202,14 +220,10 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
 
   const { summary } = data;
   const avgSecondsPerQ =
-    summary.attemptedCount > 0
-      ? Math.round(data.timeSpentSeconds / summary.attemptedCount)
-      : null;
+    summary.attemptedCount > 0 ? Math.round(data.timeSpentSeconds / summary.attemptedCount) : null;
 
   const markedCount = data.questionReview.filter(
-    (q) =>
-      q.status === "marked_for_review" ||
-      q.status === "answered_and_marked_for_review"
+    (q) => q.status === 'marked_for_review' || q.status === 'answered_and_marked_for_review',
   ).length;
 
   return (
@@ -232,17 +246,16 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
               <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
                 Submitted
               </span>
-              <span className="text-xs text-muted">
-                Attempt #{data.attemptNumber}
-              </span>
+              <span className="text-xs text-muted">Attempt #{data.attemptNumber}</span>
               {data.endedAt && (
                 <span className="text-xs text-muted">
-                  · {new Date(data.endedAt).toLocaleDateString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
+                  ·{' '}
+                  {new Date(data.endedAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
                   })}
                 </span>
               )}
@@ -268,7 +281,10 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           1. SCORE, PERCENTAGE, ATTEMPTED/CORRECT/WRONG/UNATTEMPTED
           ───────────────────────────────────────────────────────────── */}
       <section aria-labelledby="score-breakdown-heading" className="space-y-3">
-        <h2 id="score-breakdown-heading" className="text-xs font-bold uppercase tracking-wider text-muted">
+        <h2
+          id="score-breakdown-heading"
+          className="text-xs font-bold uppercase tracking-wider text-muted"
+        >
           1. Overall Score & Question Summary
         </h2>
 
@@ -282,9 +298,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                   <span className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
                     {summary.score}
                   </span>
-                  <span className="text-lg text-muted">
-                    / {summary.maximumMarks} Max Marks
-                  </span>
+                  <span className="text-lg text-muted">/ {summary.maximumMarks} Max Marks</span>
                 </div>
               </div>
 
@@ -339,17 +353,13 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
 
             <div className="p-4 sm:p-5">
               <span className="text-xs text-red-400 font-semibold">✗ Incorrect</span>
-              <p className="mt-1 text-2xl font-extrabold text-red-400">
-                {summary.wrongCount}
-              </p>
+              <p className="mt-1 text-2xl font-extrabold text-red-400">{summary.wrongCount}</p>
               <p className="mt-0.5 text-[11px] text-muted">Negative penalties applied</p>
             </div>
 
             <div className="p-4 sm:p-5">
               <span className="text-xs text-muted font-semibold">○ Unattempted</span>
-              <p className="mt-1 text-2xl font-extrabold text-muted">
-                {summary.skippedCount}
-              </p>
+              <p className="mt-1 text-2xl font-extrabold text-muted">{summary.skippedCount}</p>
               <p className="mt-0.5 text-[11px] text-muted">Skipped questions</p>
             </div>
           </div>
@@ -360,7 +370,10 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           2. ACCURACY AND TIME USED
           ───────────────────────────────────────────────────────────── */}
       <section aria-labelledby="accuracy-time-heading" className="space-y-3">
-        <h2 id="accuracy-time-heading" className="text-xs font-bold uppercase tracking-wider text-muted">
+        <h2
+          id="accuracy-time-heading"
+          className="text-xs font-bold uppercase tracking-wider text-muted"
+        >
           2. Accuracy Rate & Time Management
         </h2>
 
@@ -372,17 +385,17 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
               <span
                 className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${
                   summary.accuracy >= 75
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
                     : summary.accuracy >= 50
-                    ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                    : "bg-red-500/15 text-red-400 border border-red-500/30"
+                      ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                      : 'bg-red-500/15 text-red-400 border border-red-500/30'
                 }`}
               >
                 {summary.accuracy >= 75
-                  ? "High Accuracy"
+                  ? 'High Accuracy'
                   : summary.accuracy >= 50
-                  ? "Moderate Accuracy"
-                  : "Needs Improvement"}
+                    ? 'Moderate Accuracy'
+                    : 'Needs Improvement'}
               </span>
             </div>
 
@@ -396,7 +409,8 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             </div>
 
             <p className="text-xs text-muted leading-relaxed">
-              Accuracy measures the proportion of questions you answered correctly out of the questions you actively attempted.
+              Accuracy measures the proportion of questions you answered correctly out of the
+              questions you actively attempted.
             </p>
           </div>
 
@@ -405,7 +419,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted">Total Time Utilized</span>
               <span className="text-xs text-muted">
-                {data.durationMinutes ? `Allowed: ${data.durationMinutes}m` : "No limit"}
+                {data.durationMinutes ? `Allowed: ${data.durationMinutes}m` : 'No limit'}
               </span>
             </div>
 
@@ -422,8 +436,8 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
 
             <p className="text-xs text-muted leading-relaxed">
               {data.durationMinutes && data.timeSpentSeconds < data.durationMinutes * 60 * 0.8
-                ? "You completed well ahead of the allotted time. Consider spending extra time reviewing doubtful questions."
-                : "Good time pacing across the test duration."}
+                ? 'You completed well ahead of the allotted time. Consider spending extra time reviewing doubtful questions.'
+                : 'Good time pacing across the test duration.'}
             </p>
           </div>
         </div>
@@ -433,7 +447,10 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           3. SECTION-WISE TABLE
           ───────────────────────────────────────────────────────────── */}
       <section aria-labelledby="section-table-heading" className="space-y-3">
-        <h2 id="section-table-heading" className="text-xs font-bold uppercase tracking-wider text-muted">
+        <h2
+          id="section-table-heading"
+          className="text-xs font-bold uppercase tracking-wider text-muted"
+        >
           3. Section-Wise Performance Breakdown
         </h2>
 
@@ -458,23 +475,29 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                     {Number(sec.marksAwarded.toFixed(2))}
                     <span className="text-muted font-normal"> / {sec.maximumMarks}</span>
                   </td>
-                  <td className="py-3.5 px-4 text-center font-bold text-emerald-400">{sec.correctCount}</td>
-                  <td className="py-3.5 px-4 text-center font-bold text-red-400">{sec.wrongCount}</td>
+                  <td className="py-3.5 px-4 text-center font-bold text-emerald-400">
+                    {sec.correctCount}
+                  </td>
+                  <td className="py-3.5 px-4 text-center font-bold text-red-400">
+                    {sec.wrongCount}
+                  </td>
                   <td className="py-3.5 px-4 text-center text-muted">{sec.skippedCount}</td>
                   <td className="py-3.5 px-4 text-right">
                     <span
                       className={`font-bold ${
                         sec.accuracy >= 75
-                          ? "text-emerald-400"
+                          ? 'text-emerald-400'
                           : sec.accuracy >= 50
-                          ? "text-amber-300"
-                          : "text-red-400"
+                            ? 'text-amber-300'
+                            : 'text-red-400'
                       }`}
                     >
                       {sec.accuracy}%
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 text-right text-muted font-mono">{formatTime(sec.timeSpentSeconds)}</td>
+                  <td className="py-3.5 px-4 text-right text-muted font-mono">
+                    {formatTime(sec.timeSpentSeconds)}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -486,7 +509,10 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           4. "STRONG" AND "NEEDS REVISION" CHAPTERS
           ───────────────────────────────────────────────────────────── */}
       <section aria-labelledby="chapter-strength-heading" className="space-y-3">
-        <h2 id="chapter-strength-heading" className="text-xs font-bold uppercase tracking-wider text-muted">
+        <h2
+          id="chapter-strength-heading"
+          className="text-xs font-bold uppercase tracking-wider text-muted"
+        >
           4. Chapter Diagnostic Strengths & Revision Alerts
         </h2>
 
@@ -497,12 +523,15 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
               <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-red-500/15 text-xs text-red-400 font-bold">
                 !
               </span>
-              <h3 className="text-sm font-bold text-white">Needs Revision Chapters (&lt; 60% accuracy)</h3>
+              <h3 className="text-sm font-bold text-white">
+                Needs Revision Chapters (&lt; 60% accuracy)
+              </h3>
             </div>
 
             {data.needsRevisionChapters.length === 0 ? (
               <p className="text-xs text-muted">
-                No weak chapters identified in this test. All attempted chapters maintained solid accuracy!
+                No weak chapters identified in this test. All attempted chapters maintained solid
+                accuracy!
               </p>
             ) : (
               <div className="space-y-2.5">
@@ -533,7 +562,8 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
 
             {data.strongChapters.length === 0 ? (
               <p className="text-xs text-muted">
-                No chapters reached the 75% accuracy benchmark yet. Practice targeted topic tests to build strength.
+                No chapters reached the 75% accuracy benchmark yet. Practice targeted topic tests to
+                build strength.
               </p>
             ) : (
               <div className="space-y-2.5">
@@ -561,46 +591,50 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
       <section aria-labelledby="question-review-heading" className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 id="question-review-heading" className="text-xs font-bold uppercase tracking-wider text-muted">
+            <h2
+              id="question-review-heading"
+              className="text-xs font-bold uppercase tracking-wider text-muted"
+            >
               5. Comprehensive Question Review & Solutions
             </h2>
             <p className="text-xs text-muted mt-0.5">
-              Review each question with solutions, your answer vs the correct answer, and time spent.
+              Review each question with solutions, your answer vs the correct answer, and time
+              spent.
             </p>
           </div>
 
           {/* Review Filter Pills */}
           <div className="flex flex-wrap gap-1.5 rounded-xl border border-border bg-surface p-1">
             <FilterButton
-              active={filter === "all"}
-              onClick={() => setFilter("all")}
+              active={filter === 'all'}
+              onClick={() => setFilter('all')}
               label="All"
               count={summary.totalQuestions}
             />
             <FilterButton
-              active={filter === "correct"}
-              onClick={() => setFilter("correct")}
+              active={filter === 'correct'}
+              onClick={() => setFilter('correct')}
               label="Correct"
               count={summary.correctCount}
               activeColor="bg-emerald-500 text-white"
             />
             <FilterButton
-              active={filter === "incorrect"}
-              onClick={() => setFilter("incorrect")}
+              active={filter === 'incorrect'}
+              onClick={() => setFilter('incorrect')}
               label="Incorrect"
               count={summary.wrongCount}
               activeColor="bg-red-500 text-white"
             />
             <FilterButton
-              active={filter === "skipped"}
-              onClick={() => setFilter("skipped")}
+              active={filter === 'skipped'}
+              onClick={() => setFilter('skipped')}
               label="Skipped"
               count={summary.skippedCount}
             />
             {markedCount > 0 && (
               <FilterButton
-                active={filter === "marked"}
-                onClick={() => setFilter("marked")}
+                active={filter === 'marked'}
+                onClick={() => setFilter('marked')}
                 label="Marked"
                 count={markedCount}
                 activeColor="bg-amber-500 text-white"
@@ -618,7 +652,9 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             {filteredQuestions.map((q) => {
               const isSolutionOpen = Boolean(expandedSolutions[q.questionId]);
               const isCorrect = q.isCorrect === true;
-              const isWrong = q.isCorrect === false && (q.status === "answered" || q.status === "answered_and_marked_for_review");
+              const isWrong =
+                q.isCorrect === false &&
+                (q.status === 'answered' || q.status === 'answered_and_marked_for_review');
 
               return (
                 <div
@@ -636,11 +672,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                           {q.difficulty}
                         </span>
                       )}
-                      {q.topic && (
-                        <span className="text-[11px] text-muted">
-                          {q.topic}
-                        </span>
-                      )}
+                      {q.topic && <span className="text-[11px] text-muted">{q.topic}</span>}
                     </div>
 
                     <div className="flex items-center gap-3 text-xs">
@@ -654,7 +686,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                         </span>
                       ) : isWrong ? (
                         <span className="rounded-md border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[11px] font-bold text-red-400">
-                          ✗ Incorrect ({q.negativeMarks ? `-${q.negativeMarks}` : "0"})
+                          ✗ Incorrect ({q.negativeMarks ? `-${q.negativeMarks}` : '0'})
                         </span>
                       ) : (
                         <span className="rounded-md border border-border bg-surface-raised px-2 py-0.5 text-[11px] font-medium text-muted">
@@ -665,9 +697,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                   </div>
 
                   {/* Question Prompt */}
-                  <div className="text-sm font-medium leading-relaxed text-white">
-                    {q.content}
-                  </div>
+                  <div className="text-sm font-medium leading-relaxed text-white">{q.content}</div>
 
                   {/* Question Options */}
                   {q.options && q.options.length > 0 && (
@@ -677,11 +707,12 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                         const isStudentChoice = opt.isSelected;
                         const isActualCorrect = opt.isCorrect;
 
-                        let borderClass = "border-border bg-surface-raised/40 text-muted";
+                        let borderClass = 'border-border bg-surface-raised/40 text-muted';
                         if (isActualCorrect) {
-                          borderClass = "border-emerald-500/50 bg-emerald-500/10 text-white font-semibold";
+                          borderClass =
+                            'border-emerald-500/50 bg-emerald-500/10 text-white font-semibold';
                         } else if (isStudentChoice && !isActualCorrect) {
-                          borderClass = "border-red-500/50 bg-red-500/10 text-white";
+                          borderClass = 'border-red-500/50 bg-red-500/10 text-white';
                         }
 
                         return (
@@ -710,16 +741,18 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                   )}
 
                   {/* Numerical answer if applicable */}
-                  {q.type === "numerical" && (
+                  {q.type === 'numerical' && (
                     <div className="rounded-xl border border-border bg-surface-raised/40 p-3 text-xs space-y-1">
                       <p className="text-muted">
-                        Correct Numerical Answer:{" "}
+                        Correct Numerical Answer:{' '}
                         <span className="font-bold text-emerald-400">{q.numericalAnswer}</span>
                       </p>
                       {q.userNumericalValue && (
                         <p className="text-muted">
-                          Your Input:{" "}
-                          <span className={`font-bold ${isCorrect ? "text-emerald-400" : "text-red-400"}`}>
+                          Your Input:{' '}
+                          <span
+                            className={`font-bold ${isCorrect ? 'text-emerald-400' : 'text-red-400'}`}
+                          >
                             {q.userNumericalValue}
                           </span>
                         </p>
@@ -734,8 +767,8 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                       onClick={() => toggleSolution(q.questionId)}
                       className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:underline"
                     >
-                      <span>{isSolutionOpen ? "Hide Solution" : "View Detailed Solution"}</span>
-                      <span aria-hidden="true">{isSolutionOpen ? "↑" : "↓"}</span>
+                      <span>{isSolutionOpen ? 'Hide Solution' : 'View Detailed Solution'}</span>
+                      <span aria-hidden="true">{isSolutionOpen ? '↑' : '↓'}</span>
                     </button>
 
                     {isSolutionOpen && (
@@ -744,7 +777,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                           Explanation & Solution Notes
                         </p>
                         <div className="leading-relaxed text-muted whitespace-pre-line">
-                          {q.explanation || "No explanation text provided for this question."}
+                          {q.explanation || 'No explanation text provided for this question.'}
                         </div>
                       </div>
                     )}
@@ -759,7 +792,10 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
       {/* ─────────────────────────────────────────────────────────────
           6. CLEAR NEXT ACTIONS: Reattempt, practice weak, take next
           ───────────────────────────────────────────────────────────── */}
-      <section aria-labelledby="next-actions-heading" className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-xs">
+      <section
+        aria-labelledby="next-actions-heading"
+        className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-xs"
+      >
         <h2 id="next-actions-heading" className="text-base font-bold text-white">
           6. Recommended Next Actions
         </h2>
@@ -823,7 +859,7 @@ function FilterButton({
   onClick,
   label,
   count,
-  activeColor = "bg-accent text-white",
+  activeColor = 'bg-accent text-white',
 }: {
   active: boolean;
   onClick: () => void;
@@ -836,15 +872,11 @@ function FilterButton({
       type="button"
       onClick={onClick}
       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-        active
-          ? `${activeColor} shadow-xs`
-          : "text-muted hover:bg-surface-raised hover:text-white"
+        active ? `${activeColor} shadow-xs` : 'text-muted hover:bg-surface-raised hover:text-white'
       }`}
     >
       <span>{label}</span>
-      {count !== undefined && (
-        <span className="ml-1 opacity-80 text-[11px]">({count})</span>
-      )}
+      {count !== undefined && <span className="ml-1 opacity-80 text-[11px]">({count})</span>}
     </button>
   );
 }

@@ -53,7 +53,7 @@ export function TestInstructions({ testId }: Props) {
           throw new Error(
             res.status === 404
               ? 'Test was not found or is currently unavailable.'
-              : `Unable to load test instructions (status ${res.status})`
+              : `Unable to load test instructions (status ${res.status})`,
           );
         }
         const data = await res.json();
@@ -89,7 +89,9 @@ export function TestInstructions({ testId }: Props) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Unable to start test attempt. Check permissions or attempt limits.');
+        throw new Error(
+          data.message || 'Unable to start test attempt. Check permissions or attempt limits.',
+        );
       }
 
       const attempt = await res.json();
@@ -114,10 +116,22 @@ export function TestInstructions({ testId }: Props) {
   if (error || !test) {
     return (
       <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3 my-8">
-        <svg className="w-8 h-8 text-rose-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <svg
+          className="w-8 h-8 text-rose-500 mx-auto"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
         </svg>
-        <p className="text-sm font-semibold text-rose-200">{error || 'Test details could not be loaded.'}</p>
+        <p className="text-sm font-semibold text-rose-200">
+          {error || 'Test details could not be loaded.'}
+        </p>
         <a
           href="/test-series"
           className="inline-block text-xs font-semibold text-[#2563EB] hover:underline"
@@ -131,9 +145,14 @@ export function TestInstructions({ testId }: Props) {
   const sections = test.sections || [];
   const isFull = test.testMode === 'full';
   const totalQuestions = test.totalQuestionsCount;
-  const estimatedMarks = isFull && sections.length > 0
-    ? sections.reduce((sum, s) => sum + (s.questionsCount || s.requiredQuestionCount || 0) * (s.positiveMarks || 1), 0)
-    : totalQuestions * (test.positiveMarks || 1);
+  const estimatedMarks =
+    isFull && sections.length > 0
+      ? sections.reduce(
+          (sum, s) =>
+            sum + (s.questionsCount || s.requiredQuestionCount || 0) * (s.positiveMarks || 1),
+          0,
+        )
+      : totalQuestions * (test.positiveMarks || 1);
 
   return (
     <div className="w-full space-y-6 py-2">
@@ -141,7 +160,11 @@ export function TestInstructions({ testId }: Props) {
       <section className="bg-surface border border-border rounded-2xl p-6 sm:p-7 shadow-2xs space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-surface-raised border border-border text-slate-700 dark:text-slate-300">
-            {isFull ? 'Full Length Mock Paper' : test.testMode === 'chapter' ? 'Chapter Practice Test' : 'Subject Practice Test'}
+            {isFull
+              ? 'Full Length Mock Paper'
+              : test.testMode === 'chapter'
+                ? 'Chapter Practice Test'
+                : 'Subject Practice Test'}
           </span>
           <span className="text-xs text-muted">Version {test.version}</span>
           {test.access === 'free' ? (
@@ -160,9 +183,7 @@ export function TestInstructions({ testId }: Props) {
             {test.title}
           </h1>
           {test.description && (
-            <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
-              {test.description}
-            </p>
+            <p className="text-xs sm:text-sm text-muted mt-1 leading-relaxed">{test.description}</p>
           )}
         </div>
 
@@ -170,7 +191,9 @@ export function TestInstructions({ testId }: Props) {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
           <div className="bg-surface-raised/40 border border-border/80 rounded-xl p-3">
             <span className="text-[11px] text-muted block">Total Questions</span>
-            <span className="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">{totalQuestions} Questions</span>
+            <span className="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">
+              {totalQuestions} Questions
+            </span>
           </div>
           <div className="bg-surface-raised/40 border border-border/80 rounded-xl p-3">
             <span className="text-[11px] text-muted block">Duration</span>
@@ -180,7 +203,9 @@ export function TestInstructions({ testId }: Props) {
           </div>
           <div className="bg-surface-raised/40 border border-border/80 rounded-xl p-3">
             <span className="text-[11px] text-muted block">Total Marks</span>
-            <span className="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">{estimatedMarks} Marks</span>
+            <span className="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">
+              {estimatedMarks} Marks
+            </span>
           </div>
           <div className="bg-surface-raised/40 border border-border/80 rounded-xl p-3">
             <span className="text-[11px] text-muted block">Languages</span>
@@ -212,7 +237,9 @@ export function TestInstructions({ testId }: Props) {
                 {sections.map((sec, idx) => (
                   <tr key={idx} className="hover:bg-surface-raised/30">
                     <td className="py-2.5 px-3 text-muted">{idx + 1}</td>
-                    <td className="py-2.5 px-3 font-semibold text-slate-900 dark:text-white">{sec.name}</td>
+                    <td className="py-2.5 px-3 font-semibold text-slate-900 dark:text-white">
+                      {sec.name}
+                    </td>
                     <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300">
                       {sec.questionsCount || sec.requiredQuestionCount || '-'} Qs
                     </td>
@@ -221,7 +248,9 @@ export function TestInstructions({ testId }: Props) {
                     </td>
                     <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300">
                       +{sec.positiveMarks || test.positiveMarks || 1}
-                      {test.negativeMarkingEnabled && sec.negativeMarks > 0 ? ` / -${sec.negativeMarks}` : ''}
+                      {test.negativeMarkingEnabled && sec.negativeMarks > 0
+                        ? ` / -${sec.negativeMarks}`
+                        : ''}
                     </td>
                   </tr>
                 ))}
@@ -244,15 +273,27 @@ export function TestInstructions({ testId }: Props) {
         ) : (
           <div className="space-y-2.5 text-xs text-muted leading-relaxed">
             <div className="flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">1</span>
-              <p>The countdown clock in the top banner will display the remaining time available for completing the examination.</p>
+              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+                1
+              </span>
+              <p>
+                The countdown clock in the top banner will display the remaining time available for
+                completing the examination.
+              </p>
             </div>
             <div className="flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">2</span>
-              <p>When the overall exam timer expires, your test will be automatically submitted with your currently saved answers.</p>
+              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+                2
+              </span>
+              <p>
+                When the overall exam timer expires, your test will be automatically submitted with
+                your currently saved answers.
+              </p>
             </div>
             <div className="flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">3</span>
+              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+                3
+              </span>
               <p>Question palette states:</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-7 pt-1 text-[11px] text-slate-700 dark:text-slate-300">
@@ -278,8 +319,15 @@ export function TestInstructions({ testId }: Props) {
               </div>
             </div>
             <div className="flex items-start gap-2.5 pt-1">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">4</span>
-              <p>Negative marking: {test.negativeMarkingEnabled && test.negativeMarks > 0 ? `Each incorrect answer will incur a penalty of -${test.negativeMarks} marks.` : 'No negative marking is applied for this test.'}</p>
+              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+                4
+              </span>
+              <p>
+                Negative marking:{' '}
+                {test.negativeMarkingEnabled && test.negativeMarks > 0
+                  ? `Each incorrect answer will incur a penalty of -${test.negativeMarks} marks.`
+                  : 'No negative marking is applied for this test.'}
+              </p>
             </div>
           </div>
         )}
@@ -301,7 +349,9 @@ export function TestInstructions({ testId }: Props) {
             className="w-4 h-4 mt-0.5 rounded border-border text-[#2563EB] focus:ring-[#2563EB]"
           />
           <span className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-            I have read and understood all the examination instructions above. I declare that I will follow the rules of the test honestly and acknowledge that closing or navigating away may automatically submit my attempt.
+            I have read and understood all the examination instructions above. I declare that I will
+            follow the rules of the test honestly and acknowledge that closing or navigating away
+            may automatically submit my attempt.
           </span>
         </label>
 
@@ -332,7 +382,12 @@ export function TestInstructions({ testId }: Props) {
               <>
                 <span>I am Ready to Begin</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  />
                 </svg>
               </>
             )}

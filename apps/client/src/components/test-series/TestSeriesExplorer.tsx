@@ -100,7 +100,10 @@ export function TestSeriesExplorer() {
     <div className="space-y-4">
       {/* Category Tabs */}
       <section className="space-y-2.5 pt-1">
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none" role="tablist">
+        <div
+          className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none"
+          role="tablist"
+        >
           {CATEGORIES.map((cat) => (
             <button
               key={cat.id}
@@ -127,7 +130,11 @@ export function TestSeriesExplorer() {
               viewBox="0 0 24 24"
               strokeWidth="2"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               type="search"
@@ -189,7 +196,8 @@ export function TestSeriesExplorer() {
               </h2>
             </div>
             <p className="text-[11px] text-muted">
-              Select an exam suite to practice Subject-wise tests, Chapter-wise tests, and Full Mock Tests.
+              Select an exam suite to practice Subject-wise tests, Chapter-wise tests, and Full Mock
+              Tests.
             </p>
           </div>
           <span className="text-xs font-semibold text-muted">
@@ -210,9 +218,7 @@ export function TestSeriesExplorer() {
         {/* Error State */}
         {fetchError && !isLoading && (
           <div className="p-6 rounded-2xl bg-rose-500/10 dark:bg-rose-950/40 border border-rose-500/20 dark:border-rose-900/40 text-center space-y-3">
-            <p className="text-xs font-semibold text-rose-600 dark:text-rose-400">
-              {fetchError}
-            </p>
+            <p className="text-xs font-semibold text-rose-600 dark:text-rose-400">{fetchError}</p>
             <button
               type="button"
               onClick={fetchPublishedSeries}
@@ -227,9 +233,7 @@ export function TestSeriesExplorer() {
         {!isLoading && !fetchError && sortedList.length === 0 && (
           <div className="py-16 text-center rounded-2xl border border-dashed border-border p-8 space-y-2">
             <p className="text-xs font-bold text-white">No test series found</p>
-            <p className="text-[11px] text-muted">
-              Try resetting your category or search filters.
-            </p>
+            <p className="text-[11px] text-muted">Try resetting your category or search filters.</p>
           </div>
         )}
 
@@ -288,8 +292,8 @@ export function TestSeriesExplorer() {
                           series.accessType === 'free'
                             ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                             : series.accessType === 'freemium'
-                            ? 'bg-accent/10 text-accent border border-accent/20'
-                            : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
+                              ? 'bg-accent/10 text-accent border border-accent/20'
+                              : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
                         }`}
                       >
                         {series.accessType}
@@ -301,8 +305,18 @@ export function TestSeriesExplorer() {
 
                     <div className="flex items-center gap-1 text-accent font-semibold text-xs group-hover:translate-x-0.5 transition-transform">
                       <span>Explore Tests</span>
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </div>
                   </div>

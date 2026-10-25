@@ -155,7 +155,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
           throw new Error(
             res.status === 404
               ? 'Test series was not found or is currently not published.'
-              : `Unable to load test series (status ${res.status})`
+              : `Unable to load test series (status ${res.status})`,
           );
         }
         const data = await res.json();
@@ -249,7 +249,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       setLoadingSubjectTests(true);
       try {
         const res = await fetch(
-          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=subject&subjectId=${selectedSubjectId}`
+          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=subject&subjectId=${selectedSubjectId}`,
         );
         if (res.ok) {
           const tests = await res.json();
@@ -273,7 +273,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       setLoadingChapterTests(true);
       try {
         const res = await fetch(
-          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=chapter&chapterId=${selectedChapterId}`
+          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=chapter&chapterId=${selectedChapterId}`,
         );
         if (res.ok) {
           const tests = await res.json();
@@ -297,7 +297,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       setLoadingFullTests(true);
       try {
         const res = await fetch(
-          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=full`
+          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=full`,
         );
         if (res.ok) {
           const tests = await res.json();
@@ -326,10 +326,22 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   if (error || !series) {
     return (
       <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3">
-        <svg className="w-8 h-8 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <svg
+          className="w-8 h-8 text-red-500 mx-auto"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          />
         </svg>
-        <p className="text-sm font-semibold text-red-200">{error || 'Test series could not be loaded.'}</p>
+        <p className="text-sm font-semibold text-red-200">
+          {error || 'Test series could not be loaded.'}
+        </p>
         <a
           href="/test-series"
           className="inline-block text-xs font-semibold text-accent hover:underline"
@@ -394,14 +406,34 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
             {/* Metadata Pills */}
             <div className="flex flex-wrap items-center gap-4 text-xs text-muted pt-1">
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                <svg
+                  className="w-4 h-4 text-accent"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  />
                 </svg>
                 <span>{assignedSubjects.length} Assigned Subjects</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <svg
+                  className="w-4 h-4 text-emerald-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
                 </svg>
                 <span>Bilingual ({series.supportedLanguages?.join(', ') || 'English, Hindi'})</span>
               </div>
@@ -463,12 +495,14 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
               <div className="flex items-center gap-3 text-xs">
                 {learnerPrep.averageScorePercent !== null && (
                   <span className="rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    Avg Score: <strong className="text-accent">{learnerPrep.averageScorePercent}%</strong>
+                    Avg Score:{' '}
+                    <strong className="text-accent">{learnerPrep.averageScorePercent}%</strong>
                   </span>
                 )}
                 {learnerPrep.averageAccuracy !== null && (
                   <span className="rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    Accuracy: <strong className="text-emerald-400">{learnerPrep.averageAccuracy}%</strong>
+                    Accuracy:{' '}
+                    <strong className="text-emerald-400">{learnerPrep.averageAccuracy}%</strong>
                   </span>
                 )}
               </div>
@@ -718,9 +752,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
         {activeTab === 'full' && (
           <div className="space-y-4">
             {loadingFullTests ? (
-              <div className="py-12 text-center text-xs text-muted">
-                Loading full tests...
-              </div>
+              <div className="py-12 text-center text-xs text-muted">Loading full tests...</div>
             ) : fullTests.length === 0 ? (
               <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
                 No published Full Length mock tests available at this time.
@@ -763,7 +795,11 @@ function TestCard({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-surface-raised border border-border text-muted">
-              {test.testMode === 'full' ? 'Full Test' : test.testMode === 'chapter' ? 'Chapter Test' : 'Subject Test'}
+              {test.testMode === 'full'
+                ? 'Full Test'
+                : test.testMode === 'chapter'
+                  ? 'Chapter Test'
+                  : 'Subject Test'}
             </span>
 
             {/* Learner Personal Status Badge */}
@@ -794,15 +830,11 @@ function TestCard({
         </div>
 
         {/* Title */}
-        <h3 className="text-sm font-bold text-white line-clamp-1 leading-snug">
-          {test.title}
-        </h3>
+        <h3 className="text-sm font-bold text-white line-clamp-1 leading-snug">{test.title}</h3>
 
         {/* Description */}
         {test.description && (
-          <p className="text-xs text-muted line-clamp-2 leading-relaxed">
-            {test.description}
-          </p>
+          <p className="text-xs text-muted line-clamp-2 leading-relaxed">{test.description}</p>
         )}
 
         {/* Submitted Attempt Score Box (when test was submitted) */}
@@ -843,7 +875,9 @@ function TestCard({
             <span className="text-[10px] text-muted block">Marking</span>
             <span className="font-semibold text-white">
               +{test.positiveMarks}
-              {test.negativeMarkingEnabled && test.negativeMarks > 0 ? ` / -${test.negativeMarks}` : ''}
+              {test.negativeMarkingEnabled && test.negativeMarks > 0
+                ? ` / -${test.negativeMarks}`
+                : ''}
             </span>
           </div>
         </div>
@@ -854,9 +888,7 @@ function TestCard({
             <span className="text-[10px] font-semibold text-slate-300">
               {sectionsCount} {sectionsCount === 1 ? 'Section' : 'Sections'}:
             </span>
-            <span className="truncate">
-              {test.sections!.map((s) => s.name).join(', ')}
-            </span>
+            <span className="truncate">{test.sections!.map((s) => s.name).join(', ')}</span>
           </div>
         )}
       </div>
@@ -895,7 +927,12 @@ function TestCard({
           >
             <span>View Instructions & Start</span>
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
             </svg>
           </a>
         )}
