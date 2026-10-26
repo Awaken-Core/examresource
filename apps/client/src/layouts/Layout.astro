@@ -50,7 +50,7 @@ const {
   hideDesktopSidebar = false,
   alternateLinks = [],
   noindex = false,
-  useClientRouter = false,
+  useClientRouter = true,
 } = Astro.props;
 
 // Ensure explicit X-Robots-Tag HTTP header matches the meta robots directive
@@ -324,7 +324,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       </div>
 
       {/* ── Scrollable Nav Body ── */}
-      <nav class="flex-1 overflow-y-auto overscroll-contain pt-0 px-3 pb-3 space-y-5 scrollbar-none">
+      <nav data-lenis-prevent class="flex-1 overflow-y-auto overscroll-contain pt-0 px-3 pb-3 space-y-5 scrollbar-none">
         
         {/* Channels Section */}
         <div>
@@ -534,6 +534,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Global Robust Interactive Script */}
     <script>
       import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
+      import { initLenis, destroyLenis, stopLenis, startLenis } from '../lib/lenis';
 
       const siteDomain = document.documentElement.getAttribute('data-site-domain') || window.location.hostname;
       const API_URL = (import.meta.env.PUBLIC_API_URL || '').replace(/\/$/, '');
@@ -677,6 +678,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function openMobileDrawer() {
+          stopLenis();
           const backdrop = document.getElementById('mobile-sidebar-backdrop');
           const overlay = document.getElementById('mobile-backdrop-overlay');
           const container = document.getElementById('mobile-sidebar-container');
@@ -696,6 +698,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function closeMobileDrawer() {
+          startLenis();
           const backdrop = document.getElementById('mobile-sidebar-backdrop');
           const overlay = document.getElementById('mobile-backdrop-overlay');
           const container = document.getElementById('mobile-sidebar-container');
@@ -895,6 +898,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         let activeResultIndex = -1;
 
         function openSearchModal() {
+          stopLenis();
           const modal = document.getElementById('global-search-modal');
           const container = document.getElementById('global-search-container');
           const input = document.getElementById('global-search-input') as HTMLInputElement | null;
@@ -919,6 +923,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function closeSearchModal() {
+          startLenis();
           const modal = document.getElementById('global-search-modal');
           const container = document.getElementById('global-search-container');
           if (!modal || !container) return;
@@ -1423,18 +1428,40 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           const apiUrl = API_URL;
           const response = await fetch(`${apiUrl}/me`, { priority: 'low', credentials: 'include' } as any).catch(() => null);
-          if (response && response.status === 401) {
-            try { localStorage.removeItem('auth_active'); } catch (e) {}
+
+          // If request was aborted (e.g. navigation in flight), network failed, or server had 5xx blip:
+          // NEVER touch auth state or reset UI to logged-out. Keep optimistic state intact!
+          if (!response || response.status >= 500) return;
+
+          if (response.status === 401) {
+            try {
+              localStorage.removeItem('auth_active');
+              localStorage.removeItem('auth_user');
+            } catch (e) {}
           }
-          const user = response?.ok ? await response.json().catch(() => null) : null;
-          if (user) {
-            try { localStorage.setItem('auth_active', '1'); } catch (e) {}
-          } else {
-            try { localStorage.removeItem('auth_active'); } catch (e) {}
+
+          const user = response.ok ? await response.json().catch(() => null) : null;
+          const isUserLoggedIn = Boolean(user && user.id);
+
+          if (isUserLoggedIn) {
+            try {
+              localStorage.setItem('auth_active', '1');
+              localStorage.setItem('auth_user', JSON.stringify({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+              }));
+            } catch (e) {}
+          } else if (response.status === 401 || (response.ok && !user)) {
+            try {
+              localStorage.removeItem('auth_active');
+              localStorage.removeItem('auth_user');
+            } catch (e) {}
           }
 
           const { refreshNotifications } = await import('../lib/notifications');
-          if (user) {
+          if (isUserLoggedIn) {
             void refreshNotifications('session');
 
             if (!(window as any).__notifPollInterval) {
@@ -1451,7 +1478,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const loginLinks = document.querySelectorAll<HTMLElement>('.auth-login-link');
           const adminPanelLinks = document.querySelectorAll<HTMLElement>('.admin-panel-link');
 
-          if (user) {
+          if (isUserLoggedIn) {
             const fullName = (user.name || 'User').trim();
             const email = user.email || 'Account';
             const parts = fullName.split(/\s+/).filter(Boolean);
@@ -1507,7 +1534,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               el.classList.add('hidden');
               el.style.display = 'none';
             });
-          } else {
+          } else if (response.status === 401 || (response.ok && !user)) {
             document.documentElement.removeAttribute('data-authenticated');
             (window as any).__currentUser = null;
 
@@ -1629,6 +1656,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function reinitPageElements() {
+          // Initialize Lenis smooth scroll
+          initLenis({ headerOffset: -70 });
+
+          // Instantly show logged-in shell from cache — zero network, zero delay
+          applyOptimisticAuth();
+
           // Sync sidebar active links
           updateSidebarActiveLinks();
 
@@ -1715,21 +1748,93 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           queueSyncAuthProfile();
         }
 
+        /**
+         * Instant optimistic auth: reads localStorage/cookie without any network call.
+         * Shows the logged-in header/sidebar shell in <1ms so there's zero visible flash.
+         * The real fetch in syncAuthProfile() will correct it if the session has expired.
+         */
+        /**
+         * Instant optimistic auth: reads localStorage/cookie without any network call.
+         * Shows the logged-in header/sidebar shell in <1ms so there's zero visible flash.
+         * The real fetch in syncAuthProfile() will correct it if the session has expired.
+         */
+        function applyOptimisticAuth() {
+          let isLoggedIn = false;
+          try {
+            isLoggedIn = localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
+          } catch (e) {}
+
+          if (isLoggedIn) {
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-in').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-out').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-out').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-logout-btn').forEach(b => {
+              b.classList.remove('hidden');
+              b.style.display = 'flex';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-login-link').forEach(l => {
+              l.classList.add('hidden');
+              l.style.display = 'none';
+            });
+
+            // Instant hydrate cached user initials and name to eliminate flash of guest profile
+            try {
+              const rawUser = localStorage.getItem('auth_user');
+              if (rawUser) {
+                const u = JSON.parse(rawUser);
+                const fullName = (u.name || 'User').trim();
+                const email = u.email || 'Account';
+                const parts = fullName.split(/\s+/).filter(Boolean);
+                const initials = parts.length > 1
+                  ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+                  : (fullName.slice(0, 2)).toUpperCase() || 'U';
+
+                document.querySelectorAll('.user-display-name').forEach(el => el.textContent = fullName);
+                document.querySelectorAll('.user-display-email').forEach(el => el.textContent = email);
+                document.querySelectorAll('.user-avatar-initials').forEach(el => {
+                  el.textContent = initials;
+                  el.classList.remove('hidden');
+                });
+                if (u.role === 'admin' || u.role === 'editor') {
+                  document.querySelectorAll<HTMLElement>('.admin-panel-link').forEach(link => {
+                    link.classList.remove('hidden');
+                    link.style.display = 'flex';
+                  });
+                }
+              }
+            } catch (e) {}
+          }
+        }
+
         let authProfileQueued = false;
         function queueSyncAuthProfile() {
           // API-host cookies are unreadable here in production; always verify the session.
-
           if (authProfileQueued) return;
           authProfileQueued = true;
           const run = () => {
             authProfileQueued = false;
             void syncAuthProfile();
           };
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(run, { timeout: 3000 });
-          } else {
-            setTimeout(run, 2000);
-          }
+          // Fire immediately after layout paint — no artificial delay.
+          // requestAnimationFrame chains twice to ensure DOM is stable before fetch.
+          requestAnimationFrame(() => requestAnimationFrame(run));
         }
 
         // --- Global One-Time Event Listeners & Lifecycles ---
@@ -1762,6 +1867,19 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           window.addEventListener('exam:language-change', ((e: CustomEvent) => {
             if (e.detail?.lang) setLanguage(e.detail.lang, false);
           }) as EventListener);
+
+          // Apply optimistic auth to the newly swapped DOM immediately before browser paint
+          document.addEventListener('astro:after-swap', () => {
+            applyOptimisticAuth();
+          });
+
+          // Lenis smooth scroll and page elements re-init on EVERY page load / client transition
+          document.addEventListener('astro:page-load', () => {
+            reinitPageElements();
+          });
+          document.addEventListener('astro:before-swap', () => {
+            destroyLenis();
+          });
 
           // Dispatch astro:page-load so any components listening to it continue working seamlessly
           try {

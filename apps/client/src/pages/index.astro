@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import { Image } from 'astro:assets';
+import videoBg from '../assets/video-bg.png';
 import BrandLogo from '../components/BrandLogo.astro';
 import { Avatar, Style } from '@dicebear/core';
 import lorelei from '@dicebear/styles/lorelei.json' with { type: 'json' };
@@ -102,6 +105,7 @@ const ctaBarHeights = [
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{siteName} — Explore exam resources</title>
+    <ClientRouter />
   </head>
   <body class="min-h-screen bg-black text-white antialiased">
     <main class="min-h-screen">
@@ -126,20 +130,22 @@ const ctaBarHeights = [
           <div
             class="hidden items-center gap-7 font-['Geist'] text-[12px] font-medium text-[#514A44] md:flex"
           >
-            <a href="/blogs" class="transition-colors hover:text-[#FF4D00]">Blogs</a>
-            <a href="/test-series" class="transition-colors hover:text-[#FF4D00]">Live tests</a>
-            <a href="/test-series" class="transition-colors hover:text-[#FF4D00]">Quizzes</a>
+            <a href="/blogs" data-astro-prefetch="hover" class="transition-colors hover:text-[#FF4D00]">Blogs</a>
+            <a href="/test-series" data-astro-prefetch="hover" class="transition-colors hover:text-[#FF4D00]">Live tests</a>
+            <a href="/test-series" data-astro-prefetch="hover" class="transition-colors hover:text-[#FF4D00]">Quizzes</a>
           </div>
           <div class="flex items-center gap-2.5">
             {/* Logged-out navbar actions */}
             <div id="home-nav-logged-out" class="flex items-center gap-2.5">
               <a
                 href="/login"
+                data-astro-prefetch="hover"
                 class="min-h-10 inline-flex items-center px-3 font-['Geist'] text-[12px] font-semibold text-[#514A44] transition-colors hover:text-[#191613]"
                 >Log in</a
               >
               <a
                 href="/blogs"
+                data-astro-prefetch="hover"
                 class="inline-flex min-h-10 items-center rounded-full bg-[#FF4D00] px-4 font-['Geist'] text-[12px] font-semibold text-white transition-colors hover:bg-[#D94100] focus-visible:outline-2 focus-visible:outline-[#FF4D00] focus-visible:outline-offset-2"
                 >Explore blogs</a
               >
@@ -149,7 +155,8 @@ const ctaBarHeights = [
             <div id="home-nav-logged-in" class="hidden items-center gap-2.5 relative">
               <a
                 href="/blogs"
-                class="hidden sm:inline-flex min-h-9 items-center rounded-full border border-[#191613]/10 bg-white/60 px-3.5 font-['Geist'] text-[11px] font-semibold text-[#514A44] transition-colors hover:border-[#FF4D00]/40 hover:bg-white hover:text-[#191613]"
+                data-astro-prefetch="hover"
+                class="hidden sm:inline-flex min-h-9 items-center rounded-full border border-[#191613]/15 bg-white px-3.5 font-['Geist'] text-[11px] font-semibold text-[#514A44] transition-colors hover:border-[#FF4D00]/40 hover:text-[#191613] shadow-2xs"
                 >Blogs</a
               >
               <div class="relative">
@@ -159,7 +166,7 @@ const ctaBarHeights = [
                   aria-expanded="false"
                   aria-haspopup="menu"
                   aria-label="Open user profile menu"
-                  class="group flex items-center gap-2 rounded-full border border-[#191613]/15 bg-white/90 pl-1 pr-2.5 sm:pr-3 py-1 shadow-xs hover:border-[#FF4D00]/50 hover:bg-white hover:shadow-sm transition-all duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF4D00]/30 select-none"
+                  class="group flex items-center gap-2 rounded-full border border-[#191613]/15 bg-white pl-1 pr-2.5 sm:pr-3 py-1 shadow-xs hover:border-[#FF4D00]/50 hover:shadow-sm transition-all duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF4D00]/30 select-none"
                 >
                   <span
                     class="user-avatar-initials size-8 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF4D00] text-white font-bold flex items-center justify-center text-[11px] uppercase shadow-xs shrink-0 select-none"
@@ -191,18 +198,23 @@ const ctaBarHeights = [
                   id="home-profile-dropdown"
                   role="menu"
                   aria-orientation="vertical"
-                  class="hidden absolute right-0 top-full mt-2 w-72 rounded-2xl border border-[#191613]/12 bg-white p-2.5 shadow-[0_16px_40px_rgba(25,22,19,0.16)] z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none"
+                  class="hidden absolute right-0 top-full mt-2 w-72 rounded-2xl border border-[#191613]/15 bg-white p-2.5 shadow-[0_16px_40px_rgba(25,22,19,0.16)] z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none"
                 >
-                  {/* User Profile Header Card */}
-                  <div class="flex items-center gap-3 p-2.5 rounded-xl bg-[#FFF8F1] border border-[#FF4D00]/15 mb-2">
+                  {/* User Profile Header Card (Clickable to open profile) */}
+                  <a
+                    href="/profile"
+                    data-astro-prefetch="hover"
+                    class="group/card flex items-center gap-3 p-2.5 rounded-xl bg-[#FFF8F1] border border-[#FF4D00]/15 mb-2 hover:bg-[#FFEBD4] hover:border-[#FF4D00]/30 transition-colors cursor-pointer select-none"
+                    title="View My Profile"
+                  >
                     <div
-                      class="user-avatar-initials size-10 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF4D00] text-white font-bold flex items-center justify-center text-[13px] uppercase shadow-xs shrink-0"
+                      class="user-avatar-initials size-10 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF4D00] text-white font-bold flex items-center justify-center text-[13px] uppercase shadow-xs shrink-0 group-hover/card:scale-105 transition-transform"
                     >
                       U
                     </div>
                     <div class="flex-1 min-w-0">
                       <div class="flex items-center gap-1.5">
-                        <p class="user-display-name font-['Geist'] text-[13px] font-bold text-[#191613] truncate">
+                        <p class="user-display-name font-['Geist'] text-[13px] font-bold text-[#191613] truncate group-hover/card:text-[#FF4D00] transition-colors">
                           User
                         </p>
                         <span
@@ -214,23 +226,28 @@ const ctaBarHeights = [
                         user@example.com
                       </p>
                     </div>
-                  </div>
+                    <svg class="size-4 shrink-0 text-[#675F58] group-hover/card:text-[#FF4D00] group-hover/card:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
 
                   {/* Options */}
                   <div class="space-y-0.5 font-['Geist'] text-[12px]">
                     <a
                       href="/profile"
+                      data-astro-prefetch="hover"
                       role="menuitem"
                       class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
                     >
                       <svg class="size-4 shrink-0 text-[#675F58]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                       </svg>
-                      <span class="font-medium">My Preparation</span>
+                      <span class="font-medium">My Profile</span>
                     </a>
 
                     <a
                       href="/test-series"
+                      data-astro-prefetch="hover"
                       role="menuitem"
                       class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
                     >
@@ -242,6 +259,7 @@ const ctaBarHeights = [
 
                     <a
                       href="/favorites"
+                      data-astro-prefetch="hover"
                       role="menuitem"
                       class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
                     >
@@ -337,14 +355,11 @@ const ctaBarHeights = [
               class="relative rounded-[20px] border border-black/80 bg-[#111111] p-[7px] sm:p-[9px]"
             >
               <div class="relative aspect-[16/10] overflow-hidden rounded-[13px] bg-[#111111]">
-                <img
-                  src="/video-bg.png"
+                <Image
+                  src={videoBg}
                   alt="GovtPariksha platform preview"
-                  width="4096"
-                  height="2304"
                   loading="eager"
                   fetchpriority="high"
-                  decoding="async"
                   class="h-full w-full object-cover object-center"
                 />
                 <span
@@ -1371,6 +1386,7 @@ const ctaBarHeights = [
 
 <script>
   import { API_URL } from '../lib/api';
+  import { initLenis, destroyLenis } from '../lib/lenis';
 
   function initHomeAuth() {
     const loggedOutNav = document.getElementById('home-nav-logged-out');
@@ -1419,6 +1435,36 @@ const ctaBarHeights = [
         el.href = '/test-series';
         el.textContent = 'Test series';
       });
+
+      // Instantly restore cached user initials and name to avoid guest flash
+      try {
+        const rawUser = localStorage.getItem('auth_user');
+        if (rawUser) {
+          const u = JSON.parse(rawUser);
+          const fullName = (u.name || 'User').trim();
+          const email = u.email || 'Aspirant';
+          const role = u.role || 'student';
+          const parts = fullName.split(/\s+/).filter(Boolean);
+          const initials =
+            parts.length > 1
+              ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+              : fullName.slice(0, 2).toUpperCase() || 'U';
+
+          document.querySelectorAll('.user-display-name').forEach((el) => (el.textContent = fullName));
+          document.querySelectorAll('.user-display-email').forEach((el) => (el.textContent = email));
+          document.querySelectorAll('.user-avatar-initials').forEach((el) => (el.textContent = initials));
+          document.querySelectorAll('.user-display-role').forEach((el) => {
+            el.textContent = role === 'admin' ? 'Administrator' : role === 'editor' ? 'Editor' : 'Aspirant';
+          });
+          document.querySelectorAll('.user-role-badge').forEach((el) => {
+            el.textContent = role === 'admin' ? 'Admin' : role === 'editor' ? 'Editor' : 'Aspirant';
+          });
+          if (adminLink && (role === 'admin' || role === 'editor')) {
+            adminLink.classList.remove('hidden');
+            adminLink.classList.add('flex');
+          }
+        }
+      } catch (e) {}
     }
 
     // Toggle dropdown
@@ -1439,39 +1485,71 @@ const ctaBarHeights = [
       profileTrigger.setAttribute('aria-expanded', 'true');
     }
 
-    profileTrigger?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = profileTrigger.getAttribute('aria-expanded') === 'true';
-      if (isOpen) {
-        closeDropdown();
-      } else {
-        openDropdown();
+    if (profileTrigger && !profileTrigger.dataset.dropdownBound) {
+      profileTrigger.dataset.dropdownBound = 'true';
+      profileTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = profileTrigger.getAttribute('aria-expanded') === 'true';
+        if (isOpen) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+    }
+
+    // Close dropdown immediately when any link inside it is clicked
+    profileDropdown?.querySelectorAll('a').forEach((link) => {
+      if (!link.dataset.closeBound) {
+        link.dataset.closeBound = 'true';
+        link.addEventListener('click', () => {
+          closeDropdown();
+        });
       }
     });
 
-    document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (!target.closest('#home-profile-dropdown') && !target.closest('#home-profile-trigger')) {
-        closeDropdown();
-      }
-    });
+    if (!(window as any).__homeAuthDocBound) {
+      (window as any).__homeAuthDocBound = true;
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest('#home-profile-dropdown') && !target.closest('#home-profile-trigger')) {
+          const currentDropdown = document.getElementById('home-profile-dropdown');
+          const currentTrigger = document.getElementById('home-profile-trigger');
+          if (currentDropdown && currentTrigger) {
+            currentDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+            currentDropdown.classList.remove('scale-100', 'opacity-100');
+            currentTrigger.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeDropdown();
-    });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const currentDropdown = document.getElementById('home-profile-dropdown');
+          const currentTrigger = document.getElementById('home-profile-trigger');
+          if (currentDropdown && currentTrigger) {
+            currentDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+            currentDropdown.classList.remove('scale-100', 'opacity-100');
+            currentTrigger.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+    }
 
     // Logout handling
-    logoutBtn?.addEventListener('click', async (e) => {
-      e.preventDefault();
-      try {
-        localStorage.removeItem('auth_active');
-      } catch (err) {}
-      closeDropdown();
-      await fetch(`${API_URL}/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'X-CSRF-Protection': '1' },
-      } as any).catch(() => null);
+    if (logoutBtn && !logoutBtn.dataset.bound) {
+      logoutBtn.dataset.bound = 'true';
+      logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          localStorage.removeItem('auth_active');
+        } catch (err) {}
+        closeDropdown();
+        await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'X-CSRF-Protection': '1' },
+        } as any).catch(() => null);
 
       // Revert UI to logged-out
       loggedInNav?.classList.add('hidden');
@@ -1493,14 +1571,43 @@ const ctaBarHeights = [
         }
       });
     });
+  }
 
     // Fetch user profile from /me
+    // Only a definitive HTTP 401 proves the session has expired.
+    // 5xx, CORS failures, or network errors must NOT wipe auth_active to
+    // prevent the "logout flash" when the sidebar logo navigates back to Home.
     fetch(`${API_URL}/me`, { priority: 'high', credentials: 'include' } as any)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((user) => {
+      .then(async (res) => {
+        // If server failed or network blip, never wipe optimistic state
+        if (!res || res.status >= 500) return;
+
+        if (res.status === 401) {
+          try {
+            localStorage.removeItem('auth_active');
+            localStorage.removeItem('auth_user');
+          } catch (e) {}
+          loggedInNav?.classList.add('hidden');
+          loggedInNav?.classList.remove('flex');
+          loggedOutNav?.classList.remove('hidden');
+          loggedOutNav?.classList.add('flex');
+          if (ctaAuthBtn) {
+            ctaAuthBtn.href = '/signup';
+            ctaAuthBtn.textContent = 'Create an account';
+          }
+          return;
+        }
+
+        const user = res.ok ? await res.json().catch(() => null) : null;
         if (user && user.id) {
           try {
             localStorage.setItem('auth_active', '1');
+            localStorage.setItem('auth_user', JSON.stringify({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+            }));
           } catch (e) {}
 
           const fullName = (user.name || 'User').trim();
@@ -1578,10 +1685,11 @@ const ctaBarHeights = [
               { once: true },
             );
           }
-        } else {
-          // User is not logged in
+        } else if (res.ok && !user) {
+          // Explicit unauthenticated session from server
           try {
             localStorage.removeItem('auth_active');
+            localStorage.removeItem('auth_user');
           } catch (e) {}
           loggedInNav?.classList.add('hidden');
           loggedInNav?.classList.remove('flex');
@@ -1594,19 +1702,32 @@ const ctaBarHeights = [
         }
       })
       .catch(() => {
-        // If network error, keep optimistic if cached, otherwise hide
-        if (!cachedAuth) {
-          loggedInNav?.classList.add('hidden');
-          loggedOutNav?.classList.remove('hidden');
-        }
+        // Network error — never reset login state. The session may still be valid.
       });
   }
 
+  function setupSmoothScroll() {
+    initLenis({ headerOffset: -80 });
+  }
+
   // Support both normal load and client transitions
-  document.addEventListener('astro:page-load', initHomeAuth);
+  document.addEventListener('astro:after-swap', () => {
+    initHomeAuth();
+  });
+  document.addEventListener('astro:page-load', () => {
+    initHomeAuth();
+    setupSmoothScroll();
+  });
+  document.addEventListener('astro:before-swap', destroyLenis);
+
+  // Fallback if client router is ever bypassed or DOM is already ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initHomeAuth);
+    document.addEventListener('DOMContentLoaded', () => {
+      initHomeAuth();
+      setupSmoothScroll();
+    });
   } else {
     initHomeAuth();
+    setupSmoothScroll();
   }
 </script>

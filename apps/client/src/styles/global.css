@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 /* ============================================================
    EXAMRESOURCE — Global Stylesheet
@@ -183,8 +184,6 @@
   --color-surface-raised: #F1F5F9;
   --color-text-body: #1E293B;
   --color-heading: #0F172A;
-  --color-white: #0F172A;
-  /* slate-900, stronger than gray-900, ~18:1 on white */
   --color-muted: #64748B;
   /* slate-500, WCAG AA ~4.6:1 on white */
   --color-border: #E2E8F0;
@@ -202,8 +201,6 @@
   --color-surface-raised: #201C19;
   --color-text-body: #E7E5E4;
   --color-heading: #FAFAF9;
-  --color-white: #FAFAF9;
-  /* Warm neutral text keeps the orange theme free of blue undertones. */
   --color-muted: #A8A29E;
   --color-border: #302A26;
   --color-subtle: #12100F;
@@ -225,7 +222,6 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
   }
 
   /* Remove tap highlight on mobile devices */
@@ -290,7 +286,7 @@
 
   .btn-secondary {
     background-color: var(--color-primary);
-    color: var(--color-white);
+    color: #FFFFFF;
   }
 
   .btn-ghost {

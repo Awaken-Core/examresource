@@ -601,7 +601,7 @@ const jsonLd = {
                 aria-label={`${portal.name} - ${portal.url} (opens in new tab)`}
               >
                 <div class="w-8 h-8 rounded-full bg-surface border border-border/60 flex items-center justify-center p-0.5 mb-2 shrink-0 overflow-hidden relative">
-                  <img
+                  <Image
                     src={portal.logo}
                     alt={`${portal.name} emblem`}
                     class="w-full h-full object-contain"
@@ -609,7 +609,6 @@ const jsonLd = {
                     decoding="async"
                     width={28}
                     height={28}
-                    onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
                   />
                   <div class={`w-full h-full rounded-full ${portal.bg} ${portal.text} hidden items-center justify-center font-bold text-[10px] select-none`}>
                     {portal.initial}
