@@ -8,6 +8,7 @@ import {
   BlogTagSchema,
   BookSchema,
   CategorySchema,
+  ChapterSchema,
   CommentSchema,
   EmailVerificationTokenSchema,
   ExamSchema,
@@ -15,12 +16,16 @@ import {
   NotificationSchema,
   OauthStateSchema,
   PasswordResetTokenSchema,
+  QuestionMappingSchema,
   QuestionSchema,
   ReportedQuestionSchema,
   SavedQuestionSchema,
   SessionSchema,
+  SubjectSchema,
   TagSchema,
   TestAttemptSchema,
+  TestSeriesSchema,
+  TestSeriesSubjectSchema,
   UrlRedirectSchema,
   UserSchema,
 } from '../schema/index.js';
@@ -79,6 +84,11 @@ const SCHEMA_MAP: Record<string, any> = {
   ReportedQuestion: ReportedQuestionSchema,
   Exam: ExamSchema,
   TestAttempt: TestAttemptSchema,
+  Subject: SubjectSchema,
+  TestSeries: TestSeriesSchema,
+  TestSeriesSubject: TestSeriesSubjectSchema,
+  Chapter: ChapterSchema,
+  QuestionMapping: QuestionMappingSchema,
 };
 
 export class MongoDurableObject extends DurableObject {
