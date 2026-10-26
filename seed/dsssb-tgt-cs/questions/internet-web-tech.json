@@ -1,0 +1,522 @@
+[
+  {
+    "content": "A collection of web pages is known as _____.",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "A collection of related web pages is called a website.",
+    "options": [
+      {
+        "content": "Website",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Web server",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Web world",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Web tool",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is incorrect regarding user-friendly website?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "A user-friendly website should load quickly, be accessible and behave consistently across browsers. It should not be cluttered.",
+    "options": [
+      {
+        "content": "It should have faster loading time",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It should be easily accessible",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It should have browser consistency",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It should be cluttered",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is/are correct regarding strategies used to increase the visibility of an e-commerce website?\nI. The website name should be meaningful and easy to guess.\nII. Uploading content such as special offers or eye-catching information for regular followers can increase traffic on the website.\nIII. Social-network icons on the website have no major influence on e-visibility.",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "Statement I is correct because a meaningful and easy-to-guess website name improves recall and helps users find the site again. Statement II is also correct because regularly uploading special offers, useful information, or eye-catching content can increase repeat visits and website traffic. Statement III is incorrect because social-network icons or links can help users share the website and can bring traffic from social platforms. Therefore, only statements I and II are correct.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match List-I with List-II.\nList-I\na) Front-end framework\nb) Front-end asset\nc) Front-end boilerplate\nd) JavaScript library\nList-II\ni) React JS\nii) Tailwind CSS\niii) Font Awesome\niv) Reset CSS",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "Classify each item by its usual web-development role: Tailwind CSS is a front-end CSS framework, Font Awesome provides icons and visual assets, Reset CSS acts as a boilerplate/reset stylesheet, and React JS is a JavaScript library. Therefore, the correct matching is a-ii, b-iii, c-iv, d-i.",
+    "options": [
+      {
+        "content": "a-ii, b-iii, c-iv, d-i",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "a-ii, b-i, c-iv, d-iii",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a-i, b-ii, c-iv, d-iii",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a-iii, b-i, c-iv, d-ii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What does WPF stand for in the Microsoft .NET ecosystem?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "WPF stands for Windows Presentation Foundation. It is part of the Microsoft .NET ecosystem and is used to build rich Windows desktop user interfaces. It should not be confused with ASP.NET, which is used for web applications.",
+    "options": [
+      {
+        "content": "Windows Presentation Foundation",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Windows Presentation Framework",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Windows Programming Force",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Windows Presentation File",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What does AJAX stand for in ASP.NET?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "AJAX is the abbreviation of Asynchronous JavaScript and XML. It allows a web page to communicate with the server asynchronously, so only the required part of the page can be updated instead of reloading the entire page. Therefore, the correct option is Asynchronous JavaScript and XML.",
+    "options": [
+      {
+        "content": "Asynchronous JavaScript and XML",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Associated JavaScript and XML",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Asynchronous JavaScript and HTML",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Associated JavaScript and HTML",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which object holds the real content of the page in JavaScript?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Web Design & Development",
+    "chapterSlug": "dsssb-web-design",
+    "difficulty": "easy",
+    "explanation": "In JavaScript, the document object represents the web page and holds the page's actual content as the DOM. The window object represents the browser window, location stores URL information, and alert displays a message dialog. Hence the correct answer is Document.",
+    "options": [
+      {
+        "content": "Document",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Alert",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Location",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Window",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is a barrier to e-commerce related to micro-environmental issues external to the organisation?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Internet Fundamentals",
+    "chapterSlug": "dsssb-web-fundamentals",
+    "difficulty": "medium",
+    "explanation": "E-commerce barriers can be grouped as internal, external micro-environmental, and external macro-environmental issues. Internet infrastructure and culture are broader macro-environmental factors, while lack of experts is internal to the organisation. Business models belong to the external market/industry context around the organisation, so they are treated as a micro-environmental barrier.",
+    "options": [
+      {
+        "content": "Internet infrastructure",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Culture",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Business models",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Lack of experts",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is NOT a key driver of e-business?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Internet Fundamentals",
+    "chapterSlug": "dsssb-web-fundamentals",
+    "difficulty": "easy",
+    "explanation": "Key drivers of e-business typically include commercial benefits, a skilled workforce, and customer or supplier needs. Supplementary workforce is not considered a primary driver in standard e-business frameworks.",
+    "options": [
+      {
+        "content": "Commercial benefits",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Skilled and committed workforce",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Requirements of customers and suppliers",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Supplementary workforce",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following business models fall under the category of native Internet business models?\nI. Library model\nII. Subscription model",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Internet Fundamentals",
+    "chapterSlug": "dsssb-web-fundamentals",
+    "difficulty": "easy",
+    "explanation": "A native Internet business model is one that belongs specifically to Internet-based business structures in this classification. The library model is included in that category. The subscription model is a broad recurring-revenue model used in many contexts and is not counted here as the native Internet model. Therefore, only statement I is correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "E-commerce refers to the paperless exchange of business information through different electronic methods. Which of the following is NOT a valid way to perform electronic commerce?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Internet Fundamentals",
+    "chapterSlug": "dsssb-web-fundamentals",
+    "difficulty": "medium",
+    "explanation": "Common methods used in e-commerce include Electronic Data Interchange (EDI), electronic mail, and Electronic Fund Transfer (EFT). These support paperless exchange of business information or money. Virtual Reality may be used in some modern shopping experiences, but it is not a standard basic method for performing electronic commerce in this classification. Therefore, the NOT valid way is Virtual Reality.",
+    "options": [
+      {
+        "content": "Electronic Data Interchange (EDI)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Electronic Mail (E-Mail)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Virtual Reality",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Electronic Fund Transfer (EFT)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is false with reference to static website?",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Website, Browser & Services",
+    "chapterSlug": "dsssb-web-browser",
+    "difficulty": "easy",
+    "explanation": "Static websites serve fixed HTML files without server-side processing. Content remains consistent across visits and does not change dynamically at runtime, making the claim about runtime changes false.",
+    "options": [
+      {
+        "content": "Same content is loaded everytime the page is loaded",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It is loaded at a faster speed",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Content change at runtime",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "No interaction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A web browser is an example of ____.",
+    "type": "single_choice",
+    "subject": "Internet & Web Technology",
+    "subjectSlug": "internet-web-tech",
+    "topic": "Website, Browser & Services",
+    "chapterSlug": "dsssb-web-browser",
+    "difficulty": "easy",
+    "explanation": "A web browser acts as a client in the client-server model because it requests resources from web servers.",
+    "options": [
+      {
+        "content": "Client",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Server",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Protocol",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Cookies",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "internet-web-tech",
+      "2018"
+    ],
+    "examYear": 2018
+  }
+]

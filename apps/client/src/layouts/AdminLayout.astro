@@ -123,7 +123,13 @@ const {
       html.admin-theme:not(.theme-dark) .text-slate-400 {
         color: #94A3B8 !important;
       }
-      html.admin-theme .text-white {
+      html.admin-theme.theme-dark .text-white,
+      html.admin-theme :is(button, a, span, div)[class*="bg-blue-"].text-white,
+      html.admin-theme :is(button, a, span, div)[class*="bg-emerald-"].text-white,
+      html.admin-theme :is(button, a, span, div)[class*="bg-rose-"].text-white,
+      html.admin-theme :is(button, a, span, div)[class*="bg-red-"].text-white,
+      html.admin-theme :is(button, a, span, div)[class*="bg-slate-900"].text-white,
+      html.admin-theme :is(button, a, span, div)[class*="bg-slate-800"].text-white {
         color: #FFFFFF !important;
       }
       /* Desk shell uses the same foreground token as the public site.
@@ -427,6 +433,7 @@ const {
         document.body.textContent = 'Unable to verify access. Please try again later.';
         document.documentElement.classList.remove('auth-pending');
       }
+
     </script>
 
     <!-- Mobile Sidebar Backdrop Overlay -->

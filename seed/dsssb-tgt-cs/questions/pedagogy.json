@@ -1,0 +1,2762 @@
+[
+  {
+    "content": "Which of the following is an element of effective learning activity?\n I. Spontaneous involvement\n II. Challenging",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Effective learning activities should encourage spontaneous involvement and also be challenging enough to engage learners. Therefore both statements are correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "The Rishi valley approach in pedagogy was designed to make the students______.\n I. capable of acquiring mastery in learning competencies through both group and individual learning\n II. Understand the importance of physical environment in the classroom",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "The Rishi Valley approach was designed to help students acquire mastery in learning competencies through group and individual learning. The physical classroom environment is not the defining feature here.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "“Preparing any project in science/mathematics may give pleasure to the pupil as result of which he/she is motivated to undertake similar activities on his/her own.”\n This given statement describes which of the following type(s) of motivation?\n Statements:\n I. Intrinsic Motivation\n II. Extrinsic Motivation",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "When a project gives pleasure and motivates the pupil to do similar activities independently, the motivation comes from interest and satisfaction in the activity itself. This is intrinsic motivation.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are not correct?\n Statements:\n I. Conditioning of elicited behaviours defines classical conditioning.\n II. Conditioning of emitted behaviours defines operant conditioning.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Classical conditioning concerns elicited behaviours, while operant conditioning concerns emitted behaviours. Since both statements are correct, neither is not correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is/are the major type(s) of play for a child?\n Statements:\n I. Constructive play\n II. Functional play\n III. Dramatic or pretend play",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Constructive play, functional play and dramatic/pretend play are major types of play in child development.",
+    "options": [
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following pre-number concepts can be developed in children during the pre-school years?\n Statements:\n I. Matching\n II. Sorting\n III. Comparing",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Matching, sorting and comparing are pre-number concepts that can be developed during the preschool years.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is/are the instructional objective(s) of mathematics?\n Statements:\n I. To apply addition of two digit numbers in solving problems of daily life.\n II. To apply formula of direct variable to solve simple problems of day to day life.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Applying two-digit addition to daily-life problems and using direct-variation formulas in day-to-day problems are both instructional objectives of mathematics.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are NOT correct?\nI. In multi-grade and multi-level situations, teaching-learning materials provide vital help to teachers in managing their classes effectively.\nII. Teaching-learning materials are needed for effective self-learning.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "medium",
+    "explanation": "Both statements are correct. Teaching-learning materials support teachers in managing multi-grade and multi-level classrooms, and they also support effective self-learning. Since the question asks for the statement(s) that are NOT correct, neither I nor II is the answer.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A preschool child naturally learns new words through listening and interaction during play. What is this an example of?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "A preschool child naturally learning words through listening and interaction during play is an example of language acquisition in preschool years, not formal grammar instruction.",
+    "options": [
+      {
+        "content": "Rote memorization of content through reading",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Vocabulary practice",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Language acquisition in preschool years",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Formal grammar instruction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "The maxim \"From Concrete to Abstract\" is most effective because concrete experiences __________.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "The maxim “From Concrete to Abstract” means teaching should begin with direct, tangible, sensory experiences and then move toward general ideas or abstract concepts. Concrete experiences are easier for learners to observe, understand, and remember, so option A best completes the statement.",
+    "options": [
+      {
+        "content": "appeal to sensory understanding and stay in memory for a long time",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "encourage imagination without the need for real objects",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "make abstract thinking unnecessary in higher classes",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "reduce the need for physical materials in early classes",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "In the teaching-learning process, what is the primary function of textbooks?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Textbooks primarily function to provide structured content that organizes curriculum material systematically for learners. This resource supports the teaching process without replacing the teacher's role in instruction.",
+    "options": [
+      {
+        "content": "Providing structured content",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Limiting curriculum flexibility",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Eliminating assessments",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Replacing teacher instruction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which method involves reasoning from specific observations to general principles?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Inductive reasoning moves from specific observations to broader general principles. Deductive reasoning works in the opposite direction, from general rule to specific conclusion.",
+    "options": [
+      {
+        "content": "Verification",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Deductive reasoning",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Inductive reasoning",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Hypothesis testing",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "A preschool teacher notices that Riya can button her shirt but struggles to hop on one foot. What does this indicate?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Buttoning a shirt needs fine motor control, while hopping on one foot needs gross motor control. Riya can button but struggles to hop, so fine motor skills are more developed than gross motor skills.",
+    "options": [
+      {
+        "content": "Fine motor skills are more developed than gross motor skills",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Delay in cognitive sequencing abilities affecting motor coordination",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Underdeveloped sensory integration leading to bilateral confusion",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Inadequate maturation of language-mediated motor planning",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "In a classroom, Rehan consistently completes assignments on time and organizes his work meticulously. Applying the Big Five model, which personality dimension best explains Rehan's behavior?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "In the Big Five model, being organized, careful, punctual and responsible reflects high conscientiousness.",
+    "options": [
+      {
+        "content": "High agreeableness",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "High conscientiousness",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "High neuroticism",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "High openness",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "What distinguishes personality from other characteristics in psychological studies?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Personality is distinguished by the organized interplay between organic and psychological events, not merely appearance or group dynamics.",
+    "options": [
+      {
+        "content": "The interplay between organic and psychological events",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "The emphasis on physical appearance",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The focus on group dynamics",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The disregard for individual differences",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "What preschool limitation prevents seeing others' viewpoints?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Egocentrism is the preschool limitation in which a child has difficulty seeing from another person's viewpoint.",
+    "options": [
+      {
+        "content": "Egocentrism",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Conservation logic",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Hypothetical thoughts",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Decentration",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "At which stage do children begin to understand and follow rules because they want to maintain social order and gain approval from others?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "In Kohlberg's conventional stage, children follow rules to gain approval and maintain social order.",
+    "options": [
+      {
+        "content": "Post-conventional stage",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Autonomous stage",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Pre-conventional stage",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Conventional stage",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Rohan, a 5-year-old boy, is playing with a football. Which motor skill is being displayed in this context?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Playing football mainly uses large body muscles and whole-body movement. This is a gross motor skill.",
+    "options": [
+      {
+        "content": "Fine motor skill",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Limited motor skill",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Lite motor skill",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Gross motor skill",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following is not a practice to support mindfulness in the classroom?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Mindfulness in the classroom is supported by guided mindful moments and a calm atmosphere. Segregating mindful and non-mindful students is not a supportive mindfulness practice.",
+    "options": [
+      {
+        "content": "Start each class with at least a couple of moments of guided mindfulness",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Segregating mindful and non-mindful students",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Start each class off with the right atmosphere",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Be aware of the part you play in setting the pace and tone of your classroom",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "During the preschool years (3-6), what primarily drives the explosive vocabulary growth from hundreds to thousands of words?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Preschool vocabulary grows rapidly mainly through rich language environments and incidental exposure during social interaction.",
+    "options": [
+      {
+        "content": "Incidental exposure through social interactions and rich language environments",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Repetitive drilling of isolated words in structured classroom settings",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Exclusive focus on reading printed materials without oral practice",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Formal grammar instruction and rote memorization techniques",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "What does mathematics education at the elementary stage mainly aim to achieve?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "At the elementary stage, mathematics education should develop reasoning and mathematical thinking rather than only memorization.",
+    "options": [
+      {
+        "content": "To develop reasoning skills",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "To memorize multiplication tables",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "To focus only on addition",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "To improve handwriting",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "In a rule-governed language system, what guides how sentences are formed?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "In a rule-governed language system, sentence formation is guided by specific rules for word order and structure.",
+    "options": [
+      {
+        "content": "Visual appearance of words",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Specific rules for word order and structure",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Random selection of words",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Personal preferences of speakers",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which foundational mindfulness program was developed to help people take responsibility for their well-being through paying attention and understanding their experiences?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Mindfulness-Based Stress Reduction is the foundational programme developed to help people take responsibility for well-being through mindful attention and awareness.",
+    "options": [
+      {
+        "content": "Mindfulness-Based Stress Reduction",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Mindfulness Emotional Regulation",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Mindfulness Acceptance Training",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Mindfulness-Based Cognitive Therapy",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "How does learning to observe contribute to self-understanding in daily life?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Learning to observe helps a person identify personal patterns and reactions in everyday situations, which supports self-understanding.",
+    "options": [
+      {
+        "content": "It helps identify personal patterns and reactions",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "It only encourages seeking approval from others",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It relies solely on past achievements",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It promotes avoiding new experiences",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which practice best supports experiential learning in graduate education?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Experiential learning is supported by active engagement with real problems. Problem solving gives learners direct experience instead of only passive reception.",
+    "options": [
+      {
+        "content": "Engaging in problem solving",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Copying instructor notes",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Reading assigned articles",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Attending lectures regularly",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which feature best describes a 'rule governed system' in the context of language?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "A rule-governed language system means that language works through structured rules of grammar, syntax and usage.",
+    "options": [
+      {
+        "content": "Language operates with structured rules for grammar and syntax.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Language does not have any structure or authentic rules for all",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Language is naturally evolving with new rules which may change",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Language is based only on spoken words and written expressions",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "What is a key benefit of learning to observe oneself?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Learning to observe oneself helps a person notice personal strengths, weaknesses, reactions and patterns. This builds self-understanding.",
+    "options": [
+      {
+        "content": "Gaining awareness of personal strengths and weaknesses",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Avoiding mistakes in every activity",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Copying others' behaviours in new situations",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Relying on others' opinions for self-assessment",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Read the Assertion (A) and Reason (R) given below and choose the correct option.\nAssertion (A): When introducing the concept of volume to young children, using water and containers of different shapes is beneficial.\nReason (R): Hands-on activities help children visualize and compare how much space an object occupies.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Using water and differently shaped containers helps children experience and compare volume directly. Hands-on activities explain why this approach is beneficial.",
+    "options": [
+      {
+        "content": "Both A and R are true, and R is the correct explanation of A",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "A is false, but R is true",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A is true, but R is false",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both A and R are true, but R is not the correct explanation of A",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "According to NCF 2005, the main goal of Mathematics education in school is......",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "NCF 2005 emphasizes the mathematization of children's thinking, meaning the development of mathematical ways of reasoning rather than only memorizing formulae.",
+    "options": [
+      {
+        "content": "vocational training",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "preparation for engineering",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "memorization of formulae",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "mathematization of children’s minds",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which activity best helps students understand that units must be consistent when measuring length, area, and volume?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Consistent units help students compare measurements correctly. Metres, square metres and cubic metres match length, area and volume respectively.",
+    "options": [
+      {
+        "content": "Estimating objects by visual comparison without using units",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Measuring objects with different informal units each time",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Measuring objects using metres, square metres, and cubic metres",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Recording object measurements but omitting the unit names",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Who developed the concept of classical conditioning?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Classical conditioning was developed by Ivan Petrovich Pavlov through his experiments on conditioned responses.",
+    "options": [
+      {
+        "content": "Ivan Petrovich Pavlov",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "B.F. Skinner",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Jean Piaget",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Sigmund Freud",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following is a major content area in the Primary level Environmental Studies curriculum?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Primary EVS includes understanding the immediate environment, including plants, animals, water, air and surroundings. It is not limited to rote definitions or unrelated history.",
+    "options": [
+      {
+        "content": "Understanding plants, animals, water, air, and the surrounding environment",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Studying only historical events unrelated to the environment or nature",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Focusing solely on advanced scientific theories and laboratory experiments",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Memorizing definitions and terms without observing the natural world",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following best describes the nature of science as a discipline?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Science relies on observation, experimentation, evidence and verification. It is not based only on imagination, opinion, or untestable claims.",
+    "options": [
+      {
+        "content": "It relies on observation and experimentation of nature.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "It cannot be tested or scientifically verified.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It ignores facts and focuses only on imagination.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It is based only on personal opinions and beliefs",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "During a unit on scientific inquiry, students make repeated observations of plants bending towards light and propose that all plants exhibit this behaviour. Which core process of scientific reasoning are they applying?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Students are moving from repeated specific observations to a general principle. This is inductive reasoning.",
+    "options": [
+      {
+        "content": "Statistical reasoning.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Inductive reasoning.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Retroduction reasoning.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Deductive reasoning.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "In which of the following approach Pedagogy indicate learning by doing based on engagement of students through different activities?\nI. Teacher centered approach\nII. Student centered approach",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "Learning by doing and engagement through activities are features of a student-centered approach, not a teacher-centered one.",
+    "options": [
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "In which of the following approach to learning and teaching, both the teacher and the students perform activities strictly confined to the prescribed contents/ textbooks in the subject being taught?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "When both teacher and students work strictly within the prescribed content or textbook of the subject, the approach is subject-centered.",
+    "options": [
+      {
+        "content": "Learner centered",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Teacher-centered",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Subject-centered",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Discipline centered",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Designing differentiated learning activities is a significant aspect of which of the following approaches?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching-Learning Process",
+    "chapterSlug": "dsssb-ped-teaching-learning",
+    "difficulty": "easy",
+    "explanation": "A child-centric approach keeps the learner's needs, abilities, interests and pace at the centre of teaching. Designing differentiated learning activities means planning different tasks or supports for different learners, so it is a significant aspect of the child-centric approach.",
+    "options": [
+      {
+        "content": "Child-centric approach",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Experiential learning approach",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Activity-based approach",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Subject-based approach",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The objective type items are normally used in most of the tests. Which of the following is the correct example of closed-ended items?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "A closed-ended item has a limited, specific answer rather than many possible responses. 'Who controls the teachers and students in a school?' expects a specific answer, so it is the closed-ended example.",
+    "options": [
+      {
+        "content": "In how many ways can you draw a triangle?",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Which numbers when added give 7?",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Write down as many words adding ‘ed’ like played, created etc.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Who controls the teachers and students in a school?",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "How peer assessment helps students?\nI. In consolidating their learning through dialogue and interaction with their peers.\n II. In learning how to give and receive constructive, explicit feedback based on clear criteria.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "Peer assessment helps learners consolidate learning through dialogue and learn to give and receive constructive feedback using clear criteria.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "When we gather new experiences while assessing our own performance or performance of others, then the processes of learning and assessment lose the line of demarcation between them. In such instances assessment becomes a _____ process.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "When assessment and learning merge through reflection on performance, assessment becomes a learning process.",
+    "options": [
+      {
+        "content": "Learning",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Reading",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Speaking",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Teaching",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In contrast to other approaches to assessment of learning, assessment as learning is entirely ____ controlled.\n I. Student\n II. Teacher",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "Assessment as learning emphasizes student reflection, self-monitoring and self-regulation. Hence it is student controlled.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "“If you are planning to teach the different states of India in class VI, then you need to know whether the students are well conversant in using the atlas”. This given statement is referred to which of the following phase(s) of Assessment For Learning?\n I. Formative Assessment\n II. Diagnostic Assessment",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "Checking whether students can use an atlas before teaching states of India is diagnosis of prior knowledge and readiness. It is diagnostic assessment.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How does using a checklist help in ensuring the assessment of pronunciation, vocabulary use, and fluency during a speaking activity?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "A checklist gives clear criteria for observing pronunciation, vocabulary use and fluency. This makes the assessment systematic rather than random or purely subjective.",
+    "options": [
+      {
+        "content": "Systematic assessment",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Subjective judgment",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Memorization of content",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Random evaluation",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which strategy is most effective for assessing early language acquisition in a classroom with varied learners?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "For varied young learners, observing interactive role-play gives direct evidence of early language acquisition in use. Written tests or word-list memorization are less suitable.",
+    "options": [
+      {
+        "content": "Checking for memorization of word lists",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Giving standardized written tests",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Observing interactive role-play scenarios",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Monitoring silent reading time",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "What is an effective way to assess the impact of pretend play on language development?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "Pretend play supports language development through interaction, narration and role-based conversation. Observing group storytelling is therefore an effective way to assess its language impact.",
+    "options": [
+      {
+        "content": "Assign individual reading",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Observe group storytelling",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Administer written tests",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Use silent observation",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "A teacher wants to use open-ended problems in evaluation to promote higher-order thinking. Which of the following best illustrates an effective use of open-ended questions for this purpose?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "Asking students to propose solutions and justify their choices makes them reason, evaluate and explain, which is the purpose of open-ended questions for higher-order thinking.",
+    "options": [
+      {
+        "content": "Instructing students to copy answers directly from textbooks.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Having students select one correct option from a list.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Asking students to propose solutions and justify their choices.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Asking students to recall a fixed definition from memory.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "A key pedagogical advantage of using open-ended questions is that they:",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "Open-ended questions allow learners to explain, justify and explore ideas. This promotes higher-order thinking rather than fixed recall.",
+    "options": [
+      {
+        "content": "Reduce instructional planning time.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Ensure identical learner responses.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Simplify scoring procedures.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Promote higher-order skills.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following best describes an open-ended question in educational evaluation?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "An open-ended question allows more than one possible response and asks learners to explain their thinking instead of giving only a fixed word, number, or yes/no answer.",
+    "options": [
+      {
+        "content": "A question that has only one correct word as an answer.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A question that can only be answered with a number.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A question that requires a yes or no answer.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A question that allows for multiple possible responses and explanations.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "A school leadership team wants to evaluate the success of a new initiative to foster a positive, inclusive culture. Which strategy best ensures the measurement is valid and meaningful?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "A valid evaluation of inclusive school culture should use multiple meaningful sources such as observation, discussion and performance evidence, not only attendance or textbook purchases.",
+    "options": [
+      {
+        "content": "Reviewing textbook purchases.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Observation, discussion & performance.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Surveying only students.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Collecting attendance records.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following approach of Assessment for Learning is the assessment of classmates on the response and performance of the learner?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "When classmates assess a learner's response or performance, the approach is peer assessment.",
+    "options": [
+      {
+        "content": "Teacher-led assessment",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Learner self-assessment",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Computer-based assessment",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Peer assessment",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Through the process of standardization which of the following properties of achievement tests is/are ensured?\n I. The test items used are purposefully designed to measure a clearly defined achievement domain.\n II. A standardized procedure of administering, scoring and interpreting the results of the test are followed.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Assessment & Evaluation",
+    "chapterSlug": "dsssb-ped-assessment",
+    "difficulty": "easy",
+    "explanation": "I. The test items used are purposefully designed to measure a clearly defined achievement domain.\nStandardization requires intense scrutiny of the test questions (items) before the test is ever finalized.\n• Experts perform a process called item analysis to ensure every single question aligns perfectly with a specific learning objective or content area (the \"achievement domain\").\n• This ensures the test is highly valid—meaning it actually measures what it claims to measure, without random or irrelevant questions.\nII. A standardized procedure of administering, scoring and interpreting the results of the test are followed. This is the core definition of a standardized test. To make sure the test is fair and reliable, the environment and rules must be identical for everyone:\n• Administering: Every student gets the exact same amount of time, the same instructions, and the same testing conditions.\n• Scoring: The grading rules are completely objective (often automated or using strict rubrics) so that a student's score doesn't change based on who is grading it.\n• Interpreting: The scores are mapped against a fixed scale or a \"norm group\" so that a score of, say, 85% means the exact same level of achievement no matter where or when the test was taken.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In which stage of cognitive development of Piaget’s theory, a child understands and carry out calculations involving proportions?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "medium",
+    "explanation": "Piaget's Formal Operational stage begins around age eleven and is marked by the ability to think abstractly. Children at this stage can handle hypothetical-deductive reasoning and understand complex proportional relationships without concrete objects.",
+    "options": [
+      {
+        "content": "Pre-operation Period",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Concrete Operation Period",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Formal Operation Period",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Sensory Motor Period",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "According to Piaget’s theory, in which stage does object permanence develop?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "easy",
+    "explanation": "According to Jean Piaget's theory of cognitive development, object permanence is a fundamental milestone that emerges during the Sensorimotor stage. This period spans from birth to approximately two years of age, where infants learn that objects continue to exist even when they cannot be seen.",
+    "options": [
+      {
+        "content": "Sensorimotor stage",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Formal operational stage",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Concrete operational stage",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Pre-operational stage",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following is a key characteristic of the pre-operational stage in Piaget's theory related to mathematical learning?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "medium",
+    "explanation": "Piaget's pre-operational stage spans ages 2 to 7 and is characterized by symbolic thinking without logical operations. Children in this stage struggle with conservation tasks, meaning they cannot understand that quantity remains the same despite changes in shape or arrangement. This limitation impacts early mathematical learning, as they rely on perception rather than logical reasoning.",
+    "options": [
+      {
+        "content": "Children do use symbols, but they have difficulty understanding logical operations",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Children easily understand the principle of conservation of numbers",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Children perform complex mental calculations",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Children think abstractly about numbers",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "The transition from one Piagetian stage to another is best described as:",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "medium",
+    "explanation": "Piaget's theory states that cognitive development stages follow a fixed, invariant sequence for all individuals. While the order remains constant across cultures, the timing of transitions varies based on maturation and environment.",
+    "options": [
+      {
+        "content": "Abrupt and test-score dependent",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Variable but sequential across individuals",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Reliant solely on linguistic development",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Entirely determined by environmental input",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following stage is used for child cognition development at the age from 2 years to 7 years?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "easy",
+    "explanation": "In Piaget's theory, the pre-operational stage covers approximately ages 2 to 7 years.",
+    "options": [
+      {
+        "content": "Sensori-motor",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Pre-operational",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Formal operational",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Concrete operational",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Piaget divided which of the following domain of development into four stages: The Sensorimotor Stage, The Pre-Operational Stage, Concrete Operational Stage and The Formal Operational Stage?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "easy",
+    "explanation": "Piaget's four stages--sensorimotor, pre-operational, concrete operational, and formal operational--describe cognitive development.",
+    "options": [
+      {
+        "content": "Moral development",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Physical and motor development",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Cognitive development",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Socio-emotional development",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "According to Kohlberg’s theory, which stage is characterized by children obeying rules to avoid punishment?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "easy",
+    "explanation": "Kohlberg's theory identifies the Pre-conventional level as where morality is externally controlled. Children in this stage obey rules primarily to avoid punishment or gain concrete rewards, matching the description provided.",
+    "options": [
+      {
+        "content": "Conventional stage",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Post-conventional stage",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Autonomous stage",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Pre-conventional stage",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "According to Kohlberg's Moral Development Theory, ethical principles are internalized and judgments are made in the age group of:",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "medium",
+    "explanation": "Kohlberg's Moral Development Theory outlines three levels of moral reasoning: Pre-conventional, Conventional, and Post-conventional. The question specifically asks about the internalization of ethical principles, which characterizes the Post-conventional level. This highest stage involves reasoning based on universal ethical principles and individual conscience rather than societal rules or laws. Research indicates that this advanced form of moral reasoning typically emerges during adolescence and continues into adulthood, generally starting around age 13. Therefore, the correct answer is Option C (13 and above). Options A and B are incorrect because they represent earlier developmental stages where moral judgments are primarily based on avoiding punishment (Pre-conventional) or adhering to social norms and laws (Conventional), rather than internalized ethical principles. Option D is too young for any significant moral reasoning development beyond basic obedience.",
+    "options": [
+      {
+        "content": "10 to 13 years",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "4 to 10 years",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "13 and above",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "1 to 4 years",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Match the column Types of knowledge with the column Descriptions.",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Theories",
+    "chapterSlug": "dsssb-ped-theories",
+    "difficulty": "easy",
+    "explanation": "To match these correctly, let's break down the definitions used in knowledge management:\n1. Tacit Knowledge (a) → (ii): This is deeply personal, context-specific knowledge embedded in individual experience, intuition, and practice. It is incredibly difficult to codify or write down. Thus, it matches description (ii): \"typically acquired through experience, and it is intuitively understood.\"\n2. Implicit Knowledge (b) → (iii): This is the application of explicit knowledge. It is often described as the practical skills or \"know-how\" that an individual possesses. While it hasn't been codified into a document yet, it can be articulated if prompted. Thus, it matches description (iii): \"also referred to as ‘know-how’ knowledge.\"\n3. Explicit Knowledge (c) → (i): This is formal, systematized information that is easily written down, stored, and shared. Thus, it perfectly matches description (i): \"captured within various document types such as manuals, reports, and guides...\"",
+    "options": [
+      {
+        "content": "a-ii, b-iii, c-i",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "a-iii, b-ii, c-i",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a-i, b-ii, c-iii",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a-i, b-iii, c-ii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Why is the number of words in each language often found to be lower in bilingual children compared to monolingual children?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Child Development",
+    "chapterSlug": "dsssb-ped-child-development",
+    "difficulty": "easy",
+    "explanation": "Bilingual children often divide their vocabulary across two languages. A word known in one language may not have an equally used equivalent in the other language, so the count within each single language can appear lower than in monolingual children. This does not mean they know fewer words overall or have weaker cognitive ability.",
+    "options": [
+      {
+        "content": "Because they struggle with language development",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Because they learn fewer words overall",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Because their vocabulary is divided between two languages",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Because they have limited cognitive capacity",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Relationships and interaction between boys and girls in school is called:",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Child Development",
+    "chapterSlug": "dsssb-ped-child-development",
+    "difficulty": "easy",
+    "explanation": "The correct term for relationships and interactions between boys and girls in school is \"gender dynamics\". This concept specifically refers to the social patterns, power relations, and behaviors observed between genders within an educational context. Other options may refer to attitudes or prejudices rather than the mutual interactions themselves.",
+    "options": [
+      {
+        "content": "gender sensitivity",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "gender dynamics",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "gender bias",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "gender stereotyping",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following best describes gender equality in schools?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Child Development",
+    "chapterSlug": "dsssb-ped-child-development",
+    "difficulty": "easy",
+    "explanation": "Gender equality in schools means ensuring all students have equal access to learning opportunities regardless of their gender. This principle requires removing barriers like discrimination or segregation to create a fair educational environment for everyone.",
+    "options": [
+      {
+        "content": "Having separate classrooms for boys and girls.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Providing equal learning opportunities to all genders.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Allowing participation in sports only for boys.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Giving higher academic marks only to girls.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following comes under socio-emotional development of play?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Child Development",
+    "chapterSlug": "dsssb-ped-child-development",
+    "difficulty": "medium",
+    "explanation": "When children play, they test their limits, master new challenges (like building a tall tower or winning a game), and showcase what they can do. This directly builds self-esteem, confidence, and a sense of identity, which are core pillars of emotional and social growth.",
+    "options": [
+      {
+        "content": "Playing helps to develop memory, and the ability to analyse",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Playing improves brain cognition",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Play provides opportunity for children to demonstrate their abilities and skills",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "By play children learn or develop the ability to keep their mind on task at hand",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is the main characteristic of the lecture method of teaching mathematics?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching Methods & Strategies",
+    "chapterSlug": "dsssb-ped-methods",
+    "difficulty": "medium",
+    "explanation": "The lecture method is traditionally teacher-centered, meaning students primarily listen without active participation. Option 3 correctly identifies that students remain passive listeners during this instructional approach.",
+    "options": [
+      {
+        "content": "Students conduct experiments",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Students play mathematical games",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Students participate actively",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Students remain passive listeners",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "A curriculum committee is revising science teaching to better reflect evolving pedagogy. Which change best aligns with contemporary pedagogical practices?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Teaching Methods & Strategies",
+    "chapterSlug": "dsssb-ped-methods",
+    "difficulty": "easy",
+    "explanation": "Contemporary pedagogy in science encourages students to explore, ask questions, form explanations, and reason from evidence. Inquiry-based exploration makes learners active participants rather than passive followers of fixed procedures. Therefore, including inquiry and encouraging students’ reasoning is the best change.",
+    "options": [
+      {
+        "content": "Restricting experiments to standardized procedures in manuals",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Including inquiry-based exploration and encouraging students’ reasoning",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Focusing only on strict discipline and traditional instruction",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Making teaching independent of students’ developmental patterns",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "'Imbecile' is/was the term that was used for people with mental disabilities in:",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Inclusive Education",
+    "chapterSlug": "dsssb-ped-inclusive",
+    "difficulty": "easy",
+    "explanation": "'Imbecile' is an obsolete and offensive historical label that was used in older classifications for people with intellectual or mental disabilities. In the given exam context, it is associated with the late 18th-century period, not with present-day respectful terminology. Hence the correct option is late 18th century.",
+    "options": [
+      {
+        "content": "17th century",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "18th century",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "late 18th century",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "till today",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "How does experiential learning in the classroom benefit students?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Experiential Pedagogy",
+    "chapterSlug": "dsssb-ped-experiential",
+    "difficulty": "easy",
+    "explanation": "Experiential learning benefits students by fostering cognitive, attitudinal, and behavioural changes through active engagement. This approach promotes holistic development beyond simple memory retention or social limitation.",
+    "options": [
+      {
+        "content": "It discourages creativity",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It only improves memory",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It leads to cognitive, attitudinal, and behavioural changes",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "It limits social interaction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  },
+  {
+    "content": "Which of the following statements best describes a common pattern of behavior in groups?",
+    "type": "single_choice",
+    "subject": "Pedagogy",
+    "subjectSlug": "pedagogy",
+    "topic": "Psychology",
+    "chapterSlug": "dsssb-ped-psychology",
+    "difficulty": "easy",
+    "explanation": "In a group, members interact with one another and usually share roles and responsibilities to achieve a common goal. This sharing reflects cooperation and group dynamics. The other options describe isolation, avoidance, or decision-making by only one person, which are not typical patterns of healthy group behavior.",
+    "options": [
+      {
+        "content": "Only one person makes all the decisions",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "All individuals work on separate tasks without any interaction",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Members avoid contacting one another",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Members often share roles and responsibilities",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "pedagogy",
+      "2026"
+    ],
+    "examYear": 2026
+  }
+]

@@ -1,0 +1,1242 @@
+[
+  {
+    "content": "Which of the following refers to as a software design technique that focuses on separating the program functionality into independent, interchangeable methods/modules?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "easy",
+    "explanation": "The question describes a design technique that separates program functionality into independent, interchangeable methods or modules. This definition aligns precisely with modular programming, which organizes code into distinct sections for better maintainability. Scripting and low-level programming refer to execution levels or language abstraction rather than structural separation techniques.",
+    "options": [
+      {
+        "content": "Scripting",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Modular programming",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Functional programming",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Low-level programming",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "What is COUPLING in software design?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "easy",
+    "explanation": "In software design, coupling evaluates how much two distinct modules rely on each other to work properly.\n• Interdependence means that changes in one module can force changes in the other.\n• A primary goal of good software architecture is to achieve Low Coupling, meaning modules are as independent as possible, making the codebase easier to maintain, test, and modify without causing a domino effect of bugs.",
+    "options": [
+      {
+        "content": "Coupling is measure of degree of functional interdependence between the two modules",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Coupling is measure of degree of functional non-dependence between the two modules",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Coupling is measure of degree of functional connected dependence between the two modules",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Coupling is the measure of the functional strength of the module of the software",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is COHESION in software design?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "easy",
+    "explanation": "The correct answer is 2) Cohesion is a measure of functional strength of a module of a software.",
+    "options": [
+      {
+        "content": "Cohesion is a measure of complexity of module of a software",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Cohesion is a measure of functional strength of a module of a software",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Cohesion is a measure of functional weakness of a module of a software",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Cohesion is a measure of efficiency of a module of a software",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A module of a software is said to be logically cohesive if ______.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "medium",
+    "explanation": "Logical Cohesion occurs when a module contains a collection of activities that are similar in nature (logically related) but are functionally different. For example, a single module might handle all \"Input/Output\" operations or all \"Error Logging\" functions, even though printing a report and reading a file are different tasks.",
+    "options": [
+      {
+        "content": "all the elements of the module perform similar operations like error handling, data input etc",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "different elements of the module cooperate to achieve a single function for example managing an employee’s pay roll",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "if the set of functions of the module are all part of a procedure",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "all the elements of the module performs different operations alternatively",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Two modules are said to be common coupled in software design if __________.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "medium",
+    "explanation": "Common coupling occurs when two or more modules have access to the same global data. This is generally considered a \"loose\" form of coupling but can be risky because a change in the data by one module can have unexpected side effects on all other modules sharing that data.",
+    "options": [
+      {
+        "content": "They share their code",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "They share same global data areas",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "They communicate via a composite data",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "They communicate through an elementary data item",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is an inter-module concept which is an indication of the relationships between modules?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "medium",
+    "explanation": "Coupling measures the interdependence between separate modules within a system.\nThis concept indicates relationships between modules, distinguishing it from cohesion which focuses on internal module strength.",
+    "options": [
+      {
+        "content": "Coupling",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Cohesion",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both coupling and cohesion",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither coupling nor cohesion",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is/are desirable properties in modular programming?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "medium",
+    "explanation": "Modular programming requires modules with low coupling and high cohesion. This design minimizes dependencies between components while maximizing internal consistency for better maintainability.",
+    "options": [
+      {
+        "content": "Low coupling and low cohesion",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Low coupling and high cohesion",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "High coupling and low cohesion",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "High coupling and high cohesion",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "What is another name for Level 0–DFD?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "easy",
+    "explanation": "A Level 0 Data Flow Diagram (DFD) is the highest abstraction level of a data flow diagram. It provides an overview of the entire system by treating the system as a single process and mapping out its relationship with external entities. Because it sets the boundary and \"context\" for the whole system, it is universally known as a Context Diagram.",
+    "options": [
+      {
+        "content": "E-R Diagram",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Context diagram",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Flow diagram",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Structure chart",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is/are the aspect(s) of software evolution?\n I. Software Architecture Aspect\n II. Programming Language Aspect",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "easy",
+    "explanation": "• I. Software Architecture Aspect: This involves changes to the high-level structure of the system. As software evolves, the original architecture may become obsolete or unable to support new features (often called \"architectural drift\"). Evolution in this aspect ensures the system remains scalable, maintainable, and robust.\n• II. Programming Language Aspect: This involves the evolution of the code itself. This can include migrating a codebase to a newer version of a language (e.g., Python 2 to Python 3) or incorporating modern language features to improve performance, security, or readability.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the other name of Data Flow Diagram (DFD)?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Design",
+    "chapterSlug": "dsssb-se-design",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option C: Bubble chart. A Data Flow Diagram (DFD) is a graphical representation used in structured system analysis to depict the flow of data through an information system. In DFDs, processes are typically represented by circles or rounded rectangles that resemble bubbles, which is why this diagram is frequently referred to as a Bubble chart or Bubble diagram in many academic and software engineering contexts. This terminology highlights the visual structure of the diagram where data flows between these 'bubbles.' Option A (Flow chart) is incorrect because flowcharts represent control logic and sequential steps rather than data movement. Option B (Pictorial graph) is too vague, as it refers to any visual representation of data without specific structural meaning. Option D (Di-graph) is a mathematical concept involving directed graphs, not the standard terminology for data flow visualization in systems analysis.",
+    "options": [
+      {
+        "content": "Flow chart",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Pictorial graph",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Bubble chart",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Di-graph",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following projects deals with developing a well-understood application program, the size of the development team is reasonably small, and the team members are experienced in developing similar types of projects?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "medium",
+    "explanation": "In the COCOMO project classification, an organic project is relatively small, familiar, and handled by an experienced team in a well-understood application area.",
+    "options": [
+      {
+        "content": "Flexible",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Semidetached",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Organic",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Embedded",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is the full form of CASE tool in software engineering?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "medium",
+    "explanation": "CASE stands for Computer-Aided Software Engineering, which is a standard industry term. This tool helps automate various activities within the software development lifecycle to improve quality and productivity.",
+    "options": [
+      {
+        "content": "Computer Aided Software Engineering",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Computer Application Software Engineering",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Control Application Software Engineering",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Code Aided Software Engineering",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement(s) is/are correct regarding the feasibility study?\n I. It determines whether developing the product is financially feasible.\n II. It determines whether developing the product is technically feasible.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "easy",
+    "explanation": "A feasibility study assesses the viability of a project before implementation. It specifically evaluates financial aspects to ensure cost-effectiveness and technical aspects to confirm capability. Therefore, both statements regarding financial and technical feasibility are correct components of this study.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is NOT a valid Software Life Cycle Model?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "easy",
+    "explanation": "There is no standard, recognized software engineering framework called the \"Circular Model.\" While software development itself is often depicted as a repeating cycle (especially in DevOps or Agile workflows), \"Circular\" is not a defined, textbook Software Development Life Cycle (SDLC) model.",
+    "options": [
+      {
+        "content": "JAD",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Iterative",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Prototype",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Circular",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statements is/are true for the Waterfall Model?\n i) This model does not work smoothly if there are some issues left at the previous step.\n ii) It projects the process of development in a cyclic manner, repeating every step after every cycle of software development life cycle process.\n iii) This model considers risk, which often goes unnoticed by most other models.\n iv) This model provides means of testing of software at each stage in a reverse manner.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "easy",
+    "explanation": "The Waterfall Model is a linear, sequential development paradigm. Work flows down strictly from one phase to the next (e.g., Requirements -> Design -> Coding). Because it lacks flexibility, if an error or a missing requirement from an earlier stage goes unnoticed until later, it is incredibly difficult and expensive to go backward and fix it.\nii) Cyclic manner (FALSE): The Waterfall model is strictly linear and sequential, not cyclic. The model that repeats steps in a cyclic manner is the Iterative or Spiral model.\niii) Considers risk (FALSE): The Waterfall model notoriously ignores risk assessment. The model explicitly designed to manage and analyze risk at every stage is the Spiral Model.\niv) Testing at each stage in a reverse manner (FALSE): Waterfall places testing near the end of the life cycle (after coding). The model that maps testing directly to every single development stage in a parallel or \"reverse\" verification manner is the V-Model (Verification and Validation Model).",
+    "options": [
+      {
+        "content": "i only",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i and ii only",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ii and iii only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i, iii and iv only",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is the other name of Linear Sequential Model in software engineering?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "easy",
+    "explanation": "The Linear Sequential Model is the classic lifecycle model for software development. It suggests a systematic, sequential approach to software development that begins at the system level and progresses through analysis, design, coding, testing, and support.",
+    "options": [
+      {
+        "content": "Spiral model",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Waterfall model",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Prototype model",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "RAD model",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ model is a “high speed” adaptation of the linear sequential model in software engineering.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "medium",
+    "explanation": "The Rapid Application Development (RAD) model is a high-speed adaptation of the linear sequential model. It focuses on iterative prototyping and shorter development cycles to accelerate software delivery.",
+    "options": [
+      {
+        "content": "Prototype model",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Rapid Application Development model",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Spiral model",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Waterfall model",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In ______ model, software is developed in a series of incremental releases.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "easy",
+    "explanation": "Concept: Each prescriptive process model is identified by its defining characteristic, not by every trait it happens to share with the others. The incremental family is defined by building and delivering the product as a sequence of working releases, each one adding more functionality. The spiral approach is defined by risk-driven iteration, where every loop is organised around risk analysis and prototyping. The linear (waterfall-type) approach is defined by a single straight pass through the phases with no return for fresh releases.\nApplication: The phrase \"developed in a series of incremental releases\" is the textbook signature of the incremental model. Among the four offered choices, the member of the incremental family is RAD (Rapid Application Development) — a standard reference defines it as \"an incremental software process model that emphasizes a short development cycle.\" So RAD is the intended answer.\nContrast with the other choices:\n• RAD — incremental delivery is its defining purpose: the system is split into modules, built in short time-boxed cycles, and shipped as successive working increments. This matches the stem exactly.\n• Spiral — it does iterate and can ship prototypes each loop, but its defining purpose is managing risk; incremental release is incidental to it, not its identity. That is why it is not the model the stem describes.\n• Sequential — a single straight pass through the phases (a waterfall-type flow); it does not return to earlier phases to deliver new releases, so there is no series of increments.\n• Concurrent — organises activities or states that run in parallel; it is not characterised by delivering software as incremental releases.\nCross-check: Since \"Incremental\" itself is not listed, the correct pick is the option whose defining trait is incremental delivery. RAD is the unique member of the incremental family here, so RAD is the best and only fitting answer.",
+    "options": [
+      {
+        "content": "Spiral",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Sequential",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Concurrent",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "RAD",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In ______ model, software is developed in a series of incremental releases.\nI. Spiral\nII. Sequential",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Process Models",
+    "chapterSlug": "dsssb-se-process-models",
+    "difficulty": "easy",
+    "explanation": "• I. Spiral Model: Focuses on risk assessment and develops software in increments. It is ideal for large, expensive, and complicated projects.\n• II. Sequential Model: Also known as the Waterfall Model, this approach follows a linear path where one phase must be completed before the next begins (e.g., Requirements → Design → Implementation). It typically results in one final release at the end of the cycle rather than a series of increments.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Nither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "According to Boehm’s, what are the definitions of verification and validation?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Testing",
+    "chapterSlug": "dsssb-se-testing",
+    "difficulty": "medium",
+    "explanation": "Barry Boehm, a pioneer in software engineering, provided these classic definitions to distinguish between the two processes:\n1. Verification (\"Are we building the product right?\")Verification is a process-oriented activity. It focuses on whether the software is being developed according to the specified requirements and design constraints. It involves checking documents, design, and code through activities like inspections, reviews, and walkthroughs.\n2. Validation (\"Are we building the right product?\")Validation is a product-oriented activity. It focuses on whether the final software meets the actual needs and expectations of the user. It ensures that the requirements defined at the start were actually what the customer wanted.",
+    "options": [
+      {
+        "content": "Verification: Is the software free of errors?",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Verification: Is the software commercially viable?",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Verification: Are we building the product right?",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Verification: Are we building the right product?",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the other name of White-box testing?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Testing",
+    "chapterSlug": "dsssb-se-testing",
+    "difficulty": "easy",
+    "explanation": "White-box testing is a software testing method where the internal structure, design, and coding of the software are visible to the tester. The tester chooses inputs to exercise paths through the code and determines the appropriate outputs.",
+    "options": [
+      {
+        "content": "Red-box testing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Glass-box testing",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Open-box testing",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Close-box testing",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In boundary value analysis testing method, if we want to design a test case that computes the square root of integer values in the range from 1 to 4000, then the test case must include what values?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Testing",
+    "chapterSlug": "dsssb-se-testing",
+    "difficulty": "easy",
+    "explanation": "Boundary Value Analysis tests values at the edges of input domains. For a range from 1 to 4000, valid boundaries are 1 and 4000. Invalid boundaries immediately outside the range are 0 and 4001. Therefore, test cases should include values {0, 1, 4000, 4001} to cover both valid and invalid edge conditions effectively.",
+    "options": [
+      {
+        "content": "{0, 1, 3999, 4000}",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "{1, 2, 3999, 4000}",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "{0, 1, 4000, 4001}",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "{1, 2, 4000, 4001}",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Equivalence partitioning is a ________.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Testing",
+    "chapterSlug": "dsssb-se-testing",
+    "difficulty": "medium",
+    "explanation": "Equivalence Partitioning (also known as Equivalence Class Partitioning) is a software testing technique that divides the input data of a software unit into partitions of equivalent data from which test cases can be derived.",
+    "options": [
+      {
+        "content": "White box testing method",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Black box testing method",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Comparison testing method",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Loop testing method",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "N is the number of nodes of the control flow graph and E is the number of edges in the control flow graph. What is McCabe’s cyclomatic complexity V(G)?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Testing",
+    "chapterSlug": "dsssb-se-testing",
+    "difficulty": "medium",
+    "explanation": "McCabe’s cyclomatic complexity V(G) is a measure of the number of linearly independent paths in a program’s control flow graph. It is calculated using the formula:\nV(G) = E - N + 2\nWhere: E = number of edges in the control flow graph, N = number of nodes in the control flow graph.\nThis formula is derived from graph theory, where the complexity represents the number of regions in the graph. The +2 accounts for the entry and exit points of the control flow.",
+    "options": [
+      {
+        "content": "V(G) = E + N + 2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "V(G) = E − N + 2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "V(G) = E + N − 2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "V(G) = E − N − 2",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the full form of SQA in software engineering?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Quality",
+    "chapterSlug": "dsssb-se-quality",
+    "difficulty": "medium",
+    "explanation": "Software Quality Assurance (SQA) is a systematic process that ensures the software developed by an organization meets a specific set of standardized requirements. Unlike testing, which focuses on finding bugs in the final product, SQA is a proactive process that focuses on the development process itself to prevent defects from occurring in the first place.",
+    "options": [
+      {
+        "content": "Software Quality Activity",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "System Quality Assurance",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Service Quality Activity",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Software Quality Assurance",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "With respect to simulation and modelling, which of the following is the process of comparing two or more items to ensure their accuracy?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Quality",
+    "chapterSlug": "dsssb-se-quality",
+    "difficulty": "easy",
+    "explanation": "In modelling and simulation, verification is the process of checking accuracy by comparing model-related items, such as the implemented model with its specification or conceptual model. Validation is different: it checks whether the model is an adequate representation of the real system. Therefore, option A, Verification, is correct.",
+    "options": [
+      {
+        "content": "Verification",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Experimental frame",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Lumped model",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Validation",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "What is the full form of MTTF in software reliability?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Quality",
+    "chapterSlug": "dsssb-se-quality",
+    "difficulty": "easy",
+    "explanation": "MTTF is a statistical measure used to estimate the average time a software system or component is expected to operate before a non-repairable failure occurs. It is a key metric in assessing the dependability and quality of a software product.",
+    "options": [
+      {
+        "content": "Minimum time to failure",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Maximum time to failure",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Mean time to failure",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Median time to failure",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following software is used by a wide range of industries for project planning, resource allocation and scheduling?",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Estimation and Scheduling",
+    "chapterSlug": "dsssb-se-estimation",
+    "difficulty": "easy",
+    "explanation": "Project management software is used for project planning, resource allocation, scheduling, and tracking work.",
+    "options": [
+      {
+        "content": "CRM software",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Project management software",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Word processor",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Firewall software",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\n i) The ‘communications’, ‘schedules’ and ‘task lists’ are key functionality aspects of project management software to guide you in your decision.\n ii) A data warehouse is a relational database that is designed for query and analysis rather than transaction processing.\n iii) Software integration option is one of the criteria for selecting project management software.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Estimation and Scheduling",
+    "chapterSlug": "dsssb-se-estimation",
+    "difficulty": "medium",
+    "explanation": "All three statements are true: project management software commonly includes communications, schedules, and task lists; a data warehouse is designed for query and analysis; and software integration is a selection criterion.",
+    "options": [
+      {
+        "content": "i-True, ii-True, iii-True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True, iii-True",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-True, iii-False",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-True, ii-False, iii-True",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding software project management?\nI. PERT charts can be derived automatically from Gantt charts.\nII. Gantt charts cannot be automatically derived from PERT charts.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Estimation and Scheduling",
+    "chapterSlug": "dsssb-se-estimation",
+    "difficulty": "medium",
+    "explanation": "Statement I is incorrect because reconstructing a PERT network automatically from a Gantt chart is not feasible without explicit dependency metadata. Statement II is incorrect because standard theory indicates Gantt charts can be derived from PERT networks by mapping activities to a timeline. Therefore, neither statement is correct regarding software project management chart conversions.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Process of recovering the design and the requirement specification of a product from an analysis of its code is called ______.",
+    "type": "single_choice",
+    "subject": "Software Engineering",
+    "subjectSlug": "software-engineering",
+    "topic": "Software Configuration Management",
+    "chapterSlug": "dsssb-se-config-mgmt",
+    "difficulty": "easy",
+    "explanation": "Software reverse engineering is the process of analyzing a completed software system to look at its source code or binary and trace it backward. The goal is to recreate, extract, and understand the high-level architecture, design schemas, and original requirement specifications that went into making it. It is essentially taking a finished machine apart to see how it was built.",
+    "options": [
+      {
+        "content": "Software analysis",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Software engineering",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Software reverse engineering",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Software return engineering",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "software-engineering",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

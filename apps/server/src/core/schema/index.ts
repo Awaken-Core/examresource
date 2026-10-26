@@ -9,3 +9,4 @@ export * from './url-redirect.schema.js';
 export * from './book.schema.js';
 export * from './question.schema.js';
 export * from './exam.schema.js';
+export * from './test-series.schema.js';

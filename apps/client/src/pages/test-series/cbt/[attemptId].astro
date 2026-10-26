@@ -1,0 +1,27 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { siteName, siteUrl } from '../../../data/site';
+import { CBTTestRunner } from '../../../components/test-series/CBTTestRunner';
+
+const { attemptId } = Astro.params;
+
+if (!attemptId) {
+  return Astro.redirect('/test-series');
+}
+
+Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+
+const pageTitle = `Computer-based mock test session | ${siteName}`;
+const pageDescription =
+  'Private examination session. The code of conduct is accepted before any answer is saved. This candidate session is not indexed.';
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={`${siteUrl}/test-series`}
+  hideHeaderFooter={true}
+  noindex={true}
+>
+  <CBTTestRunner client:only="react" attemptId={attemptId} siteName={siteName} />
+</Layout>

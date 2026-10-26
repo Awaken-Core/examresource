@@ -1,0 +1,2962 @@
+[
+  {
+    "content": "Which of the following switching technique was used in ARPANET?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "ARPANET utilized packet switching technology, which divides data into blocks for efficient network transmission. This approach distinguished it from earlier circuit and message switching methods.",
+    "options": [
+      {
+        "content": "Message Switching",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Circuit Switching",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Packet Switching",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Data switching",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "When a signal travels through a media, loss in its energy is called:",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "Attenuation refers to the reduction in signal strength or energy as it propagates through a transmission medium. This phenomenon occurs due to absorption, scattering, or dispersion within the material.",
+    "options": [
+      {
+        "content": "Latency",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Distortion",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Noise",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Attenuation",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the full form of ARPANET, which was an experimental computer network that was the forerunner of the Internet?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "ARPANET stands for Advanced Research Projects Agency Network. It was the experimental network that became a forerunner of the Internet.",
+    "options": [
+      {
+        "content": "Advanced Research Projects Agency Nodes",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Advanced Research Projects Agency Network",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Advanced Recombination Projects Agency Network",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Associated Recombination Projects Agency Network",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In __________ type of distributed systems, the nodes play an important role in this system and the task is evenly distributed among the nodes.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "The correct answer is Option C, peer-to-peer system. In a peer-to-peer (P2P) distributed architecture, every node functions as both a client and a server. Unlike traditional models where specific machines handle requests for others, P2P systems rely on the collective resources of all participating nodes. This means that tasks and data are distributed evenly across the network, with each node playing an equally important role in processing requests and sharing resources. This contrasts sharply with a file server system (Option B), where a central server manages files and clients merely request them, creating an imbalance in roles. Similarly, a computer server system (Option A) typically implies a client-server model where the server is dominant. Middleware (Option D) refers to software that connects different applications rather than a structural system type itself. Therefore, the description of nodes playing an important role with evenly distributed tasks perfectly defines a peer-to-peer system.",
+    "options": [
+      {
+        "content": "computer server system",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "file server system",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "peer-to-peer system",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "middleware",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements about distributed computing is FALSE?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "The FALSE statement is Option C. It claims distributed computing does not allow scalability, which is incorrect as scalability is a core benefit.",
+    "options": [
+      {
+        "content": "It involves various computers.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Each computer system in distributed computing has its own memory.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It does not allow for scalability and resource sharing.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "The computer systems connect with one another via a network.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "The main aim of which of the following is to make a network work as a single computer?\n(i) Distributed computing\n(ii) Parallel computing",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "The correct answer is Option A, which states that only distributed computing aims to make a network work as a single computer. Distributed computing is designed specifically to integrate multiple independent computers into a unified system that appears as one entity to the user. This allows for resource sharing, fault tolerance, and seamless operation across a network. In contrast, parallel computing focuses on executing multiple calculations simultaneously to solve a single problem faster. While it involves multiple processors, its primary goal is performance acceleration rather than presenting the system as a single computer to users. Therefore, parallel computing does not fit the specific definition provided in the question.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statement(s) is/are true regarding Data Communication?\nStatements:\nI. Half duplex communication is multidirectional communication.\nII. Full duplex communication is bidirectional communication.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: Only II is correct.\nKey idea: Half-duplex and full-duplex are both bidirectional (two-way). What separates them is timing — whether both ends can transmit at the same time — not the number of directions.\n• Simplex: one direction only (e.g., keyboard to computer).\n• Half-duplex: two-way (bidirectional), but the two ends take turns — only one transmits at a time (e.g., a walkie-talkie).\n• Full-duplex: two-way (bidirectional) and simultaneous — both ends transmit at the same time (e.g., a telephone call).\nWhy Statement I is false: Half-duplex is correctly described as bidirectional (two-way), not \"multidirectional.\" \"Multidirectional\" is a non-standard, ambiguous term in this context; the standard textbook description of half-duplex is \"bidirectional, but not simultaneous.\" Both half- and full-duplex are bidirectional, so directionality is not the distinguishing feature — timing is.\nWhy Statement II is true: Full-duplex supports two-way (bidirectional) communication, with the additional property that it happens simultaneously. Calling it bidirectional is accurate.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ mode allows transmission in either direction but not simultaneously.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: Half Duplex allows transmission in either direction but not simultaneously.\n• Simplex — one-way only; example: TV broadcast or a keyboard sending data to a computer.\n• Half duplex — two-way but not at the same time; devices take turns transmitting; example: walkie‑talkies or a shared Ethernet hub.\n• Full duplex (Duplex) — two-way simultaneously; example: telephone calls or modern switched Ethernet links.\nNote: The term \"Half-Simplex\" is not standard; use \"Half Duplex\" to describe two-way non-simultaneous transmission.",
+    "options": [
+      {
+        "content": "Duplex",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Half Duplex",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Simplex",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Half-Simplex",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A connection that allows traffic either way, but only one way at a time is known as ______.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Half duplex systems:\nDevices can send and receive, but not at the same time\nOne device must wait while the other transmits",
+    "options": [
+      {
+        "content": "Full duplex",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Half duplex",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Duplex",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Simplex",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Communication of CPU with keyboard and monitor is an example of which of the following modes of communication?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Simplex communication is one-way communication. A keyboard sends input to the CPU, and a monitor receives output from the CPU; each direction is one-way. Hence the communication mode illustrated is simplex. Therefore, option A is correct.",
+    "options": [
+      {
+        "content": "Simplex",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Half-duplex",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Full-duplex",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both simplex and half-duplex",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Communication over walkie-talkie is an example of which of the following modes of communication?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "In half-duplex communication, data can flow in both directions, but only one direction at a time. A walkie-talkie works this way: one person speaks while the other listens, and then they switch. Therefore, option B is correct.",
+    "options": [
+      {
+        "content": "Simplex",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Half-duplex",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Full-duplex",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both half-duplex and full-duplex",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which statement is correct regarding a point-to-point connection in data communication?\nI. It provides a dedicated link between two devices.\nII. It is a time-shared connection.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Correct answer: Only I\n• Statement I: Correct. A point-to-point connection creates a dedicated link between exactly two devices.\n• Statement II: Incorrect. A time-shared connection means the same communication resource is shared by multiple users/devices over time. Point-to-point communication is not described as time-shared; it is a dedicated two-device link.\n• Conclusion: Only statement I is correct.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is not a type of Network topology?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer:  Singleton Network",
+    "options": [
+      {
+        "content": "Star Network",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Ring Network",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Hybrid Network",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Singleton Network",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are not true about star topology?\n I. Failure of the central computer shuts down the entire network\n II. Connection of additional computers increases the communication time",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: Only statement II is not true.\n• Statement I: True. In a star topology all devices connect to a central device (hub or switch); if that central device fails, the network becomes nonfunctional.\n• Statement II: False. Each device has a dedicated point-to-point link to the central device, so adding more computers does not inherently increase the communication time per link. (Caveat: overall throughput can be affected if the central device becomes overloaded, but that does not make the statement generally true.)\nTherefore, the correct choice is that only statement II is not true.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "For a star topology, which of the following statement(s) is/are not true?\nI. Failure of the central computer/device shuts down the entire network.\nII. Connection of additional computers increases the communication time.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "In a star topology, every computer is connected to a central device such as a hub, switch, or central computer.Statement I: Failure of the central computer/device shuts down the entire network.\nThis is true because the central device is the single point through which communication occurs. If it fails, nodes cannot communicate through the network.\nStatement II: Connection of additional computers increases the communication time.\nThis is not true for star topology. A new computer is connected directly to the central device through its own link. Adding a node does not increase the path length between existing nodes.\nThe question asks for the statement(s) that are not true. Only Statement II is not true. Hence, Option A is correct.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a type of network topology?\nI. Star topology\nII. Bus topology\nIII. Car topology",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "A network topology defines the arrangement of various elements (links, nodes, etc.) of a computer network.\nStar topology connects all devices to a central hub, while Bus topology connects all devices to a single central cable. Both are standard and widely recognized configurations in computer networking.\nCar topology is not a standard term in computer networking or infrastructure design. Therefore, it is not a valid network topology.\nThus, statements I and II are correct, while statement III is incorrect.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many maximum links can be created in a mesh topology network of n computers?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "In a full mesh topology, every single computer (or node) must be directly connected to every other computer in the network.\n• If you have n computers, each computer needs a connection to all the other computers, which is n - 1 links.\n• If you multiply the number of computers (n) by the links they each need (n - 1), you get n(n - 1).\n• However, a link between Computer A and Computer B is the exact same physical cable as the link between Computer B and Computer A. To avoid counting every cable twice, you have to divide the total by 2.",
+    "options": [
+      {
+        "content": "n",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "n-1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "n(n-1)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "n(n-1)/2",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In a ________ network topology, stations are connected in a closed loop; there is no host computer controlling the others, and all stations are equal.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "hard",
+    "explanation": "In a ring topology, each station is connected to two neighboring stations, forming a closed loop. There is no single host computer that controls all other computers, and the stations have equal status in the network. Therefore, the correct answer is Ring.",
+    "options": [
+      {
+        "content": "Ring",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Tree",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Bus",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Star",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\n i) Service Set Identification (SSID) is human readable text string with a maximum length of 2000 bytes.\n ii) Service Set Identification (SSID) acts as a single shared identifier between the access points and clients.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: Statement i is false; statement ii is true.\nExplanation:\n• Statement i (SSID length and format): False. Under IEEE 802.11 the SSID is a human-readable identifier but its maximum length is 32 bytes (octets), not 2000 bytes.\n• Statement ii (SSID role between APs and clients): True. The SSID is the network name advertised by access points (in beacon/probe frames) and used by clients to identify and join the same wireless network. Multiple access points can share the same SSID to form an extended service set (ESS).\n• Additional note: Do not confuse SSID (network name) with BSSID (the MAC address identifying a specific access point).",
+    "options": [
+      {
+        "content": "i-True, ii-True",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which statements are true about Local Area Network (LAN)?\n I. Communication takes place by way of satellites, microwave\n II. Faster than wide area network\n III. Covers limited area",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: Statements II and III are true; statement I is false.\n• Statement I: \"Communication takes place by way of satellites, microwave.\" — False. Local Area Networks typically use wired technologies like Ethernet or short‑range wireless technologies like Wi‑Fi. Satellites and long‑range microwave links are used for wide‑area communication, not for typical LANs.\n• Statement II: \"Faster than wide area network.\" — True. LANs generally offer higher bandwidth and lower latency than WANs because they span a small, local area and use high‑speed links.\n• Statement III: \"Covers limited area.\" — True. By definition, a LAN covers a limited geographic area such as a home, office, or building.\nTherefore, the correct statements are II and III.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statements are true about wide area network?\n I. Covers wide geographical area\n II. Communication takes place by way of satellites, microwaves\n III. Relatively faster than local area network",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: I and II are true; III is false.\n• I. Covers wide geographical area — True. WANs connect devices across cities, countries, or continents.\n• II. Communication takes place by way of satellites, microwaves — True. WAN links commonly use satellite, microwave, fiber-optic, and leased-line technologies for long-distance communication.\n• III. Relatively faster than local area network — False. LANs typically offer higher bandwidth and lower latency because they operate over shorter distances and use faster media, so WANs are usually slower than LANs.\nExplanation: WANs are designed to connect geographically dispersed networks using long-distance transmission methods, which makes statements I and II correct. Because of the longer distances and varied transmission paths, WANs generally have lower throughput and higher latency compared to LANs, so the claim that WANs are relatively faster than LANs is incorrect.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statements are true about Wide Area Network (WAN)?\n I. Covers wide geographical area\n II. Communication takes place by way of satellites, microwaves\n III. Relatively faster than local area network",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Step 1: A Wide Area Network (WAN) is designed to cover a large geographical area, such as cities, countries, or even continents. Therefore, statement I is correct.\nStep 2: WANs use long-distance communication technologies like satellites, microwaves, and leased lines to connect distant locations. Hence, statement II is correct.\nStep 3: While WANs cover large areas, they are not necessarily faster than Local Area Networks (LANs). LANs operate over shorter distances and use high-speed technologies, making them faster in most cases. Therefore, statement III is incorrect.\nहिन्दी उत्तर:\nचरण 1: वृहद क्षेत्र नेटवर्क (WAN) को शहरों, देशों या ग्लोबल स्तर पर व्यापक भौगोलिक क्षेत्र को कवर करने के लिए डिज़ाइन किया गया है। इसलिए, कथन I सही है।\nचरण 2: WAN दूरस्थ संचार तकनीकों जैसे उपग्रह, माइक्रोवेव और लीज़्ड लाइनों का उपयोग करते हैं ताकि दूरस्थ स्थानों को जोड़ा जा सके। इसलिए, कथन II सही है।\nचरण 3: यद्यपि WAN व्यापक क्षेत्र को कवर करते हैं, वे आमतौर पर स्थानीय क्षेत्र नेटवर्क (LAN) से तेज़ नहीं होते हैं। LAN छोटी दूरी पर काम करते हैं और उच्च गति वाली तकनीकों का उपयोग करते हैं, जिससे वे अधिकांश मामलों में तेज़ होते हैं। इसलिए, कथन III गलत है।",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct?\nI. Metropolitan area network is a collection of Local area network .\nII. Metropolitan area network support both data and voices transmission.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "A Metropolitan Area Network (MAN) connects multiple Local Area Networks (LANs) within a specific geographic area like a city, making Statement I correct. Additionally, MAN infrastructure supports both data and voice transmission, validating Statement II. Therefore, both statements are correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor I",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not a LAN technology?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Ethernet, Token Ring and FDDI are LAN technologies used for local-area networking. Frame Relay is a packet-switched WAN technology used to connect geographically separated networks. Therefore Frame Relay is not a LAN technology.",
+    "options": [
+      {
+        "content": "Fiber Distributed Data Interface",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Token Ring",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Ethernet",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Frame Relay",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statement(s) is/are true regarding switching techniques in Data communication?\n Statements:\n I. In circuit switching a dedicated path is identified between the sender and the receiver.\n II. In packet switching each information to be transmitted between sender and receiver is broken down into smaller packets.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Answer: Both statements are true.\nStatement I: In circuit switching, a dedicated communication path is established between the sender and the receiver for the duration of the session. Resources along that path may be reserved, ensuring a constant connection (example: traditional circuit-switched telephone networks).\nStatement II: In packet switching, the information to be transmitted is divided into smaller packets. Each packet carries header information (such as source and destination addresses) and packets can be routed independently through the network (example: Internet). Packet switching uses statistical multiplexing and does not require a dedicated path.\n• Key difference: circuit switching reserves a dedicated path and resources for the whole session; packet switching sends independent packets without reserving a single dedicated path.\n• Implication: circuit switching provides predictable latency and steady bandwidth while packet switching is more efficient for bursty traffic and supports resource sharing.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which data transmission technique in a computer network required dedicated communication channel?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "In circuit switching, a dedicated communication channel is established between the sender and receiver before data transmission begins. This channel remains reserved for the entire duration of the communication, ensuring a continuous and uninterrupted data flow. This is why circuit switching requires a dedicated communication channel.\nहिन्दी उत्तर: सर्किट स्विचिंग में, डेटा संचरण शुरू होने से पहले संप्रेषण के लिए एक समर्पित संचार चैनल स्थापित किया जाता है। यह चैनल संचार की पूरी अवधि के लिए आरक्षित रहता है, जिससे निरंतर और बाधा-मुक्त डेटा प्रवाह सुनिश्चित होता है। इसीलिए सर्किट स्विचिंग में समर्पित संचार चैनल की आवश्यकता होती है।",
+    "options": [
+      {
+        "content": "Circuit switching",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Packet switching",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Message switching",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Frame switching",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not an example of Guided transmission media?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Guided transmission media use physical pathways to transmit signals. Let's analyze each option:\nA. Fiber optic: Uses light to transmit data through glass or plastic fibers. Signals are confined within the medium, making it a guided transmission medium.\nB. Infrared wave: Transmits data through air using electromagnetic waves without a physical medium. This is an unguided transmission method.\nC. Twisted pair: Uses copper wires twisted together to reduce interference. Signals travel along the wires, making it a guided transmission medium.\nD. Coaxial cable: Has a central conductor surrounded by insulation and shielding, guiding signals along a physical path. This is a guided transmission medium.",
+    "options": [
+      {
+        "content": "Fiber optic",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Infrared wave",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Twisted pair",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Coaxial cable",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not an example of unguided transmission media?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Unguided media = wireless (air, space)\nGuided media = wired (cables)\n Coaxial cable is guided, so it is NOT unguided",
+    "options": [
+      {
+        "content": "Radio transmission",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Microwave transmission",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Coaxial cable",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Light transmission",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a type of transmission mode?\nI. Simplex mode\nII. Half simplex mode\nIII. Duplex mode",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Transmission mode refers to the way data is transmitted between devices. There are three main types:\nSimplex: Data flows in one direction only. Example: Keyboard → Computer\nHalf-duplex: Data flows in both directions, but one at a time. Example: Walkie-talkie\nFull-duplex: Data flows in both directions simultaneously. Example: Telephone\nSo, “Half simplex mode” is not a valid transmission mode term.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Twisted-pair cables transmit signals in the form of:",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "Twisted-pair cables consist of pairs of copper wires twisted together to reduce electromagnetic interference. These cables transmit data signals in the form of electrical currents flowing through the copper conductors. When a device sends information, it converts digital data into varying electrical voltages that travel along the wires to the receiving end. This distinguishes twisted-pair cables from fiber optic cables, which use light pulses (Options A and D), or wireless systems that transmit radio waves (Option C). Since twisted-pair cables rely on copper wiring rather than optical fibers or air-based transmission, the correct answer is Option B (Electric current). Understanding this fundamental difference helps identify appropriate cabling for various networking scenarios, as electrical transmission requires physical copper connections while light-based or wireless methods offer different performance characteristics.",
+    "options": [
+      {
+        "content": "Light",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Electric current",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Radio waves",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Infrared light",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statements is/are FALSE?\n• (i) Fibre optics provide faster data transmission than copper wires.\n• (ii) Shielded twisted pair does not suffer from attenuation.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "Correct answer: Only (ii)\n• Statement (i) is TRUE: fibre optics use light signals and generally provide faster, higher-bandwidth transmission than copper wires.\n• Statement (ii) is FALSE: shielded twisted pair is still a physical copper medium and suffers attenuation over distance.\n• Shielding helps reduce electromagnetic interference, but it does not remove attenuation.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statement is correct regarding unguided media (wireless)?\nI. Unguided media transport electromagnetic waves without using a physical conductor.\nII. Unguided signals can travel from the source to destination in ground propagation way.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Unguided media carry electromagnetic waves without a physical conductor, and wireless signals can propagate by ground propagation, sky propagation, or line-of-sight propagation. Therefore both statements are correct.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which type of guided transmission medium is commonly categorized by RG (Radio Guide) ratings in computer networking?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Correct answer: Coaxial Cable\nRG stands for Radio Guide. RG numbers are used as designations for coaxial cable types, such as RG-6, RG-11, and RG-59.\nOther guided media use different classifications: twisted-pair cables use category ratings like Cat5e/Cat6, and fiber-optic cables are described by fiber and optical specifications.",
+    "options": [
+      {
+        "content": "Fiber-Optic Cable",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Coaxial Cable",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Metallic Cable",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Twisted-Pair Cable",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following devices works at the network layer of the ISO-OSI reference model?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "The router is the primary device of the Network Layer. Its main job is to move data packets between different networks.\n• Addressing: It uses IP addresses (Logical addressing) to identify destinations.\n• Function: It determines the best path for data to travel (routing) using a routing table.",
+    "options": [
+      {
+        "content": "Hub",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Router",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Amplifier",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Repeater",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statement(s) is/are true regarding OSI layers in computer networks?\n Statements:\n I. The session layer provides means of establishing, maintaining and terminating a session between two end users.\n II. Data Link layer sets up a logical path between the source and destination computer of the network.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "The primary role of the Session Layer (Layer 5) is \"dialogue control.\" It manages the communication session between applications. It handles synchronization (checkpoints) so that if a connection drops, the data transfer can resume from the last known good point rather than starting over.\nThe Data Link Layer (Layer 2) is responsible for \"node-to-node\" delivery (moving data between two physically connected devices, like our laptop and our router). The Network Layer is what handles \"end-to-end\" logical paths across multiple different networks using IP addressing.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In OSI model network layer is responsible for __________.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "The Network layer (Layer 3) is responsible for routing packets from source to destination using logical addressing (IP).",
+    "options": [
+      {
+        "content": "Dialog control",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Token management",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Routing",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Physical transmission",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement is/are true about the OSI model?\nI. Layer 1 through 3 are end-to-end\nII. Layer 4 through 7 are chained",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "❌ Statement I: “Layer 1 through 3 are end-to-end”\nThis is false.\nLayers 1–3 (Physical, Data Link, Network) are hop-by-hop, not end-to-end.\nThey handle transmission between adjacent devices (like routers).\nEnd-to-end communication is mainly handled by higher layers (especially Layer 4).\n❌ Statement II: “Layer 4 through 7 are chained”\nThis is also false.\nLayers 4–7 (Transport, Session, Presentation, Application) are actually end-to-end layers, not “chained.”\nThe term “chained” is not a standard or correct description in the OSI model context.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Layer five of the OSI model is __________.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "In the OSI model, numbering starts from the bottom: layer 1 is Physical, layer 2 is Data Link, layer 3 is Network, layer 4 is Transport, layer 5 is Session, layer 6 is Presentation, and layer 7 is Application.\nTherefore, layer 5 is the Session layer. Layer 3 is the Network layer, so the reported statement confuses layer 3 with layer 5.",
+    "options": [
+      {
+        "content": "Network layer",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Transport layer",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Session layer",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Presentation layer",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is also known as nonadaptive routing?\n(i) Static routing\n(ii) Dynamic routing",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "medium",
+    "explanation": "Nonadaptive routing, also known as static routing, refers to a method where the path for data packets is determined before transmission and does not change based on current network conditions. In static routing, the routes are manually configured by a network administrator and remain fixed regardless of traffic congestion or link failures. This contrasts with dynamic routing, which continuously monitors the network and adjusts paths in real-time to optimize performance. Therefore, only static routing is classified as nonadaptive because it lacks the ability to adapt to changing network topologies or traffic loads. Dynamic routing is adaptive by definition, as it responds to changes in the network environment. Consequently, option A is correct because static routing alone fits the definition of nonadaptive routing.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A router works at the __________ layer in the OSI model and __________ layer in TCP/IP model.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Introduction to CN",
+    "chapterSlug": "dsssb-cn-introduction",
+    "difficulty": "easy",
+    "explanation": "Routers operate at the Network layer in the OSI model and the Internet layer in the TCP/IP model.",
+    "options": [
+      {
+        "content": "internet, network",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "network, physical",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "network, internet",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "session, internet",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following are the formal dimensions/directions of communication?\nDimensions:\ni) Downward\nii) Upward\niii) Horizontal/Lateral\niv) Diagonal\nv) Grapevine\nvi) Circular",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "Communication dimensions describe the direction in which information flows in an organization. The standard formal dimensions are downward, upward, horizontal/lateral, and diagonal communication. Grapevine is an informal communication network, and circular is a network pattern, not a formal direction. Therefore, i, ii, iii, and iv only are correct.",
+    "options": [
+      {
+        "content": "i, ii, iii, iv and v",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ii, iii and v only",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i, ii, iii and iv only",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "i and ii only",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "The frequency which is used for transmission of signal from the satellite to earth station receive is known as _____.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "Downlink Frequency: The signal path from the satellite back down to the Earth station. This frequency is typically lower than the uplink frequency to minimize atmospheric attenuation and power requirements on the satellite.",
+    "options": [
+      {
+        "content": "Uplink frequency",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Backlink frequency",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Forward link frequency",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Downlink frequency",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "To obtain figure (b) from figure (a) in a binary system, which modulation technique is applied?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "medium",
+    "explanation": "In Frequency Modulation process, the frequency of a carrier wave is modified in accordance with the binary data from the baseband signal:\n• 0 (Low Bit): Represented by a lower frequency sine wave (longer wavelengths).\n• 1 (High Bit): Represented by a higher frequency sine wave (shorter, more compressed wavelengths).\n• Constant Amplitude: Unlike Amplitude Modulation, the height of the waves remains uniform throughout the signal.",
+    "options": [
+      {
+        "content": "Amplitude modulation",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Frequency modulation",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Phase modulation",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Quadrature phase shift keying",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which modulation technique is applied to a binary signal in figure (a) to achieve figure (b)?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "In figure (b), we can see that the carrier wave changes its amplitude (its height/strength) based on the binary input from figure (a):\n• Binary '1': A carrier sine wave is present at a specific amplitude.\n• Binary '0': The carrier wave is absent (the amplitude is zero).\nThis specific type of AM, where the carrier is switched completely \"on\" or \"off,\" is often called On-Off Keying (OOK).",
+    "options": [
+      {
+        "content": "Amplitude modulation",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Frequency modulation",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Phase modulation",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Quadrature Phase Shift Keying (QPSK)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The loss of energy as a signal propagates outward is known as ______.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "The loss of energy as a signal propagates outward is called Attenuation.",
+    "options": [
+      {
+        "content": "Noise",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Distortion",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Attenuation",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Scattering",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding digital certificates?\n I. A digital certificate does not include the name of the CA who issues it.\n II. Digital certificates are based on public key cryptography.\n III. These certificates are available only in one strength i.e. 128-bit encryption.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "medium",
+    "explanation": "II. Digital certificates are based on public key cryptography\nCorrect\nDigital certificates use public key cryptography\nThey contain a public key and are used for:\nEncryption\nAuthentication\nSecure communication",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Number of signal elements transmitted per second is called ____.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "Concept: In data communication, the signal rate (baud rate) is the number of signal elements (symbols) sent per second, measured in baud. A signal element is the smallest unit of a transmitted signal — one constant level of voltage, phase, or frequency. This is separate from the data rate (bit rate), which counts bits per second.\nApplication: The phrase “number of signal elements transmitted per second” is the exact textbook definition of the baud rate, so the term being defined here is the baud rate.\nContrast with the other terms:\n• Bit rate — bits per second, i.e. data volume, not symbols. If each symbol carries n bits, bit rate = baud rate × n.\n• Data rate — another name for bit rate; it measures information (bits) per second, not signal elements.\n• Byte rate — bytes processed per second, a data-volume measure, unrelated to the count of physical signal changes.\nCross-check: When a system uses two symbols with one bit per symbol, baud rate and bit rate are numerically equal — but they remain different quantities, one counting signal elements and the other counting bits.",
+    "options": [
+      {
+        "content": "Baud rate",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Byte rate",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Bit rate",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data rate",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Suppose a 100 km long cable has a speed of 1.536 Mbps. The signal speed in cable is 2/3 speed of the light. What will be the number of bits in the cable?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "medium",
+    "explanation": "Calculate signal speed as two-thirds of light speed, yielding 200 million meters per second. Determine propagation delay by dividing the 100-kilometer cable length by this speed, resulting in half a millisecond. Multiply the 1.536 Mbps bandwidth by this delay to find exactly 768 bits in the cable.",
+    "options": [
+      {
+        "content": "500",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "768",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "307",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "400",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "A digital signal is a representation of _______ data in _________ form.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "A digital signal represents analog data in discrete form.\n• Analog data: continuous data that can vary smoothly over time.\n• Discrete form: separate levels or values used in digital representation.\nTherefore, the correct pair is analog, discrete.",
+    "options": [
+      {
+        "content": "discrete, analog",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "analog, virtual",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "analog, discrete",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "discrete, virtual",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "The capacity of the link is known as __________ of the link.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "ConceptIn data communication, the bandwidth of a link is the maximum rate at which data can be carried across that link. \"Capacity\" and \"bandwidth\" describe the same property of the channel: the upper limit on how much data the link can transfer per unit time. So the capacity of a link is simply its bandwidth.\nApplying it hereThe blank asks for the term that names a link's data-carrying capacity. That term is bandwidth, because bandwidth is defined precisely as the maximum amount of data a link can transmit in a given time. A higher-bandwidth link can move more bits per second, i.e. it has a larger capacity.\nCapacity vs. bandwidth (the reported doubt)These two words are often used interchangeably for a link's maximum throughput. The subtle distinction in everyday use:\n• Bandwidth / capacity: the theoretical maximum data rate the link can support (e.g. a 100 Mbps line). This is a fixed property of the channel.\n• Actual / used data rate: how much of that capacity is currently in use at a moment (the live traffic). This is always less than or equal to the capacity.\nWhen an exam says \"the capacity of the link\", it is naming the maximum that the link can carry, which is its bandwidth.\nWhy the other terms do not fit• A count of the routers a packet crosses measures path length, not how much data a single link can carry.\n• The time taken for a bit to travel across the link measures latency, a duration, not a data-carrying rate.\n• The amount of traffic actually present on the link is the live usage at a moment, which can be far below the link's maximum.",
+    "options": [
+      {
+        "content": "hop count",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "bandwidth",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "delay",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "load",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In periodic analog signals, which of the following is NOT a parameter to describe a sine wave in data communication?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "ConceptA periodic analog signal is built from sine waves, and a single sine wave is completely described by exactly three independent parameters: peak amplitude (its maximum value, i.e. the strength of the signal), frequency (the number of cycles it completes per second, in hertz), and phase (its position in the cycle at time zero, measured in degrees or radians).\nWavelength is a derived, spatial quantity: it is the distance a single cycle occupies as the wave travels through a medium, and it equals propagation speed divided by frequency. Because it depends on the medium's speed rather than describing the time-domain waveform itself, it is not counted among the three defining parameters of a sine wave.\nApplying it hereThe question asks which option is NOT one of the parameters used to describe a sine wave. Matching each option against the three defining parameters:\n• Peak amplitude — the maximum displacement from the centre line; one of the three defining parameters.\n• Frequency — cycles per second; one of the three defining parameters.\n• Phase — offset of the cycle at the time origin; one of the three defining parameters.\n• Wavelength — a spatial distance derived from speed and frequency; it characterises the wave as it propagates through space, not the sine waveform itself, so it is NOT one of the three defining parameters.\nResultThree of the options (peak amplitude, frequency, phase) are the standard descriptors, so the one that is NOT a defining parameter is wavelength.",
+    "options": [
+      {
+        "content": "Wavelength",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Phase",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Frequency",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Peak amplitude",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is correct formula for calculating wavelength (λ) of a signal in the data communication?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Data Communication",
+    "chapterSlug": "dsssb-cn-data-communication",
+    "difficulty": "easy",
+    "explanation": "Wavelength equals propagation speed divided by frequency. Since period is the reciprocal of frequency, wavelength also equals propagation speed multiplied by period.",
+    "options": [
+      {
+        "content": "λ = propagation speed + frequency",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "λ = propagation speed × period",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "λ = propagation speed + period",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "λ = propagation speed × frequency",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "_____ URL is used to send electronic mail.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "he correct URL used to send electronic mail is:  Mailto",
+    "options": [
+      {
+        "content": "Mailto",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Eto",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Email URL",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "EURL",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ gives the location of a resource on the internet.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "A URL includes:\nProtocol (http, https)\nDomain name\nPath to the resource\n That’s why it gives the complete location",
+    "options": [
+      {
+        "content": "URL",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "TCP/IP",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Domain name",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "IP address",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a part(s) of a URL?\n I. Protocol\n II. Hostname\n III. Directory and Filename",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "Example   https://www.example.com/folder/file.html\nProtocol → https\nHostname → www.example.com\nDirectory & Filename → /folder/file.html",
+    "options": [
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following protocols assign(s) dynamic IP?\n i) POP\n ii) DHCP\n iii) BOOTP\n iv) SNMP\n v) ICMP",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "Correct answer: DHCP (ii) and BOOTP (iii) assign dynamic IP addresses.\nExplanation:\n• DHCP (Dynamic Host Configuration Protocol): Assigns IP addresses dynamically to hosts, provides address leasing and additional configuration options (gateway, DNS, etc.). It is the modern standard for dynamic IP assignment.\n• BOOTP (Bootstrap Protocol): An older protocol that also provided dynamic addressing for hosts (commonly used for diskless workstations). Largely superseded by DHCP but historically used for IP assignment.\n• POP (Post Office Protocol): An email retrieval protocol; it does not assign IP addresses.\n• SNMP (Simple Network Management Protocol): Used for network management and monitoring; it does not perform IP assignment.\n• ICMP (Internet Control Message Protocol): Used for control messages and diagnostics (for example, ping); it does not assign IP addresses.\nTherefore, only DHCP and BOOTP assign dynamic IP addresses.",
+    "options": [
+      {
+        "content": "i, ii, iii and v only",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ii and iii only",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "ii, iii, iv and v only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i, ii and iii only",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "_____ protocol is used for uploading and downloading files between different computers.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "Answer: XMODEM\nExplanation: XMODEM is a file transfer protocol used for uploading and downloading files between computers, especially over serial links or modems. It sends data in fixed-size blocks and uses checksum or CRC to detect transmission errors.\n• Why XMODEM is correct: simple block-based file transfer with error detection suitable for sending files between systems.\n• Why the other choices are incorrect:\n• X.12 is an electronic data interchange (EDI) standard for business documents, not a file transfer protocol.\n• X.75 deals with interconnecting X.25 packet-switched networks and is unrelated to general file uploading/downloading.\n• XON refers to a software flow-control control character (used with XOFF) and is not a file transfer protocol.",
+    "options": [
+      {
+        "content": "X.12",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "XMODEM",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "X.75",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "XON",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "DHCP (Dynamic Host Configuration Protocol) is a _____.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "Correct answer: DHCP is a protocol that allows both manual IP address assignment and automatic assignment.\nWhat DHCP does: it automatically provides IP configuration (IP address, subnet mask, default gateway, DNS servers) to hosts and also supports manual/static assignment through reservations or manual configuration.\n• Automatic (dynamic) assignment: DHCP servers lease addresses to clients and manage lease times and renewals.\n• Manual/static assignment: administrators can assign fixed addresses or configure reservations on the DHCP server for specific hardware addresses.\n• Centralized management: DHCP centralizes network configuration so hosts can be configured automatically when they join the network.\nTypical DHCP message exchange (DORA):\n1. Discover: client broadcasts to find DHCP servers.\n2. Offer: server offers an IP address and configuration.\n3. Request: client requests the offered configuration.\n4. Acknowledge: server confirms and assigns the lease.\nIn summary, the statement that DHCP allows both manual and automatic IP assignment correctly captures DHCP's role in network configuration.",
+    "options": [
+      {
+        "content": "asking question and getting the reply",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "protocol in which the sender stops positive acknowledgement before advancing to the next data item",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "protocol allows a newly booted workstation to broadcast its Ethernet address",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "protocol allows both manual IP address assignment and automatic assignment",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which protocol is used for basic transmission of multimedia content?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "The Real-time Transport Protocol (RTP) is the standard protocol used for delivering audio and video over IP networks. It provides end-to-end network transport functions suitable for applications transmitting real-time data, such as audio, video, or simulation data.",
+    "options": [
+      {
+        "content": "Real-time transport protocol",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Real-system transport protocol",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Real-system transfer protocol",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Real-software transport protocol",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ is a set of rules that governs how two computer systems interact.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Application Layer",
+    "chapterSlug": "dsssb-cn-application-layer",
+    "difficulty": "easy",
+    "explanation": "A protocol is a set of rules that governs how two computer systems interact. It defines the format, order, and actions for communication between systems, ensuring reliable data exchange.\nहिन्दी उत्तर:\nप्रोटोकॉल एक ऐसा सेट है जो दो कंप्यूटर सिस्टम के बीच इंटरैक्शन को नियंत्रित करता है। यह संचार के लिए फॉर्मेट, क्रम और क्रियाओं को परिभाषित करता है, जिससे डेटा का विश्वसनीय आदान-प्रदान सुनिश्चित होता है।",
+    "options": [
+      {
+        "content": "Syntax",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Rules",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Protocol",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Grammar",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In computer networking, a Repeater is a device that operates only in the _____ layer.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "easy",
+    "explanation": "A repeater regenerates signals and works at the Physical layer of the OSI model.",
+    "options": [
+      {
+        "content": "Physical",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Network",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Data link",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Session",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Routing algorithms which do not base their routing decisions on measurements or estimates of the current traffic and topology belong to which category?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "easy",
+    "explanation": "ConceptRouting algorithms are classified by whether they react to live network conditions. A non-adaptive (static) routing algorithm fixes its routing decisions in advance and never changes them in response to the current traffic load or topology. An adaptive (dynamic) routing algorithm, by contrast, continuously measures or estimates the present network state and updates its routes accordingly.\nApplying it hereThe stem describes an algorithm that does NOT base its decisions on measurements or estimates of the current traffic and topology. By definition, an algorithm that ignores the live network state and uses precomputed, unchanging paths is a non-adaptive (static) routing algorithm.\n• Precomputed paths: routes are calculated offline and loaded into the routers when the network boots.\n• Static behaviour: because it does not sense current conditions, it cannot react to congestion or link failures in real time.\n• Simplicity: easy to implement and well suited to small or stable networks where traffic and topology rarely change.\nWhy the other categories do not fit• Adaptive (dynamic) routing is the exact opposite: it DOES use live traffic and topology measurements to update routes, so it cannot describe an algorithm that ignores them.\n• Greedy is a general algorithm-design strategy (make the locally optimal choice at each step); it is not the standard category used to classify routing algorithms by their use of network state.\n• Back propagation is a training method for neural networks, unrelated to how routers choose paths.",
+    "options": [
+      {
+        "content": "Adaptive algorithm",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Greedy algorithm",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Back propagation algorithm",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Non-adaptive algorithm",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following security services protects against repudiation?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "easy",
+    "explanation": "Repudiation refers to the act of a user denying that they performed a specific action (such as sending a message or authorizing a transaction). Non-repudiation ensures that there is undeniable proof of the origin and delivery of data.",
+    "options": [
+      {
+        "content": "Nonrepudiation",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Access control",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Authentication",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data integrity",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statement(s) is/are true regarding cryptography?\n Statements:\n I. Cipher text is encrypted text transformed from plain text using an encryption algorithm.\n II. According to Kerckhoff’s principle, all algorithms must be private and only the keys are secret.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "easy",
+    "explanation": "I. TRUE.\n• This is the fundamental definition of cryptography. Plaintext (readable data) is put through a mathematical function (the algorithm) using a specific Key to produce Ciphertext (unreadable/scrambled data).\nII. FALSE.\n• Kerckhoff’s principle actually states the exact opposite. Kerckhoff’s Principle (and later Shannon's Maxim) argues that a cryptosystem should be secure even if everything about the system, except for the key, is public knowledge.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "easy",
+    "explanation": "Hub → Physical\nSwitch → Data Link\nRouter → Network\nGateway → Application",
+    "options": [
+      {
+        "content": "a-iii, b-i, c-ii, d-iv",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "a-iv, b-i, c-ii, d-iii",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "a-ii, b-iii, c-iv, d-i",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a-i, b-iv, c-iii, d-ii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "easy",
+    "explanation": "a. Repeater  -> (iv)Works at Physical Layer\nb. Bridge  ->   (iii)Works at Data Link Layer\nc. Routers  ->  (i)   Works at Network Layer\nd. Gateway  ->  (ii)  Works at Transport Layer (in this context)",
+    "options": [
+      {
+        "content": "a-ii, b-i, c-iii, d-iv",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "a-iii, b-ii, c-i, d-iv",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a-iv, b-iii, c-i, d-ii",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "a-i, b-iii, c-iv, d-ii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following connector is used by Unshielded Twisted Pair (UTP)?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Hardware basics",
+    "chapterSlug": "dsssb-cn-hardware",
+    "difficulty": "medium",
+    "explanation": "Unshielded Twisted Pair (UTP) cables are commonly used for Ethernet networking. They terminate using RJ45 connectors, which provide the necessary interface for network devices.",
+    "options": [
+      {
+        "content": "RJ45",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "RJ55",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "RS45",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "RS55",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In Managed Ad-hoc Network (MANET), under which attack, malicious node injects fault routing information to the network, in order to locate packets into a loop?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Network Security & Cryptography",
+    "chapterSlug": "dsssb-cn-security-crypto",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option A – Byzantine Attack.\nExplanationIn a Mobile Ad-hoc Network (MANET), a Byzantine attack occurs when a malicious node injects false or misleading routing information into the network. This can cause:\n• Creation of routing loops, where packets circulate continuously without reaching their destination.\n• Routing packets through incorrect or inefficient paths.\n• Packet dropping or network disruption.\nSince the question specifically mentions injecting faulty routing information to force packets into a loop, it describes a Byzantine attack.\nWhy the other options are incorrect:• Wormhole Attack (B): Creates a tunnel between malicious nodes to replay packets and mislead routing decisions but does not primarily create routing loops through false routing information.\n• Snooping Attack (C): A passive attack used for monitoring or eavesdropping on network traffic.\n• DNS Attack (D): Targets domain name resolution and is not related to MANET routing loops.\nTherefore, the correct answer is Option A – Byzantine Attack.",
+    "options": [
+      {
+        "content": "Byzantine attack",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Worm Hole attack",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Snooping attack",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "DNS attack",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is not a Cipher mode in Cryptography?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Network Security & Cryptography",
+    "chapterSlug": "dsssb-cn-security-crypto",
+    "difficulty": "easy",
+    "explanation": "While \"Stream Cipher\" is a major category of encryption, it is not a specific Block Cipher Mode of Operation. The other three options — ECB, CFB and CBC — are standard modes (NIST SP 800-38A) that define how a block cipher such as AES or DES processes a sequence of data blocks. Hence Stream Cipher Mode is the one that is not a cipher mode of operation.",
+    "options": [
+      {
+        "content": "Electronic Code Book Mode",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Cipher Feedback Mode",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Stream Cipher Mode",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Cipher Block Chaining Mode",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The Data Encryption Standard (DES) was designed by __________. Options :",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Network Security & Cryptography",
+    "chapterSlug": "dsssb-cn-security-crypto",
+    "difficulty": "easy",
+    "explanation": "The Data Encryption Standard (DES) was designed by IBM. In the early 1970s, IBM developed a cipher called Lucifer based on their research into symmetric-key cryptography. This design was submitted to the National Bureau of Standards (now NIST) for consideration as a federal encryption standard. After modifications and review by the National Security Agency (NSA), IBM's Lucifer algorithm was adopted and renamed DES in 1976. It became the first publicly accessible encryption standard widely used for securing sensitive data.\\nMicrosoft, Google, and Intel were not involved in the original design of DES. Microsoft was founded later (1975) and focused on operating systems, while Google (founded 1998) and Intel (focused on hardware chips) did not exist or were not active in cryptography standards development at that time. Therefore, the correct choice is Option A (IBM).",
+    "options": [
+      {
+        "content": "IBM",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Microsoft",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Google",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Intel",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true?\n(i) In a secret-key encryption/decryption technique, the same key is used by both parties.\n(ii) In a secret-key encryption/decryption technique, the decryption algorithm is the inverse of the encryption algorithm.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "Network Security & Cryptography",
+    "chapterSlug": "dsssb-cn-security-crypto",
+    "difficulty": "medium",
+    "explanation": "In secret-key (symmetric-key) cryptography, the sender and receiver share the same secret key. The encryption algorithm transforms plaintext into ciphertext, and the decryption algorithm applies the inverse of that transformation, using the same key, to recover the original plaintext.\nSo statement (i) is true (one shared key for both parties) and statement (ii) is true (decryption inverts encryption). Both statements are therefore correct.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Systems in which multiple users share a common channel in a way that can lead to conflicts are widely known as ______.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "DLL: Error Control",
+    "chapterSlug": "dsssb-cn-error-control",
+    "difficulty": "easy",
+    "explanation": "Systems where multiple users share a channel and conflicts may occur are called Contention systems.",
+    "options": [
+      {
+        "content": "Carrier",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Communication network",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Contention",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Bus",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the Hamming distance between 1101 and 110, if 110 is left-padded as 0110?",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "DLL: Error Control",
+    "chapterSlug": "dsssb-cn-error-control",
+    "difficulty": "easy",
+    "explanation": "Hamming distance counts the bit positions where two binary strings of equal length differ. Write 110 as 0110. Comparing 1101 and 0110 gives differences in the 1st, 3rd and 4th positions, so the Hamming distance is 3.",
+    "options": [
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "3",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "0",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In the data link layer, _____ is based on automatic repeat request, which is the retransmission of data.",
+    "type": "single_choice",
+    "subject": "Computer Networks",
+    "subjectSlug": "computer-networks",
+    "topic": "DLL: Error Control",
+    "chapterSlug": "dsssb-cn-error-control",
+    "difficulty": "easy",
+    "explanation": "At the data link layer, error control is commonly based on ARQ, where frames are retransmitted when errors are detected.",
+    "options": [
+      {
+        "content": "Framing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Physical addressing",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Error control",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Flow control",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-networks",
+      "2024"
+    ],
+    "examYear": 2024
+  }
+]

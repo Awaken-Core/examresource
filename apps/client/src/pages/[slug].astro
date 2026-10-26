@@ -11,9 +11,11 @@ import { getRecentPosts, getCachedRecentPostsSync, type ListingPost } from '../l
 import { siteUrl, siteName, siteDomain } from '../data/site';
 import { buildLangVersion, processArticleHtml, type ArticleLangBundle } from '../lib/article-lang';
 import { blogLanguageToAppLang, resolveArticleLanguage } from '../lib/preferred-lang';
+import { ProfileHub } from '../components/profile/ProfileHub';
 
 const { slug: slugParam } = Astro.params;
 const slugKey = (slugParam || '').toLowerCase();
+const isProfile = slugKey === 'profile';
 
 // Automatic 301 redirect for legacy -english or -hinglish URLs to clean slug
 const cleanSlugMatch = slugKey.match(/^(.*?)-(english|hinglish)$/i);
@@ -33,7 +35,7 @@ const requestedLanguage = resolveArticleLanguage({
   cookieHeader: Astro.request.headers.get('cookie'),
 });
 
-let livePost: any = null;
+let livePost: any = isProfile ? { htmlContent: '', slug: '', title: '' } : null;
 let alternatePost: any = null;
 let redirectUrl: string | null = null;
 
@@ -72,7 +74,7 @@ if (redirectUrl) {
   return Astro.redirect(redirectUrl, 301);
 }
 
-if (!livePost) {
+if (!livePost && !isProfile) {
   return Astro.rewrite('/404');
 }
 
@@ -106,7 +108,12 @@ const wordCount = plainText ? plainText.split(' ').length : 0;
 const readMinutes = Math.max(1, Math.round(wordCount / 200));
 
 // Edge CDN caching: cache article HTML for 5 minutes, serve stale up to 15 minutes
-Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
+Astro.response.headers.set(
+  'Cache-Control',
+  isProfile
+    ? 'private, no-store'
+    : 'public, max-age=0, s-maxage=300, stale-while-revalidate=900',
+);
 
 function makePageTitle(metaTitle: string | undefined, title: string) {
   const base = metaTitle || title;
@@ -301,6 +308,13 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
 }
 ---
 
+{isProfile ? (
+  <Layout title={`My Preparation | ${siteName}`} noindex>
+    <main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <ProfileHub client:load />
+    </main>
+  </Layout>
+) : (
 <Layout
   title={pageTitle}
   description={pageDescription}
@@ -569,3 +583,4 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
     } catch (e) {}
   </script>
 </Layout>
+)}

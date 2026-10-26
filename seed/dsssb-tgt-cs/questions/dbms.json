@@ -1,0 +1,3762 @@
+[
+  {
+    "content": "Which of the following languages is referred to as a database language?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Structured Query Language : SQL is the standard language used to define, manipulate, and retrieve data from databases.",
+    "options": [
+      {
+        "content": "SQL",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "VJ++",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "HTML",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Python",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is used for single-line comment in SQL?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In SQL, the double dash '--' is used to create single-line comments within a query. Text following these symbols on the same line is ignored by the database engine.",
+    "options": [
+      {
+        "content": "&&",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "/* ...*/",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "--",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "##",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the full-form of SQL?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The full form of SQL is Structured Query Language.",
+    "options": [
+      {
+        "content": "Secure Query Language",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Structured Query Language",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Secure Query List",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Structured Query List",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Consider the following Oracle SQL query:\nSELECT * FROM Products\nWHERE Price BETWEEN 10 AND 20;\nWhich of the following is the correct interpretation of this query?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The BETWEEN operator in Oracle SQL (and standard SQL) is always inclusive. This means it includes both the start value and the end value in the results.\n• Boundary Values: If a product costs exactly 10 or exactly 20, it will be included in your results.\n• Order of Values: Always remember that the smaller number must come first. Writing BETWEEN 20 AND 10 would return zero rows because SQL evaluates it strictly from low to high.",
+    "options": [
+      {
+        "content": "Select all products whose price is greater than 10 but less than 20",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Select all products whose price is greater than or equal to 10 but less than 20",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Select all products whose price is greater than 10 but less than or equal to 20",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Select all products whose price is greater than or equal to 10 but less than or equal to 20",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following command is used with SQL SELECT statement in Oracle to return only distinct (different) values?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In Oracle SQL, the DISTINCT keyword is used with SELECT to return only unique rows. UNIQUE is not a valid clause for this purpose in standard SELECT statements.",
+    "options": [
+      {
+        "content": "UNIQUE",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "DIFFERENT",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "DISTINCT",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "SINGLE",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is an optional statement in an SQL query?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "A basic SQL query commonly has the form SELECT columns FROM table WHERE condition. The WHERE clause is optional because it is needed only when we want to filter rows. Without WHERE, the query can still return rows from the table. Therefore, option C is correct.",
+    "options": [
+      {
+        "content": "SELECT",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "FROM",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "WHERE",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Both SELECT and FROM",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following symbol is used with SELECT command of SQL, to retrieve all the attribute values of the selected tuples?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In SQL, SELECT * retrieves all attributes or columns from the selected tuples.",
+    "options": [
+      {
+        "content": "#",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "%",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "*",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": ":",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding Structured Query Language (SQL)?\n I. The datatype FLOAT can hold numbers with decimal points.\n II. The datatype BIGINT occupies 16 bytes.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The datatype FLOAT can hold numbers with decimal points. TRUE",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a Comparison operator in Structured Query Language?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In SQL, comparison operators are used to compare two values and return a boolean result (true or false). The operator '>=' checks if the left value is greater than or equal to the right value. It is a valid comparison operator because it evaluates a condition and returns a logical outcome.\n On the other hand, operators like '+' (addition), '*' (multiplication), and '/' (division) are arithmetic operators. They perform mathematical operations and do not evaluate conditions. Therefore, they are not comparison operators.",
+    "options": [
+      {
+        "content": "+",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "*",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "/",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": ">=",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is NOT a Structured Query Language Data type?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Structured Query Language (SQL) defines specific data types for storing different kinds of information in database tables.\nREAL is a numeric data type used for floating-point numbers. INTERVAL represents a period of time between dates. TIMESTAMP stores both date and time information together.\nBASE is not a standard SQL data type. It is often associated with number systems but does not define column types in SQL queries.",
+    "options": [
+      {
+        "content": "REAL",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "INTERVAL",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "TIME STAMP",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "BASE",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following Oracle SQL statements can be used to select the name of customers who have no address?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In Oracle SQL, standard equality operators do not work with NULL values because comparisons return unknown. You must use the IS NULL operator in your WHERE clause to correctly identify customers who have no address recorded.",
+    "options": [
+      {
+        "content": "SELECT Name",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "SELECT Name",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "SELECT Name",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "SELECT Name",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following operator is used as concatenation operator in SQL?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In standard SQL, the double vertical bar operator || is used for string concatenation.",
+    "options": [
+      {
+        "content": "++",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "\" \"",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "##",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "||",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following operator of SQL is used in WHERE clause for match a character pattern in database?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In SQL, the LIKE operator is used in the WHERE clause to match character patterns.",
+    "options": [
+      {
+        "content": "LIKE",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "IN",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "IS NULL",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "OR",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is NOT a part of Data Definitions Language in Relational Database Management System?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Insert table",
+    "options": [
+      {
+        "content": "Create table",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Insert table",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Alter table",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Drop table",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement is a part of Data Manipulative Language in Structured Query Language?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Insert, Update and Delete command falls under DML",
+    "options": [
+      {
+        "content": "Delete",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Alter table",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Copy",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Paste",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following operators with their definition in data definition language.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In Data Definition Language (DDL) notation, different symbols are used to represent the structure and occurrence of data elements.\n• { } represents iterative/repetitive data, meaning the element can occur multiple times.\n• ( ) represents optional data, meaning the element may or may not be present.\n• [ , ] represents selection, meaning one choice is selected from the given alternatives.\nTherefore, the correct matching is:\n• 1 → iii\n• 2 → i\n• 3 → ii\nHence, the correct answer is: 1-iii, 2-i, 3-ii",
+    "options": [
+      {
+        "content": "1-iii, 2-i, 3-ii",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1-i, 2-ii, 3-iii",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1-ii, 2-iii, 3-i",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1-iii, 2-ii, 3-i",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following:\nList-1\nList-2\nI) DELETE\nP) Data definition language\nII) DROP\nQ) Data manipulation language\nIII) SAVEPOINT\nR) Data control language\nIV) GRANT\nS) Transaction control language",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Classify each command by function. DELETE manipulates data (DML), DROP defines objects (DDL), SAVEPOINT controls transactions (TCL), and GRANT manages permissions (DCL). Thus, the correct sequence matches I-Q, II-P, III-S, IV-R.",
+    "options": [
+      {
+        "content": "I-Q, II-P, III-R, IV-S",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I-P, II-Q, III-R, IV-S",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I-Q, II-P, III-S, IV-R",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "I-P, II-Q, III-S, IV-R",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The SQL ALTER TABLE statement is used to:",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The SQL ALTER TABLE command is used to modify the structure of an existing database table. It allows users to add, delete, or modify columns within that specific table schema without affecting the data itself. Other commands like DROP TABLE remove the entire table, while INSERT and UPDATE handle data manipulation rather than structural changes.",
+    "options": [
+      {
+        "content": "Add, delete, or modify columns in an existing table",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Drop an existing table in a database",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Insert or modify records in a table",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Delete existing records in a table",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The DELETE SQL command can be used to delete ______ tuple(s) from the tables of the database.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The SQL DELETE command removes rows, or tuples, from a table. If the WHERE clause matches one row, it deletes one tuple; if it matches many rows, it deletes multiple tuples. Without a WHERE clause, it can delete all tuples in the table. Therefore, option B is correct.",
+    "options": [
+      {
+        "content": "only one",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "single or multiple",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "at least two",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "at the most five",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In SQL, which of the following is correct command for schema evolution, if the RESTRICT option is chosen than the schema is dropped only if schema has no element in it?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "With the RESTRICT option, the SQL DROP command drops a schema only when it has no dependent elements. Therefore the command is DROP.",
+    "options": [
+      {
+        "content": "DELETE",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "UPDATE",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ALTER",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "DROP",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following keyword is used in Oracle SQL to sort the result-set in ascending or descending order?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The correct keyword is ORDER BY. This clause sorts the result-set in ascending or descending order based on specified columns.",
+    "options": [
+      {
+        "content": "MANGE",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "SORT",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ARRANGE",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "ORDER BY",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following Oracle SQL statements is not correct?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "medium",
+    "explanation": "Option C is incorrect because Oracle SQL requires column names to precede ASC or DESC keywords in the ORDER BY clause. In option C, the keyword DESC appears before the column identifier CustomerName without a preceding column name.",
+    "options": [
+      {
+        "content": "SELECT * FROM Customers",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "SELECT * FROM Customers",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "SELECT * FROM Customers",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "SELECT * FROM Customers",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding COUNT functions in Structured Query Language of Relational Database Management System?\n I. COUNT(* ) is used to count the number of values in a column.\n II. COUNT() is used to count the number of rows of the query result.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Statement Analysis:\nI. COUNT(*) is used to count the number of values in a column.\nIncorrect\nCOUNT(*) counts the total number of rows in the query result, including rows containing NULL values.\nCorrect example:\nSELECT COUNT(*) FROM STUDENT;\nII. COUNT() is used to count the number of rows of the query result.\nIncorrect\nCOUNT() without any argument is invalid in SQL.\nCorrect formats:\nCOUNT(*)\nCOUNT(column_name)\nExample:\nSELECT COUNT(MARKS) FROM STUDENT;\nTherefore, both statements are incorrect.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding single row functions in Structured Query Language?\n Statements:\n I. INSERT() is a numeric function.\n II. ROUND() is a numeric function.\n III. LENGTH() is a character function.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Both II and III",
+    "options": [
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Both II and III",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Only III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both I and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Identify the SQL wildcard character in Oracle which represents zero, one, or multiple characters? Options:",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In Oracle SQL, the percent sign (%) acts as a wildcard for zero, one, or multiple characters. The underscore (_) matches exactly one character instead.",
+    "options": [
+      {
+        "content": "Percent (%)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Underscore (_)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Question mark (?)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Asterisk (*)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following data function in SQL returns the current database system timestamp as a ‘date time’ value without the database time zone offset?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In SQL Server, `GETDATE()` returns the current database system timestamp as a datetime value without a time-zone offset.",
+    "options": [
+      {
+        "content": "GETTIME",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "GETDATE",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "CASTDATE",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "CASTTIME",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following statement is correct for DATEDIFF function in SQL?\nI. This function reports difference between the arguments ‘startdate’ and ‘enddate’.\nII. In this, ‘datepart’ argument/value can be specified in a variable.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The SQL `DATEDIFF` function returns the difference between `startdate` and `enddate` for a specified date part. In SQL Server, the `datepart` argument is a keyword, not a variable value. Therefore only statement I is correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following maths function in SQL returns the smallest integer greater than, or equal to, the specified numeric expression?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "The SQL CEILING function returns the smallest integer greater than or equal to the given numeric expression.",
+    "options": [
+      {
+        "content": "ROUND",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "CEILING",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "ABS",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "FLOOR",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is NOT an aggregate function in SQL?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "COUNT, SUM, and MAXIMUM/MAX are aggregate-style functions. CROSS PRODUCT is a relational operation, not an aggregate function.",
+    "options": [
+      {
+        "content": "CROSS PRODUCT",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "MAXIMUM",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "COUNT",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "SUM",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is an Aggregate operator in Structured Query Language (SQL)?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Count, Min, Max, Avg, Sum all are aggregate functions in SQL",
+    "options": [
+      {
+        "content": "Minus",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Intersect",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Union",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Count",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If X1, X2, X3, ..., XN are the domains in a relational database model, then the relation (table) is a subset of which of the following?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "medium",
+    "explanation": "In relational database theory, a relation is formally defined as a subset of the Cartesian product of its attribute domains. Since X1 through XN represent these domains, the relation is a subset of their Cartesian product (X1 × X2 × ... × XN).",
+    "options": [
+      {
+        "content": "X1 × X2 × X3 × ... × XN",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "X1 + X2 + X3 + ... + XN",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "X1 U X2 U X3 U ... U XN",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "X1 ∩ X2 ∩ X3 ∩ ... ∩ XN",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is join operation in Structure Query Language (SQL)?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "Join is an operation used to combine rows from two or more tables based on one or more common fields between them",
+    "options": [
+      {
+        "content": "Join is an operation used to select group rows of a table that contains the same values in a specific column.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Join is an operation which is used to combine two different data keys.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Join is an operation used to combine rows from two or more tables based on one or more common fields between them.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Join is an operation which works on a single row of a table and return a single value.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is self join in Database Management System?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "In a self join, a table is joined to itself",
+    "options": [
+      {
+        "content": "In a self join, a table is joined to a number",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "In a self join, a table is joined to itself",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "In a self join, a table is joined with a query",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "In a self join, two databases are joined /",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following represents the \"inner\" join operation?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "An inner join returns only rows that have matching values in both tables. This operation corresponds to the intersection of the two sets in a Venn diagram, highlighting only the overlapping region.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following category of join returns all records when there is a match in either left or right table?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "medium",
+    "explanation": "A Full Outer Join returns all records when there is a match in either the left or right table. It combines both Left and Right Outer Joins, ensuring all rows from both tables are included regardless of matches.",
+    "options": [
+      {
+        "content": "Inner join",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Left outer join",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Right outer join",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Full outer join",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In Structured Query Language, what is the GROUP BY clause?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "SQL",
+    "chapterSlug": "dsssb-dbms-sql",
+    "difficulty": "easy",
+    "explanation": "It groups the rows together that contain the same values in a specific column",
+    "options": [
+      {
+        "content": "It groups the table with same name in the database.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It groups the rows together that contain the same values in a specific column.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "It combines data from two tables on specific conditions.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It groups the columns together that contain the same values in specific rows.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is NOT an element of Database?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "Frontend is not an element of DB",
+    "options": [
+      {
+        "content": "Schema",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Relationships",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Constraints",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Frontend",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ is known as the acquisition, storage, organization, retrieval, display and dissemination of information.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option B: Information processing. This term specifically defines the comprehensive lifecycle of handling information, which includes acquiring raw data, storing it for future use, organizing it into a structured format, retrieving it when needed, displaying results to users, and disseminating the final information to relevant parties. This sequence of operations transforms raw inputs into meaningful outputs, which is the core function of information processing systems. While Data management (Option A) involves policies and governance regarding data, it does not explicitly cover the operational steps of retrieval and display. Similarly, Data structure (Option C) refers to how data is arranged in memory rather than the process of handling it, and Programming management (Option D) focuses on software development oversight. Therefore, the description provided in the question aligns perfectly with the standard definition of Information processing.",
+    "options": [
+      {
+        "content": "Data management",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Information processing",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Data structure",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Programming management",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is NOT an approach of database design in database management system?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "Correct Answer: D) Up-down approach\nExplanation of Each Option:\nA) Top-down approach\n- This is a valid database design approach.\n- In this method, design starts from the overall system view and gradually breaks it into smaller entities, attributes, and relationships.\n- Hence, this option is incorrect.\nB) Bottom-up approach\n- This is also a valid database design approach.\n- In this method, small data components and attributes are identified first and then combined to form higher-level entities and relationships.\n- Hence, this option is incorrect.\nC) Inside-out approach\n- This is a recognized database design approach.\n- In this method, design starts from the core important entities and then expands outward by adding related entities and relationships.\n- Hence, this option is incorrect.\nD) Up-down approach\n- “Up-down approach” is not a standard or recognized database design approach in DBMS.\n- Therefore, this is the correct answer.\nThe main approaches of database design in DBMS are:\n1. Top-Down Approach\n2. Bottom-Up Approach\n3. Inside-Out Approach\n4. Mixed Approach\nSo, the option which is NOT an approach of database design will be the one other than these standard approaches.",
+    "options": [
+      {
+        "content": "Top-down approach",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Bottom-up approach",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Inside-out approach",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Up-down approach",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the full form of DDLC in database?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "Database Development Life Cycle",
+    "options": [
+      {
+        "content": "Distributed Database Log Clearing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Distributed Database Life Cycle",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Database Development Life Cycle",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Deductive Database Life Cycle",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_________ is used for management, maintenance and retrieval of the data stored in the database.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Database Management System (DBMS). A DBMS is software specifically designed to manage, maintain, and retrieve data stored in a database. It acts as an interface between the end-user or application and the database.",
+    "options": [
+      {
+        "content": "Operating System",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Database Management System",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "System Software",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Processing Software",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the full form of DASD in database management system?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "DASD stands for Direct Access Storage Device. In the context of database management systems and computing, this term refers to storage devices that allow data to be retrieved directly from any location on the device without sequential access, such as hard disk drives.",
+    "options": [
+      {
+        "content": "Direct Access Storage Device",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Dynamic Access Storage Device",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Digital Access Storage Device",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Disk Access Storage Device",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The values of the attributes in a database describe a particular __________.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "Explanation:• Entity: An entity represents a real-world object, concept, or event about which data is stored (e.g., a Student, a Course, an Order). Attributes are properties of an entity. The values of the attributes for a specific instance of an entity are exactly what describes that particular entity instance.\n• Tuple: A tuple is a single row in a database table. It represents a specific instance of an entity type and contains the values for all attributes of that instance. While a tuple contains the values, the values themselves describe the entity instance represented by the tuple. The question asks what the values describe.\n• Field: A field (or column) represents a single attribute across all rows. It defines the type of characteristic being stored (e.g., the 'Name' field stores names). It doesn't describe a particular entity instance; it describes one characteristic shared by all instances in that column.\n• View: A view is a virtual table based on the result-set of an SQL query. It does not represent a single real-world object described by attribute values in the same way a base table row does.\nBased on these definitions, the values of the attributes for a specific record collectively describe a particular instance of an Entity.",
+    "options": [
+      {
+        "content": "Entity",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Tuple",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Field",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "View",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "With respect to data warehouse, OLAP stands for:",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "OLAP stands for Online Analytical Processing. It is a category of software that enables users to analyze information from multiple database systems at the same time. This technology is essential for data warehousing as it supports complex queries and multidimensional analysis.",
+    "options": [
+      {
+        "content": "Overlapping Analytical Processing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Online Analytical Processing",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Online Augmented Processing",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Offline Analytical Processing",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which one of the following operations CANNOT be done on a database?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "medium",
+    "explanation": "Standard relational database operations include sorting, ordering, and grouping via SQL commands. However, iteration is typically an application-level process used to traverse result sets rather than a native database operation itself.",
+    "options": [
+      {
+        "content": "Sorting",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Ordering",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Grouping",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Iteration",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following focuses on actual storage and organisation of data on disk blocks?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "medium",
+    "explanation": "The physical schema defines how data is actually stored on the storage medium, including disk blocks and indexing structures. Unlike conceptual schemas which focus on logical relationships, or external schemas for user views, the physical layer manages implementation details.",
+    "options": [
+      {
+        "content": "External schema",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Conceptual schema",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Physical schema",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Both external and conceptual schema",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following database management systems is developed by Microsoft?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "• Oracle — developed by Oracle Corporation\n• SQL Server — developed by Microsoft\n• MySQL — originally by MySQL AB (now Oracle)\n• PostgreSQL — open-source community project",
+    "options": [
+      {
+        "content": "Oracle",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "SQL Server",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "MySQL",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "PostgreSQL",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is Not a database model?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "Inheritance model",
+    "options": [
+      {
+        "content": "Network",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Relational",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Object-oriented",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Inheritance model",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is oldest database model?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "The Hierarchical Model (Oldest)\nThe Hierarchical Database Model was developed in the 1960s. The most famous example is IBM’s IMS (Information Management System), which was used in the Apollo space program.\n• Structure: It organizes data in a tree-like structure (parent-child relationship).",
+    "options": [
+      {
+        "content": "Deductive",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Relational",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Object-Oriented",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Hierarchical",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding On-Line Transaction Processing (OLTP)?\n I. Responses to the user inquiry are immediate.\n II. The associated cost is economical with efficient utilization of resources.\n III. The database is always up-to-date.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "On-Line Transaction Processing (OLTP) systems prioritize immediate response times for user inquiries, making Statement I correct. They also ensure the database is always up-to-date with real-time data accuracy, validating Statement III. However, OLTP systems often require significant infrastructure investment for high availability and performance, making the claim in Statement II regarding economical cost ambiguous or less accurate.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Only III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not a valid category of database management system?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "medium",
+    "explanation": "Hierarchical, Object-Oriented, and Relational are established DBMS models. Sequential access refers to file organization methods rather than database management system architectures, making it the invalid category in this context.",
+    "options": [
+      {
+        "content": "Hierarchical",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Sequential",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Object-Oriented",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Relational",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding Data Dictionary in Database Management System?\n Statements:\n I. Data Dictionary is a collection of definitions, rules and advisories of data designed to be used as a reference with the data warehouse.\n II. Data Dictionary is the area of memory allocated for data storage.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "ConceptA data dictionary (also called a system catalog) is a centralized store of metadata — \"data about data.\" It records the definitions, structures, rules, constraints and relationships of the data objects in a database or data warehouse (tables, columns, data types, keys, views, owners, etc.). It does not hold the actual user records; it describes them so the DBMS and users can interpret the stored data.\nApplying it to each statement1. Statement I says a data dictionary is a collection of definitions, rules and advisories of data used as a reference with the data warehouse. This matches the definition of metadata exactly — a dictionary is precisely such a reference catalog. So Statement I is correct.\n2. Statement II says a data dictionary is the area of memory allocated for data storage. That describes a data buffer, tablespace or storage segment — not a dictionary. A dictionary stores descriptions of data, not the data itself, so it is not a memory-allocation area. So Statement II is incorrect.\nConclusionOnly Statement I is correct; Statement II is false. The distinction to remember: a data dictionary holds metadata (descriptions), whereas memory/tablespace allocation is where the actual data values physically reside.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a component of Management Information System (MIS)?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Basics of DBMS",
+    "chapterSlug": "dsssb-dbms-basics",
+    "difficulty": "easy",
+    "explanation": "A Management Information System relies on data resources to function effectively. An external database serves as a fundamental structural element for storing and retrieving necessary information within the system framework.",
+    "options": [
+      {
+        "content": "External database",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Knowledge engine",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Data entry",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Inquiry processing",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many entities are associated in the quaternary relationship in E–R modelling?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "Four entities",
+    "options": [
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "4",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a symbol of multivalued attribute in Entity Relationship diagram?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the building blocks in Entity Relationship Diagram.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "Entity Relationship Diagram - It is a diagram that displays the relationship of entity sets stored in a database. In other words, ER diagrams help to explain the logical structure of databases. ER diagrams are created based on three basic concepts: entities, attributes and relationships.\nRelationship - It is nothing but an association among two or more entities. Entities take part in relationships. We can often identify relationships with verbs or verb phrases. It is represented by a Diamond.\nAttributes - It is a single-valued property of either an entity-type or a relationship-type. It is represented by an Oval.\nOptional One - It represents a relationship between two entities that is NOT mandatory to exist. It is represented by a line intersected with a vertical line and an oval at one end.\nMandatory One - It represents a relationship between two entities that is mandatory to exist. It is represented by a line intersected by two small vertical lines at one end.",
+    "options": [
+      {
+        "content": "i-b, ii-c, iii-a, iv-d",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i-b, ii-c, iii-d, iv-a",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i-c, ii-b, iii-d, iv-a",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-b, ii-a, iii-d, iv-c",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following with respect to ER diagram:\nList-1\nList-2\nI) Boxes\nR) Entities\nII) Ovals\nP) Attributes\nIII) Diamonds\nQ) Relationships",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "In Entity-Relationship diagrams, rectangular boxes represent entities, ovals denote attributes, and diamonds indicate relationships. Therefore, the correct mapping aligns Boxes with Entities, Ovals with Attributes, and Diamonds with Relationships. This standard notation helps visualize database structures clearly.",
+    "options": [
+      {
+        "content": "I-Q, II-P, III-R",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I-P, II-R, III-Q",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I-R, II-Q, III-P",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I-R, II-P, III-Q",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "How many attributes in the following ER diagram are both multi-valued as well as composite?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "An attribute is composite if it has sub-attributes and multi-valued if it has a double oval. In this diagram, 'Name' is composite but single-valued. 'Address' is multi-valued but not composite. Only 'Works_on' has both a double oval and sub-attributes (Project, Hours). Therefore, exactly one attribute is both multi-valued and composite.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is a composite attribute?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "A composite attribute can be divided into smaller sub-parts that have independent meaning. Date-of-birth is composite because it consists of day, month, and year components. In contrast, atomic attributes like age, grade, or city cannot be meaningfully subdivided further in this context.",
+    "options": [
+      {
+        "content": "Date-of-birth",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Age",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Grade",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "City",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is used to represent a derived attribute?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "In Entity-Relationship (ER) diagrams, attributes are depicted using ovals connected to entities. Derived attributes, which are calculated from other data rather than stored directly, are specifically represented using dashed-line ovals to distinguish them from regular attributes.",
+    "options": [
+      {
+        "content": "Solid-line oval",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Dashed-line oval",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Double-lined rectangle",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Double-lined diamond",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In the DBMS ER model, which term denotes a collection of similar entities that share the same attributes?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "Correct answer: Entity set\n• An entity set is the collection of entities of the same type that share the same properties or attributes.\n• An entity type describes the common structure or category, but the term for the actual collection asked in the question is entity set.",
+    "options": [
+      {
+        "content": "Entity type",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Value set",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Entity set",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Value type",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following term of ER model (Entity – Relationship) is corresponding to the foreign key (or relationship relation) in the relational model of database?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "Foreign keys are typically used to represent 1:1 or 1:N relationship types in the relational model. M:N relationships usually need a separate relationship relation.",
+    "options": [
+      {
+        "content": "Composite attribute",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Entity type",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1 : 1 (one to one) or 1 : N (one to many) relationship type",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "M : N (many to many) relationship type",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following symbol represents one-to-one cardinality relationship in Entity Relationship Diagram?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "In an Entity Relationship Diagram (ERD), cardinality defines the number of instances of one entity that can be associated with the instances of another entity. For a one-to-one relationship, each instance of Entity A is associated with exactly one instance of Entity B, and vice versa.\n The standard notations for cardinality are:\n Single line on both ends: Represents 'exactly one' on each side, indicating a one-to-one relationship.\n Circle and single line: Represents 'zero or one' on that side.\n Crow's foot with single line: Represents 'one or many' on that side.\n Crow's foot on both ends: Represents 'many' on both sides, indicating a many-to-many relationship.\n Therefore, the symbol with a single line on both ends correctly represents a one-to-one cardinality relationship.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "State whether True or False?\n(i) In a database, low cardinality means more unique values are stored in a column and vice-versa.\n(ii) If a standalone column of a table is connected to the primary key of the same table, then it is called a recursive relationship.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "medium",
+    "explanation": "Statement (i) is False because low cardinality indicates fewer unique values in a column, not more. Statement (ii) is True as a foreign key referencing the primary key of the same table defines a recursive relationship. Thus, the correct option identifies (i) False and (ii) True.",
+    "options": [
+      {
+        "content": "(i) - True, (ii) - True",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(i) - True, (ii) - False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) - False, (ii) - True",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "(i) - False, (ii) - False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following notation of ERD (Entity-Relationship Diagram) shows the 'Weak Entity'?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "In standard Chen's notation for Entity-Relationship Diagrams (ERDs), a weak entity is an entity that cannot be uniquely identified by its own attributes alone and relies on a relationship with a parent (identifying) entity.\nTo visually distinguish it from a strong entity, it is represented inside a double rectangle. Its identifying relationship is similarly enclosed within a double diamond.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is a type of connection trap in Entity Relationship Model?\n I. Fan traps\n II. Chasm traps",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "Both I and II",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ are some problems that may arise while creating the Entity Relationship model.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "ER Diagram",
+    "chapterSlug": "dsssb-dbms-er-diagram",
+    "difficulty": "easy",
+    "explanation": "Connection traps",
+    "options": [
+      {
+        "content": "Connection traps",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Transition traps",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Groups traps",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data traps",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ describes the process of deciding about putting data to different sites in distributed database system.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "easy",
+    "explanation": "The process of deciding where to place data across different sites in a distributed database system is known as data allocation. This involves analyzing data access patterns, network latency, and storage requirements to optimize performance and availability.\n Data sharing refers to the ability of multiple users or systems to access the same data, not the decision of where to store it.\n Data storing is the act of saving data in a storage system, which is a general operation and not specific to distributed systems.\n Data mining involves extracting patterns and knowledge from large datasets, which is unrelated to data placement decisions.",
+    "options": [
+      {
+        "content": "Data sharing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Data allocation",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Data storing",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data mining",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ is a technique of breaking up database into logical units, which may be assigned for storage at the various sites in distributed database.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "easy",
+    "explanation": "Step 1: Understand the question — it asks for a technique that breaks a database into logical units for storage at different sites in a distributed system.\n Step 2: Evaluate each option:\n Option A: Data normalization — This is a process to reduce data redundancy by organizing tables. It does not involve splitting data across sites.\n Option B: Data mining — This involves extracting patterns from large datasets. It is not related to database partitioning or storage distribution.\n Option C: Data binding — This connects data sources to user interface components in software. It is not a database storage technique.\n Option D: Data fragmentation — This divides a database into smaller logical parts (fragments) that can be stored at different locations in a distributed system.\n Step 3: Based on the definitions, data fragmentation is the correct technique for splitting a database for distributed storage.",
+    "options": [
+      {
+        "content": "Data normalization",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Data mining",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Data binding",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data fragmentation",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement is/are correct regarding sequential file organization?\nI. Entire file must be read for new record insertion and record deletion.\nII. On an average, half of the records in the file must be processed to find the location of a record.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "medium",
+    "explanation": "In sequential file organization, records are stored linearly based on a specific order. Statement I is correct because inserting or deleting a record requires maintaining this sequence, often necessitating processing the file to shift records. Statement II is also valid because accessing a specific record involves a sequential search from the beginning, which on average requires processing half of the records in the file.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "When data is frequently added to or deleted from a file, the volatility of the file is __________.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "easy",
+    "explanation": "When data is frequently added to or deleted from a file, the contents change rapidly. In digital forensics and data management, volatility refers to how quickly information changes state or becomes inaccessible. Therefore, frequent modifications result in high volatility.",
+    "options": [
+      {
+        "content": "low",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "moderate",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "high",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "zero",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A _____ index is an ordered file whose records are of fixed length with two fields primary key and a pointer to a disk block.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "easy",
+    "explanation": "A primary index is an ordered index file whose entries contain the primary key and a pointer to the corresponding disk block.",
+    "options": [
+      {
+        "content": "Secondary",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Multilevel",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Primary",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Clustering",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "What is the full form of ISAM in file organisation?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "easy",
+    "explanation": "ISAM stands for Indexed Sequential Access Method.\nIt is a file-organisation technique that combines two ideas: (1) the data records are stored sequentially, sorted on a key field, and (2) a separate index is built on that key. The sequential ordering supports efficient sequential (range) scans, while the index allows fast, near-direct access to a particular record without scanning the whole file.\nSo decoding the acronym: I = Indexed (an index is maintained), S = Sequential (records are kept in sorted/sequential order), AM = Access Method. The other options replace \"Indexed\" with \"Indirect\"/\"Index\" or \"Sequential\" with \"Serial,\" which do not match the standard term.",
+    "options": [
+      {
+        "content": "Indirect Sequential Access Method",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Indexed Sequential Access Method",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Indirect Serial Access Method",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Index Serial Access Method",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Primary index in sequential order file organisation is also known as ______.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "medium",
+    "explanation": "In sequential (ordered) file organisation, the records are physically stored in sorted order of the ordering key field.\nA primary index is built on this ordering key field. Since the records are already ordered by the key, the index keeps only one entry per data block, storing the key value of the first record of each block (the block anchor) together with a pointer to that block.\nBecause it has fewer entries than the number of records (one per block, not one per record), a primary index is a non-dense, i.e. sparse, index. This is why a primary index in sequential order file organisation is also known as a sparse index.\nReference: Elmasri & Navathe, Fundamentals of Database Systems — a primary index is a nondense (sparse) index.",
+    "options": [
+      {
+        "content": "dense index",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "clustering index",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "non-clustering index",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "sparse index",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement is false about a B-tree of order M?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "File Organization & Indexing",
+    "chapterSlug": "dsssb-dbms-file-org",
+    "difficulty": "easy",
+    "explanation": "In a B-tree of order M, the root is a special case: it is either a leaf node, or if it is not a leaf, it has at least two children and at most M children.\nInternal nodes except the root have at least ceil(M/2) children, and a full node can contain M - 1 keys.\nThe false statement is: \"Leaf nodes are not at the same level.\"\nThis is false because all leaf nodes in a B-tree must be at the same level. This property keeps the B-tree height-balanced.",
+    "options": [
+      {
+        "content": "The root is either a leaf node or has at least two child nodes and at most M child nodes.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "The internal nodes except the root have at least ⌈M/2⌉ child nodes.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Leaf nodes are not at the same level.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "A node is full if it has (M − 1) keys.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is FALSE?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "medium",
+    "explanation": "Option D is false because superkeys do not require minimality. Only candidate keys are defined as minimal superkeys without redundant attributes.",
+    "options": [
+      {
+        "content": "A relation (table) may have multiple secondary keys",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "The value of primary key can't be null",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Secondary key is also a candidate key",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Super key satisfies the \"minimality\" condition",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "If AB and C are the candidate keys in a relation schema R(A,B,C,D), then what are the prime attributes?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "easy",
+    "explanation": "Prime attributes are defined as any attribute that is part of at least one candidate key. Since the candidate keys are AB and C, the attributes A, B, and C constitute the set of prime attributes.",
+    "options": [
+      {
+        "content": "A, B, and C only",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "A and B only",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A and C only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "B and C only",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "An attribute which is a part of any candidate key is known as ______ attribute.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "easy",
+    "explanation": "An attribute that is part of any candidate key is known as a prime attribute. Candidate keys are minimal sets of attributes that uniquely identify records in a relation.",
+    "options": [
+      {
+        "content": "non-prime",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "prime",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "atomic",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "single-valued",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following defines entity integrity constraint?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "easy",
+    "explanation": "Entity integrity ensures that every row in a table is uniquely identifiable. This constraint mandates that the primary key column cannot contain null values, as nulls would prevent unique identification of records.",
+    "options": [
+      {
+        "content": "The value of primary key cannot be null.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "The value of foreign key cannot be null.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The value of prime attribute cannot be null.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The value of non-prime attribute cannot be null.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Consider the relation schema R(A, B, C, D) and a set of functional dependencies F = {A → BC, C → A, B → CD}. Which of the following can be a candidate key of R?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "medium",
+    "explanation": "1. Find the Closure of A (A^+):\n• A^+ = {A}\n• Apply A -> BC {A, B, C}\nApply B  -> CD {A, B, C, D}\n1. Check for Candidate Key Properties:\n• Since A^+ contains all attributes of the relation, A is a Superkey.\n• Since A is a single attribute, it is automatically minimal (cannot be reduced further).\nTherefore, A is a valid Candidate Key.\nOptions like AB, ABC, and BCD are superkeys but fail the minimality criteria because their smaller subsets can already derive the entire relation.",
+    "options": [
+      {
+        "content": "AB",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "ABC",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "BCD",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is TRUE?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "medium",
+    "explanation": "A table can have multiple foreign keys referencing different tables, making Option A true. The primary key is a specific candidate key chosen from minimal unique sets.",
+    "options": [
+      {
+        "content": "A relation (table) may have more than one foreign keys",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Primary key is not a candidate key",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Every candidate key is a primary key",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Candidate key is maximal set of attributes whose values are unique",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In relational databases, which of the following integrity constraint is specified between two relations and is used to maintain the consistency among tuples in the two relations?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Keys & Integrity Constraints",
+    "chapterSlug": "dsssb-dbms-keys-constraints",
+    "difficulty": "easy",
+    "explanation": "A referential integrity constraint connects two relations and keeps tuples consistent through foreign-key references.",
+    "options": [
+      {
+        "content": "Entity integrity constraint",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Semantic integrity constraint",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Functional integrity constraint",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Referential integrity constraint",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "What is Denormalization in Relational Database Management System?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Normalization (1NF - BCNF)",
+    "chapterSlug": "dsssb-dbms-normalization",
+    "difficulty": "easy",
+    "explanation": "Denormalization is the process of increasing redundancy to improve performance.",
+    "options": [
+      {
+        "content": "Denormalization is the process of increasing redundancy to improve performance.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Denormalization is used to decrease redundancy in database.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Denormalization is used to decrease the dependence on normal forms.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Denormalization is used to develop a new schema in database.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Relation schema: R(A, B, C, D, E, F, G, H)\nFunctional dependencies: F = {AB → C, C → A, B → CFH, E → A, F → EG}\nHow many candidate keys does relation R have?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Normalization (1NF - BCNF)",
+    "chapterSlug": "dsssb-dbms-normalization",
+    "difficulty": "medium",
+    "explanation": "Key observation: Any attribute that never appears on the RHS of any dependency must be present in every candidate key. The RHS attributes are A, C, E, F, G, and H, so B and D are compulsory.\nClosure check: Start with BD⁺ = {B, D}. From B → CFH, add C, F, and H. From C → A, add A. From F → EG, add E and G. Thus BD⁺ = {A, B, C, D, E, F, G, H}.\nWhy AB is not a key: AB⁺ can derive C, F, H, A, E, and G, but it cannot derive D because D never appears on any RHS. So AB is not a superkey for R.\nFinal answer: BD is minimal and is the only candidate key. Therefore, relation R has exactly 1 candidate key.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following normal form of normalization in relational model, disallows relations within relations or relations as attribute values within tuples?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Normalization (1NF - BCNF)",
+    "chapterSlug": "dsssb-dbms-normalization",
+    "difficulty": "easy",
+    "explanation": "First Normal Form requires atomic attribute values, so it disallows relations within relations or relation-valued attributes inside tuples.",
+    "options": [
+      {
+        "content": "Fourth",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "First",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Second",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Third",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "If a relation schema is in 2NF, then it is definitely in:",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Normalization (1NF - BCNF)",
+    "chapterSlug": "dsssb-dbms-normalization",
+    "difficulty": "medium",
+    "explanation": "Database normalization follows a hierarchical structure where each higher normal form builds upon the previous one. To achieve Second Normal Form (2NF), a relation must first satisfy all conditions of First Normal Form (1NF). Consequently, any schema in 2NF is inherently guaranteed to be in 1NF as well.",
+    "options": [
+      {
+        "content": "1NF",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "4NF",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "3NF",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "BCNF",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Consider a database relation Employee (SSN, Name). What is the highest normal form satisfied by the Employee relation?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Normalization (1NF - BCNF)",
+    "chapterSlug": "dsssb-dbms-normalization",
+    "difficulty": "easy",
+    "explanation": "ConceptNormal forms form a strict hierarchy 1NF ⊆ 2NF ⊆ 3NF ⊆ BCNF, where each form adds a stronger constraint on functional dependencies. BCNF is the strongest of these: a relation is in BCNF when, for every non-trivial functional dependency X → Y, the determinant X is a superkey (a candidate key or a superset of one). The \"highest normal form\" of a relation is the strictest form in this chain that it satisfies.\nApplication1. List the attributes and the key. The relation has exactly two attributes, SSN and Name, and SSN uniquely identifies each row, so SSN is the only candidate key.\n2. Write the non-trivial functional dependencies. The single non-trivial dependency is SSN → Name.\n3. Test the BCNF rule on each dependency. For SSN → Name, the determinant SSN is a candidate key, hence a superkey, so the only dependency already satisfies the BCNF condition.\nCross-checkThis matches the general theorem that any relation with only two attributes is automatically in BCNF: the left side of every non-trivial dependency must be one of the two attributes, and in a valid relation that attribute is a superkey. With no partial dependency (single-attribute key) and no transitive dependency (Name depends directly on the key), 2NF and 3NF also hold, but BCNF is the strictest form reached.\nResult: the highest normal form satisfied by Employee(SSN, Name) is BCNF.",
+    "options": [
+      {
+        "content": "1 NF",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2 NF",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "3 NF",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "BCNF",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Match the following formal relational terms with their informal equivalents.\nColumn I (Formal terms)\ni. Relation\nii. Tuple\niii. Domain\niv. Attribute\nColumn II (Informal equivalents)\n1. Row\n2. Column\n3. Table\n4. Set of permitted values for an attribute",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Relational Model & Functional Dependencies",
+    "chapterSlug": "dsssb-dbms-relational-model",
+    "difficulty": "easy",
+    "explanation": "The visible matching lists are:\nColumn I: i. Relation, ii. Tuple, iii. Domain, iv. Attribute\nColumn II: 1. Row, 2. Column, 3. Table, 4. Set of permitted values for an attribute\nRelation is represented informally as a table, so i-3.\nTuple means a row in a relation, so ii-1.\nDomain is the set of permitted values for an attribute, so iii-4.\nAttribute means a column in a relation, so iv-2.\nTherefore, the correct matching is i-3, ii-1, iii-4, iv-2. Hence, Option B is correct.",
+    "options": [
+      {
+        "content": "i-3, ii-4, iii-1, iv-2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i-3, ii-1, iii-4, iv-2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i-1, ii-3, iii-2, iv-4",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-4, ii-3, iii-2, iv-1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the cardinality and degree of relation having 50 Tuples and 20 Attributes?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Relational Model & Functional Dependencies",
+    "chapterSlug": "dsssb-dbms-relational-model",
+    "difficulty": "easy",
+    "explanation": "For a relation (table) in a database, the answer is straightforward based on the definitions of these terms:\n• Cardinality: This refers to the number of tuples (rows) in the relation.\n• Cardinality = 50\n• Degree: This refers to the number of attributes (columns) in the relation.\n• Degree = 20",
+    "options": [
+      {
+        "content": "Cardinality – 70, Degree – 30",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Cardinality – 20, Degree – 50",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Cardinality – 50, Degree – 20",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Cardinality – 50, Degree – 50",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the cardinality of a relation having 500 tuples and 50 attributes?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Relational Model & Functional Dependencies",
+    "chapterSlug": "dsssb-dbms-relational-model",
+    "difficulty": "easy",
+    "explanation": "Cardinality of a relation refers to the number of tuples (rows) in the relation.\nIn this case, the relation has 500 tuples, so the cardinality is 500.\nNote: The number of attributes (columns) does not affect cardinality.",
+    "options": [
+      {
+        "content": "500",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "50",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "450",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2500",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many rules does Dr. E. F. Codd provide which qualify a database as a RDBMS?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Relational Model & Functional Dependencies",
+    "chapterSlug": "dsssb-dbms-relational-model",
+    "difficulty": "easy",
+    "explanation": "Rule 0: The Foundation RuleRule 1: The Information RuleRule 2: The Guaranteed Access RuleRule 3: Systematic Treatment of NULL ValuesRule 4: Active Online Catalog RuleRule 5: The Comprehensive Data Sublanguage RuleRule 6: The View Updating RuleRule 7: High-level Insert, Update, and DeleteRule 8: Physical Data IndependenceRule 9: Logical Data Independence Rule 10: Integrity IndependenceRule 11: Distribution IndependenceRule 12: Non-Subversion Rule",
+    "options": [
+      {
+        "content": "10",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "11",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "12",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "13",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The main purpose of an ______ is to record, process, validate and store transactions that take place in various functional areas of a business for future retrieval of use.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Transaction Management",
+    "chapterSlug": "dsssb-dbms-transaction",
+    "difficulty": "easy",
+    "explanation": "Transaction Processing System",
+    "options": [
+      {
+        "content": "Transaction Processing System",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Decision Support System",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Executive Support System",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Knowledge Management System",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which one of the following is NOT a part of the ACID properties of database transaction?",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Transaction Management",
+    "chapterSlug": "dsssb-dbms-transaction",
+    "difficulty": "easy",
+    "explanation": "Instance",
+    "options": [
+      {
+        "content": "Atomicity",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Consistency",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Instance",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Durability",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding batch transaction processing?\n I. The database is updated when the transaction is processed.\n II. The associated cost is very high.\n III. Reports generated are required only at a scheduled interval.",
+    "type": "single_choice",
+    "subject": "Database Management System",
+    "subjectSlug": "dbms",
+    "topic": "Transaction Management",
+    "chapterSlug": "dsssb-dbms-transaction",
+    "difficulty": "easy",
+    "explanation": "Step 1: In batch transaction processing, transactions are collected over time and processed together at scheduled intervals. The database is updated only after the entire batch is processed, not during individual transaction processing. Therefore, statement I is incorrect.\n Step 2: Batch processing is generally cost-effective because it reduces the need for real-time processing infrastructure. Therefore, statement II is incorrect as it claims the cost is very high.\n Step 3: Reports in batch processing are generated only at scheduled intervals, such as daily or weekly, to analyze the processed data. Therefore, statement III is correct.\n Conclusion: Only statement III is correct. Hence, the correct option is B.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only III",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "dbms",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

@@ -1,0 +1,1362 @@
+[
+  {
+    "content": "Which of the following is correct for Identifiers name used in Python language?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "A Python identifier can contain letters, digits, and underscores, but it cannot be a keyword and cannot start with a digit. Therefore an identifier can have the underscore (_) symbol.",
+    "options": [
+      {
+        "content": "An identifier can have underscore (_) symbol",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "We must use keywords as identifier",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "There is restriction the length of an identifier",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "An identifier must start with a digit",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is commonly used in UNICODE encoding schemes and number system in computer science?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "UTF-8 is a widely used Unicode encoding scheme.",
+    "options": [
+      {
+        "content": "UTF-17",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "UTF-61",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "UTF-8",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "UTF-35",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "_____ has been developed to incorporate all the character of every written language of the world. It provides a unique number for every character, irrespective of device [server, desktop, mob], OS [linux, win] or software application",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "Unicode assigns a unique code point to characters from writing systems across the world, independent of platform, device, operating system, or application.",
+    "options": [
+      {
+        "content": "UNICODE",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Binary Code",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ISCII",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "ASCII",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which statement(s) is/are NOT true about the variables in Python Language:\n I. Values of every variable can be changed once a variable has been created and assigned value.\n II. Assignment statement is used to create a new variable and assign value.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "To determine which statement(s) is/are NOT true, analyze each statement separately.\nStatement I: 'Values of every variable can be changed once a variable has been created and assigned value.'\n• Step 1: In Python, some data types are immutable, such as integers, strings, and tuples.\n• Step 2: Immutable objects cannot be modified after creation. When a value is 'changed', a new object is created.\n• Step 3: Therefore, not all variable values can be changed; this makes Statement I false.\nStatement II: 'An assignment statement is used to create a new variable and assign value.'\n• Step 1: An assignment statement (e.g., x = 5) creates a variable if it does not already exist.\n• Step 2: It also assigns a value to the variable.\n• Step 3: This means Statement II is true.\nConclusion: Only Statement I is NOT true. Therefore, the correct option is the one that identifies only I as false.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following type of function used with strings in the Python language returns the character with the highest ASCII value?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "For strings in Python, `max()` returns the character with the highest Unicode/ASCII ordering value among the characters.",
+    "options": [
+      {
+        "content": "len ()",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "hvalue ()",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "max ()",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "long ()",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Select the correct output for the following Python code:\n```\na = 20\nb = 35\nif a >= b:\n    print(\"yes\")\nelse:\n    print(\"No\")\n```",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "Correct answer: No\nIn the corrected code, the print statement under if and the print statement under else are indented.\nHere, a = 20 and b = 35. The condition a >= b is false because 20 is not greater than or equal to 35.\nSo the else block runs and prints No.",
+    "options": [
+      {
+        "content": "Syntax Error",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "No",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Yes",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Error",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following type conversion function in the Python language , is used to convert a character into an integer?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "In Python, `ord()` converts a character into its integer Unicode code point.",
+    "options": [
+      {
+        "content": "tuple ()",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "dict ()",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "set ()",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "ord ()",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "In Python language, which of the following is correct for ‘strip ( )’ function?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "`strip()` returns a string after removing leading and trailing white spaces.",
+    "options": [
+      {
+        "content": "In returns the string by removing trailing and leading white spaces",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "It returns a list from the string depending upon the delimiter that we specify",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It returns the power of values passed",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It returns the string with the first character in upper case and lowering the case for rest of the string",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "In Python language, which of the following method of lists is used to add an element to the end of the list?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "In Python, the `append()` method adds an element to the end of a list.",
+    "options": [
+      {
+        "content": "index ( )",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "sort ( )",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "pop ( )",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "append ( )",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Choose the correct output for the following Python code.\ntuple_var_mix = (“Example”, 1, “Tuple ”)\nprint (tuple_var_mix)",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "Printing the tuple `('Example', 1, 'Tuple')` displays it with parentheses and quoted string elements.",
+    "options": [
+      {
+        "content": "{Example, 1, Tuple}",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(Example, 1, tuple)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "('Example', 1, 'Tuple')",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "[Example, 1, 'Tuple']",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "The values in a dictionary can be _____ but the keys in the dictionary should be _____ in Python programming languages",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "Python dictionary values may repeat, but keys must be unique.",
+    "options": [
+      {
+        "content": "repeated, repeated",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "repeated, unique",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "unique, repeated",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "unique, unique",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "String is a collection of one or more character which consists of _____ in programming language.\nI. Letters\nII. Numbers\nIII. Symbols",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Tokens, Variables, Data Types, I/O",
+    "chapterSlug": "dsssb-py-tokens-datatypes",
+    "difficulty": "easy",
+    "explanation": "A string can contain letters, numbers, and symbols because it is a sequence of characters.",
+    "options": [
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "In Python language, which of following mode for opening the file, opens the file for both reading and writing and file pointer will be placed at the start of the file?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "In Python, `r+` opens a file for both reading and writing with the file pointer at the start.",
+    "options": [
+      {
+        "content": "ab",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "rb",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "r+",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "a+",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Extensions like .txt, .py, .CSV, etc in python language are example of _____.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "Files with extensions such as .txt, .py, and .csv are stored as text-based files that can be read as character data.",
+    "options": [
+      {
+        "content": "text files",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "text editor",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "UNI CODE",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "ASCII",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "_____ files are spreadsheet files in a text format of data when cell contents are separated by a character for example a comma or semi-colon.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "CSV files store spreadsheet-style data in text form, with cell values separated by commas, semicolons, or similar delimiters.",
+    "options": [
+      {
+        "content": "Comma-Separated- Values",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Semi-colon Separated Values",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Column and Row Headers",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "CVS",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "_____ is a two-dimensional labelled data structure with columns of potentially different type, in data handling with pandas.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "In pandas, a DataFrame is a two-dimensional labelled data structure with columns that may have different data types.",
+    "options": [
+      {
+        "content": "Series",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Missing data",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Iteration",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data frames",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is a one-dimensional labelled array capable of holding any data type (integers, strings, floating point numbers, python objects, etc) in data handling with pandas?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "In pandas, a Series is a one-dimensional labelled array that can hold values of different data types.",
+    "options": [
+      {
+        "content": "Series",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Missing data",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Data frames",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Iteration",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "If you encounter an import Error, what does it mean?\nI. Python could find pandas in list of available libraries\nII. Pandas couldn't find python in list of available libraries\nIII. Python couldn't find Pandas in list of available libraries",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "An import error occurs when Python cannot find the requested module or library in the available/importable paths. Here that means Python could not find pandas.",
+    "options": [
+      {
+        "content": "Only III",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Only I and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Data frame in Pandas has a method which takes a column name (for a regular index) or a list of column names to create a new, re-indexed data frame, which of the following is correct method?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "In pandas, `set_index()` is used to create a new DataFrame indexed by one or more existing columns.",
+    "options": [
+      {
+        "content": "dFb",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "data.index ( )",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "set_index ( )",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "dFmi",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which operation is provided in Pandas, when multiple tables can be concatenated both column wise and row wise as database?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "File Handling & Data Analysis",
+    "chapterSlug": "dsssb-py-file-handling",
+    "difficulty": "easy",
+    "explanation": "In Pandas, merge is used to combine data from multiple DataFrames in a database-style manner, similar to joining tables.",
+    "options": [
+      {
+        "content": "SUM",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "MERGE",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "GROUP BY",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "SELECT",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which symbol is used to represent an input/output operation in the flow chart?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "Standard flowcharting conventions define the parallelogram shape as the symbol for input and output operations. Ovals represent start or end points, rectangles denote processing steps, and diamonds indicate decisions.",
+    "options": [
+      {
+        "content": "Oval",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Circle",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Rectangle",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Parallelogram",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Flowchart given in below figure represents which programming construct?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "The flowchart displays a diamond shape with two outgoing paths labeled 'Y' (Yes) and 'N' (No). This structure represents a decision point where the program flow branches based on whether a condition is true or false. Therefore, it depicts a decision structure.",
+    "options": [
+      {
+        "content": "Sequence structure",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Decision structure",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Loop structure",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Case structure",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Pictorial representation of a program is known as _____.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "A flowchart is a diagram that visually represents the steps of an algorithm or process using standardized symbols. Unlike pseudocode or source code which are textual, a flowchart provides a graphical depiction of the program logic.",
+    "options": [
+      {
+        "content": "Flowchart",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Pseudocode",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Code",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Algorithm",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which symbol in flowchart is used for processing?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "The Rectangle symbol is used to represent Processing.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which one is NOT a feature of Python language?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "Python is case-sensitive, meaning identifiers like Name and name differ. Thus, the claim that Python is case insensitive is not a feature.",
+    "options": [
+      {
+        "content": "High level language",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Interpreted language",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Case insensitive",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Portable",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following symbol is used to add comments in the Python language?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "In Python, the hash symbol # is used to add comments.",
+    "options": [
+      {
+        "content": "*",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "#",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "!",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "//",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which symbol is used to add the comment in the code or program to make it more readable and understandable in Python programming language?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Introduction to Python",
+    "chapterSlug": "dsssb-py-introduction",
+    "difficulty": "easy",
+    "explanation": "In Python, the hash symbol # starts a comment.",
+    "options": [
+      {
+        "content": "#",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "*",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "-",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": ":",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\ni) A tuple is an immutable sequence of Python objects. The tuple course = (\"i\", \"m\", \"n\", \"o\") has four elements.\nii) To explicitly remove an entire tuple, use the drop statement.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Collections & Strings",
+    "chapterSlug": "dsssb-py-collections",
+    "difficulty": "medium",
+    "explanation": "To evaluate the truthfulness of the statements, analyze each one separately.\nStatement i: A tuple is an immutable sequence of Python objects. This means the tuple structure cannot be changed after creation. The tuple course = (\"i\", \"m\", \"n\", \"o\") contains four elements. Therefore, statement i is true.\nStatement ii: Python does not have a \"drop statement\" for removing a tuple. To delete a tuple reference, Python uses the del statement. Therefore, statement ii is false.\nThus, statement i is true and statement ii is false.",
+    "options": [
+      {
+        "content": "i-True, ii-True",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "The given declaration statement in Python Language belongs to which data type?\n >>> Student = {'SUBJECT' : 'Compiler', 'Marks' : '50', 'Grade' : 'C'}",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Collections & Strings",
+    "chapterSlug": "dsssb-py-collections",
+    "difficulty": "easy",
+    "explanation": "The given declaration uses curly braces {} with key-value pairs separated by colons, such as 'SUBJECT' : 'Compiler'. This syntax is used in Python to define a dictionary, where each key is associated with a value. Dictionaries are mutable and allow access to values using keys. This structure is not used for numbers, sequences, or sets.",
+    "options": [
+      {
+        "content": "Numbers",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Sequence",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Sets",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Dictionary",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the expected output of the following Python code?\n print(\"\\nDictionary Iteration\")\n d = dict()\n d['lmn'] = 123\n d['abc'] = 345\n for i in d :\n     print(\"%s %d\" % (i, d[i]))",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Collections & Strings",
+    "chapterSlug": "dsssb-py-collections",
+    "difficulty": "medium",
+    "explanation": "Step 1: The code starts by printing \"\\nDictionary Iteration\", which adds a newline and the text.\nStep 2: A dictionary d is created, and two key-value pairs are added: d['lmn'] = 123 and d['abc'] = 345.\nStep 3: The for loop iterates over the dictionary keys in the order they were inserted, which is 'lmn' then 'abc'.\nStep 4: Inside the loop, the print statement uses the format string \"%s %d\", which prints the key (string) followed by the value (integer).\nStep 5: The output will be: Dictionary Iteration followed by lmn 123 and abc 345 on separate lines.",
+    "options": [
+      {
+        "content": "Dictionary Iteration",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Dictionary Iteration",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Dictionary Iteration",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Dictionary Iteration",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is output of the code in Python Language:\n >>> str1 = 'All the Best'\n >>> str1[-3]",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Collections & Strings",
+    "chapterSlug": "dsssb-py-collections",
+    "difficulty": "easy",
+    "explanation": "In Python, negative indexing starts from the end of the string:\n-1 → last character (t)\n-2 → second last (s)\n-3 → third last (e)\nGiven \"All the Best\", str1[-3] = 'e'.",
+    "options": [
+      {
+        "content": "'l'",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "'e'",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "'h'",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "'B'",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of this code in Python Language:\n >>> x = 125\n >>> y = 13\n >>> x //= y\n >>> x",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Operators & Expressions",
+    "chapterSlug": "dsssb-py-operators",
+    "difficulty": "easy",
+    "explanation": "Step 1: The operator //= performs floor division, which divides the left operand by the right operand and returns the largest integer less than or equal to the result.\nStep 2: Here, x = 125 and y = 13. The expression x //= y is equivalent to x = x // y.\nStep 3: 125 divided by 13 is approximately 9.615. The floor of this value is 9, since it is the largest integer less than or equal to 9.615.\nStep 4: Therefore, after the operation, x is assigned the value 9.",
+    "options": [
+      {
+        "content": "9",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "125/13",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "10",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "9.62",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the meaning of >>> in Python Language?",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Operators & Expressions",
+    "chapterSlug": "dsssb-py-operators",
+    "difficulty": "easy",
+    "explanation": "In Python, the '>>> ' symbol is the default prompt in the interactive interpreter. It indicates that the interpreter is ready to accept a new command. This prompt appears when you start the Python shell and is used for executing code line by line. It is not a bitwise operator or related to compilation. Instead, it is a visual indicator of the interpreter's readiness to process input.",
+    "options": [
+      {
+        "content": "3 left shift",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "3 right shift",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Interpreter is ready to take instruction",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Compiler is ready to take instruction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If a loop does not terminate at all and keeps on executing endlessly, then it is known as _____.",
+    "type": "single_choice",
+    "subject": "Python",
+    "subjectSlug": "python",
+    "topic": "Control Flow & Looping",
+    "chapterSlug": "dsssb-py-control-flow",
+    "difficulty": "easy",
+    "explanation": "An infinite loop occurs when a program executes a block of code repeatedly without a terminating condition. This differs from finite loops which stop after a specific number of iterations or when a condition becomes false.",
+    "options": [
+      {
+        "content": "For loop",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Finite loop",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "While loop",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Infinite loop",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "python",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

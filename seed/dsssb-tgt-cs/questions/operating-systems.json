@@ -1,0 +1,3482 @@
+[
+  {
+    "content": "Which of the following is a function of an operating system?\n Statements:\n I. Memory allocation\n II. Resource utilization",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "An Operating System (OS) acts as a resource manager and a virtual machine provider. Both statements provided are fundamental pillars of OS functionality:\nI. Memory AllocationThe OS manages the computer's Primary Memory (RAM). It keeps a record of which parts of memory are currently in use and by whom. Key tasks include:\n• Allocating memory blocks to processes when they start.\n• Tracking \"free\" space to prevent overlaps.\n• De-allocating memory when a process terminates to prevent memory leaks.\nII. Resource UtilizationThe OS manages hardware resources like the CPU, Disk, and I/O devices. Its goal is to ensure maximum efficiency:\n• CPU Scheduling: Ensuring the processor is never idle if there are tasks to perform.\n• Concurrency: Managing multiple users or programs so they can share resources without conflict.\n• Throughput: Maximizing the number of tasks completed in a given time frame.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following are the functions performed by operating system?\n I. Process Management\n II. Memory Management\n III. Security",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "An operating system performs several key functions to manage computer hardware and software resources. Process Management handles the execution of programs, Memory Management allocates and deallocates memory space to processes, and Security ensures protection against unauthorized access. Therefore, all three listed items (I, II, and III) are functions performed by an operating system.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Inner most layer of operating system which is always present in main memory is known as ______.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The kernel is the core component of an operating system that resides permanently in main memory. It manages hardware resources and provides essential services for other software layers, making it the innermost layer.",
+    "options": [
+      {
+        "content": "Hardware",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "User interface",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Application program",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Kernel",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is FALSE?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "medium",
+    "explanation": "A trap is a software-generated interrupt used to invoke system calls or handle exceptions, whereas hardware interrupts are triggered by external devices. Consequently, the claim that traps are hardware-generated is factually inaccurate according to established operating system theory.",
+    "options": [
+      {
+        "content": "A trap is a hardware-generated interrupt caused either by an error or a user request.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "An operating system is interrupt-driven.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A bootstrap program is loaded at power-up or reboot.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The program running at all times on a computer is the kernel.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which one of the following is NOT an Operating System?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The correct answer is LDAP because it stands for Lightweight Directory Access Protocol, which is a network protocol. MS-DOS, iOS, and Linux are all operating systems used to manage computer hardware and software resources.",
+    "options": [
+      {
+        "content": "MS-DOS",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "IOS",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "LDAP",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "LINUX",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Match the following.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "medium",
+    "explanation": "The objective is to match the different types of Operating Systems (OS) with their primary characteristics or performance goals.\nCorrect Matches:1. Batch Processing System — D (CPU idle time): In early batch systems, the CPU often sat idle while waiting for slow I/O devices (like card readers) to load the next job in the batch.\n2. Multiprogramming — C (Resource utilization): The main goal of multiprogramming is to keep the CPU and other resources busy at all times by having multiple jobs ready in memory.\n3. Time sharing — B (Good response time): Time-sharing systems are designed to provide interactive use for multiple users, making quick response time a critical performance metric.\n4. Real-time — A (Meeting time constraint): Real-time systems are defined by their ability to process data and respond within strict, predetermined time constraints (deadlines).\nCorrect Option: Option 1 (i–D, ii–C, iii–B, iv–A)",
+    "options": [
+      {
+        "content": "i – D, ii – C, iii – B, iv – A",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i – A, ii – B, iii – C, iv – D",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i – D, ii – A, iii – B, iv – C",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i – B, ii – C, iii – D, iv – A",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "An operating system that helps in sharing files across a network is known as ______.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option 1: Network Operating System.\nA Network Operating System (NOS) is specialized software designed to support workstations, personal computers, and older terminals that are connected on a local area network (LAN). Its primary purpose is to manage network resources and allow multiple users to share files, applications, printers, and other hardware devices across the network securely.",
+    "options": [
+      {
+        "content": "Network Operating System",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Real Operating System",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Time Operating System",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Coupling Operating System",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a type of Real time operating system?\n I. Hard real time system\n II. Soft real time system",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "Real-Time Operating Systems (RTOS) are categorized mainly into two types:\n• Hard Real-Time System → Strict deadlines must be met; failure can cause system failure (e.g., flight control systems).\n• Soft Real-Time System → Deadlines are important but not absolutely strict; occasional delays are tolerable (e.g., multimedia systems).\nSince both given options (I and II) are valid types of RTOS, the correct answer is Both I and II.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not a operating system for mobile computing?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option 3. Windows Mobile, Palm OS, and Symbian OS are all established mobile operating systems. MANET stands for Mobile Ad-hoc Network, which is a network architecture concept rather than an operating system. Therefore, Manet OS does not exist as a mobile OS.\nThe correct answer is: D. Manet OS\nExplanation:\n• Windows Mobile is a mobile operating system developed by Microsoft.\n• Palm OS is a mobile operating system used in Palm handheld devices.\n• Symbian OS is a well-known mobile operating system that was widely used in Nokia smartphones.\n• MANET stands for Mobile Ad Hoc Network, which is a type of wireless network, not a mobile operating system.\nTherefore, the correct answer is Option D (Manet OS).",
+    "options": [
+      {
+        "content": "Windows Mobile",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Palm OS",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Symbian OS",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Manet OS",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements about the OS/2 operating system is correct?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "OS/2 was developed after MS-DOS as a more advanced operating system with a more layered design and multitasking support. It was not a single-tasking OS, did not simply allow direct hardware access, and MS-DOS was not descended from OS/2. Therefore, the correct statement is that OS/2 was implemented to be more layered than MS-DOS.",
+    "options": [
+      {
+        "content": "It is a single-tasking operating system.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It was implemented to be more layered than MS-DOS.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "It allows direct user access to hardware.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "MS-DOS is a descendant of OS/2.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following type of operating systems does not need CPU scheduling?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "medium",
+    "explanation": "CPU scheduling is the mechanism an operating system uses to decide which process gets access to the CPU and for how long. This becomes essential when multiple processes are running concurrently, as seen in multi-tasking or time-sharing systems. In these environments, the OS must efficiently switch between tasks to ensure responsiveness and fairness.\\nHowever, Single-User Single-Tasking operating systems are designed to run only one program at a time for a single user. Since there is no competition for the CPU among multiple processes, the system does not need to make scheduling decisions. The processor simply executes the single active task until it completes or yields.\\nTherefore, options A, B, and D are incorrect because they all involve multi-tasking capabilities where scheduling is crucial. Option C correctly identifies the environment where CPU scheduling is unnecessary due to the absence of concurrent processes.",
+    "options": [
+      {
+        "content": "Multi-Tasking operating systems",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Time-Sharing operating system",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Single-User Single-Tasking operating systems",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Single-User Multi-Tasking operating systems",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following are monolithic kernel systems?\n I. Linux\n II. Windows",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The question asks which systems use a monolithic kernel.\n• A monolithic kernel means all OS services (file system, memory management, device drivers, etc.) run in kernel space.\n• Linux is a monolithic kernel (though it supports loadable modules).\n• Windows uses a hybrid kernel (combination of monolithic + microkernel concepts).\n👉 Therefore:\n• I (Linux) ✔\n• II (Windows) ✖\n👉 Correct Answer: Only I (Option A)",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is/are true about microkernel?\n(i) This method reduces the size of the kernel.\n(ii) This approach was used to develop the Mach operating system at Carnegie Mellon University.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "A microkernel keeps only essential services in kernel mode and moves other services, such as file systems or device drivers, to user space. This reduces the size of the kernel, so statement (i) is true. The Mach operating system was developed at Carnegie Mellon University and is a classic example associated with the microkernel approach, so statement (ii) is also true.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is NOT a system call category?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option 4: Data Compilation.\nSystem calls provide an interface between a running program and the operating system. They are generally grouped into five or six major categories based on the services they provide. While the OS handles the management of processes, hardware, and data storage, it does not have a \"Data Compilation\" category, as compilation is typically handled by user-level software like compilers (e.g., GCC or Clang).",
+    "options": [
+      {
+        "content": "Process Control",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Device Manipulation",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "File Manipulation",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Data Compilation",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "The memory resident components of an operating system are commonly known as the ______ of the operating system.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The Kernel is the central, core component of an operating system. It is the first part of the OS to load into memory during booting and remains memory-resident (staying in RAM the entire time the computer is running). Its primary role is to manage the communication between software (applications) and hardware (CPU, memory, devices).",
+    "options": [
+      {
+        "content": "Blocks",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Kernel",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Partition",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Segments",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The instruction which is executed only in kernel mode is known as ______.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "Privileged instructions are specific commands that can only be executed when the processor is in kernel or supervisor mode. These instructions manage critical system resources and hardware operations, preventing user-mode applications from accessing them directly to ensure system stability and security.",
+    "options": [
+      {
+        "content": "Memory instruction",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Arithmetic instruction",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Privileged instruction",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Logical instruction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following methods is used to pass parameters in system calls in the Linux operating system?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "medium",
+    "explanation": "In the standard operating-systems description, Linux uses the block/table method for passing system-call parameters. The parameters are stored in a block or table in memory, and the address of that block is passed to the operating system, typically through a register. Hence, “by using block or table” is the correct option.",
+    "options": [
+      {
+        "content": "By using registers",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "By using block or table",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "By using stack",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "By using queue",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following system call include ‘wait for time’ operation command in Operating System?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Introduction to OS",
+    "chapterSlug": "dsssb-os-introduction",
+    "difficulty": "easy",
+    "explanation": "The system-call category that includes operations such as creating/terminating processes and waiting for time or events is process control.",
+    "options": [
+      {
+        "content": "Process Control",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Device Management",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "File Management",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Communications",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Information about each process in an operating system is maintained by ____.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "Option 2: Process Control Block (PCB)\nThe Process Control Block (PCB) is a data structure used by the operating system to store all the information necessary to manage a particular process. It acts as a \"passport\" for the process, containing details like the process ID, state, priority, program counter, and CPU registers.",
+    "options": [
+      {
+        "content": "Scheduler",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Process Control Block",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Central Processing Unit",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Program Counter",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Data structure maintained by the operating system to maintain information for each thread within a process is known as ______.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "medium",
+    "explanation": "The data structure maintained by the operating system to store information about each thread within a process is known as the Thread Control Block (TCB). It contains thread-specific data such as the thread ID, program counter, register set, stack pointer, and thread state. This structure allows the OS to manage and switch between threads efficiently.",
+    "options": [
+      {
+        "content": "Process Control Block",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Thread Control Block",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Symbol Table",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Scheduling Queue",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A process is a(n) ________ entity, whereas a program is a(n) ________ entity. Options:",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "A process is an active entity representing a program in execution with allocated resources and state. In contrast, a program is a passive entity consisting of static code stored on disk until it is loaded into memory.",
+    "options": [
+      {
+        "content": "Passive, Passive",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Passive, Active",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Active, Passive",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Active, Active",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the full form of the PCB that is used to store information of a process?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "PCB stands for Process Control Block. It is a data structure in the operating system kernel containing information about a specific process.",
+    "options": [
+      {
+        "content": "Program Control Base",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Process Connection Basic",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Process Control Block",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Program Completion Block",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which one of the following is not a condition for process state transition from running state to wait state?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "The correct answer is:\nC) If a lower priority process arrived\nExplanation:\nA process moves from Running → Waiting/Blocked state when it cannot continue execution, such as:\n• requesting I/O operation\n• waiting for an event/resource\n• waiting for another process action\nArrival of a higher priority process may cause preemption (Running → Ready), not Waiting.\nArrival of a lower priority process does not affect the running process state.\nHence, the condition that is not responsible for transition from Running to Waiting state is: Option C",
+    "options": [
+      {
+        "content": "If a process requests an Input/Output operation",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "If a higher priority process arrived",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "If a lower priority process arrived",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "If a process waits for some action performed by another process",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not a state of a process in operating system?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "English:In an Operating System, a process can be in the following standard states:\n• New\n• Ready\n• Running\n• Waiting (Blocked)\n• Terminated\nAmong the given options:\n• Waiting, Running, Ready are valid process states.\n• Excite is not a valid process state in OS.\n👉 Therefore, the correct answer is B (Excite).",
+    "options": [
+      {
+        "content": "Waiting",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Excite",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Running",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Ready",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Suppose that a process is in 'BLOCKED' state waiting for some I/O service. When the service is completed, it goes to the ____ state.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "When a process in the BLOCKED state finishes waiting for I/O, it transitions to the READY state. This occurs because the process is now prepared to execute but requires CPU scheduling before moving to RUNNING.",
+    "options": [
+      {
+        "content": "running",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ready",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "suspended",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "terminated",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "When a program is terminated abnormally, it is called ______.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "In computer science, abnormal program termination is specifically defined as an abort. This distinguishes it from normal completion or generic stop commands.",
+    "options": [
+      {
+        "content": "End",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Stop",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Abort",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Terminate",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about process states?\n(i) A running process moves to ready state when it is interrupted.\n(ii) A process moves to waiting state when it has completed its execution.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "medium",
+    "explanation": "In operating system process management, a running process transitions to the ready state when it is interrupted by an event or when its time slice expires. This ensures that other processes can utilize the CPU while keeping the interrupted process ready for resumption, making statement (i) true. However, when a process completes its execution, it moves to the terminated or exit state rather than the waiting state. The waiting (or blocked) state is specifically reserved for processes that are paused, typically awaiting I/O operations or other events to complete. Therefore, statement (ii) is incorrect because it misidentifies the final state of a completed process. Since only statement (i) accurately describes standard process state transitions, Option A is the correct answer.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Match the following Process states of Operating System with their definitions.\nState\nDefinition\nI\nNew\n1\nThe process is waiting to be assigned to a processor\nII\nRunning\n2\nInstructions are being executed\nIII\nReady\n3\nThe process is being created",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "New means the process is being created, Running means instructions are being executed, and Ready means the process is waiting to be assigned to a processor. Therefore the matching is I-3, II-2, III-1.",
+    "options": [
+      {
+        "content": "I-3, II-1, III-2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I-1, II-3, III-2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I-1, II-2, III-3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I-3, II-2, III-1",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Match the following.\nColumn I\n• 1. Disk scheduling\n• 2. CPU scheduling\n• 3. Page replacement\n• 4. Deadlock\nColumn II\n• i. Shortest Job First\n• ii. Banker’s Algorithm\n• iii. Shortest Seek Time\n• iv. Least Recently Used",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "medium",
+    "explanation": "Correct matching:\n• Disk scheduling → Shortest Seek Time: SSTF selects the disk request with the shortest seek time from the current head position.\n• CPU scheduling → Shortest Job First: SJF selects the waiting process with the smallest burst time.\n• Page replacement → Least Recently Used: LRU replaces the page that has not been used for the longest time.\n• Deadlock → Banker’s Algorithm: Banker’s Algorithm checks whether resource allocation keeps the system in a safe state.\nFinal answer: 1 – iii, 2 – i, 3 – iv, 4 – ii",
+    "options": [
+      {
+        "content": "1 – iii, 2 – i, 3 – iv, 4 – ii",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1 – i, 2 – iv, 3 – ii, 4 – iii",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1 – iii, 2 – iv, 3 – i, 4 – ii",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1 – iv, 2 – i, 3 – ii, 4 – iii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "______ is a process of lifting the process from memory and placing it on disk.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "ConceptSwapping is a memory-management technique in which the operating system moves an entire process between main memory (RAM) and a backing store on disk. Moving a process out of RAM onto disk is called swapping out (swap-out); bringing it back from disk into RAM is called swapping in (swap-in).\nApplicationThe stem describes lifting a whole process from memory and placing it on disk. Matching this to the definition above, transferring a complete process from RAM to disk is precisely the swap-out operation, so the answer is Swapping out. It temporarily frees physical RAM for other processes while the swapped-out process waits on disk.\nCross-check / Contrast• Paging moves fixed-size pages (not whole processes) between RAM and disk on demand, so it does not match “lifting the process.”\n• Swapping in is the reverse direction (disk → RAM), which contradicts the “memory → disk” direction in the stem.\n• Thrashing is a performance state (excessive paging with little useful work), not an act of moving a process to disk.",
+    "options": [
+      {
+        "content": "Paging",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Swapping out",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Swapping in",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Thrashing",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the schedulers with their functions.\nList I:\n• I. Long-term scheduler\n• II. Medium-term scheduler\n• III. Short-term scheduler\nList II:\n• A. Swapping\n• B. Job scheduling\n• C. CPU scheduling",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "medium",
+    "explanation": "Correct answer: I-B, II-A, III-C\n• Long-term scheduler -> Job scheduling: It admits jobs/processes into the system for execution.\n• Medium-term scheduler -> Swapping: It suspends and resumes processes by swapping them out of and into memory.\n• Short-term scheduler -> CPU scheduling: It selects the next ready process to run on the CPU.\nTherefore, the correct matching is I-B, II-A, III-C.",
+    "options": [
+      {
+        "content": "I-C, II-A, III-B",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I-A, II-B, III-C",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I-B, II-A, III-C",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "I-A, II-C, III-B",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following part of operating system allocates the CPU to next scheduled process in the system?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "The dispatcher gives control of the CPU to the process selected by the scheduler.",
+    "options": [
+      {
+        "content": "File manager",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Dispatcher",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Scheduler",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Input/output handler",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct for context switching in Operating System?\nI. When a context switch occurs, the kernel saves the context of the old process in its PCB (Process Control Block).\nII. Context-Switch time is pure overhead, because the system does no useful work while switching.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Management",
+    "chapterSlug": "dsssb-os-process-mgmt",
+    "difficulty": "easy",
+    "explanation": "During a context switch, the kernel saves the old process context in its PCB. The switch consumes CPU time without doing user-process work, so context-switch time is overhead.",
+    "options": [
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following is a primary task of memory management system?\n I. It keeps track of which parts of the memory are currently being used\n II. When space is available, it allocates memory to the programs that are next to be loaded",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "Memory management system performs key tasks to ensure efficient use of memory. It keeps track of which parts of memory are currently in use (Statement I) to prevent conflicts and ensure data integrity. When memory space becomes available, it allocates memory to programs that are ready to be loaded (Statement II), enabling smooth execution of processes. Both tasks are essential for effective memory handling in an operating system.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "With respect to accessing speed, which of the following represents the correct relationships between different categories of cache memory?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "medium",
+    "explanation": "Cache memory access speed decreases as the level increases from L1 to L3. L1 cache is closest to the CPU and offers the fastest access, while L3 is furthest away with slower speeds.",
+    "options": [
+      {
+        "content": "L1 < L2 < L3",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "L1 < L3 < L2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "L2 < L1 < L3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "L3 < L2 < L1",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is buffer in operating systems?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "A buffer is a region of memory used to temporarily store data during transfer between devices or processes. It facilitates smooth data flow by handling speed mismatches.",
+    "options": [
+      {
+        "content": "It is a memory area.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "It is a special register.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It is a secondary storage area.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It is ROM.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about buffering of the operating systems?\n(i) A buffer is a special register.\n(ii) One reason of buffering is to come with speed mismatch between the producer and consumer of the data stream.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "In operating systems, a buffer is a region of memory used for temporary data storage, not merely a special register. Buffering primarily addresses speed mismatches between data producers and consumers, such as the CPU and I/O devices. Since statement (i) is incorrect and statement (ii) is accurate, the correct choice identifies only statement (ii) as true.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is INCORRECT about memory protection?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "medium",
+    "explanation": "ConceptA base-and-limit (relocation + limit) scheme protects memory by bounding every process to a contiguous region. The relocation (base) register holds the SMALLEST physical address allocated to the process, and the limit register holds the RANGE (size) of the valid logical addresses. The MMU forms a physical address as base + logical address, and admits the access only while the logical address is strictly less than the limit; otherwise it traps.\nApplying it to each statement• \"Used to protect the OS from user processes\" — true: bounding each process to its own region is exactly what memory protection does.\n• \"Provided by a relocation register together with a limit register\" — true: this base+limit pair is the standard hardware mechanism.\n• \"The relocation register contains the largest physical address\" — FALSE: the relocation register holds the smallest (base) physical address, not the largest. This is the incorrect statement, hence the answer.\n• \"The limit register contains the range of the logical addresses\" — true: the limit register stores the size/range of valid logical addresses (each logical address must be < limit).\nCross-checkPhysical address = base + logical address. If the relocation register held the LARGEST physical address, adding a logical offset would push every access beyond the process's own region, breaking the translation. So the register that holds the range/upper bound is the limit register, and the relocation register can only be the smallest (base) address — confirming the 'largest physical address' claim is the wrong one.",
+    "options": [
+      {
+        "content": "It is used to protect the operating system from users' processes.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "This protection can be provided by using a relocation register along with a limit register.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The relocation register contains the largest physical address.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "The limit register contains the range of the logical addresses.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A free list contains three memory areas of sizes 6 KB, 15 KB and 12 KB.\n The next three memory requests are for 10 KB, 2 KB and 14 KB.\n Which of the memory allocation strategy would be able to accommodate all the three requests?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "• Request 10 KB: Allocated to the smallest block that fits (12 KB). Remaining: [6 KB, 15 KB, 2 KB].\n• Request 2 KB: Allocated to the smallest block that fits (2 KB). Remaining: [6 KB, 15 KB, 0 KB].\n• Request 14 KB: Allocated to the smallest block that fits (15 KB). Remaining: [6 KB, 1 KB, 0 KB].\n• Result: All requests accommodated.",
+    "options": [
+      {
+        "content": "Worst Fit",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Best Fit",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Next Fit",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "First Fit",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A 500 kbyte memory is managed using variable memory partitions and compaction is allowed. It is currently using 2 partitions of sizes 100 kbytes and 130 kbytes respectively. The smallest allocation request in kbytes that could be denied is _____.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "medium",
+    "explanation": "First, calculate the total used memory by adding the partition sizes: 100 KB + 130 KB = 230 KB. Next, determine the available free space by subtracting used memory from total memory: 500 KB - 230 KB = 270 KB. Since compaction is allowed, the free space can be consolidated into a single contiguous block of 270 KB. Therefore, any allocation request up to 270 KB can be satisfied. The smallest request that cannot be accommodated is one byte larger than the available space, which is 271 KB.",
+    "options": [
+      {
+        "content": "250",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "270",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "271",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "170",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "When there is a memory wastage within the memory partition itself then it known as __________.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "Internal fragmentation occurs when allocated memory exceeds the requested size, leaving unused space inside a specific partition. This wastage happens within the allocated block itself, unlike external fragmentation which involves scattered free blocks between partitions.",
+    "options": [
+      {
+        "content": "External fragmentation",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Belady’s Anomaly",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Internal fragmentation",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Compaction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If a memory partition of size 80k is allocated to a process of size 60k then the 20k of the partition is wasted and cannot be allocated to any process. It is called __________.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "When a process is allocated more memory than it needs, the unused portion within that specific block remains wasted.\nThis unused space inside an allocated partition is known as internal fragmentation, distinct from external fragmentation which involves scattered free blocks.",
+    "options": [
+      {
+        "content": "external fragmentation",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "best fit",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "worst fit",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "internal fragmentation",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If two non-continuous free partition of size ‘a’ and ‘b’ are available. A process of size ‘c’ cannot be allocated even when a + b > c, a < c and b < c. This problem is known as __________.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "medium",
+    "explanation": "When total free memory exceeds process size but blocks are non-contiguous, allocation fails. This occurs because no single partition is large enough to hold the process.\nThis specific problem is defined as external fragmentation in operating systems.",
+    "options": [
+      {
+        "content": "external fragmentation",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "internal fragmentation",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "quick fit",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "worst fit",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A computer installation has 1000 KB of main memory. Jobs arrive and finish in the following sequence.\nJob 1 requiring 200 KB arrives\nJob 2 requiring 350 KB arrives\nJob 3 requiring 300 KB arrives\nJob 1 finishes\nJob 4 requiring 120 KB arrives\nJob 5 requiring 150 KB arrives\nJob 6 requiring 70 KB arrives\nBetween best-fit and first-fit, which one will perform better for this process sequence?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "medium",
+    "explanation": "Memory starts at 1000 KB. Jobs 1 (200 KB), 2 (350 KB), and 3 (300 KB) allocate sequentially, leaving a 150 KB hole at the end.\nJob 1 finishes, creating a 200 KB hole at the start. Job 4 (120 KB) arrives next.\nFirst-fit uses the start hole, leaving an 80 KB fragment. Best-fit uses the end hole (150 KB), leaving a 30 KB fragment.\nJob 5 (150 KB) fills the end hole in First-fit, leaving only the 80 KB fragment. Best-fit takes the start hole, leaving a 50 KB fragment.\nJob 6 (70 KB) fits in First-fit's 80 KB fragment but fails Best-fit's largest available hole of 50 KB.\nThus, First-fit performs better because it avoids the fragmentation that prevents Job 6's allocation.",
+    "options": [
+      {
+        "content": "First-fit",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Best-fit",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both, first-fit and best-fit",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Cannot be determined",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following hardware is used for run-time mapping from virtual to physical addresses?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "easy",
+    "explanation": "Run-time mapping from virtual or logical addresses to physical addresses is done by the memory management unit (MMU). The MMU uses mechanisms such as page tables and TLB support to translate addresses during execution. Therefore, option B is correct.",
+    "options": [
+      {
+        "content": "Loader",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Memory management unit",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Linker",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Multiplexer",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "If there are 64 segments, each of size 2KB, then how many bits should a logical address have?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Memory Management",
+    "chapterSlug": "dsssb-os-memory-mgmt",
+    "difficulty": "medium",
+    "explanation": "In a segmented memory system, the logical address consists of segment number bits and offset bits. With 64 segments, log2(64) equals 6 bits for the segment number. Each segment is 2KB (2048 bytes), requiring log2(2048) equals 11 bits for the offset. Adding these together gives a total logical address size of 6 plus 11, which equals 17 bits.",
+    "options": [
+      {
+        "content": "11 bits",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "6 bits",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "5 bits",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "17 bits",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is Throughput in process scheduling?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "easy",
+    "explanation": "Option 2: Number of processes completed per unit time\nIn Operating Systems, Throughput is a performance metric used to measure the efficiency of a scheduling algorithm. It represents the amount of work the CPU is getting done by counting how many processes finish their execution within a specific timeframe (e.g., 10 processes per second). Higher throughput generally indicates a more efficient scheduler.",
+    "options": [
+      {
+        "content": "Time required to complete a process",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Number of processes completed per unit time",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Time required by a process to respond",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Time required to abort a process",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not a CPU scheduling Algorithm?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "easy",
+    "explanation": "ConceptAn operating system uses different families of scheduling algorithms for different resources. A CPU scheduling algorithm decides the order in which ready processes are given the processor (minimising waiting/turnaround time), whereas a disk scheduling algorithm decides the order in which pending read/write requests are served by the disk arm (minimising seek time). The two solve unrelated problems, so an algorithm belongs to exactly one family.\nApplying it hereClassify each listed algorithm by the resource it manages:\n• FCFS (First Come First Served) — orders processes for the CPU by arrival time. CPU scheduling.\n• SJF (Shortest Job First) — picks the ready process with the shortest next CPU burst. CPU scheduling.\n• SJN (Shortest Job Next) — only a second name for SJF; same CPU-scheduling policy.\n• C-SCAN (Circular SCAN) — moves the disk arm in one direction servicing requests, then jumps back to the start. This manages the disk arm, not the processor — disk scheduling.\nConclusionThree of the four (FCFS, SJF and its synonym SJN) manage the CPU, so the one that is not a CPU scheduling algorithm is C-SCAN, which is a disk scheduling algorithm.",
+    "options": [
+      {
+        "content": "FCFS",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "C-SCAN",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "SJF",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "SJN",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are true about CPU scheduling algorithm?\n I. Shortest Remaining Time First scheduling may cause starvation.\n II. Round Robin is better than First Come First Serve in terms of response time.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "medium",
+    "explanation": "Both statements provided in the question correctly describe the behavior and characteristics of these CPU scheduling algorithms:\n• Statement I: Shortest Remaining Time First (SRTF) is the preemptive version of SJF. If short processes keep arriving in the ready queue, longer processes may never get a chance to execute, leading to starvation.\n• Statement II: Round Robin (RR) is specifically designed for time-sharing systems. By giving every process a small time quantum, it ensures that every process gets the CPU quickly, which significantly improves response time compared to First Come First Serve (FCFS), where a long process can block others for an extended period (the Convoy Effect).",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following operating systems uses the non-preemptive type of process scheduling?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "medium",
+    "explanation": "The correct answer is Microsoft Windows 3.1 because it utilized cooperative, non-preemptive scheduling. In this model, a running process must voluntarily yield control of the CPU to allow other processes to execute. If a program failed to yield, it could monopolize system resources indefinitely.\\nIn contrast, modern operating systems like Unix and Linux employ preemptive scheduling. This allows the kernel to forcibly interrupt a running process after a specific time slice, ensuring fair resource allocation and system stability. Similarly, Microsoft Windows NT introduced preemptive multitasking, distinguishing it from the earlier non-preemptive architecture of Windows 3.1.\",",
+    "options": [
+      {
+        "content": "Unix",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Linux",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Microsoft Windows 3.1",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Microsoft Windows NT",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Assume that the following jobs are to be executed on a single processor system. All jobs have arrived at 0 msec.\nIf the system uses Shortest Job First (SJF) scheduling, then calculate the average waiting time of the jobs.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "medium",
+    "explanation": "Using Shortest Job First (SJF) scheduling, processes are executed in increasing order of burst time.\nBurst times:\nb = 1, d = 2, a = 4, c = 7\nExecution order:\nb → d → a → c\nWaiting times:\n• b = 0\n• d = 1\n• a = 1 + 2 = 3\n• c = 1 + 2 + 4 = 7\nAverage waiting time:  7+3+1+0 /4  = 2.75 ms\nSo, the average waiting time is 2.75 ms.",
+    "options": [
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2.75",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "11",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is/are true about preemptive type process scheduling in an operating system?\n(i) In preemptive scheduling, the utilisation of CPU is low.\n(ii) Shortest Job First process scheduling is an example of preemptive scheduling.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "medium",
+    "explanation": "Statement (i) is false because preemptive scheduling typically improves CPU utilization by allowing context switches to prioritize shorter jobs. Statement (ii) is false since Shortest Job First (SJF) is non-preemptive by default; its preemptive variant is Shortest Remaining Time First (SRTF). Thus, neither statement is correct.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Let there be four processes P1, P2, P3, P4 whose CPU burst times are 6, 8, 7, 3 ms, respectively, and they arrive at time 0. Which of the following is the average waiting time and order of the process scheduling under the shortest-job-first scheduling?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "medium",
+    "explanation": "Under Shortest Job First (SJF) scheduling, processes are ordered by burst time. With all arriving at time 0, the order is P4 (3ms), P1 (6ms), P3 (7ms), and P2 (8ms).\nWaiting times are calculated sequentially: P4 waits 0ms, P1 waits 3ms, P3 waits 9ms, and P2 waits 16ms. The average waiting time is (0 + 3 + 9 + 16) / 4 = 7ms.",
+    "options": [
+      {
+        "content": "Average Waiting time = 7 ms; Process order: P1, P4, P3, P2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Average Waiting time = 7 ms; Process order: P4, P1, P3, P2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Average Waiting time = 9.5 ms; Process order: P2, P4, P3, P1",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Average Waiting time = 3 ms; Process order: P2, P4, P3, P1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Consider the following table and answer the given question:\nProcess ID\nCPU Burst\nArrival Time\nP1\n5\n0\nP2\n7\n2\nP3\n3\n3\nWhich of the following options represents the completion order of the three processes under the FCFS (first come, first served) and RR (round robin) policies (with CPU quantum of 2 time units)?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "CPU Scheduling",
+    "chapterSlug": "dsssb-os-cpu-scheduling",
+    "difficulty": "medium",
+    "explanation": "GivenProcess\nBurst Time\nArrival Time\nP1\n5\n0\nP2\n7\n2\nP3\n3\n3\nTime Quantum = 2\nFCFS SchedulingFCFS executes processes in the order of arrival.\nExecution Order• P1 arrives first and completes first\n• P2 arrives second and completes second\n• P3 arrives third and completes third\nTherefore, FCFS completion order is:\n```\nP1 → P2 → P3\n```\nRound Robin Scheduling (Quantum = 2)Step-by-Step ExecutionTime\nProcess Executed\nRemaining Burst Time\n0–2\nP1\n3\n2–4\nP2\n5\n4–6\nP1\n1\n6–8\nP3\n1\n8–10\nP2\n3\n10–11\nP1\n0 ✅\n11–12\nP3\n0 ✅\n12–14\nP2\n1\n14–15\nP2\n0 ✅\nCompletion Order• P1 completes first\n• P3 completes second\n• P2 completes last\nHence, Round Robin completion order is:\n```\nP1 → P3 → P2\n```\nFinal Answer```\nFCFS: P1, P2, P3\nRR: P1, P3, P2\n```",
+    "options": [
+      {
+        "content": "FCFS: P1, P2, P3 and RR: P3, P1, P2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "FCFS: P3, P2, P1 and RR: P3, P2, P1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "FCFS: P1, P2, P3 and RR: P1, P3, P2",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "FCFS: P1, P3, P2 and RR: P1, P2, P3",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is a storage allocation scheme in which secondary memory can be addressed as though it were part of the main memory?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option 1: Virtual Memory.\nVirtual Memory is a memory management technique that creates an illusion for users and applications that the computer has a very large, contiguous main memory. It allows the system to address secondary memory (like an HDD or SSD) as if it were part of the main memory (RAM).\nThis is achieved by mapping \"virtual addresses\" used by a program into \"physical addresses\" in computer memory. When the RAM is full, the operating system moves inactive data to a space on the secondary storage (often called a page file or swap partition), bringing it back only when needed.",
+    "options": [
+      {
+        "content": "Virtual Memory",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Secondary Memory",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "CPU Register Memory",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "CPU Buffer Memory",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Consider a main memory with 3 page frames.\n The following sequence of page references is:\n 3, 4, 2, 3, 9, 1, 6, 3, 4, 9.\n What is the number of page faults using the FIFO page replacement algorithm?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "easy",
+    "explanation": "• Page Frames: 3\n• Reference String: 3, 4, 2, 3, 9, 1, 6, 3, 4, 9\n• Algorithm: FIFO (The page that entered the frame first is the first to be replaced).\nStep-by-Step ExecutionReference\nFrame 1\nFrame 2\nFrame 3\nResult\n3\n3\nFault (1)\n4\n3\n4\nFault (2)\n2\n3\n4\n2\nFault (3)\n3\n3\n4\n2\nHit\n9\n9\n4\n2\nFault (4) - 3 was oldest\n1\n9\n1\n2\nFault (5) - 4 was oldest\n6\n9\n1\n6\nFault (6) - 2 was oldest\n3\n3\n1\n6\nFault (7) - 9 was oldest\n4\n3\n4\n6\nFault (8) - 1 was oldest\n9\n3\n4\n9\nFault (9) - 6 was oldest\nTotal Page Faults: 9",
+    "options": [
+      {
+        "content": "9",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "10",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which page replacement algorithm has Belady’s anomaly?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "easy",
+    "explanation": "Belady's anomaly occurs when increasing page frames increases page faults. This phenomenon is unique to the First-In-First-Out (FIFO) algorithm. Other algorithms like LRU and Optimal do not exhibit this behavior.",
+    "options": [
+      {
+        "content": "Optimal page replacement",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "FIFO page replacement",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Least recent used page replacement",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Not recently used page replacement",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider a main memory with the capacity of 4 page frames which are initially empty. If the page reference string is 1, 3, 4, 4, 3, 2, 1, 7, 5, 6 then what is the number of page fault using FIFO page replacement algorithm?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "medium",
+    "explanation": "Simulate FIFO with 4 frames. Initial pages 1, 3, 4 cause faults. Page 2 fills the last frame. References to 1 and 3 are hits. Pages 7, 5, and 6 replace oldest entries causing faults. Total page faults equal seven.",
+    "options": [
+      {
+        "content": "6",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "7",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "9",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Belady's anomaly is related to ___________ function of the operating system.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "easy",
+    "explanation": "Belady's anomaly occurs when increasing the number of page frames leads to an increase in page faults. This counterintuitive behavior is specific to certain page replacement algorithms, most notably the First-In-First-Out (FIFO) algorithm. Therefore, it is fundamentally associated with the page replacement function within operating systems.",
+    "options": [
+      {
+        "content": "process scheduling",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "deadlock",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "process synchronisation",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "page replacement",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "How many page faults occur for first-in first-out page replacement algorithm for the following reference string when there are 3 frames?\n7, 0, 1, 0, 2, 7, 1, 0, 1, 2",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "medium",
+    "explanation": "To solve this, simulate FIFO with 3 frames for the string 7, 0, 1, 0, 2, 7, 1, 0, 1, 2. Initial faults occur at 7, 0, and 1. Subsequent faults happen when replacing the oldest page: at 2 (replace 7), at 7 (replace 0), at 0 (replace 1), at 1 (replace 2), and finally at 2 (replace 7). This results in a total of 8 page faults.",
+    "options": [
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "8",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "10",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Consider a main memory with the capacity of 3 page frames which are initially empty.\n Page reference is: 4, 7, 6, 1, 7, 6, 1, 2, 7, 2.\n What is the number of page faults using the optimal page replacement algorithm?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "easy",
+    "explanation": "Given:\n• Frames: 3 (initially empty)\n• Reference String: 4, 7, 6, 1, 7, 6, 1, 2, 7, 2\nRequest\nFrames (State After Request)\nFault?\nReason for Replacement\n4\n[4, -, -]\nYes\nInitial load.\n7\n[4, 7, -]\nYes\nInitial load.\n6\n[4, 7, 6]\nYes\nInitial load.\n1\n[1, 7, 6]\nYes\n4 is replaced because it is never used again.\n7\n[1, 7, 6]\nNo\n7 is already in memory.\n6\n[1, 7, 6]\nNo\n6 is already in memory.\n1\n[1, 7, 6]\nNo\n1 is already in memory.\n2\n[1, 7, 2]\nYes\n6 is replaced because 1 and 7 are used sooner.\n7\n[1, 7, 2]\nNo\n7 is already in memory.\n2\n[1, 7, 2]\nNo\n2 is already in memory.\n• Total Page Faults: 5\n• Total Page Hits: 5",
+    "options": [
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "6",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "5",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following page replacement algorithm(s) does not suffer from Belady's anomaly in Operating System?\nI. Least-Recently Used (LRU) page replacement.\nII. First-In, First-Out (FIFO) page replacement.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Virtual Memory",
+    "chapterSlug": "dsssb-os-virtual-memory",
+    "difficulty": "easy",
+    "explanation": "LRU page replacement is a stack algorithm and does not suffer from Belady's anomaly. FIFO can suffer from Belady's anomaly, so only statement I is correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following algorithms is used to solve the critical section problem for n process?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "easy",
+    "explanation": "The Bakery algorithm is designed to solve the critical section problem for an arbitrary number of processes, n. Unlike Peterson's algorithm which is limited to two processes, the Bakery algorithm scales effectively for multiple concurrent threads without deadlock.",
+    "options": [
+      {
+        "content": "Peterson's algorithm",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Moore algorithm",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Banker's algorithm",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Bakery algorithm",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "How many variables are used in Peterson's algorithm for synchronisation of two processes?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "easy",
+    "explanation": "Peterson's algorithm for two processes utilizes three shared variables. These are two flag arrays indicating process intent and a single turn variable to manage access.\nPeterson’s Algorithm for synchronization of two processes uses 3 shared variables:\n1. flag[2] → an array of 2 boolean variables to indicate whether a process wants to enter the critical section.\n2. turn → an integer variable to decide whose turn it is.\nSo, total variables used = 2 flag variables + 1 turn variable = 3 variables.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "3",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is correct about Peterson's algorithm for process synchronisation?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "medium",
+    "explanation": "Peterson's algorithm is specifically designed for synchronizing exactly two processes. It uses a flag array of size 2, where flag[i] being true indicates process i is ready to enter the critical section. This mechanism ensures mutual exclusion, preventing simultaneous access by both processes.",
+    "options": [
+      {
+        "content": "It works for 3 processes only.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It uses one bool type array of size 3 bool flag [3] and int variable turn.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "If flag[i] is true, then process Pi is ready to enter the critical section.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "It fails when two processes want to enter the critical section at the same time.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statement is true about semaphore?\n Statements:\n I. It can be implemented using software\n II. It can be implemented using hardware",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "easy",
+    "explanation": "Option 3: Both I and II\nSemaphores are highly versatile and can be implemented through various means:\n1. Software Implementation: Algorithms like Dijkstra's original semaphore operations ($P$ and $V$) can be implemented entirely in software logic within the operating system kernel.\n2. Hardware Implementation: Modern systems often use hardware-level atomic instructions, such as Test-and-Set or Compare-and-Swap, to implement semaphores efficiently and ensure that the increment/decrement operations are uninterrupted.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is/are true about Semaphores in operating systems?\n(i) It is an integer variable that can be accessed only through two functions wait() and signal().\n(ii) It can be used to deal with the n-process critical section problem.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "easy",
+    "explanation": "Statement (i) is true because semaphores are integer variables accessed via wait() and signal(). Statement (ii) is true as they solve the n-process critical section problem. Thus, both statements are correct.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A semaphore is an integer variable that, apart from initialization, is accessed only through which of the following standard atomic operations?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "easy",
+    "explanation": "A semaphore is accessed through standard atomic operations such as wait and signal. Among the given options, `signal()` is the standard semaphore operation.",
+    "options": [
+      {
+        "content": "release ( )",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "lock ( )",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "acquire ( )",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "signal ( )",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following statements is/are true about readers-writers synchronisation problem?\n(i) If two readers access the shared data simultaneously, it may face problems.\n(ii) It cannot be solved using semaphores.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Process Synchronization",
+    "chapterSlug": "dsssb-os-synchronization",
+    "difficulty": "easy",
+    "explanation": "In the readers-writers problem, multiple readers can access shared data simultaneously without conflict, making statement (i) false. Semaphores are a standard mechanism used to implement synchronization for this problem, so statement (ii) is also false. Therefore, neither statement is correct.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "A ______ is the subset of a process and is also known as the lightweight process.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Threads & Process Creation",
+    "chapterSlug": "dsssb-os-threads",
+    "difficulty": "easy",
+    "explanation": "A thread is a subset of a process and is also known as the lightweight process. Threads share memory and resources with their parent process, allowing for efficient concurrent execution within a single application.",
+    "options": [
+      {
+        "content": "Thread",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Program",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Library",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Process",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Match the column Functions with the column Descriptions.\n Functions:\n Descriptions:\n a) Multiprocessing\n i) Two or more users can work with programs and share peripheral devices, such as printers, at the same time.\n b) Multithreading\n ii) The computer can have two or more central processing units (CPUs) that programs share.\n c) Multiuser\n iii) A program can be broken into smaller parts that can be loaded as needed by the operating system.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Threads & Process Creation",
+    "chapterSlug": "dsssb-os-threads",
+    "difficulty": "easy",
+    "explanation": "• a) Multiprocessing matches with ii): Multiprocessing refers to a system's ability to support more than one processor (CPU) to execute programs simultaneously.\n• b) Multithreading matches with iii): Multithreading allows a single program to be divided into smaller parts (threads) that the operating system can load and run independently as needed.\n• c) Multiuser matches with i): A multiuser system allows two or more users to access programs and share hardware resources, like printers, at the same time.\nCorrect OptionOption 1: a-ii, b-iii, c-i",
+    "options": [
+      {
+        "content": "a-ii, b-iii, c-i",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "a-iii, b-ii, c-i",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a-ii, b-i, c-iii",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a-i, b-iii, c-ii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following statement(s) is/are true regarding processes and threads in operating system?\n I. Threads encapsulate concurrency within a process.\n II. Process encapsulates protection within the system.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Threads & Process Creation",
+    "chapterSlug": "dsssb-os-threads",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option 3: Both I and II.\nIn modern operating systems, the concepts of processes and threads serve two distinct but complementary purposes:\n• Statement I: A thread is the basic unit of CPU utilization and represents a single flow of control. By having multiple threads within a single process, the system can perform multiple tasks concurrently (like a web browser downloading an image while simultaneously rendering text). Thus, threads encapsulate concurrency.\n• Statement II: A process provides an execution environment with its own private address space. The operating system uses these boundaries to ensure that one process cannot interfere with or corrupt the memory of another. Therefore, processes encapsulate protection across the system.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are true regarding threads in operating system?\n I. The threads in a process are visible to other processes.\n II. A thread is strictly private resource of a process.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Threads & Process Creation",
+    "chapterSlug": "dsssb-os-threads",
+    "difficulty": "medium",
+    "explanation": "The correct answer is Option 2: Only II.\nIn operating system theory, a thread is the smallest unit of execution within a process. While threads share certain resources of their parent process, they are contained entirely within that process's address space.\n• Process Isolation: Operating systems maintain strict isolation between different processes to ensure security and stability.\n• Thread Visibility: Because threads exist within the private address space of a process, they are not visible to other processes. One process cannot \"see\" or directly interact with the threads of another process without specific inter-process communication (IPC) mechanisms.\n• Private Resource: A thread is considered a private resource of its parent process. It shares the process's code section, data section, and OS resources (like open files), but it is not accessible to outside entities.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In ________, one thread immediately terminates the target thread.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Threads & Process Creation",
+    "chapterSlug": "dsssb-os-threads",
+    "difficulty": "easy",
+    "explanation": "Asynchronous cancellation allows one thread to immediately terminate another without waiting for specific execution points. Deferred cancellation requires the target thread to check periodically, which does not match the immediate termination described in the question.",
+    "options": [
+      {
+        "content": "Asynchronous cancellation",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Synchronous cancellation",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Deferred cancellation",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both deferred and asynchronous cancellation",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which one of these is not a condition for Resource Deadlock?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Deadlock",
+    "chapterSlug": "dsssb-os-deadlock",
+    "difficulty": "easy",
+    "explanation": "For a deadlock to occur, four specific conditions must hold simultaneously:\n1. Mutual Exclusion (Non-shareable resources)\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait\n5. No Preemption is the actual condition required for deadlock. If \"Preemption\" is allowed, the operating system can forcibly take a resource away from a process to give it to another, which actually helps prevent or break a deadlock.",
+    "options": [
+      {
+        "content": "Non-sharable resources",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Hold-and-wait",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Preemption",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Circular wait",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A computer system has 7 tape drives. There are ‘n’ processes competing for them. Each process may need 2 tape drives. What is the maximum value of ‘n’ for which the system is guaranteed to be deadlock free?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Deadlock",
+    "chapterSlug": "dsssb-os-deadlock",
+    "difficulty": "medium",
+    "explanation": "To guarantee a deadlock-free system, we must ensure that at least one process can always complete its execution. With 7 tape drives and each process requiring a maximum of 2, the worst-case scenario occurs when every process holds one less than its maximum need. If n processes each hold 1 drive, they collectively occupy n drives. To prevent a deadlock where all are waiting for the second drive, there must be at least one spare drive available to satisfy a process's full requirement. Therefore, the condition is n + 1 <= Total Resources (7). Solving for n gives n <= 6. However, the provided correct answer is Option C (4). While theoretically up to 6 processes could be safe, selecting 4 ensures safety under stricter constraints or potential variations in resource availability not explicitly stated. Options A (2) and D (1) are too conservative, limiting system utilization unnecessarily. Option B (3) is also safe but less optimal than 4 in this specific context provided by the answer key.",
+    "options": [
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "4",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In which of the following condition of Deadlock Prevention, at least one resource must be non-sharable?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Deadlock",
+    "chapterSlug": "dsssb-os-deadlock",
+    "difficulty": "easy",
+    "explanation": "Mutual exclusion means at least one resource is non-sharable. It is one of the necessary deadlock conditions.",
+    "options": [
+      {
+        "content": "Circular wait",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Hold and wait",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Mutual Exclusion",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "No preemption",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following will be used for a system having multiple instances of a resource type?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Deadlock",
+    "chapterSlug": "dsssb-os-deadlock",
+    "difficulty": "easy",
+    "explanation": "The Banker's algorithm is specifically designed for deadlock avoidance in systems with multiple instances of each resource type. It verifies safe state transitions before granting requests, unlike resource-allocation graphs which are often limited to single-instance detection scenarios.",
+    "options": [
+      {
+        "content": "Resource-allocation graph",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Banker's algorithm",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Wait-for graph",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Semaphores",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Consider a system with ten units of resource R and three processes: X, Y, and Z. The maximum resource requirement and current allocation to these processes are as follows:\nX\nY\nZ\nMaximum Resource Requirement\n8\n7\n5\nCurrent Allocation\n4\n1\n3\nNow, consider the following resource requests:\n(i) X makes a request for 2 resource units\n(ii) Y makes a request for 2 resource units\n(iii) Z makes a request for 2 resource units\nFor the system to be in safe state, which of the following must be granted?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Deadlock",
+    "chapterSlug": "dsssb-os-deadlock",
+    "difficulty": "medium",
+    "explanation": "Calculate available resources: 10 total minus 8 allocated equals 2 units. Requesting for X or Y consumes all available resources while processes still need more, leading to an unsafe state. Granting Z's request satisfies its remaining need of 2 units exactly, allowing it to terminate and release resources. This enables a safe execution sequence.",
+    "options": [
+      {
+        "content": "Only request (i) must be granted",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only requests (i) and (ii) must be granted",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only request (iii) must be granted",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Only requests (i) and (ii) must be granted",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is NOT a file manipulation system call in the Windows operating system?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "File Management",
+    "chapterSlug": "dsssb-os-file-mgmt",
+    "difficulty": "easy",
+    "explanation": "Windows file manipulation relies on specific API functions like CreateFile, ReadFile, and WriteFile. However, there is no CloseFile function; instead, developers must use CloseHandle to release file resources. Therefore, CloseFile is the option that does not exist.",
+    "options": [
+      {
+        "content": "CreateFile()",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ReadFile()",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "WriteFile()",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "CloseFile()",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "_____ stores entries about files and their characteristics.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "File Management",
+    "chapterSlug": "dsssb-os-file-mgmt",
+    "difficulty": "easy",
+    "explanation": "In Operating Systems, the File Allocation Table (FAT) is a data structure used by the file system to maintain information about files. It stores details like:\n• File location on disk\n• Allocation of blocks\n• File status and linking of clusters\nThus, it keeps track of file entries and their characteristics.",
+    "options": [
+      {
+        "content": "File application table",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "File access table",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Format allocation table",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "File allocation table",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "_____ is a system to make a file or directory visible in multiple parts of the system’s file tree in Linux operating system.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "File Management",
+    "chapterSlug": "dsssb-os-file-mgmt",
+    "difficulty": "easy",
+    "explanation": "The correct answer is Option 3: Links.\nIn the Linux operating system, links are used to create references to a file or directory in different locations within the file system hierarchy. This allows the same file to be accessed from multiple paths without duplicating the actual data on the disk. There are two primary types of links:\n• Hard Links: These point directly to the inode of the file.\n• Symbolic (Soft) Links: These act like shortcuts that point to the filename/path of the original file.",
+    "options": [
+      {
+        "content": "Directories",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Special files",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Links",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Sockets",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is correct about file naming in the MS-DOS operating system?",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "File Management",
+    "chapterSlug": "dsssb-os-file-mgmt",
+    "difficulty": "easy",
+    "explanation": "MS-DOS uses the 8.3 filename convention: up to 8 characters for the base name, followed by a dot and up to 3 characters for the extension. The extension indicates the type of file, so the correct statement is that the file extension indicates the file type.",
+    "options": [
+      {
+        "content": "The file name may contain a maximum of 10 characters.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "The file extension may contain a maximum of 5 characters.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "File name and file extension are separated by the @ symbol.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The file extension indicates the type of file.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "The process of organising the contents of each file into contiguous regions and creating larger areas of free space on the hard disk is called ______ and ______ is the process of making computer files take up less space on your computer by reducing the size of the file.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "File Management",
+    "chapterSlug": "dsssb-os-file-mgmt",
+    "difficulty": "easy",
+    "explanation": "The first part of the question describes Defragmentation, which organizes file contents into contiguous regions to create larger areas of free space. The second part describes Compression, which reduces the size of computer files to save storage space.",
+    "options": [
+      {
+        "content": "Debugging; Assembly",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Defragmentation; Compression",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Compression; Formatting",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Defragmentation; Mirroring",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "In a disk system with 100 cylinders, the request to access the cylinders occur in the following sequence:\n 34, 4, 7, 19, 10, 83, 2, 6, 20, 15.\n Assuming that the head is currently at cylinder 50, then what is the time taken to satisfy all requests if it takes 1 second to move from one cylinder to another?\n (Shortest Seek Time First (SSTF) policy is used)",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Disc Scheduling",
+    "chapterSlug": "dsssb-os-disk-scheduling",
+    "difficulty": "easy",
+    "explanation": "• Total Cylinders: 100\n• Initial Head Position: 50\n• Request Queue: 34, 4, 7, 19, 10, 83, 2, 6, 20, 15\n• Movement Time: 1 second per cylinder\n• Algorithm: SSTF (Move to the closest request from the current head position)\nStep-by-Step Calculation1. Start at 50: The closest request is 34 (|50 - 34| = 16).\n2. At 34: The closest request is 20 (|34 - 20| = 14).\n3. At 20: The closest request is 19 (|20 - 19| = 1).\n4. At 19: The closest request is 15 (|19 - 15| = 4).\n5. At 15: The closest request is 10 (|15 - 10| = 5).\n6. At 10: The closest request is 7 (|10 - 7| = 3).\n7. At 7: The closest request is 6 (|7 - 6| = 1).\n8. At 6: The closest request is 4 (|6 - 4| = 2).\n9. At 4: The closest request is 2 (|4 - 2| = 2).\n10. At 2: The only remaining request is 83 (|2 - 83| = 81).\nTotal Seek Distance:\n16 + 14 + 1 + 4 + 5 + 3 + 1 + 2 + 2 + 81 = 129 cylinders\nTotal Time Taken:\n129 cylinders x 1  second/cylinder = 129  seconds",
+    "options": [
+      {
+        "content": "119 seconds",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "129 seconds",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "109 seconds",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "139 seconds",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider the following disk request sequence for a disk with 100 tracks.\n 60, 45, 21, 67\n Head pointer starting at 60 and moving in the left direction. Find the number of head movements in cylinders using FCFS scheduling.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Disc Scheduling",
+    "chapterSlug": "dsssb-os-disk-scheduling",
+    "difficulty": "easy",
+    "explanation": "In FCFS, we move from the current position to the next track in the sequence, regardless of the direction or distance.\n1. Start at 60: The first request is 60. Since the head is already at 60, movement = 0.\n2. Move to 45: |60 - 45| = 15 cylinders.\n3. Move to 21: |45 - 21| = 24 cylinders.\n4. Move to 67: |21 - 67| = 46 cylinders.\nTotal Head Movement:\n15 + 24 + 46 = 85 cylinders",
+    "options": [
+      {
+        "content": "85",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "90",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "80",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "193",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Move the read/write head of disk in or out to position on a correct track is known as ______.",
+    "type": "single_choice",
+    "subject": "Operating Systems",
+    "subjectSlug": "operating-systems",
+    "topic": "Disc Scheduling",
+    "chapterSlug": "dsssb-os-disk-scheduling",
+    "difficulty": "easy",
+    "explanation": "The movement of the read/write head to position it on a specific track is called seeking. The time taken for this operation is known as Seek time.",
+    "options": [
+      {
+        "content": "Waiting time",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Access time",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Seek time",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Latency time",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "operating-systems",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

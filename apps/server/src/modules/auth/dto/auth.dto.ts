@@ -25,5 +25,17 @@ export const updateProfileSchema = z
   .object({
     name: z.string().trim().min(2).max(100).optional(),
     phone: z.string().trim().min(7).max(20).nullable().optional(),
+    preferredLanguage: z.enum(['English', 'Hindi']).optional(),
+    targetExam: z.string().trim().max(120).nullable().optional(),
+    targetSeriesIds: z.array(z.string()).optional(),
+    examGoalDate: z.string().nullable().optional(),
   })
-  .refine((value) => value.name !== undefined || value.phone !== undefined);
+  .refine(
+    (value) =>
+      value.name !== undefined ||
+      value.phone !== undefined ||
+      value.preferredLanguage !== undefined ||
+      value.targetExam !== undefined ||
+      value.targetSeriesIds !== undefined ||
+      value.examGoalDate !== undefined,
+  );

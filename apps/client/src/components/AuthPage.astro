@@ -57,7 +57,8 @@ const googleAuthUrl = `${API_URL}/auth/google`;
     const link = document.getElementById('google-continue-btn') as HTMLAnchorElement | null;
     if (!link || link.dataset.ready === 'true') return;
     link.dataset.ready = 'true';
-    const returnTo = safeDeskReturn(new URLSearchParams(window.location.search).get('returnTo'));
+    const params = new URLSearchParams(window.location.search);
+    const returnTo = safeDeskReturn(params.get('redirect') || params.get('returnTo'));
     link.href = returnTo
       ? `${API_URL}/auth/google?returnTo=${encodeURIComponent(returnTo)}`
       : `${API_URL}/auth/google`;

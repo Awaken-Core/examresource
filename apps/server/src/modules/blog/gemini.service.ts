@@ -115,10 +115,13 @@ export class GeminiService {
     const defaultChain = [
       env.GEMINI_MODEL,
       ...configuredFallback,
+      'gemini-3.5-flash-lite',
+      'gemini-flash-lite-latest',
+      'gemini-3-flash-preview',
+      'gemini-3.5-flash',
+      'gemini-3.6-flash',
       'gemini-3.8-flash',
       'gemini-3.7-flash',
-      'gemini-3.6-flash',
-      'gemini-3.5-flash',
       'gemini-3.1-pro-preview',
       'gemini-flash-latest',
       'gemini-pro-latest',
@@ -146,7 +149,7 @@ export class GeminiService {
     if (images && images.length > 0) {
       for (const img of images) {
         if (img.data && img.mimeType) {
-          const cleanBase64 = img.data.replace(/^data:image\/\w+;base64,/, '').trim();
+          const cleanBase64 = img.data.replace(/^data:[^;]+;base64,/, '').trim();
           if (cleanBase64) {
             parts.push({
               inlineData: {
@@ -806,9 +809,19 @@ Return ONLY valid JSON:
 
     let imageInstructions = '';
     if (validImages.length > 0) {
-      onStage?.('VISION', `Analyzing ${validImages.length} attached image(s) with Vision...`);
+      const hasPdf = validImages.some((img) => img.mimeType === 'application/pdf');
+      onStage?.(
+        'VISION',
+        hasPdf
+          ? `Analyzing attached notification document & images with Gemini Multimodal Pipeline...`
+          : `Analyzing ${validImages.length} attached image(s) with Gemini Vision...`,
+      );
+
       const imageDescriptions = validImages
         .map((img, i) => {
+          if (img.mimeType === 'application/pdf') {
+            return `Attachment ${i + 1} [OFFICIAL PDF NOTIFICATION]: Read and synthesize all pages of this government notification document thoroughly.`;
+          }
           const hint = img.altText ? `(Author Alt/Keyword Hint: "${img.altText}")` : '';
           const urlOrRef = img.url || 'Reference Image';
           return `Image ${i + 1}: ${urlOrRef} ${hint}`.trim();
@@ -817,18 +830,16 @@ Return ONLY valid JSON:
 
       imageInstructions = `
 ══════════════════════════════════════════════════════════════════════════════
-3. MULTIMODAL CONTEXTUAL IMAGE PLACEMENT & KEYWORD-RICH ALT TAGS (MANDATORY)
+3. MULTIMODAL ATTACHMENTS (DOCUMENTS & CONTEXTUAL IMAGE PLACEMENTS)
 ══════════════════════════════════════════════════════════════════════════════
-The author provided ${validImages.length} image(s) for this article:
+The author provided ${validImages.length} attachment(s) for this article:
 ${imageDescriptions}
 
-INSTRUCTIONS FOR IMAGES:
-1. Inspect what each image represents (e.g. Exam Pattern, Syllabus Breakdown, Important Dates Table, Salary Structure, Official Notification snippet).
-2. Intelligently place each image into BOTH the Hinglish and English versions at the exact point in the article flow where it provides the maximum clarity and visual engagement.
-3. CRITICAL SEO REQUIREMENT: Create a rich, keyword-optimized alt tag that incorporates the author's hint and primary focus keyword/exam name (e.g. alt="SSC CGL 2026 Tier 1 Exam Pattern and Marking Scheme Chart"). Do NOT use generic alt tags like "image" or "chart".
-4. Render each image inside the markdown/HTML content using this exact responsive structure:
+INSTRUCTIONS FOR ATTACHMENTS:
+1. If any attachment is an Official PDF Notification, extract all exact figures, tables, dates, vacancies, fees, eligibility, and pay scales directly from it.
+2. For image files: inspect what each image represents (e.g. Exam Pattern, Syllabus Breakdown, Important Dates Table, Salary Structure). Place each image into BOTH the Hinglish and English versions at the point of maximum clarity.
+3. Render placed images using this exact responsive structure:
 <figure class="article-figure" data-align="center" data-layout="full"><img src="{EXACT_IMAGE_URL}" alt="{DESCRIPTIVE_ALT_WITH_FOCUS_KEYWORDS}" width="700" height="400" data-align="center" data-layout="full" class="article-media" /><figcaption class="text-xs text-center text-slate-500 mt-2">{Helpful Caption}</figcaption></figure>
-5. Every provided image URL MUST be placed.
 `;
     }
 
@@ -1086,4 +1097,281 @@ Output ONLY valid JSON matching this schema:
       throw new BadRequestException(`Failed to parse AI blog generation output: ${err.message}. Please try again.`);
     }
   }
+
+  /**
+   * AI-powered question generator for Question Bank.
+   * Produces authentic exam-standard MCQs with bilingual English & Devanagari Hindi,
+   * 4 plausible options, exact correct answer key, and in-depth step-by-step explanations.
+   */
+  async generateQuestions(input: {
+    subject: string;
+    topic?: string;
+    examName?: string;
+    difficulty?: 'easy' | 'medium' | 'hard';
+    count?: number;
+    language?: 'bilingual' | 'english' | 'hindi';
+    additionalPrompt?: string;
+  }): Promise<{
+    questions: Array<{
+      content: string;
+      translations?: { hi?: string };
+      type: 'single_choice';
+      difficulty: 'easy' | 'medium' | 'hard';
+      subject: string;
+      topic?: string;
+      marks: number;
+      negativeMarks: number;
+      explanation: string;
+      explanationTranslations?: { hi?: string };
+      tags: string[];
+      options: Array<{
+        content: string;
+        translations?: { hi?: string };
+        isCorrect: boolean;
+      }>;
+    }>;
+  }> {
+    const count = Math.min(Math.max(Number(input.count) || 5, 1), 20);
+    const difficulty = input.difficulty || 'medium';
+    const examContext = input.examName ? `Target Exam: ${input.examName}` : 'Target Exam: Indian Competitive Exams (UPSC, SSC CGL, RRB NTPC, State PSC)';
+    const topicContext = input.topic ? `Topic / Chapter: ${input.topic}` : '';
+
+    const systemPrompt = `You are a chief examination controller and academic psychometrician for Indian competitive government exams (UPSC CSE, SSC CGL, RRB NTPC, State PSCs, Banking).
+Your job is to generate exactly ${count} original, high-quality, exam-standard Multiple Choice Questions (MCQs).
+
+Guidelines:
+1. Academic Rigor: Questions must be factually accurate, current with syllabus, unambiguous, and test conceptual clarity.
+2. Structure:
+   - Exactly 4 options per question (Option A, B, C, D).
+   - EXACTLY 1 correct option (isCorrect: true) and 3 highly plausible distractors (isCorrect: false).
+3. Bilingual Format:
+   - "content": Standard, grammatically flawless English.
+   - "translations": { "hi": "शुद्ध प्रामाणिक देवनागरी हिंदी में प्रश्न" }
+   - "options": 4 options each with English "content" and Hindi "translations": { "hi": "हिंदी अनुवाद" }
+   - "explanation": Comprehensive, pedagogical step-by-step solution in English explaining why the correct answer is true and why the other options are wrong.
+   - "explanationTranslations": { "hi": "विस्तृत चरण-दर-चरण व्याख्या (देवनागरी लिपि में)" }
+4. Difficulty Level: Strictly calibrate to "${difficulty}".
+5. Subject: "${input.subject}". ${topicContext}. ${examContext}.
+${input.additionalPrompt ? `Special instructions: ${input.additionalPrompt}` : ''}
+
+Output Schema (Valid JSON ONLY, no extra text):
+{
+  "questions": [
+    {
+      "content": "English question text string",
+      "translations": { "hi": "हिंदी प्रश्न टेक्स्ट" },
+      "type": "single_choice",
+      "difficulty": "${difficulty}",
+      "subject": "${input.subject}",
+      "topic": "${input.topic || 'General'}",
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "explanation": "Detailed English explanation...",
+      "explanationTranslations": { "hi": "विस्तृत हिंदी व्याख्या..." },
+      "tags": ["tag1", "tag2"],
+      "options": [
+        { "content": "Option 1 (English)", "translations": { "hi": "विकल्प 1" }, "isCorrect": true },
+        { "content": "Option 2 (English)", "translations": { "hi": "विकल्प 2" }, "isCorrect": false },
+        { "content": "Option 3 (English)", "translations": { "hi": "विकल्प 3" }, "isCorrect": false },
+        { "content": "Option 4 (English)", "translations": { "hi": "विकल्प 4" }, "isCorrect": false }
+      ]
+    }
+  ]
+}`;
+
+    const userPrompt = `Generate ${count} ${difficulty} level questions for Subject: "${input.subject}"${input.topic ? `, Topic: "${input.topic}"` : ''}${input.examName ? `, Exam: "${input.examName}"` : ''}. Return valid JSON only.`;
+
+    const rawJson = await this.callGemini(systemPrompt, userPrompt);
+    try {
+      const cleaned = rawJson.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+      const parsed = JSON.parse(cleaned);
+      const list = Array.isArray(parsed.questions) ? parsed.questions : (Array.isArray(parsed) ? parsed : []);
+
+      const formatted = list.map((q: any) => ({
+        content: String(q.content || '').trim(),
+        translations: q.translations && typeof q.translations === 'object' ? q.translations : (q.contentHi ? { hi: q.contentHi } : undefined),
+        type: 'single_choice' as const,
+        difficulty: (['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : difficulty) as 'easy' | 'medium' | 'hard',
+        subject: input.subject,
+        topic: q.topic || input.topic || 'General',
+        marks: Number(q.marks) || 1,
+        negativeMarks: Number(q.negativeMarks) || 0.25,
+        explanation: String(q.explanation || '').trim(),
+        explanationTranslations: q.explanationTranslations && typeof q.explanationTranslations === 'object'
+          ? q.explanationTranslations
+          : (q.explanationHi ? { hi: q.explanationHi } : undefined),
+        tags: Array.isArray(q.tags) ? q.tags.map(String) : [input.subject],
+        options: Array.isArray(q.options)
+          ? q.options.map((opt: any) => ({
+              content: String(opt.content || '').trim(),
+              translations: opt.translations && typeof opt.translations === 'object' ? opt.translations : (opt.contentHi ? { hi: opt.contentHi } : undefined),
+              isCorrect: Boolean(opt.isCorrect),
+            }))
+          : [],
+      }));
+
+      return { questions: formatted };
+    } catch (err) {
+      this.logger.error('Failed to parse Gemini generated questions', err);
+      throw new BadRequestException('Failed to process AI generated questions. Please retry.');
+    }
+  }
+
+  /**
+   * 1-Click Question Translation & Explanation Generator.
+   * Translates an existing question & options to Devanagari Hindi and provides step-by-step solutions.
+   */
+  async translateAndExplainQuestion(input: {
+    content: string;
+    options: Array<{ content: string; isCorrect: boolean }>;
+    explanation?: string;
+    subject?: string;
+    topic?: string;
+  }): Promise<{
+    contentHi: string;
+    optionsHi: string[];
+    explanation: string;
+    explanationHi: string;
+  }> {
+    const systemPrompt = `You are an elite bilingual competitive exam tutor and translator.
+Task:
+1. Translate the English Question text into authentic, clear DEVANAGARI HINDI (देवनागरी लिपि).
+2. Translate each of the provided options into Devanagari Hindi in the exact same index order.
+3. If an explanation is already provided in English, polish it and translate it into Devanagari Hindi. If NO explanation is provided, author a comprehensive, educational step-by-step solution in English AND a matching Hindi explanation.
+
+Return ONLY valid JSON matching this schema:
+{
+  "contentHi": "हिंदी में प्रश्न (देवनागरी)",
+  "optionsHi": ["विकल्प 1", "विकल्प 2", "विकल्प 3", "विकल्प 4"],
+  "explanation": "Clear step-by-step English solution explaining why the correct choice is right...",
+  "explanationHi": "चरण-दर-चरण हिंदी व्याख्या..."
+}`;
+
+    const userPrompt = JSON.stringify({
+      question: input.content,
+      options: input.options,
+      existingExplanation: input.explanation || '',
+      subject: input.subject || 'General Studies',
+      topic: input.topic || '',
+    });
+
+    const rawJson = await this.callGemini(systemPrompt, userPrompt);
+    try {
+      const cleaned = rawJson.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+      const parsed = JSON.parse(cleaned);
+
+      return {
+        contentHi: String(parsed.contentHi || '').trim(),
+        optionsHi: Array.isArray(parsed.optionsHi) ? parsed.optionsHi.map(String) : [],
+        explanation: String(parsed.explanation || input.explanation || '').trim(),
+        explanationHi: String(parsed.explanationHi || '').trim(),
+      };
+    } catch (err) {
+      this.logger.error('Failed to parse Gemini translate-explain response', err);
+      throw new BadRequestException('Failed to generate question translation and explanation.');
+    }
+  }
+
+  /**
+   * AI Raw Exam Paper & Unstructured Text Parser.
+   * Parses messy, copy-pasted exam papers, PYQ PDFs, or book snippets into structured questions.
+   */
+  async parseRawQuestions(input: {
+    rawText: string;
+    subject?: string;
+    topic?: string;
+    examName?: string;
+  }): Promise<{
+    questions: Array<{
+      content: string;
+      translations?: { hi?: string };
+      type: 'single_choice';
+      difficulty: 'easy' | 'medium' | 'hard';
+      subject: string;
+      topic?: string;
+      marks: number;
+      negativeMarks: number;
+      explanation: string;
+      explanationTranslations?: { hi?: string };
+      tags: string[];
+      options: Array<{
+        content: string;
+        translations?: { hi?: string };
+        isCorrect: boolean;
+      }>;
+    }>;
+  }> {
+    const systemPrompt = `You are an AI document parser and exam data extraction specialist.
+Extract all multiple-choice questions from the provided raw text (which may be copied from previous year exam papers, question banks, or study guides).
+
+Requirements:
+1. Detect each question statement, question number, and options (A, B, C, D / 1, 2, 3, 4).
+2. Clean OCR noise, extraneous page numbers, headers, and footers.
+3. Identify the correct answer key if mentioned in the text. If not explicitly stated, accurately deduce the correct answer.
+4. If the text has only English or only Hindi, translate the missing counterpart so each question is bilingual (English content + Hindi in translations.hi, and English options with Hindi translations).
+5. Extract or synthesize a helpful step-by-step explanation.
+
+Return ONLY valid JSON matching this schema:
+{
+  "questions": [
+    {
+      "content": "English question text",
+      "translations": { "hi": "हिंदी प्रश्न" },
+      "type": "single_choice",
+      "difficulty": "medium",
+      "subject": "${input.subject || 'General Studies'}",
+      "topic": "${input.topic || 'General'}",
+      "marks": 1,
+      "negativeMarks": 0.25,
+      "explanation": "English explanation...",
+      "explanationTranslations": { "hi": "हिंदी व्याख्या..." },
+      "tags": ["exam", "pyq"],
+      "options": [
+        { "content": "Option text 1", "translations": { "hi": "विकल्प 1" }, "isCorrect": true },
+        { "content": "Option text 2", "translations": { "hi": "विकल्प 2" }, "isCorrect": false },
+        { "content": "Option text 3", "translations": { "hi": "विकल्प 3" }, "isCorrect": false },
+        { "content": "Option text 4", "translations": { "hi": "विकल्प 4" }, "isCorrect": false }
+      ]
+    }
+  ]
+}`;
+
+    const rawJson = await this.callGemini(systemPrompt, input.rawText.slice(0, 30000));
+    try {
+      const cleaned = rawJson.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+      const parsed = JSON.parse(cleaned);
+      const list = Array.isArray(parsed.questions) ? parsed.questions : (Array.isArray(parsed) ? parsed : []);
+
+      const formatted = list.map((q: any) => ({
+        content: String(q.content || '').trim(),
+        translations: q.translations && typeof q.translations === 'object' ? q.translations : undefined,
+        type: 'single_choice' as const,
+        difficulty: (['easy', 'medium', 'hard'].includes(q.difficulty) ? q.difficulty : 'medium') as 'easy' | 'medium' | 'hard',
+        subject: input.subject || q.subject || 'General Studies',
+        topic: q.topic || input.topic || 'General',
+        marks: Number(q.marks) || 1,
+        negativeMarks: Number(q.negativeMarks) || 0.25,
+        explanation: String(q.explanation || '').trim(),
+        explanationTranslations: q.explanationTranslations && typeof q.explanationTranslations === 'object'
+          ? q.explanationTranslations
+          : undefined,
+        tags: Array.isArray(q.tags) && q.tags.length > 0 ? q.tags.map(String) : [input.subject || 'General Studies'],
+        options: Array.isArray(q.options)
+          ? q.options.map((opt: any) => ({
+              content: String(opt.content || '').trim(),
+              translations: opt.translations && typeof opt.translations === 'object' ? opt.translations : undefined,
+              isCorrect: Boolean(opt.isCorrect),
+            }))
+          : [],
+      }));
+
+      return { questions: formatted };
+    } catch (err) {
+      this.logger.error('Failed to parse raw questions via Gemini', err);
+      throw new BadRequestException('Failed to parse questions from raw text. Please check the input format.');
+    }
+  }
+
 }
+
+

@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Req,
 } from '@nestjs/common';
 import type { Request } from 'express';
@@ -17,6 +18,7 @@ import {
   createExamSchema,
   saveAnswerSchema,
   updateExamSchema,
+  updateSectionProgressSchema,
 } from './dto/exam.dto.js';
 import { ExamService } from './exam.service.js';
 
@@ -26,6 +28,38 @@ export class ExamController {
     private readonly service: ExamService,
     private readonly auth: AuthService,
   ) {}
+
+  @Get('admin/exam-attempts')
+  async adminListAttempts(
+    @Query('search') search: string | undefined,
+    @Query('testSeriesId') testSeriesId: string | undefined,
+    @Query('testId') testId: string | undefined,
+    @Query('status') status: string | undefined,
+    @Query('startDate') startDate: string | undefined,
+    @Query('endDate') endDate: string | undefined,
+    @Query('limit') limit: string | undefined,
+    @Query('offset') offset: string | undefined,
+    @Req() req: Request,
+  ) {
+    return this.service.adminListAttempts(
+      {
+        search,
+        testSeriesId,
+        testId,
+        status,
+        startDate,
+        endDate,
+        limit,
+        offset,
+      },
+      await this.auth.requireUser(req),
+    );
+  }
+
+  @Get('admin/exam-attempts/:id')
+  async adminGetAttempt(@Param('id') id: string, @Req() req: Request) {
+    return this.service.adminGetAttempt(id, await this.auth.requireUser(req));
+  }
 
   @Get('exams')
   list() {
@@ -92,6 +126,37 @@ export class ExamController {
       this.parse(saveAnswerSchema, req.body),
       await this.auth.requireUser(req),
     );
+  }
+
+  @Delete('exam-attempts/:attemptId/questions/:questionId/answer')
+  async clearAnswer(
+    @Param('attemptId') attemptId: string,
+    @Param('questionId') questionId: string,
+    @Req() req: Request,
+  ) {
+    return this.service.clearAnswer(attemptId, questionId, await this.auth.requireUser(req));
+  }
+
+  @Put('exam-attempts/:attemptId/section-progress')
+  async updateSectionProgress(
+    @Param('attemptId') attemptId: string,
+    @Req() req: Request,
+  ) {
+    return this.service.updateSectionProgress(
+      attemptId,
+      this.parse(updateSectionProgressSchema, req.body),
+      await this.auth.requireUser(req),
+    );
+  }
+
+  @Post('exam-attempts/:id/pause')
+  async pause(@Param('id') id: string, @Req() req: Request) {
+    return this.service.pauseAttempt(id, await this.auth.requireUser(req));
+  }
+
+  @Post('exam-attempts/:id/resume')
+  async resume(@Param('id') id: string, @Req() req: Request) {
+    return this.service.resumeAttempt(id, await this.auth.requireUser(req));
   }
 
   @Post('exam-attempts/:id/submit')

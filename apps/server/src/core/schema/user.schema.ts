@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -28,6 +28,18 @@ export class User {
 
   @Prop({ type: String, enum: ['active', 'suspended'], default: 'active' })
   status: 'active' | 'suspended';
+
+  @Prop({ type: String, enum: ['English', 'Hindi'], default: 'English' })
+  preferredLanguage?: 'English' | 'Hindi';
+
+  @Prop({ type: String, default: null })
+  targetExam?: string | null;
+
+  @Prop({ type: [Types.ObjectId], ref: 'TestSeries', default: [] })
+  targetSeriesIds?: Types.ObjectId[];
+
+  @Prop({ type: Date, default: null })
+  examGoalDate?: Date | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

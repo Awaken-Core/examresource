@@ -104,7 +104,10 @@ export class AuthController {
       sameSite: 'lax',
     });
     const staff = result.user.role === 'admin' || result.user.role === 'editor';
-    const next = returnTo && staff ? returnTo : '/?login=success';
+    const next =
+      returnTo && (staff || this.isTestSeriesReturn(returnTo))
+        ? returnTo
+        : '/?login=success';
     return res.redirect(new URL(next, env.CLIENT_URL).toString());
   }
 
@@ -224,7 +227,7 @@ export class AuthController {
   private returnCookieName() {
     return 'desk_return';
   }
-  /** Staff paths only. Rejects protocol-relative and off-site values. */
+  /** Staff paths and test-series pages. Rejects protocol-relative and off-site values. */
   private safeDeskReturn(value: string | undefined) {
     if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\') || value.includes('://')) {
       return null;
@@ -234,8 +237,14 @@ export class AuthController {
       path === '/administrator' ||
       path.startsWith('/administrator/') ||
       path === '/editor' ||
-      path.startsWith('/editor/');
+      path.startsWith('/editor/') ||
+      this.isTestSeriesReturn(path);
     return allowed ? value.slice(0, 240) : null;
+  }
+
+  private isTestSeriesReturn(value: string) {
+    const path = value.split(/[?#]/)[0];
+    return path === '/test-series' || path.startsWith('/test-series/');
   }
   private googleStateCookieName() {
     return this.isHostedEnvironment()

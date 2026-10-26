@@ -9,7 +9,7 @@ import {
   roleLabel,
   type DeskUser,
 } from '../../lib/adminSession';
-import { adminApi, type Category } from './api';
+import { adminApi, type Category, type AdminTestSeries } from './api';
 import { AdminToastProvider } from './AdminToast';
 import { ArticlesManager } from './ArticlesManager';
 import { CategoriesManager } from './CategoriesManager';
@@ -19,8 +19,23 @@ import { UsersManager } from './UsersManager';
 import { CategoryModal } from './CategoryModal';
 import { DeskMark } from './DeskMark';
 import { SessionPanel } from './SessionPanel';
+import { TestSeriesManager } from './TestSeriesManager';
+import { HierarchyManager } from './HierarchyManager';
+import { QuestionBankManager } from './QuestionBankManager';
+import { TestBuilderManager } from './TestBuilderManager';
+import { TestAttemptsManager } from './TestAttemptsManager';
 
-export type AdminTab = 'posts' | 'categories' | 'users' | 'notifications' | 'comments';
+export type AdminTab =
+  | 'posts'
+  | 'categories'
+  | 'users'
+  | 'notifications'
+  | 'comments'
+  | 'series'
+  | 'hierarchy'
+  | 'question-bank'
+  | 'test-builder'
+  | 'attempts';
 
 const TAB_TITLES: Record<AdminTab, string> = {
   posts: 'Articles',
@@ -28,6 +43,11 @@ const TAB_TITLES: Record<AdminTab, string> = {
   users: 'People',
   notifications: 'Notices',
   comments: 'Comments',
+  series: 'Test Series',
+  hierarchy: 'Subjects & Chapters',
+  'question-bank': 'Question Bank',
+  'test-builder': 'Test Builder',
+  attempts: 'Test Attempts',
 };
 
 interface AdminAppProps {
@@ -50,6 +70,7 @@ function brandParts() {
 function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
   const cached = typeof window !== 'undefined' ? peekSession() : undefined;
   const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
+  const [selectedSeriesForNav, setSelectedSeriesForNav] = useState<AdminTestSeries | null>(null);
   const [mountedTabs, setMountedTabs] = useState<AdminTab[]>([initialTab]);
   const [currentUser, setCurrentUser] = useState<DeskUser | null>(cached ?? null);
   const [isVerifyingAuth, setIsVerifyingAuth] = useState(!cached);
@@ -84,6 +105,11 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
       if (path.startsWith(`${DESK_PATH}/users`)) setActiveTab('users');
       else if (path.startsWith(`${DESK_PATH}/notifications`)) setActiveTab('notifications');
       else if (path.startsWith(`${DESK_PATH}/comments`)) setActiveTab('comments');
+      else if (path.includes('/attempts') || window.location.hash === '#attempts') setActiveTab('attempts');
+      else if (path.includes('/series') || window.location.hash === '#series') setActiveTab('series');
+      else if (path.includes('/hierarchy') || window.location.hash === '#hierarchy') setActiveTab('hierarchy');
+      else if (path.includes('/question-bank') || window.location.hash === '#question-bank') setActiveTab('question-bank');
+      else if (path.includes('/test-builder') || window.location.hash === '#test-builder') setActiveTab('test-builder');
       else if (window.location.hash === '#categories-section') setActiveTab('categories');
       else setActiveTab('posts');
     }
@@ -106,9 +132,19 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
           ? `${DESK_PATH}/notifications`
           : tab === 'comments'
             ? `${DESK_PATH}/comments`
-            : tab === 'categories'
-              ? `${DESK_PATH}#categories-section`
-              : DESK_PATH;
+            : tab === 'attempts'
+              ? `${DESK_PATH}#attempts`
+              : tab === 'series'
+                ? `${DESK_PATH}#series`
+                : tab === 'hierarchy'
+                  ? `${DESK_PATH}#hierarchy`
+                  : tab === 'question-bank'
+                    ? `${DESK_PATH}#question-bank`
+                    : tab === 'test-builder'
+                      ? `${DESK_PATH}#test-builder`
+                      : tab === 'categories'
+                        ? `${DESK_PATH}#categories-section`
+                        : DESK_PATH;
     window.history.pushState(null, '', target);
   };
 
@@ -133,74 +169,59 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
           setActiveTab('posts');
           window.history.replaceState(null, '', DESK_PATH);
         }
-        setCurrentUser((prev) =>
-          prev &&
-          user &&
-          prev.id === user.id &&
-          prev.role === user.role &&
-          prev.name === user.name &&
-          prev.email === user.email
-            ? prev
-            : user,
-        );
+        setCurrentUser(user);
         setAuthError(null);
-        document.documentElement.classList.remove('auth-pending');
       } catch (err: any) {
-        if (cancelled || force) return;
-        setAuthError(err?.message || 'Access verification failed. Please sign in again.');
-        document.documentElement.classList.remove('auth-pending');
+        if (cancelled) return;
+        setCurrentUser(null);
+        setAuthError(err.message || 'Unable to authenticate staff session');
       } finally {
         if (!cancelled) setIsVerifyingAuth(false);
       }
     }
 
-    checkAuth(false);
-
-    function onVisible() {
-      if (document.visibilityState === 'visible') checkAuth(true);
-    }
-    document.addEventListener('visibilitychange', onVisible);
+    checkAuth(!cached);
     return () => {
       cancelled = true;
-      document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
 
   const fetchCategories = useCallback(async () => {
-    if ((readCategoryCache<Category>() ?? []).length === 0) setIsLoadingCategories(true);
     try {
       const data = await adminApi.getCategories();
-      const rows = data || [];
-      setCategories(rows);
-      writeCategoryCache(rows);
+      setCategories(data);
+      writeCategoryCache(data);
     } catch {
-      /* child views surface their own empty states */
+      /* ignore */
     } finally {
       setIsLoadingCategories(false);
     }
   }, []);
 
   useEffect(() => {
-    if (currentUser) fetchCategories();
-  }, [currentUser, fetchCategories]);
+    if (categories.length === 0) {
+      fetchCategories();
+    }
+  }, [categories.length, fetchCategories]);
 
   if (isVerifyingAuth) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-canvas desk-fg">
-        <div className="flex items-center gap-3 text-sm text-muted">
-          <DeskMark size={28} />
-          <span>Opening Desk…</span>
-        </div>
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-canvas desk-fg gap-3">
+        <DeskMark size={40} className="animate-pulse" />
+        <p className="text-xs text-muted">Opening Desk…</p>
       </div>
     );
   }
 
   if (authError || !currentUser) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center p-4 bg-canvas desk-fg">
-        <div className="max-w-md w-full bg-surface border border-border rounded-2xl p-6 text-center space-y-3 shadow-elevated">
-          <h2 className="text-base font-semibold">Desk is unavailable</h2>
-          <p className="text-sm text-muted">{authError || 'Sign in with an editor or administrator account.'}</p>
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-canvas desk-fg p-6 text-center">
+        <div className="max-w-sm space-y-4">
+          <DeskMark size={40} className="mx-auto" />
+          <h1 className="text-base font-semibold">Staff access required</h1>
+          <p className="text-xs text-muted">
+            {authError || 'Sign in with an editor or administrator account to manage this site.'}
+          </p>
           <a href="/login" className="inline-flex px-4 py-2 rounded-full bg-accent desk-on-accent text-sm font-medium">
             Sign in
           </a>
@@ -263,6 +284,13 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
               <NavIcon name="write" />
               <span>Write</span>
             </a>
+
+            <NavGroup label="Test Series Platform" />
+            <NavButton active={activeTab === 'series'} onClick={() => switchTab('series')} icon="series" label="Test Series" />
+            <NavButton active={activeTab === 'hierarchy'} onClick={() => switchTab('hierarchy')} icon="hierarchy" label="Subjects & Chapters" />
+            <NavButton active={activeTab === 'question-bank'} onClick={() => switchTab('question-bank')} icon="questions" label="Question Bank" />
+            <NavButton active={activeTab === 'test-builder'} onClick={() => switchTab('test-builder')} icon="builder" label="Test Builder" />
+            <NavButton active={activeTab === 'attempts'} onClick={() => switchTab('attempts')} icon="attempts" label="Student Attempts" />
 
             {isAdmin && (
               <>
@@ -383,6 +411,55 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
                 <CommentsManager />
               </div>
             )}
+
+            {mountedTabs.includes('series') && (
+              <div hidden={activeTab !== 'series'}>
+                <TestSeriesManager
+                  currentUserRole={currentUser?.role}
+                  onSelectSeriesForHierarchy={(series) => {
+                    setSelectedSeriesForNav(series);
+                    switchTab('hierarchy');
+                  }}
+                  onSelectSeriesForTests={(series) => {
+                    setSelectedSeriesForNav(series);
+                    switchTab('test-builder');
+                  }}
+                />
+              </div>
+            )}
+
+            {mountedTabs.includes('hierarchy') && (
+              <div hidden={activeTab !== 'hierarchy'}>
+                <HierarchyManager
+                  initialSeriesId={selectedSeriesForNav?.id || selectedSeriesForNav?._id}
+                  onNavigateToTests={(series) => {
+                    setSelectedSeriesForNav(series);
+                    switchTab('test-builder');
+                  }}
+                />
+              </div>
+            )}
+
+            {mountedTabs.includes('question-bank') && (
+              <div hidden={activeTab !== 'question-bank'}>
+                <QuestionBankManager currentUserRole={currentUser?.role} />
+              </div>
+            )}
+
+            {mountedTabs.includes('test-builder') && (
+              <div hidden={activeTab !== 'test-builder'}>
+                <TestBuilderManager
+                  currentUserRole={currentUser?.role}
+                  initialSeriesId={selectedSeriesForNav?.id || selectedSeriesForNav?._id}
+                />
+              </div>
+            )}
+
+            {mountedTabs.includes('attempts') && (
+              <div hidden={activeTab !== 'attempts'}>
+                <TestAttemptsManager />
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -433,7 +510,19 @@ function NavButton({
   );
 }
 
-type IconName = 'articles' | 'categories' | 'comments' | 'write' | 'people' | 'notices' | 'site';
+type IconName =
+  | 'articles'
+  | 'categories'
+  | 'comments'
+  | 'write'
+  | 'people'
+  | 'notices'
+  | 'site'
+  | 'series'
+  | 'hierarchy'
+  | 'questions'
+  | 'builder'
+  | 'attempts';
 
 function NavIcon({ name }: { name: IconName }) {
   const common = 'w-4 h-4 shrink-0';
@@ -476,6 +565,41 @@ function NavIcon({ name }: { name: IconName }) {
     return (
       <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    );
+  }
+  if (name === 'series') {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    );
+  }
+  if (name === 'hierarchy') {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+    );
+  }
+  if (name === 'questions') {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    );
+  }
+  if (name === 'builder') {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+    );
+  }
+  if (name === 'attempts') {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     );
   }

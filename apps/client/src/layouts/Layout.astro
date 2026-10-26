@@ -50,7 +50,7 @@ const {
   hideDesktopSidebar = false,
   alternateLinks = [],
   noindex = false,
-  useClientRouter = false,
+  useClientRouter = true,
 } = Astro.props;
 
 // Ensure explicit X-Robots-Tag HTTP header matches the meta robots directive
@@ -156,6 +156,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <link rel="preload" href="/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" fetchpriority="high" />
     <link rel="preload" href="/fonts/geist-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 
+
     {/* DNS prefetch for the media CDN without holding an unused TLS socket */}
     <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
 
@@ -165,7 +166,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0a58ca" />
+    <meta name="theme-color" content="#FF4D00" />
     <meta name="generator" content={Astro.generator} />
 
     {/* Primary SEO Meta Tags */}
@@ -252,7 +253,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       })();
     </script>
   </head>
-  <body class="bg-canvas min-h-screen flex flex-col font-sans text-white antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+  <body class="bg-canvas min-h-screen flex flex-col font-sans text-heading antialiased selection:bg-accent selection:text-white transition-colors duration-200">
     {/* Google Tag Manager (noscript) */}
     <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -272,6 +273,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       {/* Main Area: Header + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
         {!hideHeaderFooter && !hideHeader && <Header hideDesktopSidebar={hideDesktopSidebar} />}
+
         <main id="main-content" class="flex-grow">
           <slot />
         </main>
@@ -322,7 +324,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       </div>
 
       {/* ── Scrollable Nav Body ── */}
-      <nav class="flex-1 overflow-y-auto overscroll-contain pt-0 px-3 pb-3 space-y-5 scrollbar-none">
+      <nav data-lenis-prevent class="flex-1 overflow-y-auto overscroll-contain pt-0 px-3 pb-3 space-y-5 scrollbar-none">
         
         {/* Channels Section */}
         <div>
@@ -367,6 +369,23 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               </svg>
               <span>Latest updates</span>
             </a>
+            <a href="/#categories" data-mobile-sidebar-close
+              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition-all text-sm font-medium"
+            >
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              <span>PYQs</span>
+            </a>
+            <a href="/test-series" data-mobile-sidebar-close
+              class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted hover:text-white hover:bg-surface-raised/60 transition-all text-sm font-medium"
+            >
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+              </svg>
+              <span>Test Series</span>
+            </a>
+
           </div>
         </div>
 
@@ -433,7 +452,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <div class="p-3 border-t border-border/60 shrink-0">
         {/* Logged Out */}
         <div class="sidebar-auth-logged-out block">
-          <a href="/login" data-mobile-sidebar-close
+          <a href="/login" data-login-link data-mobile-sidebar-close
             class="flex items-center justify-center gap-2.5 w-full py-3 px-4 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold text-sm transition shadow-sm"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -515,6 +534,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Global Robust Interactive Script */}
     <script>
       import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
+      import { initLenis, destroyLenis, stopLenis, startLenis } from '../lib/lenis';
 
       const siteDomain = document.documentElement.getAttribute('data-site-domain') || window.location.hostname;
       const API_URL = (import.meta.env.PUBLIC_API_URL || '').replace(/\/$/, '');
@@ -658,6 +678,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function openMobileDrawer() {
+          stopLenis();
           const backdrop = document.getElementById('mobile-sidebar-backdrop');
           const overlay = document.getElementById('mobile-backdrop-overlay');
           const container = document.getElementById('mobile-sidebar-container');
@@ -677,6 +698,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function closeMobileDrawer() {
+          startLenis();
           const backdrop = document.getElementById('mobile-sidebar-backdrop');
           const overlay = document.getElementById('mobile-backdrop-overlay');
           const container = document.getElementById('mobile-sidebar-container');
@@ -876,6 +898,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         let activeResultIndex = -1;
 
         function openSearchModal() {
+          stopLenis();
           const modal = document.getElementById('global-search-modal');
           const container = document.getElementById('global-search-container');
           const input = document.getElementById('global-search-input') as HTMLInputElement | null;
@@ -900,6 +923,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         }
 
         function closeSearchModal() {
+          startLenis();
           const modal = document.getElementById('global-search-modal');
           const container = document.getElementById('global-search-container');
           if (!modal || !container) return;
@@ -1404,18 +1428,40 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           const apiUrl = API_URL;
           const response = await fetch(`${apiUrl}/me`, { priority: 'low', credentials: 'include' } as any).catch(() => null);
-          if (response && response.status === 401) {
-            try { localStorage.removeItem('auth_active'); } catch (e) {}
+
+          // If request was aborted (e.g. navigation in flight), network failed, or server had 5xx blip:
+          // NEVER touch auth state or reset UI to logged-out. Keep optimistic state intact!
+          if (!response || response.status >= 500) return;
+
+          if (response.status === 401) {
+            try {
+              localStorage.removeItem('auth_active');
+              localStorage.removeItem('auth_user');
+            } catch (e) {}
           }
-          const user = response?.ok ? await response.json().catch(() => null) : null;
-          if (user) {
-            try { localStorage.setItem('auth_active', '1'); } catch (e) {}
-          } else {
-            try { localStorage.removeItem('auth_active'); } catch (e) {}
+
+          const user = response.ok ? await response.json().catch(() => null) : null;
+          const isUserLoggedIn = Boolean(user && user.id);
+
+          if (isUserLoggedIn) {
+            try {
+              localStorage.setItem('auth_active', '1');
+              localStorage.setItem('auth_user', JSON.stringify({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+              }));
+            } catch (e) {}
+          } else if (response.status === 401 || (response.ok && !user)) {
+            try {
+              localStorage.removeItem('auth_active');
+              localStorage.removeItem('auth_user');
+            } catch (e) {}
           }
 
           const { refreshNotifications } = await import('../lib/notifications');
-          if (user) {
+          if (isUserLoggedIn) {
             void refreshNotifications('session');
 
             if (!(window as any).__notifPollInterval) {
@@ -1432,7 +1478,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const loginLinks = document.querySelectorAll<HTMLElement>('.auth-login-link');
           const adminPanelLinks = document.querySelectorAll<HTMLElement>('.admin-panel-link');
 
-          if (user) {
+          if (isUserLoggedIn) {
             const fullName = (user.name || 'User').trim();
             const email = user.email || 'Account';
             const parts = fullName.split(/\s+/).filter(Boolean);
@@ -1488,7 +1534,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               el.classList.add('hidden');
               el.style.display = 'none';
             });
-          } else {
+          } else if (response.status === 401 || (response.ok && !user)) {
             document.documentElement.removeAttribute('data-authenticated');
             (window as any).__currentUser = null;
 
@@ -1593,23 +1639,29 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const svg = link.querySelector('svg');
 
             if (isActive) {
-              link.classList.add('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
+              link.classList.add('bg-accent/10', 'text-accent', 'font-semibold', 'border', 'border-accent/20');
               link.classList.remove('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
               if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
-                svg.classList.add('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
+                svg.classList.add('text-accent');
                 svg.classList.remove('text-muted');
               }
             } else {
-              link.classList.remove('bg-[#EBF2FE]', 'text-[#2563EB]', 'font-semibold', 'theme-dark:bg-[#2563EB]/20', 'theme-dark:text-[#60A5FA]');
+              link.classList.remove('bg-accent/10', 'text-accent', 'font-semibold', 'border', 'border-accent/20');
               link.classList.add('text-muted', 'hover:text-white', 'hover:bg-surface-raised');
               if (svg && !svg.classList.contains('text-[#25D366]') && !svg.classList.contains('text-[#2AABEE]')) {
-                svg.classList.remove('text-[#2563EB]', 'theme-dark:text-[#60A5FA]');
+                svg.classList.remove('text-accent');
               }
             }
           });
         }
 
         function reinitPageElements() {
+          // Initialize Lenis smooth scroll
+          initLenis({ headerOffset: -70 });
+
+          // Instantly show logged-in shell from cache — zero network, zero delay
+          applyOptimisticAuth();
+
           // Sync sidebar active links
           updateSidebarActiveLinks();
 
@@ -1696,6 +1748,81 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           queueSyncAuthProfile();
         }
 
+        /**
+         * Instant optimistic auth: reads localStorage/cookie without any network call.
+         * Shows the logged-in header/sidebar shell in <1ms so there's zero visible flash.
+         * The real fetch in syncAuthProfile() will correct it if the session has expired.
+         */
+        /**
+         * Instant optimistic auth: reads localStorage/cookie without any network call.
+         * Shows the logged-in header/sidebar shell in <1ms so there's zero visible flash.
+         * The real fetch in syncAuthProfile() will correct it if the session has expired.
+         */
+        function applyOptimisticAuth() {
+          let isLoggedIn = false;
+          try {
+            isLoggedIn = localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
+          } catch (e) {}
+
+          if (isLoggedIn) {
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-in').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-out').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-out').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-logout-btn').forEach(b => {
+              b.classList.remove('hidden');
+              b.style.display = 'flex';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-login-link').forEach(l => {
+              l.classList.add('hidden');
+              l.style.display = 'none';
+            });
+
+            // Instant hydrate cached user initials and name to eliminate flash of guest profile
+            try {
+              const rawUser = localStorage.getItem('auth_user');
+              if (rawUser) {
+                const u = JSON.parse(rawUser);
+                const fullName = (u.name || 'User').trim();
+                const email = u.email || 'Account';
+                const parts = fullName.split(/\s+/).filter(Boolean);
+                const initials = parts.length > 1
+                  ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+                  : (fullName.slice(0, 2)).toUpperCase() || 'U';
+
+                document.querySelectorAll('.user-display-name').forEach(el => el.textContent = fullName);
+                document.querySelectorAll('.user-display-email').forEach(el => el.textContent = email);
+                document.querySelectorAll('.user-avatar-initials').forEach(el => {
+                  el.textContent = initials;
+                  el.classList.remove('hidden');
+                });
+                if (u.role === 'admin' || u.role === 'editor') {
+                  document.querySelectorAll<HTMLElement>('.admin-panel-link').forEach(link => {
+                    link.classList.remove('hidden');
+                    link.style.display = 'flex';
+                  });
+                }
+              }
+            } catch (e) {}
+          }
+        }
+
         let authProfileQueued = false;
         function queueSyncAuthProfile() {
           // API-host cookies are unreadable here in production; always verify the session.
@@ -1705,16 +1832,25 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             authProfileQueued = false;
             void syncAuthProfile();
           };
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(run, { timeout: 3000 });
-          } else {
-            setTimeout(run, 2000);
-          }
+          // Fire immediately after layout paint — no artificial delay.
+          // requestAnimationFrame chains twice to ensure DOM is stable before fetch.
+          requestAnimationFrame(() => requestAnimationFrame(run));
         }
 
         // --- Global One-Time Event Listeners & Lifecycles ---
         if (!(window as any).__APP_GLOBAL_LISTENERS_INITIALIZED__) {
           (window as any).__APP_GLOBAL_LISTENERS_INITIALIZED__ = true;
+
+          document.addEventListener('click', (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            const link = target.closest('a[data-login-link], a.auth-login-link, a#header-login-btn');
+            if (!(link instanceof HTMLAnchorElement)) return;
+            const path = window.location.pathname;
+            if (path !== '/test-series' && !path.startsWith('/test-series/')) return;
+            const here = `${path}${window.location.search}`;
+            link.href = `/login?redirect=${encodeURIComponent(here)}`;
+          }, true);
 
           // Central Click Event Delegation
           document.addEventListener('click', handleGlobalClick);
@@ -1731,6 +1867,19 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           window.addEventListener('exam:language-change', ((e: CustomEvent) => {
             if (e.detail?.lang) setLanguage(e.detail.lang, false);
           }) as EventListener);
+
+          // Apply optimistic auth to the newly swapped DOM immediately before browser paint
+          document.addEventListener('astro:after-swap', () => {
+            applyOptimisticAuth();
+          });
+
+          // Lenis smooth scroll and page elements re-init on EVERY page load / client transition
+          document.addEventListener('astro:page-load', () => {
+            reinitPageElements();
+          });
+          document.addEventListener('astro:before-swap', () => {
+            destroyLenis();
+          });
 
           // Dispatch astro:page-load so any components listening to it continue working seamlessly
           try {

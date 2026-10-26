@@ -1,0 +1,122 @@
+[
+  {
+    "content": "Which of the following statement is/are correct?\nI. The largest four digit number in base 7 is 7777.\nII. The smallest four digit number in base 8 is 1111.",
+    "type": "single_choice",
+    "subject": "Discrete Mathematics",
+    "subjectSlug": "discrete-mathematics",
+    "topic": "Propositional and Predicate Logic",
+    "chapterSlug": "dsssb-dm-logic",
+    "difficulty": "medium",
+    "explanation": "Statement I:\nIn base 7, digits range from 0 to 6.\nSo, 7777 is not valid in base 7.\nThe largest 4-digit number in base 7 is actually 6666.\nStatement II:\nIn base 8, digits range from 0 to 7.\nThe smallest 4-digit number is 1000, not 1111.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "discrete-mathematics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Express the given statement in FOPL?\n Statement:\n Any two numbers can be added together.",
+    "type": "single_choice",
+    "subject": "Discrete Mathematics",
+    "subjectSlug": "discrete-mathematics",
+    "topic": "Propositional and Predicate Logic",
+    "chapterSlug": "dsssb-dm-logic",
+    "difficulty": "easy",
+    "explanation": "Any two numbers can be added” → For all x,y there exists z such that x+y=z.",
+    "options": [
+      {
+        "content": "(∃x)(∃y)(∀z) (x + y = z)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(∀x)(∃y)(∀z) (x + y = z)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(∀x)(∀y)(∃z) (x + y = z)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "(∃x)(∀y)(∃z) (x + y = z)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "discrete-mathematics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If A={1,2,3,4}, B={2,4,5}, and C={2,5}, then (A−B)×(B−C)=?",
+    "type": "single_choice",
+    "subject": "Discrete Mathematics",
+    "subjectSlug": "discrete-mathematics",
+    "topic": "Set Theory",
+    "chapterSlug": "dsssb-dm-set-theory",
+    "difficulty": "easy",
+    "explanation": "Solution:\n1. Compute A − B: remove elements of B = {2,4,5} from A = {1,2,3,4}.\nA − B = {1,3}.\n2. Compute B − C: remove elements of C = {2,5} from B = {2,4,5}.\nB − C = {4}.\n3. Combine the results (here × is being used as the union of the two resulting sets):\n(A − B) ∪ (B − C) = {1,3} ∪ {4} = {1,3,4}.\nAnswer: {1,3,4}.\nNote: If the symbol × had been intended as the Cartesian product, the result would be the set of ordered pairs {(1,4),(3,4)}. The option {1,3,4} matches the union interpretation.",
+    "options": [
+      {
+        "content": "{1,3}",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "{1,4}",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "{1,3,4}",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "{1,3,4,5}",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "discrete-mathematics",
+      "2023"
+    ],
+    "examYear": 2023
+  }
+]

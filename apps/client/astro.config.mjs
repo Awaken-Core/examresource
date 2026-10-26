@@ -40,6 +40,9 @@ export default defineConfig({
 	adapter: vercel(),
 	integrations: [react()],
   vite: {
+    resolve: {
+      preserveSymlinks: true,
+    },
     cacheDir: isBuild ? 'node_modules/.vite/build' : 'node_modules/.vite/dev',
     server: {
       watch: {

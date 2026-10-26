@@ -1,0 +1,202 @@
+[
+  {
+    "content": "In AI biases many AI models are _____.\nI. deepfakes\nII. Black boxes\nIII. K-anonymity",
+    "type": "single_choice",
+    "subject": "Knowledge of ICT",
+    "subjectSlug": "knowledge-ict",
+    "topic": "Emerging Tech Trends",
+    "chapterSlug": "dsssb-ict-emerging-tech",
+    "difficulty": "easy",
+    "explanation": "Many AI models are described as black boxes because their internal decision process may not be easily interpretable. Deepfakes and K-anonymity are different concepts.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Only I and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "knowledge-ict",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Match the categories of AI with its correct description.\nCategories of AI\nDescription\nI\nArtificial Narrow Intelligence\n1\nLevel of general and strong AI that is smarter than humans if that's possible.\nII\nArtificial General Intelligence\n2\nSuch system seems to act intelligently but they don't have any awareness of what they are doing.\nIII\nSuper Intelligence\n3\nActing like a smart human and thinking like one with a conscious.",
+    "type": "single_choice",
+    "subject": "Knowledge of ICT",
+    "subjectSlug": "knowledge-ict",
+    "topic": "Emerging Tech Trends",
+    "chapterSlug": "dsssb-ict-emerging-tech",
+    "difficulty": "easy",
+    "explanation": "Artificial Narrow Intelligence is limited and only appears intelligent, Artificial General Intelligence is human-like general intelligence, and Super Intelligence is smarter than humans. Therefore the matching is I-2, II-3, III-1.",
+    "options": [
+      {
+        "content": "I-2, II-3, III-1",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "I-2, II-1, III-3",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I-1, II-2, III-3",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I-1, II-3, III-2",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "knowledge-ict",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "From the challenges given below, which of the challenge does IoT adoption include?",
+    "type": "single_choice",
+    "subject": "Knowledge of ICT",
+    "subjectSlug": "knowledge-ict",
+    "topic": "Emerging Tech Trends",
+    "chapterSlug": "dsssb-ict-emerging-tech",
+    "difficulty": "easy",
+    "explanation": "Security is a major challenge in IoT adoption because connected devices collect data and communicate over networks.",
+    "options": [
+      {
+        "content": "Deepfake",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Black box",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Security",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Cloud storage",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "knowledge-ict",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following are the key feature(s) of cloud computing?\n I. Scalability\n II. Self service\n III. Pay-per-use",
+    "type": "single_choice",
+    "subject": "Knowledge of ICT",
+    "subjectSlug": "knowledge-ict",
+    "topic": "Emerging Tech Trends",
+    "chapterSlug": "dsssb-ict-emerging-tech",
+    "difficulty": "easy",
+    "explanation": "• I. Scalability: This allows users to increase or decrease resource capacity (like storage or processing power) instantly based on demand. In cloud environments, this is often handled through Auto-scaling, ensuring you only use what you need.\n• II. Self-service (On-demand Self-service): Users can provision computing capabilities, such as server time and network storage, automatically as needed without requiring human interaction with the service provider.\n• III. Pay-per-use (Measured Service): Similar to a utility like electricity, cloud computing follows a consumption-based model. we are billed only for the specific resources and duration we actually use, which shifts costs from Capital Expenditure (CapEx) to Operational Expenditure (OpEx).",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "knowledge-ict",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which among the following given below is correct in context of privacy issues in social media and online platforms?",
+    "type": "single_choice",
+    "subject": "Knowledge of ICT",
+    "subjectSlug": "knowledge-ict",
+    "topic": "Society, Law & Ethics",
+    "chapterSlug": "dsssb-ict-law-ethics",
+    "difficulty": "easy",
+    "explanation": "The correct privacy-related statement is that social-media sharing, especially by children, should be monitored. The other options incorrectly deny real risks such as addiction, rumours, fake news, and misuse.",
+    "options": [
+      {
+        "content": "The sharing on social media especially by children must be monitored at all times.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "The addiction of social media does not hamper the academic performance of a student.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Rumours and fake news cannot put the administration at risk.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Mishandling of social media cannot create tension in the law and order.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "knowledge-ict",
+      "2024"
+    ],
+    "examYear": 2024
+  }
+]

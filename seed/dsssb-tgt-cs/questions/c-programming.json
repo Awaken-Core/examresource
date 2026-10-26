@@ -1,0 +1,522 @@
+[
+  {
+    "content": "Which statement(s) is/are true about formation of identifier in C?\n I. It consist of alphabets, digits and underscore.\n II. An identifier can start with an underscore.",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "C identifiers allow alphabets, digits, and underscores only. They may start with an underscore but not a digit. Both statements correctly reflect these standard C syntax rules.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which inbuilt function in C is used to read string from system console?",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "Correct Answer: cgets()The correct inbuilt function in C used to read a string from the system console is cgets(). This function is specifically designed to read a line of text from the standard input and store it in a character array.\nAnalysis of Options• puts(): This function is used to write or print a string to the console. It outputs data, it does not read input.\n• cgets(): This function reads a string from the console. It is a non-standard function but is commonly used in older C compilers for safe string input.\n• getche(): This function reads a single character from the keyboard and echoes it immediately. It does not read a full string.\n• getchar(): This function reads a single character from the standard input stream. It returns the character as an integer and does not handle strings.\nTherefore, among the given options, cgets() is the only function specifically intended for reading a string from the system console.",
+    "options": [
+      {
+        "content": "puts ()",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "cgets ()",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "getche ()",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "getchar ()",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the following code written in C?\nvoid main()\n{\nprintf(\"%d%d%d\", 62, 062, 0x62);\n}",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "The code uses printf with three integer arguments formatted as %d.\nFirst argument: 62 is a decimal integer, so it prints as 62.\nSecond argument: 062 starts with 0, indicating octal. 6*8 + 2 = 50.\nThird argument: 0x62 indicates hexadecimal. 6*16 + 2 = 98.\nThe format string %d%d%d prints them consecutively, resulting in 625098.",
+    "options": [
+      {
+        "content": "506298",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "629850",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "625098",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "986250",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the code written in C?\n void main()\n {\n     int k = 8, v = 8, i;\n     i = k / ++v;\n     printf(\"%d\\n\", i);\n }",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "Step 1: The variable v is initialized to 8.\nStep 2: The expression ++v is a pre-increment, so v is incremented to 9 before the division.\nStep 3: The division k / ++v becomes 8 / 9.\nStep 4: Since both operands are integers, integer division is performed, resulting in 0.\nStep 5: The printf statement prints the integer value 0.",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "0.8",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Error",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the code written in C?\n void main()\n {\n     int k, val = 1;\n     k = ++val * ++val;\n     printf(\"%d\", k);\n }",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "1. Initial state: val = 1\n2. First increment: The compiler resolves the first ++val, incrementing val from 1 to 2.\n3. Second increment: The compiler resolves the second ++val, incrementing val from 2 to 3.\n4. Multiplication: Now that both prefix increments have been processed, the compiler looks at the values for the multiplication. Since both operands refer to the memory location of val (which is now 3), the expression evaluates as 3 *3.\n5. Assignment: k becomes 9, and printf outputs 9.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "9",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "16",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the code written in C?\n void main()\n {\n     printf(\"%d\", 7 % -3);\n     printf(\"%d\", -7 % 3);\n }",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "In C, the modulo operator % follows truncation towards zero. For 7 % -3, the sign matches the dividend (positive), yielding 1. For -7 % 3, the sign matches the dividend (negative), yielding -1. The program prints these values consecutively without spaces.",
+    "options": [
+      {
+        "content": "1 −1",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "−1 −1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "−1 1",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which one is the reserved word in C language?",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "C Fundamentals",
+    "chapterSlug": "dsssb-c-fundamentals",
+    "difficulty": "easy",
+    "explanation": "In C programming, reserved words are keywords with special meaning. Volatile is a storage class specifier keyword used to indicate that a variable may change unexpectedly. Automatic, integer, and constant are not reserved keywords in standard C syntax.",
+    "options": [
+      {
+        "content": "automatic",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "integer",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "constant",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "volatile",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the following ‘C’ language statements?\n #include <stdio.h>\n int main() {\n     int a = 10, b = 20, *p1 = &a, *p2 = &b;\n     printf(\"Before : **p1=%d **p2=%d\", *p1, *p2);\n     *p1 = *p1 + *p2;\n     *p2 = *p1 - *p2;\n     *p1 = *p1 - *p2;\n     printf(\"\\nAfter : **p1=%d **p2=%d\", *p1, *p2);\n     return 0;\n }",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "Arrays & Pointers",
+    "chapterSlug": "dsssb-c-arrays-pointers",
+    "difficulty": "medium",
+    "explanation": "Step 1: Initialize variables: a = 10, b = 20, *p1 = &a, *p2 = &b. So, *p1 = 10, *p2 = 20.\nStep 2: *p1 = *p1 + *p2 → *p1 = 10 + 20 = 30.\nStep 3: *p2 = *p1 - *p2 → *p2 = 30 - 20 = 10.\nStep 4: *p1 = *p1 - *p2 → *p1 = 30 - 10 = 20.\nFinal values: *p1 = 20, *p2 = 10.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Consider the following declarations in C++:\nint C, *PTR;\nWhich of the following statements is TRUE?",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "Arrays & Pointers",
+    "chapterSlug": "dsssb-c-arrays-pointers",
+    "difficulty": "easy",
+    "explanation": "The declaration int C, *PTR; means C is an integer and PTR is a pointer to an integer. A pointer variable must store an address, and &C gives the address of C. Therefore the valid statement is PTR = &C;.",
+    "options": [
+      {
+        "content": "PTR = C;",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "*PTR = &C;",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "PTR = &C;",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "C = &PTR;",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Considering A as a one-dimensional array, which of the following C++ statements will print the third element of A?",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "Arrays & Pointers",
+    "chapterSlug": "dsssb-c-arrays-pointers",
+    "difficulty": "easy",
+    "explanation": "In C/C++, array indexing starts at 0, so the third element is `A[2]`. Also `A[2]` is equivalent to `*(A + 2)` and `2[A]`, so `cout << 2[A];` prints the third element. `cout >> A[2];` is wrong because `>>` is the input/extraction operator.",
+    "options": [
+      {
+        "content": "cout << A[3];",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "cout << 3[A];",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "cout << 2[A];",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "cout >> A[2];",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is specified by function prototype in C++?\n I. Return Type\n II. Function name\n III. Number and types of argument",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "Functions",
+    "chapterSlug": "dsssb-c-functions",
+    "difficulty": "easy",
+    "explanation": "A C++ function prototype declares the function's interface before its definition. It specifies the return type, the function name, and the number and types of arguments required.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement is correct regarding main () function in C++?\nI. It is a user defined function.\nII. It is a pre-defined function.",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "Functions",
+    "chapterSlug": "dsssb-c-functions",
+    "difficulty": "easy",
+    "explanation": "ExplanationThe main() function acts as the entry point for C++ programs.\nStatement I is correct because the programmer must explicitly write the definition.\nStatement II is incorrect as it is not a pre-defined library function.\nTherefore, only Statement I is valid.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider the following C declaration.\n Assume that objects of data type short, float and long occupy 2 bytes, 4 bytes and 8 bytes respectively.\n What is the memory requirement for variable t?\n struct {\n     short a[5];\n     union {\n         float v;\n         long z;\n     } u;\n } t;",
+    "type": "single_choice",
+    "subject": "C Programming",
+    "subjectSlug": "c-programming",
+    "topic": "Storage Classes, Structures & Enums",
+    "chapterSlug": "dsssb-c-storage-classes",
+    "difficulty": "easy",
+    "explanation": "To determine the memory requirement for variable t, we analyze the structure and union components:\n1. The array a[5] of type short occupies 5 × 2 = 10 bytes.\n2. The union u contains float (4 bytes) and long (8 bytes). The size of a union is determined by its largest member, so u occupies 8 bytes.\n3. The total memory requirement is the sum of the array and the union: 10 + 8 = 18 bytes.",
+    "options": [
+      {
+        "content": "22 bytes",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "18 bytes",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "24 bytes",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "10 bytes",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "c-programming",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

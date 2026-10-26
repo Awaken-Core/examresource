@@ -1,985 +1,1235 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import FAQSection from '../components/FAQSection.astro';
-import ArticleCard from '../components/blog/ArticleCard.astro';
-import BrandLogo from '../components/BrandLogo.astro';
-import ProfileDropdown from '../components/ProfileDropdown.astro';
-import NotificationPopup from '../components/NotificationPopup.astro';
-import FavoritesDropdown from '../components/FavoritesDropdown.astro';
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import { Image } from 'astro:assets';
-import { siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
+import videoBg from '../assets/video-bg.png';
+import BrandLogo from '../components/BrandLogo.astro';
+import InkOrbitFeatures from '../components/ui/ink-orbit-features';
+import { Avatar, Style } from '@dicebear/core';
+import lorelei from '@dicebear/styles/lorelei.json' with { type: 'json' };
 import {
-  appLangToBlogLanguage,
-  articleHref,
-  preferredLangFromCookieHeader,
-} from '../lib/preferred-lang';
+  contactEmail,
+  examPortals,
+  siteDomain,
+  siteFaqs,
+  siteName,
+  siteSlogan,
+  telegramChannel,
+  whatsappChannel,
+} from '../data/site';
 
-
-const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
-const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
-const listLanguage = appLangToBlogLanguage(preferredAppLang);
-
-// Edge CDN caching: cache for 60s, serve stale up to 300s while revalidating in background
-Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
-Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
-
-let livePosts: any[] = [];
-let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string; status?: number; durationMs: number } | null = null;
-
-const fetchStart = performance.now();
-try {
-  const res = await fetch(`${API_URL}/blogs?limit=60&language=${listLanguage}&includeImages=false`, {
-    signal: AbortSignal.timeout(6000),
-  });
-  const durationMs = Math.round(performance.now() - fetchStart);
-
-  if (!res.ok) {
-    fetchError = { type: 'http', status: res.status, durationMs };
-  } else {
-    try {
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        livePosts = data;
-        if (data.length === 0) {
-          fetchError = { type: 'empty', status: res.status, durationMs };
-        }
-      } else {
-        fetchError = { type: 'json', message: 'Payload is not an array', status: res.status, durationMs };
-      }
-    } catch (parseErr: any) {
-      fetchError = { type: 'json', message: parseErr?.message, status: res.status, durationMs };
-    }
-  }
-} catch (netErr: any) {
-  const durationMs = Math.round(performance.now() - fetchStart);
-  fetchError = { type: 'network', message: netErr?.message, durationMs };
-}
-
-// Map only REAL live database articles
-const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-const nowTime = Date.now();
-const displayArticles = (livePosts || []).map((p) => {
-  const title = p.title || 'Untitled Notification';
-  const categoryName = p.category?.name || p.categories?.[0]?.name || 'Central Government';
-  const categorySlug = p.category?.slug || p.categories?.[0]?.slug || 'central-government';
-  const pubTime = new Date(p.publishedAt || p.updatedAt || Date.now()).getTime();
-  
-  // NEW tag ONLY on blogs published within the last 3 days
-  const isNew = (nowTime - pubTime) >= 0 && (nowTime - pubTime) <= THREE_DAYS_MS;
-
-  return {
-    title,
-    slugKey: p.slug,
-    slug: articleHref(p.slug, preferredAppLang),
-    category: categoryName,
-    categorySlug,
-    categories: p.categories || (p.category ? [p.category] : []),
-    summary: p.description || p.metaDescription || '',
-    date: new Date(pubTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-    isNew,
-  };
-});
-
-// 9 Curated Authentic Government Exam Streams (3x3 Grid)
-const streamCategories = [
+const avatarStyle = new Style(lorelei);
+const studentPerspectives = [
   {
-    id: 'central-govt',
-    name: 'Central Govt & UPSC',
-    shortName: 'Central & UPSC',
-    slug: 'central-government',
-    coverage: 'UPSC Civil Services, EPFO, Central Ministries & National Agencies',
-    keywords: ['central', 'upsc', 'ias', 'ips', 'ministry', 'epfo', 'ncs'],
-    iconType: 'monument',
+    title: 'Find deadlines faster',
+    body: 'Clear dates, concise summaries, and direct official links make important updates easier to act on.',
+    seed: 'exam-planner',
   },
   {
-    id: 'ssc',
-    name: 'SSC Exams',
-    shortName: 'SSC Exams',
-    slug: 'ssc',
-    coverage: 'Staff Selection Commission (CGL, CHSL, MTS, GD, CPO, Steno)',
-    keywords: ['ssc', 'cgl', 'chsl', 'mts', 'staff selection', 'cpo', 'stenographer', 'gd constable'],
-    iconType: 'document',
+    title: 'Prepare in one place',
+    body: 'Exam streams and focused resources keep preparation organised without jumping between scattered sources.',
+    seed: 'focused-learner',
   },
   {
-    id: 'railways',
-    name: 'Railway Exams (RRB)',
-    shortName: 'Railway Exams',
-    slug: 'railways',
-    coverage: 'Railway Recruitment Boards (NTPC, Group D, ALP, Technician, RPF)',
-    keywords: ['railway', 'railways', 'rrb', 'ntpc', 'group d', 'alp', 'rpf', 'technician'],
-    iconType: 'train',
+    title: 'Verify before applying',
+    body: 'Every guide points back to the relevant official portal so critical details can be checked confidently.',
+    seed: 'careful-candidate',
+  },
+].map((item) => ({
+  ...item,
+  avatar: new Avatar(avatarStyle, {
+    seed: item.seed,
+    size: 96,
+    borderRadius: 50,
+    backgroundColor: ['#FFE1D3', '#F1E7DB', '#FFD0BA'],
+  }).toDataUri(),
+}));
+
+const groups = [
+  {
+    title: 'Explore',
+    links: [
+      ['Exam updates', '/blogs'],
+      ['Latest notifications', '/blogs#latest-updates'],
+      ['Exam categories', '/blogs#categories'],
+      ['Test series', '/test-series'],
+      ['Bookmarks', '/bookmarks'],
+      ['Favorites', '/favorites'],
+      ['Notifications', '/notifications'],
+    ],
   },
   {
-    id: 'banking',
-    name: 'Banking & Insurance Exams',
-    shortName: 'Banking Exams',
-    slug: 'banking',
-    coverage: 'SBI, IBPS PO/Clerk, RBI Grade B, LIC & Public Sector Banks',
-    keywords: ['bank', 'banking', 'sbi', 'ibps', 'rbi', 'lic', 'clerk', 'po', 'nabard', 'insurance'],
-    iconType: 'bank',
+    title: 'Exam streams',
+    links: [
+      ['Central Govt & UPSC', '/category/central-government'],
+      ['SSC exams', '/category/ssc'],
+      ['Railway exams', '/category/railways'],
+      ['Banking exams', '/category/banking'],
+      ['Latest govt jobs', '/category/latest-jobs'],
+      ['Defence exams', '/category/defence'],
+      ['Police recruitment', '/category/police'],
+      ['Teaching exams', '/category/teaching'],
+      ['PSU & engineering', '/category/psu-engineering'],
+    ],
   },
+  { title: 'Resources', links: examPortals.slice(0, 9).map(({ name, href }) => [name, href]) },
   {
-    id: 'latest-jobs',
-    name: 'Latest Govt Jobs',
-    shortName: 'Latest Govt Jobs',
-    slug: 'latest-jobs',
-    coverage: 'State PSCs, Central Ministries, Public Sector Undertakings & National Recruitment',
-    keywords: ['latest-jobs', 'latest-job', 'job', 'jobs', 'recruitment', 'vacancy', 'vacancies', 'bharti', 'sarkari', 'state', 'uppsc', 'bpsc', 'mpsc', 'rpsc', 'mppsc', 'pcs', 'patwari', 'lekhpal', 'psc', 'vyapam'],
-    iconType: 'building',
-  },
-  {
-    id: 'defence',
-    name: 'Defence & Paramilitary Exams',
-    shortName: 'Defence Exams',
-    slug: 'defence',
-    coverage: 'Indian Armed Forces (Army, Navy, Air Force), NDA, CDS, AFCAT, CAPF, Coast Guard',
-    keywords: ['defence', 'defense', 'army', 'navy', 'air force', 'nda', 'cds', 'afcat', 'capf', 'coast guard', 'cgept', 'navik', 'agniveer'],
-    iconType: 'shield',
-  },
-  {
-    id: 'police',
-    name: 'Police Recruitment Exams',
-    shortName: 'Police Exams',
-    slug: 'police',
-    coverage: 'State Police Sub-Inspector (SI), Constable, ASI & Driver Drives',
-    keywords: ['police', 'constable', 'si', 'sub-inspector', 'driver', 'delhi police', 'mp police', 'mpesb'],
-    iconType: 'badge',
-  },
-  {
-    id: 'teaching',
-    name: 'Teaching & Education Exams',
-    shortName: 'Teaching Exams',
-    slug: 'teaching',
-    coverage: 'CTET, State TETs, KVS, NVS, DSSSB, Assistant Professor & PGT/TGT/PRT',
-    keywords: ['teach', 'teacher', 'ctet', 'tet', 'kvs', 'nvs', 'dsssb', 'ugc', 'net', 'pgt', 'tgt', 'prt', 'upessc'],
-    iconType: 'book',
-  },
-  {
-    id: 'psu-engineering',
-    name: 'PSU & Engineering Exams',
-    shortName: 'PSU & Engineering',
-    slug: 'psu-engineering',
-    coverage: 'BHEL, ISRO, DRDO, GATE, State Engineering Services & Technical Drives',
-    keywords: ['psu', 'engineering', 'gate', 'isro', 'drdo', 'bhel', 'bel', 'sail', 'iocl', 'polytechnic', 'jeecup', 'artisan', 'technical', 'diploma'],
-    iconType: 'gear',
+    title: 'Company',
+    links: [
+      ['About our portal', '/blogs#faqs'],
+      ['Contact us', '/contact-us'],
+      ['Privacy policy', '/privacy-policy'],
+      ['Terms of service', '/terms-of-service'],
+      ['Sitemap', '/sitemap'],
+      ['RSS feed', '/rss.xml'],
+      ['Log in', '/login'],
+      ['Create account', '/signup'],
+    ],
   },
 ];
 
-// Combine ONLY real database articles per category (NO fake fallback data)
-const bentoGridData = streamCategories.map((cat) => {
-  const matchedLive = displayArticles.filter((art) => {
-    const artCategories = (art.categories || []).map((c: any) => (c.slug || '').toLowerCase());
-    const artCategoryNames = (art.categories || []).map((c: any) => (c.name || '').toLowerCase());
-    const artCatSlug = (art.categorySlug || '').toLowerCase();
-    const artCatName = (art.category || '').toLowerCase();
-    const artTitle = (art.title || '').toLowerCase();
-
-    // Check direct slug/name match against primary or any attached category
-    if (artCatSlug === cat.slug || artCatName === cat.name.toLowerCase()) return true;
-    if (artCategories.includes(cat.slug) || artCategoryNames.includes(cat.name.toLowerCase())) return true;
-
-    // Support category-specific alias mappings
-    if (cat.slug === 'latest-jobs' && (artCatSlug === 'state-exams' || artCategories.includes('state-exams'))) return true;
-    if (cat.slug === 'psu-engineering' && (artCatSlug === 'admissions' || artCategories.includes('admissions') || artCatName.includes('admission'))) return true;
-
-    // Keyword matching across title, category slug, category name, and attached categories
-    return cat.keywords.some((kw) => artCatSlug.includes(kw) || artCatName.includes(kw) || artTitle.includes(kw) || artCategories.some((cs: string) => cs.includes(kw)));
-  });
-
-  return {
-    ...cat,
-    articles: matchedLive.slice(0, 4),
-    totalCount: matchedLive.length,
-  };
-});
-
-// Official Portals for rapid reference
-const R2_PORTAL_BASE = 'https://pub-68568854a58845bc975b176de76b1ad5.r2.dev/portals';
-const verifiedPortals = [
-  { name: 'UPSC', url: 'upsc.gov.in', href: 'https://www.upsc.gov.in/', logo: `${R2_PORTAL_BASE}/upsc.svg`, initial: 'U', bg: 'bg-[#0C2340]', text: 'text-[#E2B13C]' },
-  { name: 'SSC', url: 'ssc.gov.in', href: 'https://ssc.gov.in/', logo: `${R2_PORTAL_BASE}/ssc.svg`, initial: 'S', bg: 'bg-[#8B0000]', text: 'text-[#FFD700]' },
-  { name: 'Railways', url: 'rrb.indianrailways.gov.in', href: 'https://rrb.indianrailways.gov.in/', logo: `${R2_PORTAL_BASE}/railways.svg`, initial: 'R', bg: 'bg-[#003366]', text: 'text-[#E5A823]' },
-  { name: 'UPPSC', url: 'uppsc.up.nic.in', href: 'https://uppsc.up.nic.in/', logo: `${R2_PORTAL_BASE}/uppsc.svg`, initial: 'UP', bg: 'bg-[#14532D]', text: 'text-[#FEF08A]' },
-  { name: 'SBI Careers', url: 'sbi.co.in', href: 'https://sbi.co.in/web/careers', logo: `${R2_PORTAL_BASE}/sbi.svg`, initial: 'SBI', bg: 'bg-[#0080C7]', text: 'text-white' },
-  { name: 'IBPS', url: 'ibps.in', href: 'https://www.ibps.in/', logo: `${R2_PORTAL_BASE}/ibps.svg`, initial: 'I', bg: 'bg-[#312E81]', text: 'text-[#F59E0B]' },
+const ctaBarHeights = [
+  190, 170, 150, 132, 114, 98, 82, 68, 56, 46, 38, 32, 32, 38, 46, 56, 68, 82, 98, 114, 132, 150,
+  170, 190,
 ];
-
-const pageTitle = `${siteName} | SARKARI JOBS, EXAM NOTIFICATIONS & RESULTS`;
-const pageDescription = `${siteName} (${siteDomain}) delivers verified government examination notices, admit cards, answer keys, syllabi, and direct official commission portal links across India.`;
-const canonicalUrl = `${siteUrl}/`;
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebSite',
-      '@id': `${siteUrl}/#website`,
-      name: siteName,
-      alternateName: [siteName, siteDomain, `${siteName} Sarkari Portal`],
-      url: canonicalUrl,
-      description: pageDescription,
-      inLanguage: ['en-IN', 'hi-Latn'],
-      about: [
-        { '@type': 'Thing', name: 'Government Examinations in India' },
-        { '@type': 'Thing', name: 'Sarkari Naukri Notifications' },
-        { '@type': 'Thing', name: 'Civil Services Examination' },
-        { '@type': 'Thing', name: 'Staff Selection Commission' },
-        { '@type': 'Thing', name: 'Railway Recruitment Boards' },
-      ],
-      publisher: {
-        '@id': `${siteUrl}/#organization`,
-      },
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: {
-          '@type': 'EntryPoint',
-          urlTemplate: `${siteUrl}/?search={search_term_string}`,
-        },
-        'query-input': 'required name=search_term_string',
-      },
-    },
-    {
-      '@type': 'Organization',
-      '@id': `${siteUrl}/#organization`,
-      name: siteName,
-      alternateName: [siteName, siteDomain],
-      url: canonicalUrl,
-      logo: {
-        '@type': 'ImageObject',
-        url: `${siteUrl}/logo.png`,
-        width: 512,
-        height: 512,
-        caption: `${siteName} Logo`,
-      },
-      image: `${siteUrl}/og-image.jpg`,
-      sameAs: [whatsappChannel, telegramChannel].filter(Boolean),
-      description: 'Verified government exam notifications, Sarkari job updates, admit cards, answer keys, and counselling results portal across India.',
-      knowsAbout: [
-        'Government Exams in India',
-        'Sarkari Naukri Alerts',
-        'UPSC Civil Services Examination',
-        'Staff Selection Commission (SSC)',
-        'Railway Recruitment Control Board (RRB)',
-        'Institute of Banking Personnel Selection (IBPS)',
-        'State Public Service Commissions',
-        'Admit Cards & Answer Keys',
-        'Exam Syllabi & Cut-off Marks',
-      ],
-    },
-    {
-      '@type': 'FAQPage',
-      '@id': `${siteUrl}/#faq`,
-      mainEntity: siteFaqs.map((faq) => ({
-        '@type': 'Question',
-        name: faq.question,
-        acceptedAnswer: { '@type': 'Answer', text: faq.answer },
-      })),
-    },
-  ],
-};
 ---
 
-<Layout
-  title={pageTitle}
-  description={pageDescription}
-  canonicalUrl={canonicalUrl}
-  ogImage={`${siteUrl}/og-image.jpg`}
-  ogType="website"
-  jsonLd={jsonLd}
->
-  <div class="bg-canvas text-white transition-colors duration-200 relative">
-    <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 relative z-10">
-
-      <h1 class="sr-only">GovtPariksha — Verified Government Exam Notifications, Admit Cards &amp; Results</h1>
-
-      {/* ══════════════════════════════════════════════════════════
-          1. HERO SEARCH BAR
-          ══════════════════════════════════════════════════════════ */}
-      <section class="max-w-2xl mb-12 relative z-40" aria-label="Exam Search and Category Filter">
-
-        {/* Section label */}
-        <div class="mb-4">
-          <p class="text-[12px] font-semibold uppercase tracking-widest text-muted">Find your exam</p>
-          <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight mt-1">
-            Search <span class="text-accent">9 exam streams</span> in real-time
-          </h2>
-        </div>
-
-        <div class="relative group z-40">
-          {/* Glow ring on focus */}
-          <div class="absolute -inset-0.5 bg-gradient-to-r from-accent/25 via-sky-500/15 to-blue-600/25 rounded-2xl blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-
-          <div class="relative flex items-center bg-surface border border-border group-focus-within:border-accent/60 rounded-2xl px-2 sm:px-3 py-2 transition-all duration-200 gap-2 shadow-sm">
-
-            {/* Category Dropdown */}
-            <div class="relative shrink-0 z-50" id="category-dropdown-container">
-              <button
-                id="category-dropdown-btn"
-                type="button"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-raised hover:bg-surface-raised/80 border border-border/80 text-white text-[12px] font-semibold cursor-pointer transition-all duration-150 select-none"
-                aria-expanded="false"
-                aria-haspopup="listbox"
-                title="Filter by Exam Category"
-              >
-                <span id="category-dropdown-label" class="truncate max-w-[90px] sm:max-w-[140px]">All Streams</span>
-                <svg id="category-dropdown-arrow" class="w-3.5 h-3.5 text-muted transition-transform duration-200 shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              <div
-                id="category-dropdown-menu"
-                class="hidden absolute left-0 top-full mt-2 w-64 max-h-80 overflow-y-auto bg-surface border border-border rounded-2xl shadow-xl py-1.5 z-[100] backdrop-blur-xl scrollbar-none"
-                role="listbox"
-              >
-                <button
-                  type="button"
-                  data-stream-option="all"
-                  data-stream-name="All Streams"
-                  class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-semibold text-white hover:bg-surface-raised transition-colors text-left cursor-pointer"
-                  role="option"
-                  aria-selected="true"
-                >
-                  <span class="flex items-center gap-2 truncate">
-                    <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                    All Streams
-                  </span>
-                  <span class="category-check text-accent font-bold text-xs shrink-0">✓</span>
-                </button>
-                <div class="h-px bg-border/60 my-1 mx-3"></div>
-                {streamCategories.map((cat) => (
-                  <button
-                    type="button"
-                    data-stream-option={cat.slug}
-                    data-stream-name={cat.shortName}
-                    class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-medium text-muted hover:text-white hover:bg-surface-raised transition-colors text-left cursor-pointer"
-                    role="option"
-                    aria-selected="false"
-                  >
-                    <span class="truncate">{cat.name}</span>
-                    <span class="category-check hidden text-accent font-bold text-xs shrink-0">✓</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div class="w-px h-6 bg-border/60 shrink-0"></div>
-
-            <div class="text-muted group-focus-within:text-accent transition-colors shrink-0">
-              <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-
-            <input
-              id="command-search-input"
-              type="text"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="Search exam, post, admit card..."
-              class="w-full bg-transparent text-[13px] sm:text-sm text-white placeholder-muted focus:outline-none py-1 px-1 font-sans"
-              aria-label="Search examinations and articles"
-            />
-
-            <button
-              id="command-search-clear"
-              type="button"
-              class="hidden px-1.5 text-muted hover:text-white transition-colors cursor-pointer shrink-0"
-              title="Clear search"
-              aria-label="Clear search text"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-
-            <div class="hidden sm:flex items-center shrink-0 select-none">
-              <kbd class="px-2 py-0.5 text-[10px] font-mono font-medium text-muted bg-surface-raised border border-border/80 rounded-md">
-                Ctrl K
-              </kbd>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          2. EXAM STREAMS — EDITORIAL CARD GRID
-          ══════════════════════════════════════════════════════════ */}
-      <section id="bento-grid-section" class="mb-16" aria-label="Exam Categories Grid">
-
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-2.5">
-            <div class="w-1 h-5 bg-accent rounded-full"></div>
-            <h2 class="text-[15px] sm:text-base font-bold text-white tracking-tight">Exam Streams</h2>
-          </div>
-          <span class="text-[11px] text-muted font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
-            {displayArticles.length} active notices
-          </span>
-        </div>
-
-        {/* Responsive 3-column editorial grid */}
-        <div id="bento-cards-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {bentoGridData.map((cat) => (
-            <article
-              data-bento-card
-              data-stream-slug={cat.slug}
-              data-stream-name={cat.name.toLowerCase()}
-              data-stream-keywords={cat.keywords.join(' ')}
-              class="group relative bg-surface border border-border/60 rounded-2xl overflow-hidden transition-all duration-200 hover:border-accent/40 hover:shadow-lg hover:-translate-y-0.5 flex flex-col"
-            >
-              {/* Top accent gradient on hover */}
-              <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent/0 via-accent/60 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-              {/* Card Header */}
-              <div class="flex items-center justify-between px-4 pt-4 pb-3">
-                <a
-                  href={`/category/${cat.slug}`}
-                  class="flex items-center gap-2.5 min-w-0 group/title cursor-pointer"
-                  title={cat.name}
-                >
-                  <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-accent/10 text-accent border border-accent/15">
-                    {cat.iconType === 'monument' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'train' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="2"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'bank' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'building' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'book' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'shield' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'document' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'badge' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'gear' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    )}
-                  </div>
-                  <div class="min-w-0">
-                    <span class="text-[13.5px] font-bold text-white group-hover/title:text-accent transition-colors duration-150 leading-tight block truncate">{cat.name}</span>
-                    <span class="text-[10px] text-muted/60 leading-none">{cat.coverage.slice(0, 40)}{cat.coverage.length > 40 ? '…' : ''}</span>
-                  </div>
-                </a>
-
-                <span class="text-[10px] font-bold text-muted/40 shrink-0 select-none tabular-nums bg-surface-raised px-2 py-0.5 rounded-md border border-border/40">
-                  {cat.totalCount}
-                </span>
-              </div>
-
-              {/* Divider */}
-              <div class="h-px bg-border/40 mx-4"></div>
-
-              {/* Article Links */}
-              <div class="px-2 pt-1.5 pb-1.5 flex-1">
-                {cat.articles.length > 0 ? (
-                  cat.articles.map((art) => (
-                    <a
-                      href={art.slug}
-                      target="_blank"
-                      rel="noopener"
-                      data-article-link={art.slugKey}
-                      data-stream-item
-                      data-stream-title={art.title.toLowerCase()}
-                      class="group/item flex items-start gap-2.5 px-2.5 py-2 rounded-xl hover:bg-surface-raised/70 transition-colors duration-150 cursor-pointer"
-                    >
-                      <div class="w-1 h-1 rounded-full bg-border mt-2 shrink-0 group-hover/item:bg-accent transition-colors duration-150"></div>
-                      <div class="min-w-0 flex-1">
-                        <p class="text-[12.5px] font-medium text-white/80 group-hover/item:text-accent transition-colors duration-150 line-clamp-2 leading-[1.45]">
-                          {art.isNew && (
-                            <span class="badge-new inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/12 text-emerald-500 border border-emerald-500/20 mr-1.5 select-none align-middle -translate-y-px">
-                              New
-                            </span>
-                          )}
-                          <span data-article-title>{art.title}</span>
-                        </p>
-                        <time class="text-[10px] text-muted/50 mt-0.5 block tabular-nums">{art.date}</time>
-                      </div>
-                      <svg class="w-3 h-3 text-border group-hover/item:text-accent/60 shrink-0 mt-1.5 transition-colors duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </a>
-                  ))
-                ) : (
-                  <div class="py-6 px-3 text-center">
-                    <div class="w-8 h-8 rounded-xl bg-surface-raised mx-auto mb-2 flex items-center justify-center">
-                      <svg class="w-4 h-4 text-muted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                      </svg>
-                    </div>
-                    <p class="text-[11px] text-muted/40">No updates yet</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Card Footer */}
-              <div class="px-4 py-3 border-t border-border/30 bg-surface-raised/20">
-                <a
-                  href={`/category/${cat.slug}`}
-                  class="flex items-center justify-between text-[11.5px] font-semibold text-accent/70 hover:text-accent transition-colors duration-150 group/footer cursor-pointer"
-                >
-                  <span>View all {cat.name.toLowerCase().includes('exam') ? '' : 'notices'}</span>
-                  <svg class="w-3.5 h-3.5 group-hover/footer:translate-x-0.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        <div id="bento-empty-state" class="hidden p-12 text-center bg-surface border border-border/60 rounded-2xl mt-4">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent/10 text-accent mb-3">
-            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <h3 class="text-sm font-bold text-white">No matching notices found</h3>
-          <p class="text-xs text-muted max-w-sm mx-auto mt-1">
-            Try adjusting your search terms or clearing the stream filter.
-          </p>
-          <button
-            id="bento-reset-all-btn"
-            type="button"
-            class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-accent text-white hover:bg-accent/90 transition-all duration-150 shadow-sm cursor-pointer"
+<!doctype html>
+<html lang="en" class="theme-dark bg-black">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content={`${siteName} links, exam resources, official portals, policies, and community channels.`}
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{siteName} — Explore exam resources</title>
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen bg-black text-white antialiased">
+    <main class="min-h-screen">
+      <section
+        class="overflow-hidden border-t border-[#191613]/15 bg-[#FFF8F1] text-[#191613]"
+        aria-labelledby="landing-heading"
+      >
+        <nav
+          class="mx-auto flex h-18 max-w-[1180px] items-center justify-between px-5 sm:px-8"
+          aria-label="Landing navigation"
+        >
+          <a
+            href="/"
+            class="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-[#FF4D00] focus-visible:outline-offset-3"
+            aria-label={`${siteName} home`}
           >
-            Clear Search
-          </button>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          3. OFFICIAL PORTALS — REFINED GRID
-          ══════════════════════════════════════════════════════════ */}
-      <section class="mb-16" aria-label="Official Commission Portals">
-        <div class="bg-surface border border-border/60 rounded-2xl p-5 sm:p-6">
-          <div class="flex items-center gap-2.5 mb-5">
-            <div class="w-1 h-5 bg-accent rounded-full"></div>
-            <div>
-              <h2 class="text-[15px] font-bold text-white tracking-tight">Official Commission Portals</h2>
-              <p class="text-[11px] text-muted mt-0.5">Apply, verify roll numbers and pay fees on official domains</p>
-            </div>
+            <BrandLogo size={34} />
+            <span class="font-['EB_Garamond'] text-[24px] leading-none font-medium tracking-tight text-[#191613]"
+              >{siteName}</span
+            >
+          </a>
+          <div
+            class="hidden items-center gap-7 font-['Geist'] text-[12px] font-medium text-[#514A44] md:flex"
+          >
+            <a href="/blogs" data-astro-prefetch="hover" class="transition-colors hover:text-[#FF4D00]">Blogs</a>
+            <a href="/test-series" data-astro-prefetch="hover" class="transition-colors hover:text-[#FF4D00]">Live tests</a>
+            <a href="/test-series" data-astro-prefetch="hover" class="transition-colors hover:text-[#FF4D00]">Quizzes</a>
           </div>
-
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
-            {verifiedPortals.map((portal) => (
+          <div class="flex items-center gap-2.5">
+            {/* Logged-out navbar actions */}
+            <div id="home-nav-logged-out" class="flex items-center gap-2.5">
               <a
-                href={portal.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group flex flex-col items-center text-center p-3 rounded-xl bg-surface-raised/30 hover:bg-surface-raised border border-border/40 hover:border-border transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
-                title={`${portal.name} Official Portal`}
-                aria-label={`${portal.name} - ${portal.url} (opens in new tab)`}
+                href="/login"
+                data-astro-prefetch="hover"
+                class="min-h-10 inline-flex items-center px-3 font-['Geist'] text-[12px] font-semibold text-[#514A44] transition-colors hover:text-[#191613]"
+                >Log in</a
               >
-                <div class="w-8 h-8 rounded-full bg-surface border border-border/60 flex items-center justify-center p-0.5 mb-2 shrink-0 overflow-hidden relative">
-                  <img
-                    src={portal.logo}
-                    alt={`${portal.name} emblem`}
-                    class="w-full h-full object-contain"
-                    loading="lazy"
-                    decoding="async"
-                    width={28}
-                    height={28}
-                    onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
-                  />
-                  <div class={`w-full h-full rounded-full ${portal.bg} ${portal.text} hidden items-center justify-center font-bold text-[10px] select-none`}>
-                    {portal.initial}
+              <a
+                href="/blogs"
+                data-astro-prefetch="hover"
+                class="inline-flex min-h-10 items-center rounded-full bg-[#FF4D00] px-4 font-['Geist'] text-[12px] font-semibold text-white transition-colors hover:bg-[#D94100] focus-visible:outline-2 focus-visible:outline-[#FF4D00] focus-visible:outline-offset-2"
+                >Explore blogs</a
+              >
+            </div>
+
+            {/* Logged-in profile trigger & dropdown */}
+            <div id="home-nav-logged-in" class="hidden items-center gap-2.5 relative">
+              <a
+                href="/blogs"
+                data-astro-prefetch="hover"
+                class="hidden sm:inline-flex min-h-9 items-center rounded-full border border-[#191613]/15 bg-white px-3.5 font-['Geist'] text-[11px] font-semibold text-[#514A44] transition-colors hover:border-[#FF4D00]/40 hover:text-[#191613] shadow-2xs"
+                >Blogs</a
+              >
+              <div class="relative">
+                <button
+                  id="home-profile-trigger"
+                  type="button"
+                  aria-expanded="false"
+                  aria-haspopup="menu"
+                  aria-label="Open user profile menu"
+                  class="group flex items-center gap-2 rounded-full border border-[#191613]/15 bg-white pl-1 pr-2.5 sm:pr-3 py-1 shadow-xs hover:border-[#FF4D00]/50 hover:shadow-sm transition-all duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#FF4D00]/30 select-none"
+                >
+                  <span
+                    class="user-avatar-initials size-8 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF4D00] text-white font-bold flex items-center justify-center text-[11px] uppercase shadow-xs shrink-0 select-none"
+                    >U</span
+                  >
+                  <div class="hidden sm:flex flex-col text-left leading-none">
+                    <span class="user-display-name font-['Geist'] text-[12px] font-bold text-[#191613] max-w-[110px] truncate"
+                      >User</span
+                    >
+                    <span class="user-display-role font-['Geist'] text-[10px] text-[#675F58] capitalize mt-0.5"
+                      >Aspirant</span
+                    >
+                  </div>
+                  <svg
+                    class="size-3.5 text-[#514A44] transition-transform duration-200 group-aria-expanded:rotate-180"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                      clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+
+                {/* Profile Dropdown */}
+                <div
+                  id="home-profile-dropdown"
+                  role="menu"
+                  aria-orientation="vertical"
+                  class="hidden absolute right-0 top-full mt-2 w-72 rounded-2xl border border-[#191613]/15 bg-white p-2.5 shadow-[0_16px_40px_rgba(25,22,19,0.16)] z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none"
+                >
+                  {/* User Profile Header Card (Clickable to open profile) */}
+                  <a
+                    href="/profile"
+                    data-astro-prefetch="hover"
+                    class="group/card flex items-center gap-3 p-2.5 rounded-xl bg-[#FFF8F1] border border-[#FF4D00]/15 mb-2 hover:bg-[#FFEBD4] hover:border-[#FF4D00]/30 transition-colors cursor-pointer select-none"
+                    title="View My Profile"
+                  >
+                    <div
+                      class="user-avatar-initials size-10 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF4D00] text-white font-bold flex items-center justify-center text-[13px] uppercase shadow-xs shrink-0 group-hover/card:scale-105 transition-transform"
+                    >
+                      U
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-1.5">
+                        <p class="user-display-name font-['Geist'] text-[13px] font-bold text-[#191613] truncate group-hover/card:text-[#FF4D00] transition-colors">
+                          User
+                        </p>
+                        <span
+                          class="user-role-badge inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-[#FF4D00]/10 text-[#FF4D00]"
+                          >Aspirant</span
+                        >
+                      </div>
+                      <p class="user-display-email font-['Geist'] text-[11px] text-[#675F58] truncate">
+                        user@example.com
+                      </p>
+                    </div>
+                    <svg class="size-4 shrink-0 text-[#675F58] group-hover/card:text-[#FF4D00] group-hover/card:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </a>
+
+                  {/* Options */}
+                  <div class="space-y-0.5 font-['Geist'] text-[12px]">
+                    <a
+                      href="/profile"
+                      data-astro-prefetch="hover"
+                      role="menuitem"
+                      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
+                    >
+                      <svg class="size-4 shrink-0 text-[#675F58]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                      </svg>
+                      <span class="font-medium">My Profile</span>
+                    </a>
+
+                    <a
+                      href="/test-series"
+                      data-astro-prefetch="hover"
+                      role="menuitem"
+                      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
+                    >
+                      <svg class="size-4 shrink-0 text-[#675F58]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                      <span class="font-medium">Live Tests & Mock Series</span>
+                    </a>
+
+                    <a
+                      href="/favorites"
+                      data-astro-prefetch="hover"
+                      role="menuitem"
+                      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
+                    >
+                      <svg class="size-4 shrink-0 text-[#675F58]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                      </svg>
+                      <span class="font-medium">Saved Bookmarks</span>
+                    </a>
+
+                    <a
+                      href="/notifications"
+                      role="menuitem"
+                      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
+                    >
+                      <svg class="size-4 shrink-0 text-[#675F58]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                      </svg>
+                      <span class="font-medium">Notifications</span>
+                    </a>
+
+                    <a
+                      id="home-admin-link"
+                      href="/administrator"
+                      role="menuitem"
+                      class="hidden w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[#191613] hover:bg-[#FFF8F1] hover:text-[#FF4D00] transition-colors"
+                    >
+                      <svg class="size-4 shrink-0 text-[#675F58]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l7 4v5c0 4.55-2.99 7.9-7 9-4.01-1.1-7-4.45-7-9V7l7-4z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.5 12l1.5 1.5 3.5-3.5"></path>
+                      </svg>
+                      <span class="font-medium">Open Admin Desk</span>
+                    </a>
+
+                    <div class="my-1 border-t border-[#191613]/10"></div>
+
+                    <button
+                      type="button"
+                      id="home-logout-btn"
+                      role="menuitem"
+                      class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                    >
+                      <svg class="size-4 shrink-0 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                      </svg>
+                      <span>Log out</span>
+                    </button>
                   </div>
                 </div>
-                <p class="text-[12px] font-semibold text-white group-hover:text-accent transition-colors duration-150 truncate w-full">{portal.name}</p>
-                <p class="text-[9px] text-muted/50 truncate w-full mt-0.5">{portal.url}</p>
-              </a>
-            ))}
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <div class="mx-auto max-w-[1180px] px-5 pb-0 pt-20 text-center sm:px-8">
+          <p
+            class="font-['Geist'] text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FF4D00]"
+          >
+            Government exam preparation, simplified
+          </p>
+          <h1
+            id="landing-heading"
+            class="mx-auto mt-5 max-w-[920px] font-['EB_Garamond'] text-[clamp(3.25rem,5vw,6.5rem)] font-normal leading-[0.92] tracking-[-0.045em] text-[#191613]"
+          >
+            Prepare smarter.<br />Perform with confidence.
+          </h1>
+          <p
+            class="mx-auto mt-7 max-w-[650px] font-['Geist'] text-[14px] leading-7 text-[#675F58] sm:text-[16px]"
+          >
+            Verified exam updates, focused quizzes, and live tests—brought together to keep your
+            preparation clear and measurable.
+          </p>
+          <div class="mt-8 flex justify-center">
+            <a
+              href="/test-series"
+              class="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#FF4D00] px-7 font-['Geist'] text-[13px] font-semibold text-white transition-colors hover:bg-[#D94100] focus-visible:outline-2 focus-visible:outline-[#FF4D00] focus-visible:outline-offset-3"
+            >
+              Explore tests
+              <svg
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+                ><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"
+                ></path></svg
+              >
+            </a>
+          </div>
+
+          <div class="relative mx-auto mb-8 mt-16 max-w-[1080px] translate-y-px text-left sm:mt-20">
+            <div
+              class="relative rounded-[20px] border border-black/80 bg-[#111111] p-[7px] sm:p-[9px]"
+            >
+              <div class="relative aspect-[16/10] overflow-hidden rounded-[13px] bg-[#111111]">
+                <Image
+                  src={videoBg}
+                  alt="GovtPariksha platform preview"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="h-full w-full object-cover object-center"
+                />
+                <span
+                  class="absolute left-1/2 top-0 h-[15px] w-[74px] -translate-x-1/2 rounded-b-[9px] bg-[#111111] sm:h-[18px] sm:w-[98px]"
+                  aria-hidden="true"></span>
+                <div
+                  class="absolute bottom-2 left-1/2 flex -translate-x-1/2 items-end gap-1 rounded-[12px] border border-white/35 bg-white/45 p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:bottom-4 sm:gap-1.5 sm:rounded-[18px] sm:p-2"
+                  aria-hidden="true"
+                >
+                  <span
+                    class="grid size-7 place-items-center rounded-[7px] bg-white/90 sm:size-10 sm:rounded-[10px]"
+                  >
+                    <span class="grid grid-cols-3 gap-[2px] sm:gap-[3px]">
+                      <i class="size-[4px] rounded-[1px] bg-[#77DF2F] sm:size-[6px]"></i><i
+                        class="size-[4px] rounded-[1px] bg-[#FFD21E] sm:size-[6px]"></i><i
+                        class="size-[4px] rounded-[1px] bg-[#FF8A00] sm:size-[6px]"></i>
+                      <i class="size-[4px] rounded-[1px] bg-[#DC3C72] sm:size-[6px]"></i><i
+                        class="size-[4px] rounded-[1px] bg-[#5E6F75] sm:size-[6px]"></i><i
+                        class="size-[4px] rounded-[1px] bg-[#FF4E62] sm:size-[6px]"></i>
+                      <i class="size-[4px] rounded-[1px] bg-[#804CD9] sm:size-[6px]"></i><i
+                        class="size-[4px] rounded-[1px] bg-[#385CE5] sm:size-[6px]"></i><i
+                        class="size-[4px] rounded-[1px] bg-[#55C9AA] sm:size-[6px]"></i>
+                    </span>
+                  </span>
+                  <span
+                    class="relative grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#5AE5FF] to-[#1976F3] text-white sm:size-10 sm:rounded-[10px]"
+                  >
+                    <svg class="size-[72%]" viewBox="0 0 32 32" fill="none"
+                      ><circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="1.5"
+                      ></circle><path d="m18.2 13.8-7 7 2.6-9.6 9-2-4.6 4.6Z" fill="white"
+                      ></path><path d="m13.8 18.2 7-7-2.6 9.6-9 2 4.6-4.6Z" fill="#FF4D4D"
+                      ></path></svg
+                    >
+                    <i
+                      class="absolute -bottom-1 h-0.5 w-0.5 rounded-full bg-black/70 sm:-bottom-1.5"
+                    ></i>
+                  </span>
+                  <span
+                    class="grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#E8ECED] to-[#858B8D] text-[#333] sm:size-10 sm:rounded-[10px]"
+                  >
+                    <svg class="size-[76%]" viewBox="0 0 32 32" fill="none"
+                      ><circle cx="16" cy="16" r="9.2" stroke="currentColor" stroke-width="3"
+                      ></circle><circle
+                        cx="16"
+                        cy="16"
+                        r="3.5"
+                        stroke="currentColor"
+                        stroke-width="2"></circle><path
+                        d="M16 3v5M16 24v5M3 16h5M24 16h5M6.8 6.8l3.6 3.6M21.6 21.6l3.6 3.6M25.2 6.8l-3.6 3.6M10.4 21.6l-3.6 3.6"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"></path></svg
+                    >
+                  </span>
+                  <span
+                    class="grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#168EFF] to-[#0758D7] font-['Geist'] text-[8px] font-semibold tracking-[-0.06em] text-white sm:size-10 sm:rounded-[10px] sm:text-[12px]"
+                  >
+                    zoom
+                  </span>
+                  <span
+                    class="grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#76CBFF] to-[#3896E8] text-white sm:size-10 sm:rounded-[10px]"
+                  >
+                    <svg class="size-[72%]" viewBox="0 0 32 32" fill="none"
+                      ><circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="2"
+                      ></circle><path
+                        d="m9 20.5 7-10 1.5 7.5 5.5-4.5"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path></svg
+                    >
+                  </span>
+                  <span class="mx-0.5 h-6 w-px bg-black/20 sm:h-9"></span>
+                  <span class="grid size-7 place-items-center sm:size-10">
+                    <svg class="h-full w-[80%] drop-shadow-sm" viewBox="0 0 32 38" fill="none"
+                      ><path
+                        d="M7 7.5h18l-1.6 27H8.6L7 7.5Z"
+                        fill="url(#trash-body)"
+                        stroke="#D4D0CC"></path><path
+                        d="M5 7.5h22M11 4h10"
+                        stroke="#D4D0CC"
+                        stroke-width="2"
+                        stroke-linecap="round"></path><path
+                        d="M12 12v17M16 12v17M20 12v17"
+                        stroke="#D7D2CD"></path><defs
+                        ><linearGradient
+                          id="trash-body"
+                          x1="16"
+                          y1="7.5"
+                          x2="16"
+                          y2="34.5"
+                          gradientUnits="userSpaceOnUse"
+                          ><stop stop-color="#FFF"></stop><stop offset="1" stop-color="#E9E4DE"
+                          ></stop></linearGradient
+                        ></defs
+                      ></svg
+                    >
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="relative left-1/2 h-[9px] w-[103%] -translate-x-1/2 rounded-b-[55%] border border-t-0 border-[#B8B5AF] bg-[#D9D7D2] sm:h-3"
+              aria-hidden="true"
+            >
+              <span class="mx-auto block h-[3px] w-16 rounded-b-full bg-[#AAA7A1] sm:w-24"></span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════════════
-          4. LATEST NOTIFICATIONS FEED — EDITORIAL CARD GRID
-          ══════════════════════════════════════════════════════════ */}
-      <section id="latest-updates" class="mb-16" aria-label="Latest Published Notifications">
-        <div class="flex items-center justify-between gap-3 mb-6">
-          <div class="flex items-center gap-2.5">
-            <div class="relative flex items-center">
-              <div class="w-1 h-5 bg-emerald-500 rounded-full"></div>
-              <span class="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-75"></span>
-            </div>
-            <div>
-              <h2 class="text-[15px] sm:text-base font-bold text-white tracking-tight">Latest Notifications</h2>
-              <p class="text-[11px] text-muted mt-0.5">Recently published official recruitment alerts</p>
-            </div>
-          </div>
-          <span class="text-[11px] text-muted font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
-            {displayArticles.length} updates
-          </span>
-        </div>
+      <InkOrbitFeatures client:visible theme="light" brand={siteName} chip="PARIKSHA" />
 
-        {displayArticles.length > 0 ? (
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {displayArticles.slice(0, 15).map((article, idx) => (
-              <ArticleCard
-                variant="standard"
-                title={article.title}
-                slug={article.slugKey}
-                href={article.slug}
-                category={article.category}
-                categories={article.categories}
-                date={article.date}
-                summary={article.summary}
-                isNew={article.isNew}
-                headingLevel="h3"
-                prefetch={idx < 3 ? 'viewport' : 'hover'}
-              />
-            ))}
-          </div>
-        ) : fetchError && fetchError.type !== 'empty' ? (
-          <div class="p-10 text-center bg-surface border border-border/60 rounded-2xl">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 mb-3">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <h3 class="text-sm font-bold text-white">Temporary Feed Connectivity Hiccup</h3>
-            <p class="text-xs text-muted max-w-md mx-auto mt-1">
-              Real-time connection is refreshing. Browse the categories above or visit our Telegram channel.
+      <section
+        class="bg-[#FFFCF8] px-5 py-20 text-[#191613] sm:px-8 sm:py-24 lg:px-10 lg:py-28"
+        aria-labelledby="student-perspectives-heading"
+      >
+        <div class="mx-auto max-w-[1040px]">
+          <div class="text-center">
+            <p
+              class="font-['Geist'] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FF4D00]"
+            >
+              Student-first by design
+            </p>
+            <h2
+              id="student-perspectives-heading"
+              class="mt-3 font-['EB_Garamond'] text-4xl font-normal leading-tight tracking-[-0.02em] text-[#191613] sm:text-5xl"
+            >
+              Made for students everywhere
+            </h2>
+            <p class="mx-auto mt-4 max-w-xl font-['Geist'] text-[13px] leading-6 text-[#675F58]">
+              Three principles shaping a clearer, calmer way to discover and verify exam
+              information.
             </p>
           </div>
-        ) : (
-          <div class="p-8 text-center bg-surface border border-border/60 rounded-2xl">
-            <p class="text-sm text-muted">All active notifications loaded in the streams above.</p>
-          </div>
-        )}
-      </section>
 
-      {/* ══════════════════════════════════════════════════════════
-          5. FAQ SECTION
-          ══════════════════════════════════════════════════════════ */}
-      <section id="faqs" class="mb-16" aria-label="Frequently Asked Questions">
-        <FAQSection faqs={siteFaqs} />
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          6. COMMUNITY CHANNELS
-          ══════════════════════════════════════════════════════════ */}
-      <section class="pt-8 border-t border-border/40" aria-label="Join Community Channels">
-        <div class="bg-surface rounded-2xl border border-border/60 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div class="text-center sm:text-left">
-            <h2 class="text-base font-bold text-white tracking-tight">Stay Updated Instantly</h2>
-            <p class="text-[13px] text-muted mt-1 max-w-sm">
-              Join official community channels for immediate notification alerts. Never miss a deadline.
-            </p>
-          </div>
-          <div class="flex items-center gap-3 select-none shrink-0">
-            {telegramChannel && (
-              <a
-                href={telegramChannel}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/40 text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
-                title="Join Telegram Channel"
-              >
-                <svg class="w-4 h-4 text-[#229ED9] shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                </svg>
-                <span>Telegram</span>
-              </a>
-            )}
-            {whatsappChannel && (
-              <a
-                href={whatsappChannel}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/40 text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
-                title="Join WhatsApp Channel"
-              >
-                <svg class="w-4 h-4 text-[#25D366] shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                </svg>
-                <span>WhatsApp</span>
-              </a>
-            )}
+          <div class="student-marquee mt-12 overflow-hidden" aria-label="Student perspectives">
+            <div class="student-marquee-track">
+              {
+                [false, true].map((duplicate) => (
+                  <div class="student-marquee-group" aria-hidden={duplicate ? 'true' : undefined}>
+                    {studentPerspectives.map((item) => (
+                      <article class="flex min-h-[220px] w-[min(82vw,340px)] shrink-0 flex-col rounded-xl border border-[#191613]/15 bg-[#fffaf1] p-6 sm:w-[340px] sm:p-7 lg:w-[360px]">
+                        <div class="flex items-center gap-3">
+                          <img
+                            src={item.avatar}
+                            width="40"
+                            height="40"
+                            alt=""
+                            class="h-10 w-10 rounded-full border border-[#191613]/10 bg-[#FFF1E8]"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <div>
+                            <h3 class="font-['EB_Garamond'] text-xl font-normal leading-tight text-[#191613]">
+                              {item.title}
+                            </h3>
+                            <p class="mt-0.5 font-['Geist'] text-[10px] font-semibold uppercase tracking-[0.12em] text-[#FF4D00]">
+                              Student perspective
+                            </p>
+                          </div>
+                        </div>
+                        <p class="mt-6 font-['Geist'] text-[13px] leading-6 text-[#514A44]">
+                          {item.body}
+                        </p>
+                      </article>
+                    ))}
+                  </div>
+                ))
+              }
+            </div>
           </div>
         </div>
       </section>
 
-    </div>
-  </div>
+      <section
+        class="bg-[#FFFCF8] px-5 py-20 text-[#191613] sm:px-8 sm:py-24 lg:px-10 lg:py-28"
+        aria-labelledby="faq-heading"
+      >
+        <div class="mx-auto max-w-[920px] space-y-40">
+          <div class="mx-auto max-w-[680px]">
+            <p
+              class="font-['Geist'] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FF4D00]"
+            >
+              Need clarity?
+            </p>
+            <h2
+              id="faq-heading"
+              class="mt-3 font-['EB_Garamond'] text-4xl font-normal leading-tight tracking-[-0.02em] text-[#191613] sm:text-5xl"
+            >
+              Frequently asked questions
+            </h2>
 
-  {/* Client-Side Command Controller for Real-Time Search & Stream Filter — PRESERVED EXACTLY */}
-  <script is:inline>
-    (function () {
-      function setupCommandSearch() {
-        const searchInput = document.getElementById('command-search-input');
-        const clearBtn = document.getElementById('command-search-clear');
-        const dropdownContainer = document.getElementById('category-dropdown-container');
-        const dropdownBtn = document.getElementById('category-dropdown-btn');
-        const dropdownMenu = document.getElementById('category-dropdown-menu');
-        const dropdownLabel = document.getElementById('category-dropdown-label');
-        const dropdownArrow = document.getElementById('category-dropdown-arrow');
-        const optionBtns = document.querySelectorAll('.category-option-btn');
-        const cards = document.querySelectorAll('[data-bento-card]');
-        const emptyState = document.getElementById('bento-empty-state');
-        const resetAllBtn = document.getElementById('bento-reset-all-btn');
+            <div class="mt-10 border-t border-[#191613]/20">
+              {
+                siteFaqs.map((faq) => (
+                  <details class="faq-item group border-b border-[#191613]/20">
+                    <summary class="flex min-h-14 cursor-pointer list-none items-center justify-between gap-6 py-4 font-['Geist'] text-[15px] font-medium text-[#25221f] marker:content-none tracking-tight">
+                      <span>{faq.question}</span>
+                      <svg
+                        class="h-4 w-4 shrink-0 text-[#191613]/55 transition-transform duration-200 group-open:rotate-180"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        aria-hidden="true"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                      </svg>
+                    </summary>
+                    <p class="max-w-[620px] pb-5 pr-10 font-['Geist'] text-[13px] leading-6 text-[#514A44]">
+                      {faq.answer}
+                    </p>
+                  </details>
+                ))
+              }
+            </div>
+          </div>
 
-        if (!searchInput || !cards.length) return;
+          <div
+            class="relative flex min-h-[400px] items-center justify-center overflow-hidden rounded-3xl border border-[#191613]/15 bg-[#fffaf1] px-6 py-20 text-center sm:px-10"
+          >
+            <div
+              class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end gap-1 sm:gap-1.5"
+              aria-hidden="true"
+            >
+              {
+                ctaBarHeights.map((height) => (
+                  <span
+                    class="min-w-0 flex-1 rounded-t-lg border border-b-0 border-[#FF4D00]/40 bg-[#FF4D00]/10"
+                    style={`height: ${height}px`}
+                  />
+                ))
+              }
+            </div>
+            <div class="relative z-10">
+              <p class="font-['Geist'] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FF4D00]">Start early</p>
+              <h2
+                class="font-['EB_Garamond'] text-4xl font-normal leading-tight tracking-[-0.02em] text-[#191613] sm:text-5xl"
+              >
+                Start your preparation with us!
+              </h2>
+              <p class="mx-auto mt-4 max-w-xl font-['Geist'] text-[13px] leading-6 text-[#514A44]">
+                Browse blogs recruitment notices, deadlines, exam resources, and official
+                notification.
+              </p>
+              <div class="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a
+                  href="/blogs"
+                  class="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#FF4D00] px-6 font-['Geist'] text-[12px] font-semibold text-white transition-colors hover:bg-[#D94100] focus-visible:outline-2 focus-visible:outline-[#FF4D00] focus-visible:outline-offset-2"
+                >
+                  Explore exam updates
+                  <svg
+                    class="h-3.5 w-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                    ><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"
+                    ></path></svg
+                  >
+                </a>
+                <a
+                  id="home-cta-auth-btn"
+                  href="/signup"
+                  class="inline-flex min-h-11 items-center justify-center rounded-full border border-[#191613]/20 bg-white px-6 font-['Geist'] text-[12px] font-semibold text-[#191613] transition-colors hover:border-[#ff962d] hover:bg-[#fff5e2] focus-visible:outline-2 focus-visible:outline-[#191613] focus-visible:outline-offset-2"
+                  >Create an account</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        let activeStream = 'all';
-
-        function toggleDropdown(forceClose) {
-          if (!dropdownMenu) return;
-          const isCurrentlyHidden = dropdownMenu.classList.contains('hidden') || dropdownMenu.style.display === 'none';
-          const shouldOpen = forceClose === undefined ? isCurrentlyHidden : !forceClose;
-
-          if (shouldOpen) {
-            dropdownMenu.classList.remove('hidden');
-            dropdownMenu.style.display = 'block';
-            dropdownBtn?.setAttribute('aria-expanded', 'true');
-            dropdownArrow?.classList.add('rotate-180');
-          } else {
-            dropdownMenu.classList.add('hidden');
-            dropdownMenu.style.display = 'none';
-            dropdownBtn?.setAttribute('aria-expanded', 'false');
-            dropdownArrow?.classList.remove('rotate-180');
-          }
-        }
-
-        if (dropdownBtn) {
-          dropdownBtn.onclick = function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleDropdown();
-          };
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function (e) {
-          if (dropdownContainer && !dropdownContainer.contains(e.target)) {
-            toggleDropdown(true);
-          }
-        });
-
-        // Close dropdown on Escape
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape' && dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
-            toggleDropdown(true);
-          }
-        });
-
-        function executeFilter() {
-          const query = searchInput.value.trim().toLowerCase();
-
-          if (clearBtn) {
-            clearBtn.classList.toggle('hidden', query.length === 0);
-          }
-
-          let visibleCards = 0;
-          let visibleRows = 0;
-
-          cards.forEach((card) => {
-            const streamSlug = card.getAttribute('data-stream-slug') || '';
-            const streamName = card.getAttribute('data-stream-name') || '';
-            const streamKeywords = card.getAttribute('data-stream-keywords') || '';
-            const rows = card.querySelectorAll('[data-stream-item]');
-
-            const matchesStream = activeStream === 'all' || streamSlug === activeStream;
-
-            if (!matchesStream) {
-              card.classList.add('hidden');
-              return;
-            }
-
-            if (query.length > 0) {
-              const cardMatches = streamName.includes(query) || streamKeywords.includes(query);
-              let rowMatched = false;
-
-              rows.forEach((row) => {
-                const title = row.getAttribute('data-stream-title') || '';
-                if (title.includes(query) || cardMatches) {
-                  row.classList.remove('hidden');
-                  rowMatched = true;
-                  visibleRows++;
-                } else {
-                  row.classList.add('hidden');
+      <footer
+        class="min-h-screen border-t border-white/20 bg-black px-5 py-12 sm:px-8 sm:py-16 lg:px-20 lg:py-20"
+      >
+        <div
+          class="mx-auto flex min-h-[calc(100vh-6rem)] max-w-[1440px] flex-col sm:min-h-[calc(100vh-8rem)] lg:min-h-[calc(100vh-10rem)]"
+        >
+          <div
+            class="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-[1.75fr_repeat(4,minmax(0,1fr))] lg:gap-x-10 xl:grid-cols-[3fr_repeat(4,minmax(0,1fr))] xl:gap-x-12"
+          >
+            <section class="sm:col-span-2 lg:col-span-1" aria-labelledby="footer-brand">
+              <a
+                href="/blogs"
+                class="group inline-flex items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4"
+              >
+                <BrandLogo
+                  size={38}
+                  class="transition-transform duration-200 group-hover:rotate-[-3deg]"
+                />
+                <h1
+                  id="footer-brand"
+                  class="font-['EB_Garamond'] text-[2rem] font-normal leading-none tracking-[-0.02em] text-white"
+                >
+                  {siteName}
+                </h1>
+              </a>
+              <p class="mt-5 max-w-[280px] font-['Geist'] text-[14px] leading-6 text-white/70">
+                {siteSlogan}. Verified notices, practical exam resources, and direct links to
+                official portals.
+              </p>
+              <div class="mt-6 flex items-center gap-2.5" aria-label="Community links">
+                {
+                  whatsappChannel && (
+                    <a
+                      href={whatsappChannel}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="WhatsApp channel"
+                      class="social-link hover:bg-[#25D366] focus-visible:outline-[#25D366]"
+                    >
+                      <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                      </svg>
+                    </a>
+                  )
                 }
-              });
+                {
+                  telegramChannel && (
+                    <a
+                      href={telegramChannel}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Telegram channel"
+                      class="social-link hover:bg-[#229ED9] focus-visible:outline-[#229ED9]"
+                    >
+                      <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path d="M11.944 0A12 12 0 1 0 24 12 12 12 0 0 0 11.944 0Zm5.498 8.184-1.95 9.192c-.147.65-.535.808-1.084.503l-2.97-2.19-1.433 1.379a.747.747 0 0 1-.6.293l.213-3.025 5.506-4.975c.24-.213-.052-.332-.372-.119l-6.806 4.285-2.93-.916c-.637-.199-.65-.637.133-.943l11.458-4.416c.53-.199.995.12.835.932Z" />
+                      </svg>
+                    </a>
+                  )
+                }
+                <a
+                  href={`mailto:${contactEmail}`}
+                  aria-label={`Email ${siteName}`}
+                  class="social-link hover:bg-accent focus-visible:outline-accent"
+                >
+                  <svg
+                    class="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 6.75A2.25 2.25 0 0 1 5.25 4.5h13.5A2.25 2.25 0 0 1 21 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 17.25V6.75Z"
+                    ></path><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m3.75 6 7.06 5.11a2 2 0 0 0 2.38 0L20.25 6"></path></svg
+                  >
+                </a>
+              </div>
+            </section>
 
-              if (rowMatched || cardMatches || rows.length === 0) {
-                card.classList.remove('hidden');
-                visibleCards++;
-              } else {
-                card.classList.add('hidden');
-              }
-            } else {
-              card.classList.remove('hidden');
-              rows.forEach((row) => {
-                row.classList.remove('hidden');
-                visibleRows++;
-              });
-              visibleCards++;
+            {
+              groups.map((group) => (
+                <nav aria-labelledby={`footer-${group.title.toLowerCase().replace(' ', '-')}`}>
+                  <h2
+                    id={`footer-${group.title.toLowerCase().replace(' ', '-')}`}
+                    class="font-['EB_Garamond'] text-[24px] font-normal tracking-[0.01em] text-neutral-400"
+                  >
+                    {group.title}
+                  </h2>
+                  <ul class="mt-5 space-y-3 font-['Geist']">
+                    {group.links.map(([label, href]) => {
+                      const external = href.startsWith('http');
+                      return (
+                        <li>
+                          <a
+                            href={href}
+                            target={external ? '_blank' : undefined}
+                            rel={external ? 'noopener noreferrer' : undefined}
+                            class="inline-flex min-h-5 items-center text-[15px] leading-5 text-white/95 transition-colors hover:text-accent focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                          >
+                            {label}
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+              ))
             }
-          });
+          </div>
 
-          if (emptyState) {
-            emptyState.classList.toggle('hidden', visibleCards > 0);
-          }
-        }
+          <div
+            class="mt-16 flex flex-col gap-4 border-t border-white/20 pt-6 font-['Geist'] text-[11px] text-white/65 sm:mt-auto sm:flex-row sm:items-center sm:justify-between"
+          >
+            <p>
+              © {new Date().getFullYear()}
+              {siteDomain}. Independent educational information portal.
+            </p>
+            <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <a href="/privacy-policy" class="transition-colors hover:text-white">Privacy</a>
+              <a href="/terms-of-service" class="transition-colors hover:text-white">Terms</a>
+              <a href="/contact-us" class="transition-colors hover:text-white">Contact</a>
+              <span>English · हिन्दी</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+      {/* Login Success Notification Toast */}
+      <div
+        id="home-login-toast"
+        role="status"
+        aria-live="polite"
+        class="fixed top-5 right-5 z-[10000] max-w-sm pointer-events-none transition-all duration-300 transform -translate-y-4 opacity-0"
+      >
+        <div class="pointer-events-auto flex items-center gap-3 rounded-2xl border border-[#FF4D00]/25 bg-white/95 px-4 py-3 shadow-[0_16px_36px_rgba(25,22,19,0.18)] backdrop-blur-md">
+          <div class="size-8 rounded-full bg-[#FF4D00]/10 text-[#FF4D00] flex items-center justify-center shrink-0">
+            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="font-['Geist'] text-[12px] font-bold text-[#191613]">Successfully signed in</p>
+            <p id="home-toast-welcome-msg" class="font-['Geist'] text-[11px] text-[#675F58] truncate">
+              Welcome back!
+            </p>
+          </div>
+          <button
+            type="button"
+            id="home-toast-close"
+            class="text-[#675F58] hover:text-[#191613] p-1 rounded-lg transition cursor-pointer"
+            aria-label="Close notification"
+          >
+            <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
 
-        searchInput.addEventListener('input', executeFilter);
+<style>
+  :global(html) {
+    color-scheme: dark;
+    background: #000;
+  }
+  :global(body) {
+    margin: 0;
+    background: #000;
+    color: #fafaf9;
+    font-family: 'Geist', sans-serif;
+  }
+  .student-marquee {
+    mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  }
+  .student-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: student-marquee 28s linear infinite;
+  }
+  .student-marquee-group {
+    display: flex;
+    flex-shrink: 0;
+    gap: 1rem;
+    padding-right: 1rem;
+  }
+  .student-marquee:hover .student-marquee-track,
+  .student-marquee:focus-within .student-marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes student-marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .student-marquee {
+      overflow-x: auto;
+      mask-image: none;
+      scrollbar-width: thin;
+    }
+    .student-marquee-track {
+      animation: none;
+    }
+    .student-marquee-group[aria-hidden='true'] {
+      display: none;
+    }
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .social-link {
+    display: flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.1);
+    color: rgb(255 255 255 / 0.72);
+    transition:
+      color 150ms,
+      background-color 150ms;
+  }
+  .social-link:hover {
+    color: white;
+  }
+  .social-link:focus-visible {
+    outline-width: 2px;
+    outline-style: solid;
+    outline-offset: 2px;
+  }
+</style>
 
-        if (clearBtn) {
-          clearBtn.addEventListener('click', function () {
-            searchInput.value = '';
-            searchInput.focus();
-            executeFilter();
-          });
-        }
+<script>
+  import { API_URL } from '../lib/api';
+  import { initLenis, destroyLenis } from '../lib/lenis';
 
-        optionBtns.forEach((btn) => {
-          btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const optionSlug = this.getAttribute('data-stream-option') || 'all';
-            const optionName = this.getAttribute('data-stream-name') || 'All Streams';
+  function initHomeAuth() {
+    const loggedOutNav = document.getElementById('home-nav-logged-out');
+    const loggedInNav = document.getElementById('home-nav-logged-in');
+    const profileTrigger = document.getElementById('home-profile-trigger');
+    const profileDropdown = document.getElementById('home-profile-dropdown');
+    const logoutBtn = document.getElementById('home-logout-btn');
+    const adminLink = document.getElementById('home-admin-link');
+    const ctaAuthBtn = document.getElementById('home-cta-auth-btn') as HTMLAnchorElement | null;
+    const toast = document.getElementById('home-login-toast');
+    const toastClose = document.getElementById('home-toast-close');
+    const toastWelcome = document.getElementById('home-toast-welcome-msg');
 
-            activeStream = optionSlug;
+    const searchParams = new URLSearchParams(window.location.search);
+    const isLoginSuccess = searchParams.has('login');
 
-            if (dropdownLabel) {
-              dropdownLabel.textContent = optionName;
-            }
+    if (isLoginSuccess) {
+      try {
+        localStorage.setItem('auth_active', '1');
+      } catch (e) {}
+    }
 
-            optionBtns.forEach((b) => {
-              const isSelected = (b.getAttribute('data-stream-option') || '') === optionSlug;
-              b.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-              b.classList.toggle('text-white', isSelected);
-              b.classList.toggle('font-semibold', isSelected);
-              b.classList.toggle('text-muted', !isSelected);
-              b.classList.toggle('font-medium', !isSelected);
-
-              const checkIcon = b.querySelector('.category-check');
-              if (checkIcon) {
-                checkIcon.classList.toggle('hidden', !isSelected);
-              }
-            });
-
-            toggleDropdown(true);
-            executeFilter();
-          });
-        });
-
-        function resetAll() {
-          searchInput.value = '';
-          activeStream = 'all';
-
-          if (dropdownLabel) {
-            dropdownLabel.textContent = 'All Streams';
-          }
-
-          optionBtns.forEach((b) => {
-            const isAll = (b.getAttribute('data-stream-option') || '') === 'all';
-            b.setAttribute('aria-selected', isAll ? 'true' : 'false');
-            b.classList.toggle('text-white', isAll);
-            b.classList.toggle('font-semibold', isAll);
-            b.classList.toggle('text-muted', !isAll);
-            b.classList.toggle('font-medium', !isAll);
-
-            const checkIcon = b.querySelector('.category-check');
-            if (checkIcon) {
-              checkIcon.classList.toggle('hidden', !isAll);
-            }
-          });
-
-          executeFilter();
-          searchInput.focus();
-        }
-
-        if (resetAllBtn) resetAllBtn.addEventListener('click', resetAll);
-
-        // Global hotkey: '/' or Ctrl+K focuses the hero search input
-        window.addEventListener('keydown', function (e) {
-          if ((e.ctrlKey && e.key.toLowerCase() === 'k') || (e.key === '/' && document.activeElement?.tagName !== 'INPUT')) {
-            e.preventDefault();
-            searchInput.focus();
-            searchInput.select();
-          } else if (e.key === 'Escape' && document.activeElement === searchInput) {
-            searchInput.value = '';
-            executeFilter();
-            searchInput.blur();
-          }
-        });
-        // Synchronize stream search titles when language switcher updates article titles in place
-        try {
-          const titleObserver = new MutationObserver(function (mutations) {
-            mutations.forEach(function (m) {
-              const el = m.target;
-              const link = el instanceof Element ? el.closest('[data-stream-item]') : el.parentElement?.closest('[data-stream-item]');
-              if (link) {
-                const titleText = link.querySelector('[data-article-title]')?.textContent || '';
-                link.setAttribute('data-stream-title', titleText.toLowerCase().trim());
-              }
-            });
-          });
-
-          document.querySelectorAll('[data-article-title]').forEach(function (el) {
-            titleObserver.observe(el, { childList: true, characterData: true, subtree: true });
-          });
-        } catch (e) {}
+    const cachedAuth = (function () {
+      try {
+        return localStorage.getItem('auth_active') === '1' || document.cookie.includes('logged_in=1');
+      } catch (e) {
+        return false;
       }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', setupCommandSearch);
-      } else {
-        setupCommandSearch();
-      }
-
-      document.addEventListener('astro:page-load', setupCommandSearch);
     })();
-  </script>
 
-  {/* Cache top articles for instant 0ms access when opening article pages */}
-  <script is:inline define:vars={{ cachedPosts: (livePosts || []).slice(0, 10).map((p: any) => ({
-    slug: p.slug,
-    title: p.title,
-    description: p.description || p.metaDescription || '',
-    publishedAt: p.publishedAt,
-    category: p.category ? { name: p.category.name, slug: p.category.slug } : null,
-  })), cacheLang: listLanguage }}>
-    try {
-      if (Array.isArray(cachedPosts) && cachedPosts.length > 0) {
-        sessionStorage.setItem('recent_posts_' + cacheLang, JSON.stringify(cachedPosts));
+    // Fast optimistic UI update if cached or fresh login success
+    if (cachedAuth || isLoginSuccess) {
+      loggedOutNav?.classList.add('hidden');
+      loggedOutNav?.classList.remove('flex');
+      loggedInNav?.classList.remove('hidden');
+      loggedInNav?.classList.add('flex');
+      if (ctaAuthBtn) {
+        ctaAuthBtn.href = '/profile';
+        ctaAuthBtn.textContent = 'My Preparation Hub';
       }
-    } catch (e) {}
-  </script>
+      document.querySelectorAll<HTMLAnchorElement>('footer a[href="/login"]').forEach((el) => {
+        el.href = '/profile';
+        el.textContent = 'My profile';
+      });
+      document.querySelectorAll<HTMLAnchorElement>('footer a[href="/signup"]').forEach((el) => {
+        el.href = '/test-series';
+        el.textContent = 'Test series';
+      });
 
-</Layout>
+      // Instantly restore cached user initials and name to avoid guest flash
+      try {
+        const rawUser = localStorage.getItem('auth_user');
+        if (rawUser) {
+          const u = JSON.parse(rawUser);
+          const fullName = (u.name || 'User').trim();
+          const email = u.email || 'Aspirant';
+          const role = u.role || 'student';
+          const parts = fullName.split(/\s+/).filter(Boolean);
+          const initials =
+            parts.length > 1
+              ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+              : fullName.slice(0, 2).toUpperCase() || 'U';
+
+          document.querySelectorAll('.user-display-name').forEach((el) => (el.textContent = fullName));
+          document.querySelectorAll('.user-display-email').forEach((el) => (el.textContent = email));
+          document.querySelectorAll('.user-avatar-initials').forEach((el) => (el.textContent = initials));
+          document.querySelectorAll('.user-display-role').forEach((el) => {
+            el.textContent = role === 'admin' ? 'Administrator' : role === 'editor' ? 'Editor' : 'Aspirant';
+          });
+          document.querySelectorAll('.user-role-badge').forEach((el) => {
+            el.textContent = role === 'admin' ? 'Admin' : role === 'editor' ? 'Editor' : 'Aspirant';
+          });
+          if (adminLink && (role === 'admin' || role === 'editor')) {
+            adminLink.classList.remove('hidden');
+            adminLink.classList.add('flex');
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Toggle dropdown
+    function closeDropdown() {
+      if (!profileDropdown || !profileTrigger) return;
+      profileDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+      profileDropdown.classList.remove('scale-100', 'opacity-100');
+      profileTrigger.setAttribute('aria-expanded', 'false');
+    }
+
+    function openDropdown() {
+      if (!profileDropdown || !profileTrigger) return;
+      profileDropdown.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        profileDropdown.classList.remove('scale-95', 'opacity-0');
+        profileDropdown.classList.add('scale-100', 'opacity-100');
+      });
+      profileTrigger.setAttribute('aria-expanded', 'true');
+    }
+
+    if (profileTrigger && !profileTrigger.dataset.dropdownBound) {
+      profileTrigger.dataset.dropdownBound = 'true';
+      profileTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = profileTrigger.getAttribute('aria-expanded') === 'true';
+        if (isOpen) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      });
+    }
+
+    // Close dropdown immediately when any link inside it is clicked
+    profileDropdown?.querySelectorAll('a').forEach((link) => {
+      if (!link.dataset.closeBound) {
+        link.dataset.closeBound = 'true';
+        link.addEventListener('click', () => {
+          closeDropdown();
+        });
+      }
+    });
+
+    if (!(window as any).__homeAuthDocBound) {
+      (window as any).__homeAuthDocBound = true;
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (!target.closest('#home-profile-dropdown') && !target.closest('#home-profile-trigger')) {
+          const currentDropdown = document.getElementById('home-profile-dropdown');
+          const currentTrigger = document.getElementById('home-profile-trigger');
+          if (currentDropdown && currentTrigger) {
+            currentDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+            currentDropdown.classList.remove('scale-100', 'opacity-100');
+            currentTrigger.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const currentDropdown = document.getElementById('home-profile-dropdown');
+          const currentTrigger = document.getElementById('home-profile-trigger');
+          if (currentDropdown && currentTrigger) {
+            currentDropdown.classList.add('hidden', 'scale-95', 'opacity-0');
+            currentDropdown.classList.remove('scale-100', 'opacity-100');
+            currentTrigger.setAttribute('aria-expanded', 'false');
+          }
+        }
+      });
+    }
+
+    // Logout handling
+    if (logoutBtn && !logoutBtn.dataset.bound) {
+      logoutBtn.dataset.bound = 'true';
+      logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          localStorage.removeItem('auth_active');
+        } catch (err) {}
+        closeDropdown();
+        await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'X-CSRF-Protection': '1' },
+        } as any).catch(() => null);
+
+      // Revert UI to logged-out
+      loggedInNav?.classList.add('hidden');
+      loggedInNav?.classList.remove('flex');
+      loggedOutNav?.classList.remove('hidden');
+      loggedOutNav?.classList.add('flex');
+      if (ctaAuthBtn) {
+        ctaAuthBtn.href = '/signup';
+        ctaAuthBtn.textContent = 'Create an account';
+      }
+      document.querySelectorAll<HTMLAnchorElement>('footer a[href="/profile"]').forEach((el) => {
+        el.href = '/login';
+        el.textContent = 'Log in';
+      });
+      document.querySelectorAll<HTMLAnchorElement>('footer a[href="/test-series"]').forEach((el) => {
+        if (el.textContent === 'Test series') {
+          el.href = '/signup';
+          el.textContent = 'Create account';
+        }
+      });
+    });
+  }
+
+    // Fetch user profile from /me
+    // Only a definitive HTTP 401 proves the session has expired.
+    // 5xx, CORS failures, or network errors must NOT wipe auth_active to
+    // prevent the "logout flash" when the sidebar logo navigates back to Home.
+    fetch(`${API_URL}/me`, { priority: 'high', credentials: 'include' } as any)
+      .then(async (res) => {
+        // If server failed or network blip, never wipe optimistic state
+        if (!res || res.status >= 500) return;
+
+        if (res.status === 401) {
+          try {
+            localStorage.removeItem('auth_active');
+            localStorage.removeItem('auth_user');
+          } catch (e) {}
+          loggedInNav?.classList.add('hidden');
+          loggedInNav?.classList.remove('flex');
+          loggedOutNav?.classList.remove('hidden');
+          loggedOutNav?.classList.add('flex');
+          if (ctaAuthBtn) {
+            ctaAuthBtn.href = '/signup';
+            ctaAuthBtn.textContent = 'Create an account';
+          }
+          return;
+        }
+
+        const user = res.ok ? await res.json().catch(() => null) : null;
+        if (user && user.id) {
+          try {
+            localStorage.setItem('auth_active', '1');
+            localStorage.setItem('auth_user', JSON.stringify({
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+            }));
+          } catch (e) {}
+
+          const fullName = (user.name || 'User').trim();
+          const email = user.email || 'Aspirant';
+          const role = user.role || 'student';
+          const parts = fullName.split(/\s+/).filter(Boolean);
+          const initials =
+            parts.length > 1
+              ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+              : fullName.slice(0, 2).toUpperCase() || 'U';
+
+          // Update avatar & text
+          document.querySelectorAll('.user-display-name').forEach((el) => (el.textContent = fullName));
+          document.querySelectorAll('.user-display-email').forEach((el) => (el.textContent = email));
+          document.querySelectorAll('.user-avatar-initials').forEach((el) => (el.textContent = initials));
+          document.querySelectorAll('.user-display-role').forEach((el) => {
+            el.textContent = role === 'admin' ? 'Administrator' : role === 'editor' ? 'Editor' : 'Aspirant';
+          });
+          document.querySelectorAll('.user-role-badge').forEach((el) => {
+            el.textContent = role === 'admin' ? 'Admin' : role === 'editor' ? 'Editor' : 'Aspirant';
+          });
+
+          // Show admin link if role permitted
+          if (adminLink && (role === 'admin' || role === 'editor')) {
+            adminLink.classList.remove('hidden');
+            adminLink.classList.add('flex');
+          }
+
+          // Show logged-in UI, hide logged-out UI
+          loggedOutNav?.classList.add('hidden');
+          loggedOutNav?.classList.remove('flex');
+          loggedInNav?.classList.remove('hidden');
+          loggedInNav?.classList.add('flex');
+
+          if (ctaAuthBtn) {
+            ctaAuthBtn.href = '/profile';
+            ctaAuthBtn.textContent = 'My Preparation Hub';
+          }
+          document.querySelectorAll<HTMLAnchorElement>('footer a[href="/login"]').forEach((el) => {
+            el.href = '/profile';
+            el.textContent = 'My profile';
+          });
+          document.querySelectorAll<HTMLAnchorElement>('footer a[href="/signup"]').forEach((el) => {
+            el.href = '/test-series';
+            el.textContent = 'Test series';
+          });
+
+          // Show Toast if login=success
+          if (isLoginSuccess && toast) {
+            if (toastWelcome) {
+              toastWelcome.textContent = `Welcome back, ${fullName}!`;
+            }
+            toast.classList.remove('-translate-y-4', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            // Clean query parameter from URL without reloading
+            try {
+              const url = new URL(window.location.href);
+              url.searchParams.delete('login');
+              window.history.replaceState({}, document.title, url.pathname + (url.search || ''));
+            } catch (err) {}
+
+            const hideTimer = setTimeout(() => {
+              toast.classList.add('-translate-y-4', 'opacity-0');
+              toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 4500);
+
+            toastClose?.addEventListener(
+              'click',
+              () => {
+                clearTimeout(hideTimer);
+                toast.classList.add('-translate-y-4', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+              },
+              { once: true },
+            );
+          }
+        } else if (res.ok && !user) {
+          // Explicit unauthenticated session from server
+          try {
+            localStorage.removeItem('auth_active');
+            localStorage.removeItem('auth_user');
+          } catch (e) {}
+          loggedInNav?.classList.add('hidden');
+          loggedInNav?.classList.remove('flex');
+          loggedOutNav?.classList.remove('hidden');
+          loggedOutNav?.classList.add('flex');
+          if (ctaAuthBtn) {
+            ctaAuthBtn.href = '/signup';
+            ctaAuthBtn.textContent = 'Create an account';
+          }
+        }
+      })
+      .catch(() => {
+        // Network error — never reset login state. The session may still be valid.
+      });
+  }
+
+  function setupSmoothScroll() {
+    initLenis({ headerOffset: -80 });
+  }
+
+  // Support both normal load and client transitions
+  document.addEventListener('astro:after-swap', () => {
+    initHomeAuth();
+  });
+  document.addEventListener('astro:page-load', () => {
+    initHomeAuth();
+    setupSmoothScroll();
+  });
+  document.addEventListener('astro:before-swap', destroyLenis);
+
+  // Fallback if client router is ever bypassed or DOM is already ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initHomeAuth();
+      setupSmoothScroll();
+    });
+  } else {
+    initHomeAuth();
+    setupSmoothScroll();
+  }
+</script>

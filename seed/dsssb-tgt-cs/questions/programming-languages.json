@@ -1,0 +1,4082 @@
+[
+  {
+    "content": "Which of the following statement(s) is/are true about pre-processor in C/C++?\n I. To replace each #include directive with the contents of the designated file.\n II. To replace each escape sequence with designated character.\n III. To process macro definitions and expand macro calls.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "Solution:\nCorrect Answer: I and III\nExplanation:\nI. To replace each #include directive with the contents of the designated file\nTrue – The preprocessor replaces #include with the actual contents of the specified file before compilation.\nII. To replace each escape sequence with designated character\nFalse – Escape sequences (like \\n, \\t) are handled during lexical analysis by the compiler, not by the preprocessor.\nIII. To process macro definitions and expand macro calls\nTrue – The preprocessor processes #define macros and expands them wherever they are used.\nFinal Answer:\nStatements I and III are correct.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following characters is a terminal that terminates a statement in C++?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, every executable statement must end with a semicolon (;). This symbol signals the compiler that the command is complete before proceeding to the next line of code.",
+    "options": [
+      {
+        "content": "Semicolon (;)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Colon (:)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Ampersand (&)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Dollar ($)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is the insertion operator in C++, used to write formatted data into the stream?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, the insertion operator is represented by the double less-than symbol (<<). This operator is overloaded in the standard library to write formatted data into output streams, such as std::cout. When you use cout << variable_name, the compiler directs the value of variable_name to be inserted into the output stream for display. Option B correctly identifies this symbol as the insertion operator.\\nOption A (>>) is incorrect because it represents the extraction operator, which reads data from an input stream like std::cin into a variable. Option C (&&) is the logical AND operator used for boolean logic, not stream manipulation. Option D (<>) is not a valid C++ operator; it resembles the less-than and greater-than symbols but does not function as an insertion or extraction mechanism. Therefore, understanding the direction of the arrows is key: << inserts data into a stream (left to right), while >> extracts data from a stream.",
+    "options": [
+      {
+        "content": ">>",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<<",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "&&",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<>",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is used to access the overridden function of the base class from the derived class?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "The scope resolution operator :: accesses overridden base class functions from a derived class. This syntax explicitly calls the parent implementation instead of the overridden version.",
+    "options": [
+      {
+        "content": "::",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "<<",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": ">>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": ":",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In C++, bool data type is used to hold how many values?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, the bool data type is used to store only two possible values:\n• true\n• false\nSince it can hold only these two values, the correct answer is 2.",
+    "options": [
+      {
+        "content": "n²",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "2n",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2n",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of code?\n oid main ()\n {\n     int x = 33, y, z;\n     z = x++ + 17;\n     y = ++z - ++x;\n     cout << \"x=\" << x << \" y=\" << y << \" z=\" << z;\n }",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "Initial values:\n```\nx = 33\n```\nStep 1:```\nz = x++ + 17;\n```\nx++ is post-increment:\n• First use current value of x\nThen increment x\nSo:\n```\nz = 33 + 17 = 50\n```\nAfter execution:\n```\nx = 34\nz = 50\n```\nStep 2:```\ny = ++z - ++x;\n```\n++z is pre-increment:\n```\nz = 51\n```\n++x is pre-increment:\n```\nx = 35\n```\nNow:\n```\ny = 51 - 35 = 16\n```\nFinal values:\n```\nx = 35\ny = 16\nz = 51\n```\nTherefore, the output is:\n```\nx = 35  y = 16  z = 51\n```",
+    "options": [
+      {
+        "content": "x = 34 y = 17 z = 51",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "x = 35 y = 16 z = 51",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "x = 34 y = 16 z = 50",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "x = 35 y = 17 z = 51",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In C++ a wide–character constant begins with the letter _____.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, wide-character constants are denoted by prefixing the character with the letter L. For example, L'a' represents a wide-character literal rather than a standard char.",
+    "options": [
+      {
+        "content": "W",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "C",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "L",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "S",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In C++, trying to access private data from outside of a class throws error. This feature is known as:",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "In C++, restricting access to class members using private keywords prevents external modification. This mechanism is known as data hiding, which ensures security and integrity of object state.",
+    "options": [
+      {
+        "content": "Data abstraction",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Data encoding",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Data hiding",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Data mining",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is not a correct declaration statement in C++?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, pointers require matching types for valid assignment. Option C incorrectly assigns an int address to a double pointer, violating type safety rules. Options A, B, and D follow correct syntax for valid declarations.",
+    "options": [
+      {
+        "content": "int *ptr=0, p;",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "int p, *ptr = 0;",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "int p; double *fp = &p;",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "int *p, *q, r;",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Consider the following C++ code segment:\nint a = 10, b = 20;\nint *p = &a, *q = &b;\np = q;\nWith respect to the code segment mentioned above, which of the following statement is correct?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "Initially, pointer p points to variable a and q points to b. The statement p = q copies the address of b into p, so both pointers now reference variable b. The values of a and b remain unchanged.",
+    "options": [
+      {
+        "content": "Both a and b will contain 10",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Both a and b will contain 20",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both p and q will point to a",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both p and q will point to b",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What will be the output of the following C++ program?\n# include <iostream>\nusing namespace std;\nint main(){\nchar array[10];\nfor(int i = 0; i < 5; i++)\n*(array + i) = 65 + i;\n*(array + i) = '\\0';\ncout << array;\nreturn(0);\n}",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "The loop iterates from i=0 to 4, assigning ASCII values 65 ('A') through 69 ('E') to the array elements.\nAfter the loop finishes, i equals 5. The code places a null terminator at index 5 of the array.\nPrinting the array with cout outputs ABCDE, stopping at the null character.",
+    "options": [
+      {
+        "content": "ABCDE\\0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ABCDE",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "BCDEF",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "CDEFG",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which statement is correct about static member function in C++?\n I. It can access only other static members declared in the same class.\n II. It cannot be called using the class name (instead of its objects).",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, a static member function belongs to the class rather than to any specific object.\nStatement I:\nA static member function can directly access only static data members and other static member functions of the same class.\nSo, Statement I is correct.\nStatement II:\nStatic member functions can be called using the class name without creating objects.\nExample:\n```\nClassName::functionName();\n```\nTherefore, Statement II is incorrect.\nHence, the correct answer is Only I.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "By default in C++, the member of a class are _____, while, by default the member of structure are _____.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++:\n• Members of a class are private by default.\n• Members of a structure (struct) are public by default.\nExample:\n```\nclass A {\n   int x;   // private by default\n};\nstruct B {\n   int y;   // public by default\n};\n```\nTherefore, the correct answer is private; public.",
+    "options": [
+      {
+        "content": "private; private",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "public; public",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "private; public",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "public; private",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In case of public inheritance in C++, which of the following correctly represents the accessibility of the data variables from derived class?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++ public inheritance, private members of the base class remain inaccessible to the derived class. Protected and public members are accessible within the derived class, though their accessibility levels may change relative to external code.",
+    "options": [
+      {
+        "content": "Private variables: Yes, Protected variables: Yes, Public variables: Yes",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Private variables: Yes, Protected variables: No, Public variables: Yes",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Private variables: No, Protected variables: Yes, Public variables: Yes",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Private variables: No, Protected variables: No, Public variables: Yes",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In case of protected inheritance in C++, which of the following correctly represents the accessibility of the data variables from second derived class?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "In protected inheritance, base class private members remain inaccessible to all derived classes. Public and protected members of the base class become protected in the first derived class, allowing access from a second derived class within its scope. Therefore, private variables are inaccessible while protected and public base variables are accessible as protected.",
+    "options": [
+      {
+        "content": "Private variables: Yes, Protected variables: Yes, Public variables: Yes",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Private variables: Yes, Protected variables: No, Public variables: Yes",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Private variables: No, Protected variables: Yes, Public variables: Yes",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Private variables: No, Protected variables: No, Public variables: Yes",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In case of private inheritance in C++, which of the following correctly represents the accessibility of the data variables from second derived class?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "In C++, private inheritance converts all public and protected members of the base class into private members of the derived class. Consequently, a second derived class cannot access these members because they are treated as private in the intermediate class. Original private members remain inaccessible to all derived classes regardless of inheritance type.",
+    "options": [
+      {
+        "content": "Private variables: Yes, Protected variables: No, Public variables: Yes",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Private variables: Yes, Protected variables: No, Public variables: No",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Private variables: Yes, Protected variables: Yes, Public variables: Yes",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Private variables: No, Protected variables: No, Public variables: No",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "State whether True or False?\n(i) Pointer arithmetic can't be done on a void pointer.\n(ii) A void pointer cannot point to a class member in C++.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "Statement (i) is True because C++ forbids arithmetic on void pointers due to their incomplete type size. Statement (ii) is also True as a void pointer cannot store the specific representation required for C++ member pointers. Therefore, both statements are True.",
+    "options": [
+      {
+        "content": "(i) – True, (ii) – True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "(i) – True, (ii) – False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) – False, (ii) – True",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(i) – False, (ii) – False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The cout is a predefined object of ______ class.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In standard C++, the cout object is used for output to the console. It belongs to the ostream class defined in the iostream header file.",
+    "options": [
+      {
+        "content": "istream",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ostream",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "outstream",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "foutstream",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding void keyword in C++?\n I. To specify the return type of a function when it is not returning any value.\n II. To indicate an empty argument list to a function.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, the void keyword is used in multiple ways:\n1. To specify that a function does not return any value.\nExample:\n```\nvoid display()\n```\n1. To indicate that a function has no arguments.\nExample:\n```\nint show(void)\n```\nSince both statements are correct, the correct answer is Both I and II.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the correct interpretation of the following declaration in C++?\nint (*FPTR)(char*)",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "The declaration int (* FPTR)(char* ) defines a pointer named FPTR to a function. This function accepts a character pointer argument and returns an integer value.",
+    "options": [
+      {
+        "content": "FPTR is a pointer to character",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "FPTR is a pointer to a function, which takes character as an argument and returns integer value",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "FPTR is a pointer to a function, which takes character pointer as an argument and returns integer value",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "FPTR is a function, which takes character pointer as an argument and returns integer pointer",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which option gives the correct interpretation of the following declaration in C++?\nint(*p[5])();",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "To parse the declaration int(*p[5])(), start with the identifier p. The brackets [5] indicate that p is an array of 5 elements. The parentheses around *p[5] override the default precedence, meaning each element of the array is a pointer. Finally, the trailing () indicates that these pointers point to functions returning an integer. Thus, p is an array of 5 pointers to functions that return int.",
+    "options": [
+      {
+        "content": "p is a pointer to function",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "p is an array of pointers to function",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "p is a pointer to such function which return type is array",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "p is a pointer to an array of functions",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the output of the following C++ code segment in Dev C++ under Windows 10 operating system?\nint sum(int a, int b=10, int c=20)\n{\nreturn a+b+c;\n}\nint main(){\ncout<<sum(20,30);\n}",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "The function sum uses default parameters b=10 and c=20. When called with sum(20,30), a becomes 20 and b becomes 30. Parameter c retains its default value of 20. The calculation is 20+30+20=70.",
+    "options": [
+      {
+        "content": "50",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "60",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "70",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "80",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In C++, the \"+\" operator is overloaded (as member operator function) in user defined class Matrix that adds two matrices and returns resultant matrix.\nWhich of the following is a signature of this operator function?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "For a binary operator overloaded as a member function, the left operand is the object that calls the function and the right operand is the single explicit parameter. So A + B is internally treated as A.operator+(B). The function must return a Matrix because adding two matrices gives another Matrix. Therefore, the correct signature is Matrix operator+(Matrix B). Hence, Option B is correct.",
+    "options": [
+      {
+        "content": "Matrix operator + (Matrix A, Matrix B)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Matrix operator + (Matrix B)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Matrix + operator (Matrix A, Matrix B)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Void + operator (Matrix B)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Identify the correct statements.\n(i) Derived classes do not inherit or overload constructors or destructors from their base classes.\n(ii) Destructors can be declared with the keyword virtual.\n(iii) Constructors can be declared with the keyword virtual.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "In C++, constructors and destructors are not inherited members, confirming statement (i). Destructors can be declared virtual to ensure proper resource cleanup during polymorphic deletion, supporting statement (ii). Conversely, constructors cannot be virtual, making statement (iii) incorrect. Thus, the valid statements are only (i) and (ii).",
+    "options": [
+      {
+        "content": "(i) and (iii) only",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(i) and (ii) only",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(ii) and (iii) only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(i), (ii) and (iii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following type of constructors (in C++) does NOT accept parameters?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "A default constructor in C++ is defined as a constructor that can be called without any arguments. While parameterized constructors require specific input values and copy constructors take an object reference, the default constructor initializes objects without external parameters.",
+    "options": [
+      {
+        "content": "Default constructor",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Dynamic constructor",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Parameterised constructor",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Copy constructor",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following functions should be the destructor function for user defined class Person in C++?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, a destructor must be named with the class name preceded by a tilde symbol and cannot accept parameters. Option 3 correctly defines ~Person() which strictly adheres to this specific syntax requirement for user-defined classes.",
+    "options": [
+      {
+        "content": "Person(string s)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Person()",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "~Person(string s)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "~Person()",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is INCORRECT about copy constructor in C++?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "A copy constructor initializes a new object from an existing one of the same class type. It requires a reference parameter to access that source object data. Consequently, stating it accepts no parameters is false, making Option A the correct selection.",
+    "options": [
+      {
+        "content": "It is the constructor that does not accept parameters.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "It is member function of a class.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It is used to initialise the object by another object.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It accepts objects of the same class as a reference.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is the output of the following C++ code segment in Dev C++ under Windows 10 operating system?\nclass A{ int a=10, b=20;\nA(int a, int b){a=30; b=40;}\npublic: A(){ A x(50, 60);\ncout<<\"a=\"<<a<<\" b=\"<<b;\n}\n};\nint main(){A y;}",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "The member variables a and b are initialized to 10 and 20. The parameterized constructor assigns values to local parameters, not members due to shadowing. Thus, the default constructor prints the initial member values 10 and 20.",
+    "options": [
+      {
+        "content": "a=30 b=40",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "a=10 b=20",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "a=50 b=60",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a=10 b=60",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In C++, if a function f is defined as a friend function, then which of the following category of data members can be accessed using the function f ?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "In C++, a friend function is declared outside the class but granted special access privileges. It can access all data members of the class, including private, protected, and public categories.",
+    "options": [
+      {
+        "content": "Only Private",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only Protected",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only Public",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Public, Private and Protected",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is NOT correct about virtual functions in C++?\nI. A virtual function must be a member of a class.\nII. It can be accessed using an object pointer or reference.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "Key idea\nA virtual function in C++ is a member function declared with the virtual keyword, usually in a base class.\nStatement check\n• Statement I: Correct. A non-member or global function cannot be declared virtual.\n• Statement II: Correct. Dynamic binding is commonly achieved by calling the virtual function through a base-class pointer or reference.\nConclusion\nBoth statements are correct, so no listed statement is “NOT correct.”\nFinal answer: Neither I nor II.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A ________ function is a member function in base class that you expect to redefine in derived classes.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "medium",
+    "explanation": "A virtual function is declared in a base class using the virtual keyword to enable polymorphism. This allows derived classes to override the function, ensuring the correct implementation is called at runtime based on the object type.",
+    "options": [
+      {
+        "content": "Friend",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Virtual",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Private",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Protected",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which statement is NOT correct regarding ternary operator in C++?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "The ternary operator in C++ is represented by ?: and is also called the conditional operator. It behaves similarly to an if-else statement by evaluating a condition and selecting one of two expressions.\nIn C++, the ternary operator cannot be overloaded. Therefore, the statement “Operator overloading is possible in it” is NOT correct.",
+    "options": [
+      {
+        "content": "Its symbol is ?:",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It is also known as conditional operator",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Operator overloading is possible in it",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "It is similar to if else",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the following file stream classes in C++ with its functions.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "Matching of C++ stream classes:\n1. fstream → Provides common operations for file streams.\nTherefore → iii\n2. ifstream → Provides input operations.\nTherefore → iv\n3. ofstream → Provides output operations.\nTherefore → ii\n4. iostream → Supports both input and output operations together.\nTherefore → i\nHence, the correct matching is:\n1 – iii, 2 – iv, 3 – ii, 4 – i",
+    "options": [
+      {
+        "content": "1 – i, 2 – ii, 3 – iv, 4 – iii",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1 – iv, 2 – iii, 3 – i, 4 – ii",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1 – i, 2 – iii, 3 – iv, 4 – ii",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "1 – iii, 2 – iv, 3 – ii, 4 – i",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In C++, “Out-of-range-index” belong to _____ type exception while keyboard interrupts are called _____ exceptions.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++ exception handling:\n• “Out-of-range-index” exceptions occur during program execution due to program logic or invalid indexing. These are synchronous exceptions because they occur as a direct result of program instructions.\n• Keyboard interrupts occur due to external events independent of the program flow. These are asynchronous exceptions.\nTherefore, the correct answer is synchronous; asynchronous.",
+    "options": [
+      {
+        "content": "synchronous; synchronous",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "synchronous; asynchronous",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "asynchronous; synchronous",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "asynchronous; asynchronous",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the following code?\n```\n#include <iostream>\nusing namespace std;\nint main()\n{\n    int a = 3, b, *p, **q;\n    p = &a;\n    q = &p;\n    b = 2 * (**q + *p);\n    cout << b;\n}\n```",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "Step-by-step execution:\n1. a = 3\n2. p = &a\np stores the address of a.\n3. q = &p\nq stores the address of p.\n4. *p gives the value of a → 3\n5. *q gives the value stored in p → address of a\n**q gives the value of a → 3\nConceptually, the intention is:\n• *p = 3\n• **q = 3\nSo:\n```\nb = 2 * (**q + *p)\n  = 2 * (3 + 3)\n  = 2 * 6\n  = 12\n```\nHence, the output is 12.",
+    "options": [
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "12",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "18",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "24",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The operator in C++, which is used to access a value referred by a pointer is known as ______.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "In C++, the * operator is used to access the value stored at the memory address held by a pointer. This process is called dereferencing.\nThe * operator used with pointers is known as the indirection operator or dereference operator.\nExample:\n```\nint x = 10;\nint *p = &x;\ncout << *p;\n```\nHere:\n• p stores the address of x\n• *p accesses the value stored at that address, which is 10\nTherefore, the operator used to access the value referred to by a pointer is called the indirection operator.",
+    "options": [
+      {
+        "content": "indirect operator",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "direct operator",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "indirection operator",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "insertion operator",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The programming language C++ was developed by:",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Programming in C++",
+    "chapterSlug": "dsssb-pl-cpp",
+    "difficulty": "easy",
+    "explanation": "C++ was developed by Bjarne Stroustrup at Bell Labs as an extension of the C language with object-oriented features. Blaise Pascal is associated with Pascal, Dennis Ritchie with C, and Alan Turing with theoretical computer science.",
+    "options": [
+      {
+        "content": "Blaise Pascal",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Dennis Ritchie",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Alan Turing",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Bjarne Stroustrup",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statement about HTML attributes is false?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "medium",
+    "explanation": "HTML attributes provide additional information about elements and are always placed within the opening tag, not the end tag. Option 3 is incorrect because it claims attributes appear in the closing tag, making it the false statement.",
+    "options": [
+      {
+        "content": "HTML element can have attributes",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Attributes provide additional information about an element",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Attributes are always specified in the end tag",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Attributes usually come in name/value pairs like: name = \"value\"",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following is NOT an attribute that included by the HR tag which puts a horizontal line on the page?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "For the old HTML `<hr>` tag, `SIZE`, `ALIGN`, and `WIDTH` are attributes. `SHADE` is not the standard attribute; the older attribute was `NOSHADE`.",
+    "options": [
+      {
+        "content": "SHADE",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "SIZE",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ALIGN",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "WIDTH",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following tag of HTML language is a container for the tags that contain information about the page?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The `<head>` tag contains metadata and other tags that provide information about the web page.",
+    "options": [
+      {
+        "content": "<title>",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<html>",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<head>",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "<body>",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following form is correct to show a ‘comments’ in the HTML language?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The correct HTML comment syntax begins with `<!--` and ends with `-->`. Therefore the valid form is `<!-- This is a comment -->`.",
+    "options": [
+      {
+        "content": "<-- This is a comment -->",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<-- This is a comment -!>",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<!-- This is a comment -!>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<!-- This is a comment -->",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding <title> tag in HTML?\n Statements:\n I. This tag always goes outside to the <head> tag.\n II. This tag is used to indicate the title of the webpage.\n III. It is also used by search engines.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The <title> tag must be placed inside the <head> section, not outside.\nIt defines the title of the webpage displayed in browser tabs.\nAdditionally, search engines use this tag for indexing and displaying results.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is tag in HTML?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "An HTML tag defines an element that structures content and metadata on a webpage. Tags contain information about the page's components rather than storing addresses or counting other tags.",
+    "options": [
+      {
+        "content": "It contains the address of the webpage.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It contains the number of nested tags in the page.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "It contains information about the webpage.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "It contains the number of tags in the web page.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A Java program that is embedded in an HTML document and runs in the context of a Java-capable browser is known as ______.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "A Java program embedded in an HTML document and running within a browser context is called a Java Applet. These applications were designed to run client-side but are now largely deprecated in modern web standards.",
+    "options": [
+      {
+        "content": "Applet",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Canvas",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Doctags",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Frame window",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "How many different levels of heading does HTML support?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The levels represent the importance and structural hierarchy of the content on a webpage:\n• <h1> : The most important heading. It is typically used for the main title of a page. Search engines and screen readers rely on this to understand the primary topic.\n• <h2>  through <h6> : These are used for sub-sections. As the number increases, the visual size of the text typically decreases, and the \"importance\" level drops.",
+    "options": [
+      {
+        "content": "6",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "9",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which HTML tag is used to embed Java Script scripts in a page?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "To embed JavaScript in an HTML page, we use the <script> tag.",
+    "options": [
+      {
+        "content": "<script>tag",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "<embed>tag",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<java>tag",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<enable>tag",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "HTML links are defined with the ____ tag.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "HTML links are defined using the anchor tag <a>. This element requires an href attribute to specify the destination URL for the hyperlink connection.",
+    "options": [
+      {
+        "content": "<p>",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<h 1>",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<link>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<a>",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statements about HTML Attributes is FALSE?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "HTML attributes provide extra information about elements, and most elements support them. Option 1 incorrectly claims all HTML elements cannot have attributes. Since this statement is factually wrong, it is the correct choice for identifying the false statement.",
+    "options": [
+      {
+        "content": "All HTML elements cannot have attributes.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Attributes provide additional information about elements.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Attributes are always specified in the start tag.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Attributes usually come in name/value pairs like: name=\"value\".",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "With reference to legacy/deprecated HTML <body> attributes, which attribute specifies the colour of a hyperlink after it has been visited or clicked?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "Key distinction:\n• VLINK: sets the colour of visited links in legacy HTML.\n• ALINK: sets the colour of an active link while it is being selected/clicked.\n• LINK: sets the colour of unvisited links.\n• Modern HTML note: these presentational body attributes are deprecated/obsolete; CSS such as :visited should be used instead.\nFinal answer: VLINK",
+    "options": [
+      {
+        "content": "VLINK",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "ALINK",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "LINK",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "HLINK",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "Which of the following HTML tag is used to puts a line break in the text?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The HTML <BR> tag inserts a line break in text.",
+    "options": [
+      {
+        "content": "<B>",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<BL>",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<L>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<BR>",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "What will be the output of the following segment of the HTML codes?\n<ol>\n    <li>coffee</li>\n    <li>tea</li>\n    <li>milk</li>\n</ol>",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "medium",
+    "explanation": "Key idea: The <ol> tag creates an ordered list, so the browser adds numbering automatically.\nThe given items are written in this order:\n1. Coffee\n2. Tea\n3. Milk\nFinal answer: Option A",
+    "options": [
+      {
+        "content": "1. Coffee",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1. Milk",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "1. Coffee",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Coffee",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is image map in HTML?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "An HTML image map enables specific clickable areas within a single image to link to different URLs or locations. It utilizes the map and area tags to define interactive regions like rectangles or circles for user navigation, distinguishing it from standard image links.",
+    "options": [
+      {
+        "content": "It is the backup copy of the image.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "It is a special image in which different area point to different locations on the web.",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "It contains the properties of the image. /",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "It contains the number of pixels in the image.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following HTML tags is used to embed an image in an HTML page?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "To embed an image in an HTML page, you must use the <img> tag. This is the standard element defined in HTML5 for displaying images within a document structure.",
+    "options": [
+      {
+        "content": "<img>",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "<pic>",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<href>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<url>",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements about <img> tag is NOT correct?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The question asks for the incorrect statement about HTML <img> tags. Width and height are valid attributes used for image sizing in standard markup. Therefore, the claim that these cannot be used is false and corresponds to option 3.",
+    "options": [
+      {
+        "content": "The <img> tag may contain the width attribute.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "The <img> tag may contain the height attribute.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "The <img> tag may contain both width and height attributes.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "The <img> tag cannot contain either width attribute or height attribute.",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "How many forms can we have on a webpage at the maximum?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "HTML standards do not impose a specific numerical cap on the number of form elements within a single document. While practical performance constraints might exist in browsers, the specification allows for multiple forms without restriction.",
+    "options": [
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "10",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "No limit",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which attribute in HTML table tag defines the number of columns in a column group?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The attribute used to define the number of columns in a column group is span.This attribute is used within the <colgroup> or <col> tags to apply styles or structural rules to multiple columns simultaneously without repeating the code for every individual cell.",
+    "options": [
+      {
+        "content": "border",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "colspan",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "rowspan",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "span",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following HTML element is used to define table data/cell?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The correct HTML element for defining table data cells is <td>. While <table> creates the container and <tr> defines rows, <th> is specifically for header cells. Therefore, option 1 accurately identifies the standard data cell tag.",
+    "options": [
+      {
+        "content": "<table>",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<td>",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "<tr>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<th>",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which property of CSS specifies the degree to which text should be emboldened?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The CSS property used to specify the degree of thickness or \"boldness\" of text is font-weight. This property accepts both keyword values and numeric values, allowing for precise control over how heavy the typeface appears.",
+    "options": [
+      {
+        "content": "Font-style",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Font-family",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Font-weight",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Font-size",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which property of CSS enables to set multiple list properties at once?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "The list-style shorthand covers these three individual sub-properties:\n1. list-style-type: Defines the design of the marker (e.g., disc, circle, square, decimal, lower-roman).\n2. list-style-position: Determines if the marker appears inside or outside the content flow (inside or outset).\n3. list-style-image: Allows you to use a custom image as the marker (e.g., url('bullet.png')).",
+    "options": [
+      {
+        "content": "List-style-type",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "List-style-image",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "List-style-position",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "List-style",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following can be used to display black color in HTML?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "In HTML and CSS, the RGB color model defines black as having zero intensity for all three primary colors. Therefore, the value rgb(0, 0, 0) represents pure black.",
+    "options": [
+      {
+        "content": "RGB(0, 0, 0)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "RGB(255, 255, 255)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "RGB(255, 0, 0)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "RGB(0, 255, 0)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following category of CSS is defined in the <head> section of an HTML page, within a <style> element?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "Internal CSS is defined within a <style> element located in the head section of an HTML document.\nInline CSS applies styles directly to elements using the style attribute, while External CSS links to separate stylesheet files. Therefore, Internal CSS matches the description provided in the question.",
+    "options": [
+      {
+        "content": "Inline CSS",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Internal CSS",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "External CSS",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Both Internal and External CSS",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following category of style sheet can be used to change the look of an entire website, by changing one file (CSS)?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "medium",
+    "explanation": "External CSS is stored in a separate file linked to HTML pages. This allows centralized updates across the entire website without editing individual documents, unlike inline or internal CSS which require page-specific changes.",
+    "options": [
+      {
+        "content": "Inline CSS",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Internal CSS",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "External CSS",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Both Inline and Internal CSS",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "In HTML, a color can be specified in the form of hsl(hue, saturation, lightness), where hue is a degree on the color wheel from 0 to 360. What are the hue values representing red, green, and blue?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "In the HSL color model, hue is measured in degrees from 0 to 360 on a circular color wheel. Standard HTML specifications define red as 0 degrees, green as 120 degrees, and blue as 240 degrees. These values correspond to the primary positions on the color spectrum used for digital display.",
+    "options": [
+      {
+        "content": "0: Red, 120: Green, 240: Blue",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "0: Red, 130: Green, 260: Blue",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "100: Red, 200: Green, 300: Blue",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "120: Red, 240: Green, 360: Blue",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statements related to business computing is/are true?\n(i) The HTML style attribute is used to add styles to an element, such as colour, font, size, and more.\n(ii) HTML colours are specified with predefined colour names, or with RGB, HEX, HSL, RGBA, or HSLA values.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "Statement (i) is true because the style attribute applies inline CSS for properties like color and font. Statement (ii) is also true as HTML supports multiple color formats including names, HEX, RGB, and HSL. Since both statements are factually correct regarding web development standards, the valid response is Option 2.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In DHTML, the letter 'D' stands for:",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "DHTML stands for Dynamic HTML. It is not a single language but a combination of technologies including HTML, CSS, and JavaScript that allows web pages to change dynamically without reloading.",
+    "options": [
+      {
+        "content": "Distributed",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Dynamic",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Daily",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Different",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Identify the incorrect statement.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "medium",
+    "explanation": "The question asks to identify the incorrect statement regarding web technologies. Option A incorrectly defines DHTML as a programming language, whereas it is actually a combination of HTML, CSS, and JavaScript. Options B, C, and D accurately describe the roles of these technologies.",
+    "options": [
+      {
+        "content": "DHTML is a programming language",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "JavaScript is the scripting standard for HTML",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "DHTML is the art of combining HTML, JavaScript, DOM, and CSS",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "DHTML is a term used to describe the technologies used to make web pages dynamic and interactive",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\n i) XML schemas define datatypes for elements and attributes, while DTD doesn't support datatypes.\n ii) DTD are the declarations that define a document type for SGML.\n iii) In XML, tag names can begin with a numeric value.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "medium",
+    "explanation": "Statement i is true because XML Schema supports rich datatypes unlike DTD which lacks them. Statement ii is true as DTDs were originally designed for SGML document types. Statement iii is false because XML tag names cannot start with numbers according to W3C specifications. Therefore, Option 0 is the correct choice based on standard XML and SGML definitions.",
+    "options": [
+      {
+        "content": "i-True, ii-True, iii-False",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i-False, ii-True, iii-False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False, iii-False",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False, iii-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following commands is used to comment out multiple lines in an XML file?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "XML documents require specific delimiters to mark sections as comments. Enclose your text block between <!-- and --> to span multiple lines correctly. Syntax from other programming languages like Java or C is invalid within XML files.",
+    "options": [
+      {
+        "content": "<!-- This is a",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "/*",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "// This is a",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<--",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following rule is needed to be followed while declaring the XML (Extensible Markup Language) elements name?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "HTML Basics",
+    "chapterSlug": "dsssb-pl-html",
+    "difficulty": "easy",
+    "explanation": "An XML element name must not start with the letters XML in any case combination. XML names also cannot start with a digit and cannot contain spaces. Therefore the valid rule among the options is that the name must not start with XML.",
+    "options": [
+      {
+        "content": "Name must start with a number",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Name can contain spaces",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Name must not start with the letters XML",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Name cannot contain letter, numbers and other characters",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2024"
+    ],
+    "examYear": 2024
+  },
+  {
+    "content": "JAVA compiler translates source code into __________.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "Unlike many other languages that compile directly into machine-specific code, Java uses a two-step process to ensure portability across different operating systems.\n• Source Code to Bytecode: The Java compiler (javac) takes your human-readable .java files and translates them into Bytecode (stored in .class files).\n• Platform Independence: This bytecode is not specific to any particular processor. Instead, it is designed to be executed by the Java Virtual Machine (JVM).\n• Execution: The JVM then translates the bytecode into the actual machine code of the specific device you are using (Windows, Mac, Linux, etc.).",
+    "options": [
+      {
+        "content": "symbolic code",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "assembly code",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "byte code",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "high language code",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is function of javap command?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "The javap command is part of the Java Development Kit used to disassemble compiled Java class files. It converts bytecode into a human-readable format, allowing developers to inspect the structure of compiled classes without needing source code.",
+    "options": [
+      {
+        "content": "A command for running the Java compiler",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "A command that disassembles Java class files",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "A command for running a non-optimized version of Java compiler",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A command that is used to generate API-style HTML documentation",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The process of compiling Intermediate Language programs to the actual machine language on the target platform prior to execution is known as ______.\n I.  Just-In-Time compiling\n II.  First-In-Time compiling",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "Just-In-Time (JIT) compilation translates Intermediate Language to machine code immediately before execution. First-In-Time compiling is not a standard term in computer science compilation models.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the following JAVA code?\n String s = \"exam:\" + 9 + 9 + 9;\n System.out.println(s);",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "In Java, the + operator concatenates strings from left to right. First, exam: combines with 9 to form exam:9. Then the next two 9s are appended sequentially. The final result is the string exam:999.",
+    "options": [
+      {
+        "content": "exam 27",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "exam:27",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "exam:9",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "exam:999",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the following Java code?\n int m = 1000;\n int k = 3000;\n while (++m < --k);\n System.out.println(m);",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "medium",
+    "explanation": "Initial values: m = 1000 and k = 3000.\nThe statement is:\nwhile (++m < --k);\nThe semicolon after while is an empty statement, so the loop body does nothing. However, the loop condition is still evaluated again and again.\nIn each evaluation:\n- ++m first increases m by 1.\n- --k first decreases k by 1.\n- Then Java checks whether m < k.\nSo m increases from 1000 and k decreases from 3000 until the condition becomes false. They meet at:\nm = 2000, k = 2000\nAt this point, 2000 < 2000 is false, so the loop terminates. Then System.out.println(m); prints:\n2000",
+    "options": [
+      {
+        "content": "Error",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "1000",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2000",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "4000",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement in this code is unreachable in  switch(x) ?\n {\n   case 1:\n     a1 = 100;\n   case 2:\n     a2 = 1000;\n     a3 = 10;\n     break;\n     a4 = 10000;\n }",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "In Java, a break statement immediately exits the switch block. Any code following a break within the same case block is unreachable because execution terminates before reaching it.",
+    "options": [
+      {
+        "content": "a1 = 100;",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "a2 = 1000;",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a3 = 10;",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a4 = 10000;",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the expected output of the following Java code?\n     public static void main(String[] args) {\n         int a = 5;\n         int b = 7;\n         System.out.println(\"a&b = \" + (a & b));\n     }\n }",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "The code performs a bitwise AND operation between integers 5 and 7. In binary, 5 is represented as 0101 and 7 as 0111. Performing the bitwise AND operation results in 0101, which equals 5 in decimal. Therefore, the expected output is \"a&b = 5\".",
+    "options": [
+      {
+        "content": "a&b = 5",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "a&b = 7",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a&b = 35",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a&b = 2",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is a invalid relational operator in Java?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "In Java, valid relational operators include <=, >=, ==, and !=. Option B uses '= >' with a space, which is invalid syntax for the greater-than-or-equal operator. Therefore, Option B is the correct choice.",
+    "options": [
+      {
+        "content": "<=",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "=>",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "!=",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "==",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the output of the given java code?\nbyte x = 64, y;\ny = (byte) (x << 4);\nsystem.out.println(y);",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "medium",
+    "explanation": "1. Binary RepresentationFirst, the value of x (64) is represented in binary. In an 8-bit byte:\n• 64 in binary is 01000000.\n2. The Shift Operation (<< 4)In Java, when you perform a bitwise shift on a byte, the value is first promoted to a 32-bit int.\n• 64 as an int: 00000000 00000000 00000000 01000000\n• Left shift by 4: All bits move four places to the left, and zeros fill the vacuum on the right.\n• Resulting int: 00000000 00000000 00000100 00000000 (This equals 1024).\n3. Narrowing Casting (byte)The code then casts that 32-bit int back down to an 8-bit byte. This process truncates the high-order bits, keeping only the last 8 bits.\n• 32-bit result: ... 00000100 00000000\n• Last 8 bits: 00000000\n4. Final ResultThe resulting 8 bits are all zeros. Therefore, y is assigned the value 0, which is what gets printed to the console.",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "128",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "256",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "32",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is/are correct about Java programming?\n I. All functions in Java must be members of some class\n II. Member functions are called methods in Java",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "In Java, all functions must belong to a class, making Statement I correct. Member functions are explicitly termed methods in Java syntax, confirming Statement II is also accurate. Therefore, both statements align with Java's object-oriented structure.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding java programming?\nI. Place a semicolon immediately after a method header\nII. Define a method outside the braces of a class definition",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "Both statements I and II are incorrect regarding Java programming.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct regarding JAVA programming?\n I. A class marked as final cannot be inherited.\n II. A method marked final cannot be overridden.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Java",
+    "chapterSlug": "dsssb-pl-java",
+    "difficulty": "easy",
+    "explanation": "In Java, a class declared as final cannot be subclassed, making Statement I correct. Similarly, a method marked final prevents overriding in subclasses, validating Statement II as well. Therefore, both statements accurately describe the behavior of the final keyword.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A/An ______ is a user-defined datatype which has data members and member functions.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "In Object-Oriented Programming (OOP), a class serves as a blueprint or a template for creating objects. It is considered a user-defined datatype because it allows a developer to group different types of data and operations together under one name.",
+    "options": [
+      {
+        "content": "Class",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Object",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Package",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Method",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which one of the following is correct regarding Programming Languages?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "Different programming paradigms are based on different primary concepts:\n• Procedural programming focuses on procedures or functions.\n• Object-oriented programming focuses on objects and classes.\n• Functional programming focuses on mathematical functions.\n• Logical programming focuses on logical rules and facts.\nAmong the given options, “Object-oriented programming – Objects” is the correctly matched pair.",
+    "options": [
+      {
+        "content": "Procedural programming – Functions",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Object-oriented programming – Objects",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Functional programming – Logical unit",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Logical Programming – Function",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following languages are object-oriented programming languages?\n Languages:\n i) LISP\n ii) Java\n iii) C++\n iv) Simula\n v) SQL\n vi) C",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "Let us analyze each language:\n1. LISP → Primarily a functional programming language, not mainly object-oriented.\n2. Java → Object-oriented programming language.\n3. C++ → Supports object-oriented programming concepts.\n4. Simula → Considered one of the first object-oriented programming languages.\n5. SQL → Database query language, not object-oriented.\n6. C → Procedural programming language, not object-oriented.\nTherefore, only ii, iii and iv are object-oriented programming languages.",
+    "options": [
+      {
+        "content": "i, ii, iii and iv only",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "ii, iii and iv only",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i, ii, iii, iv, v and vi",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i and ii only",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is the relation between object and class in an object-oriented programming?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "In Object-Oriented Programming (OOP), a class is a blueprint or template that defines properties and behaviors. An object is a real entity created from that class.\nTherefore, an object is called an instance of a class.\nExample:\n```\nclass Car { };\nCar c1;\n```\nHere, Car is a class and c1 is its object (instance).",
+    "options": [
+      {
+        "content": "Object is keyword of class",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Object is scope of class",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Object is instance of class",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Object is type of class",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is NOT an object-oriented programming feature?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "OOP features include:\n• Inheritance: one class can derive from another class.\n• Abstraction: implementation details are hidden behind a simpler interface.\n• Polymorphism: the same operation can behave differently for different object types.\n• Encapsulation: data and methods are bundled together.\nThe word Abduction is related to reasoning/inference, not to OOP features.\nTherefore, Abduction is the correct answer.",
+    "options": [
+      {
+        "content": "Inheritance",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Abduction",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Abstraction",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Polymorphism",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "There are three main concepts that any language needs to support to be an object-oriented language.\n Which of the following is one of them?\n I. Encapsulation\n II. Inheritance\n III. Polymorphism",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "The three main concepts required for a language to support Object-Oriented Programming (OOP) are:\n1. Encapsulation – Binding data and methods together into a single unit (class) and restricting direct access to data.\n2. Inheritance – Allowing one class to acquire properties and methods of another class for code reusability.\n3. Polymorphism – Allowing the same function or method to behave differently in different situations.\nSince all three are core principles of OOP, the correct answer is I, II and III.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following features of object-oriented programming is used to secure the data?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "Encapsulation is the fundamental object-oriented programming concept designed to bundle data and methods while restricting direct access to internal components. This mechanism secures data by preventing unauthorized modification through access modifiers like private or protected.",
+    "options": [
+      {
+        "content": "Inheritance",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Polymorphism",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Function overloading",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Encapsulation",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is/are feature(s) of inheritance in OOPs?\n Features:\n i) Sub Class\n ii) Super Class\n iii) Reusability\n iv) Operator Overloading",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "Inheritance in Object-Oriented Programming (OOP) involves:\n1. Sub Class → The derived class that inherits properties from another class.\n2. Super Class → The base class whose properties are inherited.\n3. Reusability → One of the main advantages/features of inheritance, as existing code can be reused.\nOperator Overloading is a separate OOP concept and is not a feature of inheritance.\nTherefore, the correct answer is i, ii and iii only.",
+    "options": [
+      {
+        "content": "iii only",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i and ii only",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "ii and iii only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i, ii and iii only",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What may be achieved by the inheritance feature of object-oriented programming?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "Inheritance allows a class to derive properties and methods from another class. This mechanism primarily promotes code reusability by reducing redundancy in software development.",
+    "options": [
+      {
+        "content": "Security",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Robustness",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Reusability",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Abstraction",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about polymorphism in OOPs?\n(i) It may be achieved by function overloading.\n(ii) It is used for reusability.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "Statement (i) is true because function overloading represents compile-time polymorphism. Statement (ii) is false as reusability primarily stems from inheritance, not polymorphism itself.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "How do objects interact with each other in object-oriented programming?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "Object Oriented Programming (OOPS)",
+    "chapterSlug": "dsssb-pl-oops",
+    "difficulty": "easy",
+    "explanation": "In Object-Oriented Programming (OOP), objects interact with each other through message passing. One object sends a message to another object by calling its methods or requesting services.\nThis communication mechanism allows objects to work together while maintaining encapsulation and modularity.",
+    "options": [
+      {
+        "content": "By ringing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "By text",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "By sending message",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "By transmitting signal",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements about JavaScript is true?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "medium",
+    "explanation": "JavaScript string literals support single quotes ('), double quotes (\"), and backticks (`). Option 0 correctly identifies that both single and double quotes are valid syntax for defining strings in JavaScript code.",
+    "options": [
+      {
+        "content": "JavaScript accepts both double and single quotes.",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "JavaScript accepts only double quotes.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "JavaScript accepts only single quotes.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "JavaScript accepts neither double nor single quotes.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "JavaScript files have the file extension __________.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "easy",
+    "explanation": "JavaScript files universally utilize the .js file extension for standard web development environments. This convention is recognized by all major browsers and servers as the primary format.",
+    "options": [
+      {
+        "content": ".js",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": ".javascript",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": ".jscript",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": ".jst",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Any time you include JavaScript verbiage in HTML document, you must enclose those lines inside a ____ tag pair.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "medium",
+    "explanation": "To include JavaScript code within an HTML document, you must wrap the script lines inside <script> and </script> tags. This tells the browser to interpret the enclosed content as executable JavaScript rather than static HTML.",
+    "options": [
+      {
+        "content": "<HTML> and </HTML>",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "<Body> and <\\Body>",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "<Div> and <\\Div>",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "<Script> and </Script>",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statements related to business computing is/are true?\n(i) You can place only five scripts in an HTML document.\n(ii) JavaScripts can be placed in the <body>, or in the <head> section of an HTML page, or in both.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "medium",
+    "explanation": "Statement (i) is incorrect because HTML documents do not limit the number of script tags to five. Statement (ii) is correct as JavaScript can be embedded in either the head, body, or both sections of an HTML page. Therefore, only statement (ii) is true.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "In java script a __________ function can be defined as a function passed into another function as a parameter.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "easy",
+    "explanation": "In JavaScript, a callback function is defined as a function passed into another function as an argument. This pattern enables asynchronous operations and allows the inner function to execute after the outer function completes.",
+    "options": [
+      {
+        "content": "call front",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "call back",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "roll back",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "roll front",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Match the column  JavaScript-Events  with the column  Descriptions .\n JavaScript-Events:\n a) onchange\n b) onmouseover\n c) onkeydown\n d) onload\n Descriptions:\n i) The browser has finished loading the page.\n ii) An HTML element has been changed.\n iii) The user moves the mouse over an HTML element.\n iv) The user pushes a keyboard key.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "easy",
+    "explanation": "The correct matches are: onchange with element changes (a-ii), onmouseover with mouse hover (b-iii), onkeydown with key presses (c-iv), and onload with page finishing load (d-i). These pairings align with standard JavaScript event definitions.",
+    "options": [
+      {
+        "content": "a-ii, b-iii, c-iv, d-i",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "a-iii, b-ii, c-iv, d-i",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "a-ii, b-iv, c-iii, d-i",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "a-iv, b-iii, c-i, d-ii",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is/are the purpose(s) of JavaScript events?\n i) Provide a dynamic interface to a webpage.\n ii) Provide a static interface to a webpage.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "easy",
+    "explanation": "JavaScript events enable webpages to respond dynamically to user interactions and browser actions. This functionality supports statement (i) by creating a dynamic interface, whereas static interfaces do not rely on event handling.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "In JavaScript, the _____ is the master container for all content you view in the web browser.",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "medium",
+    "explanation": "The Window Object is the master container in JavaScript's browser environment. It represents the top-level object containing all other objects like document, location, and screen within the browser window hierarchy.",
+    "options": [
+      {
+        "content": "Document Object",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Window Object",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Location Object",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Screen Object",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which window method generates a dialog box that displays whatever text you pass as a parameter in JavaScript?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "medium",
+    "explanation": "The alert method displays a dialog box with a specified message and an OK button. Options like display, show, or perform are not valid JavaScript window methods for generating standard dialog boxes. Therefore, alert is the correct function to use when passing text as a parameter for user notification.",
+    "options": [
+      {
+        "content": "Display()",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Show()",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Alert()",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Perform()",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following statements about JavaScript is FALSE?",
+    "type": "single_choice",
+    "subject": "Programming Languages",
+    "subjectSlug": "programming-languages",
+    "topic": "JavaScript-Basics",
+    "chapterSlug": "dsssb-pl-javascript",
+    "difficulty": "medium",
+    "explanation": "JavaScript can dynamically modify HTML element styles using the DOM API. Since Option 0 claims JavaScript cannot change styles, this statement is false and correctly answers the question.",
+    "options": [
+      {
+        "content": "JavaScript cannot change HTML styles (CSS).",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "JavaScript can change HTML attribute values.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "JavaScript can hide HTML elements.",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "JavaScript can show HTML elements.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "programming-languages",
+      "2022"
+    ],
+    "examYear": 2022
+  }
+]

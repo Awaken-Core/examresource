@@ -1,0 +1,2202 @@
+[
+  {
+    "content": "The height of a tree is the length of the longest path from root to leaf. What is the maximum and minimum number of nodes in a binary tree of height n?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "To find the maximum and minimum number of nodes in a binary tree of height n, consider the following:\nMaximum Nodes: A binary tree of height n has maximum nodes when it is a complete binary tree, i.e., all levels are completely filled. The number of nodes at level i is 2^i. So, total nodes = 2^0 + 2^1 + ... + 2^n = 2^(n+1) - 1.\nMinimum Nodes: A binary tree of height n has minimum nodes when it is a skewed tree (all nodes are in a single path). In this case, there is one node at each level from 0 to n, so total nodes = n + 1.\nThus, the maximum number of nodes is 2^(n+1) - 1 and the minimum is n + 1.",
+    "options": [
+      {
+        "content": "2n+1−1,n+1",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "2n-1−1,n-1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2n,n+1",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "2n-1 , 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "In a tree, a node of degree _____ is called a terminal node or leaf node.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "In tree data structures, the degree of a node represents the number of its immediate children. A terminal or leaf node is defined by having no children, meaning it has zero subtrees attached to it. Consequently, the degree of a leaf node is exactly zero.",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The number of subtrees of a node is called the _____ of the node.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "In tree data structures, the degree of a node is defined as the number of its children or subtrees. Therefore, option C correctly identifies this terminology.",
+    "options": [
+      {
+        "content": "size",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "rank",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "degree",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "order",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The degree of a tree is the _____ degree of a node in the tree.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "In graph theory, the degree of a tree is defined as the maximum degree among all its nodes. This requires identifying the node with the highest number of connections to establish the tree's overall degree.",
+    "options": [
+      {
+        "content": "maximum",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "minimum",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "second minimum",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "second maximum",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "The numbers 70, 50, 10, 80, 30, 60, 100, 90, 40, 20 are inserted in the given order into a binary search tree. What is the in-order traversal sequence of the resultant binary search tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Correct answer: 10, 20, 30, 40, 50, 60, 70, 80, 90, 100\nIn a Binary Search Tree, an inorder traversal always follows Left → Root → Right. This visits the keys in ascending order.\nThe inserted values are: 70, 50, 10, 80, 30, 60, 100, 90, 40, 20.\nAfter insertion, the inorder traversal is simply the sorted order of these values:\n10, 20, 30, 40, 50, 60, 70, 80, 90, 100.",
+    "options": [
+      {
+        "content": "70, 50, 10, 80, 30, 60, 100, 90, 40, 20",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "100, 90, 80, 70, 60, 50, 40, 30, 20, 10",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "10, 30, 50, 70, 90, 20, 40, 60, 80, 100",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "10, 20, 30, 40, 50, 60, 70, 80, 90, 100",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Inorder and postorder traversal of a binary tree are given.\n In : E, I, C, F, B, G, D, J, H, K\n Post : I, E, F, C, G, J, K, H, D, B\nFind the preorder traversal of a binary tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "To find the preorder traversal of a binary tree given its inorder and postorder traversals, follow these steps:\n1. The last element in the postorder traversal is the root of the tree. Here, the postorder is I, E, F, C, G, J, K, H, D, B, so the root is B.\n2. Locate the root (B) in the inorder traversal. The inorder is E, I, C, F, B, G, D, J, H, K. Elements to the left of B are in the left subtree: E, I, C, F. Elements to the right are in the right subtree: G, D, J, H, K.\n3. Recursively apply the same logic to the left and right subtrees.\nLeft subtree (inorder: E, I, C, F; postorder: I, E, F, C):\n   - Last element in postorder is C, so C is the root of the left subtree.\n   - In inorder, E, I are to the left of C, and F is to the right.\n   - Left subtree of C: E, I (inorder), I, E (postorder) → root is E, with I as right child.\n   - Right subtree of C: F (inorder), F (postorder) → single node.\n   - Preorder of left subtree: C, E, I, F.\nRight subtree (inorder: G, D, J, H, K; postorder: G, J, K, H, D):\n   - Last element in postorder is D, so D is the root of the right subtree.\n   - In inorder, G, J, H, K are to the right of D.\n   - Postorder: G, J, K, H, D → right subtree of D: H, with left child J, right child K, and G as left child of J.\n   - Preorder of right subtree: D, G, H, J, K.\n4. Combine the preorder traversal: root (B), then left subtree preorder (C, E, I, F), then right subtree preorder (D, G, H, J, K).\nFinal preorder traversal: B, C, E, I, F, D, G, H, J, K.",
+    "options": [
+      {
+        "content": "B, C, E, I, F, D, G, H, J, K",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "B, F, I, E, C, D, G, H, J, K",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "B, C, E, I, F, D, G, H, K, J",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "B, C, E, F, G, H, K, D, J, I",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider the following new-order strategy for traversing a given tree:\n I. Visit the right subtree of a node using new-order\n II. Visit the node\n III. Visit the left subtree of a node using new-order\n What is the new-order traversal of the given tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "To determine the new-order traversal, follow the given strategy: I. Visit the right subtree of a node using new-order, II. Visit the node, III. Visit the left subtree of a node using new-order.\nStart at the root P. The right subtree of P is V, so we first traverse the subtree rooted at V.\nFor node V: its right subtree is Z, so visit Z first. Then visit V. Then traverse the left subtree of V, which is W.\nFor node W: its right subtree is X, so visit X first. Then visit W. Then traverse the left subtree of W, which is T.\nFor node T: its right subtree is U, so visit U first. Then visit T. Then traverse the left subtree of T, which is empty.\nAfter completing the right subtree of P, visit P. Then traverse the left subtree of P, which is Q.\nFor node Q: its right subtree is S, so visit S first. Then visit Q. Then traverse the left subtree of Q, which is R.\nCombine all visited nodes in order: Z, V, Y, X, W, P, S, U, T, Q, R.",
+    "options": [
+      {
+        "content": "Z, V, Y, X, W, P, S, U, T, Q, R",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "R, Q, T, U, S, P, W, X, Y, V, Z",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "P, W, X, Y, V, Z, R, Q, T, U, S",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "S, U, T, Q, R, Z, V, Y, X, W, P",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which traversal of a Binary Search Tree (BST) gives values in ascending order?\n1. Preorder traversal\n2. Postorder traversal\n3. Inorder traversal",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "Correct answer: Only III\nIn a BST, left-subtree values are smaller than the root and right-subtree values are larger than the root.\n• Preorder: Root → Left → Right, so it does not guarantee ascending order.\n• Postorder: Left → Right → Root, so it also does not guarantee ascending order.\n• Inorder: Left → Root → Right, which gives ascending order for a BST.\nTherefore, only statement III is correct.",
+    "options": [
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Only III",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "II and III",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Post-order Binary tree traversal is _____.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "Post-order traversal of a binary tree involves visiting the nodes in the following order:\nVisit the left subtree.\nVisit the right subtree.\nVisit the root node.\nThis sequence ensures that all children are processed before the parent node.",
+    "options": [
+      {
+        "content": "Left, Node, Right",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Left, Right, Node",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Node, Left, Right",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Right, Left, Node",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Preorder traversal of binary search tree is\n 38, 14, 8, 23, 18, 20, 56, 45, 82, 70.\n What is the postorder traversal of the binary search tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Step 1: In preorder traversal, the first element is the root of the tree. So, 38 is the root.\nStep 2: In a binary search tree, all values in the left subtree are less than the root, and all values in the right subtree are greater than the root.\nStep 3: From the preorder sequence: 38, 14, 8, 23, 18, 20, 56, 45, 82, 70.\nStep 4: Left subtree of 38: 14, 8, 23, 18, 20 (all < 38).\nStep 5: Right subtree of 38: 56, 45, 82, 70 (all > 38).\nStep 6: Recursively apply preorder logic to left subtree: 14 is root of left subtree.\nStep 7: Left of 14: 8 (< 14), Right of 14: 23, 18, 20 (> 14).\nStep 8: 23 is root of right subtree of 14. Left of 23: 18, 20. 18 is root and 20 is its right child.\nStep 9: Recursively apply preorder logic to right subtree: 56 is root of right subtree.\nStep 10: Left of 56: 45 (< 56), Right of 56: 82, 70 (> 56).\nStep 11: 82 is root of right subtree of 56. Left of 82: 70, Right: none.\nStep 12: Postorder traversal visits left subtree, then right subtree, then root.\nStep 13: Postorder of left subtree of 38: 8, 20, 18, 23, 14.\nStep 14: Postorder of right subtree of 38: 45, 70, 82, 56.\nStep 15: Final postorder traversal: 8, 20, 18, 23, 14, 45, 70, 82, 56, 38.",
+    "options": [
+      {
+        "content": "23, 20, 18, 14, 8, 38, 45, 56, 70, 82",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "8, 18, 20, 23, 14, 45, 70, 82, 56, 38",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "8, 20, 18, 23, 14, 45, 70, 82, 56, 38",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "82, 70, 56, 45, 38, 23, 20, 18, 14, 8",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider the following New-order strategy for traversing a binary tree.\nI. Visit the right subtree of node using new-order\nII. Visit the left subtree of node using new-order\nIII. Visit the node. What is the new-order traversal of the given tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "The \"New-order\" traversal follows the rule: Visit Right Subtree -> Visit Left Subtree -> Visit Node.\n1. Start at Root A.\n2. Traverse Right Subtree (Rooted at E):\n- Visit Right Child I: Its right child is J, and J's right child is K. Traversing this branch yields: K, J, I.\n- Visit Left Child F: It has Right child H and Left child G. Traversing yields: H, G, F.\n- Visit E. Subtree Result: K, J, I, H, G, F, E.\n3. Traverse Left Subtree (Rooted at B):\n- Visit Right Child C: It has Left child D. Traversing yields: D, C.\n- Visit B. Subtree Result: D, C, B.\n4. Visit Root A.\nFinal Sequence: K, J, I, H, G, F, E, D, C, B, A.",
+    "options": [
+      {
+        "content": "K, J, I, H, G, F, E, D, C, B, A",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "A, B, C, D, E, F, G, H, I, J, K",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "B, D, C, A, G, F, H, E, I, J, K",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A, B, C, D, K, J, I, H, G, F, E",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If the _____ traversal of a binary tree gives values in sorted increasing order, then the binary tree is a Binary Search Tree (BST).",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "Correct answer: Inorder\nIn a BST, every left-subtree value is smaller than the root, and every right-subtree value is larger than the root.\nInorder traversal follows Left → Root → Right, so it visits the values in increasing order.\nTherefore, if this traversal is sorted in increasing order, the tree satisfies the BST ordering property.",
+    "options": [
+      {
+        "content": "Preorder",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Postorder",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Inorder",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Level-order",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which sequence is the pre-order traversal of the BST formed by inserting the following keys in the given order?\n9, 8, 12, 22, 4, 10, 13",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "Construct the BST by inserting the keys in the given order:\n1. 9 becomes the root.\n2. 8 is inserted to the left of 9.\n3. 12 is inserted to the right of 9.\n4. 22 is inserted to the right of 12.\n5. 4 is inserted to the left of 8.\n6. 10 is inserted to the left of 12.\n7. 13 is inserted to the left of 22.\nNow take pre-order traversal: root, left subtree, right subtree.\nPre-order = 9, 8, 4, 12, 10, 22, 13.\nCorrect Answer: Option C.",
+    "options": [
+      {
+        "content": "8, 9, 4, 12, 10, 22, 13",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "9, 8, 4, 12, 22, 10, 13",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "9, 8, 4, 12, 10, 22, 13",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "13, 22, 10, 12, 4, 8, 9",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which of the following options present the correct postorder and preorder traversals of the following binary tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "Preorder traversal follows a Root-Left-Right pattern. Starting at F, we visit nodes in the order: F, B, A, D, C, E, G, I, H.\nPostorder traversal follows a Left-Right-Root pattern. Starting from the deepest left nodes, we visit: A, C, E, D, B, H, I, G, F.",
+    "options": [
+      {
+        "content": "Postorder: A, C, E, D, B, H, I, G, F",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Postorder: A, C, E, D, B, H, I, G, F",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Postorder: A, C, E, D, B, H, I, G, F",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Postorder: A, C, D, E, B, H, I, G, F",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "How many different binary search trees can be constructed with 6 different nodes?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "The number of distinct binary search trees that can be formed with n distinct nodes is given by the nth Catalan number.\nThe formula for the nth Catalan number is:\nFor n = 6:\nCalculating:\n12! = 479001600\n7! = 5040\n6! = 720\nC_6 = 479001600 / (5040 * 720) = 479001600 / 3628800 = 132\nTherefore, the number of distinct binary search trees with 6 nodes is 132.",
+    "options": [
+      {
+        "content": "64",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "128",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "32",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "132",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "While inserting the elements 71, 56, 48, 96, 76, 82, 98 in an empty binary search tree in the sequence shown, which element will come in the lowest level?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Step 1: Insert 71 as the root node. (Level 0)\nStep 2: Insert 56. Since 56 < 71, it becomes the left child of 71. (Level 1)\nStep 3: Insert 48. Since 48 < 56, it becomes the left child of 56. (Level 2)\nStep 4: Insert 96. Since 96 > 71, it becomes the right child of 71. (Level 1)\nStep 5: Insert 76. Since 76 < 96, it becomes the left child of 96. (Level 2)\nStep 6: Insert 82. Since 82 < 96, it goes to the left of 96; 82 > 76, so it becomes the right child of 76. (Level 3)\nStep 7: Insert 98. Since 98 > 96, it becomes the right child of 96. (Level 2)\nFinal tree levels:\nLevel 0: 71\nLevel 1: 56, 96\nLevel 2: 48, 76, 98\nLevel 3: 82\nThus, the element at the lowest level is 82.\nहिन्दी उत्तर:\nचरण 1: 71 को रूट नोड के रूप में डालें। (स्तर 0)\nचरण 2: 56 को डालें। 56 < 71 होने के कारण, यह 71 का बाएँ बच्चा बनता है। (स्तर 1)\nचरण 3: 48 को डालें। 48 < 56 होने के कारण, यह 56 का बाएँ बच्चा बनता है। (स्तर 2)\nचरण 4: 96 को डालें। 96 > 71 होने के कारण, यह 71 का दाएँ बच्चा बनता है। (स्तर 1)\nचरण 5: 76 को डालें। 76 < 96 होने के कारण, यह 96 का बाएँ बच्चा बनता है। (स्तर 2)\nचरण 6: 82 को डालें। 82 < 96 होने के कारण, यह 96 के बाएँ तरफ जाता है; 82 > 76 होने के कारण, यह 76 का दाएँ बच्चा बनता है। (स्तर 3)\nचरण 7: 98 को डालें। 98 > 96 होने के कारण, यह 96 का दाएँ बच्चा बनता है। (स्तर 2)\nअंतिम ट्री स्तर:\nस्तर 0: 71\nस्तर 1: 56, 96\nस्तर 2: 48, 76, 98\nस्तर 3: 82\nइसलिए, निम्नतम स्तर पर आने वाला तत्व 82 है।",
+    "options": [
+      {
+        "content": "96",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "98",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "71",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "82",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement is correct regarding binary search tree?\nI. The value at node N is less than every value in the left subtree of node.\nII. The value at node N is greater than or equal to every value in the right subtree of N.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "In a Binary Search Tree (BST), every node N must be greater than all values in its left subtree and less than all values in its right subtree. Statement I is false because it reverses this relationship for the left subtree. Statement II is false because BST definitions typically require strict inequality, not allowing equality in the right subtree.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which statement(s) is/are correct regarding node N deletion in binary search tree?\nI. If node N has no children then just replace location of N in the parent node by the null pointer.\nII. If node N has two children, then replace it by preorder successor.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Deleting a node in a Binary Search Tree (BST) depends on the number of children.\nStatement I is correct: If the node has no children (a leaf), simply update the parent's pointer to null.\nStatement II is incorrect: A node with two children must be replaced by its inorder successor or predecessor to maintain BST properties, not the preorder successor.\nThus, only Statement I is correct.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Considering the height of a binary tree as the number of edges between the tree's root and its furthest leaf, what is the height of the binary search tree created using the following key values (in order)?\n19, 14, 18, 15, 16, 13, 12",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "First, insert the keys sequentially into a binary search tree starting with 19 as the root. Following standard BST rules, 14 becomes the left child of 19, and 18 becomes the right child of 14.\nThe longest path from root to leaf is 19-14-18-15-16. Counting the edges between these nodes gives a total of four edges. Therefore, the height of this binary search tree is 4.",
+    "options": [
+      {
+        "content": "3",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "4",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "6",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is balance factor of an AVL tree?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "The balance factor of a node in an AVL tree is defined as the difference between the heights of its left and right subtrees.\nIt is calculated as:\nFor an AVL tree, the balance factor of every node must be -1, 0, or 1. This ensures the tree remains balanced and maintains O(log n) search time.",
+    "options": [
+      {
+        "content": "|h(TL)| ≤ 1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "|h(TR)| ≤ 1",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "h(TL) – h(TR)| ≤ 1",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "|h(TL) + h(TR)| ≤ 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider a Binary Search Tree given below.\n What is the pre-order traversal of the binary search tree after node 14 is deleted?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "To find the pre-order traversal after deleting node 14 from the Binary Search Tree, follow these steps:\nIdentify the node to delete: 14. Node 14 has two children (10 and 16), so we need to find its in-order successor. The in-order successor is the smallest value in the right subtree of 14, which is 16. Replace 14 with 16 and remove the original 16 from its position. Perform pre-order traversal (root, left, right) on the modified tree. The resulting pre-order traversal is 16, 10, 7, 13, 11, 20, 18, 25, 22.",
+    "options": [
+      {
+        "content": "7, 10, 11, 13, 16, 18, 20, 22, 25",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "16, 10, 7, 13, 11, 20, 18, 25, 22",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "16, 7, 10, 13, 11, 18, 22, 20, 25",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "25, 20, 22, 18, 11, 13, 10, 16, 7",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which rotations in an AVL tree is known as double rotation?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "In an AVL tree, double rotations are required when the imbalance occurs in a direction that cannot be corrected by a single rotation. These involve two consecutive rotations.\nLR rotation (Left-Right): This is used when the imbalance is in the left-right direction. It involves a right rotation on the left child followed by a left rotation on the root.\nRL rotation (Right-Left): This is used when the imbalance is in the right-left direction. It involves a left rotation on the right child followed by a right rotation on the root.\nBoth LR and RL are classified as double rotations because they require two steps to rebalance the tree.",
+    "options": [
+      {
+        "content": "LL and RR",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "LR and LL",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "RL and RR",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "LR and RL",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What will be the balancing factor of node 14 in an AVL tree when a node 13 is deleted from it?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "Step 1: Identify the heights of the left and right subtrees of node 14 before deletion. The left subtree of 14 height is 2 before deletion. The right subtree of 14 height is 3.\nStep 2: When node 13 is deleted, the left subtree of node 14  height is 1.\nStep 3: The balance factor (BF) of a node is calculated as (height of left subtree - height of right subtree).\nStep 4: After deletion, BF(14) = 1 - 3 = -2.",
+    "options": [
+      {
+        "content": "BF(14) = −1",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "BF(14) = −2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "BF(14) = 2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "BF(14) = 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which rotations in AVL trees are known as single rotations?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "easy",
+    "explanation": "In AVL trees, rotations are used to maintain balance after insertions or deletions. Rotations are classified as single or double based on the number of steps required.\nSingle rotations are performed when the imbalance is in the same direction as the insertion. These include:\nLL rotation: performed when the left subtree of the left child is heavy.\nRR rotation: performed when the right subtree of the right child is heavy.\nDouble rotations are used when the imbalance is in the opposite direction. These include:\nLR rotation: left rotation on the left child, then right rotation on the root.\nRL rotation: right rotation on the right child, then left rotation on the root.\nThus, only LL and RR are single rotations.",
+    "options": [
+      {
+        "content": "LL and RR",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "LL and LR",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "RR and RL",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "LR and RL",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider the following AVL tree.\n  What will be the resultant AVL tree after insertion of node with value 20?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Step 1: Insert the node with value 20 into the AVL tree. Since 20 is greater than 8 and less than 23, it is inserted as the right child of 8 and left child of 23.\nStep 2: After insertion, check the balance factor of each node from the insertion point up to the root. The balance factor of node 14 becomes -2 (left-heavy), indicating an imbalance.\nStep 3: The imbalance at node 14 is a Left-Left case (LL), so a single right rotation is performed at node 14.\nStep 4: After the right rotation, node 20 becomes the new root of the subtree, with node 8 as its left child and node 14 as its right child. The tree is now balanced.\nStep 5: The final tree structure after the insertion and rotation matches the correct option.",
+    "options": [
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "A complete binary tree T have n leaf nodes. What is the number of nodes with degree of 2 in tree T?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "In a complete binary tree, every internal node has exactly two children. The number of leaf nodes (n) is related to the number of internal nodes (nodes with degree 2).\nLet the number of nodes with degree 2 be x. Each such node contributes two edges to the tree. The total number of edges in a tree with n leaves and x internal nodes is n + x - 1.\nSince each internal node contributes two edges, the total number of edges is also 2x. Equating the two expressions: 2x = n + x - 1.\nSolving for x: 2x - x = n - 1 → x = n - 1.\nThus, the number of nodes with degree 2 is n - 1.",
+    "options": [
+      {
+        "content": "n",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "n/2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "n-1",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "2n",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider a max heap, represented by the array:\n 23, 17, 14, 6, 13, 10, 1, 5\n If a value 20 is inserted into this heap, then what will be the new max heap?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "To insert 20 into the max heap represented by the array [23, 17, 14, 6, 13, 10, 1, 5], follow these steps:\nStep 1: Add 20 at the end of the array: [23, 17, 14, 6, 13, 10, 1, 5, 20].\nStep 2: Perform the heapify-up (or bubble-up) process. Compare 20 with its parent (5 at index 4). Since 20 > 5, swap them. The array becomes [23, 17, 14, 6, 13, 10, 1, 20, 5].\nStep 3: Now 20 is at index 8. Its parent is 13 at index 3. Since 20 > 13, swap them. The array becomes [23, 17, 14, 20, 13, 10, 1, 6, 5].\nStep 4: Now 20 is at index 3. Its parent is 17 at index 1. Since 20 > 17, swap them. The array becomes [23, 20, 14, 17, 13, 10, 1, 6, 5].\nStep 5: Now 20 is at index 1. Its parent is 23 at index 0. Since 20 < 23, the heap property is satisfied. No further swaps are needed.\nFinal max heap: [23, 20, 14, 17, 13, 10, 1, 6, 5].",
+    "options": [
+      {
+        "content": "23, 17, 4, 6, 13, 10, 1, 5, 20",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "23, 20, 14, 17, 13, 10, 1, 5, 6",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "23, 20, 17, 14, 13, 10, 6, 5, 1",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "23, 17, 20, 14, 13, 10, 6, 5, 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider a max heap, represented by the array 400, 300, 200, 100, 150, 160, 170, 80, 40. What will be the new heap after insertion of 350?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Step 1: Start with the max heap array: 400, 300, 200, 100, 150, 160, 170, 80, 40.\nStep 2: Insert 350 at the end of the array. New array: 400, 300, 200, 100, 150, 160, 170, 80, 40, 350.\nStep 3: Compare 350 with its parent (40) at index 4 (0-based). Since 350 > 40, swap them.\nStep 4: Array becomes: 400, 300, 200, 100, 350, 160, 170, 80, 40, 40.\nStep 5: Now 350 is at index 4. Compare with its parent (300) at index 1. Since 350 > 300, swap them.\nStep 6: Array becomes: 400, 350, 200, 100, 300, 160, 170, 80, 40, 40.\nStep 7: Now 350 is at index 1. Compare with its parent (400) at index 0. Since 350 < 400, no further swaps are needed.\nFinal heap array: 400, 350, 200, 100, 300, 160, 170, 80, 40, 40.",
+    "options": [
+      {
+        "content": "400, 300, 200, 100, 150, 160, 170, 80, 40, 350",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "400, 350, 200, 100, 300, 160, 170, 80, 40, 150",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "400, 300, 200, 100, 350, 160, 170, 80, 40, 150",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "400, 350, 200, 100, 150, 160, 170, 80, 40, 300",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statement(s) is/are correct about red-black binary tree?\n Statements:\n I. Every node is either red or black.\n II. Every leaf node is red.\n III. When a node is red and both its children are black.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Tree",
+    "chapterSlug": "dsssb-ds-tree",
+    "difficulty": "medium",
+    "explanation": "Red-black trees follow specific rules to maintain balance. Let's analyze each statement:\nStatement I: Every node is either red or black. This is a fundamental property of red-black trees and is correct.\nStatement II: Every leaf node is red. This is incorrect. In red-black trees, leaf nodes (NIL nodes) are always black to maintain balance and satisfy the black-height property.\nStatement III: When a node is red, both its children are black. This is a core rule to prevent consecutive red nodes and ensure balance. The statement is correct in intent, though phrased incompletely.\nBased on these properties, evaluate the options accordingly.",
+    "options": [
+      {
+        "content": "I and II",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "I, II and III",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I and III",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "III and II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the average number of comparisons required in sequential search to find an element?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Array",
+    "chapterSlug": "dsssb-ds-array",
+    "difficulty": "easy",
+    "explanation": "Answer: (n + 1) / 2\nDerivation: Assuming the element is present and each position from 1 to n is equally likely, finding the element at position i requires i comparisons.\n• Average comparisons = (1 + 2 + ... + n) / n\n• Sum 1 through n = n(n + 1) / 2, so average = [n(n + 1) / 2] / n = (n + 1) / 2.\nNotes: n is the worst-case number of comparisons (when the element is last or absent). If the element may be absent with some probability, the expected number of comparisons depends on that probability and will differ from (n + 1)/2.",
+    "options": [
+      {
+        "content": "n²",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "n(n + 1) / 2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "n",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(n + 1) / 2",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the length of an array when its first index is denoted by i and last index is denoted by j?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Array",
+    "chapterSlug": "dsssb-ds-array",
+    "difficulty": "easy",
+    "explanation": "To find the length of an array when the first index is i and the last index is j, we need to count the number of elements from i to j, inclusive.\n The formula is: length = j - i + 1.\n Explanation:\n The difference (j - i) gives the number of steps between the indices.\n Adding 1 accounts for the inclusion of both the first and last elements.",
+    "options": [
+      {
+        "content": "length of an array = i + j",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "length of an array = j − i",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "length of an array = j − i + 1",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "length of an array = j − i − 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider an n × n tri-diagonal sparse matrix A. Suppose we want to store sparse A in a one-dimensional array. What is the index of the (i, j)ᵗʰ element A in the one-dimensional array?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Array",
+    "chapterSlug": "dsssb-ds-array",
+    "difficulty": "medium",
+    "explanation": "A tri-diagonal matrix has non-zero elements only on the main diagonal, the diagonal above it, and the diagonal below it. For an n×n matrix, the non-zero elements are at positions (i, j) where |i - j| ≤1.\nWhen storing such a matrix in a one-dimensional array, we typically use row-major order and store only the non-zero elements. The index of the (i, j)th element in the 1D array depends on both the row number and the relative position of the element within that row.\nIn a tri-diagonal matrix, each row contains at most three non-zero elements (except the first and last rows, which contain two). Therefore, the index is determined by adding:\n• the total number of elements stored before row i, and\n• the position of the element within row i.\nUsing this mapping, the correct indexing formula for the (i, j)th element in the one-dimensional array is:\n2i + j − 2\nThis formula correctly accounts for the cumulative number of stored elements and ensures proper mapping of the tri-diagonal structure into a linear array.\nExplanation:\nMatrix form:\n• Formula works only when |i − j| ≤ 1\n• Otherwise element = 0 (not stored)\n```\nRow 1: A11  A12   0    0\nRow 2: A21  A22  A23   0\nRow 3:  0   A32  A33  A34\nRow 4:  0    0   A43  A44\n```\nStored in 1D array (row-wise):```\n[A11, A12, A21, A22, A23, A32, A33, A34, A43, A44]Example 1:\n```\nExample 1:\nFind index of A(2,3)\n=2(2)+3−2=4+3−2=5\nIndex = 5 (0-based)\nCorrect (A23 is at position 5)\nExample 2:\nFind index of A(3,2)\n=2(3)+2−2=6= 2(3) + 2 - 2 = 6=2(3)+2−2=6\nIndex = 6\nCorrect (A32 is at position 6)",
+    "options": [
+      {
+        "content": "2i + 2j",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "2i + j – 2",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i + j",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i + j − 1",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the total number of elements in an array E[−4 : 1, 6 : 10]?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Array",
+    "chapterSlug": "dsssb-ds-array",
+    "difficulty": "medium",
+    "explanation": "To find the total number of elements in a 2D array E[−4 : 1, 6 : 10], calculate the number of elements in each dimension and multiply them.\nStep 1: For the first dimension (−4 to 1), the number of elements is calculated as:\n1 - (−4) + 1 = 6\nStep 2: For the second dimension (6 to 10), the number of elements is:\n10 - 6 + 1 = 5\nStep 3: Multiply the number of elements in each dimension:\n6 × 5 = 30\nThus, the total number of elements in the array is 30.",
+    "options": [
+      {
+        "content": "30",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "20",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "9",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "11",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "2 Dimensional array (Matrices) with relatively high proportion of zero entries are called ____ while with low proportion of zero entries are called ____.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Array",
+    "chapterSlug": "dsssb-ds-array",
+    "difficulty": "easy",
+    "explanation": "In matrix theory, a 2-dimensional array (matrix) with a relatively high proportion of zero entries is called a Sparse Matrix. This is because most of the elements are zero, and such matrices are often stored in specialized formats to save memory.\n On the other hand, a matrix with a low proportion of zero entries is called a Dense Matrix, as most of the elements are non-zero and require standard storage methods.",
+    "options": [
+      {
+        "content": "Regular Matrix; Non-Regular Matrix",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Sparse Matrix; Dense Matrix",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Transpose Matrix; Inverse Matrix",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Square Matrix; Dense Matrix",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider an array A[2 : 8, −4 : 1, 6 : 10]. Base address of array A is = 400 and size of each element = 2 word per memory cell. What is the address of A[5, −1, 8] in row major form?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Array",
+    "chapterSlug": "dsssb-ds-array",
+    "difficulty": "medium",
+    "explanation": "To find the address of A[5, −1, 8] in row-major order, follow these steps:\nStep 1: Determine the number of elements in each dimension:\nFirst dimension (2 to 8): 8 − 2 + 1 = 7 elements.\nSecond dimension (−4 to 1): 1 − (−4) + 1 = 6 elements.\nThird dimension (6 to 10): 10 − 6 + 1 = 5 elements.\nStep 2: Use the row-major formula for 3D array:\nAddress = Base Address + [ (i − lower1) × (size2 × size3) + (j − lower2) × size3 + (k − lower3) ] × element_size\nWhere:\ni = 5, j = −1, k = 8\nlower1 = 2, lower2 = −4, lower3 = 6\nsize2 = 6, size3 = 5, element_size = 2\nStep 3: Compute the offset:\n(5 − 2) × (6 × 5) = 3 × 30 = 90\n(−1 − (−4)) × 5 = 3 × 5 = 15\n(8 − 6) = 2\nTotal offset = 90 + 15 + 2 = 107\nStep 4: Compute final address:\nAddress = 400 + (107 × 2) = 400 + 214 = 614",
+    "options": [
+      {
+        "content": "628",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "614",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "630",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "626",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Read the paragraph and answer the question.\nA stack is a linear data structure in which insertion and deletion of elements are done at only one end, known as the top of the stack. A stack follows the last-in-first-out (LIFO) principle.\nIn the given stack, the elements from top to bottom are: L, M, N, O, P, Q.\nAfter popping/removing three items from the stack, which item will be at the top?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Stack",
+    "chapterSlug": "dsssb-ds-stack",
+    "difficulty": "easy",
+    "explanation": "Correct Answer: O\nThe stack elements from top to bottom are: L, M, N, O, P, Q.\nA stack follows LIFO, so deletion/pop happens from the top.\nFirst pop: L is removed.\nSecond pop: M is removed.\nThird pop: N is removed.\nAfter these three removals, the next element at the top is O.\nTherefore, the correct answer is O.",
+    "options": [
+      {
+        "content": "O",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "L",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "N",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "P",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which data structure is used to indicate that the order of processing of data must be postponed until other conditions are fulfilled?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Stack",
+    "chapterSlug": "dsssb-ds-stack",
+    "difficulty": "easy",
+    "explanation": "The data structure that supports postponing the processing of data until certain conditions are fulfilled is a stack. A stack operates on the Last-In-First-Out (LIFO) principle, meaning the most recently added element is processed first. This behavior allows new operations to be pushed onto the stack and processed only after all previous operations are completed. This makes it ideal for scenarios where processing must be delayed until other tasks are finished, such as in function calls, expression evaluation, or backtracking algorithms.",
+    "options": [
+      {
+        "content": "Array",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Linked List",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Trees",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Stack",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following data structures is used in implementing recursive calls?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Stack",
+    "chapterSlug": "dsssb-ds-stack",
+    "difficulty": "easy",
+    "explanation": "Recursive calls are implemented using a stack data structure because of the Last-In-First-Out (LIFO) behavior needed for managing function call frames. Each invocation adds a frame to the stack, which is popped upon return.",
+    "options": [
+      {
+        "content": "Queue",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Binary Tree",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Stack",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Hash Table",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the Polish notation (Prefix form) of the given infix expression?\n (A∗B+C)/(E−F∗G)",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Stack",
+    "chapterSlug": "dsssb-ds-stack",
+    "difficulty": "medium",
+    "explanation": "To convert the infix expression (A*B+C)(E-F*G) to Polish notation (prefix form), follow these steps:\nStep 1: Identify the main operators and their precedence. The expression has two main parts: (A*B+C) and (E-F*G), connected by implicit multiplication.\nStep 2: Convert the first sub-expression (A*B+C). The multiplication (A*B) is evaluated first, then added to C. In prefix form, this becomes: + * A B C.\nStep 3: Convert the second sub-expression (E-F*G). The multiplication (F*G) is evaluated first, then subtracted from E. In prefix form, this becomes: - E * F G.\nStep 4: Combine the two parts. The entire expression is the product of the two sub-expressions, so the final prefix form is: * + * A B C - E * F G.\nNote: The correct prefix form is * + * A B C - E * F G. This matches the structure of the original expression with proper operator precedence and grouping.",
+    "options": [
+      {
+        "content": "+*/ABCE*FG",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "/+*ABC–E*FG",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "/ABC+*–E*FG",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "+/ABC*–E*FG",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "What is the equivalent infix expression of the following postfix expression?\n M, N, O, +, * , P, /, Q, R, S, T, /, +, * , −",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Stack",
+    "chapterSlug": "dsssb-ds-stack",
+    "difficulty": "medium",
+    "explanation": "Here is a clean copy-paste explanation for the solution section:\nExplanation:\nGiven postfix expression:\nM N O +  P / Q R S T / +  −\nStep 1: N O + → (N + O)\nStep 2: M  (N + O) → M(N + O)\nStep 3: (M(N + O)) / P → (M(N + O)) / P\nStep 4: S T / → (S / T)\nStep 5: R + (S / T) → (R + S/T)\nStep 6: Q  (R + S/T) → Q(R + S/T)\nStep 7: Final subtraction →\n((M*(N+O))/P) − (Q*(R+(S/T)))\nFinal Answer: ((M*(N+O))/P) − (Q*(R+(S/T)))",
+    "options": [
+      {
+        "content": "O  (M + N)/P − Q  (R + S/T)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "M  (N + O)/Q − P  (R/S + T)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "N  (M + O)/Q − P  (S + R/T)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "((M*(N+O))/P) − (Q*(R+(S/T)))",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Convert the following arithmetic expression into Postfix form:\nA - B - D * E / F + B * C",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Stack",
+    "chapterSlug": "dsssb-ds-stack",
+    "difficulty": "easy",
+    "explanation": "To convert the infix expression A - B - D * E / F + B * C to postfix, we follow operator precedence and associativity rules. Multiplication (*) and division (/) have higher precedence than addition (+) and subtraction (-). Left-to-right associativity applies to operators of equal precedence.\\nFirst, evaluate D * E as DE*, then divide by F giving DE*/. Next, compute A - B as AB-. Now the expression becomes (AB-) - (DE*/) + BC*. Since subtraction and addition are left-associative, we subtract the second term from the first: AB-DE*/-. Finally, add BC* to get AB-DE*/BC*+.\\nOption D matches this sequence exactly. Option A incorrectly places division before multiplication, violating left-to-right associativity for equal precedence operators. Option B misplaces the subtraction operator relative to the division result, altering the evaluation order.",
+    "options": [
+      {
+        "content": "AB-DE / F*-BC*+",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "AB-DE* / F-BC*+",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "AB-DE*F / -BC+*",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "AB-DE*F / -BC*+",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "A queue is a _____ data structure in which elements can be inserted only at one end called _____ and deleted only at the other end called _____.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Queue",
+    "chapterSlug": "dsssb-ds-queue",
+    "difficulty": "easy",
+    "explanation": "A queue is a linear data structure that follows the First-In-First-Out (FIFO) principle. Elements are inserted at one end known as the rear and removed from the other end known as the front.",
+    "options": [
+      {
+        "content": "Linear, Front, Rear",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Non-linear, Rear, Front",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Non-linear, Front, Rear",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Linear, Rear, Front",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "State whether the following statements are true or false.\nStatements:\n(i) A queue can be implemented using two stacks.\n(ii) A stack can be implemented using two queues.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Queue",
+    "chapterSlug": "dsssb-ds-queue",
+    "difficulty": "easy",
+    "explanation": "Both statements are true based on fundamental data structure theory. For statement (i), a queue's First-In-First-Out behavior can be implemented using two stacks. By pushing elements onto the first stack and popping them to transfer to the second stack, we reverse the order, allowing FIFO access. For statement (ii), a stack's Last-In-First-Out behavior is achievable using two queues. During push operations, we enqueue elements to the first queue, and during pop operations, we transfer all but one element from the first queue to the second, leaving only the most recent element for removal. Since both implementations are standard algorithmic techniques taught in computer science, Option A is correct. Options B and C incorrectly suggest one implementation is impossible, while D falsely claims both are invalid.",
+    "options": [
+      {
+        "content": "(i) True, (ii) True",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "(i) True, (ii) False",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "(i) False, (ii) True",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(i) False, (ii) False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Which statement is true about condition of overflow in the circular Queue?\n I. Front = 1 and Rear = N\n II. Front = Rear + 1",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Queue",
+    "chapterSlug": "dsssb-ds-queue",
+    "difficulty": "medium",
+    "explanation": "In a circular queue implemented with positions 1 to N, overflow occurs when the queue is full. This can happen in either of these cases:\n1. Front = 1 and Rear = N: rear is at the last position and front is at the first position.\n2. Front = Rear + 1: after circular wrap-around, rear is immediately before front.\nTherefore, both statements I and II are true.",
+    "options": [
+      {
+        "content": "Only I",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only II",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both I and II",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Neither I nor II",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following data structures can be used to efficiently implement a priority queue?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Queue",
+    "chapterSlug": "dsssb-ds-queue",
+    "difficulty": "easy",
+    "explanation": "A Heap Tree is the optimal choice for implementing a priority queue. It supports insertion and extraction in O(log n) time, unlike arrays or linked lists which require O(n). This efficiency makes heaps the standard structure for priority management.",
+    "options": [
+      {
+        "content": "Array",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Single Linked List",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Circular  Linked List",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Heap Tree",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Using division method [h(k) = k mod m], at which position 177 and 197 key values are stored in hash table when the size of hash table is 57?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Hashing",
+    "chapterSlug": "dsssb-ds-hashing",
+    "difficulty": "easy",
+    "explanation": "To find the positions of keys 177 and 197 in a hash table of size 57 using the division method h(k) = k mod m, compute the hash value for each key.\nFor key 177:\nh(177) = 177 mod 57\n57 × 3 = 171, and 177 - 171 = 6.\nSo, h(177) = 6.\nFor key 197:\nh(197) = 197 mod 57\n57 × 3 = 171, and 197 - 171 = 26.\nSo, h(197) = 26.\nTherefore, the keys 177 and 197 are stored at positions 6 and 26, respectively.",
+    "options": [
+      {
+        "content": "6,26",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "7,27",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "26,6",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "27,7",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not used to calculate Hash Functions?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Hashing",
+    "chapterSlug": "dsssb-ds-hashing",
+    "difficulty": "easy",
+    "explanation": "Folding, modular, and division methods are used to compute hash values. For example, the division method commonly uses h(k) = k mod m. Rehashing is different: it is used after collisions or table resizing to place keys again, not to calculate the original hash function. Hence, Rehashing is the correct answer.",
+    "options": [
+      {
+        "content": "Folding Method",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Modular Method",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Division Method",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Rehashing",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The following keys 22, 28, 23, 12 and 13 are inserted into initially empty hash table of length 9 using open addressing with hash function h(k)=k mod  9 and linear probing. At what index key 13 is inserted?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Hashing",
+    "chapterSlug": "dsssb-ds-hashing",
+    "difficulty": "medium",
+    "explanation": "To determine where key 13 is inserted, we use the hash function h(k) = k mod 9 and linear probing for collision resolution.\nStep 1: Insert key 22. h(22) = 22 mod 9 = 4. Insert at index 4.\nStep 2: Insert key 28. h(28) = 28 mod 9 = 1. Insert at index 1.\nStep 3: Insert key 23. h(23) = 23 mod 9 = 5. Insert at index 5.\nStep 4: Insert key 12. h(12) = 12 mod 9 = 3. Insert at index 3.\nStep 5: Insert key 13. h(13) = 13 mod 9 = 4. Index 4 is occupied by key 22, so we probe linearly: index 5 is occupied by key 23, index 6 is free. Insert key 13 at index 6.",
+    "options": [
+      {
+        "content": "4",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "5",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "6",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "7",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is not the collision resolution technique of hashing?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Hashing",
+    "chapterSlug": "dsssb-ds-hashing",
+    "difficulty": "easy",
+    "explanation": "Folding is not the collision resolution technique of hashing",
+    "options": [
+      {
+        "content": "Double hashing",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Quadratic probing",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Chaining",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Folding",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following statements is NOT true?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Introduction to DS",
+    "chapterSlug": "dsssb-ds-introduction",
+    "difficulty": "easy",
+    "explanation": "The question asks to identify the false statement regarding data structures. Linked lists do not support random access, requiring sequential traversal instead of O(1) indexing like arrays. Therefore, the claim that linked lists allow random access is incorrect.",
+    "options": [
+      {
+        "content": "The size of an array is generally fixed, whereas the size of a linked list is dynamic.",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Inserting a new element in an array is expensive compared to inserting a new element in a linked list.",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both, random access and direct access are allowed in a linked list.",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Deleting an element from array is expensive compared to deleting an element from a linked list.",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "Identify the non-linear data structures from among the following.\n(i) Linked List (ii) Stack (iii) Tree",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Introduction to DS",
+    "chapterSlug": "dsssb-ds-introduction",
+    "difficulty": "easy",
+    "explanation": "Linear data structures store elements sequentially, such as Linked Lists and Stacks.\nNon-linear data structures organize elements hierarchically without a single sequence, like Trees.\nTherefore, only item (iii) represents a non-linear data structure.",
+    "options": [
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Only (iii)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (iii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(i), (ii) and (iii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "What is the value of the ((Start → Next) → Next) → Info in the given list?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Linked List",
+    "chapterSlug": "dsssb-ds-linked-list",
+    "difficulty": "medium",
+    "explanation": "To find the value of ((Start → Next) → Next) → Info, follow the sequence of nodes step by step:\n1. Start at the 'Start' node, which has the value 125.\n2. Follow the first arrow (Start → Next) to the next node, which has the value 140.\n3. Follow the second arrow (Next → Next) from 140 to the next node, which has the value 128.\n4. The expression ((Start → Next) → Next) → Info refers to the value at the node reached after two 'Next' steps, which is 128.",
+    "options": [
+      {
+        "content": "125",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "140",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "128",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "130",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Linked List is a _____ data structure.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Linked List",
+    "chapterSlug": "dsssb-ds-linked-list",
+    "difficulty": "easy",
+    "explanation": "A linked list is a linear data structure because elements are arranged sequentially. Each node contains data and points to the next, forming a chain rather than a hierarchy.",
+    "options": [
+      {
+        "content": "Linear",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Non-linear",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Virtual",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Imaginary",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2018"
+    ],
+    "examYear": 2018
+  },
+  {
+    "content": "If complete graph have ‘n’ nodes, then it will have how many edges?",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Graphs",
+    "chapterSlug": "dsssb-ds-graphs",
+    "difficulty": "easy",
+    "explanation": "In a complete graph with n nodes, every node is connected to every other node exactly once.\nStep 1: Each node connects to (n-1) other nodes.\nStep 2: The total number of connections, if counted from each node, is n(n-1).\nStep 3: However, each edge is counted twice (once from each endpoint), so we divide by 2.\nStep 4: The total number of unique edges is n(n-1)/2.",
+    "options": [
+      {
+        "content": "n(n-1)/2",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "(n-1)/2",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "n/2",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "n(n-1)/4",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The number of vertices in an undirected graph with odd degree is always _____.",
+    "type": "single_choice",
+    "subject": "Data Structures",
+    "subjectSlug": "data-structures",
+    "topic": "Graphs",
+    "chapterSlug": "dsssb-ds-graphs",
+    "difficulty": "easy",
+    "explanation": "In any undirected graph, the sum of the degrees of all vertices is equal to twice the number of edges. This sum is always even.\nLet the number of vertices with odd degree be k. The sum of degrees of these k vertices is the sum of k odd numbers.\nThe sum of an odd number of odd integers is odd, while the sum of an even number of odd integers is even.\nSince the total sum of degrees must be even, the sum of odd-degree vertices must also be even. Therefore, k must be even.\nHence, the number of vertices with odd degree is always an even number.",
+    "options": [
+      {
+        "content": "Odd number",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Even number",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "Zero",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Prime number",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "data-structures",
+      "2021"
+    ],
+    "examYear": 2021
+  }
+]

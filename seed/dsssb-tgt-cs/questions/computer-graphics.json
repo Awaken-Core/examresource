@@ -1,0 +1,722 @@
+[
+  {
+    "content": "Solid modeling is based on ____, ____ and ____ geometric representation of physical object.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "Solid modeling represents physical objects using complete, valid, and unambiguous geometric descriptions.",
+    "options": [
+      {
+        "content": "complete; valid; unambiguous",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "complete; valid; varying",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "incomplete; valid; unambiguous",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "complete; valid; undefined",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "Which of the following is/are Interpolation Methods in Computer Graphics?\n i) Inverse Distance Weighted\n ii) Kriging\n iii) Natural Neighbor\n iv) Spline\n v) Topo to raster\n vi) Compiler",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "medium",
+    "explanation": "Inverse Distance Weighted, Kriging, Natural Neighbor, Spline, and Topo to Raster are interpolation methods used in spatial/computer-graphics or GIS contexts. Compiler is not an interpolation method.",
+    "options": [
+      {
+        "content": "i, ii, iii, iv and v only",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "i, ii, iii, iv, v and vi",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i, ii and iv only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i only",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "The duration of phosphorescence exhibited by a phosphor is known as ______.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "In display/graphics terminology, the duration for which phosphorescence remains visible after excitation is called persistence.",
+    "options": [
+      {
+        "content": "Phosphorescence",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Fluorescence",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Persistence",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "Deflection",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is a non-emissive display device?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "LCD is a non-emissive display device because it relies on an external or backlight source rather than emitting light like CRT, plasma or LED displays.",
+    "options": [
+      {
+        "content": "CRT monitor",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Plasma panel display device",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "LED display device",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "LCD display device",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following is a vector image format?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "EPS, or Encapsulated PostScript, is a vector image format. GIF, PNG and TIFF are commonly raster image formats.",
+    "options": [
+      {
+        "content": "GIF",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "PNG",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "EPS",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "TIFF",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are true about EPS image format?\n(i) It stands for Encapsulated PostScript.\n(ii) It is used for raster images.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "EPS stands for Encapsulated PostScript. It is mainly used for vector graphics, so the statement that it is used for raster images is not the defining correct statement here.",
+    "options": [
+      {
+        "content": "Only (i)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Only (ii)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Both (i) and (ii)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Neither (i) nor (ii)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which component of CRT regulates the intensity of the electron beam?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "In a Cathode Ray Tube, the Control Grid regulates electron beam intensity. It surrounds the cathode and uses a negative voltage to control how many electrons pass through to strike the screen. Adjusting this grid's potential directly modulates brightness without affecting acceleration or focus.",
+    "options": [
+      {
+        "content": "Heating Filament",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "Accelerating Anode",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Focusing Anode",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Control Grid",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "The maximum number of points that can be displayed without overlap on a CRT is referred to as ______.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "Resolution refers to the maximum number of points (pixels) that can be displayed on a screen without overlapping. It is determined by the physical characteristics of the CRT, such as the electron beam size and the spacing of the phosphor dots.",
+    "options": [
+      {
+        "content": "persistence",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "resolution",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "aspect ratio",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "phosphorescence",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the following is NOT the example of emissive display?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "Basics of Computer Graphics",
+    "chapterSlug": "dsssb-cg-basics",
+    "difficulty": "easy",
+    "explanation": "Emissive displays generate their own light through electrical excitation, such as plasma panels and LEDs. Non-emissive displays like liquid crystal devices modulate external light rather than producing it themselves. Identifying which technology relies on backlighting versus self-emission determines the correct classification.",
+    "options": [
+      {
+        "content": "Liquid crystal device",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "Plasma panels",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "Thin-film electroluminescent display",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "Light emitting diodes",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If an image has a height of 4 inches and an aspect ratio of 3 : 2, then what will be the width of the image?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "2-D Geometrical Transforms and Viewing",
+    "chapterSlug": "dsssb-cg-2d-transforms",
+    "difficulty": "easy",
+    "explanation": "The aspect ratio of 3:2 represents the relationship between width and height, meaning Width: Height = 3: 2. Since the given height is 4 inches, we can set up a proportion to find the width (W). The ratio tells us that for every 2 units of height, there are 3 units of width. Therefore, we can write the equation W/4 = 3/2. Solving for W involves multiplying both sides by 4, which gives W = (3/2) * 4. This simplifies to W = 6 inches.\",",
+    "options": [
+      {
+        "content": "3 inches",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "6 inches",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "4 inches",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "5.5 inches",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "If an image has a width of 4 inch and an aspect ratio of 3 : 2, then what is its height?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "2-D Geometrical Transforms and Viewing",
+    "chapterSlug": "dsssb-cg-2d-transforms",
+    "difficulty": "easy",
+    "explanation": "The aspect ratio of width to height is 3 : 2. Set up the proportion 4 divided by height equals 3 over 2. Cross-multiply to get 8 equals 3 times height. Divide by 3 to find the height is 8 over 3 inches.",
+    "options": [
+      {
+        "content": "4/3 inch",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "8/3 inch",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "2/3 inch",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "16/3 inch",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Rearrange steps involved in two dimensional viewing transformation.\n I. Map normalized viewport to device co-ordinates\n II. Convert world co-ordinates to viewing co-ordinates\n III. Construct world co-ordinate scene using modeling coordinate transformation\n IV. Map viewing co-ordinates to normalized viewing co-ordinates using window-viewport specification",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "2-D Geometrical Transforms and Viewing",
+    "chapterSlug": "dsssb-cg-2d-transforms",
+    "difficulty": "easy",
+    "explanation": "The standard 2D viewing transformation sequence begins with constructing the world scene using modeling coordinate transformations (III). Next, convert world coordinates to viewing coordinates (II), then map viewing coordinates to normalized space via window-viewport specification (IV). Finally, map the normalized viewport to device coordinates (I).",
+    "options": [
+      {
+        "content": "III → II → IV → I",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "II → III → IV → I",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "I → II → IV → III",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "III → II → I → IV",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Consider a triangle with co-ordinates points: A(0, 0), B(3, 3) and C(2, 5). When scaling parameter is 2 towards x-axis and 4 towards y-axis, then what are the new co-ordinates of triangle?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "2-D Geometrical Transforms and Viewing",
+    "chapterSlug": "dsssb-cg-2d-transforms",
+    "difficulty": "medium",
+    "explanation": "To find the new coordinates, you apply the scaling factors to each original (x, y) coordinate. The scaling transformation for a point (x, y) with scaling factors Sx and Sy is given by:\n$$x' = x \\cdot S_x$$\n$$y' = y \\cdot S_y$$\nGiven Parameters:Scaling factors: Sx = 2 and Sy = 4.\nStep-by-Step Calculation:\n1. Point A(0, 0):\n• x' = 0 \\cdot 2 = 0\n• y' = 0 \\cdot 4 = 0\n• New Point A' = (0, 0)\n2. Point B(3, 3):\n• x' = 3 \\cdot 2 = 6\n• y' = 3 \\cdot 4 = 12\n• New Point B' = (6, 12)\n3. Point C(2, 5):\n• x' = 2 \\cdot 2 = 4\n• y' = 5 \\cdot 4 = 20\n• New Point C' = (4, 20)\nFinal New Coordinates:The new coordinates of the triangle are A'(0, 0), B'(6, 12), and C'(4, 20).",
+    "options": [
+      {
+        "content": "A(0, 0), B(6, 12), C(4, 20)",
+        "isCorrect": true,
+        "position": 0
+      },
+      {
+        "content": "A(0, 0), B(5, 7), C(4, 9)",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "A(2, 4), B(5, 7), C(4, 9)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "A(0, 0), B(3/2, 3/4), C(1, 5/4)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "Which of the given options best describes the truthfulness of the following statements?\n i) Clipping process determines each element into the visible and invisible portion. The visible portion is selected. An invisible portion is discarded.\n ii) Clipping can be applied through hardware as well as software.\n iii) Point clipping, area clipping and text clipping are the types of clipping.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "2-D Geometrical Transforms and Viewing",
+    "chapterSlug": "dsssb-cg-2d-transforms",
+    "difficulty": "easy",
+    "explanation": "i) Clipping process determines each element into the visible and invisible portion. The visible portion is selected. An invisible portion is discarded. (True)\nThis is the literal definition of clipping. In computer graphics, a \"view window\" or \"clip window\" defines what the user is supposed to see. The clipping algorithm evaluates geometric elements (lines, polygons, etc.), keeps whatever is inside the window boundaries, and discards or \"chops off\" anything outside of it.\nii) Clipping can be applied through hardware as well as software. (True)• Software clipping uses algorithms (like Cohen-Sutherland for lines or Sutherland-Hodgman for polygons) executed by the CPU or a software application before rendering.\n• Hardware clipping is built directly into modern Graphics Processing Units (GPUs). Dedicated hardware circuits handle the clipping process incredibly quickly during the geometry processing stage of the graphics pipeline.\niii) Point clipping, area clipping and text clipping are the types of clipping. (True)These are standard, recognized categories of clipping based on the primitive being processed:\n• Point Clipping: Determines if a single coordinate (x, y) rests inside the window.\n• Area/Polygon Clipping: Clips solid filled shapes or polygons so that only the inner region remains visible.\n• Text Clipping: Determines how string characters are handled when they overlap the boundary (e.g., discarding the whole character, or splitting the character mid-letter).",
+    "options": [
+      {
+        "content": "i-True, ii-True, iii-False",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i-True, ii-True, iii-True",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "i-True, ii-False, iii-True",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "i-False, ii-False, iii-False",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2023"
+    ],
+    "examYear": 2023
+  },
+  {
+    "content": "What is the CMY co-ordinates of a colour at (0.2, 1, 0.5) in the RGB space?",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "3-D Object Representation, Geometric Transformations and Viewing",
+    "chapterSlug": "dsssb-cg-3d-transforms",
+    "difficulty": "easy",
+    "explanation": "To convert RGB to CMY, subtract each component from 1. For (0.2, 1, 0.5), calculate C = 1 - 0.2 = 0.8, M = 1 - 1 = 0, and Y = 1 - 0.5 = 0.5. The resulting CMY coordinates are (0.8, 0, 0.5).",
+    "options": [
+      {
+        "content": "(0.8, 1, 0.5)",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "(0.8, 0, 0.5)",
+        "isCorrect": true,
+        "position": 1
+      },
+      {
+        "content": "(1.2, 0, 1.5)",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "(0.2, 0.8, 0.3)",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2021"
+    ],
+    "examYear": 2021
+  },
+  {
+    "content": "For pure white colour, all the three portions of R, G, B is __________.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "3-D Object Representation, Geometric Transformations and Viewing",
+    "chapterSlug": "dsssb-cg-3d-transforms",
+    "difficulty": "easy",
+    "explanation": "Pure white in RGB color model requires maximum intensity for all three channels. In standard 8-bit representation, each channel (Red, Green, Blue) must be set to 255.",
+    "options": [
+      {
+        "content": "0",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "127",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "255",
+        "isCorrect": true,
+        "position": 2
+      },
+      {
+        "content": "511",
+        "isCorrect": false,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "The colour images are represented as red, green and blue (RGB) images, and each colour image has __________ bits/pixel.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "3-D Object Representation, Geometric Transformations and Viewing",
+    "chapterSlug": "dsssb-cg-3d-transforms",
+    "difficulty": "easy",
+    "explanation": "There are 3 color channels (Red, Green, Blue) in an RGB image. Each channel uses 8 bits to represent color intensity. Total bits per pixel = 3 channels × 8 bits = 24 bits.",
+    "options": [
+      {
+        "content": "6",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "8",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "16",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "24",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2022"
+    ],
+    "examYear": 2022
+  },
+  {
+    "content": "Which of the following statements is/are  INCORRECT  about the Z-buffer algorithm in computer graphics?\n Statements:\n i) It is an image space method to detect visible surface.\n ii) In this method, a depth buffer is used to store the depth values of each position and a refresh (frame) buffer is used to store the intensity values or colour values for each position.\n iii) In this method, object edges can be anti-aliased.\n iv) This method can only find one visible surface at each pixel position.",
+    "type": "single_choice",
+    "subject": "Computer Graphics",
+    "subjectSlug": "computer-graphics",
+    "topic": "3-D Object Representation, Geometric Transformations and Viewing",
+    "chapterSlug": "dsssb-cg-3d-transforms",
+    "difficulty": "medium",
+    "explanation": "i) It is an image space method to detect visible surface.\nTrue. Image space methods loops through pixel positions on the screen $(x, y)$ to determine which object is visible at that specific pixel. This is exactly how Z-buffer works, unlike object space methods which compare polygons to each other in 3D space.\n• ii) In this method, a depth buffer is used to store the depth values of each position and a refresh (frame) buffer is used to store the intensity values or colour values for each position.\nTrue. The algorithm requires two arrays of memory: the Z-buffer (depth buffer) to track how close an object is to the viewer, and the frame buffer to store the actual RGB color that will be displayed on the screen.\niii) In this method, object edges can be anti-aliased.\nThe standard Z-buffer algorithm operates strictly on a pixel-by-pixel basis. For each pixel, it performs a simple binary comparison: is the new polygon closer than the previous one? It either replaces the pixel completely or discards the new one. Because it works with these sharp, \"all-or-nothing\" boundaries at the pixel level, it inherently causes jagged edges (aliasing or \"jaggies\"). Standard Z-buffering cannot perform anti-aliasing on its own.\n• iv) This method can only find one visible surface at each pixel position.\nTrue. The Z-buffer only keeps track of the single closest depth value and the single corresponding color for any given pixel. It completely discards information about surfaces that are hidden behind the closest one.",
+    "options": [
+      {
+        "content": "ii, iii and iv only",
+        "isCorrect": false,
+        "position": 0
+      },
+      {
+        "content": "i, ii, iii and iv",
+        "isCorrect": false,
+        "position": 1
+      },
+      {
+        "content": "i, ii and iv only",
+        "isCorrect": false,
+        "position": 2
+      },
+      {
+        "content": "iii only",
+        "isCorrect": true,
+        "position": 3
+      }
+    ],
+    "source": "DSSSB-TGT-CS",
+    "tags": [
+      "dsssb",
+      "pyq",
+      "computer-graphics",
+      "2023"
+    ],
+    "examYear": 2023
+  }
+]
