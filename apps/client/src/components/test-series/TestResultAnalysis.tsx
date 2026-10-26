@@ -101,7 +101,12 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
 
         if (!res.ok) {
           if (res.status === 401) {
-            window.location.href = `/login?redirect=/test-series/results/${attemptId}`;
+            const loginUrl = `/login?redirect=/test-series/results/${attemptId}`;
+            void import('astro:transitions/client')
+              .then(({ navigate }) => navigate(loginUrl))
+              .catch(() => {
+                window.location.href = loginUrl;
+              });
             return;
           }
           if (res.status === 404) {

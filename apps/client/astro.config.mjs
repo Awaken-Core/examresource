@@ -28,7 +28,10 @@ export default defineConfig({
 	},
 	output: 'server',
 	compressHTML: true,
-	prefetch: false,
+	prefetch: {
+		prefetchAll: false,
+		defaultStrategy: 'hover',
+	},
 	server: { port: Number(process.env.PORT || 3000), host: true },
 	redirects: {
 		'/feed': '/rss.xml',

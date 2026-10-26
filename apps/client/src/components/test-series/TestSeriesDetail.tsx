@@ -866,6 +866,7 @@ function TestCard({
         {isInProgress ? (
           <a
             href={`/exams/${test.id || (test as any)._id}/attempt`}
+            data-astro-prefetch="hover"
             className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-bold bg-accent text-white hover:opacity-90 transition duration-150 shadow-xs cursor-pointer"
           >
             <span>Resume Test</span>
@@ -875,6 +876,7 @@ function TestCard({
           <div className="flex items-center gap-2">
             <a
               href={`/test-series/results/${latestAttempt!.id}`}
+              data-astro-prefetch="hover"
               className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-3 rounded-lg text-xs font-semibold border border-accent bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
             >
               <span>View Result</span>
@@ -882,6 +884,7 @@ function TestCard({
             </a>
             <a
               href={`/test-series/instructions/${(test as any).slug || test.id || (test as any)._id}`}
+              data-astro-prefetch="hover"
               className="inline-flex items-center justify-center py-2 px-3 rounded-lg text-xs font-semibold border border-border bg-surface-raised text-muted hover:text-white hover:border-accent transition duration-150 cursor-pointer"
               title="Take a fresh attempt"
             >
@@ -891,6 +894,7 @@ function TestCard({
         ) : (
           <a
             href={`/test-series/instructions/${(test as any).slug || test.id || (test as any)._id}`}
+            data-astro-prefetch="hover"
             className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
           >
             <span>View Instructions & Start</span>

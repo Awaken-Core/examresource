@@ -227,7 +227,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={resolvedOgImage} />
     {/* ClientRouter for page transitions on specific routes like /favorites & /notifications */}
-    {useClientRouter && <ClientRouter />}
+    {useClientRouter && <ClientRouter fallback="swap" />}
 
 
 
@@ -264,6 +264,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       {!hideHeaderFooter && !hideDesktopSidebar && (
         <div 
           id="desktop-sidebar-wrapper" 
+          transition:persist="desktop-sidebar"
           class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300"
         >
           <LeftSidebar prefix="desktop" />
@@ -274,7 +275,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
         {!hideHeaderFooter && !hideHeader && <Header hideDesktopSidebar={hideDesktopSidebar} />}
 
-        <main id="main-content" class="flex-grow">
+        <main id="main-content" class="flex-grow" transition:animate="fade">
           <slot />
         </main>
         {!hideHeaderFooter && <Footer />}
@@ -285,6 +286,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Backdrop — clicking it closes the drawer */}
     <div 
       id="mobile-sidebar-backdrop" 
+      transition:persist="mobile-sidebar-backdrop"
       class="fixed inset-0 z-[9998] hidden"
       aria-hidden="true"
     >
@@ -298,6 +300,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Drawer Panel */}
     <div 
       id="mobile-sidebar-container" 
+      transition:persist="mobile-sidebar-container"
       class="fixed inset-y-0 left-0 z-[9999] w-72 max-w-[85vw] bg-canvas border-r border-border shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
       aria-label="Navigation menu"
       role="dialog"
@@ -514,6 +517,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Global Non-intrusive Toast Notification (For Sign-in prompts, status feedback) */}
     <div 
       id="global-toast" 
+      transition:persist="global-toast"
       class="fixed bottom-5 right-5 z-[10000] max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto bg-surface-raised border border-border/80 shadow-2xl rounded-2xl p-3.5 flex items-center justify-between gap-3 text-white text-xs transition-all duration-300 transform translate-y-12 opacity-0 pointer-events-none backdrop-blur-md"
       role="status"
       aria-live="polite"

@@ -23,6 +23,15 @@ function leaveExamFullscreen() {
   doc.msExitFullscreen?.();
 }
 
+function navigateToResults(targetId: string) {
+  const url = `/test-series/results/${targetId}`;
+  void import('astro:transitions/client')
+    .then(({ navigate }) => navigate(url, { history: 'replace' }))
+    .catch(() => {
+      window.location.replace(url);
+    });
+}
+
 interface UseCBTAttemptProps {
   readonly attemptId: string;
 }
@@ -89,7 +98,7 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
       if (data.status === 'submitted') {
         const targetId = data.id || data._id || attemptId;
         leaveExamFullscreen();
-        window.location.replace(`/test-series/results/${targetId}`);
+        navigateToResults(targetId);
         return;
       }
 
@@ -315,7 +324,7 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
           const targetId = finalized?.id || finalized?._id || attempt.id;
           (window as any).__cbtNavigatingFromUI = true;
           leaveExamFullscreen();
-          window.location.replace(`/test-series/results/${targetId}`);
+          navigateToResults(targetId);
           return;
         }
 
@@ -332,7 +341,7 @@ export function useCBTAttempt({ attemptId }: UseCBTAttemptProps) {
               const targetId = finalData.id || finalData._id || attempt.id;
               (window as any).__cbtNavigatingFromUI = true;
               leaveExamFullscreen();
-              window.location.replace(`/test-series/results/${targetId}`);
+              navigateToResults(targetId);
               return;
             }
           }

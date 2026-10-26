@@ -33,17 +33,25 @@ export interface TestInstructionsData {
 
 interface Props {
   testId: string;
+  initialData?: TestInstructionsData | null;
 }
 
-export function TestInstructions({ testId }: Props) {
-  const [test, setTest] = useState<TestInstructionsData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function TestInstructions({ testId, initialData }: Props) {
+  const [test, setTest] = useState<TestInstructionsData | null>(initialData || null);
+  const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If initialData matches current testId or slug, adopt it immediately and skip fetch
+    if (initialData && (initialData.id === testId || (initialData as any)._id === testId || (initialData as any).slug === testId)) {
+      setTest(initialData);
+      setIsLoading(false);
+      return;
+    }
+
     async function loadTest() {
       setIsLoading(true);
       setError(null);
@@ -65,7 +73,7 @@ export function TestInstructions({ testId }: Props) {
       }
     }
     loadTest();
-  }, [testId]);
+  }, [testId, initialData]);
 
   const handleStartTest = async () => {
     if (!confirmed || starting || !test) return;
@@ -83,7 +91,12 @@ export function TestInstructions({ testId }: Props) {
       });
 
       if (res.status === 401 || res.status === 403) {
-        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+        const loginUrl = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+        void import('astro:transitions/client')
+          .then(({ navigate }) => navigate(loginUrl))
+          .catch(() => {
+            window.location.href = loginUrl;
+          });
         return;
       }
 
@@ -96,8 +109,13 @@ export function TestInstructions({ testId }: Props) {
 
       const attempt = await res.json();
       const attemptId = attempt.id || attempt._id;
-      // Navigate to the CBT Test Runner
-      window.location.href = `/test-series/cbt/${attemptId}`;
+      // Navigate to the CBT Test Runner via ClientRouter
+      const cbtUrl = `/test-series/cbt/${attemptId}`;
+      void import('astro:transitions/client')
+        .then(({ navigate }) => navigate(cbtUrl))
+        .catch(() => {
+          window.location.href = cbtUrl;
+        });
     } catch (err: any) {
       setStartError(err.message || 'Failed to initialize test attempt.');
       setStarting(false);

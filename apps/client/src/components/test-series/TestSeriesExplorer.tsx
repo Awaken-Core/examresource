@@ -253,6 +253,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                 <a
                   key={seriesId}
                   href={`/test-series/${seriesSlug}`}
+                  data-astro-prefetch="hover"
                   className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-surface border border-border/80 hover:border-accent/50 hover:shadow-lg transition-all duration-200 shadow-2xs"
                 >
                   <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent/0 via-accent/60 to-accent/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl pointer-events-none" />
