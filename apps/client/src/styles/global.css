@@ -28,6 +28,22 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/EBGaramond-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/EBGaramond-Medium.ttf') format('truetype');
+}
+
 @custom-variant dark (&:where(.theme-dark, .theme-dark *));
 
 /* ============================================================
@@ -173,27 +189,26 @@
   /* slate-500, WCAG AA ~4.6:1 on white */
   --color-border: #E2E8F0;
   --color-subtle: #F8FAFC;
-  --color-accent: #2563EB;
-  /* blue-600, WCAG AA ~4.5:1 on white */
+  --color-accent: #FF4D00;
+  /* Primary brand orange */
   --shadow-elevated: 0px 4px 16px -2px rgba(15, 23, 42, 0.08), 0px 2px 8px -1px rgba(15, 23, 42, 0.04);
   --shadow-sm: 0px 1px 4px 0px rgba(15, 23, 42, 0.08);
   color-scheme: light;
 }
 
 .theme-dark {
-  --color-canvas: #0C0E14;
-  --color-surface: #141820;
-  --color-surface-raised: #1C2030;
-  --color-text-body: #E2E8F0;
-  --color-heading: #F1F5F9;
-  --color-white: #F1F5F9;
-  /* slate-100 for softer large-text rendering */
-  --color-muted: #94A3B8;
-  /* slate-400, WCAG AA ~7.0:1 on dark canvas */
-  --color-border: #1E2A3A;
-  --color-subtle: #111622;
-  --color-accent: #60A5FA;
-  /* blue-400, WCAG AA compliant ~8.5:1 on dark canvas */
+  --color-canvas: #0C0B0A;
+  --color-surface: #151311;
+  --color-surface-raised: #201C19;
+  --color-text-body: #E7E5E4;
+  --color-heading: #FAFAF9;
+  --color-white: #FAFAF9;
+  /* Warm neutral text keeps the orange theme free of blue undertones. */
+  --color-muted: #A8A29E;
+  --color-border: #302A26;
+  --color-subtle: #12100F;
+  --color-accent: #FF4D00;
+  /* Primary brand orange */
   --shadow-elevated: 0px 8px 32px -4px rgba(0, 0, 0, 0.6), 0px 2px 8px -1px rgba(0, 0, 0, 0.4);
   --shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
