@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Param,
   Patch,
@@ -46,16 +47,19 @@ export class TestSeriesController {
   // =========================================================================
 
   @Get('test-series')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
   listPublished(@Query('category') category?: string) {
     return this.service.listPublished(category);
   }
 
   @Get('test-series/:idOrSlug')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
   getPublished(@Param('idOrSlug') idOrSlug: string) {
     return this.service.getPublished(idOrSlug);
   }
 
   @Get('test-series/:id/subjects/:subjectId/chapters')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
   listPublicChapters(
     @Param('id') seriesId: string,
     @Param('subjectId') subjectId: string,
@@ -369,6 +373,7 @@ export class TestSeriesController {
   // =========================================================================
 
   @Get('test-series/:id/tests')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
   listPublishedTests(
     @Param('id') seriesId: string,
     @Query() query: unknown,
@@ -380,6 +385,7 @@ export class TestSeriesController {
   }
 
   @Get('test-series/tests/:testId')
+  @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
   getPublishedTest(@Param('testId') testId: string) {
     return this.service.getPublishedTest(testId);
   }

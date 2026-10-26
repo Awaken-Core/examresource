@@ -5,10 +5,13 @@ import {
   heroStats,
   featureShortcuts,
 } from '../../data/test-series';
+import { fetchPublicJson } from '../../lib/publicFetch';
 import { TestSeriesExplorer } from '../../components/test-series/TestSeriesExplorer';
 
 // Edge CDN caching: 60s
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+
+const initialSeries = (await fetchPublicJson<any[]>('/test-series')) || [];
 
 
 
@@ -215,7 +218,7 @@ const jsonLd = {
     </section>
 
     {/* Real Published Test Series Explorer Island */}
-    <TestSeriesExplorer client:load />
+    <TestSeriesExplorer client:load initialList={initialSeries} />
 
     <section class="max-w-3xl space-y-3 pt-2" aria-labelledby="cbt-faq-heading">
       <h2 id="cbt-faq-heading" class="text-lg font-bold text-slate-900 dark:text-white">

@@ -366,6 +366,9 @@ ExamSchema.index({ status: 1, createdAt: -1 });
 ExamSchema.index({ testSeriesId: 1, testMode: 1, status: 1 });
 ExamSchema.index({ testSeriesId: 1, subjectId: 1, status: 1 });
 ExamSchema.index({ testSeriesId: 1, chapterId: 1, status: 1 });
+ExamSchema.index({ testSeriesId: 1, status: 1, isCurrentVersion: 1, testMode: 1 });
+ExamSchema.index({ testSeriesId: 1, status: 1, isCurrentVersion: 1, subjectId: 1 });
+ExamSchema.index({ testSeriesId: 1, status: 1, isCurrentVersion: 1, chapterId: 1 });
 ExamSchema.index({ parentTestId: 1, version: 1 });
 ExamSchema.index({ isCurrentVersion: 1, status: 1 });
 

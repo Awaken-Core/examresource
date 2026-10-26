@@ -31,9 +31,13 @@ const CATEGORIES = [
   { id: 'others', label: 'Others' },
 ];
 
-export function TestSeriesExplorer() {
-  const [seriesList, setSeriesList] = useState<StudentTestSeries[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface TestSeriesExplorerProps {
+  initialList?: StudentTestSeries[];
+}
+
+export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}) {
+  const [seriesList, setSeriesList] = useState<StudentTestSeries[]>(initialList || []);
+  const [isLoading, setIsLoading] = useState(!initialList || initialList.length === 0);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Filters
@@ -61,8 +65,10 @@ export function TestSeriesExplorer() {
   };
 
   useEffect(() => {
-    fetchPublishedSeries();
-  }, []);
+    if (!initialList || initialList.length === 0) {
+      fetchPublishedSeries();
+    }
+  }, [initialList]);
 
   // Filter & sort logic
   const filteredList = seriesList.filter((s) => {

@@ -37,7 +37,6 @@ import type {
   QuestionBankQueryInput,
   ReorderChaptersInput,
   TestQuestionItemInput,
-  TestSectionInput,
   UpdateChapterInput,
   UpdateIndividualTestInput,
   UpdateQuestionMappingInput,
@@ -47,8 +46,50 @@ import type {
   UpdateTestStatusInput,
 } from './dto/test-series.dto.js';
 
+interface CacheEntry<T> {
+  data: T;
+  expiresAt: number;
+}
+
+class MemoryCache {
+  private store = new Map<string, CacheEntry<any>>();
+
+  get<T>(key: string): T | undefined {
+    const entry = this.store.get(key);
+    if (!entry) return undefined;
+    if (Date.now() > entry.expiresAt) {
+      this.store.delete(key);
+      return undefined;
+    }
+    return entry.data;
+  }
+
+  set<T>(key: string, data: T, ttlMs: number): void {
+    if (this.store.size > 1000) {
+      const now = Date.now();
+      for (const [k, v] of this.store.entries()) {
+        if (now > v.expiresAt) this.store.delete(k);
+      }
+      if (this.store.size > 1000) {
+        let count = 0;
+        for (const k of this.store.keys()) {
+          this.store.delete(k);
+          if (++count >= 200) break;
+        }
+      }
+    }
+    this.store.set(key, { data, expiresAt: Date.now() + ttlMs });
+  }
+
+  clear(): void {
+    this.store.clear();
+  }
+}
+
 @Injectable()
 export class TestSeriesService {
+  private readonly cache = new MemoryCache();
+
   constructor(
     @InjectModel(TestSeries.name)
     private readonly testSeriesModel: Model<TestSeriesDocument>,
@@ -73,6 +114,10 @@ export class TestSeriesService {
   // =========================================================================
 
   async listPublished(category?: string) {
+    const cacheKey = `listPublished:${category || 'all'}`;
+    const cached = this.cache.get<any[]>(cacheKey);
+    if (cached) return cached;
+
     const filter: Record<string, any> = { status: 'published' };
     if (category && category !== 'all') {
       filter.category = category;
@@ -83,10 +128,16 @@ export class TestSeriesService {
       .sort({ order: 1, createdAt: -1 })
       .lean();
 
-    return docs.map((doc) => this.formatTestSeries(doc));
+    const formatted = docs.map((doc) => this.formatTestSeries(doc));
+    this.cache.set(cacheKey, formatted, 60_000);
+    return formatted;
   }
 
   async getPublished(idOrSlug: string) {
+    const cacheKey = `getPublished:${idOrSlug.toLowerCase()}`;
+    const cached = this.cache.get<any>(cacheKey);
+    if (cached) return cached;
+
     const isObjectId = Types.ObjectId.isValid(idOrSlug);
     const filter: Record<string, any> = isObjectId
       ? { _id: new Types.ObjectId(idOrSlug), status: 'published' }
@@ -98,11 +149,18 @@ export class TestSeriesService {
     }
 
     // Hydrate assigned subjects and chapters for published view (published chapters only)
-    const subjects = await this.listSubjectsForSeries(doc._id.toString(), true);
-    return {
+    // Pass already-fetched series doc to eliminate redundant findSeriesById waterfall query
+    const subjects = await this.listSubjectsForSeries(doc._id.toString(), true, doc);
+    const result = {
       ...this.formatTestSeries(doc),
       subjects,
     };
+
+    this.cache.set(`getPublished:${doc._id.toString()}`, result, 60_000);
+    if (doc.slug) {
+      this.cache.set(`getPublished:${doc.slug.toLowerCase()}`, result, 60_000);
+    }
+    return result;
   }
 
   async listManageable(user: CurrentUser) {
@@ -153,6 +211,7 @@ export class TestSeriesService {
       createdBy: new Types.ObjectId(user.id),
     });
 
+    this.cache.clear();
     return this.formatTestSeries(created.toObject());
   }
 
@@ -194,6 +253,7 @@ export class TestSeriesService {
     if (!updated) {
       throw new NotFoundException('Test series was not found.');
     }
+    this.cache.clear();
     return this.formatTestSeries(updated);
   }
 
@@ -212,6 +272,7 @@ export class TestSeriesService {
     if (!updated) {
       throw new NotFoundException('Test series was not found.');
     }
+    this.cache.clear();
     return this.formatTestSeries(updated);
   }
 
@@ -240,6 +301,7 @@ export class TestSeriesService {
       testSeriesId: existing._id,
     });
     await this.testSeriesModel.findByIdAndDelete(existing._id);
+    this.cache.clear();
   }
 
   // =========================================================================
@@ -286,6 +348,7 @@ export class TestSeriesService {
       createdBy: new Types.ObjectId(user.id),
     });
 
+    this.cache.clear();
     return this.formatSubject(created.toObject());
   }
 
@@ -327,6 +390,7 @@ export class TestSeriesService {
     if (!updated) {
       throw new NotFoundException('Subject was not found.');
     }
+    this.cache.clear();
     return this.formatSubject(updated);
   }
 
@@ -359,38 +423,44 @@ export class TestSeriesService {
     }
 
     await this.subjectModel.findByIdAndDelete(existing._id);
+    this.cache.clear();
   }
 
   // =========================================================================
   // 3. TEST SERIES <-> SUBJECT ASSIGNMENT
   // =========================================================================
 
-  async listSubjectsForSeries(seriesId: string, onlyPublishedChapters = false) {
-    const series = await this.findSeriesById(seriesId);
+  async listSubjectsForSeries(
+    seriesId: string,
+    onlyPublishedChapters = false,
+    knownSeries?: any,
+  ) {
+    const series = knownSeries || (await this.findSeriesById(seriesId));
 
-    const assignments = await this.testSeriesSubjectModel
-      .find({ testSeriesId: series._id })
-      .sort({ order: 1 })
-      .populate<{ subjectId: SubjectDocument }>('subjectId')
-      .lean();
+    // Parallelize assignment and chapter queries
+    const [assignments, chapters] = await Promise.all([
+      this.testSeriesSubjectModel
+        .find({ testSeriesId: series._id })
+        .sort({ order: 1 })
+        .populate<{ subjectId: SubjectDocument }>('subjectId')
+        .lean(),
+      this.chapterModel
+        .find({
+          testSeriesId: series._id,
+          ...(onlyPublishedChapters ? { status: 'published' } : {}),
+        })
+        .sort({ order: 1, name: 1 })
+        .lean(),
+    ]);
 
-    const subjectIds = assignments.map((a) => a.subjectId?._id).filter(Boolean);
-
-    // Fetch chapters for these subjects within this specific TestSeries
-    const chapterFilter: Record<string, any> = {
-      testSeriesId: series._id,
-      subjectId: { $in: subjectIds },
-      ...(onlyPublishedChapters ? { status: 'published' } : {}),
-    };
-
-    const chapters = await this.chapterModel
-      .find(chapterFilter)
-      .sort({ order: 1, name: 1 })
-      .lean();
+    const subjectIds = new Set(
+      assignments.map((a) => a.subjectId?._id?.toString()).filter(Boolean),
+    );
 
     const chaptersBySubject = new Map<string, any[]>();
     for (const chap of chapters) {
       const sId = chap.subjectId.toString();
+      if (!subjectIds.has(sId)) continue;
       if (!chaptersBySubject.has(sId)) {
         chaptersBySubject.set(sId, []);
       }
@@ -451,6 +521,7 @@ export class TestSeriesService {
       customDisplayName: input.customDisplayName ?? null,
     });
 
+    this.cache.clear();
     return {
       id: created._id.toString(),
       _id: created._id.toString(),
@@ -494,6 +565,7 @@ export class TestSeriesService {
       .findByIdAndUpdate(existing._id, { $set: payload }, { new: true })
       .lean();
 
+    this.cache.clear();
     return {
       id: updated!._id.toString(),
       _id: updated!._id.toString(),
@@ -550,6 +622,7 @@ export class TestSeriesService {
     }
 
     await this.testSeriesSubjectModel.findByIdAndDelete(assignment._id);
+    this.cache.clear();
   }
 
   // =========================================================================
@@ -653,6 +726,7 @@ export class TestSeriesService {
       createdBy: new Types.ObjectId(user.id),
     });
 
+    this.cache.clear();
     return this.formatChapter(created.toObject());
   }
 
@@ -688,6 +762,7 @@ export class TestSeriesService {
     if (!updated) {
       throw new NotFoundException('Chapter was not found.');
     }
+    this.cache.clear();
     return this.formatChapter(updated);
   }
 
@@ -716,6 +791,7 @@ export class TestSeriesService {
     });
 
     await Promise.all(updatePromises);
+    this.cache.clear();
     return this.listChapters(seriesId, subjectId, user);
   }
 
@@ -736,6 +812,7 @@ export class TestSeriesService {
     }
 
     await this.chapterModel.findByIdAndDelete(chapter._id);
+    this.cache.clear();
   }
 
   // =========================================================================
@@ -1263,6 +1340,10 @@ export class TestSeriesService {
     seriesId: string,
     query: ListIndividualTestsQueryInput,
   ) {
+    const cacheKey = `listTests:${seriesId}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}`;
+    const cached = this.cache.get<any[]>(cacheKey);
+    if (cached) return cached;
+
     const series = await this.findSeriesById(seriesId);
     if (series.status !== 'published') {
       throw new NotFoundException('Test series was not found.');
@@ -1308,13 +1389,20 @@ export class TestSeriesService {
 
     const docs = await this.examModel
       .find(filter)
+      .select('-questions.snapshot -sections.questions.snapshot')
       .sort({ createdAt: -1 })
       .lean();
 
-    return docs.map((doc) => this.formatIndividualTest(doc, false));
+    const formatted = docs.map((doc) => this.formatIndividualTest(doc, false));
+    this.cache.set(cacheKey, formatted, 60_000);
+    return formatted;
   }
 
   async getPublishedTest(testIdOrSlug: string) {
+    const cacheKey = `publishedTest:${testIdOrSlug.toLowerCase()}`;
+    const cached = this.cache.get<any>(cacheKey);
+    if (cached) return cached;
+
     const isObjectId = Types.ObjectId.isValid(testIdOrSlug);
     const idFilter: Record<string, any> = isObjectId
       ? { _id: new Types.ObjectId(testIdOrSlug) }
@@ -1359,7 +1447,13 @@ export class TestSeriesService {
       }
     }
 
-    return this.formatIndividualTest(doc, false);
+    const formatted = this.formatIndividualTest(doc, false);
+    this.cache.set(cacheKey, formatted, 60_000);
+    this.cache.set(`publishedTest:${doc._id.toString()}`, formatted, 60_000);
+    if (doc.slug) {
+      this.cache.set(`publishedTest:${doc.slug.toLowerCase()}`, formatted, 60_000);
+    }
+    return formatted;
   }
 
   async listManageableTests(
@@ -1476,6 +1570,7 @@ export class TestSeriesService {
       sections,
     });
 
+    this.cache.clear();
     return this.formatIndividualTest(created.toObject(), true);
   }
 
@@ -1613,6 +1708,7 @@ export class TestSeriesService {
       .findByIdAndUpdate(test._id, { $set: updatePayload }, { new: true })
       .lean();
 
+    this.cache.clear();
     return this.formatIndividualTest(updated!, true);
   }
 
@@ -1681,6 +1777,7 @@ export class TestSeriesService {
         )
         .lean();
 
+      this.cache.clear();
       return this.formatIndividualTest(published!, true);
     }
 
@@ -1692,6 +1789,7 @@ export class TestSeriesService {
           { new: true },
         )
         .lean();
+      this.cache.clear();
       return this.formatIndividualTest(archived!, true);
     }
 
@@ -1712,6 +1810,7 @@ export class TestSeriesService {
         { new: true },
       )
       .lean();
+    this.cache.clear();
     return this.formatIndividualTest(draft!, true);
   }
 
@@ -1822,6 +1921,7 @@ export class TestSeriesService {
       sections: clonedSections,
     });
 
+    this.cache.clear();
     return this.formatIndividualTest(newVersion.toObject(), true);
   }
 
@@ -1853,6 +1953,7 @@ export class TestSeriesService {
 
     // 2. Delete all test versions in the lineage
     await this.examModel.deleteMany({ _id: { $in: versionIds } });
+    this.cache.clear();
 
     // Shared Question documents and QuestionMapping records are strictly PRESERVED
   }

@@ -123,6 +123,6 @@ const jsonLd = seriesTitle
     )}
 
     {/* Dynamic Test Series Detail Island */}
-    <TestSeriesDetail client:load seriesIdOrSlug={id} />
+    <TestSeriesDetail client:load seriesIdOrSlug={id} initialData={seriesSeo as any} />
   </div>
 </Layout>

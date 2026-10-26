@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { API_URL } from '../../lib/api';
 
 export interface Chapter {
@@ -110,13 +110,14 @@ export interface LearnerSeriesPrep {
 
 interface Props {
   seriesIdOrSlug: string;
+  initialData?: TestSeriesDetailData | null;
 }
 
 type TabType = 'full' | 'subject' | 'chapter';
 
-export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
-  const [series, setSeries] = useState<TestSeriesDetailData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
+  const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
+  const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   // Learner series progress state (after login)
@@ -125,14 +126,21 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   // Tab: 'full' | 'subject' | 'chapter'
   const [activeTab, setActiveTab] = useState<TabType>('full');
 
-  // Subject-wise state
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
+  // Pre-select first subject if initialData is provided
+  const initialFirstSub = initialData?.subjects?.[0];
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(
+    initialFirstSub?.subjectId || null,
+  );
   const [subjectTests, setSubjectTests] = useState<PublishedTestItem[]>([]);
   const [loadingSubjectTests, setLoadingSubjectTests] = useState(false);
 
   // Chapter-wise state
-  const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(null);
-  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
+  const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(
+    initialFirstSub?.subjectId || null,
+  );
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
+    initialFirstSub?.chapters?.[0]?.id || initialFirstSub?.chapters?.[0]?._id || null,
+  );
   const [chapterTests, setChapterTests] = useState<PublishedTestItem[]>([]);
   const [loadingChapterTests, setLoadingChapterTests] = useState(false);
 
@@ -140,8 +148,21 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   const [fullTests, setFullTests] = useState<PublishedTestItem[]>([]);
   const [loadingFullTests, setLoadingFullTests] = useState(false);
 
+  // In-memory cache for test query responses to make tab/filter switching instant
+  const testsCacheRef = useRef<Map<string, PublishedTestItem[]>>(new Map());
+
   // Load series details
   useEffect(() => {
+    // If initialData already matches the requested series, skip network fetch!
+    if (
+      initialData &&
+      (initialData.id === seriesIdOrSlug ||
+        initialData.slug?.toLowerCase() === seriesIdOrSlug.toLowerCase() ||
+        initialData._id === seriesIdOrSlug)
+    ) {
+      return;
+    }
+
     async function loadSeries() {
       setIsLoading(true);
       setError(null);
@@ -173,7 +194,7 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
       }
     }
     loadSeries();
-  }, [seriesIdOrSlug]);
+  }, [seriesIdOrSlug, initialData]);
 
   // Load Learner's Personal Preparation Progress for this Series
   useEffect(() => {
@@ -220,14 +241,18 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   // Load Subject-wise tests
   useEffect(() => {
     if (!series || !selectedSubjectId || activeTab !== 'subject') return;
+    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=subject&subjectId=${selectedSubjectId}`;
+    if (testsCacheRef.current.has(url)) {
+      setSubjectTests(testsCacheRef.current.get(url)!);
+      return;
+    }
     async function fetchSubTests() {
       setLoadingSubjectTests(true);
       try {
-        const res = await fetch(
-          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=subject&subjectId=${selectedSubjectId}`,
-        );
+        const res = await fetch(url);
         if (res.ok) {
           const tests = await res.json();
+          testsCacheRef.current.set(url, tests || []);
           setSubjectTests(tests || []);
         } else {
           setSubjectTests([]);
@@ -244,14 +269,18 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   // Load Chapter-wise tests
   useEffect(() => {
     if (!series || !selectedChapterId || activeTab !== 'chapter') return;
+    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=chapter&chapterId=${selectedChapterId}`;
+    if (testsCacheRef.current.has(url)) {
+      setChapterTests(testsCacheRef.current.get(url)!);
+      return;
+    }
     async function fetchChapTests() {
       setLoadingChapterTests(true);
       try {
-        const res = await fetch(
-          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=chapter&chapterId=${selectedChapterId}`,
-        );
+        const res = await fetch(url);
         if (res.ok) {
           const tests = await res.json();
+          testsCacheRef.current.set(url, tests || []);
           setChapterTests(tests || []);
         } else {
           setChapterTests([]);
@@ -268,14 +297,18 @@ export function TestSeriesDetail({ seriesIdOrSlug }: Props) {
   // Load Full tests
   useEffect(() => {
     if (!series || activeTab !== 'full') return;
+    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=full`;
+    if (testsCacheRef.current.has(url)) {
+      setFullTests(testsCacheRef.current.get(url)!);
+      return;
+    }
     async function fetchFullTests() {
       setLoadingFullTests(true);
       try {
-        const res = await fetch(
-          `${API_URL}/test-series/${series!.id || series!._id}/tests?testMode=full`,
-        );
+        const res = await fetch(url);
         if (res.ok) {
           const tests = await res.json();
+          testsCacheRef.current.set(url, tests || []);
           setFullTests(tests || []);
         } else {
           setFullTests([]);
