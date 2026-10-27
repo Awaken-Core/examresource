@@ -200,7 +200,7 @@ export function updateFavoritesUI(): void {
             <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
           </svg>
         </div>
-        <p class="text-xs font-semibold text-white">No favorite articles yet</p>
+        <p class="text-xs font-semibold text-heading">No favorite articles yet</p>
         <p class="text-[11px] text-muted mt-1 leading-relaxed max-w-[220px] mx-auto">
           Add articles to your favorites while reading to quickly access them here anytime.
         </p>
@@ -225,7 +225,7 @@ export function updateFavoritesUI(): void {
           <span class="text-muted/40">•</span>
           <span class="text-[10px] text-muted">${timeAgo(item.savedAt)}</span>
         </div>
-        <p class="text-xs font-semibold text-white/95 group-hover:text-accent transition truncate leading-snug">${item.title}</p>
+        <p class="text-xs font-semibold text-heading group-hover:text-accent transition truncate leading-snug">${item.title}</p>
       `;
 
       const removeBtn = document.createElement('button');

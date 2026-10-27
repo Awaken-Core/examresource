@@ -425,14 +425,18 @@ const jsonLd = {
       <section id="bento-grid-section" class="mt-5 sm:mt-6 mb-16" aria-label="Exam Streams">
 
         {/* Section Header */}
-        <div class="flex items-center justify-between pb-3 mb-5 border-b border-editorial-border">
-          <div class="flex items-center gap-2.5">
+        <div class="flex items-center gap-3 sm:gap-4 mb-6">
+          <div class="flex items-center gap-2.5 shrink-0">
             <span class="w-1.5 h-4.5 bg-editorial-accent rounded-full inline-block"></span>
-            <h2 class="font-['EB_Garamond'] text-2xl sm:text-[26px] font-normal text-editorial-heading tracking-tight">
+            <h2 class="font-['EB_Garamond'] text-2xl sm:text-[26px] font-normal text-editorial-heading tracking-tight whitespace-nowrap">
               Exam Streams
             </h2>
           </div>
-          <span class="text-[11.5px] font-medium font-['Geist'] text-editorial-accent bg-editorial-accent-badge px-3 py-0.5 rounded-full border border-editorial-accent/20 tabular-nums">
+          <div class="h-px flex-1 bg-editorial-border" aria-hidden="true"></div>
+          <span 
+            id="active-notices-badge"
+            class="text-[11px] sm:text-[11.5px] font-medium font-['Geist'] text-editorial-accent bg-editorial-accent-badge px-3 py-0.5 rounded-full border border-editorial-accent/20 tabular-nums shrink-0 whitespace-nowrap"
+          >
             {displayArticles.length} active notices
           </span>
         </div>

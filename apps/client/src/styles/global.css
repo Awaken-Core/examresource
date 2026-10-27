@@ -70,10 +70,13 @@
   --color-subtle: var(--color-subtle);
   --color-primary: #292418;
   --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-accent-badge: var(--color-accent-badge);
   --color-on-accent: #FFFFFF;
   --color-black: #000000;
 
-  /* Editorial Theme Tokens (for Blogs, Test Series & Marketing pages) */
+  /* Editorial Theme Tokens (Synced with unified design tokens) */
   --color-editorial-bg: var(--color-editorial-bg);
   --color-editorial-surface: var(--color-editorial-surface);
   --color-editorial-surface-raised: var(--color-editorial-surface-raised);
@@ -203,21 +206,23 @@
   --color-border: #EADFD3;
   --color-subtle: #FFF8F1;
   --color-accent: #FF4D00;
-  /* Primary brand orange */
+  --color-accent-hover: #D94100;
+  --color-accent-soft: #FFEADA;
+  --color-accent-badge: #FFF0E6;
 
-  /* Editorial Theme Tokens (Light Mode: Warm Cream & Editorial Orange) */
-  --color-editorial-bg: #FFF8F1;
-  --color-editorial-surface: #FFFFFF;
-  --color-editorial-surface-raised: #FFF8F1;
-  --color-editorial-border: #EADFD3;
-  --color-editorial-heading: #191613;
+  /* Editorial Theme Tokens (Aliased to unified theme system for full interoperability) */
+  --color-editorial-bg: var(--color-canvas);
+  --color-editorial-surface: var(--color-surface);
+  --color-editorial-surface-raised: var(--color-surface-raised);
+  --color-editorial-border: var(--color-border);
+  --color-editorial-heading: var(--color-heading);
   --color-editorial-subheading: #514A44;
-  --color-editorial-text: #191613;
-  --color-editorial-muted: #675F58;
-  --color-editorial-accent: #FF4D00;
-  --color-editorial-accent-hover: #D94100;
-  --color-editorial-accent-soft: #FFEADA;
-  --color-editorial-accent-badge: #FFF0E6;
+  --color-editorial-text: var(--color-text-body);
+  --color-editorial-muted: var(--color-muted);
+  --color-editorial-accent: var(--color-accent);
+  --color-editorial-accent-hover: var(--color-accent-hover);
+  --color-editorial-accent-soft: var(--color-accent-soft);
+  --color-editorial-accent-badge: var(--color-accent-badge);
 
   --shadow-elevated: 0px 4px 16px -2px rgba(25, 22, 19, 0.08), 0px 2px 8px -1px rgba(25, 22, 19, 0.04);
   --shadow-sm: 0px 1px 4px 0px rgba(25, 22, 19, 0.08);
@@ -234,21 +239,23 @@
   --color-border: #332E29;
   --color-subtle: #141312;
   --color-accent: #FF4D00;
-  /* Primary brand orange */
+  --color-accent-hover: #FF7038;
+  --color-accent-soft: #38251E;
+  --color-accent-badge: #2C1E18;
 
-  /* Editorial Theme Tokens (Dark Mode: Warm Obsidian, Crisp Contrast & Editorial Orange) */
-  --color-editorial-bg: #141312;
-  --color-editorial-surface: #1C1A18;
-  --color-editorial-surface-raised: #25221F;
-  --color-editorial-border: #332E29;
-  --color-editorial-heading: #F5EEE6;
+  /* Editorial Theme Tokens (Aliased to unified theme system for full interoperability) */
+  --color-editorial-bg: var(--color-canvas);
+  --color-editorial-surface: var(--color-surface);
+  --color-editorial-surface-raised: var(--color-surface-raised);
+  --color-editorial-border: var(--color-border);
+  --color-editorial-heading: var(--color-heading);
   --color-editorial-subheading: #D4C8BC;
-  --color-editorial-text: #E7E0D8;
-  --color-editorial-muted: #A89D92;
-  --color-editorial-accent: #FF5A1F;
-  --color-editorial-accent-hover: #FF7038;
-  --color-editorial-accent-soft: #38251E;
-  --color-editorial-accent-badge: #2C1E18;
+  --color-editorial-text: var(--color-text-body);
+  --color-editorial-muted: var(--color-muted);
+  --color-editorial-accent: var(--color-accent);
+  --color-editorial-accent-hover: var(--color-accent-hover);
+  --color-editorial-accent-soft: var(--color-accent-soft);
+  --color-editorial-accent-badge: var(--color-accent-badge);
 
   --shadow-elevated: 0px 8px 32px -4px rgba(0, 0, 0, 0.6), 0px 2px 8px -1px rgba(0, 0, 0, 0.4);
   --shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.4);
@@ -1246,31 +1253,43 @@ html:not(.theme-dark) body {
   color: #111827 !important;
 }
 
-/* Light mode text contrast overrides for dark-first utility classes */
-html:not(.theme-dark) :is(h1, h2, h3, h4, h5, h6).text-white,
-html:not(.theme-dark) p.text-white,
-html:not(.theme-dark) span.text-white:not(.app-lang-btn):not([class*="bg-"]):not([class*="badge"]),
-html:not(.theme-dark) a.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]),
-html:not(.theme-dark) div.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-indigo-"]):not([class*="bg-purple-"]):not([class*="bg-slate-900"]):not([class*="bg-slate-800"]) {
+/* Light mode text contrast overrides for dark-first utility classes (container-aware) */
+html:not(.theme-dark) :is(
+  :is(h1, h2, h3, h4, h5, h6).text-white,
+  p.text-white,
+  input.text-white,
+  kbd.text-white,
+  summary.text-white,
+  span.text-white:not(.app-lang-btn):not([class*="bg-"]):not([class*="badge"]),
+  a.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-amber-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-indigo-"]),
+  div.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-amber-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-indigo-"]):not([class*="bg-slate-900"]):not([class*="bg-slate-800"]):not([class*="bg-neutral-900"]):not([class*="bg-black"])
+):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"], [class*="bg-[#1c1a18]"], [class*="bg-[#141312]"]) *) {
   color: #111827 !important;
 }
 
+/* Fractional low-opacity accent tints (e.g., bg-accent/10) must never keep pure white text in light mode */
+html:not(.theme-dark) :is(a, button, span, div)[class*="bg-accent/"]:not([class*="bg-accent/8"]):not([class*="bg-accent/9"]) {
+  &.text-white {
+    color: var(--color-accent) !important;
+  }
+}
+
 /* Opacity variants of white in light mode */
-html:not(.theme-dark) :is(.text-white\/90, .text-white\/95, .text-white\/80, .text-white\/70) {
+html:not(.theme-dark) :is(.text-white\/90, .text-white\/95, .text-white\/80, .text-white\/70):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
   color: #1F2937 !important;
 }
 
 /* Light mode adjustments for slate text used as body/question text */
-html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-300:not([class*="bg-slate-"]):not([class*="bg-gray-"]) {
+html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-300:not([class*="bg-slate-"]):not([class*="bg-gray-"]):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
   color: #374151 !important;
 }
 
-html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-400:not([class*="bg-slate-"]):not([class*="bg-gray-"]) {
+html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-400:not([class*="bg-slate-"]):not([class*="bg-gray-"]):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
   color: #4B5563 !important;
 }
 
-/* Hover text-white in navigation/buttons should turn to solid dark in light mode */
-html:not(.theme-dark) .hover\:text-white:hover {
+/* Hover text-white in navigation/buttons should turn to solid dark in light mode when not inside dark container */
+html:not(.theme-dark) .hover\:text-white:hover:not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
   color: #111827 !important;
 }
 
@@ -1330,6 +1349,56 @@ html:not(.theme-dark) a:hover > svg.text-muted {
       transform: translateX(-100%);
     }
   }
+}
+
+/* Sidebar expand trigger strictly hidden on mobile/tablet */
+@media (max-width: 1023px) {
+  #header-sidebar-expand-container,
+  #toolbar-sidebar-expand-btn {
+    display: none !important;
+  }
+}
+
+/* ── Animated Hamburger Icon (Transparent, borderless) ────────── */
+.mobile-hamburger-btn {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease;
+}
+.mobile-hamburger-btn:hover {
+  transform: scale(1.08);
+}
+.mobile-hamburger-btn:active {
+  transform: scale(0.92);
+}
+.mobile-hamburger-btn .hamburger-line {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.2s ease,
+              background-color 0.3s ease;
+  transform-origin: center;
+}
+.mobile-hamburger-btn:hover:not(.is-active) .line-middle {
+  transform: scaleX(0.7);
+}
+.mobile-hamburger-btn.is-active {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.mobile-hamburger-btn.is-active .line-top {
+  transform: translateY(8px) rotate(45deg) !important;
+  background-color: var(--color-editorial-accent, var(--color-accent, #FF4D00)) !important;
+}
+.mobile-hamburger-btn.is-active .line-middle {
+  opacity: 0 !important;
+  transform: scaleX(0) !important;
+}
+.mobile-hamburger-btn.is-active .line-bottom {
+  transform: translateY(-8px) rotate(-45deg) !important;
+  background-color: var(--color-editorial-accent, var(--color-accent, #FF4D00)) !important;
 }
 
 /* Auth state display classes */

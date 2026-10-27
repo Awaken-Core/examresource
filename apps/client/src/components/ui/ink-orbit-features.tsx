@@ -184,16 +184,28 @@ export default function InkOrbitFeatures({
     }
     const scheme = window.matchMedia("(prefers-color-scheme: dark)")
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const checkDark = () => {
+      if (theme === "dark") return true
+      if (theme === "light") return false
+      if (document.documentElement.classList.contains("theme-dark")) return true
+      if (document.documentElement.classList.contains("theme-light")) return false
+      return scheme.matches
+    }
     const sync = () => {
-      setDark(theme === "auto" ? scheme.matches : theme === "dark")
+      setDark(checkDark())
       setAllowMotion(!motion.matches)
     }
     sync()
     scheme.addEventListener?.("change", sync)
     motion.addEventListener?.("change", sync)
+
+    const observer = new MutationObserver(() => sync())
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+
     return () => {
       scheme.removeEventListener?.("change", sync)
       motion.removeEventListener?.("change", sync)
+      observer.disconnect()
     }
   }, [theme])
 
@@ -201,10 +213,11 @@ export default function InkOrbitFeatures({
 
   return (
     <div
-      className={"ib-root " + className}
+      className={["ib-root", className].filter(Boolean).join(" ")}
       data-theme={dark ? "dark" : "light"}
       data-motion={allowMotion ? "1" : "0"}
       style={style}
+      suppressHydrationWarning
     >
       <style>{IB_CSS}</style>
       <div className="ib-shell">
@@ -785,10 +798,10 @@ function InsightsCard({
 
 const IB_CSS = `
 .ib-root{
-  --ib-page:#fff8f1;
-  --ib-hatch:rgba(255,77,0,.055);
-  --ib-paper:#fffaf1;
-  --ib-card:#fff6ee;
+  --ib-page:#FFF8F1;
+  --ib-hatch:transparent;
+  --ib-paper:transparent;
+  --ib-card:#ffffff;
   --ib-raise:#ffffff;
   --ib-ink:#191613;
   --ib-soft:#514a44;
@@ -800,7 +813,7 @@ const IB_CSS = `
   --ib-accent:#ff4d00;
   --ib-inv:#191613;
   --ib-inv-ink:#fff8f1;
-  --ib-shadow:0 1px 2px rgba(25,22,19,.05),0 16px 32px -20px rgba(25,22,19,.28);
+  --ib-shadow:0 1px 2px rgba(25,22,19,.05),0 16px 32px -20px rgba(25,22,19,.16);
   --ib-sans:"Geist","Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --ib-serif:"EB Garamond",Georgia,"Times New Roman",serif;
   --ib-mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
@@ -808,8 +821,8 @@ const IB_CSS = `
   width:100%;
   overflow-x:clip;
   box-sizing:border-box;
-  background-color:var(--ib-page);
-  background-image:repeating-linear-gradient(135deg,var(--ib-hatch) 0 1px,transparent 1px 11px);
+  background-color:transparent;
+  background-image:none;
   color:var(--ib-ink);
   font-family:var(--ib-sans);
   font-size:15px;
@@ -818,11 +831,11 @@ const IB_CSS = `
   padding:clamp(56px,8vw,96px) clamp(16px,4vw,40px);
 }
 .ib-root[data-theme="dark"]{
-  --ib-page:#100e0c;
-  --ib-hatch:rgba(255,77,0,.08);
-  --ib-paper:#171412;
-  --ib-card:#211c18;
-  --ib-raise:#2a241f;
+  --ib-page:#141312;
+  --ib-hatch:transparent;
+  --ib-paper:transparent;
+  --ib-card:#1C1A18;
+  --ib-raise:#25221F;
   --ib-ink:#f6f1ea;
   --ib-soft:#d9cfc4;
   --ib-muted:#b7aea4;
@@ -839,7 +852,7 @@ const IB_CSS = `
 .ib-root :where(svg){display:block;max-width:100%;flex:none}
 .ib-root :where(h2,h3,p){margin:0;padding:0}
 .ib-shell{width:100%;max-width:1120px;margin:0 auto;container-type:inline-size}
-.ib-sec{position:relative;background:var(--ib-paper);border:1px solid var(--ib-line);padding:clamp(32px,6cqw,64px) clamp(16px,4cqw,40px)}
+.ib-sec{position:relative;background:transparent;border:none;padding:0}
 .ib-reveal{transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 .ib-head{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;margin-bottom:clamp(28px,4.5cqw,48px)}
 .ib-tag{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ib-accent)}

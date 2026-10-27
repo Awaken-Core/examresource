@@ -3,18 +3,23 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Optional,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { env } from '../../core/config/env.js';
 import {
   Exam,
   type ExamDocument,
+  PaymentOrder,
+  type PaymentOrderDocument,
   TestAttempt,
   type TestAttemptDocument,
   TestSeriesPass,
   type TestSeriesPassDocument,
 } from '../../core/schema/index.js';
 import type { CurrentUser } from '../auth/auth.service.js';
+import { addCalendarMonths } from './payment.signature.js';
 
 const QUIZ_TYPES = new Set(['quiz', 'current_affairs_quiz']);
 
@@ -27,20 +32,68 @@ export class TestSeriesAccessService {
     private readonly testAttemptModel: Model<TestAttemptDocument>,
     @InjectModel(TestSeriesPass.name)
     private readonly passModel: Model<TestSeriesPassDocument>,
+    @Optional()
+    @InjectModel(PaymentOrder.name)
+    private readonly orderModel?: Model<PaymentOrderDocument>,
   ) {}
 
   async activePass(userId: string) {
     if (!Types.ObjectId.isValid(userId)) return null;
+    const userObjectId = new Types.ObjectId(userId);
     const pass = await this.passModel
       .findOne({
-        userId: new Types.ObjectId(userId),
+        userId: userObjectId,
         status: 'paid',
         expiresAt: { $gt: new Date() },
       })
       .sort({ expiresAt: -1 })
       .lean();
-    if (!pass?.expiresAt || new Date(pass.expiresAt).getTime() <= Date.now()) return null;
-    return pass;
+    if (pass?.expiresAt && new Date(pass.expiresAt).getTime() > Date.now()) {
+      return pass;
+    }
+
+    // Auto-sync fallback: If an order was marked 'paid' in payment_orders
+    // (e.g. manually in Compass or through reconciliations) but missing in test_series_passes
+    if (this.orderModel) {
+      const paidOrder = await this.orderModel
+        .findOne({
+          userId: userObjectId,
+          status: 'paid',
+        })
+        .sort({ updatedAt: -1, createdAt: -1 })
+        .lean();
+
+      if (paidOrder) {
+        const orderDate = paidOrder.updatedAt || paidOrder.createdAt || new Date();
+        const expiresAt = addCalendarMonths(new Date(orderDate), env.RAZORPAY_PASS_VALIDITY_MONTHS);
+        if (expiresAt.getTime() > Date.now()) {
+          const paymentId =
+            paidOrder.razorpayPaymentId || `manual_${paidOrder._id.toString()}`;
+          try {
+            const created = await this.passModel.findOneAndUpdate(
+              { paymentOrderId: paidOrder._id },
+              {
+                $setOnInsert: {
+                  userId: paidOrder.userId,
+                  status: 'paid',
+                  startsAt: new Date(orderDate),
+                  expiresAt,
+                  paymentOrderId: paidOrder._id,
+                  razorpayPaymentId: paymentId,
+                },
+              },
+              { upsert: true, new: true },
+            ).lean();
+            if (created) return created;
+          } catch {
+            const existing = await this.passModel.findOne({ paymentOrderId: paidOrder._id }).lean();
+            if (existing) return existing;
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   async freeTestIdForSeries(userId: string, seriesId: string) {
@@ -73,8 +126,31 @@ export class TestSeriesAccessService {
 
     const seriesId = exam.testSeriesId.toString();
     const testId = exam._id ? String(exam._id) : '';
+
+    // Check if the user has already attempted this test before (prevent reattempting for free)
+    if (Types.ObjectId.isValid(user.id) && Types.ObjectId.isValid(testId)) {
+      const existingAttempt = await this.testAttemptModel
+        .findOne({
+          userId: new Types.ObjectId(user.id),
+          testId: new Types.ObjectId(testId),
+        })
+        .select('_id')
+        .lean();
+
+      if (existingAttempt) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.PAYMENT_REQUIRED,
+            code: 'TEST_SERIES_PASS_REQUIRED',
+            message: 'A test series pass is required to reattempt this test.',
+          },
+          HttpStatus.PAYMENT_REQUIRED,
+        );
+      }
+    }
+
     const freeTestId = await this.freeTestIdForSeries(user.id, seriesId);
-    if (!freeTestId || freeTestId === testId) return;
+    if (!freeTestId) return;
 
     throw new HttpException(
       {

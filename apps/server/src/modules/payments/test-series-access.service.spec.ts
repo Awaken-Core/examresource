@@ -25,7 +25,11 @@ function query<T>(value: T) {
   return chain;
 }
 
-function makeService(options?: { pass?: any; freeTestId?: string | null }) {
+function makeService(options?: {
+  pass?: any;
+  freeTestId?: string | null;
+  paidOrder?: any;
+}) {
   const exams: any = {
     find: vi.fn(() =>
       query([
@@ -35,16 +39,31 @@ function makeService(options?: { pass?: any; freeTestId?: string | null }) {
     ),
   };
   const attempts: any = {
-    findOne: vi.fn(() =>
-      query(options?.freeTestId ? { testId: new Types.ObjectId(options.freeTestId) } : null),
-    ),
+    findOne: vi.fn((filter?: any) => {
+      if (filter?.testId?.$in) {
+        return query(options?.freeTestId ? { testId: new Types.ObjectId(options.freeTestId) } : null);
+      }
+      if (filter?.testId && options?.freeTestId && filter.testId.toString() === options.freeTestId) {
+        return query({ _id: new Types.ObjectId() });
+      }
+      return query(null);
+    }),
   };
   const passes: any = {
     findOne: vi.fn(() => query(options?.pass ?? null)),
+    findOneAndUpdate: vi.fn(() => ({
+      lean: vi.fn().mockResolvedValue(options?.pass ?? null),
+    })),
   };
+  const orders: any = options?.paidOrder
+    ? {
+        findOne: vi.fn(() => query(options.paidOrder)),
+      }
+    : undefined;
   return {
-    service: new TestSeriesAccessService(exams, attempts, passes),
+    service: new TestSeriesAccessService(exams, attempts, passes, orders),
     passes,
+    orders,
   };
 }
 
@@ -80,16 +99,30 @@ describe('Test series pass access', () => {
     expect(passes.findOne).not.toHaveBeenCalled();
   });
 
-  it('allows the first test in a series and later attempts of that same test', async () => {
+  it('allows the first free test attempt in a series', async () => {
     await expect(
       makeService().service.assertCanStart(
         { _id: firstTestId, type: 'exam', testSeriesId: seriesId },
         student,
       ),
     ).resolves.toBeUndefined();
+  });
 
+  it('blocks reattempting the test after the 1st free attempt without an active pass', async () => {
     await expect(
       makeService({ freeTestId: firstTestId }).service.assertCanStart(
+        { _id: firstTestId, type: 'exam', testSeriesId: seriesId },
+        student,
+      ),
+    ).rejects.toMatchObject({ status: 402 });
+  });
+
+  it('allows reattempting the test when a pass is active', async () => {
+    await expect(
+      makeService({
+        freeTestId: firstTestId,
+        pass: { expiresAt: new Date(Date.now() + 86_400_000) },
+      }).service.assertCanStart(
         { _id: firstTestId, type: 'exam', testSeriesId: seriesId },
         student,
       ),

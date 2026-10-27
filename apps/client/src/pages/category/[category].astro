@@ -151,7 +151,7 @@ const relevantPortals = [
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
 >
-  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
+  <div class="min-h-screen bg-canvas text-heading px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
     <div class="max-w-[1400px] mx-auto">
       
       {/* 2-Column Grid: Main Feed (Left) + Right Sidebar (Sticky) matching Home Layout */}
@@ -166,7 +166,7 @@ const relevantPortals = [
             <span>/</span>
             <a href="/#categories" class="hover:text-accent transition">Categories</a>
             <span>/</span>
-            <span class="text-white font-medium">{categoryTitle}</span>
+            <span class="text-heading font-medium">{categoryTitle}</span>
           </nav>
 
           {/* Hero Header Banner */}
@@ -180,7 +180,7 @@ const relevantPortals = [
               </div>
 
               <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-heading">
                   {categoryTitle}
                 </h1>
                 <span class="text-xs text-muted font-medium">
@@ -194,7 +194,7 @@ const relevantPortals = [
               <div class="pt-3 border-t border-border/50 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
                 <a
                   href="/"
-                  class="px-3 py-1.5 rounded-lg text-xs font-medium text-muted hover:text-white hover:bg-surface-raised transition shrink-0"
+                  class="px-3 py-1.5 rounded-lg text-xs font-medium text-muted hover:text-heading hover:bg-surface-raised transition shrink-0"
                 >
                   All
                 </a>
@@ -208,8 +208,8 @@ const relevantPortals = [
                       data-astro-prefetch="false"
                       class={`px-3 py-1.5 rounded-lg text-xs font-semibold transition shrink-0 border ${
                         isActive
-                          ? 'bg-surface-raised text-white border-border shadow-xs'
-                          : 'text-muted hover:text-white hover:bg-surface-raised/50 border-transparent'
+                          ? 'bg-surface-raised text-heading border-border shadow-xs'
+                          : 'text-muted hover:text-heading hover:bg-surface-raised/50 border-transparent'
                       }`}
                     >
                       {c.name}
@@ -231,7 +231,7 @@ const relevantPortals = [
                     </svg>
                   </div>
                   <div class="min-w-0">
-                    <p class="text-xs font-bold text-white truncate leading-tight">WhatsApp Alerts</p>
+                    <p class="text-xs font-bold text-heading truncate leading-tight">WhatsApp Alerts</p>
                     <p class="text-[11px] text-muted truncate leading-tight mt-0.5">Instant notices &amp; admit cards</p>
                   </div>
                 </div>
@@ -255,7 +255,7 @@ const relevantPortals = [
                     </svg>
                   </div>
                   <div class="min-w-0">
-                    <p class="text-xs font-bold text-white truncate leading-tight">Telegram Alerts</p>
+                    <p class="text-xs font-bold text-heading truncate leading-tight">Telegram Alerts</p>
                     <p class="text-[11px] text-muted truncate leading-tight mt-0.5">Real-time PDF summaries</p>
                   </div>
                 </div>
@@ -274,7 +274,7 @@ const relevantPortals = [
           {/* Articles Feed */}
           <section class="space-y-3.5">
             <div class="flex items-center justify-between pb-1 border-b border-border/50">
-              <h2 class="text-sm font-bold text-white">
+              <h2 class="text-sm font-bold text-heading">
                 All {categoryTitle} Notices
               </h2>
               <span class="text-xs text-muted">Page 1</span>
@@ -302,14 +302,14 @@ const relevantPortals = [
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                   </svg>
                 </div>
-                <h3 class="text-base font-bold text-white">No articles published in {categoryTitle} yet</h3>
+                <h3 class="text-base font-bold text-heading">No articles published in {categoryTitle} yet</h3>
                 <p class="text-xs text-muted max-w-sm mx-auto leading-relaxed">
                   Our editorial desk is preparing verified guides and exam summaries for this stream. Check back soon.
                 </p>
                 <div class="pt-2">
                   <a 
                     href="/" 
-                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-raised border border-border hover:border-accent text-white font-semibold text-xs transition shadow-xs"
+                    class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-surface-raised border border-border hover:border-accent text-heading font-semibold text-xs transition shadow-xs"
                   >
                     <span>Browse All Latest Updates</span>
                     <span>&rarr;</span>
@@ -327,7 +327,7 @@ const relevantPortals = [
           {/* Official Portals Box */}
           <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3.5 transition-colors">
             <div class="flex items-center justify-between pb-1 border-b border-border/50">
-              <h3 class="text-sm font-bold text-white">
+              <h3 class="text-sm font-bold text-heading">
                 Official {categoryTitle} Portals
               </h3>
             </div>
@@ -358,7 +358,7 @@ const relevantPortals = [
                       </div>
                     </div>
                     <div class="min-w-0">
-                      <p class="text-xs font-bold text-white group-hover:text-accent transition truncate leading-tight">
+                      <p class="text-xs font-bold text-heading group-hover:text-accent transition truncate leading-tight">
                         {portal.name}
                       </p>
                       <p class="text-[11px] text-muted truncate leading-tight mt-0.5">
@@ -373,7 +373,7 @@ const relevantPortals = [
 
           {/* Other Categories Explorer */}
           <div class="bg-surface border border-border rounded-lg p-4 shadow-2xs space-y-3 transition-colors">
-            <h3 class="text-sm font-bold text-white pb-1 border-b border-border/50">
+            <h3 class="text-sm font-bold text-heading pb-1 border-b border-border/50">
               Other Exam Streams
             </h3>
             <div class="space-y-1">
@@ -383,7 +383,7 @@ const relevantPortals = [
                   target="_blank"
                   rel="noopener"
                   data-astro-prefetch="false"
-                  class="flex items-center justify-between p-2 rounded hover:bg-surface-raised text-xs text-muted hover:text-white transition group"
+                  class="flex items-center justify-between p-2 rounded hover:bg-surface-raised text-xs text-muted hover:text-heading transition group"
                 >
                   <span class="truncate">{c.name}</span>
                   <span class="text-muted group-hover:text-accent group-hover:translate-x-0.5 transition-all text-[11px]">&rarr;</span>

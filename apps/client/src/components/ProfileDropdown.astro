@@ -5,7 +5,13 @@ interface Props {
   isEditorialTheme?: boolean;
 }
 
-const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = Astro.props;
+const { id = "profile-dropdown", position = "top" } = Astro.props;
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const currentSearch = Astro.url.search || '';
+const isAuthPage = currentPath === '/login' || currentPath === '/signup' || currentPath.startsWith('/auth/');
+const loginHref = (!isAuthPage && currentPath !== '/')
+  ? `/login?redirect=${encodeURIComponent(`${currentPath}${currentSearch}`)}`
+  : '/login';
 ---
 
 <div
@@ -16,12 +22,8 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
       ? "left-[calc(100%+12px)] bottom-0 w-64"
       : position === "mobile"
         ? "left-0 bottom-full mb-2 w-full max-w-[260px]"
-        : "top-full right-0 mt-2 w-72"
-  } ${
-    isEditorialTheme
-      ? "bg-white border border-[#EADFD3] shadow-[0_16px_40px_rgba(23,20,18,0.12)] text-[#171412]"
-      : "bg-surface border border-border shadow-elevated"
-  } rounded-2xl p-2 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none`}
+        : "top-full right-0 mt-2 w-72 max-w-[calc(100vw-24px)]"
+  } bg-surface border border-border text-heading rounded-2xl p-2 z-[9999] shadow-elevated transition-all duration-150 transform scale-95 opacity-0 select-none`}
   role="menu"
   aria-orientation="vertical"
 >
@@ -35,12 +37,12 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
   {/* Clean User Identity Header (Clickable to open profile) */}
   <a
     href="/profile"
-    class="block px-3 py-2.5 border-b border-border/50 mb-1 rounded-xl hover:bg-surface-raised transition-colors cursor-pointer group"
+    class="block px-3 py-2.5 border-b border-border/50 hover:bg-surface-raised mb-1 rounded-xl transition-colors cursor-pointer group"
     title="Go to My Profile"
   >
     <div class="flex items-center gap-2.5">
       <div
-        class="w-8 h-8 rounded-full bg-accent/15 dark:bg-accent/25 border border-accent/40 text-accent font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-xs select-none group-hover:scale-105 transition-transform"
+        class="w-8 h-8 rounded-full bg-accent/15 text-accent border border-accent/30 font-bold flex items-center justify-center shrink-0 overflow-hidden shadow-xs select-none group-hover:scale-105 transition-transform"
       >
         <span
           class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase text-accent"
@@ -49,7 +51,7 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
       </div>
       <div class="truncate flex-1">
         <p
-          class="user-display-name text-body-sm font-bold text-slate-900 leading-tight truncate dark:text-slate-100 group-hover:text-accent transition-colors"
+          class="user-display-name text-body-sm font-bold text-heading group-hover:text-accent leading-tight truncate transition-colors"
         >
           User
         </p>
@@ -65,10 +67,10 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
   <div class="space-y-0.5">
     <a
       href="/profile"
-      class="auth-logged-in-only hidden w-full items-center gap-3 rounded-xl px-3 py-2 text-body-sm text-slate-900 hover:bg-surface-raised [&:not(.hidden)]:flex dark:text-slate-100"
+      class="auth-logged-in-only group hidden w-full items-center gap-3 rounded-xl px-3 py-2 text-body-sm font-medium text-heading hover:text-accent hover:bg-surface-raised transition-colors [&:not(.hidden)]:flex"
     >
       <svg
-        class="h-4 w-4 shrink-0 text-muted"
+        class="h-4 w-4 shrink-0 text-muted group-hover:text-accent transition-colors"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -80,18 +82,16 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
           stroke-linejoin="round"
           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
       </svg>
-      <span class="min-w-0 truncate font-medium">My Profile</span>
+      <span class="min-w-0 truncate">My Profile</span>
     </a>
 
-    {
-      /* Admin-only navigation: revealed only after the server confirms the role */
-    }
+    {/* Admin-only navigation: revealed only after the server confirms the role */}
     <a
       href="/administrator"
-      class="admin-panel-link hidden w-full items-center gap-3 rounded-xl px-3 py-2 text-body-sm text-slate-900 hover:bg-surface-raised [&:not(.hidden)]:flex dark:text-slate-100"
+      class="admin-panel-link group hidden w-full items-center gap-3 rounded-xl px-3 py-2 text-body-sm font-medium text-heading hover:text-accent hover:bg-surface-raised transition-colors [&:not(.hidden)]:flex"
     >
       <svg
-        class="h-4 w-4 shrink-0 text-muted"
+        class="h-4 w-4 shrink-0 text-muted group-hover:text-accent transition-colors"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -108,34 +108,32 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
           stroke-width="2"
           d="M9.5 12l1.5 1.5 3.5-3.5"></path>
       </svg>
-      <span class="min-w-0 truncate font-medium">Open Desk</span>
+      <span class="min-w-0 truncate">Open Desk</span>
     </a>
-
 
     {/* Saved Articles / Favorites link */}
     <a
       href="/favorites"
-      class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-body-sm text-slate-900 hover:bg-surface-raised dark:text-slate-100"
+      class="group flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-body-sm font-medium text-heading hover:text-accent hover:bg-surface-raised transition-colors"
     >
       <div class="flex min-w-0 items-center gap-3">
-        <svg class="h-4 w-4 shrink-0 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+        <svg class="h-4 w-4 shrink-0 text-muted group-hover:text-rose-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
-        <span class="min-w-0 truncate font-medium">Saved Favorites</span>
+        <span class="min-w-0 truncate">Saved Favorites</span>
       </div>
 
       <span class="favorites-count-badge hidden px-1.5 py-0.5 rounded-full bg-rose-500/15 text-rose-400 text-[10px] font-bold border border-rose-500/30 leading-none">0</span>
-
     </a>
 
     {/* Notifications link */}
     <a
       href="/notifications"
-      class="flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-body-sm text-slate-900 hover:bg-surface-raised dark:text-slate-100"
+      class="group flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-body-sm font-medium text-heading hover:text-accent hover:bg-surface-raised transition-colors"
     >
       <div class="flex min-w-0 items-center gap-3">
         <svg
-          class="h-4 w-4 shrink-0 text-muted"
+          class="h-4 w-4 shrink-0 text-muted group-hover:text-accent transition-colors"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -148,23 +146,79 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
             d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
           ></path>
         </svg>
-        <span class="min-w-0 truncate font-medium">Notifications</span>
+        <span class="min-w-0 truncate">Notifications</span>
       </div>
       <span
-        class="notification-badge-count hidden px-1.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/30 leading-none"
+        class="notification-badge-count hidden px-1.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30 text-[10px] font-bold border leading-none"
         >0</span
       >
     </a>
+
+    {/* Preferences: Theme & Language Switcher */}
+    <div class="my-1.5 p-2 rounded-xl bg-surface-raised border border-border/60 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="flex items-center gap-2 text-xs font-medium text-muted">
+          <svg class="size-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <span>Theme</span>
+        </span>
+        <button
+          type="button"
+          class="theme-toggle-btn relative w-12 h-6.5 bg-canvas border border-border/80 hover:border-accent/40 rounded-full p-0.5 flex items-center cursor-pointer transition-all duration-150 focus:outline-none shrink-0"
+          title="Toggle Dark and Light Mode"
+          aria-label="Toggle Dark and Light Mode"
+        >
+          <span class="theme-toggle-knob w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px] shadow-xs transition-transform duration-200 translate-x-0.5">
+            <span class="light-icon text-[10px] select-none leading-none">☀️</span>
+            <span class="dark-icon text-[10px] select-none leading-none hidden">🌙</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between pt-1 border-t border-border/50">
+        <span class="flex items-center gap-2 text-xs font-medium text-muted">
+          <svg class="size-3.5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span>Language</span>
+        </span>
+        <div
+          class="inline-flex items-center p-0.5 bg-canvas border border-border/80 rounded-lg select-none shrink-0"
+          role="group"
+          aria-label="Language selection"
+        >
+          <button
+            type="button"
+            data-app-lang="hinglish"
+            class="app-lang-btn px-2 py-0.5 rounded-md text-[10px] font-bold cursor-pointer transition-colors"
+            title="Switch to Hinglish"
+            aria-pressed="true"
+          >
+            HI
+          </button>
+          <button
+            type="button"
+            data-app-lang="en"
+            class="app-lang-btn px-2 py-0.5 rounded-md text-[10px] font-semibold cursor-pointer transition-colors"
+            title="Switch to English"
+            aria-pressed="false"
+          >
+            EN
+          </button>
+        </div>
+      </div>
+    </div>
 
     {/* Auth Action: Sign in or Logout */}
     <div class="border-t border-border/60 mt-1 pt-1">
       <button
         type="button"
         data-auth-action="logout"
-        class="auth-logout-btn hidden w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-body-sm text-red-500 hover:bg-red-500/10 [&:not(.hidden)]:flex"
+        class="auth-logout-btn group hidden w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-body-sm font-medium text-rose-500 hover:bg-rose-500/10 transition-colors [&:not(.hidden)]:flex cursor-pointer"
       >
         <svg
-          class="w-4 h-4 text-red-500 shrink-0"
+          class="w-4 h-4 text-rose-500 shrink-0 group-hover:-translate-x-0.5 transition-transform"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -177,17 +231,17 @@ const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = 
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
           ></path>
         </svg>
-        <span class="font-medium">Logout</span>
+        <span>Logout</span>
       </button>
 
       <a
-        href="/login"
+        href={loginHref}
         data-login-link
         data-auth-action="login"
-        class="auth-login-link flex w-full items-center gap-3 px-3 py-2 rounded-xl text-body-sm text-accent hover:bg-accent/10 transition font-medium"
+        class="auth-login-link group flex w-full items-center gap-3 px-3 py-2 rounded-xl text-body-sm text-accent hover:bg-accent/10 transition font-medium"
       >
         <svg
-          class="w-4 h-4 text-accent shrink-0"
+          class="w-4 h-4 text-accent shrink-0 group-hover:translate-x-0.5 transition-transform"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

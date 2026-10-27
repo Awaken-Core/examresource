@@ -403,7 +403,7 @@ const { slug, language } = Astro.props;
             if (response.status === 409) {
               showStatus('You have already used your guest comment. Please sign in to comment again.', 'error');
               var login = document.createElement('a');
-              login.href = '/login';
+              login.href = '/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
               login.className = 'ml-2 font-bold underline underline-offset-2 text-white hover:text-accent';
               login.textContent = 'Sign in';
               status.append(login);

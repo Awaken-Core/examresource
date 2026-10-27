@@ -3,6 +3,7 @@
 interface Props {
   id?: string;
   prefix?: string;
+  isEditorialTheme?: boolean;
 }
 
 const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
@@ -18,16 +19,16 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
       : prefix === 'mobile'
       ? 'left-0 bottom-full mb-2 w-full max-w-[280px]'
       : 'left-[calc(100%+14px)] bottom-0 w-84 sm:w-90'
-  } bg-surface border border-border rounded-2xl shadow-elevated p-4 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none`}
+  } bg-surface border border-border text-heading rounded-2xl shadow-elevated p-4 z-[9999] transition-all duration-150 transform scale-95 opacity-0 select-none`}
   role="dialog"
   aria-label="Notifications"
 >
   <div class="flex items-center justify-between pb-3 border-b border-border/50">
-    <h3 class="text-sm font-semibold text-white tracking-tight">Notifications</h3>
+    <h3 class="text-sm font-semibold text-heading tracking-tight">Notifications</h3>
     <button 
       type="button" 
       data-close-notifications
-      class="text-muted hover:text-white p-1 rounded-lg hover:bg-surface-raised transition cursor-pointer"
+      class="text-muted hover:text-heading hover:bg-surface-raised p-1 rounded-lg transition cursor-pointer"
       title="Close notifications"
       aria-label="Close notifications"
     >
@@ -40,14 +41,14 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
   <div class="flex items-center justify-between py-2.5 text-xs">
     <div class="flex items-center gap-1.5 font-medium text-muted">
       <span>New</span>
-      <span class="notification-badge-count px-1.5 py-0.5 rounded-full bg-surface-raised text-[10px] font-bold text-white border border-border/60 leading-none">
+      <span class="notification-badge-count px-1.5 py-0.5 rounded-full bg-surface-raised text-heading border border-border/60 text-[10px] font-bold leading-none">
         0
       </span>
     </div>
     <button 
       type="button" 
       data-mark-all-read
-      class="text-caption-xs text-muted hover:text-white hover:underline transition cursor-pointer font-medium"
+      class="text-caption-xs text-muted hover:text-heading hover:underline transition cursor-pointer font-medium"
     >
       Mark all as read
     </button>
@@ -58,12 +59,12 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
     <div class="flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 min-w-0">
         <span class="text-sm shrink-0">🔔</span>
-        <span class="text-[11px] text-white/90 font-medium leading-tight">Enable device alerts for new exams & results</span>
+        <span class="text-[11px] text-heading font-medium leading-tight">Enable device alerts for new exams & results</span>
       </div>
       <button 
         type="button" 
         data-enable-browser-notifications
-        class="px-2 py-1 rounded bg-accent text-on-accent text-[10px] font-bold hover:brightness-110 transition shrink-0 cursor-pointer"
+        class="px-2 py-1 rounded bg-accent hover:brightness-110 text-white text-[10px] font-bold transition shrink-0 cursor-pointer"
       >
         Enable
       </button>

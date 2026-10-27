@@ -134,7 +134,7 @@ export function TestInstructions({ testId, initialData }: Props) {
   if (isLoading) {
     return (
       <div className="py-20 text-center space-y-3">
-        <div className="inline-block w-8 h-8 border-3 border-[#2563EB]/20 border-t-[#2563EB] rounded-full animate-spin"></div>
+        <div className="inline-block w-8 h-8 border-3 border-accent/20 border-t-accent rounded-full animate-spin"></div>
         <p className="text-xs text-muted">Loading examination guidelines and test parameters...</p>
       </div>
     );
@@ -161,7 +161,7 @@ export function TestInstructions({ testId, initialData }: Props) {
         </p>
         <a
           href="/test-series"
-          className="inline-block text-xs font-semibold text-[#2563EB] hover:underline"
+          className="inline-block text-xs font-semibold text-accent hover:underline"
         >
           &larr; Back to Test Series
         </a>
@@ -300,7 +300,7 @@ export function TestInstructions({ testId, initialData }: Props) {
         ) : (
           <div className="space-y-2.5 text-xs text-muted leading-relaxed">
             <div className="flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+              <span className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                 1
               </span>
               <p>
@@ -309,7 +309,7 @@ export function TestInstructions({ testId, initialData }: Props) {
               </p>
             </div>
             <div className="flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+              <span className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                 2
               </span>
               <p>
@@ -318,7 +318,7 @@ export function TestInstructions({ testId, initialData }: Props) {
               </p>
             </div>
             <div className="flex items-start gap-2.5">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+              <span className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                 3
               </span>
               <p>Question palette states:</p>
@@ -346,7 +346,7 @@ export function TestInstructions({ testId, initialData }: Props) {
               </div>
             </div>
             <div className="flex items-start gap-2.5 pt-1">
-              <span className="w-5 h-5 rounded-full bg-[#2563EB]/20 text-[#2563EB] dark:text-[#60A5FA] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
+              <span className="w-5 h-5 rounded-full bg-accent/15 text-accent flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">
                 4
               </span>
               <p>
@@ -376,7 +376,7 @@ export function TestInstructions({ testId, initialData }: Props) {
             type="checkbox"
             checked={confirmed}
             onChange={(e) => setConfirmed(e.target.checked)}
-            className="w-4 h-4 mt-0.5 rounded border-border text-[#2563EB] focus:ring-[#2563EB]"
+            className="w-4 h-4 mt-0.5 rounded border-border text-accent focus:ring-accent"
           />
           <span className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
             I have read and understood all the examination instructions above. I declare that I will
@@ -399,7 +399,7 @@ export function TestInstructions({ testId, initialData }: Props) {
             onClick={handleStartTest}
             className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition cursor-pointer ${
               confirmed && !starting
-                ? 'bg-[#2563EB] text-white hover:bg-blue-600 shadow-2xs active:scale-[0.98]'
+                ? 'bg-accent text-on-accent hover:opacity-90 shadow-2xs active:scale-[0.98]'
                 : 'bg-surface-raised border border-border text-muted/50 cursor-not-allowed'
             }`}
           >

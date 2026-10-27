@@ -16,19 +16,19 @@ export function BrandMark({ size = 32, className = '' }: { size?: number; classN
     >
       <defs>
         <linearGradient id="brand-mark-main" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0a58ca" />
-          <stop offset="55%" stopColor="#053888" />
-          <stop offset="100%" stopColor="#032054" />
+          <stop offset="0%" stopColor="#FF7A00" />
+          <stop offset="55%" stopColor="#FF4D00" />
+          <stop offset="100%" stopColor="#B83200" />
         </linearGradient>
         <linearGradient id="brand-mark-swoosh" x1="0%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stopColor="#38b6ff" />
-          <stop offset="50%" stopColor="#0077ff" />
-          <stop offset="100%" stopColor="#053888" />
+          <stop offset="0%" stopColor="#FFB000" />
+          <stop offset="50%" stopColor="#FF6A00" />
+          <stop offset="100%" stopColor="#D63A00" />
         </linearGradient>
       </defs>
       <g transform="translate(130, 145)">
         <polygon points="0,-125 -95,-82 0,-42 95,-82" fill="url(#brand-mark-main)" />
-        <path d="M -52,-60 L 0,-38 L 52,-60 L 42,-42 C 20,-52 -20,-52 -42,-42 Z" fill="#042a6b" />
+        <path d="M -52,-60 L 0,-38 L 52,-60 L 42,-42 C 20,-52 -20,-52 -42,-42 Z" fill="#8F2800" />
         <path d="M -62,-48 C -98,-10 -92,58 -45,88 C -75,52 -78,-8 -44,-40 Z" fill="url(#brand-mark-swoosh)" />
         <path d="M 55,-32 C 38,-50 12,-58 -14,-53 C -54,-46 -80,-8 -73,32 C -66,72 -28,99 12,92 C 52,85 82,52 84,8 L 84,-4 L 8,-4 L 8,24 L 50,24 C 44,47 23,63 -2,61 C -29,59 -48,36 -46,8 C -44,-20 -20,-38 8,-34 C 22,-32 34,-25 42,-15 L 63,-35 Z" fill="url(#brand-mark-main)" />
         <path d="M -18,-52 C -55,-42 -76,-4 -66,35 C -58,64 -34,84 -5,90 C -38,76 -54,44 -50,8 C -46,-24 -22,-44 6,-47 Z" fill="url(#brand-mark-swoosh)" opacity="0.85" />

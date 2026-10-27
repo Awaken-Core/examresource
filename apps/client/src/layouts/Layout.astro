@@ -3,7 +3,6 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar.astro';
 import SearchModal from '../components/SearchModal.astro';
-import BrandLogo from '../components/BrandLogo.astro';
 import { whatsappChannel, telegramChannel, siteUrl, siteDomain, siteName } from '../data/site';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
@@ -21,6 +20,7 @@ interface Props {
   jsonLd?: object;
   hideHeaderFooter?: boolean;
   hideHeader?: boolean;
+  hideFooter?: boolean;
   hideDesktopSidebar?: boolean;
   alternateLinks?: { hreflang: string; href: string }[];
   noindex?: boolean;
@@ -36,6 +36,11 @@ const twitterHandle = `@${siteName.toLowerCase().replace(/\s+/g, '')}`;
 const defaultAvatarInitials = siteName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() || 'GP';
 const currentPath = Astro.url.pathname;
 const cleanPath = currentPath === '/' ? '' : currentPath.replace(/\/$/, '');
+const currentSearch = Astro.url.search || '';
+const isAuthPage = currentPath === '/login' || currentPath === '/signup' || currentPath.startsWith('/auth/');
+const loginHref = (!isAuthPage && cleanPath)
+  ? `/login?redirect=${encodeURIComponent(`${cleanPath}${currentSearch}`)}`
+  : '/login';
 
 const {
   title = `${siteDomain} - Govt Jobs, Admissions & Results`,
@@ -48,6 +53,7 @@ const {
   jsonLd,
   hideHeaderFooter = false,
   hideHeader = false,
+  hideFooter = false,
   hideDesktopSidebar = false,
   alternateLinks = [],
   noindex = false,
@@ -260,9 +266,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     {/* End Google Tag Manager (noscript) */}
-    {/* Body Row: Sidebar on Left + Main Area (Header + Content + Footer) on Right */}
+    {/* Layout Row: Desktop Sidebar (Full Height 100vh) on Left + Main Area (Header + Content + Footer) on Right */}
     <div class="flex-1 flex min-h-screen relative">
-      {/* Desktop Left Navigation Sidebar (Full height on left) */}
+      {/* Desktop Left Navigation Sidebar (full height 100vh, hidden on mobile/tablet) */}
       {!hideHeaderFooter && !hideDesktopSidebar && (
         <div 
           id="desktop-sidebar-wrapper" 
@@ -275,12 +281,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
       {/* Main Area: Header + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
-        {!hideHeaderFooter && !hideHeader && <Header hideDesktopSidebar={hideDesktopSidebar} isEditorialTheme={isEditorialTheme} />}
-
+        {!hideHeaderFooter && !hideHeader && (
+          <Header hideDesktopSidebar={hideDesktopSidebar} isEditorialTheme={isEditorialTheme} />
+        )}
         <main id="main-content" class="flex-grow" transition:animate="fade">
           <slot />
         </main>
-        {!hideHeaderFooter && <Footer />}
+        {!hideHeaderFooter && !hideFooter && <Footer />}
       </div>
     </div>
 
@@ -289,10 +296,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <div 
       id="mobile-sidebar-backdrop" 
       transition:persist="mobile-sidebar-backdrop"
-      class="fixed inset-0 z-[9998] hidden"
+      class="fixed top-14 sm:top-16 inset-x-0 bottom-0 z-[9998] hidden"
       aria-hidden="true"
     >
-      {/* Dark translucent overlay */}
+      {/* Dark translucent overlay with backdrop blur */}
       <div 
         id="mobile-backdrop-overlay"
         class="absolute inset-0 bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300"
@@ -303,26 +310,31 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <div 
       id="mobile-sidebar-container" 
       transition:persist="mobile-sidebar-container"
-      class="fixed inset-y-0 left-0 z-[9999] w-72 max-w-[85vw] bg-canvas border-r border-border shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+      class={`fixed top-14 sm:top-16 bottom-0 left-0 z-[9999] w-72 max-w-[85vw] ${
+        isEditorialTheme 
+          ? 'bg-editorial-bg border-r border-editorial-border text-editorial-text' 
+          : 'bg-canvas border-r border-border text-heading'
+      } shadow-2xl flex flex-col transform -translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform`}
       aria-label="Navigation menu"
       role="dialog"
       aria-modal="true"
     >
-      {/* ── Drawer Header ── */}
-      <div class="flex items-center justify-between h-14 px-4 border-b border-border/60 shrink-0 bg-canvas">
-        <a href="/" class="flex items-center gap-2 group" aria-label={`${siteDomain} home`}>
-          <BrandLogo size={32} class="group-hover:scale-105 transition-transform shrink-0" />
-          <span class="font-bold text-sm tracking-tight text-white">
-            {domainPrefix}<span class="text-accent">{domainSuffix}</span>
-          </span>
-        </a>
+      {/* ── Drawer Section Title ── */}
+      <div class={`flex items-center justify-between h-10 px-4 border-b ${
+        isEditorialTheme ? 'border-editorial-border bg-editorial-bg/50' : 'border-border/60 bg-canvas/50'
+      } shrink-0`}>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-muted/70 font-['Geist']">Menu</span>
         <button 
           data-mobile-sidebar-close
           type="button"
-          class="w-8 h-8 flex items-center justify-center rounded-lg text-muted hover:text-white hover:bg-surface-raised border border-border/40 hover:border-border transition-all cursor-pointer"
+          class={`size-7 flex items-center justify-center rounded-lg ${
+            isEditorialTheme 
+              ? 'text-editorial-muted hover:text-editorial-heading hover:bg-editorial-accent-soft' 
+              : 'text-muted hover:text-heading hover:bg-surface-raised'
+          } transition-all cursor-pointer`}
           aria-label="Close menu"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
@@ -457,7 +469,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <div class="p-3 border-t border-border/60 shrink-0">
         {/* Logged Out */}
         <div class="sidebar-auth-logged-out block">
-          <a href="/login" data-login-link data-mobile-sidebar-close
+          <a href={loginHref} data-login-link data-mobile-sidebar-close
             class="flex items-center justify-center gap-2.5 w-full py-3 px-4 rounded-xl bg-accent hover:bg-accent/90 text-white font-semibold text-sm transition shadow-sm"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -674,13 +686,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         function updateHamburgerIcon(isOpen: boolean) {
           const btn = document.getElementById('mobile-drawer-toggle-btn');
           if (!btn) return;
-          const svg = btn.querySelector('svg');
-          if (!svg) return;
-          if (isOpen) {
-            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />';
-          } else {
-            svg.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
-          }
+          btn.classList.toggle('is-active', isOpen);
+          btn.setAttribute('aria-expanded', String(isOpen));
+          btn.setAttribute('title', isOpen ? 'Close Navigation Menu' : 'Open Navigation Menu');
+          btn.setAttribute('aria-label', isOpen ? 'Close Navigation Menu' : 'Open Navigation Menu');
         }
 
         function openMobileDrawer() {
@@ -725,15 +734,24 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         // --- Desktop Sidebar Collapse Management (Matches Image 1) ---
 
-        function setSidebarCollapsed(isCollapsed: boolean) {
+        let sidebarCollapseTimer: number | null = null;
+
+        function setSidebarCollapsed(isCollapsed: boolean, immediate = false) {
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
           if (!wrapper) return;
           const isCurrentlyCollapsed = wrapper.classList.contains('collapsed');
-          if (isCurrentlyCollapsed === isCollapsed) return; // Early return prevents forced layout reflow
+          if (isCurrentlyCollapsed === isCollapsed && !immediate) return;
 
+          const headerExpandContainer = document.getElementById('header-sidebar-expand-container');
           const headerBrand = document.getElementById('header-brand-collapsed');
           const tooltipText = document.getElementById('sidebar-toggle-tooltip-text');
           wrapper.classList.remove('hover-peek');
+
+          if (sidebarCollapseTimer) {
+            clearTimeout(sidebarCollapseTimer);
+            sidebarCollapseTimer = null;
+          }
+
           if (isCollapsed) {
             wrapper.classList.add('collapsed');
             if (headerBrand) {
@@ -741,8 +759,28 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               headerBrand.classList.add('flex');
             }
             if (tooltipText) tooltipText.textContent = 'Expand sidebar';
+
+            // When sidebar closes, wait until the 300ms animation settles before showing the header sidebar open icon (Desktop only)
+            if (immediate) {
+              if (window.innerWidth >= 1024 && headerExpandContainer) {
+                headerExpandContainer.classList.remove('hidden');
+                headerExpandContainer.classList.add('flex');
+              }
+            } else {
+              sidebarCollapseTimer = window.setTimeout(() => {
+                if (window.innerWidth >= 1024 && headerExpandContainer) {
+                  headerExpandContainer.classList.remove('hidden');
+                  headerExpandContainer.classList.add('flex');
+                }
+              }, 300);
+            }
           } else {
             wrapper.classList.remove('collapsed');
+            // When expanding, immediately hide the header sidebar open icon so it is never visible twice
+            if (headerExpandContainer) {
+              headerExpandContainer.classList.add('hidden');
+              headerExpandContainer.classList.remove('flex');
+            }
             if (headerBrand) {
               headerBrand.classList.add('hidden');
               headerBrand.classList.remove('flex');
@@ -754,13 +792,19 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         function toggleDesktopSidebar() {
           if (window.innerWidth < 1024) {
-            openMobileDrawer();
-          } else {
-            const wrapper = document.getElementById('desktop-sidebar-wrapper');
-            wrapper?.classList.remove('hover-peek');
-            const isCurrentlyCollapsed = wrapper?.classList.contains('collapsed') ?? false;
-            setSidebarCollapsed(!isCurrentlyCollapsed);
+            const container = document.getElementById('mobile-sidebar-container');
+            const isDrawerOpen = container?.classList.contains('translate-x-0') ?? false;
+            if (isDrawerOpen) {
+              closeMobileDrawer();
+            } else {
+              openMobileDrawer();
+            }
+            return;
           }
+          const wrapper = document.getElementById('desktop-sidebar-wrapper');
+          wrapper?.classList.remove('hover-peek');
+          const isCurrentlyCollapsed = wrapper?.classList.contains('collapsed') ?? false;
+          setSidebarCollapsed(!isCurrentlyCollapsed);
         }
 
 
@@ -991,7 +1035,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <div class="flex items-center gap-3 min-w-0">
                 <span class="text-lg shrink-0">${item.icon}</span>
                 <div class="truncate">
-                  <p class="text-body-sm font-semibold text-white group-hover:text-accent transition truncate">${item.title}</p>
+                  <p class="text-body-sm font-semibold text-heading group-hover:text-accent transition truncate">${item.title}</p>
                   <p class="text-[11px] text-muted truncate">${item.tag} • ${siteDomain}</p>
                 </div>
               </div>
@@ -1430,6 +1474,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         async function syncAuthProfile() {
           if (window.location.search.includes('login=success')) {
             try { localStorage.setItem('auth_active', '1'); } catch (e) {}
+            showGlobalToast('Welcome back! Successfully signed in.');
+            try {
+              const url = new URL(window.location.href);
+              url.searchParams.delete('login');
+              window.history.replaceState({}, document.title, url.pathname + (url.search || '') + (url.hash || ''));
+            } catch (e) {}
           }
 
           const apiUrl = API_URL;
@@ -1665,6 +1715,24 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
         }
 
+        function syncLoginLinks() {
+          const path = window.location.pathname;
+          if (path === '/login' || path === '/signup' || path.startsWith('/auth/') || path === '/logout') return;
+          const here = `${path}${window.location.search}${window.location.hash}`;
+          if (!here || here === '/') {
+            document.querySelectorAll<HTMLAnchorElement>('a[data-login-link], a.auth-login-link, a#header-login-btn').forEach(link => {
+              if (link.getAttribute('href')?.startsWith('/login')) {
+                link.href = '/login';
+              }
+            });
+            return;
+          }
+          const targetHref = `/login?redirect=${encodeURIComponent(here)}`;
+          document.querySelectorAll<HTMLAnchorElement>('a[data-login-link], a.auth-login-link, a#header-login-btn').forEach(link => {
+            link.href = targetHref;
+          });
+        }
+
         function reinitPageElements() {
           // Initialize Lenis smooth scroll
           initLenis({ headerOffset: -70 });
@@ -1672,12 +1740,15 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           // Instantly show logged-in shell from cache — zero network, zero delay
           applyOptimisticAuth();
 
+          // Sync login buttons with current return URL
+          syncLoginLinks();
+
           // Sync sidebar active links
           updateSidebarActiveLinks();
 
           // Restore Collapsed State
           const savedCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
-          setSidebarCollapsed(savedCollapsed);
+          setSidebarCollapsed(savedCollapsed, true);
 
           // Sync theme UI toggle knobs (Default is LIGHT)
           const initialIsLight = !document.documentElement.classList.contains('theme-dark');
@@ -1858,12 +1929,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           document.addEventListener('click', (event) => {
             const target = event.target;
             if (!(target instanceof Element)) return;
-            const link = target.closest('a[data-login-link], a.auth-login-link, a#header-login-btn');
+            const link = target.closest('a[data-login-link], a.auth-login-link, a#header-login-btn, a[href^="/login"]');
             if (!(link instanceof HTMLAnchorElement)) return;
             const path = window.location.pathname;
-            if (path !== '/test-series' && !path.startsWith('/test-series/')) return;
-            const here = `${path}${window.location.search}`;
-            link.href = `/login?redirect=${encodeURIComponent(here)}`;
+            if (path === '/login' || path === '/signup' || path.startsWith('/auth/') || path === '/logout') return;
+            const currentHref = link.getAttribute('href') || '';
+            if (currentHref.includes('redirect=') || currentHref.includes('returnTo=')) return;
+            const here = `${path}${window.location.search}${window.location.hash}`;
+            if (here && here !== '/') {
+              link.href = `/login?redirect=${encodeURIComponent(here)}`;
+            }
           }, true);
 
           // Central Click Event Delegation
@@ -1893,6 +1968,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
           document.addEventListener('astro:before-swap', () => {
             destroyLenis();
+            closeMobileDrawer();
           });
 
           // Dispatch astro:page-load so any components listening to it continue working seamlessly

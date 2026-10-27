@@ -330,7 +330,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
 
   <div
     id="overview-top"
-    class="blog-reading-view min-h-screen bg-canvas text-white"
+    class="blog-reading-view min-h-screen bg-canvas text-heading"
     data-article-lang={blogLanguageToAppLang(currentLanguage)}
   >
     <article
@@ -346,7 +346,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
           <span class="text-muted/40 shrink-0">/</span>
           <a href={`/category/${article.subjectSlug}`} target="_blank" rel="noopener" data-astro-prefetch="false" class="hover:text-accent shrink-0">{article.subjectTitle}</a>
           <span class="text-muted/40 shrink-0">/</span>
-          <span class="truncate font-medium text-white max-w-[170px] sm:max-w-xs md:max-w-none" data-article-crumb-title>{article.title}</span>
+          <span class="truncate font-medium text-heading max-w-[170px] sm:max-w-xs md:max-w-none" data-article-crumb-title>{article.title}</span>
         </nav>
         <div class="mb-3 sm:mb-5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 text-xs text-muted">
           <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0 text-[11px] sm:text-xs">
@@ -365,7 +365,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
               data-favorite-title={article.title}
               data-favorite-category={article.category}
               data-favorite-url={canonicalUrl}
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-red-500/50 text-muted hover:text-white transition-all text-xs font-medium cursor-pointer shadow-2xs group shrink-0"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-red-500/50 text-muted hover:text-heading transition-all text-xs font-medium cursor-pointer shadow-2xs group shrink-0"
               title="Add article to favorites"
               aria-label="Add article to favorites"
             >
@@ -380,7 +380,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
               data-share-btn
               data-share-url={canonicalUrl}
               data-share-title={article.title}
-              class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-accent/50 text-muted hover:text-white transition-all text-xs font-medium cursor-pointer shadow-2xs group shrink-0"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 rounded-lg bg-surface-raised/50 hover:bg-surface-raised border border-border/70 hover:border-accent/50 text-muted hover:text-heading transition-all text-xs font-medium cursor-pointer shadow-2xs group shrink-0"
               title="Share this article"
               aria-label="Share this article"
             >
@@ -391,7 +391,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
             </button>
           </div>
         </div>
-        <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-white leading-snug sm:leading-tight" data-article-title itemprop="headline">{article.title}</h1>
+        <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-heading leading-snug sm:leading-tight" data-article-title itemprop="headline">{article.title}</h1>
         <p
           class="mt-1.5 sm:mt-2.5 max-w-4xl text-xs sm:text-sm md:text-base leading-relaxed text-muted"
           data-article-description
@@ -406,7 +406,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
           {recentPosts.length > 0 && (
             <div class="rounded-xl border border-border bg-surface p-4 flex flex-col shadow-xs w-full">
               <div class="flex items-center justify-between pb-2.5 border-b border-border/60 mb-2">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-heading flex items-center gap-2">
                   <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                   </svg>
@@ -468,7 +468,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
               </svg>
             </div>
             <div>
-              <p class="text-xs sm:text-sm font-semibold text-white">Share this article</p>
+              <p class="text-xs sm:text-sm font-semibold text-heading">Share this article</p>
               <p class="text-[11px] text-muted">Spread the update with fellow aspirants</p>
             </div>
           </div>
@@ -526,7 +526,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
                     </svg>
                   </div>
                   <div class="min-w-0">
-                    <h2 class="text-sm sm:text-base font-bold text-white tracking-tight leading-tight">Recent Posts</h2>
+                    <h2 class="text-sm sm:text-base font-bold text-heading tracking-tight leading-tight">Recent Posts</h2>
                     <p class="text-[11px] text-muted truncate">Latest notifications and announcements</p>
                   </div>
                 </div>

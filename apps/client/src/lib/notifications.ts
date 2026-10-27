@@ -185,19 +185,19 @@ function buildCard(item: AppNotification) {
   content.className = 'flex-1 min-w-0';
 
   const message = document.createElement('p');
-  message.className = 'text-xs text-white/90 leading-relaxed font-normal';
+  message.className = 'text-xs text-heading leading-relaxed font-normal';
   const welcome = item.kind === 'welcome' ? /^Hi (.+?), ([\s\S]+)$/.exec(item.body) : null;
   if (welcome) {
     message.append('Hi ');
     const name = document.createElement('span');
-    name.className = 'notification-user-name font-semibold text-white';
+    name.className = 'notification-user-name font-semibold text-heading';
     name.textContent = welcome[1] ?? '';
     message.append(name);
     message.append(`, ${welcome[2] ?? ''}`);
   } else {
     if (item.kind !== 'welcome' && item.title) {
       const label = document.createElement('span');
-      label.className = 'block font-semibold text-white mb-0.5';
+      label.className = 'block font-semibold text-heading mb-0.5';
       label.textContent = item.title;
       message.append(label);
     }
@@ -230,7 +230,7 @@ function buildCard(item: AppNotification) {
   dismissBtn.dataset.dismissNotification = item.id;
   dismissBtn.title = 'Mark as read and dismiss';
   dismissBtn.className =
-    'absolute top-2.5 right-2.5 p-1 rounded-md text-muted hover:text-white hover:bg-surface-raised border border-transparent hover:border-border/40 transition opacity-70 group-hover/item:opacity-100 cursor-pointer';
+    'absolute top-2.5 right-2.5 p-1 rounded-md text-muted hover:text-heading hover:bg-surface-raised border border-transparent hover:border-border/40 transition opacity-70 group-hover/item:opacity-100 cursor-pointer';
   dismissBtn.innerHTML = `
     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />

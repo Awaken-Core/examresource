@@ -104,11 +104,14 @@ export class AuthController {
       sameSite: 'lax',
     });
     const staff = result.user.role === 'admin' || result.user.role === 'editor';
-    const next =
-      returnTo && (staff || this.isTestSeriesReturn(returnTo))
-        ? returnTo
-        : '/?login=success';
-    return res.redirect(new URL(next, env.CLIENT_URL).toString());
+    const isStaffOnly = returnTo
+      ? this.isStaffPath(returnTo.split(/[?#]/)[0])
+      : false;
+    const canAccessReturn = returnTo && (!isStaffOnly || staff);
+    const targetPath = canAccessReturn ? returnTo : '/';
+    const redirectUrl = new URL(targetPath, env.CLIENT_URL);
+    redirectUrl.searchParams.set('login', 'success');
+    return res.redirect(redirectUrl.toString());
   }
 
   @Post('auth/logout')
@@ -227,24 +230,42 @@ export class AuthController {
   private returnCookieName() {
     return 'desk_return';
   }
-  /** Staff paths and test-series pages. Rejects protocol-relative and off-site values. */
-  private safeDeskReturn(value: string | undefined) {
-    if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\') || value.includes('://')) {
+  /**
+   * Safe local return path. Allows content pages (/blogs, /test-series, etc.) and staff desk paths.
+   * Strictly rejects protocol-relative, off-site, and auth loop paths.
+   */
+  safeDeskReturn(value: string | undefined): string | null {
+    if (
+      !value ||
+      !value.startsWith('/') ||
+      value.startsWith('//') ||
+      value.includes('\\') ||
+      value.includes('://')
+    ) {
       return null;
     }
     const path = value.split(/[?#]/)[0];
-    const allowed =
+    if (
+      path === '/login' ||
+      path.startsWith('/login/') ||
+      path === '/signup' ||
+      path.startsWith('/signup/') ||
+      path === '/logout' ||
+      path.startsWith('/auth/') ||
+      path.startsWith('/api/')
+    ) {
+      return null;
+    }
+    return value.slice(0, 240);
+  }
+
+  isStaffPath(path: string): boolean {
+    return (
       path === '/administrator' ||
       path.startsWith('/administrator/') ||
       path === '/editor' ||
-      path.startsWith('/editor/') ||
-      this.isTestSeriesReturn(path);
-    return allowed ? value.slice(0, 240) : null;
-  }
-
-  private isTestSeriesReturn(value: string) {
-    const path = value.split(/[?#]/)[0];
-    return path === '/test-series' || path.startsWith('/test-series/');
+      path.startsWith('/editor/')
+    );
   }
   private googleStateCookieName() {
     return this.isHostedEnvironment()

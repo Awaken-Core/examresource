@@ -86,6 +86,11 @@ export class PaymentService {
       amount: order.amount,
       currency: order.currency,
       keyId,
+      prefill: {
+        name: user.name,
+        email: user.email,
+        contact: user.phone || undefined,
+      },
     };
   }
 

@@ -96,8 +96,8 @@ export function TestSeriesPassCard({
 
   const buttonClass =
     variant === 'instructions'
-      ? 'px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-[#2563EB] text-white hover:bg-blue-600 shadow-2xs active:scale-[0.98]'
-      : 'w-full inline-flex items-center justify-center py-2 px-4 rounded-lg text-xs font-bold bg-accent text-white hover:opacity-90 transition duration-150';
+      ? 'px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-accent text-on-accent hover:opacity-90 shadow-2xs active:scale-[0.98]'
+      : 'w-full inline-flex items-center justify-center py-2 px-4 rounded-lg text-xs font-bold bg-accent text-on-accent hover:opacity-90 transition duration-150';
 
   const expiryLabel = expiresAt
     ? new Date(expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })

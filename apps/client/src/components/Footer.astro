@@ -30,7 +30,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
               href={whatsappChannel}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/35 text-[11px] font-semibold text-white transition-all duration-150 cursor-pointer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/35 text-[11px] font-semibold text-heading transition-all duration-150 cursor-pointer"
               title="Join WhatsApp Channel"
             >
               <svg class="w-3.5 h-3.5 text-[#25D366] shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -44,7 +44,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
               href={telegramChannel}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/35 text-[11px] font-semibold text-white transition-all duration-150 cursor-pointer"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/35 text-[11px] font-semibold text-heading transition-all duration-150 cursor-pointer"
               title="Join Telegram Channel"
             >
               <svg class="w-3.5 h-3.5 text-[#229ED9] shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -70,7 +70,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
             <li>
               <a
                 href={href}
-                class="flex items-center gap-1.5 text-[13px] text-muted hover:text-white transition-colors duration-150 min-h-[32px]"
+                class="flex items-center gap-1.5 text-[13px] text-muted hover:text-heading transition-colors duration-150 min-h-[32px]"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -98,7 +98,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
             <li>
               <a
                 href={href}
-                class="flex items-center gap-1.5 text-[13px] text-muted hover:text-white transition-colors duration-150 min-h-[32px]"
+                class="flex items-center gap-1.5 text-[13px] text-muted hover:text-heading transition-colors duration-150 min-h-[32px]"
                 rel="noopener noreferrer"
                 target={href.startsWith('http') ? '_blank' : undefined}
               >
@@ -129,12 +129,12 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
         © {new Date().getFullYear()} {siteDomain}. All rights reserved.
       </p>
       <nav class="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Footer links">
-        <a href="/privacy-policy" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Privacy Policy</a>
-        <a href="/terms-of-service" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Terms</a>
-        <a href="/refund-policy" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Refund Policy</a>
-        <a href="/pricing" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Pricing</a>
-        <a href="/contact-us" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Contact</a>
-        <a href="/sitemap" class="text-[12px] text-muted/70 hover:text-white transition-colors duration-150 min-h-[44px] flex items-center">Sitemap</a>
+        <a href="/privacy-policy" class="text-[12px] text-muted/70 hover:text-heading transition-colors duration-150 min-h-[44px] flex items-center">Privacy Policy</a>
+        <a href="/terms-of-service" class="text-[12px] text-muted/70 hover:text-heading transition-colors duration-150 min-h-[44px] flex items-center">Terms</a>
+        <a href="/refund-policy" class="text-[12px] text-muted/70 hover:text-heading transition-colors duration-150 min-h-[44px] flex items-center">Refund Policy</a>
+        <a href="/pricing" class="text-[12px] text-muted/70 hover:text-heading transition-colors duration-150 min-h-[44px] flex items-center">Pricing</a>
+        <a href="/contact-us" class="text-[12px] text-muted/70 hover:text-heading transition-colors duration-150 min-h-[44px] flex items-center">Contact</a>
+        <a href="/sitemap" class="text-[12px] text-muted/70 hover:text-heading transition-colors duration-150 min-h-[44px] flex items-center">Sitemap</a>
       </nav>
     </div>
   </div>

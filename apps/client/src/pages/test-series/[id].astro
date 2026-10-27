@@ -103,15 +103,15 @@ const jsonLd = seriesTitle
   <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-5 sm:py-7 space-y-5">
     {/* Breadcrumbs */}
     <nav class="flex items-center gap-1.5 text-xs text-muted" aria-label="Breadcrumb">
-      <a href="/" data-astro-prefetch="hover" class="hover:text-white transition">Home</a>
+      <a href="/" data-astro-prefetch="hover" class="hover:text-editorial-heading transition">Home</a>
       <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-      <a href="/test-series" data-astro-prefetch="hover" class="hover:text-white transition">Test Series</a>
+      <a href="/test-series" data-astro-prefetch="hover" class="hover:text-editorial-heading transition">Test Series</a>
       <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-      <span class="text-slate-900 dark:text-white font-medium truncate max-w-[200px] sm:max-w-md">{seriesTitle || 'Detail'}</span>
+      <span class="text-editorial-heading font-medium truncate max-w-[200px] sm:max-w-md">{seriesTitle || 'Detail'}</span>
     </nav>
 
     {seriesTitle && (

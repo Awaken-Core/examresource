@@ -26,7 +26,7 @@ export function CBTCodeOfConductModal({
       <div className="bg-surface border border-border rounded-2xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl relative my-auto animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between pb-3 border-b border-border/80">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+            <span className="w-2.5 h-2.5 rounded-full bg-accent" />
             <h2 id="conduct-title" className="text-base font-bold text-slate-900 dark:text-slate-100">
               Official Examination Instructions & Code of Conduct
             </h2>
@@ -55,9 +55,9 @@ export function CBTCodeOfConductModal({
         </div>
 
         <div className="max-h-[60vh] space-y-4 overflow-y-auto pr-2 text-xs leading-relaxed text-slate-700 dark:text-slate-300">
-          <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-200">
+          <div className="p-3 rounded-xl bg-accent/10 border border-accent/20 text-foreground">
             <p className="mb-0.5 font-semibold text-slate-900 dark:text-slate-100">{testTitle}</p>
-            <p className="text-[11px] text-blue-300">
+            <p className="text-[11px] text-accent">
               Candidate Examination Session &bull; Standard NPTEL / National CBT Protocol
             </p>
           </div>
@@ -149,7 +149,7 @@ export function CBTCodeOfConductModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition cursor-pointer shadow-md"
+            className="px-5 py-2 rounded-xl text-xs font-bold bg-accent hover:opacity-90 text-on-accent transition cursor-pointer shadow-md"
           >
             I Understand &bull; Return to Test
           </button>

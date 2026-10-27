@@ -4,12 +4,18 @@ import BrandLogo from './BrandLogo.astro';
 import { siteDomain } from '../data/site';
 import { API_URL } from '../lib/api';
 
+import { safeDeskReturn } from '../lib/adminSession';
+
 interface Props { mode: AuthMode }
 const { mode } = Astro.props;
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length ? `.${brandRest.join('.')}` : '';
 const title = mode === 'signup' ? 'Create your account' : 'Welcome back';
-const googleAuthUrl = `${API_URL}/auth/google`;
+const rawReturn = Astro.url.searchParams.get('redirect') || Astro.url.searchParams.get('returnTo');
+const safeReturn = safeDeskReturn(rawReturn);
+const googleAuthUrl = safeReturn
+  ? `${API_URL}/auth/google?returnTo=${encodeURIComponent(safeReturn)}`
+  : `${API_URL}/auth/google`;
 ---
 
 <main class="min-h-screen w-full bg-canvas px-4 py-8 flex items-center justify-center">
@@ -55,19 +61,21 @@ const googleAuthUrl = `${API_URL}/auth/google`;
 
   function setupGoogleAuth() {
     const link = document.getElementById('google-continue-btn') as HTMLAnchorElement | null;
-    if (!link || link.dataset.ready === 'true') return;
-    link.dataset.ready = 'true';
+    if (!link) return;
     const params = new URLSearchParams(window.location.search);
     const returnTo = safeDeskReturn(params.get('redirect') || params.get('returnTo'));
     link.href = returnTo
       ? `${API_URL}/auth/google?returnTo=${encodeURIComponent(returnTo)}`
       : `${API_URL}/auth/google`;
-    link.addEventListener('click', () => {
-      link.setAttribute('aria-disabled', 'true');
-      link.classList.add('pointer-events-none', 'opacity-70');
-      const label = link.querySelector('span');
-      if (label) label.textContent = 'Redirecting to Google…';
-    });
+    if (!link.dataset.clickBound) {
+      link.dataset.clickBound = 'true';
+      link.addEventListener('click', () => {
+        link.setAttribute('aria-disabled', 'true');
+        link.classList.add('pointer-events-none', 'opacity-70');
+        const label = link.querySelector('span');
+        if (label) label.textContent = 'Redirecting to Google…';
+      });
+    }
     if (new URLSearchParams(window.location.search).has('error')) {
       document.getElementById('auth-error')?.classList.remove('hidden');
     }

@@ -15,17 +15,17 @@ const VISIBLE = 20;
 function chipClass(status: string, current: boolean): string {
   if (status === 'marked_for_review' || status === 'answered_and_marked_for_review') {
     return current
-      ? 'bg-orange-500 text-white border-orange-600 ring-2 ring-blue-500 shadow-sm font-black'
-      : 'bg-orange-500 text-white border-orange-600';
+      ? 'bg-amber-500 text-white border-amber-600 ring-2 ring-accent shadow-sm font-black'
+      : 'bg-amber-500 text-white border-amber-600';
   }
   if (current) {
     if (status === 'answered') {
-      return 'bg-emerald-600 text-white border-emerald-700 ring-2 ring-blue-500 shadow-sm font-black';
+      return 'bg-emerald-600 text-white border-emerald-700 ring-2 ring-accent shadow-sm font-black';
     }
     if (status === 'not_answered') {
-      return 'bg-rose-600 text-white border-rose-700 ring-2 ring-blue-500 shadow-sm font-black';
+      return 'bg-rose-600 text-white border-rose-700 ring-2 ring-accent shadow-sm font-black';
     }
-    return 'bg-blue-600 text-white border-blue-700 ring-2 ring-blue-300 dark:ring-blue-700 shadow-sm font-black';
+    return 'bg-accent text-on-accent border-accent ring-2 ring-accent/40 shadow-sm font-black';
   }
   if (status === 'answered') return 'bg-emerald-600 text-white border-emerald-700';
   if (status === 'not_answered') return 'bg-rose-600 text-white border-rose-700';

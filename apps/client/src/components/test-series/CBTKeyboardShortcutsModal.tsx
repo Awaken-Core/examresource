@@ -60,7 +60,7 @@ export function CBTKeyboardShortcutsModal({ isOpen, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition cursor-pointer"
+            className="px-4 py-1.5 rounded-xl text-xs font-semibold bg-accent hover:opacity-90 text-on-accent transition cursor-pointer"
           >
             Got it
           </button>

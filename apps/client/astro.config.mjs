@@ -70,8 +70,6 @@ export default defineConfig({
         'marked',
         'turndown',
         'dompurify',
-      ],
-      exclude: [
         'astro/runtime/client/dev-toolbar/entrypoint.js',
       ],
     },
