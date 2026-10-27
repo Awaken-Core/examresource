@@ -8,9 +8,10 @@ import { telegramChannel, whatsappChannel, siteDomain } from '../data/site';
 interface Props {
   prefix?: string;
   isMobileDrawer?: boolean;
+  isEditorialTheme?: boolean;
 }
 
-const { prefix = "desktop", isMobileDrawer = false } = Astro.props;
+const { prefix = "desktop", isMobileDrawer = false, isEditorialTheme = false } = Astro.props;
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -20,18 +21,22 @@ const isTestSeries = currentPath.startsWith('/test-series');
 
 <aside 
   id={`${prefix}-sidebar`} 
-  class="w-64 bg-canvas border-r border-border/80 h-screen sticky top-0 flex flex-col justify-between shrink-0 select-none z-[1050] transition-all duration-300 overflow-visible"
+  class={`w-64 ${
+    isEditorialTheme 
+      ? 'bg-editorial-bg border-r border-editorial-border text-editorial-text font-[\'Geist\']' 
+      : 'bg-canvas border-r border-border/80 text-heading'
+  } h-screen sticky top-0 flex flex-col justify-between shrink-0 select-none z-[1050] transition-all duration-300 overflow-visible`}
 >
   {/* Top Logo & Collapse/Close Button */}
   <div>
-    <div class="sidebar-header h-16 px-4 flex items-center justify-between border-b border-border/70">
-      <a href="/" class="flex items-center gap-3 group truncate rounded-xl focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-4" aria-label={`${siteDomain} home`}>
+    <div class={`sidebar-header h-16 px-4 flex items-center justify-between border-b ${isEditorialTheme ? 'border-editorial-border' : 'border-border/70'}`}>
+      <a href="/" class="flex items-center gap-3 group truncate rounded-lg focus-visible:outline-2 focus-visible:outline-editorial-accent focus-visible:outline-offset-3" aria-label={`${siteDomain} home`}>
         <span class="relative flex items-center justify-center shrink-0">
-          <span class="absolute inset-0 rounded-full bg-accent/15 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></span>
+          <span class={`absolute inset-0 rounded-full ${isEditorialTheme ? 'bg-editorial-accent/15' : 'bg-accent/15'} blur-md opacity-0 group-hover:opacity-100 transition-opacity`}></span>
           <BrandLogo size={34} class="relative group-hover:scale-105 transition-transform" />
         </span>
-        <div class="sidebar-text flex items-center truncate font-bold text-sm tracking-[-0.01em] text-white">
-          <span>{brandPrefix}</span><span class="text-accent">{brandSuffix}</span>
+        <div class={`sidebar-text flex items-center truncate ${isEditorialTheme ? "font-['EB_Garamond'] text-[21px] font-medium tracking-tight text-editorial-heading" : 'font-bold text-sm tracking-[-0.01em] text-white'}`}>
+          <span>{brandPrefix}</span><span class={isEditorialTheme ? 'text-editorial-accent' : 'text-accent'}>{brandSuffix}</span>
         </div>
       </a>
 
@@ -40,7 +45,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
           id={`${prefix}-sidebar-close-btn`}
           data-mobile-sidebar-close
           type="button"
-          class="text-muted hover:text-white p-1.5 rounded-lg hover:bg-surface-raised transition cursor-pointer"
+          class={`${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading hover:bg-editorial-accent-soft' : 'text-muted hover:text-white hover:bg-surface-raised'} p-1.5 rounded-lg transition cursor-pointer`}
           title="Close drawer"
           aria-label="Close navigation drawer"
         >
@@ -54,7 +59,11 @@ const isTestSeries = currentPath.startsWith('/test-series');
             id={`${prefix}-sidebar-toggle-btn`} 
             data-sidebar-collapse
             type="button"
-            class="w-9 h-9 text-muted hover:text-white rounded-xl hover:bg-surface-raised border border-border/70 hover:border-accent/30 transition cursor-pointer shrink-0 flex items-center justify-center focus-visible:outline-2 focus-visible:outline-accent"
+            class={`w-9 h-9 ${
+              isEditorialTheme 
+                ? 'text-editorial-muted hover:text-editorial-heading hover:bg-editorial-accent-soft border-editorial-border hover:border-editorial-accent/40' 
+                : 'text-muted hover:text-white hover:bg-surface-raised border-border/70 hover:border-accent/30'
+            } rounded-xl border transition cursor-pointer shrink-0 flex items-center justify-center focus-visible:outline-2 focus-visible:outline-accent`}
             aria-label="Collapse sidebar (Alt+B)"
           >
             <svg class="w-4 h-4 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -72,17 +81,21 @@ const isTestSeries = currentPath.startsWith('/test-series');
     <nav class="pt-3 px-3 pb-3 space-y-0.5 overflow-y-auto max-h-[calc(100vh-144px)] scrollbar-none" aria-label="Primary navigation">
       {/* 1. Home */}
       <a 
-        href="/blogs"
+        href="/blogs" 
         aria-current={isHome ? 'page' : undefined}
         class={`sidebar-nav-item relative flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-xs transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent ${
-          isHome 
-            ? 'bg-accent/10 text-white font-semibold border border-accent/25 before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:rounded-full before:bg-accent'
-            : 'text-muted hover:text-white hover:bg-surface-raised font-medium border border-transparent'
+          isEditorialTheme
+            ? isHome
+              ? 'bg-editorial-accent-soft text-editorial-accent font-semibold border border-editorial-accent/30'
+              : 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60 font-medium border border-transparent'
+            : isHome 
+              ? 'bg-accent/10 text-white font-semibold border border-accent/25 before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:rounded-full before:bg-accent'
+              : 'text-muted hover:text-white hover:bg-surface-raised font-medium border border-transparent'
         }`}
         title="Home"
       >
-        <svg class={`w-4 h-4 shrink-0`} viewBox="0 0 24 24" fill="currentColor">
-          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
         </svg>
         <span class="sidebar-text truncate">Home</span>
       </a>
@@ -90,7 +103,11 @@ const isTestSeries = currentPath.startsWith('/test-series');
       {/* 2. Latest updates */}
       <a 
         href="/blogs#latest-updates"
-        class="sidebar-nav-item flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition-colors duration-150 text-xs font-medium border border-transparent focus-visible:outline-2 focus-visible:outline-accent"
+        class={`sidebar-nav-item flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${
+          isEditorialTheme 
+            ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' 
+            : 'text-muted hover:text-white hover:bg-surface-raised'
+        } transition-colors duration-150 text-xs font-medium border border-transparent focus-visible:outline-2 focus-visible:outline-accent`}
         title="Latest updates"
       >
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -102,7 +119,11 @@ const isTestSeries = currentPath.startsWith('/test-series');
       {/* 3. PYQs (Previous Year Questions) */}
       <a 
         href="/blogs#categories"
-        class="sidebar-nav-item flex items-center justify-between min-h-11 md:min-h-10 px-3 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-accent"
+        class={`sidebar-nav-item flex items-center justify-between min-h-11 md:min-h-10 px-3 rounded-lg ${
+          isEditorialTheme 
+            ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' 
+            : 'text-muted hover:text-white hover:bg-surface-raised'
+        } transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-accent`}
         title="Previous Year Questions (PYQs)"
       >
         <div class="flex items-center gap-3 min-w-0">
@@ -111,7 +132,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
           </svg>
           <span class="sidebar-text truncate">PYQs</span>
         </div>
-        <svg class="w-3.5 h-3.5 text-muted/70 group-hover:text-white transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-muted/70 group-hover:text-editorial-heading' : 'text-muted/70 group-hover:text-white'} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
         </svg>
       </a>
@@ -120,9 +141,13 @@ const isTestSeries = currentPath.startsWith('/test-series');
       <a 
         href="/test-series" 
         class={`sidebar-nav-item relative flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-xs transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent ${
-          isTestSeries 
-            ? 'bg-accent/10 text-white font-semibold border border-accent/25 before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:rounded-full before:bg-accent'
-            : 'text-muted hover:text-white hover:bg-surface-raised font-medium border border-transparent'
+          isEditorialTheme
+            ? isTestSeries
+              ? 'bg-editorial-accent-soft text-editorial-accent font-semibold border border-editorial-accent/30'
+              : 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60 font-medium border border-transparent'
+            : isTestSeries 
+              ? 'bg-accent/10 text-white font-semibold border border-accent/25 before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:rounded-full before:bg-accent'
+              : 'text-muted hover:text-white hover:bg-surface-raised font-medium border border-transparent'
         }`}
         title="Test Series & Mock Tests"
       >
@@ -132,16 +157,14 @@ const isTestSeries = currentPath.startsWith('/test-series');
         <span class="sidebar-text truncate">Test Series</span>
       </a>
 
-
-
       {/* Channels Section */}
-      <div class="pt-3 border-t border-border/60 mt-2.5 space-y-0.5">
-        <p class="sidebar-text px-3.5 mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted/80">Channels</p>
+      <div class={`pt-3 border-t ${isEditorialTheme ? 'border-editorial-border' : 'border-border/60'} mt-2.5 space-y-0.5`}>
+        <p class={`sidebar-text px-3.5 mb-2 text-[10px] font-bold uppercase tracking-[0.16em] ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted/80'}`}>Channels</p>
         <a 
           href={whatsappChannel} 
           target="_blank" 
           rel="noopener noreferrer"
-          class="flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#25D366]"
+          class={`flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${isEditorialTheme ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' : 'text-muted hover:text-white hover:bg-surface-raised'} transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#25D366]`}
           title="WhatsApp Channel"
         >
           <svg class="w-[18px] h-[18px] shrink-0 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
@@ -153,7 +176,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
           href={telegramChannel} 
           target="_blank" 
           rel="noopener noreferrer"
-          class="flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-muted hover:text-white hover:bg-surface-raised transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#2AABEE]"
+          class={`flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${isEditorialTheme ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' : 'text-muted hover:text-white hover:bg-surface-raised'} transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#2AABEE]`}
           title="Telegram Channel"
         >
           <svg class="w-[18px] h-[18px] shrink-0 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
@@ -166,24 +189,24 @@ const isTestSeries = currentPath.startsWith('/test-series');
   </div>
 
   {/* BOTTOM PROFILE / AUTH SECTION */}
-  <div class="p-3 border-t border-border/70 bg-surface/25 relative overflow-visible space-y-2">
+  <div class={`p-3 border-t ${isEditorialTheme ? 'border-editorial-border bg-editorial-bg' : 'border-border/70 bg-surface/25'} relative overflow-visible space-y-2`}>
     {/* Popover Dropdown */}
-    <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} />
+    <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} isEditorialTheme={isEditorialTheme} />
 
     {/* Quick Preferences: Theme & Language */}
     <div class="sidebar-preferences sidebar-text space-y-2">
-      <div class="flex items-center justify-between gap-2 min-h-11 md:min-h-10 px-2.5 rounded-lg bg-surface-raised/45 border border-border/60 hover:border-border transition-colors">
-        <span class="text-[12px] font-medium text-muted flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class={`flex items-center justify-between gap-2 min-h-11 md:min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
+        <span class={`text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted'} flex items-center gap-2`}>
+          <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
           <span>Language</span>
         </span>
-        <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-md text-xs font-semibold select-none" role="group" aria-label="Language selection">
+        <div class={`inline-flex items-center p-0.5 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-lg text-xs font-semibold select-none`} role="group" aria-label="Language selection">
           <button
             type="button"
             data-app-lang="hinglish"
-            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer bg-accent !text-white"
+            class="app-lang-btn px-2.5 py-0.5 rounded-md text-[10px] font-bold cursor-pointer transition-colors"
             title="Switch to Hinglish"
             aria-pressed="true"
           >
@@ -192,7 +215,7 @@ const isTestSeries = currentPath.startsWith('/test-series');
           <button
             type="button"
             data-app-lang="en"
-            class="app-lang-btn px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer text-muted hover:text-white"
+            class="app-lang-btn px-2.5 py-0.5 rounded-md text-[10px] font-semibold cursor-pointer transition-colors"
             title="Switch to English"
             aria-pressed="false"
           >
@@ -201,21 +224,21 @@ const isTestSeries = currentPath.startsWith('/test-series');
         </div>
       </div>
 
-      <div class="flex items-center justify-between gap-2 min-h-11 md:min-h-10 px-2.5 rounded-lg bg-surface-raised/45 border border-border/60 hover:border-border transition-colors">
-        <span class="text-[12px] font-medium text-muted flex items-center gap-2">
-          <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class={`flex items-center justify-between gap-2 min-h-11 md:min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
+        <span class={`text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted'} flex items-center gap-2`}>
+          <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
           <span>Theme</span>
         </span>
         <button
           type="button"
-          class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-pill p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 shrink-0"
+          class={`theme-toggle-btn relative w-13 h-7 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-full p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0`}
           title="Toggle Dark and Light Mode"
           aria-label="Toggle Dark and Light Mode"
         >
           <span
-            class="theme-toggle-knob w-5 h-5 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center text-xs shadow-2xs transition-transform duration-200 translate-x-0.5"
+            class={`theme-toggle-knob w-5 h-5 rounded-full ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border text-editorial-accent' : 'bg-surface-raised border-border text-white'} border flex items-center justify-center text-xs shadow-2xs transition-transform duration-200 translate-x-0.5`}
           >
             <span class="light-icon text-[11px] select-none leading-none">☀️</span>
             <span class="dark-icon text-[11px] select-none leading-none hidden">🌙</span>
@@ -229,7 +252,11 @@ const isTestSeries = currentPath.startsWith('/test-series');
       <a 
         href="/login"
         data-login-link
-        class="auth-login-link flex items-center justify-center gap-2 w-full min-h-11 md:min-h-10 px-4 rounded-lg bg-accent text-white font-semibold text-xs border border-accent hover:bg-accent/90 transition-colors shadow-sm group focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+        class={`auth-login-link flex items-center justify-center gap-2 w-full min-h-11 md:min-h-10 px-4 rounded-xl ${
+          isEditorialTheme
+            ? 'bg-editorial-accent hover:bg-editorial-accent-hover text-white border border-editorial-accent'
+            : 'bg-accent hover:bg-accent/90 text-white border border-accent'
+        } font-semibold text-xs transition-colors shadow-sm group focus-visible:outline-2 focus-visible:outline-accent`}
         title="Log in / Sign up"
       >
         <svg class="w-4 h-4 text-white/80 group-hover:text-white transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,22 +274,26 @@ const isTestSeries = currentPath.startsWith('/test-series');
           id={`${prefix}-notification-trigger`}
           data-notification-trigger={`${prefix}-notification-popup`}
           type="button"
-          class="sidebar-notification-pill-btn w-full px-3 py-2 rounded-xl bg-surface-raised/50 hover:bg-surface-raised border border-border/60 hover:border-border transition flex items-center justify-between text-body-sm text-white cursor-pointer text-left group"
+          class={`sidebar-notification-pill-btn w-full px-3 py-2.5 rounded-xl ${
+            isEditorialTheme 
+              ? 'bg-editorial-surface hover:bg-editorial-accent-soft border-editorial-border text-editorial-text' 
+              : 'bg-surface-raised/50 hover:bg-surface-raised border-border/60 text-white'
+          } border transition flex items-center justify-between text-xs cursor-pointer text-left group`}
           title="Open Notifications"
           aria-haspopup="dialog"
           aria-expanded="false"
         >
           <div class="flex items-center gap-2.5 min-w-0">
-            <span class="notification-dot-indicator relative flex h-2 w-2 shrink-0 hidden">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-            </span>
-            <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            <svg class={`w-4 h-4 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
             </svg>
-            <span class="sidebar-text truncate text-caption-xs font-medium text-muted notification-pill-text">Notifications</span>
+            <span class={`sidebar-text truncate text-xs font-medium ${isEditorialTheme ? 'text-editorial-text' : 'text-muted'} notification-pill-text`}>You have notifications</span>
           </div>
-          <span class="sidebar-text notification-pill-badge px-1.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/30 leading-none">
+          <span class={`sidebar-text notification-pill-badge px-2 py-0.5 rounded-full ${
+            isEditorialTheme
+              ? 'bg-editorial-accent-soft text-editorial-accent border border-editorial-accent/30'
+              : 'bg-accent/15 text-accent border border-accent/30'
+          } text-[10px] font-bold leading-none`}>
             0
           </span>
         </button>
@@ -275,19 +306,27 @@ const isTestSeries = currentPath.startsWith('/test-series');
         id={`${prefix}-profile-trigger`}
         data-profile-trigger={`${prefix}-profile-dropdown`}
         type="button"
-        class="sidebar-profile-card w-full flex items-center justify-between p-2 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition-all duration-150 cursor-pointer group text-left"
+        class={`sidebar-profile-card w-full flex items-center justify-between p-2.5 rounded-xl ${
+          isEditorialTheme
+            ? 'bg-editorial-surface hover:bg-editorial-accent-soft border-editorial-border'
+            : 'bg-surface-raised/40 hover:bg-surface-raised border-border/50 hover:border-border'
+        } border transition-all duration-150 cursor-pointer group text-left`}
         aria-haspopup="true"
         aria-expanded="false"
         title="User Profile & Settings"
       >
         <div class="flex items-center gap-2.5 min-w-0">
           {/* Avatar Circle */}
-          <div class="w-8 h-8 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform overflow-hidden shadow-xs select-none">
-            <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">DW</span>
+          <div class={`w-9 h-9 rounded-full ${
+            isEditorialTheme
+              ? 'bg-editorial-accent text-white border-transparent'
+              : 'bg-surface-raised text-white border-border'
+          } border font-bold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform overflow-hidden shadow-xs select-none`}>
+            <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">U</span>
           </div>
           <div class="sidebar-text truncate">
-            <p class="user-display-name text-body-sm font-bold text-white truncate leading-tight">Devil</p>
-            <p class="user-display-email text-[11px] text-muted leading-none mt-0.5 truncate">Free</p>
+            <p class={`user-display-name text-xs font-bold ${isEditorialTheme ? 'text-editorial-heading' : 'text-white'} truncate leading-tight`}>User</p>
+            <p class={`user-display-email text-[11px] ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted'} leading-none mt-0.5 truncate`}>user@example.com</p>
           </div>
         </div>
       </button>

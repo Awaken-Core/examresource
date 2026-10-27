@@ -1,10 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { siteName, siteDomain, siteUrl } from '../../data/site';
-import {
-  heroStats,
-  featureShortcuts,
-} from '../../data/test-series';
 import { fetchPublicJson } from '../../lib/publicFetch';
 import { TestSeriesExplorer } from '../../components/test-series/TestSeriesExplorer';
 
@@ -82,184 +78,82 @@ const jsonLd = {
   description={pageDescription}
   canonicalUrl={`${siteUrl}/test-series`}
   jsonLd={jsonLd}
+  isEditorialTheme={true}
 >
-  {/* Common Hero Wrapper: light and dark mode images and seamless matching backgrounds */}
-  <section class="test-series-hero-wrapper relative overflow-hidden bg-[#EEF5FF] dark:bg-[#182648] border-b border-[#DBEAFE] dark:border-blue-900/40 w-full shadow-xs">
-    {/* Light Mode Illustration */}
-    <div 
-      class="hero-illustration-light absolute right-0 top-0 bottom-0 h-full w-full md:w-[65%] lg:w-[60%] pointer-events-none select-none bg-no-repeat bg-right bg-cover md:bg-contain opacity-100"
-      style="background-image: url('/testimage.png'); background-position: right top;"
-      aria-hidden="true"
-    >
-      <div class="absolute inset-0 bg-gradient-to-r from-[#EEF5FF] via-[#EEF5FF]/40 to-transparent"></div>
-    </div>
+  <div class="relative min-h-screen bg-editorial-bg text-editorial-text selection:bg-editorial-accent/20 selection:text-editorial-accent">
 
-    {/* Dark Mode Illustration */}
-    <div 
-      class="hero-illustration-dark absolute right-0 top-0 bottom-0 h-full w-full md:w-[65%] lg:w-[60%] pointer-events-none select-none bg-no-repeat bg-right bg-cover md:bg-contain opacity-100"
-      style="background-image: url('/testimage-dark.png'); background-position: right top;"
-      aria-hidden="true"
-    >
-      <div class="absolute inset-0 bg-gradient-to-r from-[#182648] via-[#182648]/40 to-transparent"></div>
-    </div>
+    {/* Main Container aligned with Blogs max-w-6xl */}
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-5 sm:pt-7 pb-20 space-y-7">
 
-    {/* Content Container spanning full page width */}
-    <div class="relative z-10 w-full max-w-none px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5 space-y-2.5">
-      {/* Breadcrumbs covered by the continuous background */}
-      <nav class="flex items-center gap-1.5 text-xs" aria-label="Breadcrumb">
-        <a href="/" data-astro-prefetch="hover" class="text-accent font-medium hover:underline">Home</a>
-        <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
-        <span class="text-white font-medium">Test Series</span>
-      </nav>
-
-      {/* Hero Content Left */}
-      <div class="w-full max-w-2xl lg:max-w-3xl space-y-2 pt-0.5 pb-1.5">
-        <span class="inline-block text-[11px] font-bold tracking-wider uppercase text-accent">
-          PRACTICE SMARTER
-        </span>
-
-        <h1 class="text-2xl sm:text-3xl lg:text-[34px] font-extrabold tracking-tight text-white leading-tight">
-          Test Series
-        </h1>
-
-        <p class="text-xs sm:text-[13px] text-muted leading-relaxed max-w-lg">
-          Get exam-ready with structured mock tests, previous year papers and chapter-wise practice for all major government exams.
-        </p>
-
-        {/* 4 Compact Stats - Single Row Desktop */}
-        <div class="pt-2.5 flex items-center gap-x-5 gap-y-2 overflow-x-auto scrollbar-none">
-          {heroStats.map((st) => (
-            <div class="flex items-center gap-2 shrink-0">
-              <div class="w-7 h-7 rounded-lg bg-accent/15 border border-accent/25 flex items-center justify-center shrink-0 text-accent">
-                {st.icon === 'categories' && (
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                )}
-                {st.icon === 'tests' && (
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                )}
-                {st.icon === 'students' && (
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                )}
-                {st.icon === 'language' && (
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
-                )}
-              </div>
-              <div class="flex items-baseline gap-1">
-                <span class="text-xs sm:text-[13px] font-bold text-white leading-none">{st.value}</span>
-                <span class="text-[11px] text-muted font-medium leading-none">{st.label}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* Main content below the hero section */}
-  <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-4 sm:py-5 space-y-4">
-
-    {/* Feature Shortcut Row (4 Horizontal Cards) */}
-    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-      {featureShortcuts.map((item) => (
-        <a
-          href={item.href}
-          class="group flex items-center justify-between p-3.5 rounded-xl bg-surface border border-border hover:border-accent/50 hover:shadow-md transition-all duration-200 shadow-2xs"
-        >
-          <div class="flex items-center gap-3 min-w-0">
-            <div class={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-              item.id === 'mock-tests' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20' :
-              item.id === 'chapter-tests' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' :
-              item.id === 'ai-generator' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20' :
-              'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
-            }`}>
-              {item.icon === 'doc' && (
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              )}
-              {item.icon === 'list' && (
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-              )}
-              {item.icon === 'ai' && (
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              )}
-              {item.icon === 'note' && (
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              )}
-            </div>
-            <div class="min-w-0">
-              <h2 class="text-xs sm:text-[13px] font-bold text-white group-hover:text-accent transition-colors truncate">
-                {item.title}
-              </h2>
-              <p class="text-[11px] text-muted truncate">{item.description}</p>
-            </div>
-          </div>
-          <svg class="w-4 h-4 text-muted group-hover:text-accent group-hover:translate-x-0.5 transition shrink-0 ml-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+      {/* ══════════════════════════════════════════════════════════
+          1. BREADCRUMBS & COMPACT EDITORIAL HERO
+          ══════════════════════════════════════════════════════════ */}
+      <section class="space-y-3" aria-label="Hero Introduction">
+        {/* Subtle Breadcrumbs */}
+        <nav class="flex items-center gap-1.5 font-['Geist'] text-[11.5px] text-editorial-muted" aria-label="Breadcrumb">
+          <a href="/" data-astro-prefetch="hover" class="hover:text-editorial-heading transition-colors">Home</a>
+          <svg class="w-3 h-3 text-editorial-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
           </svg>
-        </a>
-      ))}
-    </section>
+          <span class="text-editorial-heading font-medium">Test Series</span>
+        </nav>
 
-    {/* Real Published Test Series Explorer Island */}
-    <TestSeriesExplorer client:load initialList={initialSeries} />
+        {/* Hero Copy (Compact & Editorial) */}
+        <div class="max-w-3xl space-y-2 pt-1">
+          <p class="font-['Geist'] text-[11px] font-semibold tracking-[0.2em] text-editorial-accent uppercase">
+            YOUR PRACTICE SPACE
+          </p>
 
-    <section class="max-w-3xl space-y-3 pt-2" aria-labelledby="cbt-faq-heading">
-      <h2 id="cbt-faq-heading" class="text-lg font-bold text-slate-900 dark:text-white">
-        How the computer-based mock test works
-      </h2>
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white">How does a live mock test work?</h3>
-      <p class="text-sm leading-6 text-muted">
-        The live paper fills the screen. The question stays on the left, the choices stay on the right, and the palette shows which questions are answered, unanswered, marked for review, or not visited.
-      </p>
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white">When are answers saved?</h3>
-      <p class="text-sm leading-6 text-muted">
-        Save and next stores the current response. On the last question, save and end asks you to confirm that you are ready to end. The latest saved response is graded.
-      </p>
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white">What happens before the questions open?</h3>
-      <p class="text-sm leading-6 text-muted">
-        You agree to the code of conduct first. Until then, the test questions do not accept answers.
-      </p>
-    </section>
+          <h1 class="font-['EB_Garamond'] text-[clamp(2.1rem,3.8vw,3.4rem)] font-normal leading-[1.05] tracking-[-0.03em] text-editorial-heading">
+            Practice with purpose.<br />
+            <span class="text-editorial-subheading">Perform with confidence.</span>
+          </h1>
 
+          <p class="font-['Geist'] text-[13.5px] sm:text-[14.5px] text-editorial-muted leading-relaxed max-w-2xl font-normal pt-0.5">
+            Prepare for government exams with structured mock tests, chapter-wise practice, and focused revision.
+          </p>
+        </div>
+
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          2. PUBLISHED TEST SERIES EXPLORER (React Island)
+          ══════════════════════════════════════════════════════════ */}
+      <TestSeriesExplorer client:load initialList={initialSeries} />
+
+      {/* ══════════════════════════════════════════════════════════
+          5. CBT FAQ ACCORDION / EDITORIAL GUIDE
+          ══════════════════════════════════════════════════════════ */}
+      <section class="p-6 sm:p-7 rounded-2xl bg-editorial-surface border border-editorial-border space-y-4 font-['Geist']" aria-labelledby="cbt-faq-heading">
+        <div class="flex items-center gap-2 pb-2 border-b border-editorial-border">
+          <span class="w-1.5 h-4 bg-editorial-accent rounded-full inline-block"></span>
+          <h2 id="cbt-faq-heading" class="font-['EB_Garamond'] text-xl sm:text-2xl font-normal text-editorial-heading tracking-tight">
+            How Computer-Based Tests Work
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1 text-[13px]">
+          <div class="space-y-1.5">
+            <h3 class="font-semibold text-editorial-heading text-[13.5px]">Live Exam Interface</h3>
+            <p class="text-editorial-muted leading-relaxed">
+              The live paper fills the screen. Questions stay on the left, choices on the right, and the palette marks answered, unanswered, and reviewed questions.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="font-semibold text-editorial-heading text-[13.5px]">Auto-Save Responses</h3>
+            <p class="text-editorial-muted leading-relaxed">
+              "Save and Next" safely stores each answer instantly. When completing the final question, confirm submission to get graded analysis.
+            </p>
+          </div>
+          <div class="space-y-1.5">
+            <h3 class="font-semibold text-editorial-heading text-[13.5px]">Strict Code of Conduct</h3>
+            <p class="text-editorial-muted leading-relaxed">
+              Before test questions unlock, read and accept the instructions and code of conduct just like the real examination hall.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </div>
-
-
-
-  <style is:global>
-    /* Default / Light Mode */
-    .hero-illustration-light {
-      display: block !important;
-    }
-    .hero-illustration-dark {
-      display: none !important;
-    }
-
-    /* Dark Mode */
-    html.theme-dark .test-series-hero-wrapper {
-      background-color: #182648 !important;
-    }
-    html.theme-dark .hero-illustration-light {
-      display: none !important;
-    }
-    html.theme-dark .hero-illustration-dark {
-      display: block !important;
-    }
-  </style>
 </Layout>

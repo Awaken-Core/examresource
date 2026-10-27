@@ -53,10 +53,11 @@
 
 @theme {
   /* Font Families */
-  --font-sans: "Inter", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-display: "Inter", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: "Inter", "Geist", "Noto Sans Devanagari", "Nirmala UI", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "EB Garamond", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-display: "Inter", "Geist", "Noto Sans Devanagari", "Nirmala UI", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "Inter", "Geist", ui-monospace, "SFMono-Regular", monospace;
+  --font-hindi: "Noto Sans Devanagari", "Nirmala UI", "Inter", "Geist", -apple-system, sans-serif;
 
   /* Colors (Dynamic CSS variables controlled by :root / .theme-dark) */
   --color-canvas: var(--color-canvas);
@@ -71,6 +72,20 @@
   --color-accent: var(--color-accent);
   --color-on-accent: #FFFFFF;
   --color-black: #000000;
+
+  /* Editorial Theme Tokens (for Blogs, Test Series & Marketing pages) */
+  --color-editorial-bg: var(--color-editorial-bg);
+  --color-editorial-surface: var(--color-editorial-surface);
+  --color-editorial-surface-raised: var(--color-editorial-surface-raised);
+  --color-editorial-border: var(--color-editorial-border);
+  --color-editorial-heading: var(--color-editorial-heading);
+  --color-editorial-subheading: var(--color-editorial-subheading);
+  --color-editorial-text: var(--color-editorial-text);
+  --color-editorial-muted: var(--color-editorial-muted);
+  --color-editorial-accent: var(--color-editorial-accent);
+  --color-editorial-accent-hover: var(--color-editorial-accent-hover);
+  --color-editorial-accent-soft: var(--color-editorial-accent-soft);
+  --color-editorial-accent-badge: var(--color-editorial-accent-badge);
 
   /* Semantic Status */
   --color-error: #EF4444;
@@ -179,33 +194,62 @@
 
 :root,
 .theme-light {
-  --color-canvas: #F8FAFC;
+  --color-canvas: #FFF8F1;
   --color-surface: #FFFFFF;
-  --color-surface-raised: #F1F5F9;
-  --color-text-body: #1E293B;
-  --color-heading: #0F172A;
-  --color-muted: #64748B;
-  /* slate-500, WCAG AA ~4.6:1 on white */
-  --color-border: #E2E8F0;
-  --color-subtle: #F8FAFC;
+  --color-surface-raised: #FFF8F1;
+  --color-text-body: #191613;
+  --color-heading: #191613;
+  --color-muted: #675F58;
+  --color-border: #EADFD3;
+  --color-subtle: #FFF8F1;
   --color-accent: #FF4D00;
   /* Primary brand orange */
-  --shadow-elevated: 0px 4px 16px -2px rgba(15, 23, 42, 0.08), 0px 2px 8px -1px rgba(15, 23, 42, 0.04);
-  --shadow-sm: 0px 1px 4px 0px rgba(15, 23, 42, 0.08);
+
+  /* Editorial Theme Tokens (Light Mode: Warm Cream & Editorial Orange) */
+  --color-editorial-bg: #FFF8F1;
+  --color-editorial-surface: #FFFFFF;
+  --color-editorial-surface-raised: #FFF8F1;
+  --color-editorial-border: #EADFD3;
+  --color-editorial-heading: #191613;
+  --color-editorial-subheading: #514A44;
+  --color-editorial-text: #191613;
+  --color-editorial-muted: #675F58;
+  --color-editorial-accent: #FF4D00;
+  --color-editorial-accent-hover: #D94100;
+  --color-editorial-accent-soft: #FFEADA;
+  --color-editorial-accent-badge: #FFF0E6;
+
+  --shadow-elevated: 0px 4px 16px -2px rgba(25, 22, 19, 0.08), 0px 2px 8px -1px rgba(25, 22, 19, 0.04);
+  --shadow-sm: 0px 1px 4px 0px rgba(25, 22, 19, 0.08);
   color-scheme: light;
 }
 
 .theme-dark {
-  --color-canvas: #0C0B0A;
-  --color-surface: #151311;
-  --color-surface-raised: #201C19;
-  --color-text-body: #E7E5E4;
-  --color-heading: #FAFAF9;
-  --color-muted: #A8A29E;
-  --color-border: #302A26;
-  --color-subtle: #12100F;
+  --color-canvas: #141312;
+  --color-surface: #1C1A18;
+  --color-surface-raised: #25221F;
+  --color-text-body: #E7E0D8;
+  --color-heading: #F5EEE6;
+  --color-muted: #A89D92;
+  --color-border: #332E29;
+  --color-subtle: #141312;
   --color-accent: #FF4D00;
   /* Primary brand orange */
+
+  /* Editorial Theme Tokens (Dark Mode: Warm Obsidian, Crisp Contrast & Editorial Orange) */
+  --color-editorial-bg: #141312;
+  --color-editorial-surface: #1C1A18;
+  --color-editorial-surface-raised: #25221F;
+  --color-editorial-border: #332E29;
+  --color-editorial-heading: #F5EEE6;
+  --color-editorial-subheading: #D4C8BC;
+  --color-editorial-text: #E7E0D8;
+  --color-editorial-muted: #A89D92;
+  --color-editorial-accent: #FF5A1F;
+  --color-editorial-accent-hover: #FF7038;
+  --color-editorial-accent-soft: #38251E;
+  --color-editorial-accent-badge: #2C1E18;
+
   --shadow-elevated: 0px 8px 32px -4px rgba(0, 0, 0, 0.6), 0px 2px 8px -1px rgba(0, 0, 0, 0.4);
   --shadow-sm: 0px 1px 4px 0px rgba(0, 0, 0, 0.4);
   color-scheme: dark;
@@ -1236,13 +1280,16 @@ html:not(.theme-dark) .user-display-name.text-white {
   color: #111827 !important;
 }
 
-/* Avatar initials contrast */
-html:not(.theme-dark) .user-avatar-initials {
-  color: var(--color-accent) !important;
+/* Avatar initials contrast:
+   When inside a solid colored circle (e.g., bg-editorial-accent, bg-accent, bg-gradient),
+   initials must always be white (#FFFFFF) so they don't blend into the orange background. */
+.user-avatar-initials {
+  color: #FFFFFF !important;
 }
 
-html.theme-dark .user-avatar-initials {
-  color: #93C5FD !important;
+/* Only for ghost/outline avatar wrappers without solid background, use accent color */
+.user-avatar-initials:not([class*="bg-"]):not([class*="text-white"]):is([class*="text-accent"]) {
+  color: var(--color-accent) !important;
 }
 
 /* Ensure svg icons inherit proper dark color when text-muted/hover:text-white is used */
@@ -1291,11 +1338,24 @@ html:not(.theme-dark) a:hover > svg.text-muted {
 }
 
 /* Language Switcher High Contrast Guarantee (WCAG AAA) */
-.app-lang-btn.bg-accent,
 .app-lang-btn[aria-pressed="true"] {
-  background-color: var(--color-accent);
-  color: #FFFFFF;
-  font-weight: 700;
+  background-color: var(--color-editorial-accent, var(--color-accent, #FF4D00)) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.app-lang-btn[aria-pressed="false"] {
+  background-color: transparent !important;
+  color: var(--color-editorial-muted, var(--color-muted, #77716D)) !important;
+  font-weight: 500 !important;
+}
+
+.app-lang-btn[aria-pressed="false"]:hover {
+  color: var(--color-editorial-heading, #191613) !important;
+}
+
+html.theme-dark .app-lang-btn[aria-pressed="false"]:hover {
+  color: #FFFFFF !important;
 }
 
 

@@ -1,11 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import FAQSection from '../components/FAQSection.astro';
-import ArticleCard from '../components/blog/ArticleCard.astro';
-import BrandLogo from '../components/BrandLogo.astro';
-import ProfileDropdown from '../components/ProfileDropdown.astro';
-import NotificationPopup from '../components/NotificationPopup.astro';
-import FavoritesDropdown from '../components/FavoritesDropdown.astro';
 import { Image } from 'astro:assets';
 import { siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
 import {
@@ -286,268 +280,292 @@ const jsonLd = {
   ogImage={`${siteUrl}/og-image.jpg`}
   ogType="website"
   jsonLd={jsonLd}
+  isEditorialTheme={true}
 >
-  <div class="bg-canvas text-slate-800 dark:text-text-body transition-colors duration-200 relative">
-    <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-20 relative z-10">
+  <div class="relative min-h-screen bg-editorial-bg text-editorial-text selection:bg-editorial-accent/20 selection:text-editorial-accent">
+
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-5 sm:pt-6 pb-20">
 
       <h1 class="sr-only">GovtPariksha — Verified Government Exam Notifications, Admit Cards &amp; Results</h1>
 
       {/* ══════════════════════════════════════════════════════════
-          1. HERO SEARCH BAR
+          1. HERO SECTION (Compact, Homepage Typography & Spacing)
           ══════════════════════════════════════════════════════════ */}
-      <section class="max-w-2xl mb-12 relative z-40" aria-label="Exam Search and Category Filter">
+      <section class="text-center pt-1 sm:pt-2 pb-0 max-w-3xl mx-auto" aria-label="Hero Introduction">
+        <p class="font-['Geist'] text-[11px] font-semibold tracking-[0.2em] text-editorial-accent uppercase mb-2.5">
+          THE EXAM NOTICE DESK
+        </p>
 
-        {/* Section label */}
-        <div class="mb-4">
-          <p class="text-[12px] font-semibold uppercase tracking-widest text-slate-500 dark:text-muted">Find your exam</p>
-          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-heading tracking-tight mt-1">
-            Search <span class="text-accent">9 exam streams</span> in real-time
-          </h2>
-        </div>
+        <h2 class="font-['EB_Garamond'] text-[clamp(2.35rem,3.8vw,3.75rem)] font-normal leading-[1.02] tracking-[-0.035em] text-editorial-heading">
+          Find your next opportunity.<br />
+          <span class="text-editorial-subheading">All in one place.</span>
+        </h2>
 
-        <div class="relative group z-40">
-          {/* Glow ring on focus */}
-          <div class="absolute -inset-0.5 bg-gradient-to-r from-accent/30 via-orange-500/20 to-amber-500/20 rounded-2xl blur-sm opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+        <p class="mt-2.5 sm:mt-3 text-[13.5px] sm:text-[14.5px] leading-relaxed text-editorial-muted max-w-lg mx-auto font-['Geist'] font-normal">
+          Verified exam updates, admit cards, results, and important notices — from all major government exams, in one place.
+        </p>
 
-          <div class="relative flex items-center bg-surface border border-border group-focus-within:border-accent/60 rounded-2xl px-2 sm:px-3 py-2 transition-all duration-200 gap-2 shadow-sm">
+        {/* ══════════════════════════════════════════════════════════
+            2. INTEGRATED EXAM SEARCH & FILTER BAR
+            ══════════════════════════════════════════════════════════ */}
+        <div class="mt-5 sm:mt-5.5 relative z-40 max-w-2xl mx-auto" id="command-search-wrapper">
+          <div class="bg-editorial-surface border border-editorial-border rounded-2xl sm:rounded-full p-1.5 sm:p-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 shadow-[0_2px_10px_rgba(25,22,19,0.04)] hover:border-editorial-accent/40 focus-within:border-editorial-accent focus-within:ring-2 focus-within:ring-editorial-accent/10 transition-all">
 
-            {/* Category Dropdown */}
-            <div class="relative shrink-0 z-50" id="category-dropdown-container">
+            {/* Category Filter Dropdown */}
+            <div class="relative shrink-0" id="category-dropdown-container">
               <button
                 id="category-dropdown-btn"
                 type="button"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface-raised hover:bg-surface-raised/80 border border-border/80 text-slate-800 dark:text-heading text-[12px] font-semibold cursor-pointer transition-all duration-150 select-none"
+                class="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-3.5 py-2 rounded-xl sm:rounded-full bg-editorial-surface-raised hover:bg-editorial-accent-soft text-editorial-heading text-[12.5px] font-medium font-['Geist'] cursor-pointer transition-colors border border-editorial-border"
                 aria-expanded="false"
                 aria-haspopup="listbox"
                 title="Filter by Exam Category"
               >
-                <span id="category-dropdown-label" class="truncate max-w-[90px] sm:max-w-[140px]">All Streams</span>
-                <svg id="category-dropdown-arrow" class="w-3.5 h-3.5 text-muted transition-transform duration-200 shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <svg class="w-4 h-4 text-editorial-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+                <span id="category-dropdown-label" class="truncate max-w-[130px]">All exam streams</span>
+                <svg id="category-dropdown-arrow" class="w-3.5 h-3.5 text-editorial-muted transition-transform duration-200 shrink-0 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
+              {/* Category Dropdown Menu */}
               <div
                 id="category-dropdown-menu"
-                class="hidden absolute left-0 top-full mt-2 w-64 max-h-80 overflow-y-auto bg-surface border border-border rounded-2xl shadow-xl py-1.5 z-[100] backdrop-blur-xl scrollbar-none"
+                class="hidden absolute left-0 top-full mt-2 w-64 max-h-80 overflow-y-auto bg-editorial-surface border border-editorial-border rounded-2xl shadow-xl py-1.5 z-[100] scrollbar-none font-['Geist']"
                 role="listbox"
               >
                 <button
                   type="button"
                   data-stream-option="all"
-                  data-stream-name="All Streams"
-                  class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-semibold text-slate-800 dark:text-heading hover:bg-surface-raised transition-colors text-left cursor-pointer"
+                  data-stream-name="All exam streams"
+                  class="category-option-btn w-full flex items-center justify-between px-4 py-2 text-[12.5px] font-semibold text-editorial-heading hover:bg-editorial-accent-soft transition-colors text-left cursor-pointer"
                   role="option"
                   aria-selected="true"
                 >
                   <span class="flex items-center gap-2 truncate">
-                    <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                    All Streams
+                    <span class="w-1.5 h-1.5 rounded-full bg-editorial-accent"></span>
+                    All exam streams
                   </span>
-                  <span class="category-check text-accent font-bold text-xs shrink-0">✓</span>
+                  <span class="category-check text-editorial-accent font-bold text-xs shrink-0">✓</span>
                 </button>
-                <div class="h-px bg-border/60 my-1 mx-3"></div>
+                <div class="h-px bg-editorial-border my-1 mx-3"></div>
                 {streamCategories.map((cat) => (
                   <button
                     type="button"
                     data-stream-option={cat.slug}
-                    data-stream-name={cat.shortName}
-                    class="category-option-btn w-full flex items-center justify-between px-3.5 py-2.5 text-[12px] font-medium text-slate-600 dark:text-text-body hover:text-slate-900 dark:hover:text-white hover:bg-surface-raised transition-colors text-left cursor-pointer"
+                    data-stream-name={cat.name}
+                    class="category-option-btn w-full flex items-center justify-between px-4 py-2 text-[12.5px] font-medium text-editorial-muted hover:text-editorial-heading hover:bg-editorial-accent-soft transition-colors text-left cursor-pointer"
                     role="option"
                     aria-selected="false"
                   >
                     <span class="truncate">{cat.name}</span>
-                    <span class="category-check hidden text-accent font-bold text-xs shrink-0">✓</span>
+                    <span class="category-check hidden text-editorial-accent font-bold text-xs shrink-0">✓</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div class="w-px h-6 bg-border/60 shrink-0"></div>
+            {/* Subtle Divider (Desktop) */}
+            <div class="hidden sm:block w-px h-5 bg-editorial-border shrink-0"></div>
 
-            <div class="text-muted group-focus-within:text-accent transition-colors shrink-0">
-              <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            {/* Search Input Field */}
+            <div class="flex-1 flex items-center min-w-0 px-2 sm:px-1 gap-2">
+              <svg class="w-4 h-4 text-editorial-muted shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <path stroke-linecap="round" d="m21 21-4.35-4.35" />
               </svg>
+
+              <input
+                id="command-search-input"
+                type="text"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Search exam, post, admit card, result..."
+                class="w-full bg-transparent text-[13px] sm:text-[13.5px] text-editorial-heading placeholder:text-editorial-muted/60 focus:outline-none py-1 font-['Geist']"
+                aria-label="Search exam, post, admit card, result"
+              />
+
+              <button
+                id="command-search-clear"
+                type="button"
+                class="hidden p-1 text-editorial-muted hover:text-editorial-heading transition-colors cursor-pointer shrink-0"
+                title="Clear search"
+                aria-label="Clear search text"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
-            <input
-              id="command-search-input"
-              type="text"
-              autocomplete="off"
-              spellcheck="false"
-              placeholder="Search exam, post, admit card..."
-              class="w-full bg-transparent text-[13px] sm:text-sm text-slate-900 dark:text-heading placeholder:text-slate-400 dark:placeholder:text-muted focus:outline-none py-1 px-1 font-sans"
-              aria-label="Search examinations and articles"
-            />
-
+            {/* Orange Search CTA Button */}
             <button
-              id="command-search-clear"
+              id="editorial-search-submit"
               type="button"
-              class="hidden px-1.5 text-muted hover:text-white transition-colors cursor-pointer shrink-0"
-              title="Clear search"
-              aria-label="Clear search text"
+              class="inline-flex items-center justify-center gap-2 px-5 py-2 rounded-xl sm:rounded-full bg-editorial-accent hover:bg-editorial-accent-hover text-white text-[13px] font-semibold font-['Geist'] transition-all shadow-xs cursor-pointer shrink-0"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              <span>Search</span>
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
               </svg>
             </button>
-
-            <div class="hidden sm:flex items-center shrink-0 select-none">
-              <kbd class="px-2 py-0.5 text-[10px] font-mono font-medium text-muted bg-surface-raised border border-border/80 rounded-md">
-                Ctrl K
-              </kbd>
-            </div>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          2. EXAM STREAMS — EDITORIAL CARD GRID
+          3. EXAM STREAMS — 3-COLUMN EDITORIAL SECTION
           ══════════════════════════════════════════════════════════ */}
-      <section id="bento-grid-section" class="mb-16" aria-label="Exam Categories Grid">
+      <section id="bento-grid-section" class="mt-5 sm:mt-6 mb-16" aria-label="Exam Streams">
 
-        <div class="flex items-center justify-between mb-6">
+        {/* Section Header */}
+        <div class="flex items-center justify-between pb-3 mb-5 border-b border-editorial-border">
           <div class="flex items-center gap-2.5">
-            <div class="w-1 h-5 bg-accent rounded-full"></div>
-            <h2 class="text-[15px] sm:text-base font-bold text-slate-900 dark:text-heading tracking-tight">Exam Streams</h2>
+            <span class="w-1.5 h-4.5 bg-editorial-accent rounded-full inline-block"></span>
+            <h2 class="font-['EB_Garamond'] text-2xl sm:text-[26px] font-normal text-editorial-heading tracking-tight">
+              Exam Streams
+            </h2>
           </div>
-          <span class="text-[11px] text-slate-600 dark:text-muted font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
+          <span class="text-[11.5px] font-medium font-['Geist'] text-editorial-accent bg-editorial-accent-badge px-3 py-0.5 rounded-full border border-editorial-accent/20 tabular-nums">
             {displayArticles.length} active notices
           </span>
         </div>
 
-        {/* Responsive 3-column editorial grid */}
-        <div id="bento-cards-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {bentoGridData.map((cat) => (
+        {/* 3-Column Editorial Grid (Matching Reference Columns) */}
+        <div 
+          id="bento-cards-container" 
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-0 lg:divide-x lg:divide-editorial-border"
+        >
+          {bentoGridData.map((cat, idx) => (
             <article
               data-bento-card
               data-stream-slug={cat.slug}
               data-stream-name={cat.name.toLowerCase()}
               data-stream-keywords={cat.keywords.join(' ')}
-              class="group bg-surface border border-border/70 rounded-xl overflow-hidden transition-colors duration-150 hover:border-border flex flex-col"
+              class={`flex flex-col ${idx > 0 ? 'lg:pl-8' : ''} ${idx < bentoGridData.length - 1 ? 'lg:pr-8' : ''}`}
             >
-              {/* Card Header */}
-              <div class="flex items-center justify-between gap-3 px-4 py-3.5">
-                <a
-                  href={`/category/${cat.slug}`}
-                  class="flex items-center gap-2.5 min-w-0 group/title cursor-pointer"
-                  title={cat.name}
-                >
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-accent/10 text-accent">
-                    {cat.iconType === 'monument' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'train' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="2"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'bank' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'building' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'book' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'shield' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'document' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'badge' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                      </svg>
-                    )}
-                    {cat.iconType === 'gear' && (
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    )}
-                  </div>
-                  <div class="min-w-0">
-                    <span class="text-[13px] font-bold text-slate-900 dark:text-heading group-hover/title:text-accent transition-colors duration-150 leading-tight block truncate">{cat.name}</span>
-                    <span class="text-[10px] text-slate-500 dark:text-muted leading-none mt-1 block truncate">{cat.coverage}</span>
-                  </div>
-                </a>
+              {/* Stream Header */}
+              <div class="flex items-start gap-3.5 mb-3">
+                <div class="w-9 h-9 rounded-full border border-editorial-border bg-editorial-surface flex items-center justify-center text-editorial-accent shrink-0 shadow-2xs mt-0.5">
+                  {cat.iconType === 'monument' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v5m4-5v5m4-5v5M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'train' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <rect x="4" y="3" width="16" height="14" rx="3" stroke-width="1.8"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 10h16M8 14h.01M16 14h.01M7 21l2-4m8 4l-2-4" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'bank' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l9-4 9 4v2H3V6zm2 4h2v8H5v-8zm6 0h2v8h-2v-8zm6 0h2v8h-2v-8zM2 20h20v2H2v-2z" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'building' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'book' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'shield' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'document' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'badge' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  )}
+                  {cat.iconType === 'gear' && (
+                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                </div>
 
-                <span class="inline-flex items-center justify-center min-w-6 h-6 px-1.5 text-[10px] font-semibold text-slate-500 dark:text-muted shrink-0 select-none tabular-nums rounded-full bg-surface-raised/70">
-                  {cat.totalCount}
-                </span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <a 
+                      href={`/category/${cat.slug}`} 
+                      class="font-['EB_Garamond'] text-[18px] sm:text-[19px] font-medium text-editorial-heading hover:text-editorial-accent transition-colors truncate"
+                    >
+                      {cat.name}
+                    </a>
+                    <span class="text-[11px] font-medium font-sans text-editorial-accent bg-editorial-accent-badge px-2 py-0.5 rounded-full border border-editorial-accent/15 shrink-0 tabular-nums">
+                      {cat.totalCount}
+                    </span>
+                  </div>
+                  <p class="text-[11.5px] leading-tight text-editorial-muted mt-0.5 line-clamp-1 font-sans">
+                    {cat.coverage}
+                  </p>
+                </div>
               </div>
 
-              {/* Divider */}
-              <div class="h-px bg-border/50 mx-4"></div>
-
-              {/* Article Links */}
-              <div class="px-4 flex-1">
+              {/* Vertical Article Listings with Horizontal Dividers */}
+              <div class="flex-1 divide-y divide-editorial-border">
                 {cat.articles.length > 0 ? (
                   cat.articles.map((art) => (
                     <a
                       href={art.slug}
-                      target="_blank"
-                      rel="noopener"
                       data-article-link={art.slugKey}
                       data-stream-item
                       data-stream-title={art.title.toLowerCase()}
-                      class="group/item flex items-start gap-2.5 py-3 border-b border-border/35 last:border-b-0 transition-colors duration-150 cursor-pointer"
+                      class="group/item flex items-start justify-between gap-3 py-3 hover:bg-editorial-accent-soft/30 transition-colors"
                     >
-                      <div class="min-w-0 flex-1">
-                        <p class="text-[12.5px] font-semibold text-slate-800 dark:text-text-body group-hover/item:text-accent transition-colors duration-150 line-clamp-2 leading-[1.6]">
+                      <div class="flex-1 min-w-0 pr-1">
+                        <h3 class="text-[14.5px] sm:text-[15px] font-normal leading-[1.45] text-editorial-heading group-hover/item:text-editorial-accent transition-colors font-sans">
                           {art.isNew && (
-                            <span class="badge-new inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/12 text-emerald-500 border border-emerald-500/20 mr-1.5 select-none align-middle -translate-y-px">
-                              New
+                            <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold tracking-wider font-sans bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/30 align-middle mr-1.5 -translate-y-0.5">
+                              NEW
                             </span>
                           )}
-                          <span data-article-title class="tracking-[0.006em]">{art.title}</span>
-                        </p>
-                        <time class="text-[10px] text-slate-500 dark:text-muted mt-1.5 block tabular-nums">{art.date}</time>
+                          <span data-article-title>{art.title}</span>
+                        </h3>
+                        <time class="block text-[12px] text-editorial-muted mt-1 tabular-nums font-sans">
+                          {art.date}
+                        </time>
                       </div>
-                      <svg class="w-3 h-3 text-muted/40 opacity-0 group-hover/item:opacity-100 group-hover/item:text-accent shrink-0 mt-1.5 transition-all duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+
+                      <svg class="w-4 h-4 text-editorial-accent shrink-0 mt-0.5 transition-transform group-hover/item:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
                       </svg>
                     </a>
                   ))
                 ) : (
-                  <div class="py-6 px-3 text-center">
-                    <div class="w-8 h-8 rounded-xl bg-surface-raised mx-auto mb-2 flex items-center justify-center">
-                      <svg class="w-4 h-4 text-muted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                      </svg>
-                    </div>
-                    <p class="text-[11px] text-slate-500 dark:text-muted">No updates yet</p>
+                  <div class="py-6 text-center">
+                    <p class="text-[12px] text-editorial-muted font-sans">No notices currently published in this stream.</p>
                   </div>
                 )}
               </div>
 
-              {/* Card Footer */}
-              <div class="px-4 py-2.5 border-t border-border/50 mt-auto">
+              {/* View all stream notices footer link */}
+              <div class="pt-2.5 pb-1 mt-auto">
                 <a
                   href={`/category/${cat.slug}`}
-                  class="flex items-center justify-between text-[11px] font-semibold text-muted hover:text-accent transition-colors duration-150 group/footer cursor-pointer"
+                  class="inline-flex items-center gap-1.5 text-[11.5px] font-medium font-sans text-editorial-muted hover:text-editorial-accent transition-colors"
                 >
-                  <span>View all {cat.name.toLowerCase().includes('exam') ? '' : 'notices'}</span>
-                  <svg class="w-3.5 h-3.5 group-hover/footer:translate-x-0.5 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <span>View all {cat.name} notices</span>
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
                 </a>
@@ -556,21 +574,21 @@ const jsonLd = {
           ))}
         </div>
 
-        {/* Empty State */}
-        <div id="bento-empty-state" class="hidden p-12 text-center bg-surface border border-border/60 rounded-2xl mt-4">
-          <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-accent/10 text-accent mb-3">
+        {/* Empty Search State */}
+        <div id="bento-empty-state" class="hidden p-10 text-center bg-editorial-surface border border-editorial-border rounded-2xl mt-6">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-editorial-accent-soft text-editorial-accent mb-3">
             <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
-          <h3 class="text-sm font-bold text-slate-900 dark:text-heading">No matching notices found</h3>
-          <p class="text-xs text-slate-600 dark:text-muted max-w-sm mx-auto mt-1">
+          <h3 class="font-['EB_Garamond'] text-lg font-normal text-editorial-heading">No matching notices found</h3>
+          <p class="text-[12.5px] text-editorial-muted font-['Geist'] max-w-sm mx-auto mt-1">
             Try adjusting your search terms or clearing the stream filter.
           </p>
           <button
             id="bento-reset-all-btn"
             type="button"
-            class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-accent text-white hover:bg-accent/90 transition-all duration-150 shadow-sm cursor-pointer"
+            class="mt-4 inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-semibold font-['Geist'] bg-editorial-accent text-white hover:bg-editorial-accent-hover transition-all cursor-pointer shadow-xs"
           >
             Clear Search
           </button>
@@ -578,44 +596,44 @@ const jsonLd = {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          3. OFFICIAL PORTALS — REFINED GRID
+          4. OFFICIAL PORTALS — REFINED EDITORIAL GRID
           ══════════════════════════════════════════════════════════ */}
-      <section class="mb-16" aria-label="Official Commission Portals">
-        <div class="bg-surface border border-border/60 rounded-2xl p-5 sm:p-6">
-          <div class="flex items-center gap-2.5 mb-5">
-            <div class="w-1 h-5 bg-accent rounded-full"></div>
+      <section class="mb-14" aria-label="Official Commission Portals">
+        <div class="bg-editorial-surface border border-editorial-border rounded-2xl p-5 sm:p-7 shadow-2xs">
+          <div class="flex items-center gap-3 mb-5 pb-3.5 border-b border-editorial-border">
+            <span class="w-1.5 h-5 bg-editorial-accent rounded-full inline-block"></span>
             <div>
-              <h2 class="text-[15px] font-bold text-slate-900 dark:text-heading tracking-tight">Official Commission Portals</h2>
-              <p class="text-[11px] text-slate-500 dark:text-muted mt-0.5">Apply, verify roll numbers and pay fees on official domains</p>
+              <h2 class="font-['EB_Garamond'] text-xl sm:text-2xl font-normal text-editorial-heading tracking-tight">Official Commission Portals</h2>
+              <p class="text-[12px] text-editorial-muted font-['Geist'] mt-0.5">Apply, verify roll numbers, and view official notifications directly</p>
             </div>
           </div>
 
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {verifiedPortals.map((portal) => (
               <a
                 href={portal.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group flex flex-col items-center text-center p-3 rounded-xl bg-surface-raised/30 hover:bg-surface-raised border border-border/40 hover:border-border transition-all duration-200 cursor-pointer hover:-translate-y-0.5"
+                class="group flex flex-col items-center text-center p-3 rounded-xl bg-editorial-surface-raised hover:bg-editorial-accent-soft border border-editorial-border hover:border-editorial-accent/40 transition-all duration-200 cursor-pointer"
                 title={`${portal.name} Official Portal`}
                 aria-label={`${portal.name} - ${portal.url} (opens in new tab)`}
               >
-                <div class="w-8 h-8 rounded-full bg-surface border border-border/60 flex items-center justify-center p-0.5 mb-2 shrink-0 overflow-hidden relative">
+                <div class="w-8.5 h-8.5 rounded-full bg-editorial-surface border border-editorial-border flex items-center justify-center p-1 mb-1.5 shrink-0 overflow-hidden relative shadow-2xs">
                   <Image
                     src={portal.logo}
                     alt={`${portal.name} emblem`}
                     class="w-full h-full object-contain"
                     loading="lazy"
                     decoding="async"
-                    width={28}
-                    height={28}
+                    width={26}
+                    height={26}
                   />
                   <div class={`w-full h-full rounded-full ${portal.bg} ${portal.text} hidden items-center justify-center font-bold text-[10px] select-none`}>
                     {portal.initial}
                   </div>
                 </div>
-                <p class="text-[12px] font-semibold text-slate-800 dark:text-text-body group-hover:text-accent transition-colors duration-150 truncate w-full">{portal.name}</p>
-                <p class="text-[10px] text-slate-500 dark:text-muted truncate w-full mt-0.5">{portal.url}</p>
+                <p class="text-[12.5px] font-semibold text-editorial-heading font-['Geist'] group-hover:text-editorial-accent transition-colors truncate w-full">{portal.name}</p>
+                <p class="text-[10px] text-editorial-muted font-['Geist'] truncate w-full mt-0.5">{portal.url}</p>
               </a>
             ))}
           </div>
@@ -623,86 +641,23 @@ const jsonLd = {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          4. LATEST NOTIFICATIONS FEED — EDITORIAL CARD GRID
+          5. COMMUNITY CHANNELS
           ══════════════════════════════════════════════════════════ */}
-      <section id="latest-updates" class="mb-16" aria-label="Latest Published Notifications">
-        <div class="flex items-center justify-between gap-3 mb-6">
-          <div class="flex items-center gap-2.5">
-            <div class="relative flex items-center">
-              <div class="w-1 h-5 bg-emerald-500 rounded-full"></div>
-            </div>
-            <div>
-              <h2 class="text-[15px] sm:text-base font-bold text-slate-900 dark:text-heading tracking-tight">Latest Notifications</h2>
-              <p class="text-[11px] text-slate-500 dark:text-muted mt-0.5">Recently published official recruitment alerts</p>
-            </div>
-          </div>
-          <span class="text-[11px] text-slate-600 dark:text-muted font-medium select-none tabular-nums bg-surface-raised px-2.5 py-1 rounded-lg border border-border/60">
-            {displayArticles.length} updates
-          </span>
-        </div>
-
-        {displayArticles.length > 0 ? (
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {displayArticles.slice(0, 15).map((article, idx) => (
-              <ArticleCard
-                variant="compact"
-                title={article.title}
-                slug={article.slugKey}
-                href={article.slug}
-                category={article.category}
-                categories={article.categories}
-                date={article.date}
-                summary={article.summary}
-                isNew={article.isNew}
-                headingLevel="h3"
-                prefetch={idx < 3 ? 'viewport' : 'hover'}
-              />
-            ))}
-          </div>
-        ) : fetchError && fetchError.type !== 'empty' ? (
-          <div class="p-10 text-center bg-surface border border-border/60 rounded-2xl">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 mb-3">
-              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <h3 class="text-sm font-bold text-slate-900 dark:text-heading">Temporary Feed Connectivity Hiccup</h3>
-            <p class="text-xs text-slate-600 dark:text-muted max-w-md mx-auto mt-1">
-              Real-time connection is refreshing. Browse the categories above or visit our Telegram channel.
-            </p>
-          </div>
-        ) : (
-          <div class="p-8 text-center bg-surface border border-border/60 rounded-2xl">
-            <p class="text-sm text-slate-600 dark:text-muted">All active notifications loaded in the streams above.</p>
-          </div>
-        )}
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          5. FAQ SECTION
-          ══════════════════════════════════════════════════════════ */}
-      <section id="faqs" class="mb-16" aria-label="Frequently Asked Questions">
-        <FAQSection faqs={siteFaqs} />
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          6. COMMUNITY CHANNELS
-          ══════════════════════════════════════════════════════════ */}
-      <section class="pt-8 border-t border-border/40" aria-label="Join Community Channels">
-        <div class="bg-surface rounded-2xl border border-border/60 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <section class="pt-6 border-t border-editorial-border" aria-label="Join Community Channels">
+        <div class="bg-editorial-surface rounded-2xl border border-editorial-border p-5 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 shadow-2xs">
           <div class="text-center sm:text-left">
-            <h2 class="text-base font-bold text-slate-900 dark:text-heading tracking-tight">Stay Updated Instantly</h2>
-            <p class="text-[13px] text-slate-600 dark:text-text-body mt-1 max-w-sm">
-              Join official community channels for immediate notification alerts. Never miss a deadline.
+            <h2 class="font-['EB_Garamond'] text-xl sm:text-2xl font-normal text-editorial-heading tracking-tight">Stay Updated Instantly</h2>
+            <p class="text-[12.5px] text-editorial-muted font-['Geist'] mt-1 max-w-sm">
+              Join official community channels for immediate notification alerts. Never miss an exam deadline.
             </p>
           </div>
-          <div class="flex items-center gap-3 select-none shrink-0">
+          <div class="flex items-center gap-3 select-none shrink-0 font-['Geist']">
             {telegramChannel && (
               <a
                 href={telegramChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#229ED9]/8 hover:bg-[#229ED9]/15 border border-[#229ED9]/20 hover:border-[#229ED9]/40 text-slate-800 dark:text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
+                class="group inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-[#229ED9]/10 hover:bg-[#229ED9]/20 border border-[#229ED9]/30 text-editorial-heading transition-all text-[12px] font-semibold cursor-pointer"
                 title="Join Telegram Channel"
               >
                 <svg class="w-4 h-4 text-[#229ED9] shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -716,7 +671,7 @@ const jsonLd = {
                 href={whatsappChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#25D366]/8 hover:bg-[#25D366]/15 border border-[#25D366]/20 hover:border-[#25D366]/40 text-slate-800 dark:text-white transition-all duration-150 text-sm font-semibold cursor-pointer"
+                class="group inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-[#25D366]/10 hover:bg-[#25D366]/20 border border-[#25D366]/30 text-editorial-heading transition-all text-[12px] font-semibold cursor-pointer"
                 title="Join WhatsApp Channel"
               >
                 <svg class="w-4 h-4 text-[#25D366] shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -861,11 +816,25 @@ const jsonLd = {
           });
         }
 
+        const searchSubmitBtn = document.getElementById('editorial-search-submit');
+        if (searchSubmitBtn) {
+          searchSubmitBtn.addEventListener('click', function () {
+            executeFilter();
+            searchInput.focus();
+          });
+        }
+
+        searchInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            executeFilter();
+          }
+        });
+
         optionBtns.forEach((btn) => {
           btn.addEventListener('click', function (e) {
             e.stopPropagation();
             const optionSlug = this.getAttribute('data-stream-option') || 'all';
-            const optionName = this.getAttribute('data-stream-name') || 'All Streams';
+            const optionName = this.getAttribute('data-stream-name') || 'All exam streams';
 
             activeStream = optionSlug;
 
@@ -876,9 +845,9 @@ const jsonLd = {
             optionBtns.forEach((b) => {
               const isSelected = (b.getAttribute('data-stream-option') || '') === optionSlug;
               b.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-              b.classList.toggle('text-white', isSelected);
+              b.classList.toggle('text-editorial-heading', isSelected);
               b.classList.toggle('font-semibold', isSelected);
-              b.classList.toggle('text-muted', !isSelected);
+              b.classList.toggle('text-editorial-muted', !isSelected);
               b.classList.toggle('font-medium', !isSelected);
 
               const checkIcon = b.querySelector('.category-check');
@@ -897,15 +866,15 @@ const jsonLd = {
           activeStream = 'all';
 
           if (dropdownLabel) {
-            dropdownLabel.textContent = 'All Streams';
+            dropdownLabel.textContent = 'All exam streams';
           }
 
           optionBtns.forEach((b) => {
             const isAll = (b.getAttribute('data-stream-option') || '') === 'all';
             b.setAttribute('aria-selected', isAll ? 'true' : 'false');
-            b.classList.toggle('text-white', isAll);
+            b.classList.toggle('text-editorial-heading', isAll);
             b.classList.toggle('font-semibold', isAll);
-            b.classList.toggle('text-muted', !isAll);
+            b.classList.toggle('text-editorial-muted', !isAll);
             b.classList.toggle('font-medium', !isAll);
 
             const checkIcon = b.querySelector('.category-check');

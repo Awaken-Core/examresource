@@ -25,6 +25,7 @@ interface Props {
   alternateLinks?: { hreflang: string; href: string }[];
   noindex?: boolean;
   useClientRouter?: boolean;
+  isEditorialTheme?: boolean;
 }
 
 const siteOrigin = siteUrl;
@@ -51,6 +52,7 @@ const {
   alternateLinks = [],
   noindex = false,
   useClientRouter = true,
+  isEditorialTheme = false,
 } = Astro.props;
 
 // Ensure explicit X-Robots-Tag HTTP header matches the meta robots directive
@@ -253,7 +255,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       })();
     </script>
   </head>
-  <body class="bg-canvas min-h-screen flex flex-col font-sans text-heading antialiased selection:bg-accent selection:text-white transition-colors duration-200">
+  <body class={`${isEditorialTheme ? 'editorial-theme bg-editorial-bg text-editorial-text' : 'bg-canvas text-heading'} min-h-screen flex flex-col font-sans antialiased selection:bg-editorial-accent selection:text-white transition-colors duration-200`}>
     {/* Google Tag Manager (noscript) */}
     <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -267,13 +269,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           transition:persist="desktop-sidebar"
           class="hidden lg:block shrink-0 relative z-[1050] transition-all duration-300"
         >
-          <LeftSidebar prefix="desktop" />
+          <LeftSidebar prefix="desktop" isEditorialTheme={isEditorialTheme} />
         </div>
       )}
 
       {/* Main Area: Header + Content + Footer */}
       <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
-        {!hideHeaderFooter && !hideHeader && <Header hideDesktopSidebar={hideDesktopSidebar} />}
+        {!hideHeaderFooter && !hideHeader && <Header hideDesktopSidebar={hideDesktopSidebar} isEditorialTheme={isEditorialTheme} />}
 
         <main id="main-content" class="flex-grow" transition:animate="fade">
           <slot />
@@ -408,7 +410,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <button
                 type="button"
                 data-app-lang="hinglish"
-                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer bg-accent !text-white"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer transition-colors"
                 title="Switch to Hinglish"
                 aria-pressed="true"
               >
@@ -417,7 +419,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <button
                 type="button"
                 data-app-lang="en"
-                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer text-muted hover:text-white"
+                class="app-lang-btn px-2.5 py-1 rounded-md text-[11px] font-semibold cursor-pointer transition-colors"
                 title="Switch to English"
                 aria-pressed="false"
               >
@@ -844,12 +846,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             const btnLang = btn.getAttribute('data-app-lang') || btn.getAttribute('data-global-lang');
             const isBtnActive = (btnLang === normalized);
             if (isBtnActive) {
-              btn.classList.add('bg-accent', '!text-[#ffffff]', 'font-bold', 'shadow-2xs');
-              btn.classList.remove('text-muted', 'bg-accent/20', 'text-accent', '!text-white');
+              btn.classList.add('bg-editorial-accent', 'bg-accent', '!text-white', 'font-bold', 'shadow-2xs');
+              btn.classList.remove('text-muted', 'text-editorial-muted', 'bg-accent/20', 'text-accent');
               btn.setAttribute('aria-pressed', 'true');
             } else {
-              btn.classList.remove('bg-accent', '!text-[#ffffff]', '!text-white', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
-              btn.classList.add('text-muted');
+              btn.classList.remove('bg-editorial-accent', 'bg-accent', '!text-white', '!text-[#ffffff]', 'font-bold', 'shadow-2xs', 'bg-accent/20', 'text-accent');
+              btn.classList.add('text-muted', 'text-editorial-muted');
               btn.setAttribute('aria-pressed', 'false');
             }
           });
@@ -1490,6 +1492,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
               : (fullName.slice(0, 2)).toUpperCase() || 'U';
 
+            const roleEls = document.querySelectorAll('.user-display-role');
+            const formattedRole = user.role === 'admin' ? 'Administrator' : user.role === 'editor' ? 'Editor' : (user.role || 'Aspirant');
+            roleEls.forEach(el => el.textContent = formattedRole);
+
             nameEls.forEach(el => el.textContent = fullName);
             emailEls.forEach(el => el.textContent = email);
             initialEls.forEach(el => {
@@ -1809,6 +1815,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
                 const initials = parts.length > 1
                   ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
                   : (fullName.slice(0, 2)).toUpperCase() || 'U';
+
+                const roleEls = document.querySelectorAll('.user-display-role');
+                const formattedRole = u.role === 'admin' ? 'Administrator' : u.role === 'editor' ? 'Editor' : (u.role || 'Aspirant');
+                roleEls.forEach(el => el.textContent = formattedRole);
 
                 document.querySelectorAll('.user-display-name').forEach(el => el.textContent = fullName);
                 document.querySelectorAll('.user-display-email').forEach(el => el.textContent = email);
