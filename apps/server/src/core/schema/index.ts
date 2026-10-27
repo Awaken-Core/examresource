@@ -10,3 +10,4 @@ export * from './book.schema.js';
 export * from './question.schema.js';
 export * from './exam.schema.js';
 export * from './test-series.schema.js';
+export * from './payment.schema.js';

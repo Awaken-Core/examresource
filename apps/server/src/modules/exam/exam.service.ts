@@ -23,6 +23,7 @@ import {
   type UserDocument,
 } from '../../core/schema/index.js';
 import type { CurrentUser } from '../auth/auth.service.js';
+import { TestSeriesAccessService } from '../payments/test-series-access.service.js';
 import type {
   CreateExamInput,
   SaveAnswerInput,
@@ -45,6 +46,8 @@ export class ExamService {
     @Optional()
     @InjectModel(QuestionMapping.name)
     private readonly questionMappingModel?: Model<QuestionMappingDocument>,
+    @Optional()
+    private readonly seriesAccess?: TestSeriesAccessService,
   ) {}
 
   async listPublished() {
@@ -224,6 +227,10 @@ export class ExamService {
         );
       }
       return this.formatAttempt(activeAttempt, false);
+    }
+
+    if (this.seriesAccess) {
+      await this.seriesAccess.assertCanStart(exam, user);
     }
 
     // Resolve questions and sections

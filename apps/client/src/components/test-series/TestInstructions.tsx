@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../lib/api';
+import { TestSeriesPassCard } from './TestSeriesPassCard';
 
 export interface SectionRule {
   id?: string;
@@ -43,6 +44,7 @@ export function TestInstructions({ testId, initialData }: Props) {
   const [confirmed, setConfirmed] = useState(false);
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
+  const [passRequired, setPassRequired] = useState(false);
 
   useEffect(() => {
     // If initialData matches current testId or slug, adopt it immediately and skip fetch
@@ -79,6 +81,7 @@ export function TestInstructions({ testId, initialData }: Props) {
     if (!confirmed || starting || !test) return;
     setStarting(true);
     setStartError(null);
+    setPassRequired(false);
 
     try {
       const res = await fetch(`${API_URL}/exams/${test.id}/attempts`, {
@@ -89,6 +92,12 @@ export function TestInstructions({ testId, initialData }: Props) {
         },
         credentials: 'include',
       });
+
+      if (res.status === 402) {
+        setPassRequired(true);
+        setStarting(false);
+        return;
+      }
 
       if (res.status === 401 || res.status === 403) {
         const loginUrl = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
@@ -353,6 +362,9 @@ export function TestInstructions({ testId, initialData }: Props) {
 
       {/* Confirmation & Start Action */}
       <section className="bg-surface border border-border rounded-2xl p-6 shadow-2xs space-y-4">
+        {passRequired && (
+          <TestSeriesPassCard variant="instructions" onPurchased={() => void handleStartTest()} />
+        )}
         {startError && (
           <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3 text-xs text-rose-300">
             {startError}

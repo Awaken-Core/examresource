@@ -1,0 +1,115 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { contactEmail, siteName, siteUrl } from '../data/site';
+import { formatRupees, loadPassOffer } from '../lib/passOffer';
+
+const offer = await loadPassOffer();
+const price = formatRupees(offer.amountPaise);
+const lastUpdated = 'October 27, 2026';
+const pageTitle = `Refund and Cancellation Policy | ${siteName}`;
+const pageDescription = `Refund and cancellation rules for the ${siteName} Test Series Pass. The pass is a one-time ${offer.validityMonths}-month purchase of ${price}. It does not auto-renew.`;
+const canonicalUrl = `${siteUrl}/refund-policy`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Refund and Cancellation Policy',
+  url: canonicalUrl,
+  description: pageDescription,
+  publisher: {
+    '@type': 'Organization',
+    name: siteName,
+    url: siteUrl,
+  },
+};
+
+const sections = [
+  { id: 'product', title: 'What can be refunded' },
+  { id: 'no-subscription', title: 'No subscription' },
+  { id: 'failed-payment', title: 'Failed payments' },
+  { id: 'access-not-granted', title: 'Charged but no access' },
+  { id: 'after-access', title: 'After the pass is active' },
+  { id: 'how-to-ask', title: 'How to request a refund' },
+];
+---
+
+<Layout title={pageTitle} description={pageDescription} canonicalUrl={canonicalUrl} jsonLd={jsonLd}>
+  <div class="min-h-screen bg-canvas text-white px-4 sm:px-6 lg:px-8 py-7">
+    <div class="max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_310px] xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+        <div class="min-w-0 space-y-7">
+          <nav aria-label="Breadcrumb" class="flex items-center gap-1.5 text-xs text-muted">
+            <a href="/" class="hover:text-accent transition">Home</a>
+            <span>/</span>
+            <span class="text-white font-medium">Refund Policy</span>
+          </nav>
+
+          <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs space-y-3">
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-raised border border-border text-white text-xs font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              <span>Payments</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Refund and Cancellation Policy</h1>
+            <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
+              This policy covers the Test Series Pass sold on {siteName}. Blogs, books, and quizzes are not sold through this pass. The current price and what the pass includes are on the <a href="/pricing" class="text-accent hover:underline">pricing page</a>.
+            </p>
+            <p class="text-xs text-muted">Last updated: <strong class="text-white">{lastUpdated}</strong></p>
+          </section>
+
+          <main class="space-y-6 text-sm text-muted leading-relaxed">
+            <section id="product" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
+              <h2 class="text-base font-bold text-white">What can be refunded</h2>
+              <p>
+                The only paid product is the Test Series Pass, currently {price} for {offer.validityMonths} months. A refund request can cover that payment. It does not cover a government exam fee, a book, or a quiz, because those are not charged by this pass.
+              </p>
+            </section>
+
+            <section id="no-subscription" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
+              <h2 class="text-base font-bold text-white">No subscription to cancel</h2>
+              <p>
+                The pass is a single payment. It does not renew, and Razorpay is not asked to charge the card again when the {offer.validityMonths} months end. There is no cancellation of a future debit. When the pass expires, access to locked tests stops until a new pass is bought.
+              </p>
+            </section>
+
+            <section id="failed-payment" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
+              <h2 class="text-base font-bold text-white">Failed or abandoned payments</h2>
+              <p>
+                If the payment fails, or the payment window is closed before Razorpay confirms it, the pass is not activated. A failed attempt is not a completed purchase. Any amount that a bank shows as pending returns through the bank or Razorpay. {siteName} does not keep a failed payment.
+              </p>
+            </section>
+
+            <section id="access-not-granted" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
+              <h2 class="text-base font-bold text-white">Charged, but the pass did not unlock</h2>
+              <p>
+                If money was taken and the account still does not show an active pass, write to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a> within 7 days. Include the registered email, the Razorpay payment id, and the date of payment. After we confirm the charge and the missing access, that payment is refunded in full to the original method.
+              </p>
+            </section>
+
+            <section id="after-access" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
+              <h2 class="text-base font-bold text-white">After the pass is active</h2>
+              <p>
+                Access to every published test series starts as soon as the payment is verified. Because the digital pass is delivered immediately, a change-of-mind refund is not available once the pass is active on the account. A duplicate charge for the same purchase is refunded after we match the two payment ids.
+              </p>
+            </section>
+
+            <section id="how-to-ask" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
+              <h2 class="text-base font-bold text-white">How to request a refund</h2>
+              <p>
+                Email <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a> or use <a href="/contact-us" class="text-accent hover:underline">Contact Us</a>. Approved refunds are sent through Razorpay to the original payment method. Banks often take 5 to 7 working days after Razorpay accepts the refund to show the credit.
+              </p>
+            </section>
+          </main>
+        </div>
+
+        <aside class="hidden lg:block sticky top-20">
+          <nav class="bg-surface border border-border rounded-xl p-4 space-y-2" aria-label="Refund policy sections">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted">On this page</p>
+            {sections.map((section) => (
+              <a href={`#${section.id}`} class="block text-xs text-muted hover:text-white py-1">{section.title}</a>
+            ))}
+          </nav>
+        </aside>
+      </div>
+    </div>
+  </div>
+</Layout>

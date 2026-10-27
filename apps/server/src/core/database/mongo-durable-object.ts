@@ -16,6 +16,8 @@ import {
   NotificationSchema,
   OauthStateSchema,
   PasswordResetTokenSchema,
+  PaymentOrderSchema,
+  TestSeriesPassSchema,
   QuestionMappingSchema,
   QuestionSchema,
   ReportedQuestionSchema,
@@ -89,6 +91,8 @@ const SCHEMA_MAP: Record<string, any> = {
   TestSeriesSubject: TestSeriesSubjectSchema,
   Chapter: ChapterSchema,
   QuestionMapping: QuestionMappingSchema,
+  PaymentOrder: PaymentOrderSchema,
+  TestSeriesPass: TestSeriesPassSchema,
 };
 
 export class MongoDurableObject extends DurableObject {

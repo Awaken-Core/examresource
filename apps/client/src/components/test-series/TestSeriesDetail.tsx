@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { API_URL } from '../../lib/api';
+import { TestSeriesPassCard } from './TestSeriesPassCard';
 
 export interface Chapter {
   id: string;
@@ -122,6 +123,11 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
 
   // Learner series progress state (after login)
   const [learnerPrep, setLearnerPrep] = useState<LearnerSeriesPrep | null>(null);
+  const [seriesAccess, setSeriesAccess] = useState<{
+    hasActivePass: boolean;
+    expiresAt: string | null;
+    freeTestId: string | null;
+  } | null>(null);
 
   // Tab: 'full' | 'subject' | 'chapter'
   const [activeTab, setActiveTab] = useState<TabType>('full');
@@ -201,15 +207,28 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
     if (!series) return;
     const seriesId = series.id || series._id;
     if (!seriesId) return;
+    const resolvedSeriesId = seriesId;
 
     async function fetchPrepData() {
       try {
-        const res = await fetch(`${API_URL}/me/preparation/series/${seriesId}`, {
+        const res = await fetch(`${API_URL}/me/preparation/series/${resolvedSeriesId}`, {
           credentials: 'include',
         });
         if (res.ok) {
           const data = (await res.json()) as LearnerSeriesPrep;
           setLearnerPrep(data);
+        }
+        const accessRes = await fetch(
+          `${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`,
+          { credentials: 'include' },
+        );
+        if (accessRes.ok) {
+          const access = await accessRes.json();
+          setSeriesAccess({
+            hasActivePass: Boolean(access.hasActivePass),
+            expiresAt: access.expiresAt ?? null,
+            freeTestId: access.freeTestId ?? null,
+          });
         }
       } catch {
         // Non-fatal if student is not signed in
@@ -450,6 +469,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
         </div>
       </section>
 
+      <TestSeriesPassCard
+        variant="series"
+        initialActive={Boolean(seriesAccess?.hasActivePass)}
+        initialExpiresAt={seriesAccess?.expiresAt ?? null}
+      />
+
       {/* ─────────────────────────────────────────────────────────────
           PERSONAL LAYER: Progress & Continue Active Attempt (After Login)
           ───────────────────────────────────────────────────────────── */}
@@ -621,6 +646,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
                         key={t.id || t._id}
                         test={t}
                         latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                        seriesAccess={seriesAccess}
                       />
                     ))}
                   </div>
@@ -707,6 +733,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
                         key={t.id || t._id}
                         test={t}
                         latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                        seriesAccess={seriesAccess}
                       />
                     ))}
                   </div>
@@ -732,6 +759,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
                     key={t.id || t._id}
                     test={t}
                     latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
+                    seriesAccess={seriesAccess}
                   />
                 ))}
               </div>
@@ -743,12 +771,49 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
   );
 }
 
+function TestAccessPill({
+  test,
+  seriesAccess,
+}: {
+  test: PublishedTestItem;
+  seriesAccess?: { hasActivePass: boolean; freeTestId: string | null } | null;
+}) {
+  const testId = test.id || test._id;
+  let label = test.access === 'free' ? 'Free' : 'Premium';
+  let tone: 'emerald' | 'amber' = test.access === 'free' ? 'emerald' : 'amber';
+  if (seriesAccess) {
+    if (seriesAccess.hasActivePass) {
+      label = 'Included';
+      tone = 'emerald';
+    } else if (seriesAccess.freeTestId && seriesAccess.freeTestId === testId) {
+      label = 'Your free test';
+      tone = 'emerald';
+    } else if (seriesAccess.freeTestId) {
+      label = 'Pass required';
+      tone = 'amber';
+    } else {
+      label = '1st test free';
+      tone = 'emerald';
+    }
+  }
+  const className =
+    tone === 'emerald'
+      ? 'text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded'
+      : 'text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded';
+  return <span className={className}>{label}</span>;
+}
+
 function TestCard({
   test,
   latestAttempt,
+  seriesAccess,
 }: {
   test: PublishedTestItem;
   latestAttempt?: LatestAttemptMeta | null;
+  seriesAccess?: {
+    hasActivePass: boolean;
+    freeTestId: string | null;
+  } | null;
 }) {
   const isFull = test.testMode === 'full';
   const sectionsCount = test.sections?.length || 0;
@@ -786,15 +851,7 @@ function TestCard({
             )}
           </div>
 
-          {test.access === 'free' ? (
-            <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-              Free
-            </span>
-          ) : (
-            <span className="text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
-              Premium
-            </span>
-          )}
+          <TestAccessPill test={test} seriesAccess={seriesAccess} />
         </div>
 
         {/* Title */}

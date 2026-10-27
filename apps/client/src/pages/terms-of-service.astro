@@ -40,7 +40,7 @@ const jsonLd = {
 };
 
 const sections = [
-  { id: "free-service", title: "Free Educational Resource" },
+  { id: "free-service", title: "Free content and the paid pass" },
   { id: "disclaimer", title: "Non-Government Disclaimer" },
   { id: "intellectual-property", title: "Intellectual Property" },
   { id: "user-conduct", title: "User Conduct & Fair Play" },
@@ -104,14 +104,14 @@ const sections = [
               <div class="flex items-center justify-between pb-2 border-b border-border/50">
                 <h2 class="text-base font-bold text-white flex items-center gap-2">
                   <span class="w-6 h-6 rounded-md bg-surface-raised text-white text-xs font-bold flex items-center justify-center border border-border">1</span>
-                  <span>100% Free Educational Resource</span>
+                  <span>What is free, and what is paid</span>
                 </h2>
               </div>
               <p>
-                {siteName} is a public informational platform built to assist aspirants preparing for Indian government examinations. All syllabus outlines, dates, notices, and test patterns on the platform are provided entirely free of cost.
+                {siteName} publishes exam notices, articles, and study guides free of charge. One test inside each test series is also free. A Test Series Pass is a separate paid product. Its price, duration, and limits are on the <a href="/pricing" class="text-accent hover:underline">pricing page</a>. Refunds for that pass are on the <a href="/refund-policy" class="text-accent hover:underline">refund and cancellation policy</a>.
               </p>
               <div class="p-3.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs leading-relaxed">
-                <span class="font-bold text-amber-800 dark:text-amber-300">⚠️ Fraud Warning:</span> {siteName} never charges any fee or asks for payments. If anyone demands money claiming to represent {siteName}, please do not pay and notify us immediately at <a href={`mailto:${contactEmail}`} class="underline font-semibold hover:text-amber-700 dark:hover:text-amber-100">{contactEmail}</a>.
+                <span class="font-bold text-amber-800 dark:text-amber-300">Fraud warning:</span> Pay for the Test Series Pass only on this website, through the Razorpay window opened by the Buy pass button. {siteName} does not ask for payment on WhatsApp, Telegram, or a personal UPI account. If someone does, do not pay, and write to <a href={`mailto:${contactEmail}`} class="underline font-semibold hover:text-amber-700 dark:hover:text-amber-100">{contactEmail}</a>.
               </div>
             </section>
 

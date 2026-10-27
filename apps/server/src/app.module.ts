@@ -12,6 +12,7 @@ import { NotificationModule } from './modules/notifications/notification.module.
 import { QuestionModule } from './modules/question/question.module.js';
 import { TestSeriesModule } from './modules/test-series/test-series.module.js';
 import { CommentsModule } from './modules/comments/comments.module.js';
+import { PaymentsModule } from './modules/payments/payment.module.js';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CommentsModule } from './modules/comments/comments.module.js';
     QuestionModule,
     TestSeriesModule,
     CommentsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

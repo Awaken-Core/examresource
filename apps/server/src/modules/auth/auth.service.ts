@@ -60,6 +60,13 @@ export class AuthService {
     private readonly notificationModel: Model<NotificationDocument>,
   ) {}
 
+  private async revokeOtherSessions(userId: Types.ObjectId) {
+    await this.sessionModel.updateMany(
+      { userId, revokedAt: null },
+      { $set: { revokedAt: new Date() } },
+    );
+  }
+
   private tokenHash(token: string) {
     return createHash('sha256').update(token).digest('hex');
   }
@@ -133,6 +140,7 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password.');
     }
     const token = this.newToken();
+    await this.revokeOtherSessions(user._id);
     await this.sessionModel.create({
       userId: user._id,
       tokenHash: this.tokenHash(token),
@@ -241,6 +249,7 @@ export class AuthService {
     }
 
     const token = this.newToken();
+    await this.revokeOtherSessions(user._id);
     await this.sessionModel.create({
       userId: user._id,
       tokenHash: this.tokenHash(token),

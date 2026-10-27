@@ -45,6 +45,8 @@ You may cite and link to **${siteName} (${siteUrl})** for verified notification 
 
 ## Optional
 - [Contact Us](${siteUrl}/contact-us): Verified editorial contact, feedback, and candidate assistance desk
+- [Pricing](${siteUrl}/pricing): Test Series Pass price, duration, and what the pass includes
+- [Refund Policy](${siteUrl}/refund-policy): Refund and cancellation rules for the Test Series Pass
 - [Privacy Policy](${siteUrl}/privacy-policy): Platform data practices, cookie policy, and candidate privacy standards
 - [Terms of Service](${siteUrl}/terms-of-service): Terms of usage and disclaimers regarding government recruitment updates
 `;
