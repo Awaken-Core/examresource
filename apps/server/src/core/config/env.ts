@@ -35,6 +35,21 @@ export const EnvSchema = z.object({
     .transform((val) => (val?.trim() ? val.trim() : 'https://openrouter.ai/api/v1'))
     .pipe(z.string().url())
     .default('https://openrouter.ai/api/v1'),
+  RAZORPAY_KEY_ID: z
+    .string()
+    .optional()
+    .transform((value) => (value?.trim() ? value.trim() : undefined)),
+  RAZORPAY_KEY_SECRET: z
+    .string()
+    .optional()
+    .transform((value) => (value?.trim() ? value.trim() : undefined)),
+  RAZORPAY_WEBHOOK_SECRET: z
+    .string()
+    .optional()
+    .transform((value) => (value?.trim() ? value.trim() : undefined)),
+  RAZORPAY_PASS_AMOUNT_PAISE: z.coerce.number().int().min(100).default(6900),
+  RAZORPAY_PASS_LIST_PRICE_PAISE: z.coerce.number().int().min(100).default(19900),
+  RAZORPAY_PASS_VALIDITY_MONTHS: z.coerce.number().int().min(1).max(36).default(6),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

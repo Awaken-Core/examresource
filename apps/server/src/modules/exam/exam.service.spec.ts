@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { Types } from 'mongoose';
+import { HttpException } from '@nestjs/common';
 import { ExamService } from './exam.service.js';
 import type { CurrentUser } from '../auth/auth.service.js';
 
@@ -43,6 +44,90 @@ describe('ExamService timing, publication and duration rules', () => {
     expect(exams.findOne).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'published' }),
     );
+  });
+
+  it('stops a new attempt when the series pass is required', async () => {
+    const seriesAccess = {
+      assertCanStart: vi.fn().mockRejectedValue(
+        new HttpException(
+          {
+            statusCode: 402,
+            code: 'TEST_SERIES_PASS_REQUIRED',
+            message: 'A test series pass is required to start this test.',
+          },
+          402,
+        ),
+      ),
+    };
+    const exams: any = { findOne: vi.fn(), findById: vi.fn() };
+    const attempts: any = {
+      findOne: vi.fn(),
+      countDocuments: vi.fn(),
+      create: vi.fn(),
+    };
+    const service = new ExamService(
+      exams,
+      { countDocuments: vi.fn() } as any,
+      attempts,
+      { findById: vi.fn() } as any,
+      { findById: vi.fn() } as any,
+      undefined,
+      seriesAccess as any,
+    );
+    exams.findOne.mockReturnValue({
+      lean: vi.fn().mockResolvedValue({
+        _id: '65f1a2b3c4d5e6f7a8b9c0d2',
+        status: 'published',
+        type: 'exam',
+        testSeriesId: '65f1a2b3c4d5e6f7a8b9c0d3',
+      }),
+    });
+    attempts.countDocuments.mockResolvedValue(0);
+    attempts.findOne.mockReturnValue({ lean: vi.fn().mockResolvedValue(null) });
+
+    await expect(service.startAttempt('65f1a2b3c4d5e6f7a8b9c0d2', student)).rejects.toMatchObject({
+      status: 402,
+    });
+    expect(attempts.create).not.toHaveBeenCalled();
+  });
+
+  it('resumes an in-progress attempt without asking for a pass', async () => {
+    const seriesAccess = { assertCanStart: vi.fn() };
+    const exams: any = { findOne: vi.fn() };
+    const attempts: any = { findOne: vi.fn(), countDocuments: vi.fn(), create: vi.fn() };
+    const service = new ExamService(
+      exams,
+      {} as any,
+      attempts,
+      {} as any,
+      {} as any,
+      undefined,
+      seriesAccess as any,
+    );
+    const attemptId = new Types.ObjectId();
+    exams.findOne.mockReturnValue({
+      lean: vi.fn().mockResolvedValue({
+        _id: '65f1a2b3c4d5e6f7a8b9c0d2',
+        status: 'published',
+        type: 'exam',
+        testSeriesId: '65f1a2b3c4d5e6f7a8b9c0d3',
+      }),
+    });
+    attempts.countDocuments.mockResolvedValue(1);
+    attempts.findOne.mockReturnValue({
+      lean: vi.fn().mockResolvedValue({
+        _id: attemptId,
+        status: 'in_progress',
+        testId: '65f1a2b3c4d5e6f7a8b9c0d2',
+        userId: student.id,
+        expiresAt: new Date(Date.now() + 60_000),
+      }),
+    });
+
+    const resumed = await service.startAttempt('65f1a2b3c4d5e6f7a8b9c0d2', student);
+    expect(resumed.status).toBe('in_progress');
+    expect(seriesAccess.assertCanStart).not.toHaveBeenCalled();
+    expect(attempts.create).not.toHaveBeenCalled();
   });
 
   it('requires published questions when publishing an exam', async () => {

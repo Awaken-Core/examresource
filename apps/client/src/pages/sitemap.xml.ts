@@ -77,6 +77,8 @@ export const GET: APIRoute = async () => {
     },
     { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
     { loc: `${siteUrl}/terms-of-service`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
+    { loc: `${siteUrl}/pricing`, changefreq: 'monthly', priority: '0.6', lastmod: currentDate },
+    { loc: `${siteUrl}/refund-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
     { loc: `${siteUrl}/contact-us`, changefreq: 'monthly', priority: '0.5', lastmod: currentDate },
     { loc: `${siteUrl}/sitemap`, changefreq: 'weekly', priority: '0.7', lastmod: currentDate },
   ];
