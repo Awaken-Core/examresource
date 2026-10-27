@@ -387,18 +387,18 @@ export function ProfileHub() {
 
   if (state === "loading") {
     return (
-      <div className="space-y-4">
-        <div className="h-44 w-full animate-pulse rounded-2xl border border-border bg-surface p-6" />
-        <div className="h-12 w-full animate-pulse rounded-xl border border-border bg-surface" />
-        <div className="h-64 w-full animate-pulse rounded-2xl border border-border bg-surface" />
+      <div className="space-y-4 font-['Geist']">
+        <div className="h-44 w-full animate-pulse rounded-2xl border border-editorial-border bg-editorial-surface p-6" />
+        <div className="h-12 w-full animate-pulse rounded-xl border border-editorial-border bg-editorial-surface" />
+        <div className="h-64 w-full animate-pulse rounded-2xl border border-editorial-border bg-editorial-surface" />
       </div>
     );
   }
 
   if (state === "signed-out") {
     return (
-      <section className="mx-auto max-w-xl rounded-2xl border border-border bg-surface p-8 text-center shadow-xs">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-accent/30 bg-accent/10 text-accent">
+      <section className="mx-auto max-w-xl rounded-2xl border border-editorial-border bg-editorial-surface p-8 text-center shadow-xs font-['Geist']">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-editorial-accent/30 bg-editorial-accent-soft text-editorial-accent">
           <svg
             className="h-8 w-8"
             fill="none"
@@ -413,23 +413,23 @@ export function ProfileHub() {
             />
           </svg>
         </div>
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-white">
+        <h1 className="mt-4 font-['EB_Garamond'] text-2xl sm:text-3xl font-normal tracking-tight text-editorial-heading">
           Your Personal Preparation Hub
         </h1>
-        <p className="mt-2 text-sm leading-6 text-muted">
+        <p className="mt-2 text-sm leading-6 text-editorial-muted">
           Sign in to track your mock tests, monitor chapter weaknesses, review
           accuracy trends, and manage your exam goals.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <a
             href="/login?redirect=/profile"
-            className="inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+            className="inline-flex items-center justify-center rounded-xl bg-editorial-accent px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-editorial-accent-hover shadow-xs"
           >
             Sign In
           </a>
           <a
             href="/register?redirect=/profile"
-            className="inline-flex items-center justify-center rounded-xl border border-border bg-surface-raised px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-surface-raised/80"
+            className="inline-flex items-center justify-center rounded-xl border border-editorial-border bg-editorial-surface-raised px-5 py-2.5 text-sm font-medium text-editorial-heading transition hover:bg-editorial-accent-soft"
           >
             Create Free Account
           </a>
@@ -440,8 +440,8 @@ export function ProfileHub() {
 
   if (state === "error" || !user) {
     return (
-      <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-center text-sm text-red-400">
-        <p className="font-semibold text-white">
+      <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-center text-sm text-red-500 dark:text-red-400 font-['Geist']">
+        <p className="font-semibold text-editorial-heading">
           Could not load your preparation profile
         </p>
         <p className="mt-1">
@@ -449,7 +449,7 @@ export function ProfileHub() {
         </p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 inline-flex rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white"
+          className="mt-4 inline-flex rounded-xl bg-editorial-accent px-4 py-2 text-xs font-semibold text-white transition hover:bg-editorial-accent-hover"
         >
           Refresh Page
         </button>
@@ -474,60 +474,78 @@ export function ProfileHub() {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-['Geist']">
+      {/* ─────────────────────────────────────────────────────────────
+          SECTION INTRO: Inspired by the editorial design reference
+          ───────────────────────────────────────────────────────────── */}
+      <div className="pb-1">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="w-1.5 h-4 bg-editorial-accent rounded-full inline-block"></span>
+          <span className="text-[11px] font-semibold tracking-[0.2em] uppercase text-editorial-accent">
+            Profile
+          </span>
+        </div>
+        <h1 className="font-['EB_Garamond'] text-3xl sm:text-4xl font-normal tracking-tight text-editorial-heading">
+          Your Profile
+        </h1>
+        <p className="mt-1 text-[13px] sm:text-sm text-editorial-muted">
+          Track your progress, manage your tests, and stay focused on your exam goals.
+        </p>
+      </div>
+
       {/* ─────────────────────────────────────────────────────────────
           TOP AREA: Student identity, target exam, language, metrics
           ───────────────────────────────────────────────────────────── */}
-      <header className="overflow-hidden rounded-2xl border border-border bg-surface shadow-xs">
-        <div className="bg-gradient-to-r from-accent/20 via-accent/5 to-transparent px-5 py-6 sm:px-7">
+      <header className="overflow-hidden rounded-2xl border border-editorial-border bg-editorial-surface shadow-xs">
+        <div className="px-5 py-6 sm:px-7 bg-editorial-surface">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-accent/40 bg-accent/15 text-xl font-extrabold text-accent shadow-xs">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-editorial-accent text-xl font-extrabold text-white shadow-xs">
                 {initials}
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="truncate text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+                  <h2 className="truncate text-xl font-bold tracking-tight text-editorial-heading sm:text-2xl font-['EB_Garamond']">
                     {user.name}
-                  </h1>
-                  <span className="rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-accent">
+                  </h2>
+                  <span className="rounded-md border border-editorial-accent/25 bg-editorial-accent-badge px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-editorial-accent">
                     {user.role}
                   </span>
                 </div>
-                <p className="mt-0.5 truncate text-xs text-muted sm:text-sm">
+                <p className="mt-0.5 truncate text-xs text-editorial-muted sm:text-sm">
                   {user.email}
                 </p>
-                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
                   {/* Target Exam Tag */}
-                  <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    <span className="text-accent" aria-hidden="true">
+                  <div className="inline-flex items-center gap-1.5 rounded-lg border border-editorial-border bg-editorial-surface-raised px-2.5 py-1 text-editorial-heading">
+                    <span className="text-editorial-accent" aria-hidden="true">
                       🎯
                     </span>
-                    <span className="text-muted">Target:</span>
-                    <span className="font-semibold text-white">
+                    <span className="text-editorial-muted">Target:</span>
+                    <span className="font-medium text-editorial-heading">
                       {user.targetExam || "Not set yet"}
                     </span>
                   </div>
 
                   {/* Preferred Language Tag */}
-                  <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    <span className="text-accent" aria-hidden="true">
+                  <div className="inline-flex items-center gap-1.5 rounded-lg border border-editorial-border bg-editorial-surface-raised px-2.5 py-1 text-editorial-heading">
+                    <span className="text-editorial-accent" aria-hidden="true">
                       🌐
                     </span>
-                    <span className="text-muted">Language:</span>
-                    <span className="font-semibold text-white">
+                    <span className="text-editorial-muted">Language:</span>
+                    <span className="font-medium text-editorial-heading">
                       {user.preferredLanguage || "English"}
                     </span>
                   </div>
 
                   {/* Goal Date if set */}
                   {user.examGoalDate && (
-                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                      <span className="text-accent" aria-hidden="true">
+                    <div className="inline-flex items-center gap-1.5 rounded-lg border border-editorial-border bg-editorial-surface-raised px-2.5 py-1 text-editorial-heading">
+                      <span className="text-editorial-accent" aria-hidden="true">
                         📅
                       </span>
-                      <span className="text-muted">Goal:</span>
-                      <span className="font-semibold text-white">
+                      <span className="text-editorial-muted">Goal:</span>
+                      <span className="font-medium text-editorial-heading">
                         {new Date(user.examGoalDate).toLocaleDateString(
                           undefined,
                           {
@@ -538,7 +556,7 @@ export function ProfileHub() {
                         )}
                       </span>
                       {daysUntilGoal !== null && (
-                        <span className="rounded bg-accent/20 px-1 py-0.2 text-[10px] font-bold text-accent">
+                        <span className="rounded bg-editorial-accent-soft px-1.5 py-0.2 text-[10px] font-bold text-editorial-accent">
                           {daysUntilGoal > 0
                             ? `${daysUntilGoal}d left`
                             : daysUntilGoal === 0
@@ -553,11 +571,11 @@ export function ProfileHub() {
             </div>
 
             {/* Profile Edit Action Button */}
-            <div className="flex shrink-0 items-center gap-2 self-start sm:self-center">
+            <div className="flex shrink-0 items-center gap-2.5 self-start sm:self-center">
               <button
                 type="button"
                 onClick={() => handleTabChange("settings")}
-                className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-raised px-3.5 py-2 text-xs font-semibold text-white transition hover:border-accent hover:text-accent"
+                className="inline-flex items-center gap-2 rounded-xl border border-editorial-border bg-editorial-surface px-4 py-2.5 text-xs font-semibold text-editorial-heading transition hover:border-editorial-accent hover:text-editorial-accent hover:bg-editorial-accent-soft"
               >
                 <svg
                   className="h-3.5 w-3.5"
@@ -576,7 +594,7 @@ export function ProfileHub() {
               </button>
               <a
                 href="/test-series"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white transition hover:opacity-90"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-editorial-accent px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-editorial-accent-hover shadow-xs"
               >
                 <span>Explore Tests</span>
                 <span aria-hidden="true">→</span>
@@ -586,7 +604,7 @@ export function ProfileHub() {
         </div>
 
         {/* 4 Summary Aggregate Metrics Bar */}
-        <div className="grid grid-cols-2 divide-x divide-y sm:divide-y-0 sm:grid-cols-4 divide-border border-t border-border">
+        <div className="grid grid-cols-2 divide-x divide-y sm:divide-y-0 sm:grid-cols-4 divide-editorial-border border-t border-editorial-border bg-editorial-surface">
           <MetricBlock
             label="Tests Attempted"
             value={stats.totalTests.toString()}
@@ -609,11 +627,11 @@ export function ProfileHub() {
             valueClass={
               stats.accuracyPercent !== null
                 ? stats.accuracyPercent >= 75
-                  ? "text-emerald-400"
+                  ? "text-emerald-600 dark:text-emerald-400"
                   : stats.accuracyPercent >= 50
-                    ? "text-amber-400"
-                    : "text-red-400"
-                : "text-white"
+                    ? "text-amber-600 dark:text-amber-400"
+                    : "text-red-500"
+                : "text-editorial-heading"
             }
           />
           <MetricBlock
@@ -644,7 +662,7 @@ export function ProfileHub() {
           ───────────────────────────────────────────────────────────── */}
       <nav
         aria-label="Preparation Navigation"
-        className="flex overflow-x-auto border-b border-border pb-1"
+        className="flex overflow-x-auto border-b border-editorial-border pb-1"
       >
         <div className="flex gap-2">
           <TabButton
@@ -717,7 +735,7 @@ export function ProfileHub() {
                 ? `${weakTopics.filter((t) => t.accuracy < 60).length}`
                 : undefined
             }
-            badgeColor="bg-amber-500/20 text-amber-300"
+            badgeColor="bg-amber-500/20 text-amber-700 dark:text-amber-300"
             icon={
               <svg
                 className="h-4 w-4"
@@ -769,22 +787,22 @@ export function ProfileHub() {
         <div className="space-y-6">
           {/* Active test banner if an in-progress attempt exists */}
           {stats.inProgressAttempts.length > 0 && (
-            <div className="rounded-2xl border border-accent/40 bg-accent/10 p-5 shadow-xs">
+            <div className="rounded-2xl border border-editorial-accent/30 bg-editorial-accent-soft p-5 shadow-xs">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-3">
                   <span className="flex h-3 w-3 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-editorial-accent opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-editorial-accent"></span>
                   </span>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    <p className="text-xs font-bold uppercase tracking-wider text-editorial-accent">
                       Active Test in Progress
                     </p>
-                    <h2 className="text-base font-bold text-white">
+                    <h2 className="text-base font-bold text-editorial-heading">
                       {stats.inProgressAttempts[0]?.test?.title ||
                         "Exam in progress"}
                     </h2>
-                    <p className="text-xs text-muted">
+                    <p className="text-xs text-editorial-muted">
                       Started:{" "}
                       {new Date(
                         stats.inProgressAttempts[0]?.startedAt,
@@ -796,8 +814,8 @@ export function ProfileHub() {
                   </div>
                 </div>
                 <a
-                  href={`/exams/${stats.inProgressAttempts[0]?.testId}/attempt`}
-                  className="inline-flex items-center justify-center rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:opacity-95"
+                  href={`/test-series/cbt/${stats.inProgressAttempts[0]?.id}`}
+                  className="inline-flex items-center justify-center rounded-xl bg-editorial-accent px-4 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-editorial-accent-hover"
                 >
                   Resume Test →
                 </a>
@@ -809,30 +827,33 @@ export function ProfileHub() {
             {/* Recent test activity */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-white">
-                  Recent Test Activity
-                </h2>
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-3.5 bg-editorial-accent rounded-full inline-block"></span>
+                  <h2 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-lg sm:text-xl">
+                    Recent Test Activity
+                  </h2>
+                </div>
                 <button
                   type="button"
                   onClick={() => handleTabChange("my-tests")}
-                  className="text-xs font-semibold text-accent hover:underline"
+                  className="text-xs font-semibold text-editorial-accent hover:underline"
                 >
                   View all ({attempts.length})
                 </button>
               </div>
 
               {attempts.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
-                  <p className="text-base font-semibold text-white">
+                <div className="rounded-2xl border border-dashed border-editorial-border bg-editorial-surface p-8 text-center">
+                  <p className="text-base font-medium text-editorial-heading font-['EB_Garamond'] text-lg">
                     No mock tests attempted yet
                   </p>
-                  <p className="mt-1 text-xs text-muted">
+                  <p className="mt-1 text-xs text-editorial-muted">
                     Take your first test to start generating accuracy and
                     chapter diagnostics.
                   </p>
                   <a
                     href="/test-series"
-                    className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white transition hover:opacity-90"
+                    className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-editorial-accent px-4 py-2 text-xs font-semibold text-white transition hover:bg-editorial-accent-hover shadow-xs"
                   >
                     <span>Browse Mock Tests</span>
                     <span aria-hidden="true">→</span>
@@ -849,41 +870,44 @@ export function ProfileHub() {
 
             {/* Preparation Roadmap & Quick Shortcuts */}
             <div className="space-y-4">
-              <h2 className="text-base font-bold text-white">
-                Target & Readiness
-              </h2>
-              <div className="rounded-2xl border border-border bg-surface p-5 space-y-4 shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-1.5 h-3.5 bg-editorial-accent rounded-full inline-block"></span>
+                <h2 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-lg sm:text-xl">
+                  Target & Readiness
+                </h2>
+              </div>
+              <div className="rounded-2xl border border-editorial-border bg-editorial-surface p-5 space-y-4 shadow-xs">
                 <div>
-                  <p className="text-xs font-medium text-muted">Target Exam</p>
-                  <p className="mt-0.5 text-base font-bold text-white">
+                  <p className="text-xs font-medium text-editorial-muted">Target Exam</p>
+                  <p className="mt-0.5 text-base font-semibold text-editorial-heading">
                     {user.targetExam || "Not yet set"}
                   </p>
                   {!user.targetExam && (
                     <button
                       type="button"
                       onClick={() => handleTabChange("settings")}
-                      className="mt-2 text-xs font-semibold text-accent hover:underline"
+                      className="mt-2 text-xs font-semibold text-editorial-accent hover:underline"
                     >
                       Set target exam in settings →
                     </button>
                   )}
                 </div>
 
-                <div className="border-t border-border pt-3">
-                  <p className="text-xs font-medium text-muted">
+                <div className="border-t border-editorial-border pt-3">
+                  <p className="text-xs font-medium text-editorial-muted">
                     Study Language
                   </p>
-                  <p className="mt-0.5 text-sm font-semibold text-white">
+                  <p className="mt-0.5 text-sm font-semibold text-editorial-heading">
                     {user.preferredLanguage || "English"}
                   </p>
                 </div>
 
                 {user.examGoalDate && (
-                  <div className="border-t border-border pt-3">
-                    <p className="text-xs font-medium text-muted">
+                  <div className="border-t border-editorial-border pt-3">
+                    <p className="text-xs font-medium text-editorial-muted">
                       Exam Target Date
                     </p>
-                    <p className="mt-0.5 text-sm font-semibold text-white">
+                    <p className="mt-0.5 text-sm font-semibold text-editorial-heading">
                       {new Date(user.examGoalDate).toLocaleDateString(
                         undefined,
                         {
@@ -897,11 +921,11 @@ export function ProfileHub() {
                   </div>
                 )}
 
-                <div className="rounded-xl border border-border bg-surface-raised/40 p-4">
-                  <p className="text-xs font-bold text-white">
+                <div className="rounded-xl border border-editorial-border bg-editorial-surface-raised p-4">
+                  <p className="text-xs font-bold text-editorial-heading">
                     Next Step for You
                   </p>
-                  <p className="mt-1 text-xs text-muted leading-relaxed">
+                  <p className="mt-1 text-xs text-editorial-muted leading-relaxed">
                     {stats.completedCount === 0
                       ? "Attempt a full-length mock test to assess your speed and timing baseline."
                       : stats.accuracyPercent !== null &&
@@ -911,7 +935,7 @@ export function ProfileHub() {
                   </p>
                   <a
                     href="/test-series"
-                    className="mt-3 inline-flex text-xs font-bold text-accent hover:underline"
+                    className="mt-3 inline-flex text-xs font-bold text-editorial-accent hover:underline"
                   >
                     Go to test catalog →
                   </a>
@@ -928,10 +952,10 @@ export function ProfileHub() {
       {activeTab === "my-tests" && (
         <div className="space-y-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-base font-bold text-white">
+            <h2 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-xl">
               All Test Attempts ({attempts.length})
             </h2>
-            <div className="flex items-center gap-1.5 rounded-xl border border-border bg-surface p-1">
+            <div className="flex items-center gap-1.5 rounded-xl border border-editorial-border bg-editorial-surface p-1">
               <FilterPill
                 active={testFilter === "all"}
                 onClick={() => setTestFilter("all")}
@@ -954,18 +978,18 @@ export function ProfileHub() {
           </div>
 
           {filteredAttempts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border bg-surface p-12 text-center">
-              <p className="text-base font-semibold text-white">
+            <div className="rounded-2xl border border-dashed border-editorial-border bg-editorial-surface p-12 text-center">
+              <p className="text-base font-semibold text-editorial-heading">
                 No tests match this filter
               </p>
-              <p className="mt-1 text-xs text-muted">
+              <p className="mt-1 text-xs text-editorial-muted">
                 {testFilter === "in_progress"
                   ? "You have no tests currently in progress."
                   : "You have not completed any tests yet."}
               </p>
               <a
                 href="/test-series"
-                className="mt-4 inline-flex items-center gap-1 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white"
+                className="mt-4 inline-flex items-center gap-1 rounded-xl bg-editorial-accent px-4 py-2 text-xs font-semibold text-white hover:bg-editorial-accent-hover transition shadow-xs"
               >
                 Start a New Test
               </a>
@@ -985,26 +1009,26 @@ export function ProfileHub() {
           ───────────────────────────────────────────────────────────── */}
       {activeTab === "performance" && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs">
-            <h2 className="text-base font-bold text-white">
+          <div className="rounded-2xl border border-editorial-border bg-editorial-surface p-6 shadow-xs">
+            <h2 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-xl">
               Preparation Performance Diagnostics
             </h2>
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-xs text-editorial-muted">
               Cumulative metrics derived from your completed test papers.
             </p>
 
             {stats.completedCount === 0 ? (
-              <div className="mt-6 rounded-xl border border-dashed border-border bg-surface-raised/40 p-8 text-center">
-                <p className="text-sm font-semibold text-white">
+              <div className="mt-6 rounded-xl border border-dashed border-editorial-border bg-editorial-surface-raised p-8 text-center">
+                <p className="text-sm font-semibold text-editorial-heading">
                   No performance data yet
                 </p>
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-1 text-xs text-editorial-muted">
                   Submit at least one test to unlock accuracy curves, speed
                   diagnostics, and score distributions.
                 </p>
                 <a
                   href="/test-series"
-                  className="mt-4 inline-flex rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white"
+                  className="mt-4 inline-flex rounded-xl bg-editorial-accent px-4 py-2 text-xs font-semibold text-white hover:bg-editorial-accent-hover transition shadow-xs"
                 >
                   Take a Mock Test
                 </a>
@@ -1014,15 +1038,15 @@ export function ProfileHub() {
                 {/* Accuracy breakdown bar */}
                 <div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-white">
+                    <span className="font-semibold text-editorial-heading">
                       Questions Accuracy Breakdown
                     </span>
-                    <span className="text-muted">
+                    <span className="text-editorial-muted">
                       {stats.totalCorrect} correct out of {stats.totalAnswered}{" "}
                       questions attempted ({stats.accuracyPercent}%)
                     </span>
                   </div>
-                  <div className="mt-2 h-4 w-full overflow-hidden rounded-full bg-surface-raised flex">
+                  <div className="mt-2 h-3.5 w-full overflow-hidden rounded-full bg-editorial-surface-raised flex border border-editorial-border">
                     <div
                       style={{ width: `${stats.accuracyPercent || 0}%` }}
                       className="bg-emerald-500 transition-all duration-500"
@@ -1032,17 +1056,17 @@ export function ProfileHub() {
                       style={{
                         width: `${100 - (stats.accuracyPercent || 0)}%`,
                       }}
-                      className="bg-red-500/80 transition-all duration-500"
+                      className="bg-red-400 dark:bg-red-500/80 transition-all duration-500"
                       title="Incorrect / Missed"
                     />
                   </div>
-                  <div className="mt-2 flex items-center justify-between text-[11px] text-muted">
-                    <span className="inline-flex items-center gap-1">
+                  <div className="mt-2 flex items-center justify-between text-[11px] text-editorial-muted">
+                    <span className="inline-flex items-center gap-1.5">
                       <span className="h-2 w-2 rounded-full bg-emerald-500" />
                       Correct: {stats.totalCorrect}
                     </span>
-                    <span className="inline-flex items-center gap-1">
-                      <span className="h-2 w-2 rounded-full bg-red-500/80" />
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="h-2 w-2 rounded-full bg-red-400 dark:bg-red-500/80" />
                       Incorrect: {stats.totalAnswered - stats.totalCorrect}
                     </span>
                   </div>
@@ -1050,20 +1074,20 @@ export function ProfileHub() {
 
                 {/* Performance Cards Grid */}
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-xl border border-border bg-surface-raised/50 p-4">
-                    <p className="text-xs text-muted">Average Score Rate</p>
-                    <p className="mt-1 text-2xl font-extrabold text-white">
+                  <div className="rounded-xl border border-editorial-border bg-editorial-surface-raised p-4">
+                    <p className="text-xs text-editorial-muted">Average Score Rate</p>
+                    <p className="mt-1 text-2xl font-extrabold text-editorial-heading">
                       {stats.averageScorePercent !== null
                         ? `${stats.averageScorePercent}%`
                         : "--"}
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">
+                    <p className="mt-1 text-[11px] text-editorial-muted">
                       Across all completed mock attempts
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border bg-surface-raised/50 p-4">
-                    <p className="text-xs text-muted">Pacing (Time per test)</p>
-                    <p className="mt-1 text-2xl font-extrabold text-white">
+                  <div className="rounded-xl border border-editorial-border bg-editorial-surface-raised p-4">
+                    <p className="text-xs text-editorial-muted">Pacing (Time per test)</p>
+                    <p className="mt-1 text-2xl font-extrabold text-editorial-heading">
                       {stats.completedCount > 0
                         ? formatDuration(
                             Math.round(
@@ -1072,27 +1096,27 @@ export function ProfileHub() {
                           )
                         : "--"}
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">
+                    <p className="mt-1 text-[11px] text-editorial-muted">
                       Average test attempt duration
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border bg-surface-raised/50 p-4">
-                    <p className="text-xs text-muted">Total Practice Hours</p>
-                    <p className="mt-1 text-2xl font-extrabold text-accent">
+                  <div className="rounded-xl border border-editorial-border bg-editorial-surface-raised p-4">
+                    <p className="text-xs text-editorial-muted">Total Practice Hours</p>
+                    <p className="mt-1 text-2xl font-extrabold text-editorial-accent">
                       {(stats.totalStudySeconds / 3600).toFixed(1)} hrs
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">
+                    <p className="mt-1 text-[11px] text-editorial-muted">
                       Active examination time
                     </p>
                   </div>
                 </div>
 
                 {/* Score history list */}
-                <div className="border-t border-border pt-4">
-                  <h3 className="text-sm font-bold text-white">
+                <div className="border-t border-editorial-border pt-4">
+                  <h3 className="text-sm font-bold text-editorial-heading">
                     Completed Tests Score History
                   </h3>
-                  <div className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface-raised/30 overflow-hidden">
+                  <div className="mt-3 divide-y divide-editorial-border rounded-xl border border-editorial-border bg-editorial-surface overflow-hidden">
                     {stats.completedAttempts.slice(0, 5).map((att) => {
                       const scorePct =
                         att.maximumMarks && att.maximumMarks > 0
@@ -1107,10 +1131,10 @@ export function ProfileHub() {
                           className="flex items-center justify-between p-3 text-xs sm:px-4"
                         >
                           <div>
-                            <p className="font-semibold text-white">
+                            <p className="font-semibold text-editorial-heading">
                               {att.test?.title || "Exam attempt"}
                             </p>
-                            <p className="text-muted text-[11px]">
+                            <p className="text-editorial-muted text-[11px]">
                               {new Date(att.startedAt).toLocaleDateString(
                                 undefined,
                                 {
@@ -1121,10 +1145,10 @@ export function ProfileHub() {
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-white">
+                            <p className="font-bold text-editorial-heading">
                               {att.marksAwarded ?? 0} / {att.maximumMarks ?? 0}
                             </p>
-                            <p className="text-[11px] font-semibold text-accent">
+                            <p className="text-[11px] font-semibold text-editorial-accent">
                               {scorePct !== null ? `${scorePct}%` : ""}
                             </p>
                           </div>
@@ -1144,13 +1168,13 @@ export function ProfileHub() {
           ───────────────────────────────────────────────────────────── */}
       {activeTab === "weak-topics" && (
         <div className="space-y-4">
-          <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs">
+          <div className="rounded-2xl border border-editorial-border bg-editorial-surface p-6 shadow-xs">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h2 className="text-base font-bold text-white">
+                <h2 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-xl">
                   Topic Diagnostic & Revision Planner
                 </h2>
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-1 text-xs text-editorial-muted">
                   Identifies subjects and topics where accuracy falls below
                   target, based on your answered questions.
                 </p>
@@ -1158,17 +1182,17 @@ export function ProfileHub() {
             </div>
 
             {weakTopics.length === 0 ? (
-              <div className="mt-6 rounded-xl border border-dashed border-border bg-surface-raised/40 p-8 text-center">
-                <p className="text-sm font-semibold text-white">
+              <div className="mt-6 rounded-xl border border-dashed border-editorial-border bg-editorial-surface-raised p-8 text-center">
+                <p className="text-sm font-semibold text-editorial-heading">
                   No topic diagnostic data available yet
                 </p>
-                <p className="mt-1 text-xs text-muted">
+                <p className="mt-1 text-xs text-editorial-muted">
                   Complete questions in mock tests and sectionals to identify
                   your strong and weak topics.
                 </p>
                 <a
                   href="/test-series"
-                  className="mt-4 inline-flex rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white"
+                  className="mt-4 inline-flex rounded-xl bg-editorial-accent px-4 py-2 text-xs font-semibold text-white hover:bg-editorial-accent-hover transition shadow-xs"
                 >
                   Practice Questions Now
                 </a>
@@ -1182,20 +1206,20 @@ export function ProfileHub() {
                   return (
                     <div
                       key={idx}
-                      className="flex flex-col gap-3 rounded-xl border border-border bg-surface-raised/40 p-4 sm:flex-row sm:items-center sm:justify-between"
+                      className="flex flex-col gap-3 rounded-xl border border-editorial-border bg-editorial-surface-raised p-4 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm text-white">
+                          <span className="font-semibold text-sm text-editorial-heading">
                             {item.name}
                           </span>
                           <span
                             className={`rounded-md px-2 py-0.5 text-[11px] font-bold ${
                               isNeedsRevision
-                                ? "bg-red-500/15 text-red-400 border border-red-500/30"
+                                ? "bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30"
                                 : isStrong
-                                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                                  : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                                  : "bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30"
                             }`}
                           >
                             {isNeedsRevision
@@ -1205,7 +1229,7 @@ export function ProfileHub() {
                                 : "Moderate"}
                           </span>
                         </div>
-                        <p className="text-xs text-muted">
+                        <p className="text-xs text-editorial-muted">
                           {item.correct} correct of {item.attempted} attempted
                           questions
                         </p>
@@ -1213,14 +1237,14 @@ export function ProfileHub() {
 
                       <div className="flex items-center gap-4">
                         <div className="text-right">
-                          <p className="text-sm font-bold text-white">
+                          <p className="text-sm font-bold text-editorial-heading">
                             {item.accuracy}%
                           </p>
-                          <p className="text-[10px] text-muted">Accuracy</p>
+                          <p className="text-[10px] text-editorial-muted">Accuracy</p>
                         </div>
                         <a
                           href="/test-series"
-                          className="inline-flex items-center justify-center rounded-lg border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-accent transition hover:border-accent"
+                          className="inline-flex items-center justify-center rounded-lg border border-editorial-border bg-editorial-surface px-3 py-1.5 text-xs font-semibold text-editorial-accent transition hover:border-editorial-accent hover:bg-editorial-accent-soft"
                         >
                           Practice
                         </a>
@@ -1240,11 +1264,11 @@ export function ProfileHub() {
       {activeTab === "settings" && (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
           {/* Main Settings Form */}
-          <section className="rounded-2xl border border-border bg-surface p-6 shadow-xs">
-            <h2 className="text-base font-bold text-white">
+          <section className="rounded-2xl border border-editorial-border bg-editorial-surface p-6 shadow-xs">
+            <h2 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-xl">
               Learner Profile & Exam Preferences
             </h2>
-            <p className="mt-1 text-xs text-muted">
+            <p className="mt-1 text-xs text-editorial-muted">
               Configure your preparation goals, target exam, and preferred
               language.
             </p>
@@ -1252,7 +1276,7 @@ export function ProfileHub() {
             <form onSubmit={saveProfile} className="mt-6 space-y-4">
               {/* Full Name */}
               <div>
-                <label className="block text-xs font-semibold text-white">
+                <label className="block text-xs font-semibold text-editorial-heading">
                   Full Name
                   <input
                     type="text"
@@ -1261,16 +1285,16 @@ export function ProfileHub() {
                     minLength={2}
                     maxLength={100}
                     required
-                    className="mt-1.5 w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-white placeholder-muted outline-none transition focus:border-accent"
+                    className="mt-1.5 w-full rounded-xl border border-editorial-border bg-editorial-surface-raised px-3.5 py-2.5 text-sm text-editorial-heading placeholder:text-editorial-muted outline-none transition focus:border-editorial-accent"
                   />
                 </label>
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-xs font-semibold text-white">
+                <label className="block text-xs font-semibold text-editorial-heading">
                   Phone Number{" "}
-                  <span className="font-normal text-muted">(optional)</span>
+                  <span className="font-normal text-editorial-muted">(optional)</span>
                   <input
                     type="tel"
                     value={phone}
@@ -1278,24 +1302,24 @@ export function ProfileHub() {
                     minLength={7}
                     maxLength={20}
                     placeholder="+91 98765 43210"
-                    className="mt-1.5 w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-white placeholder-muted outline-none transition focus:border-accent"
+                    className="mt-1.5 w-full rounded-xl border border-editorial-border bg-editorial-surface-raised px-3.5 py-2.5 text-sm text-editorial-heading placeholder:text-editorial-muted outline-none transition focus:border-editorial-accent"
                   />
                 </label>
               </div>
 
               {/* Preferred Language */}
               <div>
-                <label className="block text-xs font-semibold text-white">
+                <label className="block text-xs font-semibold text-editorial-heading">
                   Preferred Test Language
                 </label>
                 <div className="mt-1.5 grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setPreferredLanguage("English")}
-                    className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                    className={`rounded-xl border px-3 py-2 text-xs font-bold transition cursor-pointer ${
                       preferredLanguage === "English"
-                        ? "border-accent bg-accent/15 text-accent"
-                        : "border-border bg-surface-raised text-muted hover:text-white"
+                        ? "border-editorial-accent bg-editorial-accent-soft text-editorial-accent"
+                        : "border-editorial-border bg-editorial-surface-raised text-editorial-muted hover:text-editorial-heading"
                     }`}
                   >
                     English
@@ -1303,10 +1327,10 @@ export function ProfileHub() {
                   <button
                     type="button"
                     onClick={() => setPreferredLanguage("Hindi")}
-                    className={`rounded-xl border px-3 py-2 text-xs font-bold transition ${
+                    className={`rounded-xl border px-3 py-2 text-xs font-bold transition cursor-pointer ${
                       preferredLanguage === "Hindi"
-                        ? "border-accent bg-accent/15 text-accent"
-                        : "border-border bg-surface-raised text-muted hover:text-white"
+                        ? "border-editorial-accent bg-editorial-accent-soft text-editorial-accent"
+                        : "border-editorial-border bg-editorial-surface-raised text-editorial-muted hover:text-editorial-heading"
                     }`}
                   >
                     Hindi (हिंदी)
@@ -1316,7 +1340,7 @@ export function ProfileHub() {
 
               {/* Target Exam */}
               <div>
-                <label className="block text-xs font-semibold text-white">
+                <label className="block text-xs font-semibold text-editorial-heading">
                   Target Exam / Preferred Test Series
                 </label>
                 <div className="mt-1.5 space-y-2">
@@ -1330,7 +1354,7 @@ export function ProfileHub() {
                       onChange={(e) => {
                         if (e.target.value) setTargetExam(e.target.value);
                       }}
-                      className="w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-accent"
+                      className="w-full rounded-xl border border-editorial-border bg-editorial-surface-raised px-3.5 py-2.5 text-sm text-editorial-heading outline-none transition focus:border-editorial-accent cursor-pointer"
                     >
                       <option value="">
                         Select from published test series...
@@ -1351,21 +1375,21 @@ export function ProfileHub() {
                     onChange={(e) => setTargetExam(e.target.value)}
                     placeholder="Or type custom target (e.g. DSSSB TGT CS 2026, UGC NET CS)"
                     maxLength={120}
-                    className="w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-white placeholder-muted outline-none transition focus:border-accent"
+                    className="w-full rounded-xl border border-editorial-border bg-editorial-surface-raised px-3.5 py-2.5 text-sm text-editorial-heading placeholder:text-editorial-muted outline-none transition focus:border-editorial-accent"
                   />
                 </div>
               </div>
 
               {/* Exam Goal Date */}
               <div>
-                <label className="block text-xs font-semibold text-white">
+                <label className="block text-xs font-semibold text-editorial-heading">
                   Exam Goal / Target Date{" "}
-                  <span className="font-normal text-muted">(optional)</span>
+                  <span className="font-normal text-editorial-muted">(optional)</span>
                   <input
                     type="date"
                     value={examGoalDate}
                     onChange={(e) => setExamGoalDate(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-accent"
+                    className="mt-1.5 w-full rounded-xl border border-editorial-border bg-editorial-surface-raised px-3.5 py-2.5 text-sm text-editorial-heading outline-none transition focus:border-editorial-accent"
                   />
                 </label>
               </div>
@@ -1375,8 +1399,8 @@ export function ProfileHub() {
                 <div
                   className={`rounded-xl p-3 text-xs ${
                     message.type === "success"
-                      ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                      : "border border-red-500/30 bg-red-500/10 text-red-400"
+                      ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                      : "border border-red-500/30 bg-red-500/10 text-red-500 dark:text-red-400"
                   }`}
                   role="status"
                 >
@@ -1387,7 +1411,7 @@ export function ProfileHub() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-xl bg-editorial-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-editorial-accent-hover disabled:cursor-not-allowed disabled:opacity-60 shadow-xs cursor-pointer"
               >
                 {saving ? "Saving Changes…" : "Save Profile & Preferences"}
               </button>
@@ -1396,24 +1420,24 @@ export function ProfileHub() {
 
           {/* Account & Security Summary */}
           <section className="space-y-4">
-            <div className="rounded-2xl border border-border bg-surface p-6 shadow-xs space-y-4">
-              <h3 className="text-base font-bold text-white">
+            <div className="rounded-2xl border border-editorial-border bg-editorial-surface p-6 shadow-xs space-y-4">
+              <h3 className="text-base font-bold text-editorial-heading font-['EB_Garamond'] text-xl">
                 Account Details
               </h3>
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <span className="text-muted">Account Email</span>
-                  <p className="mt-0.5 font-semibold text-white">
+                  <span className="text-editorial-muted">Account Email</span>
+                  <p className="mt-0.5 font-semibold text-editorial-heading">
                     {user.email}
                   </p>
                 </div>
 
-                <div className="border-t border-border pt-2">
-                  <span className="text-muted">Verification Status</span>
+                <div className="border-t border-editorial-border pt-2">
+                  <span className="text-editorial-muted">Verification Status</span>
                   <p className="mt-0.5">
                     {user.emailVerified ? (
-                      <span className="inline-flex items-center gap-1 font-semibold text-emerald-400">
+                      <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
                         <svg
                           className="h-3.5 w-3.5"
                           fill="none"
@@ -1430,25 +1454,25 @@ export function ProfileHub() {
                         Verified
                       </span>
                     ) : (
-                      <span className="font-semibold text-amber-400">
+                      <span className="font-semibold text-amber-600 dark:text-amber-400">
                         Unverified
                       </span>
                     )}
                   </p>
                 </div>
 
-                <div className="border-t border-border pt-2">
-                  <span className="text-muted">Account Role</span>
-                  <p className="mt-0.5 font-semibold capitalize text-white">
+                <div className="border-t border-editorial-border pt-2">
+                  <span className="text-editorial-muted">Account Role</span>
+                  <p className="mt-0.5 font-semibold capitalize text-editorial-heading">
                     {user.role}
                   </p>
                 </div>
               </div>
 
-              <div className="border-t border-border pt-4">
+              <div className="border-t border-editorial-border pt-4">
                 <a
                   href="/bookmarks"
-                  className="inline-flex w-full items-center justify-between rounded-xl border border-border bg-surface-raised px-3.5 py-2.5 text-xs font-semibold text-white transition hover:border-accent hover:text-accent"
+                  className="inline-flex w-full items-center justify-between rounded-xl border border-editorial-border bg-editorial-surface-raised px-3.5 py-2.5 text-xs font-semibold text-editorial-heading transition hover:border-editorial-accent hover:text-editorial-accent hover:bg-editorial-accent-soft"
                 >
                   <span>Saved Bookmarks & Questions</span>
                   <span aria-hidden="true">→</span>
@@ -1471,7 +1495,7 @@ function MetricBlock({
   value,
   subtitle,
   icon,
-  valueClass = "text-white",
+  valueClass = "text-editorial-heading",
 }: {
   label: string;
   value: string;
@@ -1482,7 +1506,7 @@ function MetricBlock({
   return (
     <div className="p-4 sm:p-5">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted">{label}</span>
+        <span className="text-xs text-editorial-muted">{label}</span>
         <span className="text-base" aria-hidden="true">
           {icon}
         </span>
@@ -1492,7 +1516,7 @@ function MetricBlock({
       >
         {value}
       </p>
-      <p className="mt-0.5 text-[11px] text-muted truncate">{subtitle}</p>
+      <p className="mt-0.5 text-[11px] text-editorial-muted truncate">{subtitle}</p>
     </div>
   );
 }
@@ -1502,7 +1526,7 @@ function TabButton({
   onClick,
   label,
   badge,
-  badgeColor = "bg-accent/20 text-accent",
+  badgeColor = "bg-editorial-accent-soft text-editorial-accent",
   icon,
 }: {
   active: boolean;
@@ -1516,10 +1540,10 @@ function TabButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs font-bold transition ${
+      className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-4 py-2.5 text-xs font-semibold transition cursor-pointer ${
         active
-          ? "bg-accent text-white shadow-xs"
-          : "text-muted hover:bg-surface-raised hover:text-white"
+          ? "bg-editorial-accent text-white shadow-xs font-bold"
+          : "text-editorial-muted hover:bg-editorial-accent-soft/70 hover:text-editorial-heading"
       }`}
     >
       {icon}
@@ -1527,7 +1551,7 @@ function TabButton({
       {badge !== undefined && (
         <span
           className={`rounded-full px-1.5 py-0.2 text-[10px] font-bold ${
-            active ? "bg-white/20 text-white" : badgeColor
+            active ? "bg-white/25 text-white" : badgeColor
           }`}
         >
           {badge}
@@ -1552,8 +1576,10 @@ function FilterPill({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-        active ? "bg-accent text-white" : "text-muted hover:text-white"
+      className={`rounded-lg px-3 py-1.5 text-xs font-medium transition cursor-pointer ${
+        active
+          ? "bg-editorial-accent text-white font-semibold"
+          : "text-editorial-muted hover:text-editorial-heading"
       }`}
     >
       {label}
@@ -1578,19 +1604,19 @@ function AttemptCard({
       : null;
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 transition hover:border-border/80 sm:flex-row sm:items-center sm:justify-between shadow-xs">
+    <div className="flex flex-col gap-3 rounded-2xl border border-editorial-border bg-editorial-surface p-4 transition hover:border-editorial-accent/40 sm:flex-row sm:items-center sm:justify-between shadow-xs">
       <div className="space-y-1">
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="font-bold text-sm text-white">
+          <h3 className="font-semibold text-sm text-editorial-heading font-['Geist']">
             {attempt.test?.title || `Mock Test #${attempt.attemptNumber}`}
           </h3>
           <span
             className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
               isInProgress
-                ? "border border-amber-500/40 bg-amber-500/10 text-amber-300"
+                ? "border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300"
                 : isSubmitted
-                  ? "border border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                  : "border border-border bg-surface-raised text-muted"
+                  ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                  : "border border-editorial-border bg-editorial-surface-raised text-editorial-muted"
             }`}
           >
             {isInProgress
@@ -1599,12 +1625,12 @@ function AttemptCard({
                 ? "Completed"
                 : attempt.status}
           </span>
-          <span className="text-[11px] text-muted">
+          <span className="text-[11px] text-editorial-muted">
             Attempt #{attempt.attemptNumber}
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-editorial-muted">
           <span>
             {new Date(attempt.startedAt).toLocaleDateString(undefined, {
               month: "short",
@@ -1625,11 +1651,11 @@ function AttemptCard({
       <div className="flex items-center gap-3 self-end sm:self-center">
         {isSubmitted && attempt.maximumMarks !== undefined && (
           <div className="text-right">
-            <p className="text-sm font-bold text-white">
+            <p className="text-sm font-bold text-editorial-heading">
               {attempt.marksAwarded ?? 0} / {attempt.maximumMarks}
             </p>
             {scorePct !== null && (
-              <p className="text-[11px] font-semibold text-accent">
+              <p className="text-[11px] font-semibold text-editorial-accent">
                 {scorePct}% Score
               </p>
             )}
@@ -1639,7 +1665,7 @@ function AttemptCard({
         {isInProgress ? (
           <a
             href={`/test-series/cbt/${attempt.id}`}
-            className="inline-flex items-center gap-1 rounded-xl bg-accent px-3.5 py-2 text-xs font-bold text-white shadow-xs transition hover:opacity-95"
+            className="inline-flex items-center gap-1 rounded-xl bg-editorial-accent px-3.5 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-editorial-accent-hover"
           >
             <span>Resume</span>
             <span aria-hidden="true">→</span>
@@ -1647,7 +1673,7 @@ function AttemptCard({
         ) : (
           <a
             href={`/test-series/results/${attempt.id}`}
-            className="inline-flex items-center gap-1 rounded-xl border border-border bg-surface-raised px-3 py-2 text-xs font-semibold text-white transition hover:border-accent hover:text-accent"
+            className="inline-flex items-center gap-1 rounded-xl border border-editorial-border bg-editorial-surface px-3 py-2 text-xs font-semibold text-editorial-heading transition hover:border-editorial-accent hover:text-editorial-accent hover:bg-editorial-accent-soft"
           >
             <span>View Analysis</span>
             <span aria-hidden="true">→</span>

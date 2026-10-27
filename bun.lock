@@ -4,6 +4,9 @@
   "workspaces": {
     "": {
       "name": "examresources",
+      "dependencies": {
+        "jsonrepair": "^3.15.0",
+      },
       "devDependencies": {
         "@dietrichgebert/ponytail": "^5.3.2",
         "@types/node": "26.6.5",

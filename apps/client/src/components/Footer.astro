@@ -6,7 +6,7 @@ const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 ---
 
-<footer class="bg-surface border-t border-border/60 mt-16">
+<footer class="bg-surface border-t border-border mt-16">
   <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
     {/* Main grid */}
@@ -16,7 +16,7 @@ const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
       <div class="sm:col-span-2 lg:col-span-1 space-y-4">
         <a href="/" class="flex items-center gap-2.5 group w-fit">
           <BrandLogo size={32} class="shrink-0 group-hover:scale-105 transition-transform" />
-          <span class="font-bold text-base tracking-tight text-white">
+          <span class="font-bold text-base tracking-tight text-heading">
             {brandPrefix}<span class="text-accent">{brandSuffix}</span>
           </span>
         </a>

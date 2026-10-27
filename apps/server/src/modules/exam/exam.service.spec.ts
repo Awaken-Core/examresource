@@ -125,7 +125,7 @@ describe('ExamService timing, publication and duration rules', () => {
     });
 
     const resumed = await service.startAttempt('65f1a2b3c4d5e6f7a8b9c0d2', student);
-    expect(resumed.status).toBe('in_progress');
+    expect(resumed?.status).toBe('in_progress');
     expect(seriesAccess.assertCanStart).not.toHaveBeenCalled();
     expect(attempts.create).not.toHaveBeenCalled();
   });
