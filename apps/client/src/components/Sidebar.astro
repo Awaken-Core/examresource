@@ -23,12 +23,12 @@ const liveUpdates = [
       <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
-      <h3 class="font-bold text-white text-body-md">Trending Exam Updates</h3>
+      <h3 class="font-bold text-heading text-body-md">Trending Exam Updates</h3>
     </div>
     <ul class="space-y-3 text-body-xs">
       {liveUpdates.map((item) => (
         <li class="flex items-start justify-between gap-2 border-b border-border/50 pb-2 last:border-0 last:pb-0">
-          <a href="/#latest-updates" class="text-muted hover:text-white transition font-medium line-clamp-2">
+          <a href="/#latest-updates" class="text-muted hover:text-heading transition font-medium line-clamp-2">
             {item.text}
           </a>
           <span class={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
@@ -50,7 +50,7 @@ const liveUpdates = [
         </svg>
       </div>
       <div>
-        <h4 class="text-body-md font-bold text-white">Join Exam Alerts Group</h4>
+        <h4 class="text-body-md font-bold text-heading">Join Exam Alerts Group</h4>
         <p class="text-caption-sm text-muted mt-0.5">Get direct PDF & link alerts on your mobile</p>
       </div>
     </div>

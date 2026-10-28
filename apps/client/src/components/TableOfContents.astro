@@ -12,7 +12,7 @@ const { items } = Astro.props;
       <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
       </svg>
-      <h2 class="text-heading-sm font-bold text-white tracking-tight !my-0 !border-0 !p-0">Table of Contents</h2>
+      <h2 class="text-heading-sm font-bold text-heading tracking-tight my-0 border-0 p-0">Table of Contents</h2>
     </div>
     <span class="badge-outline text-[11px] py-0.5 px-2">Quick Navigation</span>
   </div>
@@ -21,7 +21,7 @@ const { items } = Astro.props;
     {items.map((item, index) => (
       <li class="flex items-start gap-2 group">
         <span class="text-accent font-semibold text-caption-xs mt-0.5">{index + 1}.</span>
-        <a href={`#${item.id}`} class="text-muted group-hover:text-white group-hover:underline transition font-medium">
+        <a href={`#${item.id}`} class="text-muted group-hover:text-heading group-hover:underline transition font-medium">
           {item.text}
         </a>
       </li>

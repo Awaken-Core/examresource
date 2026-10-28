@@ -22,7 +22,7 @@ try {
         <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-surface-raised border border-border text-accent text-sm">
           📍
         </span>
-        <h2 class="text-heading-sm font-bold text-white tracking-tight">
+        <h2 class="text-heading-sm font-bold text-heading tracking-tight">
           Explore Government Exam Updates by State
         </h2>
       </div>
@@ -39,10 +39,10 @@ try {
         <div class="relative">
           <select 
             id="state-dropdown"
-            class="w-full appearance-none bg-surface-raised border border-border text-white font-medium text-body-sm rounded-xl pl-3 pr-8 py-2 hover:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition cursor-pointer"
+            class="w-full appearance-none bg-surface-raised border border-border text-heading font-medium text-body-sm rounded-xl pl-3 pr-8 py-2 hover:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition cursor-pointer"
           >
             {STATES_LIST.map((state) => (
-              <option value={state} class="bg-surface text-white">{state === 'All India' ? '🇮🇳 All India Updates' : `🏛️ ${state}`}</option>
+              <option value={state} class="bg-surface text-heading">{state === 'All India' ? '🇮🇳 All India Updates' : `🏛️ ${state}`}</option>
             ))}
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-muted">
@@ -59,11 +59,11 @@ try {
         <div class="relative">
           <select 
             id="category-dropdown"
-            class="w-full appearance-none bg-surface-raised border border-border text-white font-medium text-body-sm rounded-xl pl-3 pr-8 py-2 hover:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition cursor-pointer"
+            class="w-full appearance-none bg-surface-raised border border-border text-heading font-medium text-body-sm rounded-xl pl-3 pr-8 py-2 hover:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition cursor-pointer"
           >
-            <option value="All Categories" class="bg-surface text-white">All Categories</option>
+            <option value="All Categories" class="bg-surface text-heading">All Categories</option>
             {categoriesList.map((cat) => (
-              <option value={cat.name} class="bg-surface text-white">{cat.name}</option>
+              <option value={cat.name} class="bg-surface text-heading">{cat.name}</option>
             ))}
           </select>
           <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-muted">
@@ -97,7 +97,7 @@ try {
       </span>
     </div>
     <div class="text-muted">
-      Found <span id="filtered-count" class="font-bold text-white">{livePosts.length}</span> updates
+      Found <span id="filtered-count" class="font-bold text-heading">{livePosts.length}</span> updates
     </div>
   </div>
 
@@ -124,7 +124,7 @@ try {
                   📍 All India
                 </span>
               </div>
-              <h3 class="text-body-md font-bold text-white hover:text-accent transition leading-snug line-clamp-2">
+              <h3 class="text-body-md font-bold text-heading hover:text-accent transition leading-snug line-clamp-2">
                 <a href={articleHref}>
                   {post.title}
                 </a>
@@ -158,7 +158,7 @@ try {
     <div class="w-12 h-12 rounded-full bg-surface-raised border border-border text-muted flex items-center justify-center mx-auto text-xl mb-2">
       🔍
     </div>
-    <h3 class="text-body-md font-bold text-white">No updates found for this filter</h3>
+    <h3 class="text-body-md font-bold text-heading">No updates found for this filter</h3>
     <p class="text-body-xs text-muted mt-1 max-w-sm mx-auto">
       Try selecting "All India" or another state to view active notices and results.
     </p>

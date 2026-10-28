@@ -13,7 +13,7 @@ const { subject } = Astro.props;
   <nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs text-muted mb-4 font-mono">
     <a href="/blog/java" class="hover:text-accent transition">Articles</a>
     <span class="text-border">/</span>
-    <span class="text-white font-medium">{subject.title}</span>
+    <span class="text-heading font-medium">{subject.title}</span>
   </nav>
 
   <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -23,7 +23,7 @@ const { subject } = Astro.props;
         <span class="text-border">•</span>
         <span class="text-muted font-normal lowercase">{subject.topicsCount} articles available</span>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-heading tracking-tight leading-tight">
         {subject.title}
       </h1>
       <p class="text-sm sm:text-base text-muted mt-2.5 leading-relaxed">
@@ -44,7 +44,7 @@ const { subject } = Astro.props;
           type="text"
           id="topic-search-input"
           placeholder="Filter topics by title or keyword..."
-          class="w-full pl-9 pr-3.5 py-2 bg-surface border border-border rounded-lg text-sm text-white placeholder:text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition shadow-2xs"
+          class="w-full pl-9 pr-3.5 py-2 bg-surface border border-border rounded-lg text-sm text-heading placeholder:text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition shadow-2xs"
         />
       </div>
     </div>

@@ -72,7 +72,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
 
       {/* Desktop sidebar expand button (Only shown on desktop when sidebar has settled into collapsed state) */}
       {!hideDesktopSidebar && (
-        <div id="header-sidebar-expand-container" class="hidden lg:items-center relative group shrink-0">
+        <div id="header-sidebar-expand-container" class="hidden lg:flex items-center relative group shrink-0">
           <button
             id="toolbar-sidebar-expand-btn"
             data-sidebar-toggle
@@ -81,7 +81,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
               isEditorialTheme 
                 ? 'text-editorial-muted hover:text-editorial-heading hover:bg-editorial-accent-soft border border-editorial-border hover:border-editorial-accent/40' 
                 : 'text-muted hover:text-heading hover:bg-surface-raised border border-border/60 hover:border-border'
-            } transition cursor-pointer shrink-0 flex focus-visible:outline-2 focus-visible:outline-accent`}
+            } transition cursor-pointer shrink-0 hidden lg:flex focus-visible:outline-2 focus-visible:outline-accent`}
             aria-label="Expand sidebar (Alt+B)"
           >
             <svg class="w-4 h-4 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -260,7 +260,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span class="user-avatar-initials header-profile-initials w-7.5 h-7.5 rounded-full bg-accent text-white inline-flex items-center justify-center text-center text-[11px] font-bold leading-none uppercase shrink-0">
+            <span class="user-avatar-initials header-profile-initials w-7.5 h-7.5 rounded-full bg-editorial-accent text-white inline-flex items-center justify-center text-center text-[11px] font-bold leading-none uppercase shrink-0">
               U
             </span>
             <div class="hidden sm:flex flex-col text-left">
@@ -276,12 +276,14 @@ const loginHref = (!isAuthPage && currentPath !== '/')
             id="header-profile-trigger"
             data-profile-trigger="header-profile-dropdown"
             type="button"
-            class="header-profile-avatar-btn w-9 h-9 rounded-full bg-surface-raised border border-border text-white font-bold flex items-center justify-center transition-all duration-150 cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-accent/40 select-none overflow-hidden hover:border-accent/40"
+            class="header-profile-avatar-btn size-9 sm:size-9.5 rounded-full flex items-center justify-center transition-all duration-150 cursor-pointer shadow-xs focus:outline-none focus:ring-2 select-none overflow-hidden touch-manipulation bg-surface-raised border border-border text-white hover:border-accent/40 shadow-sm focus:ring-accent/40"
             aria-label="Open User Profile Menu"
             aria-haspopup="true"
             aria-expanded="false"
           >
-            <span class="user-avatar-initials header-profile-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">U</span>
+            <span class="user-avatar-initials header-profile-initials size-7.5 sm:size-8 rounded-full bg-accent text-white inline-flex items-center justify-center text-center text-[11px] sm:text-[12px] font-bold leading-none uppercase shrink-0">
+              U
+            </span>
           </button>
         )}
         <ProfileDropdown id="header-profile-dropdown" position="top" />

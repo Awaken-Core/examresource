@@ -23,7 +23,7 @@ const { subjectSlug, prevTopic, nextTopic } = Astro.props;
       <span class="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted group-hover:text-accent">
         ← Previous Topic
       </span>
-      <span class="text-xs sm:text-sm font-semibold text-white group-hover:text-accent mt-1 transition-colors leading-snug">
+      <span class="text-xs sm:text-sm font-semibold text-heading group-hover:text-accent mt-1 transition-colors leading-snug">
         {prevTopic.title}
       </span>
     </a>
@@ -39,7 +39,7 @@ const { subjectSlug, prevTopic, nextTopic } = Astro.props;
       <span class="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-muted group-hover:text-accent">
         Next Topic →
       </span>
-      <span class="text-xs sm:text-sm font-semibold text-white group-hover:text-accent mt-1 transition-colors leading-snug">
+      <span class="text-xs sm:text-sm font-semibold text-heading group-hover:text-accent mt-1 transition-colors leading-snug">
         {nextTopic.title}
       </span>
     </a>
