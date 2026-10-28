@@ -25,7 +25,7 @@ const { slug, language } = Astro.props;
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <h2 id="comments-heading" class="text-base sm:text-lg font-bold text-white leading-tight">Discussion</h2>
+          <h2 id="comments-heading" class="text-base sm:text-lg font-bold text-heading leading-tight">Discussion</h2>
           <span class="hidden rounded-full bg-surface-raised border border-border/80 px-2 py-0.5 text-[11px] font-semibold text-accent" data-comment-count>0</span>
         </div>
         <p class="text-[11px] sm:text-xs text-muted">Ask questions or share updates with fellow aspirants</p>
@@ -35,7 +35,7 @@ const { slug, language } = Astro.props;
 
   <form class="mt-4 sm:mt-5 rounded-xl border border-border bg-surface p-3.5 sm:p-5 shadow-2xs" data-comment-form>
     <input type="hidden" name="parentCommentId" value="" data-parent-comment-id />
-    <div class="hidden mb-3 rounded-lg border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-white flex items-center justify-between" data-reply-context>
+    <div class="hidden mb-3 rounded-lg border border-accent/30 bg-accent/10 px-3 py-2 text-xs text-heading flex items-center justify-between" data-reply-context>
       <div class="flex items-center gap-1.5 truncate">
         <svg class="w-3.5 h-3.5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -46,14 +46,14 @@ const { slug, language } = Astro.props;
     </div>
 
     <div>
-      <label for="comment-content" class="mb-1.5 block text-xs font-semibold text-white">Comment</label>
+      <label for="comment-content" class="mb-1.5 block text-xs font-semibold text-heading">Comment</label>
       <textarea
         id="comment-content"
         name="content"
         maxlength="2000"
         required
         rows="3"
-        class="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2.5 text-sm sm:text-base text-white placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+        class="w-full resize-y rounded-lg border border-border bg-canvas px-3 py-2.5 text-sm sm:text-base text-heading placeholder:text-muted focus:border-accent focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
         placeholder="Write a respectful, useful comment or question…"
       ></textarea>
     </div>
@@ -330,7 +330,7 @@ const { slug, language } = Astro.props;
           if (!comments.length) {
             var empty = document.createElement('div');
             empty.className = 'rounded-xl border border-dashed border-border/80 bg-surface/40 p-6 text-center';
-            empty.innerHTML = '<div class="w-10 h-10 mx-auto rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center mb-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><p class="text-xs sm:text-sm font-semibold text-white">No comments yet</p><p class="text-xs text-muted mt-1">Be the first to share your thoughts or ask a question.</p>';
+            empty.innerHTML = '<div class="w-10 h-10 mx-auto rounded-full bg-accent/10 border border-accent/20 text-accent flex items-center justify-center mb-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><p class="text-xs sm:text-sm font-semibold text-heading">No comments yet</p><p class="text-xs text-muted mt-1">Be the first to share your thoughts or ask a question.</p>';
             list.append(empty);
             return;
           }

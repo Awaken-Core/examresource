@@ -1,0 +1,7 @@
+# Vendor agent-skill corpora are not the product. The graph should describe
+# examresource itself (apps/, docs/, and repo source).
+.agents/
+
+# Wrangler-generated Cloudflare runtime types (~16k lines). Indexing them
+# buries the real architecture under Durable Object and Worker stubs.
+apps/server/worker-configuration.d.ts

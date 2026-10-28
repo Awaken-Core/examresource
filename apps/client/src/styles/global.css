@@ -45,7 +45,7 @@
   src: url('/fonts/EBGaramond-Medium.ttf') format('truetype');
 }
 
-@custom-variant dark (&:where(.theme-dark, .theme-dark *));
+@variant dark (&:where(.theme-dark, .dark, .theme-dark *, .dark *));
 
 /* ============================================================
    ── 2. Design Tokens (@theme) → Tailwind Utility Classes
@@ -1256,7 +1256,7 @@ html.admin-theme.theme-dark {
 /* In light mode, bare text-white across general content must adapt to high-contrast dark body text,
    except on deliberate colored badges/buttons (like bg-accent, bg-blue-*, etc.) where white text is desired. */
 html:not(.theme-dark) body {
-  color: #111827 !important;
+  color: var(--color-text-body);
 }
 
 /* Light mode text contrast overrides for dark-first utility classes (container-aware) */
@@ -1270,57 +1270,57 @@ html:not(.theme-dark) :is(
   a.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-amber-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-indigo-"]),
   div.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-amber-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-indigo-"]):not([class*="bg-slate-900"]):not([class*="bg-slate-800"]):not([class*="bg-neutral-900"]):not([class*="bg-black"])
 ):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"], [class*="bg-[#1c1a18]"], [class*="bg-[#141312]"]) *) {
-  color: #111827 !important;
+  color: var(--color-heading);
 }
 
 /* Fractional low-opacity accent tints (e.g., bg-accent/10) must never keep pure white text in light mode */
 html:not(.theme-dark) :is(a, button, span, div)[class*="bg-accent/"]:not([class*="bg-accent/8"]):not([class*="bg-accent/9"]) {
   &.text-white {
-    color: var(--color-accent) !important;
+    color: var(--color-accent);
   }
 }
 
 /* Opacity variants of white in light mode */
 html:not(.theme-dark) :is(.text-white\/90, .text-white\/95, .text-white\/80, .text-white\/70):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
-  color: #1F2937 !important;
+  color: var(--color-text-body);
 }
 
 /* Light mode adjustments for slate text used as body/question text */
 html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-300:not([class*="bg-slate-"]):not([class*="bg-gray-"]):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
-  color: #374151 !important;
+  color: var(--color-muted);
 }
 
 html:not(.theme-dark) :is(span, p, div, label, strong).text-slate-400:not([class*="bg-slate-"]):not([class*="bg-gray-"]):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
-  color: #4B5563 !important;
+  color: var(--color-muted);
 }
 
 /* Hover text-white in navigation/buttons should turn to solid dark in light mode when not inside dark container */
 html:not(.theme-dark) .hover\:text-white:hover:not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
-  color: #111827 !important;
+  color: var(--color-heading);
 }
 
 /* Sidebar and Header branding */
 html:not(.theme-dark) .sidebar-text.text-white,
 html:not(.theme-dark) .user-display-name.text-white {
-  color: #111827 !important;
+  color: var(--color-heading);
 }
 
 /* Avatar initials contrast:
    When inside a solid colored circle (e.g., bg-editorial-accent, bg-accent, bg-gradient),
    initials must always be white (#FFFFFF) so they don't blend into the orange background. */
 .user-avatar-initials {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
 }
 
 /* Only for ghost/outline avatar wrappers without solid background, use accent color */
 .user-avatar-initials:not([class*="bg-"]):not([class*="text-white"]):is([class*="text-accent"]) {
-  color: var(--color-accent) !important;
+  color: var(--color-accent);
 }
 
 /* Ensure svg icons inherit proper dark color when text-muted/hover:text-white is used */
 html:not(.theme-dark) button:hover > svg.text-muted,
 html:not(.theme-dark) a:hover > svg.text-muted {
-  color: #111827 !important;
+  color: var(--color-heading);
 }
 
 /* ============================================================
@@ -1357,19 +1357,13 @@ html:not(.theme-dark) a:hover > svg.text-muted {
   }
 }
 
-/* Sidebar expand trigger strictly hidden on mobile/tablet */
-@media (max-width: 1023px) {
-  #header-sidebar-expand-container,
-  #toolbar-sidebar-expand-btn {
-    display: none !important;
-  }
-}
+/* Sidebar expand trigger visibility is handled mobile-first via hidden lg:flex in markup */
 
 /* ── Animated Hamburger Icon (Transparent, borderless) ────────── */
 .mobile-hamburger-btn {
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
   outline: none;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               color 0.25s ease;
@@ -1390,47 +1384,47 @@ html:not(.theme-dark) a:hover > svg.text-muted {
   transform: scaleX(0.7);
 }
 .mobile-hamburger-btn.is-active {
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
 }
 .mobile-hamburger-btn.is-active .line-top {
-  transform: translateY(8px) rotate(45deg) !important;
-  background-color: var(--color-editorial-accent, var(--color-accent, #FF4D00)) !important;
+  transform: translateY(8px) rotate(45deg);
+  background-color: var(--color-editorial-accent, var(--color-accent));
 }
 .mobile-hamburger-btn.is-active .line-middle {
-  opacity: 0 !important;
-  transform: scaleX(0) !important;
+  opacity: 0;
+  transform: scaleX(0);
 }
 .mobile-hamburger-btn.is-active .line-bottom {
-  transform: translateY(-8px) rotate(-45deg) !important;
-  background-color: var(--color-editorial-accent, var(--color-accent, #FF4D00)) !important;
+  transform: translateY(-8px) rotate(-45deg);
+  background-color: var(--color-editorial-accent, var(--color-accent));
 }
 
 /* Auth state display classes */
 :is(.header-auth-logged-out, .header-auth-logged-in, .sidebar-auth-logged-out, .sidebar-auth-logged-in).hidden {
-  display: none !important;
+  display: none;
 }
 
-/* Language Switcher High Contrast Guarantee (WCAG AAA) */
+/* Language Switcher using semantic design tokens */
 .app-lang-btn[aria-pressed="true"] {
-  background-color: var(--color-editorial-accent, var(--color-accent, #FF4D00)) !important;
-  color: #FFFFFF !important;
-  font-weight: 700 !important;
+  background-color: var(--color-editorial-accent, var(--color-accent));
+  color: #FFFFFF;
+  font-weight: 700;
 }
 
 .app-lang-btn[aria-pressed="false"] {
-  background-color: transparent !important;
-  color: var(--color-editorial-muted, var(--color-muted, #77716D)) !important;
-  font-weight: 500 !important;
+  background-color: transparent;
+  color: var(--color-editorial-muted, var(--color-muted));
+  font-weight: 500;
 }
 
 .app-lang-btn[aria-pressed="false"]:hover {
-  color: var(--color-editorial-heading, #191613) !important;
+  color: var(--color-editorial-heading, var(--color-heading));
 }
 
 html.theme-dark .app-lang-btn[aria-pressed="false"]:hover {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
 }
 
 
@@ -1813,7 +1807,7 @@ html.admin-theme.theme-dark #ai-reference-modal {
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
-    animation: none !important;
+    animation: none;
   }
 }
 

@@ -89,8 +89,25 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
-<html lang="en" class="theme-light" data-site-domain={siteDomain}>
+<html lang="en" data-site-domain={siteDomain}>
   <head>
+    {/* Instant zero-FOUC theme initialization before stylesheet or DOM rendering */}
+    <script is:inline>
+      (function() {
+        try {
+          var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
+          var isDark = pref ? pref === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('theme-dark');
+            root.classList.remove('theme-light');
+          } else {
+            root.classList.add('theme-light');
+            root.classList.remove('theme-dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -244,24 +261,47 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     )}
 
-    {/* Apply the saved theme before paint, and again after view transitions replace the html class */}
+    {/* Apply the saved theme before paint, and keep toggles synced across Astro page swaps */}
     <script is:inline>
       (function() {
-        function applyStoredTheme() {
-          var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
-          var dark = pref === 'dark';
-          document.documentElement.classList.toggle('theme-dark', dark);
-          document.documentElement.classList.toggle('theme-light', !dark);
+        function syncThemeElements() {
+          try {
+            var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
+            var isDark = pref ? pref === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var root = document.documentElement;
+            root.classList.toggle('theme-dark', isDark);
+            root.classList.toggle('theme-light', !isDark);
+
+            var knobs = document.querySelectorAll('.theme-toggle-knob');
+            var darkIcons = document.querySelectorAll('.dark-icon');
+            var lightIcons = document.querySelectorAll('.light-icon');
+            knobs.forEach(function(knob) {
+              if (isDark) {
+                knob.classList.remove('translate-x-0.5');
+                knob.classList.add('translate-x-6');
+              } else {
+                knob.classList.remove('translate-x-6');
+                knob.classList.add('translate-x-0.5');
+              }
+            });
+            darkIcons.forEach(function(icon) {
+              icon.classList.toggle('hidden', !isDark);
+            });
+            lightIcons.forEach(function(icon) {
+              icon.classList.toggle('hidden', isDark);
+            });
+          } catch (e) {}
         }
-        applyStoredTheme();
+        syncThemeElements();
         if (!window.__examThemeBound) {
           window.__examThemeBound = true;
-          document.addEventListener('astro:after-swap', applyStoredTheme);
+          document.addEventListener('astro:after-swap', syncThemeElements);
+          document.addEventListener('astro:page-load', syncThemeElements);
         }
       })();
     </script>
   </head>
-  <body class={`${isEditorialTheme ? 'editorial-theme bg-editorial-bg text-editorial-text' : 'bg-canvas text-heading'} min-h-screen flex flex-col font-sans antialiased selection:bg-editorial-accent selection:text-white transition-colors duration-200`}>
+  <body class={`${isEditorialTheme ? 'editorial-theme bg-editorial-bg text-editorial-text' : 'bg-canvas text-heading'} min-h-screen flex flex-col font-sans antialiased selection:bg-editorial-accent selection:text-white`}>
     {/* Google Tag Manager (noscript) */}
     <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

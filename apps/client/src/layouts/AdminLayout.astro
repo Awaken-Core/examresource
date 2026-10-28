@@ -16,24 +16,18 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" class="h-full antialiased admin-theme theme-light auth-pending">
+<html lang="en" class="h-full antialiased admin-theme auth-pending">
   <head>
     <meta charset="utf-8" />
     <script is:inline>
       (function() {
-        function applyStoredTheme() {
-          var root = document.documentElement;
+        try {
           var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
-          var dark = pref === 'dark';
-          root.classList.toggle('theme-dark', dark);
-          root.classList.toggle('theme-light', !dark);
-          root.style.colorScheme = dark ? 'dark' : 'light';
-        }
-        applyStoredTheme();
-        if (!window.__examThemeBound) {
-          window.__examThemeBound = true;
-          document.addEventListener('astro:after-swap', applyStoredTheme);
-        }
+          var isDark = pref ? pref === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var root = document.documentElement;
+          root.classList.toggle('theme-dark', isDark);
+          root.classList.toggle('theme-light', !isDark);
+        } catch (e) {}
       })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -60,68 +54,68 @@ const {
       }
       html.admin-theme:not(.theme-dark),
       html.admin-theme:not(.theme-dark) body.admin-theme-body {
-        background-color: #F8FAFC !important;
-        color: #111827 !important;
+        background-color: #F8FAFC;
+        color: #111827;
       }
       html.admin-theme:not(.theme-dark) {
-        --color-canvas: #F8FAFC !important;
-        --color-surface: #FFFFFF !important;
-        --color-surface-raised: #F1F5F9 !important;
-        --color-white: #FFFFFF !important;
-        --color-text-primary: #111827 !important;
-        --color-muted: #64748B !important;
-        --color-border: #E5E7EB !important;
-        --color-subtle: #F3F4F6 !important;
-        color-scheme: light !important;
+        --color-canvas: #F8FAFC;
+        --color-surface: #FFFFFF;
+        --color-surface-raised: #F1F5F9;
+        --color-white: #FFFFFF;
+        --color-text-primary: #111827;
+        --color-muted: #64748B;
+        --color-border: #E5E7EB;
+        --color-subtle: #F3F4F6;
+        color-scheme: light;
       }
       html.admin-theme.theme-dark,
       html.admin-theme.theme-dark body.admin-theme-body {
-        background-color: #131316 !important;
-        color: #F8FAFC !important;
+        background-color: #131316;
+        color: #F8FAFC;
       }
       html.admin-theme.theme-dark {
-        --color-canvas: #131316 !important;
-        --color-surface: #1C1B1F !important;
-        --color-surface-raised: #252528 !important;
-        --color-white: #FFFFFF !important;
-        --color-text-primary: #F8FAFC !important;
-        --color-muted: #A0A0A3 !important;
-        --color-border: #2A2925 !important;
-        --color-subtle: #1D1A12 !important;
-        color-scheme: dark !important;
+        --color-canvas: #131316;
+        --color-surface: #1C1B1F;
+        --color-surface-raised: #252528;
+        --color-white: #FFFFFF;
+        --color-text-primary: #F8FAFC;
+        --color-muted: #A0A0A3;
+        --color-border: #2A2925;
+        --color-subtle: #1D1A12;
+        color-scheme: dark;
       }
       html.admin-theme:not(.theme-dark) .bg-white {
-        background-color: #FFFFFF !important;
+        background-color: #FFFFFF;
       }
       html.admin-theme:not(.theme-dark) .bg-slate-50 {
-        background-color: #F8FAFC !important;
+        background-color: #F8FAFC;
       }
       html.admin-theme:not(.theme-dark) .bg-slate-100 {
-        background-color: #F1F5F9 !important;
+        background-color: #F1F5F9;
       }
       html.admin-theme:not(.theme-dark) .border-slate-200 {
-        border-color: #E2E8F0 !important;
+        border-color: #E2E8F0;
       }
       html.admin-theme:not(.theme-dark) .border-slate-100 {
-        border-color: #F1F5F9 !important;
+        border-color: #F1F5F9;
       }
       html.admin-theme:not(.theme-dark) .text-slate-900 {
-        color: #0F172A !important;
+        color: #0F172A;
       }
       html.admin-theme:not(.theme-dark) .text-slate-800 {
-        color: #1E293B !important;
+        color: #1E293B;
       }
       html.admin-theme:not(.theme-dark) .text-slate-700 {
-        color: #334155 !important;
+        color: #334155;
       }
       html.admin-theme:not(.theme-dark) .text-slate-600 {
-        color: #475569 !important;
+        color: #475569;
       }
       html.admin-theme:not(.theme-dark) .text-slate-500 {
-        color: #64748B !important;
+        color: #64748B;
       }
       html.admin-theme:not(.theme-dark) .text-slate-400 {
-        color: #94A3B8 !important;
+        color: #94A3B8;
       }
       html.admin-theme.theme-dark .text-white,
       html.admin-theme :is(button, a, span, div)[class*="bg-blue-"].text-white,
@@ -130,18 +124,18 @@ const {
       html.admin-theme :is(button, a, span, div)[class*="bg-red-"].text-white,
       html.admin-theme :is(button, a, span, div)[class*="bg-slate-900"].text-white,
       html.admin-theme :is(button, a, span, div)[class*="bg-slate-800"].text-white {
-        color: #FFFFFF !important;
+        color: #FFFFFF;
       }
       /* Desk shell uses the same foreground token as the public site.
          The rule above keeps literal white on existing blue buttons. */
       html.admin-theme .desk-fg {
-        color: var(--color-text-primary) !important;
+        color: var(--color-text-primary);
       }
       html.admin-theme .desk-hover:hover {
-        color: var(--color-text-primary) !important;
+        color: var(--color-text-primary);
       }
       html.admin-theme .desk-on-accent {
-        color: #FFFFFF !important;
+        color: #FFFFFF;
       }
       html.admin-theme:not(.theme-dark) input:not([type="checkbox"]):not([type="radio"]),
       html.admin-theme:not(.theme-dark) select,
@@ -151,14 +145,14 @@ const {
       }
       html.admin-theme:not(.theme-dark) input::placeholder,
       html.admin-theme:not(.theme-dark) textarea::placeholder {
-        color: #94A3B8 !important;
+        color: #94A3B8;
       }
       html.admin-theme:not(.theme-dark) .ProseMirror {
-        color: #1E293B !important;
-        background-color: transparent !important;
+        color: #1E293B;
+        background-color: transparent;
       }
       html.admin-theme:not(.theme-dark) .ProseMirror p.is-editor-empty:first-child::before {
-        color: #94A3B8 !important;
+        color: #94A3B8;
       }
       .find-match {
         background-color: #FDE68A;
@@ -171,63 +165,63 @@ const {
         box-shadow: inset 0 -2px 0 #B45309;
       }
       html.admin-theme.theme-dark .bg-white {
-        background-color: #1C1B1F !important;
+        background-color: #1C1B1F;
       }
       html.admin-theme.theme-dark .hover\:bg-white:hover {
-        background-color: #323238 !important;
+        background-color: #323238;
       }
       html.admin-theme.theme-dark .bg-slate-50,
       html.admin-theme.theme-dark .bg-slate-50\/50,
       html.admin-theme.theme-dark .bg-slate-50\/60,
       html.admin-theme.theme-dark .bg-slate-50\/70,
       html.admin-theme.theme-dark .bg-slate-50\/80 {
-        background-color: #16161A !important;
+        background-color: #16161A;
       }
       html.admin-theme.theme-dark .hover\:bg-slate-50:hover,
       html.admin-theme.theme-dark .hover\:bg-slate-50\/50:hover,
       html.admin-theme.theme-dark .hover\:bg-slate-50\/70:hover,
       html.admin-theme.theme-dark .hover\:bg-slate-50\/80:hover {
-        background-color: #323238 !important;
+        background-color: #323238;
       }
       html.admin-theme.theme-dark .bg-slate-100 {
-        background-color: #2A2A30 !important;
+        background-color: #2A2A30;
       }
       html.admin-theme.theme-dark .hover\:bg-slate-100:hover {
-        background-color: #3A3A42 !important;
+        background-color: #3A3A42;
       }
       html.admin-theme.theme-dark .bg-slate-200 {
-        background-color: #2A2925 !important;
+        background-color: #2A2925;
       }
       html.admin-theme.theme-dark .bg-slate-900 {
-        background-color: #3F3F46 !important;
+        background-color: #3F3F46;
       }
       html.admin-theme.theme-dark .hover\:bg-slate-800:hover,
       html.admin-theme.theme-dark .bg-slate-800 {
-        background-color: #52525B !important;
+        background-color: #52525B;
       }
       html.admin-theme.theme-dark .text-slate-900,
       html.admin-theme.theme-dark .text-slate-800,
       html.admin-theme.theme-dark .hover\:text-slate-900:hover,
       html.admin-theme.theme-dark .hover\:text-slate-800:hover {
-        color: #F8FAFC !important;
+        color: #F8FAFC;
       }
       html.admin-theme.theme-dark .text-slate-700,
       html.admin-theme.theme-dark .text-slate-600,
       html.admin-theme.theme-dark .hover\:text-slate-700:hover,
       html.admin-theme.theme-dark .hover\:text-slate-600:hover {
-        color: #E2E8F0 !important;
+        color: #E2E8F0;
       }
       html.admin-theme.theme-dark .text-slate-500,
       html.admin-theme.theme-dark .text-slate-400,
       html.admin-theme.theme-dark .hover\:text-slate-500:hover,
       html.admin-theme.theme-dark .hover\:text-slate-400:hover {
-        color: #A0A0A3 !important;
+        color: #A0A0A3;
       }
       html.admin-theme.theme-dark .text-blue-600,
       html.admin-theme.theme-dark .hover\:text-blue-600:hover,
       html.admin-theme.theme-dark .text-blue-700,
       html.admin-theme.theme-dark .hover\:text-blue-700:hover {
-        color: #93C5FD !important;
+        color: #93C5FD;
       }
       html.admin-theme.theme-dark .text-red-500,
       html.admin-theme.theme-dark .text-red-600,
@@ -236,112 +230,112 @@ const {
       html.admin-theme.theme-dark .text-rose-950,
       html.admin-theme.theme-dark .hover\:text-red-600:hover,
       html.admin-theme.theme-dark .hover\:text-red-800:hover {
-        color: #FCA5A5 !important;
+        color: #FCA5A5;
       }
       html.admin-theme.theme-dark .text-emerald-700,
       html.admin-theme.theme-dark .text-emerald-800,
       html.admin-theme.theme-dark .text-emerald-950 {
-        color: #6EE7B7 !important;
+        color: #6EE7B7;
       }
       html.admin-theme.theme-dark .text-amber-700,
       html.admin-theme.theme-dark .text-amber-900,
       html.admin-theme.theme-dark .text-amber-950 {
-        color: #FCD34D !important;
+        color: #FCD34D;
       }
       html.admin-theme.theme-dark .bg-blue-50,
       html.admin-theme.theme-dark .bg-blue-50\/40,
       html.admin-theme.theme-dark .bg-blue-50\/50,
       html.admin-theme.theme-dark .hover\:bg-blue-50\/20:hover {
-        background-color: rgba(50, 124, 246, 0.16) !important;
+        background-color: rgba(50, 124, 246, 0.16);
       }
       html.admin-theme.theme-dark .text-blue-950 {
-        color: #BFDBFE !important;
+        color: #BFDBFE;
       }
       html.admin-theme.theme-dark .bg-blue-100,
       html.admin-theme.theme-dark .hover\:bg-blue-100:hover {
-        background-color: rgba(50, 124, 246, 0.28) !important;
+        background-color: rgba(50, 124, 246, 0.28);
       }
       html.admin-theme.theme-dark .bg-red-50,
       html.admin-theme.theme-dark .bg-rose-50\/50,
       html.admin-theme.theme-dark .hover\:bg-red-50:hover {
-        background-color: rgba(239, 68, 68, 0.14) !important;
+        background-color: rgba(239, 68, 68, 0.14);
       }
       html.admin-theme.theme-dark .bg-red-100,
       html.admin-theme.theme-dark .hover\:bg-red-100:hover,
       html.admin-theme.theme-dark .hover\:bg-red-200:hover {
-        background-color: rgba(239, 68, 68, 0.24) !important;
+        background-color: rgba(239, 68, 68, 0.24);
       }
       html.admin-theme.theme-dark .border-red-200 {
-        border-color: rgba(248, 113, 113, 0.4) !important;
+        border-color: rgba(248, 113, 113, 0.4);
       }
       html.admin-theme.theme-dark .bg-emerald-50,
       html.admin-theme.theme-dark .bg-emerald-50\/50 {
-        background-color: rgba(16, 185, 129, 0.14) !important;
+        background-color: rgba(16, 185, 129, 0.14);
       }
       html.admin-theme.theme-dark .border-emerald-200 {
-        border-color: rgba(52, 211, 153, 0.4) !important;
+        border-color: rgba(52, 211, 153, 0.4);
       }
       html.admin-theme.theme-dark .bg-amber-50,
       html.admin-theme.theme-dark .bg-amber-50\/50,
       html.admin-theme.theme-dark .bg-amber-50\/60 {
-        background-color: rgba(245, 158, 11, 0.14) !important;
+        background-color: rgba(245, 158, 11, 0.14);
       }
       html.admin-theme.theme-dark .border-amber-200 {
-        border-color: rgba(251, 191, 36, 0.4) !important;
+        border-color: rgba(251, 191, 36, 0.4);
       }
       /* ── Violet / Bilingual AI accent overrides (dark mode) ── */
       html.admin-theme.theme-dark .bg-violet-600,
       html.admin-theme.theme-dark .hover\:bg-violet-700:hover,
       html.admin-theme.theme-dark .active\:bg-violet-800:active {
-        background-color: #7C3AED !important;
+        background-color: #7C3AED;
       }
       html.admin-theme.theme-dark .hover\:bg-violet-700:hover {
-        background-color: #6D28D9 !important;
+        background-color: #6D28D9;
       }
       html.admin-theme.theme-dark .bg-violet-100 {
-        background-color: rgba(124, 58, 237, 0.18) !important;
+        background-color: rgba(124, 58, 237, 0.18);
       }
       html.admin-theme.theme-dark .bg-violet-50,
       html.admin-theme.theme-dark .hover\:bg-violet-100:hover {
-        background-color: rgba(124, 58, 237, 0.14) !important;
+        background-color: rgba(124, 58, 237, 0.14);
       }
       html.admin-theme.theme-dark .text-violet-700 {
-        color: #C4B5FD !important;
+        color: #C4B5FD;
       }
       html.admin-theme.theme-dark .border-violet-200 {
-        border-color: rgba(196, 181, 253, 0.35) !important;
+        border-color: rgba(196, 181, 253, 0.35);
       }
       html.admin-theme.theme-dark .focus\:border-violet-500:focus,
       html.admin-theme.theme-dark .focus\:border-violet-400:focus {
-        border-color: rgba(167, 139, 250, 0.6) !important;
+        border-color: rgba(167, 139, 250, 0.6);
       }
       /* ── Indigo / AI Copilot overrides (dark mode) ── */
       html.admin-theme.theme-dark .bg-indigo-50,
       html.admin-theme.theme-dark .hover\:bg-indigo-100:hover {
-        background-color: rgba(99, 102, 241, 0.16) !important;
+        background-color: rgba(99, 102, 241, 0.16);
       }
       html.admin-theme.theme-dark .text-indigo-700 {
-        color: #A5B4FC !important;
+        color: #A5B4FC;
       }
       html.admin-theme.theme-dark .border-indigo-200 {
-        border-color: rgba(165, 180, 252, 0.35) !important;
+        border-color: rgba(165, 180, 252, 0.35);
       }
       html.admin-theme.theme-dark .text-emerald-700 {
-        color: #6EE7B7 !important;
+        color: #6EE7B7;
       }
       html.admin-theme.theme-dark .bg-emerald-600,
       html.admin-theme.theme-dark .hover\:bg-emerald-700:hover {
-        background-color: #059669 !important;
+        background-color: #059669;
       }
       html.admin-theme.theme-dark .selection\:bg-blue-100::selection,
       html.admin-theme.theme-dark .selection\:bg-blue-100 *::selection,
       html.admin-theme.theme-dark ::selection {
-        background-color: #1D4ED8 !important;
-        color: #FFFFFF !important;
+        background-color: #1D4ED8;
+        color: #FFFFFF;
       }
       html.admin-theme.theme-dark .placeholder\:text-slate-400::placeholder,
       html.admin-theme.theme-dark .placeholder\:text-slate-300::placeholder {
-        color: #8B8B90 !important;
+        color: #8B8B90;
       }
       html.admin-theme.theme-dark .border-slate-100,
       html.admin-theme.theme-dark .border-slate-200,
@@ -350,7 +344,7 @@ const {
       html.admin-theme.theme-dark .divide-slate-200 > :not(:last-child),
       html.admin-theme.theme-dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
       html.admin-theme.theme-dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
-        border-color: #2A2925 !important;
+        border-color: #2A2925;
       }
       html.admin-theme.theme-dark input:not([type="checkbox"]):not([type="radio"]),
       html.admin-theme.theme-dark select,
@@ -360,15 +354,15 @@ const {
         border-color: #2A2925;
       }
       html.admin-theme.theme-dark textarea.bg-slate-900 {
-        background-color: #0F0F12 !important;
-        color: #F1F5F9 !important;
+        background-color: #0F0F12;
+        color: #F1F5F9;
       }
       html.admin-theme.theme-dark .ProseMirror {
-        color: #E2E8F0 !important;
-        background-color: transparent !important;
+        color: #E2E8F0;
+        background-color: transparent;
       }
       html.admin-theme.theme-dark .ProseMirror p.is-editor-empty:first-child::before {
-        color: #8B8B90 !important;
+        color: #8B8B90;
       }
       html.admin-theme.theme-dark .find-match {
         background-color: #854D0E;
