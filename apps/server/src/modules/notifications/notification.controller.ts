@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, ForbiddenException, Get, Post, Req } from '@nestjs/common';
+import { BadRequestException, Controller, ForbiddenException, Get, Post, Query, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { AuthService } from '../auth/auth.service.js';
 import { NotificationService } from './notification.service.js';
@@ -11,11 +11,20 @@ export class NotificationController {
   ) {}
 
   @Get('me/notifications')
-  async listMine(@Req() req: Request) {
+  async listMine(@Req() req: Request, @Query('lang') lang?: string) {
     const user = await this.auth.requireUser(req);
-    const items = await this.notifications.listForUser(user.id);
+    const items = await this.notifications.listForUser(user.id, lang);
     return {
       unreadCount: items.filter((item) => !item.read).length,
+      items,
+    };
+  }
+
+  @Get('notifications/public')
+  async listPublic(@Query('lang') lang?: string) {
+    const items = await this.notifications.listPublic(lang);
+    return {
+      unreadCount: items.length,
       items,
     };
   }

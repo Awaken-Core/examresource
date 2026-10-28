@@ -15,6 +15,7 @@ const { hideDesktopSidebar = false, isEditorialTheme = false } = Astro.props;
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isHomePage = currentPath === '/';
 const isBlogsActive = currentPath === '/blogs' || currentPath.startsWith('/blogs/') || currentPath.startsWith('/category/');
 const isTestSeriesActive = currentPath === '/test-series' || currentPath.startsWith('/test-series/');
 const currentSearch = Astro.url.search || '';
@@ -53,7 +54,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         <span class="hamburger-line line-bottom block h-0.5 w-5 rounded-full bg-current transition-all duration-300 pointer-events-none"></span>
       </button>
 
-      {/* Brand logo — visible on all screens in header */}
+      {/* Brand logo — visible on all screens in header; brand name only visible on / */}
       <a
         href="/"
         class="flex items-center gap-1.5 sm:gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-editorial-accent focus-visible:outline-offset-3 group shrink-0"
@@ -61,11 +62,14 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       >
         <BrandLogo size={24} class="sm:hidden shrink-0 group-hover:scale-105 transition-transform" />
         <BrandLogo size={32} class="hidden sm:block shrink-0 group-hover:scale-105 transition-transform" />
-        <span class={`flex items-center font-medium tracking-tight whitespace-nowrap ${
-          isEditorialTheme 
-            ? "font-['EB_Garamond'] text-[16px] min-[360px]:text-[18px] sm:text-[23px] text-editorial-heading" 
-            : 'text-heading text-base sm:text-lg font-bold'
-        }`}>
+        <span
+          id="header-brand-name"
+          class={`${isHomePage ? 'flex' : 'hidden'} items-center font-medium tracking-tight whitespace-nowrap ${
+            isEditorialTheme 
+              ? "font-['EB_Garamond'] text-[16px] min-[360px]:text-[18px] sm:text-[23px] text-editorial-heading" 
+              : 'text-heading text-base sm:text-lg font-bold'
+          }`}
+        >
           {brandPrefix}<span class={isEditorialTheme ? 'text-editorial-accent' : 'text-accent'}>{brandSuffix}</span>
         </span>
       </a>
@@ -309,3 +313,26 @@ const loginHref = (!isAuthPage && currentPath !== '/')
     </div>
   </div>
 </header>
+
+<script is:inline>
+  (function () {
+    function syncHeaderBrandVisibility() {
+      var el = document.getElementById('header-brand-name');
+      if (!el) return;
+      var path = window.location.pathname.replace(/\/$/, '') || '/';
+      var isHome = path === '/';
+      if (isHome) {
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+      } else {
+        el.classList.add('hidden');
+        el.classList.remove('flex');
+      }
+    }
+
+    document.addEventListener('astro:page-load', syncHeaderBrandVisibility);
+    document.addEventListener('astro:after-swap', syncHeaderBrandVisibility);
+    window.addEventListener('popstate', syncHeaderBrandVisibility);
+    syncHeaderBrandVisibility();
+  })();
+</script>

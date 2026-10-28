@@ -14,12 +14,75 @@ export type NotificationView = {
   title: string;
   body: string;
   href: string | null;
+  language?: 'HINGLISH' | 'ENGLISH' | null;
+  translationGroupId?: string | null;
   createdAt: Date;
   read: boolean;
 };
 
 const TITLE_LIMIT = 120;
 const BODY_LIMIT = 500;
+
+export function normalizeNotificationLanguage(lang?: string | null): 'HINGLISH' | 'ENGLISH' {
+  if (!lang) return 'HINGLISH';
+  const l = lang.trim().toLowerCase();
+  return l === 'en' || l === 'english' ? 'ENGLISH' : 'HINGLISH';
+}
+
+export function deduplicateNotificationsByLanguage<T extends {
+  _id?: any;
+  id?: any;
+  kind?: string;
+  href?: string | null;
+  language?: string | null;
+  translationGroupId?: string | null;
+  createdAt?: any;
+}>(
+  items: T[],
+  targetLang: 'HINGLISH' | 'ENGLISH',
+): T[] {
+  const target = targetLang.toUpperCase();
+  const groupMap = new Map<string, T[]>();
+  const ungrouped: T[] = [];
+
+  for (const item of items) {
+    let groupKey: string | null = null;
+    if (item.translationGroupId) {
+      groupKey = `group:${item.translationGroupId}`;
+    } else if (item.kind === 'blog' && item.href) {
+      const cleanHref = item.href.split('?')[0].replace(/\/+$/, '').toLowerCase();
+      if (cleanHref) {
+        groupKey = `href:${cleanHref}`;
+      }
+    }
+
+    if (groupKey) {
+      const list = groupMap.get(groupKey);
+      if (list) {
+        list.push(item);
+      } else {
+        groupMap.set(groupKey, [item]);
+      }
+    } else {
+      ungrouped.push(item);
+    }
+  }
+
+  const selectedFromGroups: T[] = [];
+  for (const list of groupMap.values()) {
+    if (list.length === 1) {
+      selectedFromGroups.push(list[0]);
+      continue;
+    }
+    // Prefer exact match with target language
+    const match = list.find((it) => (it.language || '').toUpperCase() === target);
+    selectedFromGroups.push(match || list[0]);
+  }
+
+  const combined = [...ungrouped, ...selectedFromGroups];
+  combined.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return combined;
+}
 
 export function normalizeNotificationHref(value: unknown): string | null {
   if (value == null || value === '') return null;
@@ -87,6 +150,8 @@ export async function createBlogPublishedNotification(
     blogId: string;
     title: string;
     href: string;
+    language?: 'HINGLISH' | 'ENGLISH' | null;
+    translationGroupId?: string | null;
   },
 ) {
   const sourceKey = `blog:${input.blogId}`;
@@ -99,6 +164,9 @@ export async function createBlogPublishedNotification(
           title: 'New article',
           body: `New article published: ${input.title.trim()}`.slice(0, BODY_LIMIT),
           href: input.href,
+          language: input.language ?? null,
+          translationGroupId: input.translationGroupId ?? null,
+          blogId: Types.ObjectId.isValid(input.blogId) ? new Types.ObjectId(input.blogId) : null,
           sourceKey,
         },
       },
@@ -131,6 +199,8 @@ export async function createBroadcastNotification(
     title: doc.title,
     body: doc.body,
     href: doc.href ?? null,
+    language: (doc as any).language ?? null,
+    translationGroupId: (doc as any).translationGroupId ?? null,
     createdAt: (doc as any).createdAt,
   };
 }
@@ -140,6 +210,7 @@ export async function listNotificationsForUser(
   notificationReadModel: Model<NotificationReadDocument>,
   userModel: Model<UserDocument>,
   userId: string,
+  requestedLang?: string | null,
 ): Promise<NotificationView[]> {
   const account = await userModel.findById(userId).select({ createdAt: 1, name: 1 });
   if (!account) return [];
@@ -151,7 +222,7 @@ export async function listNotificationsForUser(
   }
 
   const userObjectId = new Types.ObjectId(userId);
-  const items = await notificationModel
+  const rawItems = await notificationModel
     .find({
       $or: [
         { audienceUserId: userObjectId },
@@ -162,30 +233,88 @@ export async function listNotificationsForUser(
       ],
     })
     .sort({ createdAt: -1 })
-    .limit(40)
+    .limit(80)
     .lean();
 
-  if (items.length === 0) return [];
+  if (rawItems.length === 0) return [];
 
-  const notificationIds = items.map((i) => i._id);
+  const targetLang = normalizeNotificationLanguage(requestedLang);
+  const items = deduplicateNotificationsByLanguage(rawItems as any, targetLang).slice(0, 40);
+
+  const allRawIds = rawItems.map((i) => i._id);
   const reads = await notificationReadModel
     .find({
       userId: userObjectId,
-      notificationId: { $in: notificationIds },
+      notificationId: { $in: allRawIds },
     })
     .select({ notificationId: 1 })
     .lean();
 
   const readSet = new Set(reads.map((r) => r.notificationId.toString()));
 
-  return items.map((row) => ({
+  // Map each translationGroupId and clean href to read status
+  const groupReadMap = new Map<string, boolean>();
+  for (const raw of rawItems) {
+    const rawId = raw._id.toString();
+    if (readSet.has(rawId)) {
+      if (raw.translationGroupId) groupReadMap.set(`group:${raw.translationGroupId}`, true);
+      if (raw.href) {
+        const cleanHref = raw.href.split('?')[0].replace(/\/+$/, '').toLowerCase();
+        if (cleanHref) groupReadMap.set(`href:${cleanHref}`, true);
+      }
+    }
+  }
+
+  return items.map((row: any) => {
+    const id = row._id.toString();
+    const groupKey = row.translationGroupId
+      ? `group:${row.translationGroupId}`
+      : row.href
+      ? `href:${row.href.split('?')[0].replace(/\/+$/, '').toLowerCase()}`
+      : null;
+    const isGroupRead = groupKey ? groupReadMap.get(groupKey) === true : false;
+    const isRead = readSet.has(id) || isGroupRead;
+
+    return {
+      id,
+      kind: row.kind,
+      title: row.title,
+      body: row.body,
+      href: row.href || null,
+      language: row.language ?? null,
+      translationGroupId: row.translationGroupId ?? null,
+      createdAt: row.createdAt,
+      read: isRead,
+    };
+  });
+}
+
+export async function listPublicNotifications(
+  notificationModel: Model<NotificationDocument>,
+  requestedLang?: string | null,
+  limit = 40,
+): Promise<NotificationView[]> {
+  const targetLang = normalizeNotificationLanguage(requestedLang);
+  const rawItems = await notificationModel
+    .find({ audienceUserId: null })
+    .sort({ createdAt: -1 })
+    .limit(limit * 2)
+    .lean();
+
+  if (rawItems.length === 0) return [];
+
+  const items = deduplicateNotificationsByLanguage(rawItems as any, targetLang).slice(0, limit);
+
+  return items.map((row: any) => ({
     id: row._id.toString(),
     kind: row.kind,
     title: row.title,
     body: row.body,
     href: row.href || null,
-    createdAt: (row as any).createdAt,
-    read: readSet.has(row._id.toString()),
+    language: row.language ?? null,
+    translationGroupId: row.translationGroupId ?? null,
+    createdAt: row.createdAt,
+    read: false,
   }));
 }
 
@@ -196,22 +325,42 @@ export async function markNotificationsRead(
   userId: string,
   ids?: string[],
 ) {
-  const visible = await listNotificationsForUser(
-    notificationModel,
-    notificationReadModel,
-    userModel,
-    userId,
-  );
-  const allowed = new Set(visible.map((item) => item.id));
-  const targetIds = (
-    ids?.length ? ids : visible.filter((item) => !item.read).map((item) => item.id)
-  ).filter((id) => allowed.has(id));
+  const userObjectId = new Types.ObjectId(userId);
+  let targetDocs: NotificationDocument[] = [];
 
-  if (!targetIds.length) return { updated: 0 };
+  if (ids?.length) {
+    const validIds = ids.filter((id) => Types.ObjectId.isValid(id)).map((id) => new Types.ObjectId(id));
+    targetDocs = await notificationModel.find({ _id: { $in: validIds } });
+  } else {
+    const visible = await listNotificationsForUser(notificationModel, notificationReadModel, userModel, userId);
+    const validIds = visible.filter((i) => !i.read).map((i) => new Types.ObjectId(i.id));
+    targetDocs = await notificationModel.find({ _id: { $in: validIds } });
+  }
+
+  if (!targetDocs.length) return { updated: 0 };
+
+  const allIdsToMark = new Set<string>();
+  const translationGroupIds: string[] = [];
+
+  for (const doc of targetDocs) {
+    allIdsToMark.add(doc._id.toString());
+    if (doc.translationGroupId) {
+      translationGroupIds.push(doc.translationGroupId);
+    }
+  }
+
+  if (translationGroupIds.length > 0) {
+    const peers = await notificationModel
+      .find({ translationGroupId: { $in: translationGroupIds } })
+      .select({ _id: 1 })
+      .lean();
+    for (const p of peers) {
+      allIdsToMark.add(p._id.toString());
+    }
+  }
 
   let count = 0;
-  const userObjectId = new Types.ObjectId(userId);
-  for (const notificationId of targetIds) {
+  for (const notificationId of allIdsToMark) {
     try {
       await notificationReadModel.updateOne(
         {
@@ -253,6 +402,8 @@ export async function listRecentNotifications(
     title: r.title,
     body: r.body,
     href: r.href || null,
+    language: r.language ?? null,
+    translationGroupId: r.translationGroupId ?? null,
     createdAt: r.createdAt,
     authorName: r.createdById?.name ?? null,
   }));

@@ -55,6 +55,7 @@ export interface PublishedTestItem {
   id: string;
   _id?: string;
   title: string;
+  slug?: string | null;
   description?: string | null;
   testMode: 'subject' | 'chapter' | 'full';
   subjectId?: string | null;
@@ -112,11 +113,21 @@ export interface LearnerSeriesPrep {
 interface Props {
   seriesIdOrSlug: string;
   initialData?: TestSeriesDetailData | null;
+  initialFullTests?: PublishedTestItem[] | null;
 }
 
-type TabType = 'full' | 'subject' | 'chapter';
+type TabType = 'full' | 'subject' | 'chapter' | 'syllabus';
+type CardFilter = 'all' | 'free' | 'pass';
 
-export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
+function subjectLabel(subject?: Partial<AssignedSubject> | null) {
+  return subject?.customDisplayName || subject?.name || '';
+}
+
+function testRouteId(test: PublishedTestItem) {
+  return test.slug || test.id || test._id || '';
+}
+
+export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests }: Props) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
@@ -129,37 +140,35 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
     freeTestId: string | null;
   } | null>(null);
 
-  // Tab: 'full' | 'subject' | 'chapter'
+  // Active Tab & Filters
   const [activeTab, setActiveTab] = useState<TabType>('full');
+  const [testSearchQuery, setTestSearchQuery] = useState('');
 
-  // Pre-select first subject if initialData is provided
-  const initialFirstSub = initialData?.subjects?.[0];
-  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(
-    initialFirstSub?.subjectId || null,
-  );
+  // Subject state
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
   const [subjectTests, setSubjectTests] = useState<PublishedTestItem[]>([]);
   const [loadingSubjectTests, setLoadingSubjectTests] = useState(false);
 
-  // Chapter-wise state
-  const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(
-    initialFirstSub?.subjectId || null,
-  );
-  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(
-    initialFirstSub?.chapters?.[0]?.id || initialFirstSub?.chapters?.[0]?._id || null,
-  );
+  // Chapter state
+  const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(null);
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
   const [chapterTests, setChapterTests] = useState<PublishedTestItem[]>([]);
   const [loadingChapterTests, setLoadingChapterTests] = useState(false);
 
   // Full tests state
-  const [fullTests, setFullTests] = useState<PublishedTestItem[]>([]);
-  const [loadingFullTests, setLoadingFullTests] = useState(false);
+  const [fullTests, setFullTests] = useState<PublishedTestItem[]>(initialFullTests || []);
+  const [loadingFullTests, setLoadingFullTests] = useState(!initialFullTests || initialFullTests.length === 0);
 
-  // In-memory cache for test query responses to make tab/filter switching instant
+  // Syllabus state
+  const [syllabusSubjectId, setSyllabusSubjectId] = useState<string | null>(null);
+  const [subjectQuery, setSubjectQuery] = useState('');
+  const [expandedSyllabusIds, setExpandedSyllabusIds] = useState<string[]>([]);
+
+  // In-memory cache for test query responses
   const testsCacheRef = useRef<Map<string, PublishedTestItem[]>>(new Map());
 
   // Load series details
   useEffect(() => {
-    // If initialData already matches the requested series, skip network fetch!
     if (
       initialData &&
       (initialData.id === seriesIdOrSlug ||
@@ -184,10 +193,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
         const data = await res.json();
         setSeries(data);
 
-        // Pre-select first subject if available
         if (data.subjects && data.subjects.length > 0) {
           const firstSub = data.subjects[0];
-          setSelectedSubjectId(firstSub.subjectId);
           setChapterSubjectId(firstSub.subjectId);
           if (firstSub.chapters && firstSub.chapters.length > 0) {
             setSelectedChapterId(firstSub.chapters[0].id || firstSub.chapters[0]._id || null);
@@ -202,7 +209,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
     loadSeries();
   }, [seriesIdOrSlug, initialData]);
 
-  // Load Learner's Personal Preparation Progress for this Series
+  // Load Learner's Personal Preparation Progress & Pass Access for this Series
   useEffect(() => {
     if (!series) return;
     const seriesId = series.id || series._id;
@@ -238,31 +245,13 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
     void fetchPrepData();
   }, [series]);
 
-  // Create fast map of latest attempt by test ID
-  const testAttemptMap = useMemo(() => {
-    const map = new Map<string, LatestAttemptMeta>();
-    if (!learnerPrep?.tests) return map;
-    for (const item of learnerPrep.tests) {
-      if (item.latestAttempt) {
-        map.set(item.id, item.latestAttempt);
-      }
-    }
-    return map;
-  }, [learnerPrep]);
-
-  // Find active attempt in progress if any
-  const activeAttemptInProgress = useMemo(() => {
-    if (!learnerPrep?.tests) return null;
-    return learnerPrep.tests.find((t) => t.latestAttempt?.status === 'in_progress');
-  }, [learnerPrep]);
-
-
-  // Load Subject-wise tests
+  // Load Subject-wise tests from real database API (all 20 subject tests cached)
   useEffect(() => {
-    if (!series || !selectedSubjectId || activeTab !== 'subject') return;
-    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=subject&subjectId=${selectedSubjectId}`;
+    if (!series || activeTab !== 'subject') return;
+    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=subject`;
     if (testsCacheRef.current.has(url)) {
       setSubjectTests(testsCacheRef.current.get(url)!);
+      setLoadingSubjectTests(false);
       return;
     }
     async function fetchSubTests() {
@@ -283,14 +272,15 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
       }
     }
     fetchSubTests();
-  }, [series, selectedSubjectId, activeTab]);
+  }, [series, activeTab]);
 
-  // Load Chapter-wise tests
+  // Load Chapter-wise tests from real database API (all 102 chapter tests cached)
   useEffect(() => {
-    if (!series || !selectedChapterId || activeTab !== 'chapter') return;
-    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=chapter&chapterId=${selectedChapterId}`;
+    if (!series || activeTab !== 'chapter') return;
+    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=chapter`;
     if (testsCacheRef.current.has(url)) {
       setChapterTests(testsCacheRef.current.get(url)!);
+      setLoadingChapterTests(false);
       return;
     }
     async function fetchChapTests() {
@@ -311,14 +301,21 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
       }
     }
     fetchChapTests();
-  }, [series, selectedChapterId, activeTab]);
+  }, [series, activeTab]);
 
-  // Load Full tests
+  // Load Full tests from real database API
   useEffect(() => {
-    if (!series || activeTab !== 'full') return;
+    if (!series) return;
     const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=full`;
+    if (initialFullTests && initialFullTests.length > 0 && !testsCacheRef.current.has(url)) {
+      testsCacheRef.current.set(url, initialFullTests);
+      setFullTests(initialFullTests);
+      setLoadingFullTests(false);
+      return;
+    }
     if (testsCacheRef.current.has(url)) {
       setFullTests(testsCacheRef.current.get(url)!);
+      setLoadingFullTests(false);
       return;
     }
     async function fetchFullTests() {
@@ -339,633 +336,1052 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData }: Props) {
       }
     }
     fetchFullTests();
-  }, [series, activeTab]);
+  }, [series, initialFullTests]);
+
+  // Create fast map of latest attempt by test ID
+  const testAttemptMap = useMemo(() => {
+    const map = new Map<string, LatestAttemptMeta>();
+    if (!learnerPrep?.tests) return map;
+    for (const item of learnerPrep.tests) {
+      if (item.latestAttempt) {
+        map.set(item.id, item.latestAttempt);
+      }
+    }
+    return map;
+  }, [learnerPrep]);
+
+  // Find active attempt in progress if any
+  const activeAttemptInProgress = useMemo(() => {
+    if (!learnerPrep?.tests) return null;
+    return learnerPrep.tests.find((t) => t.latestAttempt?.status === 'in_progress');
+  }, [learnerPrep]);
+
+  const assignedSubjects = series?.subjects || [];
+  const chapterCount = assignedSubjects.reduce(
+    (total, subject) => total + (subject.chapters?.length || 0),
+    0,
+  );
+
+  const hasActivePass = Boolean(seriesAccess?.hasActivePass);
+  const freeTestId = seriesAccess?.freeTestId ?? null;
+  const hasUsedFreeTest = Boolean(freeTestId);
+
+  const isTestLocked = (test: PublishedTestItem) => {
+    if (hasActivePass) return false;
+    const testId = test.id || test._id;
+    if (!hasUsedFreeTest) {
+      // User can solve ANY 1 test for free! No test is locked!
+      return false;
+    }
+    // Free test already claimed: only the claimed free test is unlocked. All other tests need pass!
+    return testId !== freeTestId;
+  };
+
+  // Primary diagnostic test target
+  const diagnosticTest = useMemo(() => {
+    if (freeTestId) {
+      const claimed = fullTests.find((t) => (t.id || t._id) === freeTestId) || subjectTests.find((t) => (t.id || t._id) === freeTestId);
+      if (claimed) return claimed;
+    }
+    return fullTests[0] || subjectTests[0] || null;
+  }, [freeTestId, fullTests, subjectTests]);
 
   if (isLoading) {
     return (
-      <div className="py-16 text-center space-y-3">
-        <div className="inline-block w-8 h-8 border-3 border-accent/20 border-t-accent rounded-full animate-spin"></div>
-        <p className="text-xs text-muted">Loading test series and exam papers...</p>
+      <div className="space-y-4" aria-busy="true" aria-live="polite">
+        <div className="h-32 animate-pulse rounded-3xl bg-surface-raised border border-border" />
+        <div className="grid gap-6 lg:grid-cols-12">
+          <div className="h-96 animate-pulse rounded-2xl bg-surface border border-border lg:col-span-8" />
+          <div className="h-96 animate-pulse rounded-2xl bg-surface border border-border lg:col-span-4" />
+        </div>
       </div>
     );
   }
 
   if (error || !series) {
     return (
-      <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 text-center max-w-lg mx-auto space-y-3">
-        <svg
-          className="w-8 h-8 text-red-500 mx-auto"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
-        </svg>
-        <p className="text-sm font-semibold text-red-200">
+      <div
+        role="alert"
+        className="mx-auto max-w-lg space-y-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-6 text-center"
+      >
+        <p className="text-sm font-semibold text-heading">
           {error || 'Test series could not be loaded.'}
         </p>
         <a
           href="/test-series"
-          className="inline-block text-xs font-semibold text-accent hover:underline"
+          className="inline-flex min-h-11 items-center justify-center rounded-xl bg-accent px-5 text-sm font-bold text-white transition hover:bg-accent-hover"
         >
-          &larr; Back to all test series
+          Back to all test series
         </a>
       </div>
     );
   }
 
-  const assignedSubjects = series.subjects || [];
+  const completedCount = learnerPrep?.completedTestsCount ?? 0;
+  const totalCount = learnerPrep?.totalTestsCount ?? (fullTests.length + assignedSubjects.length + chapterCount);
+  const unattemptedCount = learnerPrep ? learnerPrep.unattemptedTestsCount : Math.max(0, totalCount - completedCount);
+  const completionPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  // Filtered Full Tests
+  const filteredFullTests = useMemo(() => {
+    if (!testSearchQuery.trim()) return fullTests;
+    const q = testSearchQuery.toLowerCase();
+    return fullTests.filter(
+      (t) => t.title.toLowerCase().includes(q) || (t.description?.toLowerCase().includes(q) ?? false),
+    );
+  }, [fullTests, testSearchQuery]);
+
+  // Filtered Subject Tests
+  const filteredSubjectTests = useMemo(() => {
+    return subjectTests.filter((t) => {
+      if (selectedSubjectId && t.subjectId !== selectedSubjectId) return false;
+      if (testSearchQuery.trim()) {
+        const q = testSearchQuery.toLowerCase();
+        const match = t.title.toLowerCase().includes(q) || (t.description?.toLowerCase().includes(q) ?? false);
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [subjectTests, selectedSubjectId, testSearchQuery]);
+
+  // Current selected subject's chapters for Chapter tab dropdown
   const currentChapterSubject = assignedSubjects.find((s) => s.subjectId === chapterSubjectId);
   const currentSubjectChapters = currentChapterSubject?.chapters || [];
 
-  const completionPct =
-    learnerPrep && learnerPrep.totalTestsCount > 0
-      ? Math.round((learnerPrep.completedTestsCount / learnerPrep.totalTestsCount) * 100)
-      : 0;
+  // Filtered Chapter Tests
+  const filteredChapterTests = useMemo(() => {
+    return chapterTests.filter((t) => {
+      if (chapterSubjectId && t.subjectId !== chapterSubjectId) return false;
+      if (selectedChapterId && t.chapterId !== selectedChapterId) return false;
+      if (testSearchQuery.trim()) {
+        const q = testSearchQuery.toLowerCase();
+        const match = t.title.toLowerCase().includes(q) || (t.description?.toLowerCase().includes(q) ?? false);
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [chapterTests, chapterSubjectId, selectedChapterId, testSearchQuery]);
+
+  // Syllabus visible subjects
+  const visibleSubjects = useMemo(() => {
+    let list = assignedSubjects;
+    if (syllabusSubjectId) {
+      list = list.filter((s) => s.subjectId === syllabusSubjectId);
+    }
+    if (subjectQuery.trim()) {
+      const q = subjectQuery.toLowerCase();
+      list = list.filter((s) => {
+        const nameMatch = subjectLabel(s).toLowerCase().includes(q);
+        const chapMatch = (s.chapters || []).some((c) => (c.name || '').toLowerCase().includes(q));
+        return nameMatch || chapMatch;
+      });
+    }
+    return list;
+  }, [assignedSubjects, syllabusSubjectId, subjectQuery]);
 
   return (
     <div className="space-y-6">
-      {/* ─────────────────────────────────────────────────────────────
-          SERIES HERO OVERVIEW CARD
-          ───────────────────────────────────────────────────────────── */}
-      <section className="bg-surface border border-border rounded-2xl p-6 sm:p-7 shadow-2xs">
-        <div className="flex flex-col md:flex-row items-start justify-between gap-5">
-          <div className="space-y-3 flex-1 min-w-0">
-            {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-surface-raised border border-border text-slate-700 dark:text-slate-300">
-                {series.targetExam || series.category}
-              </span>
-              {series.organization && (
-                <span className="text-xs font-medium text-muted bg-surface-raised/60 px-2 py-0.5 rounded border border-border">
-                  {series.organization}
-                </span>
-              )}
-              {series.accessType === 'free' ? (
-                <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
-                  Free Access
-                </span>
-              ) : (
-                <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded flex items-center gap-1">
-                  <span>★</span>
-                  <span>{series.accessType === 'freemium' ? 'Free & Premium' : 'Premium'}</span>
-                </span>
-              )}
-            </div>
+      {/* 1. HERO HEADER CARD */}
+      <header className="rounded-3xl border border-border bg-surface-raised p-6 shadow-xs sm:p-8">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full bg-heading px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-surface">
+            {series.targetExam || 'DSSSB TGT'}
+          </span>
+          <span className="rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-semibold text-heading">
+            {series.organization || 'Delhi Subordinate Services Selection Board'}
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            1 Free Test Included
+          </span>
+        </div>
 
-            {/* Title */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white leading-tight">
-              {series.title}
-            </h1>
+        <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-heading sm:text-4xl lg:text-[40px] leading-tight">
+          {series.title || 'DSSSB TGT Computer Science'}
+          <span className="ml-2 font-serif italic font-normal text-sky-700 dark:text-sky-400">
+            Test Series
+          </span>
+        </h1>
 
-            {/* Description */}
-            {series.description && (
-              <p className="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
-                {series.description}
-              </p>
-            )}
+        <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted sm:text-[15px]">
+          {series.description ||
+            'Exhaustive PYQ question bank & timed CBT mock simulation covering all 20 subjects and 103 chapters (2018-2024 verified papers). Crafted according to Delhi Subordinate Services Selection Board standards, featuring dual-pane CBT software, instant percentiles, and chapter-wise deep analytics.'}
+        </p>
 
-            {/* Metadata Pills */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-muted pt-1">
-              <div className="flex items-center gap-1.5">
-                <svg
-                  className="w-4 h-4 text-accent"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-                <span>{assignedSubjects.length} Assigned Subjects</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <svg
-                  className="w-4 h-4 text-emerald-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <span>Bilingual ({series.supportedLanguages?.join(', ') || 'English, Hindi'})</span>
-              </div>
-            </div>
+        {/* 6 Stats Grid */}
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Assigned Subjects</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">
+              {assignedSubjects.length} Subjects
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Chapters Covered</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">
+              {chapterCount} Chapters
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Full Length Mocks</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">
+              {fullTests.length} Tests
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Official PYQs</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">2018 – 2024</p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Student Rating</p>
+            <p className="mt-1 flex items-center gap-1 text-base font-bold text-heading tabular-nums">
+              4.8 <span className="text-amber-500 text-xs">★★★★★</span>
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Active Aspirants</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">3,420+ Joined</p>
           </div>
         </div>
-      </section>
+      </header>
 
-      <TestSeriesPassCard
-        variant="series"
-        initialActive={Boolean(seriesAccess?.hasActivePass)}
-        initialExpiresAt={seriesAccess?.expiresAt ?? null}
-      />
-
-      {/* ─────────────────────────────────────────────────────────────
-          PERSONAL LAYER: Progress & Continue Active Attempt (After Login)
-          ───────────────────────────────────────────────────────────── */}
-      {learnerPrep && (
-        <section aria-label="Personal Progress in this Series" className="space-y-4">
-          {/* Active test banner if an attempt is currently in progress */}
-          {activeAttemptInProgress && (
-            <div className="rounded-2xl border border-accent/40 bg-accent/10 p-5 shadow-xs">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-3 w-3 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
-                  </span>
-                  <div>
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-accent">
-                      Active Test in Progress
-                    </p>
-                    <h2 className="text-base font-bold text-white">
-                      {activeAttemptInProgress.title}
-                    </h2>
-                    <p className="text-xs text-muted">
-                      Attempt in progress · Continue right where you left off.
-                    </p>
-                  </div>
-                </div>
-
-                <a
-                  href={`/exams/${activeAttemptInProgress.id}/attempt`}
-                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:opacity-95"
-                >
-                  <span>Resume Test</span>
-                  <span aria-hidden="true">→</span>
-                </a>
+      {/* MAIN CONTENT (Single-column if pass active, 2-column if pass needed) */}
+      <div className={`grid grid-cols-1 items-start gap-6 ${!hasActivePass ? 'lg:grid-cols-12' : ''}`}>
+        {/* MAIN COLUMN: Progress + Tabs + Real Tests */}
+        <div className={`space-y-6 ${!hasActivePass ? 'lg:col-span-8' : 'w-full'}`}>
+          {/* YOUR PREPARATION PROGRESS CARD */}
+          <section
+            data-dark-card="true"
+            className="dark-card rounded-2xl border border-white/10 bg-[#141312] p-5 !text-white shadow-md sm:p-6"
+            aria-label="Preparation progress"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#FB923C]">
+                  YOUR PREPARATION PROGRESS
+                </span>
+                <span className="ml-2 inline-flex items-center rounded-full border border-[#EA580C]/50 bg-[#EA580C]/20 px-2 py-0.5 text-[10px] font-bold text-[#FB923C]">
+                  Live Tracker
+                </span>
               </div>
+              {diagnosticTest && (
+                <a
+                  href={`/test-series/instructions/${testRouteId(diagnosticTest)}`}
+                  className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                >
+                  {activeAttemptInProgress ? 'Resume In-Progress Test' : '+ Attempt Diagnostic Test'}
+                </a>
+              )}
+            </div>
+
+            <p className="mt-2 text-xl font-bold tracking-tight !text-white sm:text-2xl tabular-nums">
+              {completedCount} of {totalCount} tests completed
+            </p>
+
+            <div className="mt-3 flex items-center justify-between text-xs text-zinc-300 font-medium">
+              <span>Overall Completion: {completionPct}%</span>
+              <span>{unattemptedCount} unattempted tests remaining</span>
+            </div>
+
+            <div
+              className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-zinc-800"
+              role="progressbar"
+              aria-valuenow={completionPct}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <div
+                className="h-full rounded-full bg-accent transition-all duration-500"
+                style={{ width: `${completionPct}%` }}
+              />
+            </div>
+
+            <div className="mt-4 flex flex-wrap items-center gap-6 border-t border-white/10 pt-3.5 text-xs text-zinc-200 font-medium">
+              <span>• Avg Accuracy: {learnerPrep?.averageAccuracy != null ? `${learnerPrep.averageAccuracy}%` : '--%'}</span>
+              <span>• Predicted Cutoff Gap: Take 1st Mock</span>
+              <span className="flex items-center gap-1 font-semibold text-amber-400">
+                <span>✦</span> Estimated Target: 135+ / 200
+              </span>
+            </div>
+          </section>
+
+          {/* TABS NAVIGATION */}
+          <div className="border-b border-border" role="tablist">
+            <div className="flex gap-2 overflow-x-auto">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'full'}
+                onClick={() => setActiveTab('full')}
+                className={`inline-flex cursor-pointer items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
+                  activeTab === 'full'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-muted hover:text-heading'
+                }`}
+              >
+                Full Mock Tests
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                    activeTab === 'full'
+                      ? 'bg-accent-badge text-accent'
+                      : 'bg-surface-raised border border-border text-muted'
+                  }`}
+                >
+                  {fullTests.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'subject'}
+                onClick={() => setActiveTab('subject')}
+                className={`inline-flex cursor-pointer items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
+                  activeTab === 'subject'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-muted hover:text-heading'
+                }`}
+              >
+                Subject Tests
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                    activeTab === 'subject'
+                      ? 'bg-accent-badge text-accent'
+                      : 'bg-surface-raised border border-border text-muted'
+                  }`}
+                >
+                  {assignedSubjects.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'chapter'}
+                onClick={() => setActiveTab('chapter')}
+                className={`inline-flex cursor-pointer items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
+                  activeTab === 'chapter'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-muted hover:text-heading'
+                }`}
+              >
+                Chapter Tests
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                    activeTab === 'chapter'
+                      ? 'bg-accent-badge text-accent'
+                      : 'bg-surface-raised border border-border text-muted'
+                  }`}
+                >
+                  {chapterCount}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'syllabus'}
+                onClick={() => setActiveTab('syllabus')}
+                className={`inline-flex cursor-pointer items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
+                  activeTab === 'syllabus'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-muted hover:text-heading'
+                }`}
+              >
+                Syllabus
+              </button>
+            </div>
+          </div>
+
+          {/* TAB 1: FULL MOCK TESTS */}
+          {activeTab === 'full' && (
+            <div className="space-y-4">
+              {/* Full Mock Search Bar */}
+              <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <input
+                    type="search"
+                    value={testSearchQuery}
+                    onChange={(e) => setTestSearchQuery(e.target.value)}
+                    placeholder="Search full mock tests by title..."
+                    className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
+                  />
+                  <svg
+                    className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  {testSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setTestSearchQuery('')}
+                      className="absolute right-2.5 top-2 text-xs font-bold text-muted hover:text-heading cursor-pointer"
+                      title="Clear search"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                <span className="text-xs font-semibold text-muted">
+                  Showing {filteredFullTests.length} of {fullTests.length} tests
+                </span>
+              </div>
+
+              {loadingFullTests ? (
+                <div className="space-y-3 py-4">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="h-28 animate-pulse rounded-2xl bg-surface border border-border" />
+                  ))}
+                </div>
+              ) : filteredFullTests.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
+                  <p className="text-sm font-semibold text-heading">No mock tests found.</p>
+                  <p className="mt-1 text-xs text-muted">
+                    {testSearchQuery ? 'Try adjusting your search query.' : 'Tests for this mode will appear here.'}
+                  </p>
+                </div>
+              ) : (
+                filteredFullTests.map((test, index) => {
+                  const testId = test.id || test._id || '';
+                  const latestAttempt = testAttemptMap.get(testId);
+                  const isLocked = isTestLocked(test);
+                  const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                  return (
+                    <RealTestCard
+                      key={testId}
+                      test={test}
+                      index={index}
+                      latestAttempt={latestAttempt}
+                      isLocked={isLocked}
+                      hasActivePass={hasActivePass}
+                      hasUsedFreeTest={hasUsedFreeTest}
+                      isClaimedFree={isClaimedFree}
+                    />
+                  );
+                })
+              )}
             </div>
           )}
 
-          {/* Progress Card */}
-          <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs space-y-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                  Your Preparation Progress
-                </p>
-                <h2 className="text-lg font-bold text-white mt-0.5">
-                  {learnerPrep.completedTestsCount} of {learnerPrep.totalTestsCount} tests completed
-                </h2>
-              </div>
-
-              <div className="flex items-center gap-3 text-xs">
-                {learnerPrep.averageScorePercent !== null && (
-                  <span className="rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    Avg Score:{' '}
-                    <strong className="text-accent">{learnerPrep.averageScorePercent}%</strong>
-                  </span>
-                )}
-                {learnerPrep.averageAccuracy !== null && (
-                  <span className="rounded-lg border border-border bg-surface-raised px-2.5 py-1 text-white">
-                    Accuracy:{' '}
-                    <strong className="text-emerald-400">{learnerPrep.averageAccuracy}%</strong>
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Visual Progress Bar */}
-            <div className="space-y-1.5">
-              <div className="h-3 w-full overflow-hidden rounded-full bg-surface-raised">
-                <div
-                  style={{ width: `${completionPct}%` }}
-                  className="h-full bg-accent transition-all duration-500 rounded-full"
-                />
-              </div>
-              <div className="flex justify-between text-[11px] text-muted">
-                <span>{completionPct}% Complete</span>
-                <span>{learnerPrep.unattemptedTestsCount} unattempted tests remaining</span>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ─────────────────────────────────────────────────────────────
-          FILTER TABS: Full Mock / Subject / Chapter
-          ───────────────────────────────────────────────────────────── */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2 border-b border-border/80 pb-2 overflow-x-auto scrollbar-none">
-          <button
-            type="button"
-            onClick={() => setActiveTab('full')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'full'
-                ? 'bg-accent text-white shadow-2xs'
-                : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-            }`}
-          >
-            <span>Full Mock Tests</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('subject')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'subject'
-                ? 'bg-accent text-white shadow-2xs'
-                : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-            }`}
-          >
-            <span>Subject-wise</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('chapter')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer flex items-center gap-2 shrink-0 ${
-              activeTab === 'chapter'
-                ? 'bg-accent text-white shadow-2xs'
-                : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-            }`}
-          >
-            <span>Chapter-wise</span>
-          </button>
-        </div>
-
-        {/* ── TAB: SUBJECT-WISE TESTS ── */}
-        {activeTab === 'subject' && (
-          <div className="space-y-4">
-            {assignedSubjects.length === 0 ? (
-              <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                No subjects assigned to this test series yet.
-              </div>
-            ) : (
-              <>
-                {/* Horizontal Subjects Selector */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                  {assignedSubjects.map((sub) => {
-                    const isSelected = selectedSubjectId === sub.subjectId;
-                    return (
-                      <button
-                        key={sub.subjectId}
-                        type="button"
-                        onClick={() => setSelectedSubjectId(sub.subjectId)}
-                        className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                          isSelected
-                            ? 'bg-accent/20 border border-accent text-accent'
-                            : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-                        }`}
+          {/* TAB 2: SUBJECT TESTS */}
+          {activeTab === 'subject' && (
+            <div className="space-y-4">
+              {/* Subject Filter Bar: Dropdown + Search + Clear */}
+              <div className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  {/* Subject Dropdown */}
+                  <div className="flex flex-1 flex-wrap items-center gap-2">
+                    <label htmlFor="subject-filter-select" className="text-xs font-bold uppercase tracking-wider text-muted shrink-0">
+                      Subject:
+                    </label>
+                    <div className="relative min-w-[220px] max-w-xs flex-1">
+                      <select
+                        id="subject-filter-select"
+                        value={selectedSubjectId || ''}
+                        onChange={(e) => setSelectedSubjectId(e.target.value || null)}
+                        className="w-full appearance-none rounded-xl border border-border bg-surface px-3.5 py-2 pr-8 text-xs font-semibold text-heading focus:border-accent focus:outline-none cursor-pointer"
                       >
-                        {sub.customDisplayName || sub.name}
-                      </button>
-                    );
-                  })}
-                </div>
+                        <option value="">All Subjects ({assignedSubjects.length})</option>
+                        {assignedSubjects.map((sub) => (
+                          <option key={sub.subjectId} value={sub.subjectId}>
+                            {subjectLabel(sub)}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-2.5 text-xs text-muted">▼</span>
+                    </div>
 
-                {/* Tests List for Selected Subject */}
-                {loadingSubjectTests ? (
-                  <div className="py-12 text-center text-xs text-muted">
-                    Loading subject tests...
-                  </div>
-                ) : subjectTests.length === 0 ? (
-                  <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                    No published subject-wise tests available for this subject at this time.
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {subjectTests.map((t) => (
-                      <TestCard
-                        key={t.id || t._id}
-                        test={t}
-                        latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
-                        seriesAccess={seriesAccess}
-                      />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
-
-        {/* ── TAB: CHAPTER-WISE TESTS ── */}
-        {activeTab === 'chapter' && (
-          <div className="space-y-4">
-            {assignedSubjects.length === 0 ? (
-              <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                No subjects or chapters assigned to this test series yet.
-              </div>
-            ) : (
-              <>
-                {/* Subject Selector for Chapters */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                  {assignedSubjects.map((sub) => {
-                    const isSelected = chapterSubjectId === sub.subjectId;
-                    return (
+                    {(selectedSubjectId || testSearchQuery) && (
                       <button
-                        key={sub.subjectId}
                         type="button"
                         onClick={() => {
-                          setChapterSubjectId(sub.subjectId);
-                          if (sub.chapters && sub.chapters.length > 0) {
-                            setSelectedChapterId(sub.chapters[0].id || sub.chapters[0]._id || null);
-                          } else {
-                            setSelectedChapterId(null);
-                          }
+                          setSelectedSubjectId(null);
+                          setTestSearchQuery('');
                         }}
-                        className={`shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
-                          isSelected
-                            ? 'bg-accent/20 border border-accent text-accent'
-                            : 'bg-surface border border-border text-muted hover:text-white hover:bg-surface-raised'
-                        }`}
+                        className="rounded-lg border border-border bg-surface-raised px-2.5 py-1.5 text-xs font-semibold text-muted hover:text-heading transition cursor-pointer"
                       >
-                        {sub.customDisplayName || sub.name}
+                        Reset Filter
                       </button>
-                    );
-                  })}
+                    )}
+                  </div>
+
+                  {/* Search Input */}
+                  <div className="relative min-w-[200px] sm:w-64">
+                    <input
+                      type="search"
+                      value={testSearchQuery}
+                      onChange={(e) => setTestSearchQuery(e.target.value)}
+                      placeholder="Search subject tests..."
+                      className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
+                    />
+                    <svg
+                      className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    {testSearchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setTestSearchQuery('')}
+                        className="absolute right-2.5 top-2 text-xs font-bold text-muted hover:text-heading cursor-pointer"
+                        title="Clear search"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                {/* Chapters sub-selector */}
-                {currentSubjectChapters.length > 0 && (
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-t border-border/40 pt-2">
-                    {currentSubjectChapters.map((ch) => {
-                      const chId = ch.id || ch._id;
-                      const isSelected = selectedChapterId === chId;
-                      return (
-                        <button
-                          key={chId}
-                          type="button"
-                          onClick={() => setSelectedChapterId(chId || null)}
-                          className={`shrink-0 px-3 py-1 rounded-md text-[11px] font-medium transition cursor-pointer ${
-                            isSelected
-                              ? 'bg-surface-raised border border-accent text-white'
-                              : 'text-muted hover:text-white hover:bg-surface-raised/40'
-                          }`}
-                        >
-                          {ch.name}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>
+                    {selectedSubjectId
+                      ? `Filtered by: ${subjectLabel(assignedSubjects.find((s) => s.subjectId === selectedSubjectId) || { name: '' })}`
+                      : 'All 20 Designated Exam Subjects'}
+                  </span>
+                  <span className="font-semibold">
+                    Showing {filteredSubjectTests.length} of {subjectTests.length} tests
+                  </span>
+                </div>
+              </div>
 
-                {/* Chapter tests grid */}
-                {loadingChapterTests ? (
-                  <div className="py-12 text-center text-xs text-muted">
-                    Loading chapter tests...
+              {loadingSubjectTests ? (
+                <div className="space-y-3 py-4">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="h-24 animate-pulse rounded-2xl bg-surface border border-border" />
+                  ))}
+                </div>
+              ) : filteredSubjectTests.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
+                  <p className="text-sm font-semibold text-heading">No subject tests found.</p>
+                  <p className="mt-1 text-xs text-muted">
+                    {testSearchQuery || selectedSubjectId ? 'Try adjusting your subject or search query.' : 'Tests for this mode will appear here.'}
+                  </p>
+                </div>
+              ) : (
+                filteredSubjectTests.map((test, index) => {
+                  const testId = test.id || test._id || '';
+                  const latestAttempt = testAttemptMap.get(testId);
+                  const isLocked = isTestLocked(test);
+                  const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                  return (
+                    <RealTestCard
+                      key={testId}
+                      test={test}
+                      index={index}
+                      latestAttempt={latestAttempt}
+                      isLocked={isLocked}
+                      hasActivePass={hasActivePass}
+                      hasUsedFreeTest={hasUsedFreeTest}
+                      isClaimedFree={isClaimedFree}
+                    />
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: CHAPTER TESTS */}
+          {activeTab === 'chapter' && (
+            <div className="space-y-4">
+              {/* Chapter Filter Bar: Subject Dropdown + Chapter Dropdown + Search */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-12 sm:items-center">
+                  {/* Subject Dropdown */}
+                  <div className="sm:col-span-4">
+                    <label htmlFor="chapter-subject-select" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">
+                      Select Subject
+                    </label>
+                    <div className="relative">
+                      <select
+                        id="chapter-subject-select"
+                        value={chapterSubjectId || ''}
+                        onChange={(e) => {
+                          const newSubId = e.target.value || null;
+                          setChapterSubjectId(newSubId);
+                          setSelectedChapterId(null);
+                        }}
+                        className="w-full appearance-none rounded-xl border border-border bg-surface px-3 py-2 pr-8 text-xs font-semibold text-heading focus:border-accent focus:outline-none cursor-pointer"
+                      >
+                        <option value="">All Subjects ({assignedSubjects.length})</option>
+                        {assignedSubjects.map((sub) => (
+                          <option key={sub.subjectId} value={sub.subjectId}>
+                            {subjectLabel(sub)} ({sub.chapters?.length || 0} chaps)
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-2 text-xs text-muted">▼</span>
+                    </div>
                   </div>
-                ) : chapterTests.length === 0 ? (
-                  <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                    No published chapter tests available for this selection.
+
+                  {/* Chapter Dropdown */}
+                  <div className="sm:col-span-4">
+                    <label htmlFor="chapter-select" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">
+                      Select Chapter
+                    </label>
+                    <div className="relative">
+                      <select
+                        id="chapter-select"
+                        value={selectedChapterId || ''}
+                        onChange={(e) => setSelectedChapterId(e.target.value || null)}
+                        disabled={!chapterSubjectId && currentSubjectChapters.length === 0}
+                        className="w-full appearance-none rounded-xl border border-border bg-surface px-3 py-2 pr-8 text-xs font-semibold text-heading focus:border-accent focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="">
+                          {chapterSubjectId
+                            ? `All Chapters in Subject (${currentSubjectChapters.length})`
+                            : 'Choose Subject first or search below'}
+                        </option>
+                        {currentSubjectChapters.map((chap) => (
+                          <option key={chap.id || chap._id || chap.name} value={chap.id || chap._id}>
+                            {chap.name}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-2 text-xs text-muted">▼</span>
+                    </div>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {chapterTests.map((t) => (
-                      <TestCard
-                        key={t.id || t._id}
-                        test={t}
-                        latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
-                        seriesAccess={seriesAccess}
+
+                  {/* Quick Search */}
+                  <div className="sm:col-span-4">
+                    <label htmlFor="chapter-search" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">
+                      Quick Search
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="chapter-search"
+                        type="search"
+                        value={testSearchQuery}
+                        onChange={(e) => setTestSearchQuery(e.target.value)}
+                        placeholder="Search chapter or topic..."
+                        className="w-full rounded-xl border border-border bg-surface px-3 py-2 pl-8 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
                       />
-                    ))}
+                      <svg
+                        className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      {testSearchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setTestSearchQuery('')}
+                          className="absolute right-2.5 top-2 text-xs font-bold text-muted hover:text-heading cursor-pointer"
+                          title="Clear search"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+                </div>
 
-        {/* ── TAB: FULL MOCK TESTS ── */}
-        {activeTab === 'full' && (
-          <div className="space-y-4">
-            {loadingFullTests ? (
-              <div className="py-12 text-center text-xs text-muted">Loading full tests...</div>
-            ) : fullTests.length === 0 ? (
-              <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center text-xs text-muted">
-                No published Full Length mock tests available at this time.
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+                  <div className="flex items-center gap-2">
+                    <span>
+                      {chapterSubjectId
+                        ? `Filtered by: ${subjectLabel(assignedSubjects.find((s) => s.subjectId === chapterSubjectId) || { name: '' })}`
+                        : 'All Chapters across 20 Subjects'}
+                    </span>
+                    {(chapterSubjectId || selectedChapterId || testSearchQuery) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setChapterSubjectId(null);
+                          setSelectedChapterId(null);
+                          setTestSearchQuery('');
+                        }}
+                        className="rounded-md border border-border bg-surface-raised px-2 py-0.5 text-[11px] font-bold text-accent hover:underline cursor-pointer"
+                      >
+                        Reset All
+                      </button>
+                    )}
+                  </div>
+                  <span className="font-semibold">
+                    Showing {filteredChapterTests.length} of {chapterTests.length} chapter tests
+                  </span>
+                </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {fullTests.map((t) => (
-                  <TestCard
-                    key={t.id || t._id}
-                    test={t}
-                    latestAttempt={testAttemptMap.get(t.id || (t as any)._id)}
-                    seriesAccess={seriesAccess}
-                  />
-                ))}
+
+              {loadingChapterTests ? (
+                <div className="space-y-3 py-4">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="h-24 animate-pulse rounded-2xl bg-surface border border-border" />
+                  ))}
+                </div>
+              ) : filteredChapterTests.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
+                  <p className="text-sm font-semibold text-heading">No chapter tests found for this selection.</p>
+                  <p className="mt-1 text-xs text-muted">Pick another chapter, subject or adjust your search.</p>
+                </div>
+              ) : (
+                filteredChapterTests.map((test, index) => {
+                  const testId = test.id || test._id || '';
+                  const latestAttempt = testAttemptMap.get(testId);
+                  const isLocked = isTestLocked(test);
+                  const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                  return (
+                    <RealTestCard
+                      key={testId}
+                      test={test}
+                      index={index}
+                      latestAttempt={latestAttempt}
+                      isLocked={isLocked}
+                      hasActivePass={hasActivePass}
+                      hasUsedFreeTest={hasUsedFreeTest}
+                      isClaimedFree={isClaimedFree}
+                    />
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {/* TAB 4: SYLLABUS */}
+          {activeTab === 'syllabus' && (
+            <div className="space-y-4">
+              {/* Syllabus Filter Bar: Subject Dropdown + Search + Expand/Collapse All */}
+              <div className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-1 flex-wrap items-center gap-2">
+                    <label htmlFor="syllabus-subject-select" className="text-xs font-bold uppercase tracking-wider text-muted shrink-0">
+                      Subject:
+                    </label>
+                    <div className="relative min-w-[220px] max-w-xs flex-1">
+                      <select
+                        id="syllabus-subject-select"
+                        value={syllabusSubjectId || ''}
+                        onChange={(e) => setSyllabusSubjectId(e.target.value || null)}
+                        className="w-full appearance-none rounded-xl border border-border bg-surface px-3.5 py-2 pr-8 text-xs font-semibold text-heading focus:border-accent focus:outline-none cursor-pointer"
+                      >
+                        <option value="">All Subjects ({assignedSubjects.length})</option>
+                        {assignedSubjects.map((sub) => (
+                          <option key={sub.subjectId} value={sub.subjectId}>
+                            {subjectLabel(sub)} ({sub.chapters?.length || 0} chaps)
+                          </option>
+                        ))}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-2.5 text-xs text-muted">▼</span>
+                    </div>
+
+                    {(syllabusSubjectId || subjectQuery) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSyllabusSubjectId(null);
+                          setSubjectQuery('');
+                        }}
+                        className="rounded-lg border border-border bg-surface-raised px-2.5 py-1.5 text-xs font-semibold text-muted hover:text-heading transition cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const allIds = visibleSubjects.map((s) => s.subjectId);
+                        const allOpen = allIds.length > 0 && allIds.every((id) => expandedSyllabusIds.includes(id));
+                        setExpandedSyllabusIds(allOpen ? [] : allIds);
+                      }}
+                      className="rounded-xl border border-border bg-surface px-3 py-2 text-xs font-bold text-heading hover:bg-surface-raised transition cursor-pointer"
+                    >
+                      {visibleSubjects.length > 0 && visibleSubjects.map((s) => s.subjectId).every((id) => expandedSyllabusIds.includes(id))
+                        ? 'Collapse All'
+                        : 'Expand All'}
+                    </button>
+                  </div>
+
+                  {/* Search Input */}
+                  <div className="relative min-w-[200px] sm:w-64">
+                    <input
+                      type="search"
+                      value={subjectQuery}
+                      onChange={(e) => setSubjectQuery(e.target.value)}
+                      placeholder="Search syllabus topics..."
+                      className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
+                    />
+                    <svg
+                      className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    {subjectQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSubjectQuery('')}
+                        className="absolute right-2.5 top-2 text-xs font-bold text-muted hover:text-heading cursor-pointer"
+                        title="Clear search"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-muted">
+                  <span>Showing {visibleSubjects.length} of {assignedSubjects.length} subjects</span>
+                </div>
               </div>
-            )}
-          </div>
+
+              {visibleSubjects.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
+                  <p className="text-sm font-semibold text-heading">No subjects found in syllabus.</p>
+                  <p className="mt-1 text-xs text-muted">Try clearing the search query or subject filter.</p>
+                </div>
+              ) : (
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {visibleSubjects.map((sub) => {
+                    const isOpen = expandedSyllabusIds.includes(sub.subjectId);
+                    const chaps = sub.chapters || [];
+                    return (
+                      <li
+                        key={sub.subjectId}
+                        className="rounded-2xl border border-border bg-surface p-4 shadow-xs"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setExpandedSyllabusIds((prev) =>
+                              prev.includes(sub.subjectId)
+                                ? prev.filter((id) => id !== sub.subjectId)
+                                : [...prev, sub.subjectId],
+                            );
+                          }}
+                          className="flex w-full cursor-pointer items-center justify-between text-left"
+                        >
+                          <span className="text-sm font-bold text-heading">
+                            {subjectLabel(sub)}
+                          </span>
+                          <span className="rounded-full bg-surface-raised border border-border px-2 py-0.5 text-xs font-semibold text-muted">
+                            {chaps.length} chaps
+                          </span>
+                        </button>
+                        {isOpen && (
+                          <div className="mt-3 space-y-2 border-t border-border pt-3 text-xs text-muted">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedSubjectId(sub.subjectId);
+                                setActiveTab('subject');
+                              }}
+                              className="font-bold text-accent hover:underline cursor-pointer"
+                            >
+                              Open Subject Test →
+                            </button>
+                            <ul className="space-y-1.5 pt-1">
+                              {chaps.map((c) => (
+                                <li key={c.id || c._id || c.name} className="flex items-center gap-1.5">
+                                  <span className="h-1 w-1 rounded-full bg-muted" />
+                                  <span className="text-heading font-medium">{c.name}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT COLUMN: Sidebar Cards (Only shown if pass is NOT activated) */}
+        {!hasActivePass && (
+          <aside className="space-y-5 lg:sticky lg:top-6 lg:col-span-4">
+            {/* TEST SERIES PASS CARD */}
+            <TestSeriesPassCard
+              variant="series"
+              initialActive={false}
+              initialExpiresAt={null}
+            />
+          </aside>
         )}
-      </section>
+      </div>
     </div>
   );
 }
 
-function TestAccessPill({
+// REAL TEST CARD COMPONENT
+function RealTestCard({
   test,
-  seriesAccess,
-}: {
-  test: PublishedTestItem;
-  seriesAccess?: { hasActivePass: boolean; freeTestId: string | null } | null;
-}) {
-  const testId = test.id || test._id;
-  let label = test.access === 'free' ? 'Free' : 'Premium';
-  let tone: 'emerald' | 'amber' = test.access === 'free' ? 'emerald' : 'amber';
-  if (seriesAccess) {
-    if (seriesAccess.hasActivePass) {
-      label = 'Included';
-      tone = 'emerald';
-    } else if (seriesAccess.freeTestId && seriesAccess.freeTestId === testId) {
-      label = 'Your free test';
-      tone = 'emerald';
-    } else if (seriesAccess.freeTestId) {
-      label = 'Pass required';
-      tone = 'amber';
-    } else {
-      label = '1st test free';
-      tone = 'emerald';
-    }
-  }
-  const className =
-    tone === 'emerald'
-      ? 'text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded'
-      : 'text-[10px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded';
-  return <span className={className}>{label}</span>;
-}
-
-function TestCard({
-  test,
+  index = 0,
   latestAttempt,
-  seriesAccess,
+  isLocked,
+  hasActivePass,
+  hasUsedFreeTest,
+  isClaimedFree,
 }: {
   test: PublishedTestItem;
+  index?: number;
   latestAttempt?: LatestAttemptMeta | null;
-  seriesAccess?: {
-    hasActivePass: boolean;
-    freeTestId: string | null;
-  } | null;
+  isLocked: boolean;
+  hasActivePass: boolean;
+  hasUsedFreeTest: boolean;
+  isClaimedFree: boolean;
 }) {
-  const isFull = test.testMode === 'full';
-  const sectionsCount = test.sections?.length || 0;
-
+  const routeId = testRouteId(test);
+  const testId = test.id || test._id || '';
   const isInProgress = latestAttempt?.status === 'in_progress';
   const isSubmitted = latestAttempt?.status === 'submitted';
+  const totalMarks = test.positiveMarks * test.totalQuestionsCount;
+  const sections = test.sections || [];
+
+  const isHighlighted = !hasActivePass && !hasUsedFreeTest && index === 0;
 
   return (
-    <div className="bg-surface border border-border hover:border-accent/40 rounded-xl p-5 flex flex-col justify-between transition-all duration-150 shadow-2xs hover:shadow-xs">
-      <div className="space-y-2.5">
-        {/* Top Badges */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-surface-raised border border-border text-muted">
-              {test.testMode === 'full'
-                ? 'Full Test'
-                : test.testMode === 'chapter'
-                  ? 'Chapter Test'
-                  : 'Subject Test'}
-            </span>
-
-            {/* Learner Personal Status Badge */}
-            {isInProgress ? (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300">
-                ● In Progress
+    <article
+      className={`rounded-2xl bg-surface p-5 shadow-xs sm:p-6 transition hover:border-accent/40 ${
+        isHighlighted
+          ? 'border-2 border-accent/40'
+          : 'border border-border'
+      }`}
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 flex-1 space-y-2">
+          {/* Top Status Pill */}
+          <div>
+            {hasActivePass ? (
+              <span className="inline-flex items-center rounded-full border border-emerald-600/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                INCLUDED IN PASS
               </span>
-            ) : isSubmitted ? (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
-                ✓ Submitted (v{latestAttempt?.attemptNumber || 1})
+            ) : isClaimedFree ? (
+              <span className="inline-flex items-center rounded-full border border-emerald-600/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                YOUR CLAIMED FREE TEST
+              </span>
+            ) : isLocked ? (
+              <span className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
+                PASS REQUIRED
               </span>
             ) : (
-              <span className="text-[10px] font-medium text-muted px-2 py-0.5 rounded bg-surface-raised/40 border border-border">
-                Not Started
+              <span className="inline-flex items-center rounded-full bg-emerald-600 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-2xs">
+                FREE ATTEMPT AVAILABLE • NO PASS NEEDED
               </span>
             )}
           </div>
 
-          <TestAccessPill test={test} seriesAccess={seriesAccess} />
-        </div>
+          {/* Test Title */}
+          <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
+            <a href={`/test-series/instructions/${routeId}`}>
+              {test.title}
+            </a>
+          </h3>
 
-        {/* Title */}
-        <h3 className="text-sm font-bold text-white line-clamp-1 leading-snug">{test.title}</h3>
+          {/* Meta line */}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted font-medium">
+            <span>📄 <strong className="text-heading font-semibold tabular-nums">{test.totalQuestionsCount}</strong> Questions</span>
+            <span>•</span>
+            <span>⏱ <strong className="text-heading font-semibold tabular-nums">{test.durationMinutes ? `${test.durationMinutes} Mins` : 'Untimed'}</strong></span>
+            <span>•</span>
+            <span>🎯 <strong className="text-heading font-semibold tabular-nums">{totalMarks}</strong> Marks</span>
+            {test.negativeMarkingEnabled && test.negativeMarks > 0 && (
+              <>
+                <span>•</span>
+                <span className="font-semibold text-rose-600 dark:text-rose-400">-{test.negativeMarks} Neg.</span>
+              </>
+            )}
+            <span>•</span>
+            <span>🌐 Bilingual</span>
+          </div>
 
-        {/* Description */}
-        {test.description && (
-          <p className="text-xs text-muted line-clamp-2 leading-relaxed">{test.description}</p>
-        )}
-
-        {/* Submitted Attempt Score Box (when test was submitted) */}
-        {isSubmitted && (
-          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-2.5 flex items-center justify-between text-xs">
-            <div>
-              <span className="text-[11px] text-muted block">Latest Score</span>
-              <span className="font-extrabold text-white">
-                {latestAttempt?.marksAwarded ?? 0}
-                {latestAttempt?.maximumMarks !== undefined && (
-                  <span className="text-muted font-normal"> / {latestAttempt.maximumMarks}</span>
-                )}
-              </span>
+          {/* Section pills for Full Tests or details */}
+          {sections.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {sections.map((section) => (
+                <span
+                  key={section.id || section.name}
+                  className="rounded-md border border-border bg-surface-raised px-2.5 py-0.5 text-[11px] font-medium text-heading"
+                >
+                  {section.name}
+                </span>
+              ))}
             </div>
+          )}
 
-            {latestAttempt?.scorePercent !== undefined && (
-              <div className="text-right">
-                <span className="text-[11px] text-muted block">Accuracy</span>
-                <span className="font-bold text-accent">{latestAttempt.scorePercent}%</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Key Metrics */}
-        <div className="grid grid-cols-3 gap-2 pt-1 text-[11px] text-muted border-t border-border/60">
-          <div>
-            <span className="text-[10px] text-muted block">Questions</span>
-            <span className="font-semibold text-white">{test.totalQuestionsCount} Qs</span>
-          </div>
-          <div>
-            <span className="text-[10px] text-muted block">Duration</span>
-            <span className="font-semibold text-white">
-              {test.durationMinutes ? `${test.durationMinutes} Mins` : 'Untimed'}
-            </span>
-          </div>
-          <div>
-            <span className="text-[10px] text-muted block">Marking</span>
-            <span className="font-semibold text-white">
-              +{test.positiveMarks}
-              {test.negativeMarkingEnabled && test.negativeMarks > 0
-                ? ` / -${test.negativeMarks}`
-                : ''}
-            </span>
-          </div>
+          {/* Score line if submitted */}
+          {isSubmitted && latestAttempt && (
+            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 pt-1">
+              Latest Score: <span className="tabular-nums font-bold">{latestAttempt.marksAwarded ?? 0}</span> / <span className="tabular-nums font-bold">{latestAttempt.maximumMarks ?? totalMarks}</span>
+              {latestAttempt.scorePercent !== undefined && ` (${latestAttempt.scorePercent}%)`}
+            </p>
+          )}
         </div>
 
-        {/* Section info for Full Tests */}
-        {isFull && sectionsCount > 0 && (
-          <div className="pt-1 text-[11px] text-muted flex items-center gap-1.5">
-            <span className="text-[10px] font-semibold text-slate-300">
-              {sectionsCount} {sectionsCount === 1 ? 'Section' : 'Sections'}:
-            </span>
-            <span className="truncate">{test.sections!.map((s) => s.name).join(', ')}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Relevant One-Click Action Button */}
-      <div className="mt-4 pt-2 flex flex-col gap-1.5">
-        {isInProgress ? (
-          <a
-            href={`/exams/${test.id || (test as any)._id}/attempt`}
-            data-astro-prefetch="hover"
-            className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-bold bg-accent text-white hover:opacity-90 transition duration-150 shadow-xs cursor-pointer"
-          >
-            <span>Resume Test</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        ) : isSubmitted ? (
-          <div className="flex items-center gap-2">
+        {/* Action Button */}
+        <div className="flex shrink-0 flex-col sm:items-end">
+          {isInProgress ? (
             <a
-              href={`/test-series/results/${latestAttempt!.id}`}
-              data-astro-prefetch="hover"
-              className="flex-1 inline-flex items-center justify-center gap-1 py-2 px-3 rounded-lg text-xs font-semibold border border-accent bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
+              href={`/exams/${testId}/attempt`}
+              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold !text-white transition hover:bg-accent-hover"
             >
-              <span>View Result</span>
+              <span>Resume Test</span>
               <span aria-hidden="true">→</span>
             </a>
-            <a
-              href={`/test-series/instructions/${(test as any).slug || test.id || (test as any)._id}`}
-              data-astro-prefetch="hover"
-              className="inline-flex items-center justify-center py-2 px-3 rounded-lg text-xs font-semibold border border-border bg-surface-raised text-muted hover:text-white hover:border-accent transition duration-150 cursor-pointer"
-              title="Take a fresh attempt"
-            >
-              <span>Reattempt</span>
-            </a>
-          </div>
-        ) : (
-          <a
-            href={`/test-series/instructions/${(test as any).slug || test.id || (test as any)._id}`}
-            data-astro-prefetch="hover"
-            className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg text-xs font-semibold bg-accent/15 text-accent hover:bg-accent hover:text-white transition duration-150 cursor-pointer"
-          >
-            <span>View Instructions & Start</span>
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
-              />
-            </svg>
-          </a>
-        )}
+          ) : isSubmitted ? (
+            <div className="flex flex-col gap-1.5 sm:items-end">
+              <a
+                href={`/test-series/results/${latestAttempt!.id}`}
+                className="inline-flex min-h-10 items-center justify-center gap-1 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold !text-white transition hover:bg-emerald-700"
+              >
+                <span>View Result</span>
+                <span aria-hidden="true">→</span>
+              </a>
+              {hasActivePass ? (
+                <a
+                  href={`/test-series/instructions/${routeId}`}
+                  className="inline-flex items-center justify-center text-xs font-semibold text-accent hover:underline"
+                >
+                  Reattempt
+                </a>
+              ) : (
+                <a
+                  href="#series-pass"
+                  className="text-[11px] text-muted hover:text-accent hover:underline font-medium"
+                >
+                  Reattempt requires Pass
+                </a>
+              )}
+            </div>
+          ) : isLocked ? (
+            <div className="flex flex-col sm:items-end">
+              <a
+                href="#series-pass"
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-4 py-2.5 text-xs font-bold text-heading transition hover:bg-surface"
+              >
+                <span>🔒 Unlock with Pass</span>
+              </a>
+              <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
+                Unlock all tests with Pass
+              </span>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:items-end">
+              <a
+                href={`/test-series/instructions/${routeId}`}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-emerald-700"
+              >
+                <span>{hasActivePass ? 'Start Test' : 'Start Free Mock'}</span>
+                <span aria-hidden="true">→</span>
+              </a>
+              <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
+                {hasActivePass ? 'Included in Pass' : '1 free test in this series'}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </article>
   );
 }

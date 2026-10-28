@@ -26,6 +26,15 @@ export class Notification {
 
   @Prop({ type: String, default: null, unique: true, sparse: true })
   sourceKey?: string | null;
+
+  @Prop({ type: String, enum: ['HINGLISH', 'ENGLISH'], default: null, index: true })
+  language?: 'HINGLISH' | 'ENGLISH' | null;
+
+  @Prop({ type: String, default: null, index: true })
+  translationGroupId?: string | null;
+
+  @Prop({ type: Types.ObjectId, ref: 'Blog', default: null, index: true })
+  blogId?: Types.ObjectId | null;
 }
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
 

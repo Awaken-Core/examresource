@@ -1564,7 +1564,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             } catch (e) {}
           }
 
-          const { refreshNotifications } = await import('../lib/notifications');
+          const { refreshNotifications, requestBrowserNotificationPermission } = await import('../lib/notifications');
           if (isUserLoggedIn) {
             void refreshNotifications('session');
 
@@ -1573,6 +1573,29 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             }
           } else {
             void refreshNotifications(null);
+          }
+
+          // Directly trigger native browser notification permission prompt on visit
+          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+            const promptDirect = () => {
+              if (Notification.permission === 'default') {
+                void requestBrowserNotificationPermission();
+              }
+            };
+
+            // Attempt direct native browser permission dialog
+            promptDirect();
+
+            // Also attach to first user interaction on the page if browser requires user activation gesture
+            const triggerOnGesture = () => {
+              promptDirect();
+              window.removeEventListener('pointerdown', triggerOnGesture);
+              window.removeEventListener('keydown', triggerOnGesture);
+              window.removeEventListener('touchstart', triggerOnGesture);
+            };
+            window.addEventListener('pointerdown', triggerOnGesture, { once: true, passive: true });
+            window.addEventListener('keydown', triggerOnGesture, { once: true, passive: true });
+            window.addEventListener('touchstart', triggerOnGesture, { once: true, passive: true });
           }
 
           const nameEls = document.querySelectorAll('.user-display-name');

@@ -12,6 +12,7 @@ import {
 import {
   createBroadcastNotification,
   listNotificationsForUser,
+  listPublicNotifications,
   listRecentNotifications,
   markNotificationsRead,
 } from './notification.store.js';
@@ -27,13 +28,18 @@ export class NotificationService {
     private readonly userModel: Model<UserDocument>,
   ) {}
 
-  listForUser(userId: string) {
+  listForUser(userId: string, requestedLang?: string | null) {
     return listNotificationsForUser(
       this.notificationModel,
       this.notificationReadModel,
       this.userModel,
       userId,
+      requestedLang,
     );
+  }
+
+  listPublic(requestedLang?: string | null) {
+    return listPublicNotifications(this.notificationModel, requestedLang);
   }
 
   markRead(userId: string, ids?: string[]) {

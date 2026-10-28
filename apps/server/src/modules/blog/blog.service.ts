@@ -1866,6 +1866,8 @@ export class BlogService {
       slug: string;
       categoryId: string | null;
       status: string;
+      language?: 'HINGLISH' | 'ENGLISH';
+      translationGroupId?: string | null;
     },
     previouslyPublished: boolean,
   ) {
@@ -1875,6 +1877,8 @@ export class BlogService {
         blogId: blog.id,
         title: blog.title,
         href: `/${blog.slug}`,
+        language: blog.language,
+        translationGroupId: blog.translationGroupId,
       });
     } catch (error) {
       console.error('Failed to create blog notification', error);

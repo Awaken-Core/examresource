@@ -4,13 +4,17 @@ export type AppNotification = {
   title: string;
   body: string;
   href: string | null;
+  language?: 'HINGLISH' | 'ENGLISH' | null;
+  translationGroupId?: string | null;
   createdAt: string;
   read: boolean;
 };
 
 import { API_URL } from './api';
 import { siteName } from '../data/site';
+
 const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
+const GUEST_READ_STORAGE_KEY = 'gp_guest_read_notification_ids';
 
 let currentItems: AppNotification[] = [];
 let currentToken: string | null = null;
@@ -39,7 +43,7 @@ function goToNotificationHref(href: string) {
       return;
     }
   } catch {
-    // Ignored: Malformed URL string; fall back to standard window.location.assign
+    // Fall back to standard window.location.assign
   }
   window.location.assign(href);
 }
@@ -48,6 +52,67 @@ export function iconFor(kind: AppNotification['kind']) {
   if (kind === 'blog') return '📰';
   if (kind === 'broadcast') return '🔔';
   return '📢';
+}
+
+export function getCurrentSelectedLang(): 'hinglish' | 'en' {
+  if (typeof window === 'undefined') return 'hinglish';
+  try {
+    const raw = (
+      localStorage.getItem('preferred_exam_lang') ||
+      localStorage.getItem('site_language') ||
+      'hinglish'
+    ).toLowerCase();
+    return raw === 'en' || raw === 'english' ? 'en' : 'hinglish';
+  } catch {
+    return 'hinglish';
+  }
+}
+
+export function deduplicateClientNotifications(
+  items: AppNotification[],
+  chosenLang: 'hinglish' | 'en' = getCurrentSelectedLang(),
+): AppNotification[] {
+  const targetBlogLang = chosenLang === 'en' ? 'ENGLISH' : 'HINGLISH';
+  const groupMap = new Map<string, AppNotification[]>();
+  const ungrouped: AppNotification[] = [];
+
+  for (const item of items) {
+    let groupKey: string | null = null;
+    if (item.translationGroupId) {
+      groupKey = `group:${item.translationGroupId}`;
+    } else if (item.kind === 'blog' && item.href) {
+      const cleanHref = item.href.split('?')[0].replace(/\/+$/, '').toLowerCase();
+      if (cleanHref) {
+        groupKey = `href:${cleanHref}`;
+      }
+    }
+
+    if (groupKey) {
+      const list = groupMap.get(groupKey);
+      if (list) {
+        list.push(item);
+      } else {
+        groupMap.set(groupKey, [item]);
+      }
+    } else {
+      ungrouped.push(item);
+    }
+  }
+
+  const selectedFromGroups: AppNotification[] = [];
+  for (const list of groupMap.values()) {
+    if (list.length === 1) {
+      selectedFromGroups.push(list[0]);
+      continue;
+    }
+    // Prefer exact match with chosen language
+    const match = list.find((it) => (it.language || '').toUpperCase() === targetBlogLang);
+    selectedFromGroups.push(match || list[0]);
+  }
+
+  const combined = [...ungrouped, ...selectedFromGroups];
+  combined.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return combined;
 }
 
 function getFiredIds(): Set<string> {
@@ -61,11 +126,25 @@ function getFiredIds(): Set<string> {
 
 function saveFiredIds(ids: Set<string>) {
   try {
-    const arr = Array.from(ids).slice(-100);
+    const arr = Array.from(ids).slice(-150);
     localStorage.setItem(FIRED_STORAGE_KEY, JSON.stringify(arr));
+  } catch {}
+}
+
+function getGuestReadIds(): Set<string> {
+  try {
+    const raw = localStorage.getItem(GUEST_READ_STORAGE_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
   } catch {
-    // Ignored: Storage quota exceeded or disabled in private browsing
+    return new Set();
   }
+}
+
+function saveGuestReadIds(ids: Set<string>) {
+  try {
+    const arr = Array.from(ids).slice(-200);
+    localStorage.setItem(GUEST_READ_STORAGE_KEY, JSON.stringify(arr));
+  } catch {}
 }
 
 async function showSingleNotification(
@@ -78,7 +157,7 @@ async function showSingleNotification(
     body,
     icon: '/logo.png',
     badge: '/favicon.svg',
-    tag: item.id,
+    tag: item.translationGroupId ? `group:${item.translationGroupId}` : item.id,
     data: { url: item.href || '/' },
   };
 
@@ -86,9 +165,7 @@ async function showSingleNotification(
     try {
       await swReg.showNotification(title, options);
       return;
-    } catch {
-      // Ignored: Fallback to standard window.Notification if service worker showNotification rejects
-    }
+    } catch {}
   }
 
   try {
@@ -108,14 +185,33 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
   if (typeof window === 'undefined' || !('Notification' in window)) return;
   if (Notification.permission !== 'granted') return;
 
+  const chosenLang = getCurrentSelectedLang();
+  // Ensure we only have 1 notification per article matching chosen language
+  const deduplicated = deduplicateClientNotifications(unreadItems, chosenLang);
+
   const firedIds = getFiredIds();
   const isFirstRun = localStorage.getItem(FIRED_STORAGE_KEY) === null;
 
-  const candidates = unreadItems.filter((item) => !item.read && !firedIds.has(item.id));
-  const toFire = isFirstRun ? candidates.slice(0, 2) : candidates;
+  const candidates = deduplicated.filter((item) => {
+    if (item.read) return false;
+    if (firedIds.has(item.id)) return false;
+    if (item.translationGroupId && firedIds.has(`group:${item.translationGroupId}`)) return false;
+    if (item.href) {
+      const cleanHref = item.href.split('?')[0].replace(/\/+$/, '').toLowerCase();
+      if (cleanHref && firedIds.has(`href:${cleanHref}`)) return false;
+    }
+    return true;
+  });
+
+  const toFire = isFirstRun ? candidates.slice(0, 1) : candidates;
 
   for (const item of candidates) {
     firedIds.add(item.id);
+    if (item.translationGroupId) firedIds.add(`group:${item.translationGroupId}`);
+    if (item.href) {
+      const cleanHref = item.href.split('?')[0].replace(/\/+$/, '').toLowerCase();
+      if (cleanHref) firedIds.add(`href:${cleanHref}`);
+    }
   }
   saveFiredIds(firedIds);
 
@@ -147,6 +243,9 @@ export async function requestBrowserNotificationPermission(): Promise<boolean> {
     if (permission === 'granted') {
       const unread = currentItems.filter((i) => !i.read);
       void fireUnreadToSystem(unread);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('notifications-permission-granted'));
+      }
       return true;
     }
   } catch (err) {
@@ -162,6 +261,12 @@ export function updateBrowserNotificationUI() {
 
   document.querySelectorAll<HTMLElement>('[data-browser-notification-prompt]').forEach((el) => {
     el.classList.toggle('hidden', !supported || permission !== 'default');
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-notification-permission-prompt]').forEach((el) => {
+    if (!supported || permission !== 'default') {
+      el.classList.add('hidden');
+    }
   });
 }
 
@@ -242,7 +347,7 @@ function buildCard(item: AppNotification) {
 }
 
 function paint(items: AppNotification[]) {
-  // Only display unread notifications - read ones are completely removed
+  // Only display unread notifications - read ones are completely removed from dropdown
   const unread = items.filter((item) => !item.read);
 
   document.querySelectorAll<HTMLElement>('[data-notification-new]').forEach((list) => {
@@ -294,30 +399,65 @@ export function getNotifications(): AppNotification[] {
   return currentItems;
 }
 
-export async function refreshNotifications(token: string | null) {
+export async function refreshNotifications(token: string | null = currentToken) {
   currentToken = token;
-  if (!token) {
-    currentItems = [];
-    paint([]);
-    return;
-  }
+  const chosenLang = getCurrentSelectedLang();
 
   try {
-    const response = await fetch(`${API_URL}/me/notifications`, { priority: 'low', credentials: 'include' } as any);
-    if (!response.ok) return;
+    const endpoint = token
+      ? `${API_URL}/me/notifications?lang=${encodeURIComponent(chosenLang)}`
+      : `${API_URL}/notifications/public?lang=${encodeURIComponent(chosenLang)}`;
+
+    const response = await fetch(endpoint, {
+      priority: 'low',
+      credentials: token ? 'include' : 'same-origin',
+    } as any);
+
+    if (!response.ok) {
+      if (token && response.status === 401) {
+        currentToken = null;
+        await refreshNotifications(null);
+      }
+      return;
+    }
+
     const data = (await response.json()) as { items?: AppNotification[] };
-    currentItems = data.items ?? [];
+    let items = data.items ?? [];
+
+    // Client-side safety deduplication & language filter
+    items = deduplicateClientNotifications(items, chosenLang);
+
+    // Apply guest read status if guest
+    if (!currentToken) {
+      const guestReads = getGuestReadIds();
+      items = items.map((it) => ({
+        ...it,
+        read: it.read || guestReads.has(it.id),
+      }));
+    }
+
+    currentItems = items;
     paint(currentItems);
     void fireUnreadToSystem(currentItems.filter((item) => !item.read));
   } catch {
-    // Keep the last rendered list if the request fails.
+    // Keep the last rendered list if the request fails
   }
 }
 
 export async function markAllNotificationsRead() {
   currentItems = currentItems.map((item) => ({ ...item, read: true }));
   paint(currentItems);
-  if (!currentToken) return;
+
+  if (!currentToken) {
+    const guestReads = getGuestReadIds();
+    currentItems.forEach((it) => {
+      guestReads.add(it.id);
+      if (it.translationGroupId) guestReads.add(`group:${it.translationGroupId}`);
+    });
+    saveGuestReadIds(guestReads);
+    return;
+  }
+
   await fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     priority: 'low',
@@ -332,10 +472,24 @@ export async function markAllNotificationsRead() {
 }
 
 export function markNotificationRead(id: string) {
-  if (currentItems.every((item) => item.id !== id || item.read)) return;
-  currentItems = currentItems.map((item) => (item.id === id ? { ...item, read: true } : item));
+  const item = currentItems.find((it) => it.id === id);
+  if (!item || item.read) return;
+
+  currentItems = currentItems.map((it) => {
+    if (it.id === id) return { ...it, read: true };
+    if (item.translationGroupId && it.translationGroupId === item.translationGroupId) return { ...it, read: true };
+    return it;
+  });
   paint(currentItems);
-  if (!currentToken) return;
+
+  if (!currentToken) {
+    const guestReads = getGuestReadIds();
+    guestReads.add(id);
+    if (item.translationGroupId) guestReads.add(`group:${item.translationGroupId}`);
+    saveGuestReadIds(guestReads);
+    return;
+  }
+
   void fetch(`${API_URL}/me/notifications/read`, {
     method: 'POST',
     priority: 'low',
@@ -347,4 +501,14 @@ export function markNotificationRead(id: string) {
     body: JSON.stringify({ ids: [id] }),
     keepalive: true,
   } as any).catch(() => null);
+}
+
+// Automatically reload notifications when user changes their language anywhere on the platform
+if (typeof window !== 'undefined' && !(window as any).__NOTIF_LANG_LISTENER_BOUND__) {
+  (window as any).__NOTIF_LANG_LISTENER_BOUND__ = true;
+  const onLangChange = () => {
+    void refreshNotifications();
+  };
+  window.addEventListener('exam:language-change', onLangChange);
+  window.addEventListener('exam:article-lang-swap', onLangChange);
 }

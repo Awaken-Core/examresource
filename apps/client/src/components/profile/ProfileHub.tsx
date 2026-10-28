@@ -1,3 +1,11 @@
+interface PassInfo {
+  active: boolean;
+  expiresAt: string | null;
+  amountPaise?: number;
+  listPricePaise?: number;
+  validityMonths?: number;
+}
+
 import { useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 import { API_URL } from "../../lib/api";
@@ -70,6 +78,7 @@ export function ProfileHub() {
   const [user, setUser] = useState<User | null>(null);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [testSeriesList, setTestSeriesList] = useState<TestSeriesItem[]>([]);
+  const [passInfo, setPassInfo] = useState<PassInfo | null>(null);
 
   // Settings form state
   const [name, setName] = useState("");

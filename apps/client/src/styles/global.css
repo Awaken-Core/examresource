@@ -1259,6 +1259,42 @@ html:not(.theme-dark) body {
   color: var(--color-text-body);
 }
 
+/* Deliberate dark surfaces & cards (e.g. progress tracker, pass card top hero, dark callouts)
+   Guarantees WCAG AAA light text regardless of the outer HTML theme mode. */
+[data-dark-card],
+.dark-card,
+[data-theme="dark"] {
+  color: #FFFFFF !important;
+  --color-heading: #FFFFFF;
+  --color-text-body: #E4E4E7;
+  --color-muted: #A1A1AA;
+}
+
+[data-dark-card] :is(h1, h2, h3, h4, h5, h6),
+.dark-card :is(h1, h2, h3, h4, h5, h6) {
+  color: #FFFFFF !important;
+}
+
+[data-dark-card] :is(p, span, div, strong, a).text-white,
+.dark-card :is(p, span, div, strong, a).text-white {
+  color: #FFFFFF !important;
+}
+
+[data-dark-card] .text-zinc-200,
+.dark-card .text-zinc-200 {
+  color: #E4E4E7 !important;
+}
+
+[data-dark-card] .text-zinc-300,
+.dark-card .text-zinc-300 {
+  color: #D4D4D8 !important;
+}
+
+[data-dark-card] .text-muted,
+.dark-card .text-muted {
+  color: #A1A1AA !important;
+}
+
 /* Light mode text contrast overrides for dark-first utility classes (container-aware) */
 html:not(.theme-dark) :is(
   :is(h1, h2, h3, h4, h5, h6).text-white,
@@ -1269,7 +1305,7 @@ html:not(.theme-dark) :is(
   span.text-white:not(.app-lang-btn):not([class*="bg-"]):not([class*="badge"]),
   a.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-amber-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-indigo-"]),
   div.text-white:not([class*="bg-accent"]):not([class*="bg-blue-"]):not([class*="bg-emerald-"]):not([class*="bg-rose-"]):not([class*="bg-red-"]):not([class*="bg-amber-"]):not([class*="bg-purple-"]):not([class*="bg-violet-"]):not([class*="bg-indigo-"]):not([class*="bg-slate-900"]):not([class*="bg-slate-800"]):not([class*="bg-neutral-900"]):not([class*="bg-black"])
-):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"], [class*="bg-[#1c1a18]"], [class*="bg-[#141312]"]) *) {
+):not(:is([data-dark-card], .dark-card, [data-theme="dark"], [class*="bg-black"], [class*="bg-zinc-8"], [class*="bg-zinc-9"], [class*="bg-neutral-8"], [class*="bg-neutral-9"], [class*="bg-slate-8"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-8"], [class*="bg-gray-9"], [class*="bg-[#18181"], [class*="bg-[#111111]"], [class*="bg-[#191613]"], [class*="bg-[#1c1a18]"], [class*="bg-[#1C1A18]"], [class*="bg-[#141312]"], [class*="bg-[#25221F]"], [class*="bg-accent"], [class*="bg-emerald-6"], [class*="bg-emerald-7"]) *) {
   color: var(--color-heading);
 }
 
@@ -1281,7 +1317,7 @@ html:not(.theme-dark) :is(a, button, span, div)[class*="bg-accent/"]:not([class*
 }
 
 /* Opacity variants of white in light mode */
-html:not(.theme-dark) :is(.text-white\/90, .text-white\/95, .text-white\/80, .text-white\/70):not(:is([class*="bg-black"], [class*="bg-neutral-9"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-9"], [class*="bg-[#111111]"], [class*="bg-[#191613]"]) *) {
+html:not(.theme-dark) :is(.text-white\/90, .text-white\/95, .text-white\/80, .text-white\/70):not(:is([data-dark-card], .dark-card, [data-theme="dark"], [class*="bg-black"], [class*="bg-zinc-8"], [class*="bg-zinc-9"], [class*="bg-neutral-8"], [class*="bg-neutral-9"], [class*="bg-slate-8"], [class*="bg-slate-9"], [class*="bg-slate-950"], [class*="bg-gray-8"], [class*="bg-gray-9"], [class*="bg-[#18181"], [class*="bg-[#111111]"], [class*="bg-[#191613]"], [class*="bg-[#1c1a18]"], [class*="bg-[#1C1A18]"], [class*="bg-[#141312]"], [class*="bg-[#25221F]"]) *) {
   color: var(--color-text-body);
 }
 
