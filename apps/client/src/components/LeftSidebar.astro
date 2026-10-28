@@ -15,7 +15,7 @@ const { prefix = "desktop", isMobileDrawer = false, isEditorialTheme = false } =
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
-const isHome = currentPath === '/blogs';
+const isBlogs = currentPath === '/blogs' || currentPath.startsWith('/blogs/');
 const isTestSeries = currentPath.startsWith('/test-series');
 const currentSearch = Astro.url.search || '';
 const isAuthPage = currentPath === '/login' || currentPath === '/signup' || currentPath.startsWith('/auth/');
@@ -62,25 +62,25 @@ const loginHref = (!isAuthPage && currentPath !== '/')
 
     {/* Navigation */}
     <nav class="pt-3 px-3 pb-3 space-y-0.5 overflow-y-auto max-h-[calc(100vh-144px)] scrollbar-none" aria-label="Primary navigation">
-      {/* 1. Home */}
+      {/* 1. Blogs */}
       <a 
         href="/blogs" 
-        aria-current={isHome ? 'page' : undefined}
+        aria-current={isBlogs ? 'page' : undefined}
         class={`sidebar-nav-item relative flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-xs transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent ${
           isEditorialTheme
-            ? isHome
+            ? isBlogs
               ? 'bg-editorial-accent-soft text-editorial-accent font-semibold border border-editorial-accent/30'
               : 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60 font-medium border border-transparent'
-            : isHome 
+            : isBlogs 
               ? 'bg-accent/10 text-accent font-semibold border border-accent/25 before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-0.5 before:rounded-full before:bg-accent'
               : 'text-muted hover:text-heading hover:bg-surface-raised font-medium border border-transparent'
         }`}
-        title="Home"
+        title="Blogs"
       >
-        <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
         </svg>
-        <span class="sidebar-text truncate">Home</span>
+        <span class="sidebar-text truncate">Blogs</span>
       </a>
 
       {/* 2. Latest updates */}

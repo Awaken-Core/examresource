@@ -1409,7 +1409,7 @@ html:not(.theme-dark) a:hover > svg.text-muted {
 
 /* Auth state display classes */
 :is(.header-auth-logged-out, .header-auth-logged-in, .sidebar-auth-logged-out, .sidebar-auth-logged-in).hidden {
-  display: none;
+  display: none !important;
 }
 
 /* Language Switcher High Contrast Guarantee (WCAG AAA) */
