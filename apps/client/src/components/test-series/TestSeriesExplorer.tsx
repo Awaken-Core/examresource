@@ -256,19 +256,22 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                   <div className="space-y-3">
                     {/* Header: Organization and Badge */}
                     <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
                         <div className="w-8 h-8 rounded-xl bg-editorial-accent-soft border border-editorial-accent/25 text-editorial-accent flex items-center justify-center font-bold text-xs shrink-0">
                           {series.targetExam ? series.targetExam.slice(0, 3).toUpperCase() : 'EX'}
                         </div>
-                        <div className="min-w-0">
-                          <span className="block text-[11.5px] font-medium text-editorial-muted truncate">
+                        <div className="min-w-0 flex-1">
+                          <span
+                            className="block text-[11.5px] font-medium text-editorial-muted truncate"
+                            title={series.organization || series.targetExam}
+                          >
                             {series.organization || series.targetExam}
                           </span>
                         </div>
                       </div>
 
                       {series.badge && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/25 shrink-0">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/25 shrink-0 whitespace-nowrap">
                           {series.badge}
                         </span>
                       )}
@@ -288,10 +291,10 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                   </div>
 
                   {/* Card Footer: Metadata and CTA */}
-                  <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
+                  <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2 min-w-0">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase shrink-0 ${
                           series.accessType === 'free'
                             ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25'
                             : series.accessType === 'freemium'
@@ -301,12 +304,12 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                       >
                         {series.accessType}
                       </span>
-                      <span className="text-[11.5px] text-editorial-muted">
+                      <span className="text-[11.5px] text-editorial-muted truncate">
                         {series.supportedLanguages?.join('/') || 'Hindi/English'}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-1 text-editorial-accent font-semibold text-xs group-hover:translate-x-0.5 transition-transform">
+                    <div className="flex items-center gap-1 text-editorial-accent font-semibold text-xs shrink-0 group-hover:translate-x-0.5 transition-transform">
                       <span>Explore Tests</span>
                       <svg
                         className="w-3.5 h-3.5"

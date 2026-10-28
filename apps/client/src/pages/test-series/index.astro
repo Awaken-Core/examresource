@@ -83,7 +83,7 @@ const jsonLd = {
   <div class="relative min-h-screen bg-editorial-bg text-editorial-text selection:bg-editorial-accent/20 selection:text-editorial-accent">
 
     {/* Main Container aligned with Blogs max-w-6xl */}
-    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-5 sm:pt-7 pb-20 space-y-7">
+    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-5 sm:pt-7 pb-20 flex flex-col gap-10 sm:gap-14">
 
       {/* ══════════════════════════════════════════════════════════
           1. BREADCRUMBS & COMPACT EDITORIAL HERO
@@ -119,12 +119,14 @@ const jsonLd = {
       {/* ══════════════════════════════════════════════════════════
           2. PUBLISHED TEST SERIES EXPLORER (React Island)
           ══════════════════════════════════════════════════════════ */}
-      <TestSeriesExplorer client:load initialList={initialSeries} />
+      <div class="w-full">
+        <TestSeriesExplorer client:load initialList={initialSeries} />
+      </div>
 
       {/* ══════════════════════════════════════════════════════════
           5. CBT FAQ ACCORDION / EDITORIAL GUIDE
           ══════════════════════════════════════════════════════════ */}
-      <section class="p-6 sm:p-7 rounded-2xl bg-editorial-surface border border-editorial-border space-y-4 font-['Geist']" aria-labelledby="cbt-faq-heading">
+      <section class="mt-2 sm:mt-4 p-6 sm:p-7 rounded-2xl bg-editorial-surface border border-editorial-border space-y-4 font-['Geist']" aria-labelledby="cbt-faq-heading">
         <div class="flex items-center gap-2 pb-2 border-b border-editorial-border">
           <span class="w-1.5 h-4 bg-editorial-accent rounded-full inline-block"></span>
           <h2 id="cbt-faq-heading" class="font-['EB_Garamond'] text-xl sm:text-2xl font-normal text-editorial-heading tracking-tight">

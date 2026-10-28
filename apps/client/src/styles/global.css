@@ -293,6 +293,12 @@
   img[src="#"] {
     visibility: hidden;
   }
+
+  /* Ensure Astro islands and custom elements render as block elements */
+  astro-island,
+  astro-slot {
+    display: block;
+  }
 }
 
 /* ============================================================
