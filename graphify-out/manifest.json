@@ -33,8 +33,8 @@
     "semantic_hash": "222c793c7064cdd298daae806536eed9"
   },
   "apps/client/src/components/ActivityTabs.astro": {
-    "mtime": 1793196801.221456,
-    "seen": 1793197001.3980284,
+    "mtime": 1793198702.4363134,
+    "seen": 1793198705.7018466,
     "ast_hash": "7f8e57660da755318e641a2bb867d1c0",
     "semantic_hash": ""
   },
@@ -45,8 +45,8 @@
     "semantic_hash": "3fd0385440ffb2af0f78705726f25b40"
   },
   "apps/client/src/components/AuthPage.astro": {
-    "mtime": 1793196801.2219768,
-    "seen": 1793197001.3980343,
+    "mtime": 1793198702.4363134,
+    "seen": 1793198705.7018487,
     "ast_hash": "c3f2d6271f9dbbdc72d49caf0a3831ab",
     "semantic_hash": ""
   },
@@ -63,14 +63,14 @@
     "semantic_hash": "b0e3b15156dcfda549448196c53f3ae2"
   },
   "apps/client/src/components/Breadcrumb.astro": {
-    "mtime": 1793196801.2224975,
-    "seen": 1793197001.3980403,
+    "mtime": 1793198702.4378393,
+    "seen": 1793198705.701852,
     "ast_hash": "b1d69452cc3a8811ab084d92dc88f7ca",
     "semantic_hash": ""
   },
   "apps/client/src/components/FAQSection.astro": {
-    "mtime": 1793196801.2224975,
-    "seen": 1793197001.3980424,
+    "mtime": 1793198702.4378393,
+    "seen": 1793198705.7018533,
     "ast_hash": "57a56be36ba2c1548f3428e4b0640d49",
     "semantic_hash": ""
   },
@@ -87,14 +87,14 @@
     "semantic_hash": "f98b3e2e620bb9f6ef05fc5f95efd309"
   },
   "apps/client/src/components/Header.astro": {
-    "mtime": 1793196826.3157318,
-    "seen": 1793197001.398048,
-    "ast_hash": "d0e19e8ace5f0b806b317c0fa2552c6f",
+    "mtime": 1793198702.4393857,
+    "seen": 1793198705.7018566,
+    "ast_hash": "dea05450bca81857a1a394103c37a5de",
     "semantic_hash": ""
   },
   "apps/client/src/components/LeftSidebar.astro": {
-    "mtime": 1793195753.7026618,
-    "seen": 1793196776.78208,
+    "mtime": 1793198702.4393857,
+    "seen": 1793198705.7018576,
     "ast_hash": "9bd2647fd3917a0204c7e154838805c8",
     "semantic_hash": "9bd2647fd3917a0204c7e154838805c8"
   },
@@ -111,8 +111,8 @@
     "semantic_hash": "0a5dcaa862c99591227786edab7a40c5"
   },
   "apps/client/src/components/RelatedArticles.astro": {
-    "mtime": 1793196801.2230139,
-    "seen": 1793197001.3980572,
+    "mtime": 1793198702.4409597,
+    "seen": 1793198705.701861,
     "ast_hash": "e1ba1441bd9a5a81a790a93d5695af35",
     "semantic_hash": ""
   },
@@ -123,20 +123,20 @@
     "semantic_hash": "9d87d2ea4b781d3f0e33597d1db69dfe"
   },
   "apps/client/src/components/Sidebar.astro": {
-    "mtime": 1793196801.2235365,
-    "seen": 1793197001.3980608,
-    "ast_hash": "25fd852c0715b0540b81266931cf9f3b",
+    "mtime": 1793198702.4425068,
+    "seen": 1793198705.7018628,
+    "ast_hash": "2c744f9ba1079d7ce1b053756e0969b4",
     "semantic_hash": ""
   },
   "apps/client/src/components/StateFilterWidget.astro": {
-    "mtime": 1793196801.224096,
-    "seen": 1793197001.3980627,
+    "mtime": 1793198702.4425068,
+    "seen": 1793198705.7018638,
     "ast_hash": "0783a63fe50cc804b81527b4be6ba9a9",
     "semantic_hash": ""
   },
   "apps/client/src/components/TableOfContents.astro": {
-    "mtime": 1793196801.2246401,
-    "seen": 1793197001.3980641,
+    "mtime": 1793198702.444023,
+    "seen": 1793198705.7018645,
     "ast_hash": "8f71048adf0f782bacff1abefa996052",
     "semantic_hash": ""
   },
@@ -273,8 +273,8 @@
     "semantic_hash": "6f0f6e06296c779432087f1f74518f95"
   },
   "apps/client/src/components/blog/BlogArticle.astro": {
-    "mtime": 1793196801.2182367,
-    "seen": 1793197001.398103,
+    "mtime": 1793198702.444023,
+    "seen": 1793198705.7018886,
     "ast_hash": "f4ef5bebde437da2c76eb4a32165252a",
     "semantic_hash": ""
   },
@@ -285,8 +285,8 @@
     "semantic_hash": "69edf8f3ff3af94fb1dfba9fa8db0a7b"
   },
   "apps/client/src/components/blog/Comments.astro": {
-    "mtime": 1793196801.219357,
-    "seen": 1793197001.3981054,
+    "mtime": 1793198702.4455843,
+    "seen": 1793198705.7018905,
     "ast_hash": "0427dba65efa08318702040437f740e8",
     "semantic_hash": ""
   },
@@ -303,8 +303,8 @@
     "semantic_hash": "b8f89a20203664222fe9ee5f40df8f68"
   },
   "apps/client/src/components/blog/SubjectHeader.astro": {
-    "mtime": 1793196801.219357,
-    "seen": 1793197001.398109,
+    "mtime": 1793198702.4465897,
+    "seen": 1793198705.7018933,
     "ast_hash": "1c01a099094792566c8eb46998bd3e9a",
     "semantic_hash": ""
   },
@@ -315,14 +315,14 @@
     "semantic_hash": "2df515151b433d9f6f61d050d91759e5"
   },
   "apps/client/src/components/blog/TopicCard.astro": {
-    "mtime": 1793196801.220404,
-    "seen": 1793197001.3981118,
+    "mtime": 1793198702.447095,
+    "seen": 1793198705.7018955,
     "ast_hash": "cdd69e3a2dd113ec63cdc15635d76d7d",
     "semantic_hash": ""
   },
   "apps/client/src/components/blog/TopicNavigation.astro": {
-    "mtime": 1793196801.22092,
-    "seen": 1793197001.3981135,
+    "mtime": 1793198702.447095,
+    "seen": 1793198705.7018964,
     "ast_hash": "cb7c440d1a8873de752d809a42c6e4a1",
     "semantic_hash": ""
   },
@@ -495,16 +495,16 @@
     "semantic_hash": "98ab50f75507bc672502f57a4d1b3d86"
   },
   "apps/client/src/layouts/AdminLayout.astro": {
-    "mtime": 1793196725.0312972,
-    "seen": 1793196776.7938488,
-    "ast_hash": "c18e41a7143fce5277f7a9767ae317da",
-    "semantic_hash": "c18e41a7143fce5277f7a9767ae317da"
+    "mtime": 1793198702.4486408,
+    "seen": 1793198705.701925,
+    "ast_hash": "7bd69db0ab3687d170e7bee5a16a73a4",
+    "semantic_hash": ""
   },
   "apps/client/src/layouts/Layout.astro": {
-    "mtime": 1793196676.9098823,
-    "seen": 1793196776.7939863,
-    "ast_hash": "13e076a4579a8167e2a8c55b5b374360",
-    "semantic_hash": "13e076a4579a8167e2a8c55b5b374360"
+    "mtime": 1793198702.450192,
+    "seen": 1793198705.701926,
+    "ast_hash": "997ae0732c5b8e2200282accbb5023f2",
+    "semantic_hash": ""
   },
   "apps/client/src/lib/adminSession.ts": {
     "mtime": 1793138869.3322487,
@@ -771,10 +771,10 @@
     "semantic_hash": "0057f19a15b8027d3a7ee7707e3e1502"
   },
   "apps/client/src/pages/index.astro": {
-    "mtime": 1793196755.5647662,
-    "seen": 1793196776.8031037,
-    "ast_hash": "72343259437baaac42f1b1b95ed8920d",
-    "semantic_hash": "72343259437baaac42f1b1b95ed8920d"
+    "mtime": 1793198702.4517412,
+    "seen": 1793198705.7019725,
+    "ast_hash": "a5e870449ae9ebb3059b618bab8d5f57",
+    "semantic_hash": ""
   },
   "apps/client/src/pages/llms-full.txt.ts": {
     "mtime": 1793035362.6787708,
@@ -1814,8 +1814,8 @@
     "semantic_hash": "7ba1b215bd6a0eeeb6fec86966733215"
   },
   "AGENTS.md": {
-    "mtime": 1793196593.424152,
-    "seen": 1793197001.3987548,
+    "mtime": 1793198702.4347868,
+    "seen": 1793198705.7022061,
     "ast_hash": "2aceac59f69dd6090be5c4c3161d5e44",
     "semantic_hash": ""
   },
@@ -2045,6 +2045,468 @@
     "mtime": 1793035362.603418,
     "seen": 1793197001.3988242,
     "ast_hash": "7b8c2b04b19624222d836d4c4ed9284c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/agents/openai.yaml": {
+    "mtime": 1792181925.6965787,
+    "seen": 1793198705.7018068,
+    "ast_hash": "d7c2b6ed0c9d137e5e198ed161e4ebb2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/assets/evals.json": {
+    "mtime": 1792181925.697577,
+    "seen": 1793198705.7018123,
+    "ast_hash": "cedd6a03a375f49f2f1ee66f824450c2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/plugin.json": {
+    "mtime": 1792445188.7829814,
+    "seen": 1793198705.701815,
+    "ast_hash": "94eda85e07607b35018732c7dbb2c2ca",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ui-ux-pro-max/scripts/core.py": {
+    "mtime": 1792400315.029353,
+    "seen": 1793198705.7018166,
+    "ast_hash": "50e4dec705c13cc69d328c15dfbed37b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ui-ux-pro-max/scripts/design_system.py": {
+    "mtime": 1792400315.029353,
+    "seen": 1793198705.7018185,
+    "ast_hash": "5b7a5311730aead50b242164e6f95858",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ui-ux-pro-max/scripts/search.py": {
+    "mtime": 1792400315.0303524,
+    "seen": 1793198705.7018309,
+    "ast_hash": "8c7e35426fe8f6f3ed91e9dce0ed7af1",
+    "semantic_hash": ""
+  },
+  "apps/server/worker-configuration.d.ts": {
+    "mtime": 1792400315.1233952,
+    "seen": 1793198705.702117,
+    "ast_hash": "c6b716bf6510a4c0cee5c2a2c69671c2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/aeo-audit/SKILL.md": {
+    "mtime": 1792595318.1912181,
+    "seen": 1793198705.7021499,
+    "ast_hash": "48dc455117dce7ff3fe735c302298ccc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/README.md": {
+    "mtime": 1792181925.6955774,
+    "seen": 1793198705.7021508,
+    "ast_hash": "2738af0199b5526b822d2476cffd8d19",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/SKILL.md": {
+    "mtime": 1792181925.6955774,
+    "seen": 1793198705.7021518,
+    "ast_hash": "b71016310a479192e33dba6ff1603354",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/assets/DESIGN.template.md": {
+    "mtime": 1792181925.697577,
+    "seen": 1793198705.7021525,
+    "ast_hash": "19fa237641ecfe8986bda70aea6c3fdd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/assets/PRODUCT.template.md": {
+    "mtime": 1792181925.697577,
+    "seen": 1793198705.7021532,
+    "ast_hash": "a298fc55f5cee5723cbfe68010f69494",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/art-direction.md": {
+    "mtime": 1792181925.6989,
+    "seen": 1793198705.7021544,
+    "ast_hash": "64ca18ed97992fedc9506acc17588c94",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/evaluation.md": {
+    "mtime": 1792181925.6989,
+    "seen": 1793198705.7021554,
+    "ast_hash": "6bec772626c1f7feb5d28805c60518af",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/motion-and-interaction.md": {
+    "mtime": 1792181925.6989,
+    "seen": 1793198705.7021563,
+    "ast_hash": "ae9143d8744bb9339dd8b340bceabf66",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/product-ui.md": {
+    "mtime": 1792181925.6999042,
+    "seen": 1793198705.702157,
+    "ast_hash": "5e50abd6de0780e0cd290bb71964a413",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/prompt-recipes.md": {
+    "mtime": 1792181925.7004526,
+    "seen": 1793198705.7021577,
+    "ast_hash": "26f9c25f2b3c6cb620bf431e200ed7fe",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/quality-gates.md": {
+    "mtime": 1792181925.7010717,
+    "seen": 1793198705.7021587,
+    "ast_hash": "6418396ebb8b5e2b8ef8a636bddc5c19",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/redesign.md": {
+    "mtime": 1792181925.7010717,
+    "seen": 1793198705.7021596,
+    "ast_hash": "c99b73ea963848f0cba2ac2bd6af20c2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/reference-to-code.md": {
+    "mtime": 1792181925.7010717,
+    "seen": 1793198705.7021604,
+    "ast_hash": "8516db41420e7bf6407597766098131b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/astra-frontend-design/references/research-basis.md": {
+    "mtime": 1792181925.702076,
+    "seen": 1793198705.702161,
+    "ast_hash": "2b59cd88d0663426a195f6c866819720",
+    "semantic_hash": ""
+  },
+  ".agents/skills/mobile-responsive/SKILL.md": {
+    "mtime": 1792926643.5638776,
+    "seen": 1793198705.702162,
+    "ast_hash": "9b1996e7a13ddf09a3cc3387dc21846e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/mobile-responsive/references/css-patterns.md": {
+    "mtime": 1792926643.5648766,
+    "seen": 1793198705.7021627,
+    "ast_hash": "09d06f32f0916ff9a5f94f395f562231",
+    "semantic_hash": ""
+  },
+  ".agents/skills/mobile-responsive/references/testing-guide.md": {
+    "mtime": 1792926643.5648766,
+    "seen": 1793198705.7021635,
+    "ast_hash": "f2619c05433cbd9e5d7019523e19bb51",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/SKILL.md": {
+    "mtime": 1792181925.702076,
+    "seen": 1793198705.7021642,
+    "ast_hash": "119c3e4bc8f1dcc017fab16d0732a78a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/_sections.md": {
+    "mtime": 1792181925.7030761,
+    "seen": 1793198705.702165,
+    "ast_hash": "13b9b92d5aea952444054b8859fad09e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/_template.md": {
+    "mtime": 1792181925.7030761,
+    "seen": 1793198705.7021658,
+    "ast_hash": "83904a5210a1031a1a4dfdde0f49c088",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/api-use-dto-serialization.md": {
+    "mtime": 1792181925.7040763,
+    "seen": 1793198705.7021666,
+    "ast_hash": "f9044cd2f00d0787ec996c20c0527652",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/api-use-interceptors.md": {
+    "mtime": 1792181925.7040763,
+    "seen": 1793198705.7021675,
+    "ast_hash": "b1f31cd916c151ffd07a1fd619d6f318",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/api-use-pipes.md": {
+    "mtime": 1792181925.7050762,
+    "seen": 1793198705.7021682,
+    "ast_hash": "fb36ea8ba7eec4359653d1a48cf55a9e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/api-versioning.md": {
+    "mtime": 1792181925.7050762,
+    "seen": 1793198705.7021692,
+    "ast_hash": "8b8838af39dbdf1be7628aa0629c6b1c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/arch-avoid-circular-deps.md": {
+    "mtime": 1792181925.7050762,
+    "seen": 1793198705.7021701,
+    "ast_hash": "95066ab59c502a989e1296965364e351",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/arch-feature-modules.md": {
+    "mtime": 1792181925.7060754,
+    "seen": 1793198705.7021706,
+    "ast_hash": "b177d851813fb12817e33c4b600fa0e0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/arch-module-sharing.md": {
+    "mtime": 1792181925.7060754,
+    "seen": 1793198705.7021713,
+    "ast_hash": "6b898450b5da3f8b27b311943ccbe02f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/arch-single-responsibility.md": {
+    "mtime": 1792181925.7060754,
+    "seen": 1793198705.7021725,
+    "ast_hash": "c731f5fb44fadb3415a0911d3f77dc66",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/arch-use-events.md": {
+    "mtime": 1792181925.7070758,
+    "seen": 1793198705.702173,
+    "ast_hash": "4a4878854a47e93d6855c4d78a3dc00b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/arch-use-repository-pattern.md": {
+    "mtime": 1792181925.7070758,
+    "seen": 1793198705.7021737,
+    "ast_hash": "ba617442a5c7290398eab87485f12a7e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/db-avoid-n-plus-one.md": {
+    "mtime": 1792181925.708076,
+    "seen": 1793198705.7021747,
+    "ast_hash": "cc7bd71f088fb911c0ef5d4b93181698",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/db-use-migrations.md": {
+    "mtime": 1792181925.708076,
+    "seen": 1793198705.7021751,
+    "ast_hash": "ab82e06e56f0e61673129284afdfeb16",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/db-use-transactions.md": {
+    "mtime": 1792181925.708076,
+    "seen": 1793198705.702176,
+    "ast_hash": "59a539a83dcd0fac8e25313fe863cf0e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/devops-graceful-shutdown.md": {
+    "mtime": 1792181925.7090755,
+    "seen": 1793198705.702177,
+    "ast_hash": "914c1346b9fad6aec0bdb234a31bf8ff",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/devops-use-config-module.md": {
+    "mtime": 1792181925.7090755,
+    "seen": 1793198705.7021778,
+    "ast_hash": "d8ac93cb5daafc762adf6e46ae92924b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/devops-use-logging.md": {
+    "mtime": 1792181925.710076,
+    "seen": 1793198705.7021782,
+    "ast_hash": "b5d527a563faa53dc483a2f57bd7882e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/di-avoid-service-locator.md": {
+    "mtime": 1792181925.710076,
+    "seen": 1793198705.7021794,
+    "ast_hash": "e75c0523b75f149577ab5626e416b661",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/di-interface-segregation.md": {
+    "mtime": 1792181925.711076,
+    "seen": 1793198705.7021801,
+    "ast_hash": "75e87be2c2ee44add0e9e2f44f8e7d54",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/di-liskov-substitution.md": {
+    "mtime": 1792181925.711076,
+    "seen": 1793198705.7021809,
+    "ast_hash": "b63f304a8d6fe898642c37892ea7d8d4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/di-prefer-constructor-injection.md": {
+    "mtime": 1792181925.711076,
+    "seen": 1793198705.7021818,
+    "ast_hash": "bd01727a1c2d163d1e0fcffc0e05066c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/di-scope-awareness.md": {
+    "mtime": 1792181925.7120762,
+    "seen": 1793198705.7021828,
+    "ast_hash": "496f89d58a8e0a8af83edd1dfed4bb51",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/di-use-interfaces-tokens.md": {
+    "mtime": 1792181925.7120762,
+    "seen": 1793198705.7021835,
+    "ast_hash": "ed77bf23863507748dbd3697910150af",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/error-handle-async-errors.md": {
+    "mtime": 1792181925.713076,
+    "seen": 1793198705.7021842,
+    "ast_hash": "f2228f8378f76e217ee10f4ffdc73788",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/error-throw-http-exceptions.md": {
+    "mtime": 1792181925.713076,
+    "seen": 1793198705.7021847,
+    "ast_hash": "b7a61399d0530ec1295ad13fc6534f4b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/error-use-exception-filters.md": {
+    "mtime": 1792181925.713076,
+    "seen": 1793198705.7021856,
+    "ast_hash": "dbd585c34626516be97f2076e50f25cd",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/micro-use-health-checks.md": {
+    "mtime": 1792181925.714077,
+    "seen": 1793198705.7021866,
+    "ast_hash": "7deeacc670e6300d4d6521c3f67b7bb2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/micro-use-patterns.md": {
+    "mtime": 1792181925.714077,
+    "seen": 1793198705.7021873,
+    "ast_hash": "f000ba9b4c5306fa0fca245112fe186d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/micro-use-queues.md": {
+    "mtime": 1792181925.7150762,
+    "seen": 1793198705.702188,
+    "ast_hash": "89bf57197a2d0c29363aa75c5bc03db9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/perf-async-hooks.md": {
+    "mtime": 1792181925.7150762,
+    "seen": 1793198705.7021887,
+    "ast_hash": "9b868f4497a68205f67e16712a91fa20",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/perf-lazy-loading.md": {
+    "mtime": 1792181925.716076,
+    "seen": 1793198705.7021897,
+    "ast_hash": "8b99dc65872c46e44c957a02507b487f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/perf-optimize-database.md": {
+    "mtime": 1792181925.716076,
+    "seen": 1793198705.7021904,
+    "ast_hash": "641eb72c9a67eaf36959f1ca9bbfc87f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/perf-use-caching.md": {
+    "mtime": 1792181925.7170753,
+    "seen": 1793198705.702191,
+    "ast_hash": "e370a9017e862321d2c8e044421b55cc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/security-auth-jwt.md": {
+    "mtime": 1792181925.7170753,
+    "seen": 1793198705.7021918,
+    "ast_hash": "daa5e47703f17bbe21b5f487a81566e0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/security-rate-limiting.md": {
+    "mtime": 1792181925.7170753,
+    "seen": 1793198705.7021923,
+    "ast_hash": "5ac7ac4b856a9465012b3aca6fe48131",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/security-sanitize-output.md": {
+    "mtime": 1792181925.7180758,
+    "seen": 1793198705.7021933,
+    "ast_hash": "347e78ea178b8796cdd1d6583cf75b59",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/security-use-guards.md": {
+    "mtime": 1792181925.7180758,
+    "seen": 1793198705.702194,
+    "ast_hash": "e575ffad609dbbe73a97acafeb6336f8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/security-validate-all-input.md": {
+    "mtime": 1792181925.7190754,
+    "seen": 1793198705.7021947,
+    "ast_hash": "31dd68d9ac22913de001e765bd80881a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/test-e2e-supertest.md": {
+    "mtime": 1792181925.7190754,
+    "seen": 1793198705.7021956,
+    "ast_hash": "b71c95133de74d6e0644eb67d8aa3c33",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/test-mock-external-services.md": {
+    "mtime": 1792181925.7190754,
+    "seen": 1793198705.7021966,
+    "ast_hash": "6305fc30cb64108da36fd326ae919e87",
+    "semantic_hash": ""
+  },
+  ".agents/skills/nestjs-best-practices/rules/test-use-testing-module.md": {
+    "mtime": 1792181925.7200763,
+    "seen": 1793198705.7021973,
+    "ast_hash": "5a557f0daca47e696c0c54308ced654f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ponytail-audit/SKILL.md": {
+    "mtime": 1792445188.8005285,
+    "seen": 1793198705.702198,
+    "ast_hash": "4a8ec0358488fe552500e549503771b4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ponytail-debt/SKILL.md": {
+    "mtime": 1792445188.8005285,
+    "seen": 1793198705.7021987,
+    "ast_hash": "f5ddc8835fd59d3df8eedef0e1228348",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ponytail-gain/SKILL.md": {
+    "mtime": 1792445188.801534,
+    "seen": 1793198705.7021997,
+    "ast_hash": "9f71b76a7b488bc15d89f76afc54e2ac",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ponytail-help/SKILL.md": {
+    "mtime": 1792445188.8025355,
+    "seen": 1793198705.7022004,
+    "ast_hash": "d3d4e52b80e65a6972d1c20378356d63",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ponytail-review/SKILL.md": {
+    "mtime": 1792445188.8035333,
+    "seen": 1793198705.7022011,
+    "ast_hash": "9a06da6e1f26722dd3c34b50489a1c1e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ponytail/SKILL.md": {
+    "mtime": 1792445188.8045344,
+    "seen": 1793198705.702202,
+    "ast_hash": "546be8ebd490e5b8d3b291c33442641a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/seo-audit/SKILL.md": {
+    "mtime": 1792595318.1922576,
+    "seen": 1793198705.7022028,
+    "ast_hash": "f927d805b0d4b9c9e3cf9e9560951165",
+    "semantic_hash": ""
+  },
+  ".agents/skills/seo-audit/references/schema-examples.md": {
+    "mtime": 1792595318.1932898,
+    "seen": 1793198705.7022038,
+    "ast_hash": "77497e1a162f87914b63bb7d7917492c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/seo-audit/references/technical-checklist.md": {
+    "mtime": 1792595318.1938188,
+    "seen": 1793198705.7022045,
+    "ast_hash": "f3dc7793e86311ee4aa256d2c0cb288f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/ui-ux-pro-max/SKILL.md": {
+    "mtime": 1792400315.0091522,
+    "seen": 1793198705.7022052,
+    "ast_hash": "5e3dc615ee55f89a018822c94f927561",
     "semantic_hash": ""
   }
 }

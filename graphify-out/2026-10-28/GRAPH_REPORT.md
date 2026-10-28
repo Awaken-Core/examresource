@@ -1,7 +1,9 @@
 # Graph Report - examresource  (2026-10-28)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 314 files · ~417,041 words
+- Verdict: corpus is large enough that graph structure adds value.
+- Unclassified: 22 file(s) not represented in the graph (top: (none) 9, .example 2, .ttf 2)
 
 ## Summary
 - 2626 nodes · 5973 edges · 140 communities (90 shown, 50 thin omitted)
@@ -9,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9804f8ba`
+- Built from commit: `1b47b93b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -537,16 +539,16 @@ Nodes (3): dotenv@18.0.9, dotenv, dotenv@18.0.9
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `query()` connect `auth.service.ts` to `editor.astro`, `sitemap.astro`?**
-  _High betweenness centrality (0.197) - this node is a cross-community bridge._
+  _High betweenness centrality (0.210) - this node is a cross-community bridge._
 - **What connects `./tsconfig.json`, `astro/tsconfigs/strict` to the rest of the system?**
   _2 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `editor.astro` be split into smaller, more focused modules?**
   _Cohesion score 0.007662835249042145 - nodes in this community are weakly interconnected._
 - **Why does `Post` connect `BlogService` to `AuthService`, `ExamService`, `QuestionController`, `CommentsService`, `.requireUser`, `MediaService`, `BookService`, `admin/api.ts`, `NotificationService`, `ArticlesManager.tsx`, `PaymentController`?**
-  _High betweenness centrality (0.171) - this node is a cross-community bridge._
+  _High betweenness centrality (0.147) - this node is a cross-community bridge._
 - **Should `BlogService` be split into smaller, more focused modules?**
   _Cohesion score 0.05378720895962275 - nodes in this community are weakly interconnected._
 - **Why does `mongoose` connect `auth.service.ts` to `dependencies`, `LearnerAnalyticsService`, `blog.service.ts`, `notification.store.ts`, `seed-test-series.mjs`, `@nestjs/common`, `durable-model.ts`, `index.ts`, `test-series.service.ts`, `server/package.json`, `exam.module.ts`, `sync-exam-questions.mjs`, `question.service.ts`, `comments.service.ts`, `migrate-pg-to-mongo.mjs`, `seed-dsssb-tgt-cs.ts`, `test-series.service.spec.ts`?**
-  _High betweenness centrality (0.105) - this node is a cross-community bridge._
+  _High betweenness centrality (0.121) - this node is a cross-community bridge._
 - **Should `AuthService` be split into smaller, more focused modules?**
   _Cohesion score 0.056948798328108674 - nodes in this community are weakly interconnected._
