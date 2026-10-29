@@ -214,7 +214,8 @@ function applyImageStyle(attrs: string, widthVal: number, heightVal: number): st
 }
 
 function optimizeSingleImage(attrs: string, title: string, isFirstImage: boolean): string {
-  let updated = sanitizeImageAlt(attrs, title);
+  const safeAttrs = attrs.replace(/\bon[a-zA-Z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+  let updated = sanitizeImageAlt(safeAttrs, title);
   const { newAttrs, widthVal, heightVal } = computeImageDimensions(updated);
   updated = applyImageStyle(newAttrs, widthVal, heightVal);
 

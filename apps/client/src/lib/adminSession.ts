@@ -127,6 +127,8 @@ export async function logoutSession() {
   clearDeskCache();
   try {
     localStorage.removeItem('auth_active');
+    localStorage.removeItem('auth_user');
+    sessionStorage.removeItem('desk_user');
   } catch {
     /* storage can be blocked */
   }

@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import type { Metadata } from 'sharp';
 import { env } from '../../core/config/env.js';
+import { assertSafeRemoteUrl } from '../../core/security/ssrf.validator.js';
 import type { CurrentUser } from '../auth/auth.service.js';
 
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -145,15 +146,13 @@ export class MediaService {
     if (user.role === 'student') {
       throw new ForbiddenException('Editor access is required to upload images.');
     }
-    const cleanUrl = imageUrl.trim();
-    if (!cleanUrl || !/^https?:\/\//i.test(cleanUrl)) {
-      throw new BadRequestException('A valid HTTP/HTTPS image URL is required.');
-    }
+    const safeUrl = await assertSafeRemoteUrl(imageUrl);
+    const cleanUrl = safeUrl.toString();
 
     let referer = '';
     try {
-      referer = new URL(cleanUrl).origin + '/';
-    } catch (_) {}
+      referer = safeUrl.origin + '/';
+    } catch {}
 
     try {
       const response = await fetch(cleanUrl, {
@@ -164,11 +163,12 @@ export class MediaService {
           'Accept-Language': 'en-US,en;q=0.9',
           ...(referer ? { Referer: referer } : {}),
         },
+        redirect: 'error',
         signal: AbortSignal.timeout(12000),
       });
 
       if (!response.ok) {
-        throw new BadRequestException(`Failed to download remote image (${response.status})`);
+        throw new BadRequestException('Failed to download remote image from the provided URL.');
       }
 
       const contentType = response.headers.get('content-type') || 'image/jpeg';
@@ -183,7 +183,7 @@ export class MediaService {
       });
     } catch (err: any) {
       if (err instanceof BadRequestException || err instanceof ForbiddenException) throw err;
-      throw new BadRequestException(`Unable to fetch and process image from URL: ${err?.message || err}`);
+      throw new BadRequestException('Unable to fetch and process image from URL.');
     }
   }
 

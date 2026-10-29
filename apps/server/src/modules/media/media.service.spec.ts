@@ -81,4 +81,18 @@ describe('MediaService image compression', () => {
       }),
     ).rejects.toThrow('No image file provided.');
   });
+
+  it('should block SSRF attempts to private and metadata IPs in uploadFromUrl', async () => {
+    await expect(
+      service.uploadFromUrl(mockUser, 'http://169.254.169.254/latest/meta-data/'),
+    ).rejects.toThrow();
+
+    await expect(
+      service.uploadFromUrl(mockUser, 'http://127.0.0.1:27017'),
+    ).rejects.toThrow();
+
+    await expect(
+      service.uploadFromUrl(mockUser, 'http://localhost:3000'),
+    ).rejects.toThrow();
+  });
 });

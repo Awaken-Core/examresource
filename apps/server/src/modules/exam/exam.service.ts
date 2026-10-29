@@ -29,6 +29,7 @@ import type {
   SaveAnswerInput,
   UpdateExamInput,
 } from './dto/exam.dto.js';
+import { escapeRegex } from '../../core/utils/regex.util.js';
 
 @Injectable()
 export class ExamService {
@@ -1075,7 +1076,7 @@ export class ExamService {
     // Filter by student search (name, email, or test title)
     if (params.search && params.search.trim()) {
       const term = params.search.trim();
-      const regex = new RegExp(term, 'i');
+      const regex = new RegExp(escapeRegex(term), 'i');
       pipeline.push({
         $match: {
           $or: [

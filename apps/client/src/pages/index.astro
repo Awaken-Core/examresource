@@ -655,6 +655,12 @@ const ctaBarHeights = [
     const adminLink = document.getElementById('home-admin-link');
     const searchParams = new URLSearchParams(window.location.search);
     const isLoginSuccess = searchParams.has('login');
+    if (isLoginSuccess) {
+      try {
+        localStorage.removeItem('auth_user');
+        sessionStorage.removeItem('desk_user');
+      } catch (e) {}
+    }
     const isAuth =
       isLoginSuccess ||
       localStorage.getItem('auth_active') === '1' ||

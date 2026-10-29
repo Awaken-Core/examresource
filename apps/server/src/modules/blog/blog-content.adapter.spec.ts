@@ -55,11 +55,29 @@ describe('blog-content.adapter', () => {
         type: 'PARAGRAPH' as const,
         value: 'Hello <script>alert("hacked")</script><img src="x" onerror="alert(1)" />',
       },
+      {
+        type: 'PARAGRAPH' as const,
+        value: 'Unquoted <img src=x onerror=alert(1)> and svg <svg onload=alert(2)>',
+      },
+      {
+        type: 'PARAGRAPH' as const,
+        value: '<a href="javascript:alert(1)">click</a> and <details open ontoggle=alert(3)>',
+      },
+      {
+        type: 'PARAGRAPH' as const,
+        value: '<a href="jav&#x09;ascript:alert(1)">obfuscated click</a>',
+      },
     ];
 
     const rendered = blocksToHtml(maliciousBlocks);
-    expect(rendered).not.toContain('<script>');
-    expect(rendered).not.toContain('onerror=');
+    expect(rendered).not.toContain('<script');
+    expect(rendered).not.toContain('onerror');
+    expect(rendered).not.toContain('<svg');
+    expect(rendered).not.toContain('onload');
+    expect(rendered).not.toContain('<details');
+    expect(rendered).not.toContain('ontoggle');
+    expect(rendered).not.toContain('href="javascript:');
+    expect(rendered).not.toContain('href="jav');
   });
 
   it('should parse hr into DIVIDER blocks with empty value and render back to semantic HTML', () => {

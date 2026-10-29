@@ -39,7 +39,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     const recipientEmail = import.meta.env.CONTACT_RECEIVER_EMAIL;
 
-    const emailSubject = `[Inquiry] ${subject || 'Contact Form'}: ${name.trim()}`;
+    const cleanSubject = (subject || 'Contact Form').replace(/[\r\n]+/g, ' ').slice(0, 100);
+    const cleanName = name.trim().replace(/[\r\n]+/g, ' ').slice(0, 80);
+    const emailSubject = `[Inquiry] ${cleanSubject}: ${cleanName}`;
 
     const htmlContent = `
       <!DOCTYPE html>

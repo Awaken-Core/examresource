@@ -22,6 +22,7 @@ import {
 } from '../../core/schema/index.js';
 import type { CurrentUser } from '../auth/auth.service.js';
 import type { CreateCommentInput, ModerateCommentInput } from './dto/comment.dto.js';
+import { escapeRegex } from '../../core/utils/regex.util.js';
 
 @Injectable()
 export class CommentsService {
@@ -124,12 +125,13 @@ export class CommentsService {
   }
 
   async listArticlesWithCounts(search?: string) {
-    const match = search?.trim()
+    const escaped = search?.trim() ? escapeRegex(search.trim()) : '';
+    const match = escaped
       ? {
           $match: {
             $or: [
-              { 'blog.title': { $regex: search.trim(), $options: 'i' } },
-              { 'blog.slug': { $regex: search.trim(), $options: 'i' } },
+              { 'blog.title': { $regex: escaped, $options: 'i' } },
+              { 'blog.slug': { $regex: escaped, $options: 'i' } },
             ],
           },
         }

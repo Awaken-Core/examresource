@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Patch,
   Param,
@@ -22,16 +23,21 @@ import {
   verifyEmailSchema,
 } from './dto/auth.dto.js';
 import { AuthService } from './auth.service.js';
+import { SlidingWindowRateLimiter } from '../../core/security/rate-limiter.js';
 
 type SessionRequest = Request & { cookies?: Record<string, string> };
 
 @Controller('api/v1')
 export class AuthController {
+  private readonly authRateLimiter = new SlidingWindowRateLimiter(60_000, 10);
+  private readonly forgotPasswordLimiter = new SlidingWindowRateLimiter(60_000, 5);
+
   constructor(private readonly auth: AuthService) {}
 
   @Post('auth/register')
   async register(@Req() req: SessionRequest) {
     this.assertSafeMutation(req);
+    this.authRateLimiter.assertAllowed(this.clientIp(req), 'Too many registration attempts. Please try again in 1 minute.');
     const input = this.parse(registerSchema, req.body);
     return this.auth.register(input);
   }
@@ -43,6 +49,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     this.assertSafeMutation(req);
+    this.authRateLimiter.assertAllowed(this.clientIp(req), 'Too many login attempts. Please try again in 1 minute.');
     const input = this.parse(loginSchema, req.body);
     const result = await this.auth.login(input.email, input.password);
     this.setSessionCookie(res, result.token);
@@ -130,6 +137,7 @@ export class AuthController {
   @HttpCode(202)
   async forgotPassword(@Req() req: SessionRequest) {
     this.assertSafeMutation(req);
+    this.forgotPasswordLimiter.assertAllowed(this.clientIp(req), 'Too many password reset requests. Please try again in 1 minute.');
     const input = this.parse(forgotPasswordSchema, req.body);
     await this.auth.createPasswordResetToken(input.email);
     // A mailer adapter should deliver the token; never expose whether this email exists.
@@ -142,6 +150,7 @@ export class AuthController {
   @HttpCode(204)
   async resetPassword(@Req() req: SessionRequest) {
     this.assertSafeMutation(req);
+    this.forgotPasswordLimiter.assertAllowed(this.clientIp(req), 'Too many password reset requests. Please try again in 1 minute.');
     const input = this.parse(resetPasswordSchema, req.body);
     await this.auth.resetPassword(input.token, input.password);
   }
@@ -155,6 +164,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @Header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
   async me(@Req() req: SessionRequest) {
     const token = this.sessionToken(req);
     if (!token) return null;
@@ -296,6 +306,10 @@ export class AuthController {
       maxAge: env.SESSION_TTL_DAYS * 86_400_000,
     });
   }
+  private clientIp(req: Request): string {
+    return req.ip || req.socket?.remoteAddress || '127.0.0.1';
+  }
+
   private assertSafeMutation(req: SessionRequest) {
     const origin = req.header('origin');
     if (origin !== env.CLIENT_URL)

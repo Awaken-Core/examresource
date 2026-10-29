@@ -131,10 +131,8 @@ export class CommentsController {
   }
 
   private clientIp(req: Request) {
-    const cfIp = req.header('cf-connecting-ip');
-    const xForwarded = req.header('x-forwarded-for')?.split(',')[0]?.trim();
-    const realIp = req.header('x-real-ip');
-    return cfIp || xForwarded || realIp || req.ip || req.socket.remoteAddress || '127.0.0.1';
+    const rawIp = req.ip || req.header('cf-connecting-ip') || req.socket?.remoteAddress || '127.0.0.1';
+    return rawIp.trim();
   }
 
   private assertModerator(role: string) {

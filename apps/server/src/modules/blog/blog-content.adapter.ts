@@ -4,6 +4,8 @@
  * guaranteeing safe, semantic HTML output on the server side.
  */
 
+import { sanitizeHtml } from '../../core/security/html-sanitizer.js';
+
 export interface BlockRecord {
   type:
     | 'PARAGRAPH'
@@ -296,12 +298,15 @@ function slugify(text: string): string {
  * Basic safe inline tags: strong, b, em, i, u, s, a, code, br, span
  */
 function sanitizeInlineHtml(html: string): string {
-  if (!html) return '';
-  // Disallow scripts, onerror, onclick, style injection
-  return html
-    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
-    .replace(/javascript:/gi, '');
+  return sanitizeHtml(html, 'inline');
+}
+
+function sanitizeListHtml(html: string): string {
+  return sanitizeHtml(html, 'list');
+}
+
+function sanitizeTableHtml(html: string): string {
+  return sanitizeHtml(html, 'table');
 }
 
 function readImageTag(html: string): BlockRecord | null {
@@ -344,16 +349,6 @@ function readImageTag(html: string): BlockRecord | null {
       ...(height && height >= 40 ? { height } : {}),
     },
   };
-}
-
-function sanitizeListHtml(html: string): string {
-  if (!html) return '';
-  return sanitizeInlineHtml(html);
-}
-
-function sanitizeTableHtml(html: string): string {
-  if (!html) return '';
-  return sanitizeInlineHtml(html);
 }
 
 const isHeadingBlock = (b: BlockRecord) => b.type.startsWith('HEADING_');
