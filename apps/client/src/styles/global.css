@@ -1426,6 +1426,7 @@ html.sidebar-ready .sidebar-auth-btn {
   }
 
   .sidebar-text {
+    display: none !important;
     max-width: 0 !important;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -1472,14 +1473,16 @@ html.sidebar-ready .sidebar-auth-btn {
 
   .sidebar-pref-row {
     padding: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     width: 2.75rem !important;
     height: 2.75rem !important;
     min-height: 2.75rem !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
+    margin: 0 auto !important;
+    gap: 0 !important;
 
     & > button,
     & > .sidebar-lang-quick-btn,
@@ -1500,7 +1503,16 @@ html.sidebar-ready .sidebar-auth-btn {
       align-items: center !important;
       justify-content: center !important;
       margin: 0 auto !important;
+      padding: 0 !important;
       line-height: 1 !important;
+      font-size: 13px !important;
+      background: transparent !important;
+      border: none !important;
+    }
+
+    svg {
+      display: block !important;
+      margin: 0 auto !important;
     }
   }
 

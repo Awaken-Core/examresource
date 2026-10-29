@@ -1,6 +1,7 @@
 ---
 import ProfileDropdown from './ProfileDropdown.astro';
 import Tooltip from './Tooltip.astro';
+import { preferredLangFromCookieHeader } from '../lib/preferred-lang';
 import NotificationPopup from './NotificationPopup.astro';
 import BrandLogo from './BrandLogo.astro';
 import { telegramChannel, whatsappChannel, siteDomain } from '../data/site';
@@ -12,6 +13,8 @@ interface Props {
 }
 
 const { prefix = "desktop", isMobileDrawer = false, isEditorialTheme = false } = Astro.props;
+const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get("cookie"));
+const langCode = preferredAppLang === "en" ? "EN" : "HI";
 const [brandPrefix, ...brandRest] = siteDomain.split('.');
 const brandSuffix = brandRest.length > 0 ? `.${brandRest.join('.')}` : '';
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -228,7 +231,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           title="Toggle Language (HI / EN)"
           aria-label="Toggle Language"
         >
-          <span class="sidebar-lang-code font-bold text-[11px] px-1.5 py-0.5 rounded-md bg-editorial-accent/15 text-editorial-accent border border-editorial-accent/30 tracking-wider shrink-0 select-none">HI</span>
+          <span class="sidebar-lang-code font-bold text-[13px] tracking-wider text-editorial-accent select-none inline-flex items-center justify-center leading-none">{langCode}</span>
           <span class="sidebar-text">Language</span>
         </button>
         <div class={`sidebar-text inline-flex items-center p-0.5 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-lg text-xs font-semibold select-none`} role="group" aria-label="Language selection">
