@@ -5,7 +5,7 @@ interface Props {
   isEditorialTheme?: boolean;
 }
 
-const { id = "profile-dropdown", position = "top" } = Astro.props;
+const { id = "profile-dropdown", position = "top", isEditorialTheme = false } = Astro.props;
 const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const currentSearch = Astro.url.search || '';
 const isAuthPage = currentPath === '/login' || currentPath === '/signup' || currentPath.startsWith('/auth/');
@@ -23,7 +23,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       : position === "mobile"
         ? "left-0 bottom-full mb-2 w-full max-w-[260px]"
         : "top-full right-0 mt-2 w-72 max-w-[calc(100vw-24px)]"
-  } bg-surface border border-border text-heading rounded-2xl p-2 z-[9999] shadow-elevated transition-all duration-150 transform scale-95 opacity-0 select-none`}
+  } ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border text-editorial-text' : 'bg-surface border-border text-heading'} border rounded-2xl p-2 z-[9999] shadow-elevated transition-all duration-150 transform scale-95 opacity-0 select-none`}
   role="menu"
   aria-orientation="vertical"
 >

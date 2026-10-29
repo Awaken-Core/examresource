@@ -104,22 +104,17 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       {/* 3. PYQs (Previous Year Questions) */}
       <a 
         href="/blogs#categories"
-        class={`sidebar-nav-item flex items-center justify-between min-h-11 md:min-h-10 px-3 rounded-lg ${
+        class={`sidebar-nav-item relative flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg text-xs transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-accent ${
           isEditorialTheme 
-            ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' 
-            : 'text-muted hover:text-heading hover:bg-surface-raised'
-        } transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-accent`}
+            ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60 font-medium border border-transparent' 
+            : 'text-muted hover:text-heading hover:bg-surface-raised font-medium border border-transparent'
+        }`}
         title="Previous Year Questions (PYQs)"
       >
-        <div class="flex items-center gap-3 min-w-0">
-          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          <span class="sidebar-text truncate">PYQs</span>
-        </div>
-        <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-muted/70 group-hover:text-editorial-heading' : 'text-muted/70 group-hover:text-heading'} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
+        <span class="sidebar-text truncate">PYQs</span>
       </a>
 
       {/* 3b. Test Series */}
@@ -212,9 +207,9 @@ const loginHref = (!isAuthPage && currentPath !== '/')
   </div>
 
   {/* BOTTOM PROFILE / AUTH SECTION */}
-  <div class={`p-3 border-t ${isEditorialTheme ? 'border-editorial-border bg-editorial-bg' : 'border-border/70 bg-surface/25'} relative overflow-visible space-y-2`}>
+  <div class={`sidebar-bottom-section p-3 border-t ${isEditorialTheme ? 'border-editorial-border bg-editorial-bg' : 'border-border/70 bg-surface/25'} relative overflow-visible space-y-2`}>
     {/* Popover Dropdown */}
-    <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} />
+    <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} isEditorialTheme={isEditorialTheme} />
 
     {/* Quick Preferences: Theme & Language */}
     <div class="sidebar-preferences space-y-1.5">
@@ -284,7 +279,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
     </div>
 
     {/* Logged Out State */}
-    <div class="sidebar-auth-logged-out block">
+    <div class="sidebar-auth-logged-out w-full">
       <a 
         href={loginHref}
         data-login-link
@@ -303,7 +298,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
     </div>
 
     {/* Logged In State */}
-    <div class="sidebar-auth-logged-in hidden flex flex-col space-y-2 w-full">
+    <div class="sidebar-auth-logged-in flex flex-col space-y-2 w-full">
       {/* Notification Pill Button */}
       <div class="relative">
         <button 
@@ -343,7 +338,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         id={`${prefix}-profile-trigger`}
         data-profile-trigger={`${prefix}-profile-dropdown`}
         type="button"
-        class={`sidebar-profile-card w-full flex items-center justify-between p-2.5 rounded-xl ${
+        class={`sidebar-profile-card w-full flex items-center justify-between min-h-[44px] px-2.5 py-1.5 rounded-xl ${
           isEditorialTheme
             ? 'bg-editorial-surface hover:bg-editorial-accent-soft border-editorial-border'
             : 'bg-surface-raised/40 hover:bg-surface-raised border-border/50 hover:border-border'
@@ -352,20 +347,19 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         aria-expanded="false"
         title="User Profile & Settings"
       >
-        <div class="flex items-center gap-2.5 min-w-0">
-          {/* Avatar Circle */}
-          <div class={`w-9 h-9 rounded-full ${
-            isEditorialTheme
-              ? 'bg-editorial-accent text-white border-transparent'
-              : 'bg-surface-raised text-white border-border'
-          } border font-bold flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform overflow-hidden shadow-xs select-none`}>
-            <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">U</span>
-          </div>
-          <div class="sidebar-text truncate">
-            <p class={`user-display-name text-xs font-bold ${isEditorialTheme ? 'text-editorial-heading' : 'text-heading'} truncate leading-tight`}>User</p>
-            <p class={`user-display-email text-[11px] ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted'} leading-none mt-0.5 truncate`}>user@example.com</p>
+        <div class="sidebar-profile-inner flex items-center gap-2.5 min-w-0 flex-1">
+          {/* Avatar Circle - identical to header */}
+          <span class="user-avatar-initials sidebar-profile-initials size-8 rounded-full bg-editorial-accent text-white inline-flex items-center justify-center text-center text-[12px] font-bold leading-none uppercase shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+            U
+          </span>
+          <div class="sidebar-text truncate min-w-0 flex-1 leading-none text-left">
+            <span class="user-display-name block text-[12px] font-bold text-heading truncate leading-tight">User</span>
+            <span class="user-display-role block text-[10px] text-muted capitalize leading-tight mt-0.5">Aspirant</span>
           </div>
         </div>
+        <svg class="sidebar-text size-3.5 text-muted shrink-0 transition-transform group-hover:text-heading" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
       </button>
     </div>
   </div>

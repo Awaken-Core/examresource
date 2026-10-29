@@ -1371,16 +1371,14 @@ html:not(.theme-dark) a:hover > svg.text-muted {
   height: 100vh;
   width: 16rem;
   min-width: 16rem;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: visible !important;
   will-change: width;
 
   & > aside {
     width: 16rem;
     min-width: 16rem;
     height: 100vh;
-    overflow-x: clip;
-    overflow-y: auto;
+    overflow: visible !important;
   }
 }
 
@@ -1414,7 +1412,7 @@ html.sidebar-ready .sidebar-auth-btn {
               opacity 0.2s ease;
 }
 
-/* Collapsed (Rail) Mode — Half-way collapse keeping icons visible and operational */
+/* Collapsed (Rail) Mode — Half-way collapse keeping icons visible, centered and operational */
 :is(html[data-sidebar-collapsed="true"], html.sidebar-collapsed, #desktop-sidebar-wrapper.collapsed) {
   #desktop-sidebar-wrapper {
     width: 4.5rem !important;
@@ -1456,24 +1454,62 @@ html.sidebar-ready .sidebar-auth-btn {
     margin-right: auto !important;
   }
 
+  /* Perfectly center all bottom section items in rail mode */
+  .sidebar-bottom-section {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .sidebar-preferences {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
   .sidebar-pref-row {
     padding: 0 !important;
     justify-content: center !important;
+    align-items: center !important;
     width: 2.75rem !important;
     height: 2.75rem !important;
     min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
+
+    & > button,
+    & > .sidebar-lang-quick-btn,
+    & > .theme-toggle-btn {
+      width: 100% !important;
+      height: 100% !important;
+      justify-content: center !important;
+      align-items: center !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      gap: 0 !important;
+    }
   }
 
   .sidebar-notification-pill-btn {
     padding: 0 !important;
     justify-content: center !important;
+    align-items: center !important;
     width: 2.75rem !important;
     height: 2.75rem !important;
     min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
+
+    & > div {
+      justify-content: center !important;
+      gap: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
 
     .notification-rail-dot {
       display: block !important;
@@ -1483,6 +1519,7 @@ html.sidebar-ready .sidebar-auth-btn {
   .sidebar-profile-card {
     padding: 0 !important;
     justify-content: center !important;
+    align-items: center !important;
     width: 2.75rem !important;
     height: 2.75rem !important;
     min-height: 2.75rem !important;
@@ -1490,6 +1527,15 @@ html.sidebar-ready .sidebar-auth-btn {
     margin-right: auto !important;
     background: transparent !important;
     border-color: transparent !important;
+
+    & > .sidebar-profile-inner,
+    & > div {
+      justify-content: center !important;
+      gap: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+    }
   }
 
   .sidebar-auth-btn {
@@ -1547,7 +1593,7 @@ html.sidebar-ready .sidebar-auth-btn {
   background-color: var(--color-editorial-accent, var(--color-accent));
 }
 
-/* Auth state display classes driven by data-authenticated attribute */
+/* Auth state display classes driven by data-authenticated attribute (Single Source of Truth) */
 html[data-authenticated="true"] .header-auth-logged-out,
 html[data-authenticated="true"] .sidebar-auth-logged-out {
   display: none !important;
@@ -1574,12 +1620,8 @@ html:not([data-authenticated="true"]) .header-auth-logged-out {
 }
 
 html:not([data-authenticated="true"]) .sidebar-auth-logged-out {
-  display: block !important;
+  display: flex !important;
   width: 100% !important;
-}
-
-:is(.header-auth-logged-out, .header-auth-logged-in, .sidebar-auth-logged-out, .sidebar-auth-logged-in).hidden {
-  display: none !important;
 }
 
 /* Language Switcher using semantic design tokens */
