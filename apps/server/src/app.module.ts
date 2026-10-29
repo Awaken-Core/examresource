@@ -13,6 +13,7 @@ import { QuestionModule } from './modules/question/question.module.js';
 import { TestSeriesModule } from './modules/test-series/test-series.module.js';
 import { CommentsModule } from './modules/comments/comments.module.js';
 import { PaymentsModule } from './modules/payments/payment.module.js';
+import { DailyQuizModule } from './modules/daily-quiz/daily-quiz.module.js';
 
 @Module({
   imports: [
@@ -28,8 +29,10 @@ import { PaymentsModule } from './modules/payments/payment.module.js';
     TestSeriesModule,
     CommentsModule,
     PaymentsModule,
+    DailyQuizModule,
   ],
   controllers: [AppController],
   providers: [AppService],
+  exports: [DailyQuizModule],
 })
 export class AppModule {}

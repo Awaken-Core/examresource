@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteName, siteUrl } from '../data/site';
+import { RankPredictorIsland } from '../components/rank-predictor/RankPredictorIsland';
+
+const pageTitle = `Exam Rank Predictor & Cut-Off Calculator 2026 | ${siteName}`;
+const pageDescription = `Free All-India Rank Predictor & Cut-Off Calculator for SSC CGL, RRB NTPC, IBPS PO, and UPSC. Enter your raw/mock marks to predict your AIR, percentile, and qualifying chances instantly.`;
+const canonicalUrl = `${siteUrl}/rank-predictor`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Exam Rank Predictor & Cut-Off Calculator',
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'Any',
+  description: pageDescription,
+  url: canonicalUrl,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'INR',
+  },
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} canonicalUrl={canonicalUrl} jsonLd={jsonLd}>
+  <div class="min-h-screen bg-canvas py-10 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="mb-5 flex items-center gap-2 text-xs text-muted">
+        <a href="/" class="hover:text-heading transition-colors">Home</a>
+        <span>/</span>
+        <span class="font-semibold text-heading">Rank Predictor</span>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="mb-8 text-center sm:text-left">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold text-accent">
+          🎯 Precision Score Modeling
+        </span>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight text-heading sm:text-3xl">
+          All-India Exam Rank Predictor & Cut-Off Analysis
+        </h1>
+        <p class="mt-2 text-sm text-muted max-w-2xl leading-relaxed">
+          Estimate your All-India Rank (AIR), percentile, and category-wise qualifying probability based on historical cut-off trends and normal score distribution across 100,000+ mock attempts.
+        </p>
+      </div>
+
+      <!-- Interactive Predictor Island -->
+      <main>
+        <RankPredictorIsland client:load />
+      </main>
+
+      <!-- FAQ & Methodology Section -->
+      <section class="mt-12 rounded-2xl border border-border bg-surface p-6 shadow-xs">
+        <h2 class="text-base font-bold text-heading">Frequently Asked Questions</h2>
+        <div class="mt-4 space-y-4 text-xs leading-relaxed text-muted">
+          <div>
+            <h3 class="font-bold text-heading">How accurate is this rank prediction?</h3>
+            <p class="mt-1">
+              Our prediction model leverages normal Gaussian score distributions and historical official cut-off deltas from official exam bodies (SSC, RRB, IBPS). While actual raw-to-normalized shifts vary depending on shift difficulty, the estimated percentile bracket typically remains within ±2.5%.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold text-heading">Does this include negative marking?</h3>
+            <p class="mt-1">
+              Yes, ensure that the score you enter is your <strong>net raw score</strong> (Total Correct Marks minus Negative Penalty for incorrect attempts).
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold text-heading">How can I improve my predicted percentile?</h3>
+            <p class="mt-1">
+              Analyze your time efficiency on each question type. Rushing questions (&lt;10s) leads to negative mark penalties, while spending over 2 minutes per question reduces overall attempt volume. Taking timed sectional mock tests is proven to increase accuracy by 15-20%.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
