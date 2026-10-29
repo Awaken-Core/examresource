@@ -303,14 +303,14 @@ const loginHref = (!isAuthPage && currentPath !== '/')
     </div>
 
     {/* Logged In State */}
-    <div class="sidebar-auth-logged-in hidden space-y-2">
+    <div class="sidebar-auth-logged-in hidden flex flex-col space-y-2 w-full">
       {/* Notification Pill Button */}
       <div class="relative">
         <button 
           id={`${prefix}-notification-trigger`}
           data-notification-trigger={`${prefix}-notification-popup`}
           type="button"
-          class={`sidebar-notification-pill-btn relative w-full px-3 py-2.5 rounded-xl ${
+          class={`sidebar-notification-pill-btn relative w-full overflow-hidden px-3 py-2.5 rounded-xl ${
             isEditorialTheme 
               ? 'bg-editorial-surface hover:bg-editorial-accent-soft border-editorial-border text-editorial-text' 
               : 'bg-surface-raised/50 hover:bg-surface-raised border-border/60 text-heading'

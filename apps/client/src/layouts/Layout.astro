@@ -2022,8 +2022,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           // Lenis smooth scroll and page elements re-init on EVERY page load / client transition
           document.addEventListener('astro:page-load', () => {
             reinitPageElements();
+            requestAnimationFrame(() => document.documentElement.classList.add('sidebar-ready'));
           });
           document.addEventListener('astro:before-swap', () => {
+            document.documentElement.classList.remove('sidebar-ready');
             destroyLenis();
             closeMobileDrawer();
           });

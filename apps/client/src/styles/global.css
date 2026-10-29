@@ -1371,38 +1371,70 @@ html:not(.theme-dark) a:hover > svg.text-muted {
   height: 100vh;
   width: 16rem;
   min-width: 16rem;
-  overflow: visible;
+  overflow-x: clip;
+  overflow-y: visible;
   will-change: width;
 
   & > aside {
     width: 16rem;
     min-width: 16rem;
     height: 100vh;
+    overflow-x: clip;
+    overflow-y: auto;
   }
 }
 
-/* Enable animation only when user explicitly toggles the sidebar (prevents flash on initial load and client transitions) */
+/* Fluid transitions for sidebar container and items */
 html.sidebar-ready #desktop-sidebar-wrapper,
 html.sidebar-ready #desktop-sidebar-wrapper > aside {
-  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+html.sidebar-ready .sidebar-nav-item,
+html.sidebar-ready .sidebar-channel-item,
+html.sidebar-ready .sidebar-pref-row,
+html.sidebar-ready .sidebar-notification-pill-btn,
+html.sidebar-ready .sidebar-profile-card,
+html.sidebar-ready .sidebar-auth-btn {
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+              padding 0.25s ease,
+              background-color 0.15s ease,
+              border-color 0.15s ease;
+}
+
+/* Sidebar Text Smooth Collapse (No abrupt display:none popping) */
+.sidebar-text {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  max-width: 180px;
+  opacity: 1;
+  transition: max-width 0.28s cubic-bezier(0.25, 1, 0.5, 1),
+              opacity 0.2s ease;
 }
 
 /* Collapsed (Rail) Mode — Half-way collapse keeping icons visible and operational */
-:is(html[data-sidebar-collapsed="true"], html.sidebar-collapsed, #desktop-sidebar-wrapper.collapsed) #desktop-sidebar-wrapper {
-  width: 4.25rem !important;
-  min-width: 4.25rem !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  overflow: visible !important;
+:is(html[data-sidebar-collapsed="true"], html.sidebar-collapsed, #desktop-sidebar-wrapper.collapsed) {
+  #desktop-sidebar-wrapper {
+    width: 4.5rem !important;
+    min-width: 4.5rem !important;
+  }
 
-  & > aside {
-    width: 4.25rem !important;
-    min-width: 4.25rem !important;
+  #desktop-sidebar-wrapper > aside {
+    width: 4.5rem !important;
+    min-width: 4.5rem !important;
     transform: none !important;
   }
 
   .sidebar-text {
-    display: none !important;
+    max-width: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 
   .sidebar-header {
@@ -1417,9 +1449,9 @@ html.sidebar-ready #desktop-sidebar-wrapper > aside {
     padding-right: 0 !important;
     gap: 0 !important;
     justify-content: center !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    min-height: 2.5rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
@@ -1427,9 +1459,9 @@ html.sidebar-ready #desktop-sidebar-wrapper > aside {
   .sidebar-pref-row {
     padding: 0 !important;
     justify-content: center !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    min-height: 2.5rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
@@ -1437,9 +1469,9 @@ html.sidebar-ready #desktop-sidebar-wrapper > aside {
   .sidebar-notification-pill-btn {
     padding: 0 !important;
     justify-content: center !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    min-height: 2.5rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
 
@@ -1451,9 +1483,9 @@ html.sidebar-ready #desktop-sidebar-wrapper > aside {
   .sidebar-profile-card {
     padding: 0 !important;
     justify-content: center !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    min-height: 2.5rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
     background: transparent !important;
@@ -1463,9 +1495,9 @@ html.sidebar-ready #desktop-sidebar-wrapper > aside {
   .sidebar-auth-btn {
     padding: 0 !important;
     justify-content: center !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    min-height: 2.5rem !important;
+    width: 2.75rem !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
@@ -1521,9 +1553,15 @@ html[data-authenticated="true"] .sidebar-auth-logged-out {
   display: none !important;
 }
 
-html[data-authenticated="true"] .header-auth-logged-in,
+html[data-authenticated="true"] .header-auth-logged-in {
+  display: flex !important;
+}
+
 html[data-authenticated="true"] .sidebar-auth-logged-in {
   display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
 }
 
 html:not([data-authenticated="true"]) .header-auth-logged-in,
@@ -1531,9 +1569,13 @@ html:not([data-authenticated="true"]) .sidebar-auth-logged-in {
   display: none !important;
 }
 
-html:not([data-authenticated="true"]) .header-auth-logged-out,
-html:not([data-authenticated="true"]) .sidebar-auth-logged-out {
+html:not([data-authenticated="true"]) .header-auth-logged-out {
   display: flex !important;
+}
+
+html:not([data-authenticated="true"]) .sidebar-auth-logged-out {
+  display: block !important;
+  width: 100% !important;
 }
 
 :is(.header-auth-logged-out, .header-auth-logged-in, .sidebar-auth-logged-out, .sidebar-auth-logged-in).hidden {
