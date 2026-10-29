@@ -68,7 +68,7 @@ export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
   const questionType = question?.type ?? 'single_choice';
   const multiple = questionType === 'multiple_choice';
   const saveLabel = isEndOfExam ? 'Save & end' : 'Save & next';
-  const questionId = question?.id || question?._id || '';
+  const questionId = question?.id || (question as any)?._id || '';
 
   return (
     <div className="grid h-full min-h-0 grid-rows-[minmax(0,1fr)_52px] bg-canvas">

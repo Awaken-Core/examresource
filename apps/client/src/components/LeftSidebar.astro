@@ -189,9 +189,8 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           href={whatsappChannel} 
           target="_blank" 
           rel="noopener noreferrer"
-          class={`flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${isEditorialTheme ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' : 'text-muted hover:text-heading hover:bg-surface-raised'} transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#25D366]`}
-          title="WhatsApp Channel"
-        >
+          class={`sidebar-channel-item flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${isEditorialTheme ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' : 'text-muted hover:text-heading hover:bg-surface-raised'} transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#25D366]`}
+          title="WhatsApp Channel">
           <svg class="w-[18px] h-[18px] shrink-0 text-[#25D366]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
           </svg>
@@ -201,9 +200,8 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           href={telegramChannel} 
           target="_blank" 
           rel="noopener noreferrer"
-          class={`flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${isEditorialTheme ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' : 'text-muted hover:text-heading hover:bg-surface-raised'} transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#2AABEE]`}
-          title="Telegram Channel"
-        >
+          class={`sidebar-channel-item flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${isEditorialTheme ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' : 'text-muted hover:text-heading hover:bg-surface-raised'} transition-colors duration-150 text-xs font-medium group border border-transparent focus-visible:outline-2 focus-visible:outline-[#2AABEE]`}
+          title="Telegram Channel">
           <svg class="w-[18px] h-[18px] shrink-0 text-[#2AABEE]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
           </svg>
@@ -219,15 +217,22 @@ const loginHref = (!isAuthPage && currentPath !== '/')
     <ProfileDropdown id={`${prefix}-profile-dropdown`} position={isMobileDrawer ? 'mobile' : 'bottom'} />
 
     {/* Quick Preferences: Theme & Language */}
-    <div class="sidebar-preferences sidebar-text space-y-2">
-      <div class={`flex items-center justify-between gap-2 min-h-11 md:min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
-        <span class={`text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted'} flex items-center gap-2`}>
+    <div class="sidebar-preferences space-y-1.5">
+      {/* Language */}
+      <div class={`sidebar-pref-row flex items-center justify-between gap-2 min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
+        <button
+          type="button"
+          data-app-lang-toggle
+          class={`sidebar-lang-quick-btn flex items-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
+          title="Toggle Language (HI / EN)"
+          aria-label="Toggle Language"
+        >
           <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
-          <span>Language</span>
-        </span>
-        <div class={`inline-flex items-center p-0.5 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-lg text-xs font-semibold select-none`} role="group" aria-label="Language selection">
+          <span class="sidebar-text">Language</span>
+        </button>
+        <div class={`sidebar-text inline-flex items-center p-0.5 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-lg text-xs font-semibold select-none`} role="group" aria-label="Language selection">
           <button
             type="button"
             data-app-lang="hinglish"
@@ -249,16 +254,22 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         </div>
       </div>
 
-      <div class={`flex items-center justify-between gap-2 min-h-11 md:min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
-        <span class={`text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted' : 'text-muted'} flex items-center gap-2`}>
+      {/* Theme */}
+      <div class={`sidebar-pref-row flex items-center justify-between gap-2 min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
+        <button
+          type="button"
+          class={`theme-toggle-btn flex items-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
+          title="Toggle Dark and Light Mode"
+          aria-label="Toggle Dark and Light Mode"
+        >
           <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
-          <span>Theme</span>
-        </span>
+          <span class="sidebar-text">Theme</span>
+        </button>
         <button
           type="button"
-          class="theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-full p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0"
+          class="sidebar-text theme-toggle-btn relative w-13 h-7 bg-canvas border border-border rounded-full p-0.5 flex items-center cursor-pointer transition-colors focus:outline-none shrink-0"
           title="Toggle Dark and Light Mode"
           aria-label="Toggle Dark and Light Mode"
         >
@@ -277,7 +288,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       <a 
         href={loginHref}
         data-login-link
-        class={`auth-login-link flex items-center justify-center gap-2 w-full min-h-11 md:min-h-10 px-4 rounded-xl ${
+        class={`auth-login-link sidebar-auth-btn flex items-center justify-center gap-2 w-full min-h-11 md:min-h-10 px-4 rounded-xl ${
           isEditorialTheme
             ? 'bg-editorial-accent hover:bg-editorial-accent-hover text-white border border-editorial-accent'
             : 'bg-accent hover:bg-accent/90 text-white border border-accent'
@@ -299,7 +310,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           id={`${prefix}-notification-trigger`}
           data-notification-trigger={`${prefix}-notification-popup`}
           type="button"
-          class={`sidebar-notification-pill-btn w-full px-3 py-2.5 rounded-xl ${
+          class={`sidebar-notification-pill-btn relative w-full px-3 py-2.5 rounded-xl ${
             isEditorialTheme 
               ? 'bg-editorial-surface hover:bg-editorial-accent-soft border-editorial-border text-editorial-text' 
               : 'bg-surface-raised/50 hover:bg-surface-raised border-border/60 text-heading'
@@ -321,6 +332,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           } text-[10px] font-bold leading-none`}>
             0
           </span>
+          <span class="notification-rail-dot hidden absolute top-1.5 right-1.5 size-2 rounded-full bg-editorial-accent"></span>
         </button>
 
         {/* Notification Popup */}

@@ -1364,32 +1364,110 @@ html:not(.theme-dark) a:hover > svg.text-muted {
    ============================================================ */
 
 
+/* ── Desktop Sidebar Rail / Expanded Architecture ── */
 #desktop-sidebar-wrapper {
   position: sticky;
   top: 0;
   height: 100vh;
   width: 16rem;
+  min-width: 16rem;
   overflow: visible;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
   will-change: width;
 
-  &>aside {
+  & > aside {
     width: 16rem;
     min-width: 16rem;
     height: 100vh;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Enable animation only when user explicitly toggles the sidebar (prevents flash on initial load and client transitions) */
+html.sidebar-ready #desktop-sidebar-wrapper,
+html.sidebar-ready #desktop-sidebar-wrapper > aside {
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Collapsed (Rail) Mode — Half-way collapse keeping icons visible and operational */
+:is(html[data-sidebar-collapsed="true"], html.sidebar-collapsed, #desktop-sidebar-wrapper.collapsed) #desktop-sidebar-wrapper {
+  width: 4.25rem !important;
+  min-width: 4.25rem !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  overflow: visible !important;
+
+  & > aside {
+    width: 4.25rem !important;
+    min-width: 4.25rem !important;
+    transform: none !important;
   }
 
-  &.collapsed {
-    width: 0;
-    min-width: 0;
-    opacity: 0;
-    pointer-events: none;
-    overflow: hidden;
+  .sidebar-text {
+    display: none !important;
+  }
 
-    &>aside {
-      transform: translateX(-100%);
+  .sidebar-header {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .sidebar-nav-item,
+  .sidebar-channel-item {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    gap: 0 !important;
+    justify-content: center !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .sidebar-pref-row {
+    padding: 0 !important;
+    justify-content: center !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .sidebar-notification-pill-btn {
+    padding: 0 !important;
+    justify-content: center !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+
+    .notification-rail-dot {
+      display: block !important;
     }
+  }
+
+  .sidebar-profile-card {
+    padding: 0 !important;
+    justify-content: center !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    background: transparent !important;
+    border-color: transparent !important;
+  }
+
+  .sidebar-auth-btn {
+    padding: 0 !important;
+    justify-content: center !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
 }
 
@@ -1437,9 +1515,29 @@ html:not(.theme-dark) a:hover > svg.text-muted {
   background-color: var(--color-editorial-accent, var(--color-accent));
 }
 
-/* Auth state display classes */
+/* Auth state display classes driven by data-authenticated attribute */
+html[data-authenticated="true"] .header-auth-logged-out,
+html[data-authenticated="true"] .sidebar-auth-logged-out {
+  display: none !important;
+}
+
+html[data-authenticated="true"] .header-auth-logged-in,
+html[data-authenticated="true"] .sidebar-auth-logged-in {
+  display: flex !important;
+}
+
+html:not([data-authenticated="true"]) .header-auth-logged-in,
+html:not([data-authenticated="true"]) .sidebar-auth-logged-in {
+  display: none !important;
+}
+
+html:not([data-authenticated="true"]) .header-auth-logged-out,
+html:not([data-authenticated="true"]) .sidebar-auth-logged-out {
+  display: flex !important;
+}
+
 :is(.header-auth-logged-out, .header-auth-logged-in, .sidebar-auth-logged-out, .sidebar-auth-logged-in).hidden {
-  display: none;
+  display: none !important;
 }
 
 /* Language Switcher using semantic design tokens */

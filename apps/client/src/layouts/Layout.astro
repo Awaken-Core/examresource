@@ -264,6 +264,26 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Apply the saved theme before paint, and keep toggles synced across Astro page swaps */}
     <script is:inline>
       (function() {
+        function syncEarlyLayoutState() {
+          try {
+            var isAuth = localStorage.getItem('auth_active') === '1' || document.cookie.indexOf('logged_in=1') !== -1 || window.location.search.indexOf('login=success') !== -1;
+            if (isAuth) {
+              document.documentElement.setAttribute('data-authenticated', 'true');
+            } else {
+              document.documentElement.removeAttribute('data-authenticated');
+            }
+            var isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+            if (isCollapsed) {
+              document.documentElement.setAttribute('data-sidebar-collapsed', 'true');
+              document.documentElement.classList.add('sidebar-collapsed');
+            } else {
+              document.documentElement.removeAttribute('data-sidebar-collapsed');
+              document.documentElement.classList.remove('sidebar-collapsed');
+            }
+          } catch (e) {}
+        }
+        syncEarlyLayoutState();
+
         function syncThemeElements() {
           try {
             var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
@@ -295,8 +315,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         syncThemeElements();
         if (!window.__examThemeBound) {
           window.__examThemeBound = true;
-          document.addEventListener('astro:after-swap', syncThemeElements);
-          document.addEventListener('astro:page-load', syncThemeElements);
+          document.addEventListener('astro:after-swap', function() { syncEarlyLayoutState(); syncThemeElements(); });
+          document.addEventListener('astro:page-load', function() { syncEarlyLayoutState(); syncThemeElements(); });
         }
       })();
     </script>
@@ -529,10 +549,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         {/* Logged In */}
         <div class="sidebar-auth-logged-in hidden space-y-2">
-          <button
-            type="button"
-            class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer"
-          >
+          <a href="/profile" data-mobile-sidebar-close class="sidebar-profile-card w-full flex items-center gap-3 p-2.5 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/50 hover:border-border transition cursor-pointer">
             <div class="w-9 h-9 rounded-full bg-surface-raised border border-border text-white flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden shadow-xs select-none">
               <span class="user-avatar-initials inline-flex items-center justify-center text-center text-xs font-bold leading-none uppercase">{defaultAvatarInitials}</span>
             </div>
@@ -540,7 +557,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               <p class="user-display-name text-sm font-bold text-white truncate leading-tight">User</p>
               <p class="user-display-email text-xs text-muted leading-none mt-0.5 truncate">Free</p>
             </div>
-          </button>
+          </a>
 
           {/* Mobile Drawer Quick Actions: Favorites & Notifications */}
           <div class="grid grid-cols-2 gap-1.5 pt-0.5">
@@ -782,59 +799,19 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         // --- Desktop Sidebar Collapse Management (Matches Image 1) ---
 
-        let sidebarCollapseTimer: number | null = null;
-
         function setSidebarCollapsed(isCollapsed: boolean, immediate = false) {
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
-          if (!wrapper) return;
-          const isCurrentlyCollapsed = wrapper.classList.contains('collapsed');
-          if (isCurrentlyCollapsed === isCollapsed && !immediate) return;
-
-          const headerExpandContainer = document.getElementById('header-sidebar-expand-container');
-          const headerBrand = document.getElementById('header-brand-collapsed');
-          const tooltipText = document.getElementById('sidebar-toggle-tooltip-text');
-          wrapper.classList.remove('hover-peek');
-
-          if (sidebarCollapseTimer) {
-            clearTimeout(sidebarCollapseTimer);
-            sidebarCollapseTimer = null;
-          }
-
           if (isCollapsed) {
-            wrapper.classList.add('collapsed');
-            if (headerBrand) {
-              headerBrand.classList.remove('hidden');
-              headerBrand.classList.add('flex');
-            }
-            if (tooltipText) tooltipText.textContent = 'Expand sidebar';
-
-            // When sidebar closes, wait until the 300ms animation settles before showing the header sidebar open icon (Desktop only)
-            if (immediate) {
-              if (window.innerWidth >= 1024 && headerExpandContainer) {
-                headerExpandContainer.classList.remove('hidden');
-                headerExpandContainer.classList.add('flex');
-              }
-            } else {
-              sidebarCollapseTimer = window.setTimeout(() => {
-                if (window.innerWidth >= 1024 && headerExpandContainer) {
-                  headerExpandContainer.classList.remove('hidden');
-                  headerExpandContainer.classList.add('flex');
-                }
-              }, 300);
-            }
+            wrapper?.classList.add('collapsed');
+            document.documentElement.setAttribute('data-sidebar-collapsed', 'true');
+            document.documentElement.classList.add('sidebar-collapsed');
           } else {
-            wrapper.classList.remove('collapsed');
-            // When expanding, immediately hide the header sidebar open icon so it is never visible twice
-            if (headerExpandContainer) {
-              headerExpandContainer.classList.add('hidden');
-              headerExpandContainer.classList.remove('flex');
-            }
-            if (headerBrand) {
-              headerBrand.classList.add('hidden');
-              headerBrand.classList.remove('flex');
-            }
-            if (tooltipText) tooltipText.textContent = 'Collapse sidebar';
+            wrapper?.classList.remove('collapsed');
+            document.documentElement.removeAttribute('data-sidebar-collapsed');
+            document.documentElement.classList.remove('sidebar-collapsed');
           }
+          const tooltipText = document.getElementById('sidebar-toggle-tooltip-text');
+          if (tooltipText) tooltipText.textContent = isCollapsed ? 'Expand sidebar' : 'Collapse sidebar';
           localStorage.setItem('sidebar-collapsed', isCollapsed ? 'true' : 'false');
         }
 
@@ -849,9 +826,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             }
             return;
           }
-          const wrapper = document.getElementById('desktop-sidebar-wrapper');
-          wrapper?.classList.remove('hover-peek');
-          const isCurrentlyCollapsed = wrapper?.classList.contains('collapsed') ?? false;
+          document.documentElement.classList.add('sidebar-ready');
+          const isCurrentlyCollapsed = document.documentElement.getAttribute('data-sidebar-collapsed') === 'true' ||
+            (document.getElementById('desktop-sidebar-wrapper')?.classList.contains('collapsed') ?? false);
           setSidebarCollapsed(!isCurrentlyCollapsed);
         }
 
