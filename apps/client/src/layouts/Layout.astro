@@ -1007,9 +1007,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             return;
           }
 
-          // On any listing page (/, /blogs, /latest-updates, /category/*), reload so SSR delivers articles in the newly selected language
+          // Update listing cards in-place with zero page reload
           if (previous !== normalized) {
-            window.location.reload();
+            void refreshListingCardsInPlace(normalized);
           }
         }
 

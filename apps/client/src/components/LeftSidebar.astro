@@ -227,12 +227,12 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         <button
           type="button"
           data-app-lang-toggle
-          class={`sidebar-lang-quick-btn flex items-center justify-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
+          class={`sidebar-lang-quick-btn flex items-center justify-center text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
           title="Toggle Language (HI / EN)"
           aria-label="Toggle Language"
         >
           <span class="sidebar-lang-code font-bold text-[13px] tracking-wider text-editorial-accent select-none inline-flex items-center justify-center leading-none">{langCode}</span>
-          <span class="sidebar-text">Language</span>
+          <span class="sidebar-text ml-2">Language</span>
         </button>
         <div class={`sidebar-text inline-flex items-center p-0.5 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-lg text-xs font-semibold select-none`} role="group" aria-label="Language selection">
           <button
@@ -260,7 +260,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       <div class={`sidebar-pref-row flex items-center justify-between gap-2 min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
         <button
           type="button"
-          class={`theme-toggle-btn flex items-center justify-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
+          class={`theme-toggle-btn flex items-center justify-center text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
           title="Toggle Dark and Light Mode"
           aria-label="Toggle Dark and Light Mode"
         >
@@ -280,7 +280,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           <svg class="theme-icon-moon size-4 text-editorial-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
-          <span class="sidebar-text">Theme</span>
+          <span class="sidebar-text ml-2">Theme</span>
         </button>
         <button
           type="button"
@@ -347,7 +347,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
           } text-[10px] font-bold leading-none`}>
             0
           </span>
-          <span class="notification-rail-dot hidden absolute top-1.5 right-1.5 size-2 rounded-full bg-editorial-accent"></span>
+          <span class="notification-rail-dot notification-dot-indicator hidden absolute top-1.5 right-1.5 size-2 rounded-full bg-editorial-accent pointer-events-none"></span>
         </button>
 
         {/* Notification Popup */}

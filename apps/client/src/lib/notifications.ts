@@ -384,7 +384,7 @@ function paint(items: AppNotification[]) {
     node.textContent = pillText;
   });
 
-  document.querySelectorAll('.notification-dot-indicator').forEach((node) => {
+  document.querySelectorAll('.notification-dot-indicator, .notification-rail-dot').forEach((node) => {
     node.classList.toggle('hidden', unread.length === 0);
   });
 
