@@ -18,6 +18,7 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isHomePage = currentPath === '/';
 const isBlogsActive = currentPath === '/blogs' || currentPath.startsWith('/blogs/') || currentPath.startsWith('/category/');
 const isTestSeriesActive = currentPath === '/test-series' || currentPath.startsWith('/test-series/');
+const isDailyQuizActive = currentPath === '/daily-quiz' || currentPath.startsWith('/daily-quiz/');
 const currentSearch = Astro.url.search || '';
 const isAuthPage = currentPath === '/login' || currentPath === '/signup' || currentPath.startsWith('/auth/');
 const loginHref = (!isAuthPage && currentPath !== '/')
@@ -123,8 +124,12 @@ const loginHref = (!isAuthPage && currentPath !== '/')
             Live tests
           </a>
           <a
-            href="/test-series"
-            class="relative py-1 text-editorial-subheading hover:text-editorial-heading font-medium transition-colors"
+            href="/daily-quiz"
+            class={`relative py-1 transition-colors ${
+              isDailyQuizActive
+                ? 'text-editorial-heading font-semibold after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-editorial-accent after:rounded-full'
+                : 'text-editorial-subheading hover:text-editorial-heading font-medium'
+            }`}
           >
             Quizzes
           </a>

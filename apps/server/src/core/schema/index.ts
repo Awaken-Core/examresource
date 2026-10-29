@@ -11,3 +11,4 @@ export * from './question.schema.js';
 export * from './exam.schema.js';
 export * from './test-series.schema.js';
 export * from './payment.schema.js';
+export * from './daily-quiz.schema.js';

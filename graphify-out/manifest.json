@@ -87,16 +87,16 @@
     "semantic_hash": "f98b3e2e620bb9f6ef05fc5f95efd309"
   },
   "apps/client/src/components/Header.astro": {
-    "mtime": 1793198702.4393857,
-    "seen": 1793198705.7018566,
-    "ast_hash": "dea05450bca81857a1a394103c37a5de",
+    "mtime": 1793202390.5342977,
+    "seen": 1793205789.6897233,
+    "ast_hash": "138929a8205661e291b81fb4c3c341f3",
     "semantic_hash": ""
   },
   "apps/client/src/components/LeftSidebar.astro": {
-    "mtime": 1793198702.4393857,
-    "seen": 1793198705.7018576,
-    "ast_hash": "9bd2647fd3917a0204c7e154838805c8",
-    "semantic_hash": "9bd2647fd3917a0204c7e154838805c8"
+    "mtime": 1793210843.339133,
+    "seen": 1793210954.8995073,
+    "ast_hash": "d7b238c1a5d25097c1dc29b24304c17d",
+    "semantic_hash": ""
   },
   "apps/client/src/components/NotificationPopup.astro": {
     "mtime": 1793125979.6568766,
@@ -327,10 +327,10 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/profile/ProfileHub.tsx": {
-    "mtime": 1793114919.4602733,
-    "seen": 1793196776.7887964,
-    "ast_hash": "97ecb34ef9add1b02a455895c5903346",
-    "semantic_hash": "97ecb34ef9add1b02a455895c5903346"
+    "mtime": 1793205429.2918139,
+    "seen": 1793205789.6897976,
+    "ast_hash": "d60abbd41ea039acab3025b7efc8edc9",
+    "semantic_hash": ""
   },
   "apps/client/src/components/test-series/CBTCalculator.tsx": {
     "mtime": 1793035362.6289608,
@@ -381,10 +381,10 @@
     "semantic_hash": "90a348158c4b0c348ef2b3bb6e9369f1"
   },
   "apps/client/src/components/test-series/CBTQuestionPanel.tsx": {
-    "mtime": 1793035362.6349676,
-    "seen": 1793196776.790944,
-    "ast_hash": "576df9d86d9676c668718b0aa303739b",
-    "semantic_hash": "576df9d86d9676c668718b0aa303739b"
+    "mtime": 1793210418.7062032,
+    "seen": 1793210954.8995662,
+    "ast_hash": "a98caaa67211f882d9ac046c50475a96",
+    "semantic_hash": ""
   },
   "apps/client/src/components/test-series/CBTSubmitModal.tsx": {
     "mtime": 1793035362.6359675,
@@ -393,10 +393,10 @@
     "semantic_hash": "c01285bf6e96c792b382a28bae3cc869"
   },
   "apps/client/src/components/test-series/CBTTestRunner.tsx": {
-    "mtime": 1793035362.6359675,
-    "seen": 1793196776.7913375,
-    "ast_hash": "af6c843b464daddaead72d9766eb4361",
-    "semantic_hash": "af6c843b464daddaead72d9766eb4361"
+    "mtime": 1793210431.9135022,
+    "seen": 1793210954.8995702,
+    "ast_hash": "ef3b96c971e27a1ad40db1b101e82ab4",
+    "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestInstructions.tsx": {
     "mtime": 1793117518.5399683,
@@ -411,9 +411,9 @@
     "semantic_hash": "4a0a90af1f3de9bb0b987b8a8c638560"
   },
   "apps/client/src/components/test-series/TestSeriesDetail.tsx": {
-    "mtime": 1793200786.8277369,
-    "seen": 1793200838.8605962,
-    "ast_hash": "043f519e69c10465cf187916df7fa2ed",
+    "mtime": 1793205472.8798337,
+    "seen": 1793205789.6898212,
+    "ast_hash": "fa8035e2414822da94a361524313fc44",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesExplorer.tsx": {
@@ -423,9 +423,9 @@
     "semantic_hash": "1c6a2a6e71549660d4c666466a7b9c40"
   },
   "apps/client/src/components/test-series/TestSeriesPassCard.tsx": {
-    "mtime": 1793200677.31631,
-    "seen": 1793200838.8606002,
-    "ast_hash": "42792b4c00c0ea924ab96174b708abaa",
+    "mtime": 1793203994.2555904,
+    "seen": 1793205789.6898246,
+    "ast_hash": "ed23b9c1d8ef56198237b1e7a848e9fd",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/hooks/useCBTAttempt.ts": {
@@ -897,9 +897,9 @@
     "semantic_hash": "2f3001053dca0670814e9411efa34ecc"
   },
   "apps/client/src/pages/test-series/[id].astro": {
-    "mtime": 1793199636.4953036,
-    "seen": 1793199696.52418,
-    "ast_hash": "4d21321851a5e1ce340bcb012677c24c",
+    "mtime": 1793203005.1731167,
+    "seen": 1793205789.6899736,
+    "ast_hash": "65d5596f2fd724e07872343f4262d1e5",
     "semantic_hash": ""
   },
   "apps/client/src/pages/test-series/cbt/[attemptId].astro": {
@@ -1011,10 +1011,10 @@
     "semantic_hash": "5ca326b9b8dd2a4141b78d405205c762"
   },
   "apps/server/src/app.module.ts": {
-    "mtime": 1793114919.4734647,
-    "seen": 1793196776.8114426,
-    "ast_hash": "e740afd1f57e4ae570a19aab9a116da4",
-    "semantic_hash": "e740afd1f57e4ae570a19aab9a116da4"
+    "mtime": 1793210565.0161867,
+    "seen": 1793210954.89969,
+    "ast_hash": "a89c14901b76ca1a8db53d6d04b352fb",
+    "semantic_hash": ""
   },
   "apps/server/src/app.service.ts": {
     "mtime": 1791660125.2160418,
@@ -1107,10 +1107,10 @@
     "semantic_hash": "5a66dcb60d8287ea55d30122bd432cbd"
   },
   "apps/server/src/core/schema/index.ts": {
-    "mtime": 1793114919.475464,
-    "seen": 1793196776.8141508,
-    "ast_hash": "c6c03309957dc3aa3c1aa54b30da4029",
-    "semantic_hash": "c6c03309957dc3aa3c1aa54b30da4029"
+    "mtime": 1793210511.2008617,
+    "seen": 1793210954.8997076,
+    "ast_hash": "a616b28895662db01367f0ee28f58135",
+    "semantic_hash": ""
   },
   "apps/server/src/core/schema/notification.schema.ts": {
     "mtime": 1793199389.4415183,
@@ -2045,6 +2045,78 @@
     "mtime": 1793035362.603418,
     "seen": 1793197001.3988242,
     "ast_hash": "7b8c2b04b19624222d836d4c4ed9284c",
+    "semantic_hash": ""
+  },
+  "apps/client/src/components/daily-quiz/DailyQuizRunner.tsx": {
+    "mtime": 1793210697.9452012,
+    "seen": 1793210954.899552,
+    "ast_hash": "828e49595a7ded497cec3533dcd333d8",
+    "semantic_hash": ""
+  },
+  "apps/client/src/components/rank-predictor/RankPredictorIsland.tsx": {
+    "mtime": 1793210766.783547,
+    "seen": 1793210954.899555,
+    "ast_hash": "e53fe300793a1e59954e7ebe088cdec6",
+    "semantic_hash": ""
+  },
+  "apps/client/src/components/test-series/CBTQuestionReportModal.tsx": {
+    "mtime": 1793210358.3942366,
+    "seen": 1793210954.8995674,
+    "ast_hash": "cc92e424132afe85f49a5cf194921fd2",
+    "semantic_hash": ""
+  },
+  "apps/client/src/pages/daily-quiz/index.astro": {
+    "mtime": 1793210726.4966185,
+    "seen": 1793210954.899639,
+    "ast_hash": "51ca763c9e4f5885632fa470e952c6bd",
+    "semantic_hash": ""
+  },
+  "apps/client/src/pages/rank-predictor.astro": {
+    "mtime": 1793210778.4683588,
+    "seen": 1793210954.8996544,
+    "ast_hash": "1317a9ce756fd8eb02b9d5420fd36c7e",
+    "semantic_hash": ""
+  },
+  "apps/server/src/core/schema/daily-quiz.schema.ts": {
+    "mtime": 1793210500.7911098,
+    "seen": 1793210954.8997056,
+    "ast_hash": "cf0e06f51ab5db79ccd9faf91b9fac9e",
+    "semantic_hash": ""
+  },
+  "apps/server/src/modules/daily-quiz/daily-quiz.controller.ts": {
+    "mtime": 1793210625.3407197,
+    "seen": 1793210954.899747,
+    "ast_hash": "4ed387b1bffab6c6398ef95aec78791e",
+    "semantic_hash": ""
+  },
+  "apps/server/src/modules/daily-quiz/daily-quiz.module.ts": {
+    "mtime": 1793210554.6695054,
+    "seen": 1793210954.8997476,
+    "ast_hash": "296d23a8a297110239eb9a55b38bea8c",
+    "semantic_hash": ""
+  },
+  "apps/server/src/modules/daily-quiz/daily-quiz.service.spec.ts": {
+    "mtime": 1793210905.3085861,
+    "seen": 1793210954.8997486,
+    "ast_hash": "2f4f2e4d41c8cfaf449632da92c143dc",
+    "semantic_hash": ""
+  },
+  "apps/server/src/modules/daily-quiz/daily-quiz.service.ts": {
+    "mtime": 1793210617.1288874,
+    "seen": 1793210954.8997493,
+    "ast_hash": "af4bdb09a8fd6e95843e873b21555550",
+    "semantic_hash": ""
+  },
+  "apps/server/src/modules/daily-quiz/dto/daily-quiz.dto.ts": {
+    "mtime": 1793210521.3588526,
+    "seen": 1793210954.8997507,
+    "ast_hash": "44fdefd9417cbbac7b1a8e76dab0ab08",
+    "semantic_hash": ""
+  },
+  "seed/daily-quiz-seed.ts": {
+    "mtime": 1793210656.885432,
+    "seen": 1793210954.899805,
+    "ast_hash": "c56f0184e969c6dee8ca2ec5c9194440",
     "semantic_hash": ""
   }
 }

@@ -1,0 +1,398 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { siteName, siteUrl } from '../../data/site';
+import { API_URL } from '../../lib/api';
+import { DailyQuizRunner, type QuizDataPayload } from '../../components/daily-quiz/DailyQuizRunner';
+
+interface RecentQuiz {
+  date: string;
+  title: string;
+  category: string;
+  attemptsCount: number;
+}
+
+let primaryQuiz: QuizDataPayload | null = null;
+let recentList: RecentQuiz[] = [];
+let availableQuizzes: QuizDataPayload[] = [];
+
+try {
+  const [quizRes, recentRes] = await Promise.all([
+    fetch(`${API_URL}/daily-quizzes/today`, {
+      signal: AbortSignal.timeout(4000),
+    }),
+    fetch(`${API_URL}/daily-quizzes?limit=7`, {
+      signal: AbortSignal.timeout(4000),
+    }),
+  ]);
+
+  if (quizRes.ok) {
+    primaryQuiz = await quizRes.json();
+  }
+  if (recentRes.ok) {
+    recentList = await recentRes.json();
+  }
+} catch {
+  // Graceful fallback if server is starting or offline
+}
+
+const today = new Date().toISOString().slice(0, 10);
+
+// Multi-category quizzes ready for in-page instant switching (New Quiz on same page)
+const sampleQuizzes: QuizDataPayload[] = [
+  {
+    id: `ca-${today}`,
+    date: today,
+    title: `Daily Current Affairs & Awareness · ${today}`,
+    category: 'current-affairs',
+    durationMinutes: 5,
+    totalMarks: 5,
+    totalQuestions: 5,
+    questions: [
+      {
+        id: 'q1',
+        content: {
+          en: 'Under Article 110 of the Constitution of India, who possesses the final authority to decide whether a bill is a Money Bill or not?',
+          hi: 'भारतीय संविधान के अनुच्छेद 110 के अंतर्गत, यह निर्णय लेने का अंतिम अधिकार किसके पास है कि कोई विधेयक धन विधेयक है या नहीं?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Speaker of the Lok Sabha', hi: 'लोकसभा अध्यक्ष' } },
+          { id: 'B', text: { en: 'President of India', hi: 'भारत के राष्ट्रपति' } },
+          { id: 'C', text: { en: 'Finance Minister', hi: 'वित्त मंत्री' } },
+          { id: 'D', text: { en: 'Chief Justice of India', hi: 'भारत के मुख्य न्यायाधीश' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'q2',
+        content: {
+          en: 'Which Indian classical dance form originated in the state of Kerala and is recognized for its elaborate makeup and costumes?',
+          hi: 'कौन सा भारतीय शास्त्रीय नृत्य केरल राज्य से संबंधित है और अपनी विस्तृत वेशभूषा और मुखौटों के लिए जाना जाता है?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Kathakali', hi: 'कथकली' } },
+          { id: 'B', text: { en: 'Bharatanatyam', hi: 'भरतनाट्यम' } },
+          { id: 'C', text: { en: 'Kuchipudi', hi: 'कुचिपुड़ी' } },
+          { id: 'D', text: { en: 'Odissi', hi: 'ओडिसी' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'q3',
+        content: {
+          en: 'Who has been appointed as the new Chief of the Naval Staff of India recently in 2024?',
+          hi: 'हाल ही में 2024 में भारत के नए नौसेना प्रमुख के रूप में किसे नियुक्त किया गया है?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Admiral Dinesh K Tripathi', hi: 'एडमिरल दिनेश के त्रिपाठी' } },
+          { id: 'B', text: { en: 'Admiral R. Hari Kumar', hi: 'एडमिरल आर. हरि कुमार' } },
+          { id: 'C', text: { en: 'General Upendra Dwivedi', hi: 'जनरल उपेन्द्र द्विवेदी' } },
+          { id: 'D', text: { en: 'Air Chief Marshal VR Chaudhari', hi: 'एयर चीफ मार्शल वीआर चौधरी' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'q4',
+        content: {
+          en: 'What is the theme of World Environment Day observed annually on June 5?',
+          hi: 'प्रत्येक वर्ष 5 जून को मनाए जाने वाले विश्व पर्यावरण दिवस का मुख्य विषय क्या है?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Land Restoration, Desertification and Drought Resilience', hi: 'भूमि बहाली, मरुस्थलीकरण और सूखा सहनशीलता' } },
+          { id: 'B', text: { en: 'Beat Plastic Pollution', hi: 'प्लास्टिक प्रदूषण को समाप्त करना' } },
+          { id: 'C', text: { en: 'Only One Earth', hi: 'केवल एक पृथ्वी' } },
+          { id: 'D', text: { en: 'Ecosystem Restoration', hi: 'पारिस्थितिकी तंत्र की बहाली' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'q5',
+        content: {
+          en: 'The Tropic of Cancer does NOT pass through which of the following Indian states?',
+          hi: 'कर्क रेखा निम्नलिखित में से किस भारतीय राज्य से होकर नहीं गुजरती है?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Odisha', hi: 'ओडिशा' } },
+          { id: 'B', text: { en: 'Gujarat', hi: 'गुजरात' } },
+          { id: 'C', text: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश' } },
+          { id: 'D', text: { en: 'Tripura', hi: 'त्रिपुरा' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+    ],
+  },
+  {
+    id: `quant-${today}`,
+    date: today,
+    title: `Quantitative Aptitude Speed Drill · ${today}`,
+    category: 'quantitative-aptitude',
+    durationMinutes: 5,
+    totalMarks: 5,
+    totalQuestions: 5,
+    questions: [
+      {
+        id: 'quant-1',
+        content: {
+          en: 'If a sum of money doubles itself at simple interest in 8 years, what is the annual rate of interest?',
+          hi: 'यदि कोई धनराशि साधारण ब्याज पर 8 वर्षों में दोगुनी हो जाती है, तो वार्षिक ब्याज दर क्या है?',
+        },
+        options: [
+          { id: 'A', text: { en: '12.5% per annum', hi: '12.5% प्रति वर्ष' } },
+          { id: 'B', text: { en: '10.0% per annum', hi: '10.0% प्रति वर्ष' } },
+          { id: 'C', text: { en: '15.0% per annum', hi: '15.0% प्रति वर्ष' } },
+          { id: 'D', text: { en: '8.0% per annum', hi: '8.0% प्रति वर्ष' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'quant-2',
+        content: {
+          en: 'Two successive discounts of 20% and 15% are equivalent to a single discount of:',
+          hi: '20% और 15% की दो क्रमागत छूटें किस एकल छूट के बराबर हैं?',
+        },
+        options: [
+          { id: 'A', text: { en: '32%', hi: '32%' } },
+          { id: 'B', text: { en: '35%', hi: '35%' } },
+          { id: 'C', text: { en: '30%', hi: '30%' } },
+          { id: 'D', text: { en: '28%', hi: '28%' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'quant-3',
+        content: {
+          en: 'A train 240 m long passes a pole in 24 seconds. What is the speed of the train in km/h?',
+          hi: '240 मीटर लंबी एक ट्रेन 24 सेकंड में एक खंभे को पार करती है। ट्रेन की गति किमी/घंटा में क्या है?',
+        },
+        options: [
+          { id: 'A', text: { en: '36 km/h', hi: '36 किमी/घंटा' } },
+          { id: 'B', text: { en: '40 km/h', hi: '40 किमी/घंटा' } },
+          { id: 'C', text: { en: '45 km/h', hi: '45 किमी/घंटा' } },
+          { id: 'D', text: { en: '30 km/h', hi: '30 किमी/घंटा' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'quant-4',
+        content: {
+          en: 'If x + 1/x = 5, what is the value of x² + 1/x²?',
+          hi: 'यदि x + 1/x = 5 है, तो x² + 1/x² का मान क्या होगा?',
+        },
+        options: [
+          { id: 'A', text: { en: '23', hi: '23' } },
+          { id: 'B', text: { en: '25', hi: '25' } },
+          { id: 'C', text: { en: '27', hi: '27' } },
+          { id: 'D', text: { en: '21', hi: '21' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'quant-5',
+        content: {
+          en: 'The ratio of ages of A and B is 3:4. Four years hence, the ratio will become 4:5. Find the present age of A.',
+          hi: 'A और B की आयु का अनुपात 3:4 है। चार वर्ष बाद यह अनुपात 4:5 हो जाएगा। A की वर्तमान आयु ज्ञात कीजिए।',
+        },
+        options: [
+          { id: 'A', text: { en: '12 years', hi: '12 वर्ष' } },
+          { id: 'B', text: { en: '16 years', hi: '16 वर्ष' } },
+          { id: 'C', text: { en: '18 years', hi: '18 वर्ष' } },
+          { id: 'D', text: { en: '20 years', hi: '20 वर्ष' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+    ],
+  },
+  {
+    id: `reasoning-${today}`,
+    date: today,
+    title: `General Intelligence & Reasoning Sprint · ${today}`,
+    category: 'reasoning',
+    durationMinutes: 5,
+    totalMarks: 5,
+    totalQuestions: 5,
+    questions: [
+      {
+        id: 'reas-1',
+        content: {
+          en: 'Select the related word from the given alternatives: Ocean : Water :: Glacier : ?',
+          hi: 'दिए गए विकल्पों में से संबंधित शब्द चुनिए: महासागर : जल :: हिमनद : ?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Ice', hi: 'बर्फ' } },
+          { id: 'B', text: { en: 'Mountain', hi: 'पर्वत' } },
+          { id: 'C', text: { en: 'Cave', hi: 'गुफा' } },
+          { id: 'D', text: { en: 'Winter', hi: 'शीत ऋतु' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'reas-2',
+        content: {
+          en: 'In a code language, if DELHI is coded as 73541 and CALCUTTA as 82589662, how will CALICUT be coded?',
+          hi: 'एक कूट भाषा में, यदि DELHI को 73541 और CALCUTTA को 82589662 लिखा जाता है, तो CALICUT को कैसे लिखा जाएगा?',
+        },
+        options: [
+          { id: 'A', text: { en: '8251896', hi: '8251896' } },
+          { id: 'B', text: { en: '8251869', hi: '8251869' } },
+          { id: 'C', text: { en: '8521896', hi: '8521896' } },
+          { id: 'D', text: { en: '8251968', hi: '8251968' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'reas-3',
+        content: {
+          en: 'Find the next number in the series: 3, 7, 15, 31, 63, ?',
+          hi: 'श्रृंखला में अगली संख्या ज्ञात कीजिए: 3, 7, 15, 31, 63, ?',
+        },
+        options: [
+          { id: 'A', text: { en: '127', hi: '127' } },
+          { id: 'B', text: { en: '126', hi: '126' } },
+          { id: 'C', text: { en: '125', hi: '125' } },
+          { id: 'D', text: { en: '129', hi: '129' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'reas-4',
+        content: {
+          en: 'Pointing to a photograph, a woman says: "He is the son of the only daughter of the father of my brother." How is the boy related to the woman?',
+          hi: 'एक तस्वीर की ओर इशारा करते हुए एक महिला कहती है: "वह मेरे भाई के पिता की इकलौती बेटी का बेटा है।" लड़का उस महिला से किस प्रकार संबंधित है?',
+        },
+        options: [
+          { id: 'A', text: { en: 'Son', hi: 'पुत्र' } },
+          { id: 'B', text: { en: 'Nephew', hi: 'भतीजा/भांजा' } },
+          { id: 'C', text: { en: 'Brother', hi: 'भाई' } },
+          { id: 'D', text: { en: 'Cousin', hi: 'चचेरा भाई' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+      {
+        id: 'reas-5',
+        content: {
+          en: 'Which number is on the face opposite to 3 on a standard dice?',
+          hi: 'एक मानक पासे पर संख्या 3 के विपरीत फलक पर कौन सी संख्या होगी?',
+        },
+        options: [
+          { id: 'A', text: { en: '4', hi: '4' } },
+          { id: 'B', text: { en: '5', hi: '5' } },
+          { id: 'C', text: { en: '6', hi: '6' } },
+          { id: 'D', text: { en: '2', hi: '2' } },
+        ],
+        marks: 1,
+        negativeMarks: 0.25,
+      },
+    ],
+  },
+];
+
+availableQuizzes = sampleQuizzes;
+if (primaryQuiz) {
+  availableQuizzes = [primaryQuiz, ...sampleQuizzes.filter(s => s.id !== primaryQuiz?.id)];
+} else {
+  primaryQuiz = sampleQuizzes[0];
+}
+
+const pageTitle = `Daily Quiz & Current Affairs (${primaryQuiz.date}) | ${siteName}`;
+const pageDescription = `Practice daily 5-minute bilingual quizzes for SSC, RRB, Banking, and PSCs with instant solutions, exam tips, and daily streak rewards.`;
+const canonicalUrl = `${siteUrl}/daily-quiz`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Quiz',
+  name: primaryQuiz.title,
+  description: pageDescription,
+  url: canonicalUrl,
+  educationalLevel: 'Competitive Examination',
+  timeRequired: `PT${primaryQuiz.durationMinutes}M`,
+};
+---
+
+<Layout title={pageTitle} description={pageDescription} canonicalUrl={canonicalUrl} jsonLd={jsonLd}>
+  <div class="min-h-screen bg-canvas py-8 px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-5xl">
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="mb-5 flex items-center gap-2 text-xs text-muted">
+        <a href="/" class="hover:text-heading transition-colors">Home</a>
+        <span>/</span>
+        <span class="font-semibold text-heading">Daily Micro-Quiz</span>
+      </nav>
+
+      <!-- Main Container with Quiz Runner and Archive Sidebar -->
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <!-- Primary Quiz Island -->
+        <main>
+          <DailyQuizRunner
+            client:load
+            initialQuiz={primaryQuiz}
+            availableQuizzes={availableQuizzes}
+            apiUrl={API_URL}
+          />
+        </main>
+
+        <!-- Right Sidebar: Recent Quizzes & Habit Streaks -->
+        <aside class="space-y-6">
+          <!-- Daily Habit Nudge Card -->
+          <div class="rounded-2xl border border-border bg-surface p-5 shadow-xs">
+            <div class="flex items-center gap-2.5">
+              <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-accent-soft text-accent text-sm font-bold">
+                ⚡
+              </span>
+              <div>
+                <h3 class="text-sm font-bold text-heading">5-Minute Daily Habit</h3>
+                <p class="text-[11px] text-muted">Consistency beats intensity.</p>
+              </div>
+            </div>
+            <p class="mt-3 text-xs leading-relaxed text-muted">
+              Top rankers in SSC CGL, RRB NTPC, and Banking complete 1 micro-quiz daily to build speed and accuracy.
+            </p>
+          </div>
+
+          <!-- Archive List -->
+          <div class="rounded-2xl border border-border bg-surface p-5 shadow-xs">
+            <h3 class="text-sm font-bold text-heading">Past Daily Quizzes</h3>
+            <ul class="mt-3 divide-y divide-border text-xs">
+              {recentList.length > 0 ? (
+                recentList.map((item) => (
+                  <li class="py-2.5 first:pt-0 last:pb-0">
+                    <a
+                      href={`/daily-quiz?date=${item.date}`}
+                      class="group flex items-center justify-between font-medium text-heading hover:text-accent transition-colors"
+                    >
+                      <span class="truncate">{item.title}</span>
+                      <span class="shrink-0 text-[11px] text-muted font-mono group-hover:text-accent">
+                        {item.date}
+                      </span>
+                    </a>
+                  </li>
+                ))
+              ) : (
+                sampleQuizzes.map((item) => (
+                  <li class="py-2.5 first:pt-0 last:pb-0">
+                    <div class="flex items-center justify-between text-muted">
+                      <span class="truncate">{item.category.replace('-', ' ')}</span>
+                      <span class="shrink-0 text-[11px] font-mono">{item.date}</span>
+                    </div>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</Layout>

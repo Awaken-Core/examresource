@@ -667,6 +667,7 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
                 totalQuestions={answersList.length}
                 question={activeAnswer?.question ?? null}
                 language={language}
+                onLanguageChange={setLanguage}
                 selectedOptionIds={selectedOptionIds}
                 numericalInput={numericalInput}
                 isFlagged={isFlagged}

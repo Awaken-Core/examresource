@@ -87,9 +87,9 @@
     "semantic_hash": "f98b3e2e620bb9f6ef05fc5f95efd309"
   },
   "apps/client/src/components/Header.astro": {
-    "mtime": 1793198702.4393857,
-    "seen": 1793198705.7018566,
-    "ast_hash": "dea05450bca81857a1a394103c37a5de",
+    "mtime": 1793202390.5342977,
+    "seen": 1793205789.6897233,
+    "ast_hash": "138929a8205661e291b81fb4c3c341f3",
     "semantic_hash": ""
   },
   "apps/client/src/components/LeftSidebar.astro": {
@@ -327,10 +327,10 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/profile/ProfileHub.tsx": {
-    "mtime": 1793114919.4602733,
-    "seen": 1793196776.7887964,
-    "ast_hash": "97ecb34ef9add1b02a455895c5903346",
-    "semantic_hash": "97ecb34ef9add1b02a455895c5903346"
+    "mtime": 1793205429.2918139,
+    "seen": 1793205789.6897976,
+    "ast_hash": "d60abbd41ea039acab3025b7efc8edc9",
+    "semantic_hash": ""
   },
   "apps/client/src/components/test-series/CBTCalculator.tsx": {
     "mtime": 1793035362.6289608,
@@ -411,9 +411,9 @@
     "semantic_hash": "4a0a90af1f3de9bb0b987b8a8c638560"
   },
   "apps/client/src/components/test-series/TestSeriesDetail.tsx": {
-    "mtime": 1793199826.2879603,
-    "seen": 1793199857.8901367,
-    "ast_hash": "87987ef123cc0f3398ebbc2c560ae8d5",
+    "mtime": 1793205472.8798337,
+    "seen": 1793205789.6898212,
+    "ast_hash": "fa8035e2414822da94a361524313fc44",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesExplorer.tsx": {
@@ -423,9 +423,9 @@
     "semantic_hash": "1c6a2a6e71549660d4c666466a7b9c40"
   },
   "apps/client/src/components/test-series/TestSeriesPassCard.tsx": {
-    "mtime": 1793199488.1224792,
-    "seen": 1793199696.5240889,
-    "ast_hash": "64048539374a0098d2cc3dc4c161fb1c",
+    "mtime": 1793203994.2555904,
+    "seen": 1793205789.6898246,
+    "ast_hash": "ed23b9c1d8ef56198237b1e7a848e9fd",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/hooks/useCBTAttempt.ts": {
@@ -897,9 +897,9 @@
     "semantic_hash": "2f3001053dca0670814e9411efa34ecc"
   },
   "apps/client/src/pages/test-series/[id].astro": {
-    "mtime": 1793199636.4953036,
-    "seen": 1793199696.52418,
-    "ast_hash": "4d21321851a5e1ce340bcb012677c24c",
+    "mtime": 1793203005.1731167,
+    "seen": 1793205789.6899736,
+    "ast_hash": "65d5596f2fd724e07872343f4262d1e5",
     "semantic_hash": ""
   },
   "apps/client/src/pages/test-series/cbt/[attemptId].astro": {
