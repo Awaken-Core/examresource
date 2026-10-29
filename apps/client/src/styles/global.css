@@ -1472,6 +1472,7 @@ html.sidebar-ready .sidebar-auth-btn {
 
   .sidebar-pref-row {
     padding: 0 !important;
+    display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     width: 2.75rem !important;
@@ -1485,11 +1486,21 @@ html.sidebar-ready .sidebar-auth-btn {
     & > .theme-toggle-btn {
       width: 100% !important;
       height: 100% !important;
+      display: flex !important;
       justify-content: center !important;
       align-items: center !important;
       padding: 0 !important;
       margin: 0 !important;
       gap: 0 !important;
+      text-align: center !important;
+    }
+
+    .sidebar-lang-code {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 auto !important;
+      line-height: 1 !important;
     }
   }
 

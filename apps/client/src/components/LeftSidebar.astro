@@ -19,6 +19,7 @@ const isBlogs = currentPath === '/blogs' || currentPath.startsWith('/blogs/');
 const isTestSeries = currentPath.startsWith('/test-series');
 const isDailyQuiz = currentPath.startsWith('/daily-quiz');
 const isRankPredictor = currentPath.startsWith('/rank-predictor');
+const isLatestUpdates = currentPath === '/latest-updates' || currentPath.startsWith('/latest-updates/');
 const currentSearch = Astro.url.search || '';
 const isAuthPage = currentPath === '/login' || currentPath === '/signup' || currentPath.startsWith('/auth/');
 const loginHref = (!isAuthPage && currentPath !== '/')
@@ -87,13 +88,18 @@ const loginHref = (!isAuthPage && currentPath !== '/')
 
       {/* 2. Latest updates */}
       <a 
-        href="/blogs#latest-updates"
+        href="/latest-updates"
+        aria-current={isLatestUpdates ? 'page' : undefined}
         class={`sidebar-nav-item flex items-center gap-3 min-h-11 md:min-h-10 px-3 rounded-lg ${
-          isEditorialTheme 
-            ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60' 
-            : 'text-muted hover:text-heading hover:bg-surface-raised'
-        } transition-colors duration-150 text-xs font-medium border border-transparent focus-visible:outline-2 focus-visible:outline-accent`}
-        title="Latest updates"
+          isLatestUpdates
+            ? isEditorialTheme
+              ? 'bg-editorial-accent-soft text-editorial-accent font-semibold border border-editorial-accent/25'
+              : 'bg-accent/10 text-accent font-semibold border border-accent/25'
+            : isEditorialTheme 
+              ? 'text-editorial-subheading hover:text-editorial-heading hover:bg-editorial-accent-soft/60 font-medium border border-transparent' 
+              : 'text-muted hover:text-heading hover:bg-surface-raised font-medium border border-transparent'
+        } transition-colors duration-150 text-xs focus-visible:outline-2 focus-visible:outline-accent`}
+        title="Latest Updates"
       >
         <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -218,13 +224,11 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         <button
           type="button"
           data-app-lang-toggle
-          class={`sidebar-lang-quick-btn flex items-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
+          class={`sidebar-lang-quick-btn flex items-center justify-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
           title="Toggle Language (HI / EN)"
           aria-label="Toggle Language"
         >
-          <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-          </svg>
+          <span class="sidebar-lang-code font-bold text-[11px] px-1.5 py-0.5 rounded-md bg-editorial-accent/15 text-editorial-accent border border-editorial-accent/30 tracking-wider shrink-0 select-none">HI</span>
           <span class="sidebar-text">Language</span>
         </button>
         <div class={`sidebar-text inline-flex items-center p-0.5 ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border' : 'bg-canvas border-border'} border rounded-lg text-xs font-semibold select-none`} role="group" aria-label="Language selection">
@@ -253,12 +257,25 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       <div class={`sidebar-pref-row flex items-center justify-between gap-2 min-h-10 px-2.5 rounded-xl ${isEditorialTheme ? 'bg-editorial-surface border-editorial-border' : 'bg-surface-raised/45 border-border/60 hover:border-border'} border transition-colors`}>
         <button
           type="button"
-          class={`theme-toggle-btn flex items-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
+          class={`theme-toggle-btn flex items-center justify-center gap-2 text-[12px] font-medium ${isEditorialTheme ? 'text-editorial-muted hover:text-editorial-heading' : 'text-muted hover:text-heading'} cursor-pointer select-none`}
           title="Toggle Dark and Light Mode"
           aria-label="Toggle Dark and Light Mode"
         >
-          <svg class={`w-3.5 h-3.5 ${isEditorialTheme ? 'text-editorial-accent' : 'text-accent'} shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          {/* Sun icon: shown in dark mode (click for light) */}
+          <svg class="theme-icon-sun size-4 text-editorial-accent shrink-0 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          {/* Moon icon: shown in light mode (click for dark) */}
+          <svg class="theme-icon-moon size-4 text-editorial-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
           <span class="sidebar-text">Theme</span>
         </button>

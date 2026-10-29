@@ -283,6 +283,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             }
           } catch (e) {}
         }
+        try {
+            var prefLang = localStorage.getItem('preferred_exam_lang') || 'hinglish';
+            var code = prefLang === 'en' ? 'EN' : 'HI';
+            document.querySelectorAll('.sidebar-lang-code').forEach(function(el) {
+              el.textContent = code;
+            });
+} catch (e) {}
         syncEarlyLayoutState();
         if (!window.__earlySwapBound) {
           window.__earlySwapBound = true;
@@ -325,6 +332,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               icon.classList.toggle('hidden', !isDark);
             });
             lightIcons.forEach(function(icon) {
+              icon.classList.toggle('hidden', isDark);
+            });
+            document.querySelectorAll('.theme-icon-sun').forEach(function(icon) {
+              icon.classList.toggle('hidden', !isDark);
+            });
+            document.querySelectorAll('.theme-icon-moon').forEach(function(icon) {
               icon.classList.toggle('hidden', isDark);
             });
           } catch (e) {}
@@ -516,12 +529,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           {/* Language Toggle Row */}
           <div class="flex items-center justify-between gap-3 px-3 py-2 rounded-xl bg-surface-raised/50 border border-border/60">
-            <span class="text-xs font-semibold text-white/90 flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-              </svg>
+            <button
+              type="button"
+              data-app-lang-toggle
+              class="text-xs font-semibold text-white/90 flex items-center gap-2 cursor-pointer"
+            >
+              <span class="sidebar-lang-code font-bold text-[11px] px-1.5 py-0.5 rounded-md bg-editorial-accent/15 text-editorial-accent border border-editorial-accent/30 tracking-wider shrink-0 select-none">HI</span>
               <span>Language</span>
-            </span>
+            </button>
             <div class="inline-flex items-center p-0.5 bg-canvas border border-border rounded-lg text-xs font-semibold select-none" role="group" aria-label="Language selection">
               <button
                 type="button"
@@ -679,6 +694,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
 
           lightIcons.forEach((icon) => {
+            if (isLight) icon.classList.remove('hidden');
+            else icon.classList.add('hidden');
+          });
+
+          document.querySelectorAll('.theme-icon-sun').forEach((icon) => {
+            if (isLight) icon.classList.add('hidden');
+            else icon.classList.remove('hidden');
+          });
+
+          document.querySelectorAll('.theme-icon-moon').forEach((icon) => {
             if (isLight) icon.classList.remove('hidden');
             else icon.classList.add('hidden');
           });
@@ -932,6 +957,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const label = document.getElementById('current-language-label');
           if (label) label.textContent = normalized === 'en' ? 'EN' : 'HI';
 
+          const code = normalized === 'en' ? 'EN' : 'HI';
+          document.querySelectorAll('.sidebar-lang-code').forEach((el) => {
+            el.textContent = code;
+          });
+
           // Update profile language toggle buttons
           const appLangBtns = document.querySelectorAll<HTMLElement>('[data-app-lang], [data-global-lang]');
           appLangBtns.forEach((btn) => {
@@ -1134,6 +1164,20 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               closeAllDropdowns(dropdown);
               openDropdown(dropdown, trigger);
             }
+            return;
+          }
+
+          // Language toggle button clicked anywhere (sidebar rail badge, header, etc.)
+          const langToggleBtn = target.closest('[data-app-lang-toggle]');
+          if (langToggleBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            let current = 'hinglish';
+            try {
+              current = normalizeAppLang(localStorage.getItem('preferred_exam_lang') || 'hinglish');
+            } catch (e) {}
+            const nextLang = current === 'en' ? 'hinglish' : 'en';
+            setLanguage(nextLang, true);
             return;
           }
 
