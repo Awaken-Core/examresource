@@ -236,7 +236,7 @@ export class QuestionService {
       .findByIdAndUpdate(
         new Types.ObjectId(id),
         { $set: updatePayload },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .lean();
 

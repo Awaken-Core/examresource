@@ -29,6 +29,16 @@ export function normalizeNotificationLanguage(lang?: string | null): 'HINGLISH' 
   return l === 'en' || l === 'english' ? 'ENGLISH' : 'HINGLISH';
 }
 
+export function resolveNotificationLanguage(item: { language?: string | null; title?: string; body?: string }): 'HINGLISH' | 'ENGLISH' {
+  if (item.language) {
+    const l = item.language.trim().toUpperCase();
+    if (l === 'ENGLISH' || l === 'EN') return 'ENGLISH';
+    if (l === 'HINGLISH' || l === 'HI') return 'HINGLISH';
+  }
+  const text = `${item.title || ''} ${item.body || ''}`;
+  return /[\u0900-\u097F]/.test(text) ? 'HINGLISH' : 'ENGLISH';
+}
+
 export function deduplicateNotificationsByLanguage<T extends {
   _id?: any;
   id?: any;
@@ -75,7 +85,7 @@ export function deduplicateNotificationsByLanguage<T extends {
       continue;
     }
     // Prefer exact match with target language
-    const match = list.find((it) => (it.language || '').toUpperCase() === target);
+    const match = list.find((it) => resolveNotificationLanguage(it as any) === target);
     selectedFromGroups.push(match || list[0]);
   }
 
@@ -164,7 +174,7 @@ export async function createBlogPublishedNotification(
           title: 'New article',
           body: `New article published: ${input.title.trim()}`.slice(0, BODY_LIMIT),
           href: input.href,
-          language: input.language ?? null,
+          language: input.language ?? resolveNotificationLanguage({ title: input.title, body: input.title }),
           translationGroupId: input.translationGroupId ?? null,
           blogId: Types.ObjectId.isValid(input.blogId) ? new Types.ObjectId(input.blogId) : null,
           sourceKey,
@@ -292,13 +302,13 @@ export async function listNotificationsForUser(
 export async function listPublicNotifications(
   notificationModel: Model<NotificationDocument>,
   requestedLang?: string | null,
-  limit = 40,
+  limit = 3,
 ): Promise<NotificationView[]> {
   const targetLang = normalizeNotificationLanguage(requestedLang);
   const rawItems = await notificationModel
     .find({ audienceUserId: null })
     .sort({ createdAt: -1 })
-    .limit(limit * 2)
+    .limit(Math.max(limit * 4, 20))
     .lean();
 
   if (rawItems.length === 0) return [];

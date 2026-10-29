@@ -21,8 +21,13 @@ export class NotificationController {
   }
 
   @Get('notifications/public')
-  async listPublic(@Query('lang') lang?: string) {
-    const items = await this.notifications.listPublic(lang);
+  async listPublic(
+    @Query('lang') lang?: string,
+    @Query('limit') limitQuery?: string,
+  ) {
+    const parsedLimit = limitQuery ? parseInt(limitQuery, 10) : 3;
+    const limit = Number.isFinite(parsedLimit) && parsedLimit > 0 ? Math.min(parsedLimit, 40) : 3;
+    const items = await this.notifications.listPublic(lang, limit);
     return {
       unreadCount: items.length,
       items,

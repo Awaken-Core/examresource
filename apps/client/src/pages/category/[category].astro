@@ -53,7 +53,7 @@ Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
 
 try {
   const [postRes, catRes] = await Promise.all([
-    fetch(`${API_URL}/blogs?category=${encodeURIComponent(categorySlug)}&limit=50&language=${listLanguage}`, {
+    fetch(`${API_URL}/blogs?category=${encodeURIComponent(categorySlug)}&limit=50&language=${listLanguage}&includeImages=true`, {
       signal: AbortSignal.timeout(6000),
     }),
     fetch(`${API_URL}/categories`, {
@@ -150,6 +150,7 @@ const relevantPortals = [
   description={pageDescription}
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
+  isEditorialTheme={true}
 >
   <div class="min-h-screen bg-canvas text-heading px-4 sm:px-6 lg:px-8 py-7 transition-colors duration-200">
     <div class="max-w-[1400px] mx-auto">
@@ -289,6 +290,8 @@ const relevantPortals = [
                     slug={article.slug}
                     href={articleHref(article.slug, preferredAppLang)}
                     category={categoryTitle}
+                    coverImage={article.coverImage || article.firstImage || null}
+                    imageAlt={article.imageAlt || article.title}
                     publishedAt={article.publishedAt || article.updatedAt}
                     summary={article.description || article.metaDescription || 'Click to view full notification details and official links.'}
                     headingLevel="h3"

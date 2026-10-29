@@ -34,6 +34,25 @@ export function initLenis(options: InitLenisOptions = {}): Lenis | null {
     anchors: { offset: headerOffset },
     stopInertiaOnNavigate: true,
     respectReducedMotion: true,
+    prevent: (node) => {
+      if (!node || (node as any).nodeType !== 1) return false;
+      let current: HTMLElement | null = node as HTMLElement;
+      while (current && current !== document.body && current !== document.documentElement) {
+        if (current.hasAttribute('data-lenis-prevent')) return true;
+        const style = window.getComputedStyle(current);
+        const canScrollY =
+          (style.overflowY === 'auto' || style.overflowY === 'scroll') &&
+          current.scrollHeight > current.clientHeight;
+        const canScrollX =
+          (style.overflowX === 'auto' || style.overflowX === 'scroll') &&
+          current.scrollWidth > current.clientWidth;
+        if (canScrollY || canScrollX) {
+          return true;
+        }
+        current = current.parentElement;
+      }
+      return false;
+    },
   });
 
   (window as any).lenis = lenisInstance;

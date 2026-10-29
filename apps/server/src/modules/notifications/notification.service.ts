@@ -38,8 +38,8 @@ export class NotificationService {
     );
   }
 
-  listPublic(requestedLang?: string | null) {
-    return listPublicNotifications(this.notificationModel, requestedLang);
+  listPublic(requestedLang?: string | null, limit = 3) {
+    return listPublicNotifications(this.notificationModel, requestedLang, limit);
   }
 
   markRead(userId: string, ids?: string[]) {

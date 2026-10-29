@@ -26,7 +26,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
   : '/login';
 ---
 
-<header id="main-header" transition:persist="main-header" class={`${
+<header id="main-header" class={`${
   isEditorialTheme 
     ? 'bg-editorial-bg/95 border-b border-editorial-border text-editorial-text' 
     : 'bg-surface/95 border-b border-border/60'
@@ -82,7 +82,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       <div class="hidden md:flex flex-1 items-center justify-center px-3 sm:px-6 min-w-0">
         <nav class="flex items-center gap-7 font-['Geist'] text-[13px]">
           <a
-            href="/blogs"
+            href="/blogs" data-header-nav-link data-astro-prefetch="hover"
             class={`relative py-1 transition-colors ${
               isBlogsActive
                 ? 'text-editorial-heading font-semibold after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-editorial-accent after:rounded-full'
@@ -92,17 +92,17 @@ const loginHref = (!isAuthPage && currentPath !== '/')
             Blogs
           </a>
           <a
-            href="/test-series"
+            href="/test-series" data-header-nav-link data-astro-prefetch="hover"
             class={`relative py-1 transition-colors ${
               isTestSeriesActive
                 ? 'text-editorial-heading font-semibold after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-editorial-accent after:rounded-full'
                 : 'text-editorial-subheading hover:text-editorial-heading font-medium'
             }`}
           >
-            Live tests
+            Test Series
           </a>
           <a
-            href="/daily-quiz"
+            href="/daily-quiz" data-header-nav-link data-astro-prefetch="hover"
             class={`relative py-1 transition-colors ${
               isDailyQuizActive
                 ? 'text-editorial-heading font-semibold after:content-[\'\'] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-editorial-accent after:rounded-full'
@@ -257,7 +257,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
             <span class="user-display-name text-[12px] font-bold text-heading truncate max-w-[120px]">User</span>
             <span class="user-display-role text-[10px] text-muted capitalize mt-0.5">Aspirant</span>
           </div>
-          <svg class="size-3.5 text-muted shrink-0 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+          <svg class="profile-chevron-arrow size-3.5 text-muted shrink-0 transition-transform duration-200 ease-out" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
         </button>
@@ -287,23 +287,48 @@ const loginHref = (!isAuthPage && currentPath !== '/')
 
 <script is:inline>
   (function () {
-    function syncHeaderBrandVisibility() {
-      var el = document.getElementById('header-brand-name');
-      if (!el) return;
+    function syncHeaderState() {
+      var brandEl = document.getElementById('header-brand-name');
       var path = window.location.pathname.replace(/\/$/, '') || '/';
       var isHome = path === '/';
-      if (isHome) {
-        el.classList.remove('hidden');
-        el.classList.add('flex');
-      } else {
-        el.classList.add('hidden');
-        el.classList.remove('flex');
+      if (brandEl) {
+        if (isHome) {
+          brandEl.classList.remove('hidden');
+          brandEl.classList.add('flex');
+        } else {
+          brandEl.classList.add('hidden');
+          brandEl.classList.remove('flex');
+        }
       }
+
+      var navLinks = document.querySelectorAll('header#main-header nav a[data-header-nav-link]');
+      var activeClasses = ['text-editorial-heading', 'font-semibold', "after:content-['']", 'after:absolute', 'after:bottom-0', 'after:left-0', 'after:right-0', 'after:h-[2px]', 'after:bg-editorial-accent', 'after:rounded-full'];
+      var inactiveClasses = ['text-editorial-subheading', 'hover:text-editorial-heading'];
+
+      navLinks.forEach(function (link) {
+        var href = link.getAttribute('href');
+        var isActive = false;
+        if (href === '/blogs') {
+          isActive = path === '/blogs' || path.startsWith('/blogs/') || path.startsWith('/category/');
+        } else if (href === '/test-series') {
+          isActive = path === '/test-series' || path.startsWith('/test-series/');
+        } else if (href === '/daily-quiz') {
+          isActive = path === '/daily-quiz' || path.startsWith('/daily-quiz/');
+        }
+
+        if (isActive) {
+          inactiveClasses.forEach(function (c) { link.classList.remove(c); });
+          activeClasses.forEach(function (c) { link.classList.add(c); });
+        } else {
+          activeClasses.forEach(function (c) { link.classList.remove(c); });
+          inactiveClasses.forEach(function (c) { link.classList.add(c); });
+        }
+      });
     }
 
-    document.addEventListener('astro:page-load', syncHeaderBrandVisibility);
-    document.addEventListener('astro:after-swap', syncHeaderBrandVisibility);
-    window.addEventListener('popstate', syncHeaderBrandVisibility);
-    syncHeaderBrandVisibility();
+    document.addEventListener('astro:page-load', syncHeaderState);
+    document.addEventListener('astro:after-swap', syncHeaderState);
+    window.addEventListener('popstate', syncHeaderState);
+    syncHeaderState();
   })();
 </script>

@@ -229,6 +229,10 @@ function optimizeSingleImage(attrs: string, title: string, isFirstImage: boolean
     if (!updated.includes('decoding=')) updated += ' decoding="async"';
   }
 
+  if (!updated.includes('data-image-component')) {
+    updated += ' data-image-component="true"';
+  }
+
   return `<img ${updated.replace(/\s+/g, ' ').trim()}>`;
 }
 

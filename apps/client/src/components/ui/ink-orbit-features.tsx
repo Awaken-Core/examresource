@@ -117,9 +117,9 @@ const D_FEATURES: InkFeatures = {
   },
   reports: {
     title: "Attempt sheets",
-    description: "Each live test lays down a score sheet — timing, answers, and what to revise next.",
+    description: "Each live test provides a clear score sheet: timing, answers, and revision guidance.",
     href: "/test-series",
-    linkLabel: "View live tests",
+    linkLabel: "View test series",
   },
   integrations: {
     title: "Exam streams",
@@ -480,14 +480,8 @@ function FlowCard({
               <g
                 key={item.code}
                 className="ib-exam"
-                tabIndex={0}
-                role="img"
                 aria-label={item.name + (item.live ? ", active" : ", quiet")}
                 onMouseEnter={() => {
-                  setSide("left")
-                  setCaption(item.name)
-                }}
-                onFocus={() => {
                   setSide("left")
                   setCaption(item.name)
                 }}
@@ -662,13 +656,9 @@ function IntegrationsCard({
             <g
               key={i}
               className={"ib-tool" + (on === i ? " ib-tool-on" : "")}
-              tabIndex={0}
-              role="img"
               aria-label={tools[i] || "Exam stream"}
               onMouseEnter={() => setHover(i)}
               onMouseLeave={() => setHover(-1)}
-              onFocus={() => setHover(i)}
-              onBlur={() => setHover(-1)}
             >
               <rect x={tile.x - 22} y={tile.y - 22} width="44" height="44" fill="transparent" />
               <rect x={tile.x - 15} y={tile.y - 15} width="30" height="30" rx="7" className="ib-node" />
@@ -727,25 +717,28 @@ function InsightsCard({
   return (
     <div className="ib-frame ib-frame-hover" ref={ref} data-in={inView ? "true" : "false"}>
       <Brackets />
-      <div className="ib-card">
+      <div
+        className="ib-card outline-none focus-visible:ring-2 focus-visible:ring-editorial-accent rounded-xl"
+        tabIndex={0}
+        role="slider"
+        aria-label={copy.title + ". Left and right arrows move along the sample line."}
+        aria-valuemin={1}
+        aria-valuemax={vals.length}
+        aria-valuenow={i + 1}
+        aria-valuetext={valueText}
+        onPointerMove={onMove}
+        onPointerLeave={() => setHover(-1)}
+        onKeyDown={(event) => {
+          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return
+          event.preventDefault()
+          const current = hover >= 0 ? hover : points.length - 1
+          setHover(clamp(current + (event.key === "ArrowRight" ? 1 : -1), 0, points.length - 1))
+        }}
+      >
         <svg
           className="ib-diagram ib-chart"
           viewBox={"0 0 " + W + " " + (H + 8)}
-          tabIndex={0}
-          role="slider"
-          aria-label={copy.title + ". Left and right arrows move along the sample line."}
-          aria-valuemin={1}
-          aria-valuemax={vals.length}
-          aria-valuenow={i + 1}
-          aria-valuetext={valueText}
-          onPointerMove={onMove}
-          onPointerLeave={() => setHover(-1)}
-          onKeyDown={(event) => {
-            if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return
-            event.preventDefault()
-            const current = hover >= 0 ? hover : points.length - 1
-            setHover(clamp(current + (event.key === "ArrowRight" ? 1 : -1), 0, points.length - 1))
-          }}
+          aria-hidden="true"
         >
           <defs>
             <linearGradient id={fill} x1="0" y1="0" x2="0" y2="1">

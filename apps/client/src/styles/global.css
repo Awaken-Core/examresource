@@ -1264,7 +1264,7 @@ html:not(.theme-dark) body {
 [data-dark-card],
 .dark-card,
 [data-theme="dark"] {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
   --color-heading: #FFFFFF;
   --color-text-body: #E4E4E7;
   --color-muted: #A1A1AA;
@@ -1272,27 +1272,27 @@ html:not(.theme-dark) body {
 
 [data-dark-card] :is(h1, h2, h3, h4, h5, h6),
 .dark-card :is(h1, h2, h3, h4, h5, h6) {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
 }
 
 [data-dark-card] :is(p, span, div, strong, a).text-white,
 .dark-card :is(p, span, div, strong, a).text-white {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
 }
 
 [data-dark-card] .text-zinc-200,
 .dark-card .text-zinc-200 {
-  color: #E4E4E7 !important;
+  color: #E4E4E7;
 }
 
 [data-dark-card] .text-zinc-300,
 .dark-card .text-zinc-300 {
-  color: #D4D4D8 !important;
+  color: #D4D4D8;
 }
 
 [data-dark-card] .text-muted,
 .dark-card .text-muted {
-  color: #A1A1AA !important;
+  color: #A1A1AA;
 }
 
 /* Light mode text contrast overrides for dark-first utility classes (container-aware) */
@@ -2109,3 +2109,60 @@ html.theme-light .theme-icon-moon {
   display: block !important;
   margin: 0 auto !important;
 }
+
+
+/* ── Clean & Client Custom Scrollbars (Lightweight & Modern) ── */
+.custom-scrollbar,
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-border) 75%, var(--color-muted) 25%) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar,
+.scrollbar-thin::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track,
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb,
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-border) 70%, var(--color-muted) 30%);
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.15s ease-in-out;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+.scrollbar-none {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ── Profile Dropdown Chevron Arrow Smooth Rotation ── */
+.profile-chevron-arrow {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+[data-profile-trigger][aria-expanded="true"] .profile-chevron-arrow,
+.profile-chevron-arrow.rotate-180 {
+  transform: rotate(180deg);
+}
+

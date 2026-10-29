@@ -151,7 +151,7 @@ export class ExamService {
       .findByIdAndUpdate(
         new Types.ObjectId(id),
         { $set: updatePayload },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .lean();
 
@@ -610,7 +610,7 @@ export class ExamService {
     const attempt = await this.requireActiveAttempt(id, user);
     if (attempt.pausedAt) return this.formatAttempt(attempt, false);
     const updated = await this.testAttemptModel
-      .findByIdAndUpdate(attempt._id, { pausedAt: new Date() }, { new: true })
+      .findByIdAndUpdate(attempt._id, { pausedAt: new Date() }, { returnDocument: 'after' })
       .lean();
     return this.formatAttempt(updated, false);
   }
@@ -623,7 +623,7 @@ export class ExamService {
       ? new Date(new Date(attempt.expiresAt).getTime() + pausedMs)
       : null;
     const updated = await this.testAttemptModel
-      .findByIdAndUpdate(attempt._id, { pausedAt: null, expiresAt }, { new: true })
+      .findByIdAndUpdate(attempt._id, { pausedAt: null, expiresAt }, { returnDocument: 'after' })
       .lean();
     return this.formatAttempt(updated, false);
   }

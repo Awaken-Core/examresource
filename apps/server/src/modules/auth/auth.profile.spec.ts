@@ -69,7 +69,7 @@ describe('AuthService learner preparation preferences', () => {
           examGoalDate: expect.any(Date),
         },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
 
     expect(result.id).toBe(userId);

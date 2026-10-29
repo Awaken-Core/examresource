@@ -179,7 +179,7 @@ export class CommentsService {
     const comment = await this.commentModel.findByIdAndUpdate(
       id,
       { $set: { status: input.status, moderatedByUserId: new Types.ObjectId(user.id), moderatedAt: new Date() } },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!comment) throw new NotFoundException('Comment was not found.');
     return { comment: this.moderationComment(comment) };

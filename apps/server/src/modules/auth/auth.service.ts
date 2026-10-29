@@ -178,7 +178,7 @@ export class AuthService {
       {
         $set: { usedAt: new Date() },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!oauthState) {
       throw new BadRequestException(
@@ -219,7 +219,7 @@ export class AuthService {
               emailVerifiedAt: emailOwner.emailVerifiedAt ?? new Date(),
             },
           },
-          { new: true },
+          { returnDocument: 'after' },
         );
       } else {
         user = await this.userModel.create({
@@ -342,7 +342,7 @@ export class AuthService {
       throw new NotFoundException('User not found.');
     }
     const user = await this.userModel
-      .findByIdAndUpdate(userId, { $set: { role } }, { new: true })
+      .findByIdAndUpdate(userId, { $set: { role } }, { returnDocument: 'after' })
       .select({ _id: 1, name: 1, email: 1, role: 1, status: 1, createdAt: 1 })
       .lean();
     if (!user) {
@@ -462,7 +462,7 @@ export class AuthService {
     const user = await this.userModel.findByIdAndUpdate(
       userId,
       { $set: updateData },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!user) throw new BadRequestException('Account was not found.');
     return this.publicUser(user);
@@ -493,7 +493,7 @@ export class AuthService {
       {
         $set: { usedAt: new Date() },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!row) {
       throw new BadRequestException(
@@ -530,7 +530,7 @@ export class AuthService {
       {
         $set: { usedAt: new Date() },
       },
-      { new: true },
+      { returnDocument: 'after' },
     );
     if (!row) {
       throw new BadRequestException(

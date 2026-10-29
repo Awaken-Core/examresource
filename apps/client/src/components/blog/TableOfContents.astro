@@ -17,7 +17,7 @@ const { items } = Astro.props;
     <span class="text-[12px] font-bold uppercase tracking-wider text-muted">On this page</span>
   </div>
 
-  <nav id="toc-scroll" class="relative max-h-80 min-h-0 flex-1 overflow-y-auto pr-1 text-[13px] scrollbar-none xl:max-h-none">
+  <nav id="toc-scroll" data-lenis-prevent class="relative max-h-80 min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 text-[13px] scrollbar-none custom-scrollbar xl:max-h-none">
     <div id="toc-list" class="relative">
       <span id="toc-highlight-bg" class="pointer-events-none absolute left-0 right-1 rounded-md bg-accent/10 opacity-0 transition-all duration-300 ease-out"></span>
       <span id="toc-highlight" class="pointer-events-none absolute left-0 w-[3px] rounded-full bg-accent opacity-0 transition-all duration-300 ease-out"></span>

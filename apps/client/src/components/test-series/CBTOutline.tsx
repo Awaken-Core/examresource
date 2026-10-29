@@ -54,7 +54,7 @@ export const CBTOutline = React.memo(function CBTOutline({
         ))}
       </div>
 
-      <div className="hidden h-full flex-col gap-3 overflow-y-auto p-3 lg:flex">
+      <div data-lenis-prevent className="hidden h-full flex-col gap-3 overflow-y-auto overscroll-contain p-3 lg:flex custom-scrollbar">
         <p className="text-[10px] font-bold tracking-wider text-muted uppercase">Outline panel</p>
         <section className="space-y-1">
           <p className="text-[11px] font-semibold text-slate-900 dark:text-slate-100">Section 1</p>

@@ -45,7 +45,7 @@ export async function getRecentPosts(language: string, currentSlug?: string): Pr
   }
 
   try {
-    const res = await fetch(`${API_URL}/blogs?limit=6&language=${langKey}&includeImages=false`, {
+    const res = await fetch(`${API_URL}/blogs?limit=6&language=${langKey}&includeImages=true`, {
       priority: 'low',
       signal: AbortSignal.timeout(2000), // Strict 2s timeout so article page never hangs
     } as any);

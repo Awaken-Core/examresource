@@ -85,6 +85,7 @@ const updatesList = sortedPosts.map((p) => {
     category: categoryName,
     categorySlug,
     categories: p.categories || (p.category ? [p.category] : []),
+    coverImage: p.coverImage || p.firstImage || null,
     summary: p.description || p.metaDescription || '',
     dateFormatted: pubDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
     relativeTime,
@@ -106,14 +107,14 @@ const newNoticesCount = updatesList.filter(u => u.isNew).length;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
-  name: `Latest Exam Updates & Notifications — ${siteName}`,
+  name: `Latest Exam Updates & Notifications | ${siteName}`,
   description: `Real-time government exam notices, admit card alerts, answer keys, and results published chronologically.`,
   url: `${siteUrl}/latest-updates`,
 };
 ---
 
 <Layout
-  title={`Latest Exam Updates & Notifications — ${siteName}`}
+  title={`Latest Exam Updates & Notifications | ${siteName}`}
   description={`Real-time government exam updates, fresh job alerts, admit card releases, answer keys, and official notices listed chronologically.`}
   canonicalUrl={`${siteUrl}/latest-updates`}
   ogType="website"
@@ -220,11 +221,15 @@ const jsonLd = {
           </div>
         ) : (
           updatesList.map((item) => (
-            <article
-              class="update-row-card group bg-editorial-surface hover:bg-editorial-surface-raised border border-editorial-border hover:border-editorial-accent/35 rounded-2xl p-4 sm:p-5 transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-['Geist']"
+            <a
+              href={item.slug}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="update-row-card group bg-editorial-surface hover:bg-editorial-surface-raised border border-editorial-border hover:border-editorial-accent/35 rounded-2xl p-4 sm:p-5 transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-['Geist'] block sm:flex text-inherit no-underline cursor-pointer"
               data-category={item.categorySlug}
               data-title={item.title.toLowerCase()}
               data-summary={item.summary.toLowerCase()}
+              aria-label={`Read notice: ${item.title}`}
             >
               {/* Left Column: Date & Badges + Content */}
               <div class="flex-1 min-w-0 space-y-1.5">
@@ -256,9 +261,7 @@ const jsonLd = {
 
                 {/* Title */}
                 <h2 class="text-[16px] sm:text-[18px] font-semibold text-editorial-heading group-hover:text-editorial-accent transition-colors leading-snug">
-                  <a href={item.slug} class="focus:outline-none focus-visible:underline">
-                    {item.title}
-                  </a>
+                  {item.title}
                 </h2>
 
                 {/* Excerpt Summary */}
@@ -271,18 +274,16 @@ const jsonLd = {
 
               {/* Right Column: CTA Action */}
               <div class="shrink-0 flex items-center sm:self-center pt-2 sm:pt-0 border-t sm:border-t-0 border-editorial-border/60">
-                <a
-                  href={item.slug}
-                  class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-editorial-surface-raised group-hover:bg-editorial-accent text-editorial-heading group-hover:text-white border border-editorial-border group-hover:border-editorial-accent text-xs font-semibold transition-all duration-150"
-                  aria-label={`Read notice: ${item.title}`}
+                <span
+                  class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-editorial-surface-raised group-hover:bg-editorial-accent text-editorial-heading group-hover:text-white border border-editorial-border group-hover:border-editorial-accent text-xs font-semibold transition-all duration-150 select-none"
                 >
                   <span>Read Notice</span>
                   <svg class="size-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                   </svg>
-                </a>
+                </span>
               </div>
-            </article>
+            </a>
           ))
         )}
 

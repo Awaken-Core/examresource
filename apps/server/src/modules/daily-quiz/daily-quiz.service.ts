@@ -248,7 +248,7 @@ export class DailyQuizService {
           isPublished: true,
         },
       },
-      { upsert: true, new: true },
+      { upsert: true, returnDocument: 'after' },
     );
 
     return quiz;

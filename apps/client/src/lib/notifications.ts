@@ -17,6 +17,7 @@ const FIRED_STORAGE_KEY = 'gp_fired_notification_ids';
 const GUEST_READ_STORAGE_KEY = 'gp_guest_read_notification_ids';
 
 let currentItems: AppNotification[] = [];
+let allCachedNotifications = new Map<string, AppNotification>();
 let currentToken: string | null = null;
 
 export function relativeTime(iso: string) {
@@ -57,15 +58,41 @@ export function iconFor(kind: AppNotification['kind']) {
 export function getCurrentSelectedLang(): 'hinglish' | 'en' {
   if (typeof window === 'undefined') return 'hinglish';
   try {
+    const urlLang = new URLSearchParams(window.location.search).get('lang');
+    if (urlLang) {
+      const lowerUrlLang = urlLang.toLowerCase();
+      if (lowerUrlLang === 'en' || lowerUrlLang === 'english') return 'en';
+      if (lowerUrlLang === 'hi' || lowerUrlLang === 'hinglish') return 'hinglish';
+    }
+
+    let cookieLang = '';
+    const cookieMatch = document.cookie.match(/(?:^|;\s*)preferred_lang=([^;]*)/);
+    if (cookieMatch) {
+      try {
+        cookieLang = decodeURIComponent(cookieMatch[1].trim()).toLowerCase();
+      } catch {}
+    }
+
     const raw = (
       localStorage.getItem('preferred_exam_lang') ||
       localStorage.getItem('site_language') ||
+      cookieLang ||
       'hinglish'
     ).toLowerCase();
     return raw === 'en' || raw === 'english' ? 'en' : 'hinglish';
   } catch {
     return 'hinglish';
   }
+}
+
+export function resolveClientItemLanguage(item: { language?: string | null; title?: string; body?: string }): 'HINGLISH' | 'ENGLISH' {
+  if (item.language) {
+    const l = item.language.trim().toUpperCase();
+    if (l === 'ENGLISH' || l === 'EN') return 'ENGLISH';
+    if (l === 'HINGLISH' || l === 'HI') return 'HINGLISH';
+  }
+  const text = `${item.title || ''} ${item.body || ''}`;
+  return /[\u0900-\u097F]/.test(text) ? 'HINGLISH' : 'ENGLISH';
 }
 
 export function deduplicateClientNotifications(
@@ -106,7 +133,7 @@ export function deduplicateClientNotifications(
       continue;
     }
     // Prefer exact match with chosen language
-    const match = list.find((it) => (it.language || '').toUpperCase() === targetBlogLang);
+    const match = list.find((it) => resolveClientItemLanguage(it) === targetBlogLang);
     selectedFromGroups.push(match || list[0]);
   }
 
@@ -184,8 +211,11 @@ async function showSingleNotification(
 export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
   if (typeof window === 'undefined' || !('Notification' in window)) return;
   if (Notification.permission !== 'granted') return;
-
   const chosenLang = getCurrentSelectedLang();
+
+
+
+
   // Ensure we only have 1 notification per article matching chosen language
   const deduplicated = deduplicateClientNotifications(unreadItems, chosenLang);
 
@@ -203,7 +233,7 @@ export async function fireUnreadToSystem(unreadItems: AppNotification[]) {
     return true;
   });
 
-  const toFire = isFirstRun ? candidates.slice(0, 1) : candidates;
+  const toFire = isFirstRun ? candidates.slice(0, 1) : candidates.slice(0, 3);
 
   for (const item of candidates) {
     firedIds.add(item.id);
@@ -275,7 +305,13 @@ function buildCard(item: AppNotification) {
   card.className =
     'notification-item group/item relative block border-l-3 border-l-accent bg-surface-raised/50 hover:bg-surface-raised border border-border/40 rounded-xl p-3 transition pr-9';
   if (card instanceof HTMLAnchorElement && item.href) {
-    card.href = item.href;
+    const chosenLang = getCurrentSelectedLang();
+  
+
+
+    card.href = (chosenLang === 'en' && !item.href.includes('lang='))
+      ? `${item.href}${item.href.includes('?') ? '&' : '?'}lang=en`
+      : item.href;
     card.dataset.notificationLink = item.id;
   }
 
@@ -399,18 +435,43 @@ export function getNotifications(): AppNotification[] {
   return currentItems;
 }
 
-export async function refreshNotifications(token: string | null = currentToken) {
+export async function refreshNotifications(token?: string | null) {
+  if (token === undefined) {
+    if (currentToken) {
+      token = currentToken;
+    } else if (
+      typeof window !== 'undefined' &&
+      (localStorage.getItem('auth_active') === '1' ||
+       document.documentElement.getAttribute('data-authenticated') === 'true' ||
+       Boolean((window as any).__currentUser))
+    ) {
+      token = 'session';
+    } else {
+      token = null;
+    }
+  }
   currentToken = token;
   const chosenLang = getCurrentSelectedLang();
+
+
+  // Instant optimistic switch from cached notifications
+  if (allCachedNotifications.size > 0) {
+    const optimistic = deduplicateClientNotifications(Array.from(allCachedNotifications.values()), chosenLang);
+    currentItems = !currentToken ? optimistic.slice(0, 3) : optimistic;
+    paint(currentItems);
+  }
+
+
+
 
   try {
     const endpoint = token
       ? `${API_URL}/me/notifications?lang=${encodeURIComponent(chosenLang)}`
-      : `${API_URL}/notifications/public?lang=${encodeURIComponent(chosenLang)}`;
+      : `${API_URL}/notifications/public?lang=${encodeURIComponent(chosenLang)}&limit=3`;
 
     const response = await fetch(endpoint, {
       priority: 'low',
-      credentials: token ? 'include' : 'same-origin',
+      credentials: 'include',
     } as any);
 
     if (!response.ok) {
@@ -422,13 +483,16 @@ export async function refreshNotifications(token: string | null = currentToken) 
     }
 
     const data = (await response.json()) as { items?: AppNotification[] };
-    let items = data.items ?? [];
+    const fetched = data.items ?? [];
+    fetched.forEach((it) => allCachedNotifications.set(it.id, it));
+    let items = deduplicateClientNotifications(Array.from(allCachedNotifications.values()), chosenLang);
 
     // Client-side safety deduplication & language filter
-    items = deduplicateClientNotifications(items, chosenLang);
+
 
     // Apply guest read status if guest
     if (!currentToken) {
+      items = items.slice(0, 3);
       const guestReads = getGuestReadIds();
       items = items.map((it) => ({
         ...it,
@@ -446,6 +510,7 @@ export async function refreshNotifications(token: string | null = currentToken) 
 
 export async function markAllNotificationsRead() {
   currentItems = currentItems.map((item) => ({ ...item, read: true }));
+  allCachedNotifications.forEach((item) => { item.read = true; });
   paint(currentItems);
 
   if (!currentToken) {
@@ -474,6 +539,12 @@ export async function markAllNotificationsRead() {
 export function markNotificationRead(id: string) {
   const item = currentItems.find((it) => it.id === id);
   if (!item || item.read) return;
+
+  allCachedNotifications.forEach((it) => {
+    if (it.id === id || (item.translationGroupId && it.translationGroupId === item.translationGroupId)) {
+      it.read = true;
+    }
+  });
 
   currentItems = currentItems.map((it) => {
     if (it.id === id) return { ...it, read: true };
@@ -511,4 +582,10 @@ if (typeof window !== 'undefined' && !(window as any).__NOTIF_LANG_LISTENER_BOUN
   };
   window.addEventListener('exam:language-change', onLangChange);
   window.addEventListener('exam:article-lang-swap', onLangChange);
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'preferred_exam_lang' || e.key === 'site_language') {
+      onLangChange();
+    }
+  });
+  document.addEventListener('astro:page-load', onLangChange);
 }

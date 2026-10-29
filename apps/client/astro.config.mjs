@@ -36,6 +36,10 @@ export default defineConfig({
 	redirects: {
 		'/feed': '/rss.xml',
 		'/feed/(.*)': '/rss.xml',
+		'/live-tests': '/test-series',
+		'/live-tests/(.*)': '/test-series',
+		'/live-test': '/test-series',
+		'/live-test/(.*)': '/test-series',
 	},
 	build: {
 		inlineStylesheets: 'always',

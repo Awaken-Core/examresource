@@ -5,7 +5,7 @@ import { siteUrl, siteName, siteDomain } from '../data/site';
 // Return HTTP 404 status code to clients and search crawlers
 Astro.response.status = 404;
 
-const pageTitle = `404 - Page Not Found | ${siteName}`;
+const pageTitle = `404: Page Not Found | ${siteName}`;
 const pageDescription = `The page, exam notification, or resource you are looking for could not be found on ${siteDomain}. Search or explore active recruitment categories.`;
 
 const popularCategories = [

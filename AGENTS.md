@@ -17,8 +17,12 @@ This file contains **mandatory instructions and context** for any AI agent or de
    - In `apps/server`, validate all variables in `src/core/config/env.ts` with Zod schemas and access them strictly via `env.*` or dependency-injected config.
    - Never commit sensitive secrets (`.env` files) to git.
 
-3. **Consult Skills in `.agents`**
-   - **Frontend & UI/UX**: Always check and adhere to:
+3. **Consult Skills in `.agents` & Design System**
+   - **GovtPariksha Design System & UI Styling**:
+     - `.agents/skills/govtpariksha-design-system/SKILL.md` (Authoritative GovtPariksha design system rules).
+     - `.agents/skills/ui-styling/SKILL.md` (Utility styling rules, Tailwind CSS v4 patterns, zero `!important`).
+     - `design-system/MASTER.md` (Inspected source of truth for tokens, colors, typography, and component patterns).
+   - **Frontend & UI/UX Best Practices**:
      - `.agents/skills/astra-frontend-design/SKILL.md` (Design systems, layout hierarchy, visual polish).
      - `.agents/skills/ui-ux-pro-max/SKILL.md` (Design intelligence, color palettes, typography, spacing).
      - `.agents/skills/mobile-responsive/SKILL.md` (Mobile responsiveness, touch targets, mobile PageSpeed & LCP optimization).
@@ -28,7 +32,13 @@ This file contains **mandatory instructions and context** for any AI agent or de
    - **Backend NestJS**: Always follow:
      - `.agents/skills/nestjs-best-practices/SKILL.md` (Architecture, modular dependency injection, security, transaction safety, exception filters, DTO validation).
 
-4. **Preserve Comments & Existing Conventions**
+4. **UI/UX & Styling Requirements (Mandatory Workflow)**
+   - **Inspect First**: Always inspect `apps/client/src/styles/global.css`, `design-system/MASTER.md`, and existing components before introducing any new CSS or modifying UI.
+   - **Zero `!important` Policy**: Never use `!important` in custom styling, components, or layout code.
+   - **Multi-Row Grid Safety**: Never use `divide-x` on multi-row containers (which corrupts row 2 column alignment). Use explicit CSS `:nth-child` rules or grid gaps.
+   - **Reuse Tokens**: Always use semantic Tailwind tokens (`text-heading`, `text-muted`, `bg-canvas`, `bg-surface`, `border-editorial-border`, `bg-editorial-accent`) instead of arbitrary raw hex colors.
+
+5. **Preserve Comments & Existing Conventions**
    - Retain existing docstrings, technical rationale comments, and test suites.
    - Do not remove or alter existing business logic or API contracts without explicit instruction.
 

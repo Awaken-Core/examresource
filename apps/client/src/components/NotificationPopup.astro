@@ -13,6 +13,7 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
   id={id} 
   data-notification-popup
   data-notification-prefix={prefix}
+  data-lenis-prevent
   class={`hidden absolute ${
     prefix === 'header'
       ? 'top-full right-0 mt-2 w-80 sm:w-88 max-w-[calc(100vw-24px)]'
@@ -71,7 +72,7 @@ const { id = "desktop-notification-popup", prefix = "desktop" } = Astro.props;
     </div>
   </div>
 
-  <div data-notification-new class="space-y-2 mt-1 max-h-[380px] overflow-y-auto pr-1">
+  <div data-notification-new data-lenis-prevent class="space-y-2 mt-1 max-h-[380px] overflow-y-auto overscroll-contain pr-1.5 custom-scrollbar">
     <p class="text-xs text-muted py-2 text-center">Loading notifications...</p>
   </div>
 

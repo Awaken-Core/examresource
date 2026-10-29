@@ -59,7 +59,7 @@ const {
   alternateLinks = [],
   noindex = false,
   useClientRouter = true,
-  isEditorialTheme = false,
+  isEditorialTheme = true,
 } = Astro.props;
 
 // Ensure explicit X-Robots-Tag HTTP header matches the meta robots directive
@@ -618,7 +618,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
                 <span class="user-display-role block text-[10px] text-muted capitalize leading-tight mt-0.5">Aspirant</span>
               </div>
             </div>
-            <svg class="sidebar-text size-3.5 text-muted shrink-0 transition-transform group-hover:text-heading" viewBox="0 0 20 20" fill="currentColor">
+            <svg class="sidebar-text profile-chevron-arrow size-3.5 text-muted shrink-0 transition-transform duration-200 ease-out group-hover:text-heading" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
             </svg>
           </button>
@@ -656,6 +656,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <script>
       import { appLangToBlogLanguage, articleHref, normalizeAppLang } from '../lib/preferred-lang';
       import { initLenis, destroyLenis, stopLenis, startLenis } from '../lib/lenis';
+      import {
+        refreshNotifications,
+        updateBrowserNotificationUI,
+        requestBrowserNotificationPermission,
+        markNotificationRead,
+        markAllNotificationsRead,
+      } from '../lib/notifications';
 
       const siteDomain = document.documentElement.getAttribute('data-site-domain') || window.location.hostname;
       const API_URL = (import.meta.env.PUBLIC_API_URL || '').replace(/\/$/, '');
@@ -746,6 +753,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             menu.removeAttribute('data-close-timer');
           }, 150);
           menu.setAttribute('data-close-timer', String(timer));
+
+          document.querySelectorAll('[data-profile-trigger]').forEach((trigger) => {
+            if (trigger.getAttribute('data-profile-trigger') === menu.id) {
+              trigger.setAttribute('aria-expanded', 'false');
+              const arrow = trigger.querySelector('.profile-chevron-arrow');
+              if (arrow) arrow.classList.remove('rotate-180');
+            }
+          });
         }
 
         function openDropdown(menu: HTMLElement, trigger: HTMLElement) {
@@ -761,6 +776,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             menu.classList.add('scale-100', 'opacity-100');
           });
           trigger.setAttribute('aria-expanded', 'true');
+          const arrow = trigger.querySelector('.profile-chevron-arrow');
+          if (arrow) arrow.classList.add('rotate-180');
         }
 
         function closeAllDropdowns(exceptMenu?: HTMLElement | null) {
@@ -772,6 +789,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           document.querySelectorAll('[data-profile-trigger]').forEach((trigger) => {
             if (!exceptMenu || trigger.getAttribute('data-profile-trigger') !== exceptMenu.id) {
               trigger.setAttribute('aria-expanded', 'false');
+              const arrow = trigger.querySelector('.profile-chevron-arrow');
+              if (arrow) arrow.classList.remove('rotate-180');
             }
           });
           // Close all notification popups
@@ -982,6 +1001,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           // Keep listing card links aligned with preference
           syncListingCardLinks(normalized);
+          window.dispatchEvent(new CustomEvent('exam:language-change', { detail: { lang: normalized } }));
+          void refreshNotifications();
 
           if (!shouldNavigate) return;
 
@@ -1161,6 +1182,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             if (isAlreadyOpen) {
               closeDropdown(dropdown);
               trigger.setAttribute('aria-expanded', 'false');
+              const arrow = trigger.querySelector('.profile-chevron-arrow');
+              if (arrow) arrow.classList.remove('rotate-180');
             } else {
               closeAllDropdowns(dropdown);
               openDropdown(dropdown, trigger);
@@ -1260,7 +1283,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               const isOpen = !notifPopup.classList.contains('hidden');
               closeAllDropdowns();
               if (!isOpen) {
-                void import('../lib/notifications').then(({ updateBrowserNotificationUI }) => updateBrowserNotificationUI());
+                void refreshNotifications();
+                updateBrowserNotificationUI();
                 notifPopup.classList.remove('hidden');
                 requestAnimationFrame(() => {
                   notifPopup.classList.remove('scale-95', 'opacity-0');
@@ -1283,7 +1307,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (enableBrowserBtn) {
             e.preventDefault();
             e.stopPropagation();
-            void import('../lib/notifications').then(({ requestBrowserNotificationPermission }) => requestBrowserNotificationPermission());
+            void requestBrowserNotificationPermission();
             return;
           }
 
@@ -1293,7 +1317,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             e.stopPropagation();
             const notificationId = dismissNotifBtn.getAttribute('data-dismiss-notification');
             if (notificationId) {
-              void import('../lib/notifications').then(({ markNotificationRead }) => markNotificationRead(notificationId));
+              markNotificationRead(notificationId);
             }
             return;
           }
@@ -1302,7 +1326,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (markAllReadBtn) {
             e.preventDefault();
             e.stopPropagation();
-            void import('../lib/notifications').then(({ markAllNotificationsRead }) => markAllNotificationsRead());
+            void markAllNotificationsRead();
             return;
           }
 
@@ -1310,7 +1334,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (notificationLink) {
             const notificationId = notificationLink.getAttribute('data-notification-link');
             if (notificationId) {
-              void import('../lib/notifications').then(({ markNotificationRead }) => markNotificationRead(notificationId));
+              markNotificationRead(notificationId);
             }
           }
 
@@ -1615,7 +1639,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             } catch (e) {}
           }
 
-          const { refreshNotifications, requestBrowserNotificationPermission } = await import('../lib/notifications');
+
           if (isUserLoggedIn) {
             void refreshNotifications('session');
 
@@ -1623,6 +1647,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               (window as any).__notifPollInterval = setInterval(() => void refreshNotifications('session'), 45000);
             }
           } else {
+            if ((window as any).__notifPollInterval) {
+              clearInterval((window as any).__notifPollInterval);
+              (window as any).__notifPollInterval = null;
+            }
             void refreshNotifications(null);
           }
 

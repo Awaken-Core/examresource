@@ -203,7 +203,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             />
           </svg>
         </div>
-        <h1 className="mt-4 text-xl font-bold text-white">Analysis Not Available</h1>
+        <h1 className="mt-4 text-xl font-bold text-heading">Analysis Not Available</h1>
         <p className="mt-2 text-sm text-muted">{error || 'Could not retrieve attempt analysis.'}</p>
         <div className="mt-6 flex justify-center gap-3">
           <a
@@ -214,7 +214,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           </a>
           <a
             href="/test-series"
-            className="inline-flex rounded-xl border border-border bg-surface-raised px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-surface-raised/80"
+            className="inline-flex rounded-xl border border-border bg-surface-raised px-4 py-2.5 text-xs font-semibold text-heading transition hover:bg-surface-raised/80"
           >
             Explore Tests
           </a>
@@ -265,7 +265,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                 </span>
               )}
             </div>
-            <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+            <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-heading sm:text-3xl">
               {data.testTitle}
             </h1>
           </div>
@@ -300,7 +300,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
               <div>
                 <p className="text-xs font-semibold text-muted">Total Marks Scored</p>
                 <div className="mt-1 flex items-baseline gap-3">
-                  <span className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                  <span className="text-4xl font-extrabold tracking-tight text-heading sm:text-5xl">
                     {summary.score}
                   </span>
                   <span className="text-lg text-muted">/ {summary.maximumMarks} Max Marks</span>
@@ -341,7 +341,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           <div className="grid grid-cols-2 divide-x divide-y sm:divide-y-0 sm:grid-cols-4 divide-border border-t border-border">
             <div className="p-4 sm:p-5">
               <span className="text-xs text-muted">Attempted</span>
-              <p className="mt-1 text-2xl font-extrabold text-white">
+              <p className="mt-1 text-2xl font-extrabold text-heading">
                 {summary.attemptedCount}
                 <span className="text-xs font-normal text-muted"> / {summary.totalQuestions}</span>
               </p>
@@ -405,7 +405,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             </div>
 
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-extrabold tracking-tight text-white">
+              <span className="text-4xl font-extrabold tracking-tight text-heading">
                 {summary.accuracy}%
               </span>
               <span className="text-xs text-muted">
@@ -429,7 +429,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             </div>
 
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-extrabold tracking-tight text-white">
+              <span className="text-4xl font-extrabold tracking-tight text-heading">
                 {formatTime(data.timeSpentSeconds)}
               </span>
               {avgSecondsPerQ !== null && (
@@ -475,8 +475,8 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             <tbody className="divide-y divide-border">
               {data.sections.map((sec, idx) => (
                 <tr key={sec.sectionId || idx} className="hover:bg-surface-raised/20 transition">
-                  <td className="py-3.5 px-4 font-bold text-white">{sec.name}</td>
-                  <td className="py-3.5 px-4 font-semibold text-white">
+                  <td className="py-3.5 px-4 font-bold text-heading">{sec.name}</td>
+                  <td className="py-3.5 px-4 font-semibold text-heading">
                     {Number(sec.marksAwarded.toFixed(2))}
                     <span className="text-muted font-normal"> / {sec.maximumMarks}</span>
                   </td>
@@ -528,7 +528,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
               <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-red-500/15 text-xs text-red-400 font-bold">
                 !
               </span>
-              <h3 className="text-sm font-bold text-white">
+              <h3 className="text-sm font-bold text-heading">
                 Needs Revision Chapters (&lt; 60% accuracy)
               </h3>
             </div>
@@ -546,7 +546,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                     className="flex items-center justify-between rounded-xl border border-red-500/20 bg-red-500/5 p-3 text-xs"
                   >
                     <div>
-                      <p className="font-semibold text-white">{ch.name}</p>
+                      <p className="font-semibold text-heading">{ch.name}</p>
                       <p className="text-[11px] text-muted">{ch.attempted} questions attempted</p>
                     </div>
                     <span className="font-bold text-red-400">{ch.accuracy}% accuracy</span>
@@ -562,7 +562,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
               <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-500/15 text-xs text-emerald-400 font-bold">
                 ✓
               </span>
-              <h3 className="text-sm font-bold text-white">Strong Chapters (≥ 75% accuracy)</h3>
+              <h3 className="text-sm font-bold text-heading">Strong Chapters (≥ 75% accuracy)</h3>
             </div>
 
             {data.strongChapters.length === 0 ? (
@@ -578,7 +578,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                     className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs"
                   >
                     <div>
-                      <p className="font-semibold text-white">{ch.name}</p>
+                      <p className="font-semibold text-heading">{ch.name}</p>
                       <p className="text-[11px] text-muted">{ch.attempted} questions attempted</p>
                     </div>
                     <span className="font-bold text-emerald-400">{ch.accuracy}% accuracy</span>
@@ -669,7 +669,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                   {/* Question header row */}
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-raised text-xs font-bold text-white">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-surface-raised text-xs font-bold text-heading">
                         Q{q.questionIndex}
                       </span>
                       {q.difficulty && (
@@ -702,7 +702,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                   </div>
 
                   {/* Question Prompt */}
-                  <div className="text-sm font-medium leading-relaxed text-white">{q.content}</div>
+                  <div className="text-sm font-medium leading-relaxed text-heading">{q.content}</div>
 
                   {/* Question Options */}
                   {q.options && q.options.length > 0 && (
@@ -712,12 +712,12 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                         const isStudentChoice = opt.isSelected;
                         const isActualCorrect = opt.isCorrect;
 
-                        let borderClass = 'border-border bg-surface-raised/40 text-muted';
+                        let borderClass = 'border-border bg-surface-raised/40 text-heading';
                         if (isActualCorrect) {
                           borderClass =
-                            'border-emerald-500/50 bg-emerald-500/10 text-white font-semibold';
+                            'border-emerald-500/60 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 font-semibold';
                         } else if (isStudentChoice && !isActualCorrect) {
-                          borderClass = 'border-red-500/50 bg-red-500/10 text-white';
+                          borderClass = 'border-red-500/60 bg-red-500/10 text-red-950 dark:text-red-100 font-medium';
                         }
 
                         return (
@@ -725,17 +725,17 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                             key={opt.id}
                             className={`flex items-start gap-3 rounded-xl border p-3 text-xs transition ${borderClass}`}
                           >
-                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-border bg-surface font-bold text-[10px]">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-border bg-surface font-bold text-[10px] text-heading">
                               {optLetter}
                             </span>
                             <div className="flex-1 min-w-0">{opt.content}</div>
                             {isActualCorrect && (
-                              <span className="shrink-0 font-bold text-emerald-400 text-[11px]">
+                              <span className="shrink-0 font-bold text-emerald-600 dark:text-emerald-400 text-[11px]">
                                 Correct Answer
                               </span>
                             )}
                             {isStudentChoice && !isActualCorrect && (
-                              <span className="shrink-0 font-bold text-red-400 text-[11px]">
+                              <span className="shrink-0 font-bold text-red-600 dark:text-red-400 text-[11px]">
                                 Your Answer
                               </span>
                             )}
@@ -781,7 +781,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
                         <p className="font-bold text-accent uppercase tracking-wider text-[10px]">
                           Explanation & Solution Notes
                         </p>
-                        <div className="leading-relaxed text-muted whitespace-pre-line">
+                        <div className="leading-relaxed text-text-body whitespace-pre-line">
                           {q.explanation || 'No explanation text provided for this question.'}
                         </div>
                       </div>
@@ -801,7 +801,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
         aria-labelledby="next-actions-heading"
         className="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-xs"
       >
-        <h2 id="next-actions-heading" className="text-base font-bold text-white">
+        <h2 id="next-actions-heading" className="text-base font-bold text-heading">
           6. Recommended Next Actions
         </h2>
         <p className="mt-1 text-xs text-muted">
@@ -814,7 +814,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             className="flex flex-col justify-between rounded-xl border border-border bg-surface-raised/50 p-4 transition hover:border-accent hover:bg-surface-raised group"
           >
             <div>
-              <p className="text-xs font-bold text-white group-hover:text-accent">
+              <p className="text-xs font-bold text-heading group-hover:text-accent">
                 Reattempt This Test
               </p>
               <p className="mt-1 text-[11px] text-muted">
@@ -829,7 +829,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             className="flex flex-col justify-between rounded-xl border border-border bg-surface-raised/50 p-4 transition hover:border-accent hover:bg-surface-raised group"
           >
             <div>
-              <p className="text-xs font-bold text-white group-hover:text-accent">
+              <p className="text-xs font-bold text-heading group-hover:text-accent">
                 Practice Weak Chapters
               </p>
               <p className="mt-1 text-[11px] text-muted">
@@ -844,7 +844,7 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
             className="flex flex-col justify-between rounded-xl border border-border bg-surface-raised/50 p-4 transition hover:border-accent hover:bg-surface-raised group"
           >
             <div>
-              <p className="text-xs font-bold text-white group-hover:text-accent">
+              <p className="text-xs font-bold text-heading group-hover:text-accent">
                 Take Next Mock Test
               </p>
               <p className="mt-1 text-[11px] text-muted">
@@ -877,7 +877,7 @@ function FilterButton({
       type="button"
       onClick={onClick}
       className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-        active ? `${activeColor} shadow-xs` : 'text-muted hover:bg-surface-raised hover:text-white'
+        active ? `${activeColor} shadow-xs` : 'text-muted hover:bg-surface-raised hover:text-heading'
       }`}
     >
       <span>{label}</span>

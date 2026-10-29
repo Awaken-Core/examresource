@@ -247,7 +247,7 @@ export class TestSeriesService {
     }
 
     const updated = await this.testSeriesModel
-      .findByIdAndUpdate(existing._id, { $set: updatePayload }, { new: true })
+      .findByIdAndUpdate(existing._id, { $set: updatePayload }, { returnDocument: 'after' })
       .lean();
 
     if (!updated) {
@@ -266,7 +266,7 @@ export class TestSeriesService {
     const existing = await this.findSeriesById(id);
 
     const updated = await this.testSeriesModel
-      .findByIdAndUpdate(existing._id, { $set: { status } }, { new: true })
+      .findByIdAndUpdate(existing._id, { $set: { status } }, { returnDocument: 'after' })
       .lean();
 
     if (!updated) {
@@ -384,7 +384,7 @@ export class TestSeriesService {
     if (input.slug) updatePayload.slug = input.slug.toLowerCase();
 
     const updated = await this.subjectModel
-      .findByIdAndUpdate(existing._id, { $set: updatePayload }, { new: true })
+      .findByIdAndUpdate(existing._id, { $set: updatePayload }, { returnDocument: 'after' })
       .lean();
 
     if (!updated) {
@@ -562,7 +562,7 @@ export class TestSeriesService {
     }
 
     const updated = await this.testSeriesSubjectModel
-      .findByIdAndUpdate(existing._id, { $set: payload }, { new: true })
+      .findByIdAndUpdate(existing._id, { $set: payload }, { returnDocument: 'after' })
       .lean();
 
     this.cache.clear();
@@ -756,7 +756,7 @@ export class TestSeriesService {
     if (input.slug) updatePayload.slug = input.slug.toLowerCase();
 
     const updated = await this.chapterModel
-      .findByIdAndUpdate(chapter._id, { $set: updatePayload }, { new: true })
+      .findByIdAndUpdate(chapter._id, { $set: updatePayload }, { returnDocument: 'after' })
       .lean();
 
     if (!updated) {
@@ -1017,7 +1017,7 @@ export class TestSeriesService {
     }
 
     const updated = await this.questionMappingModel
-      .findByIdAndUpdate(mapping._id, { $set: updatePayload }, { new: true })
+      .findByIdAndUpdate(mapping._id, { $set: updatePayload }, { returnDocument: 'after' })
       .populate<{ questionId: QuestionDocument }>('questionId')
       .lean();
 
@@ -1705,7 +1705,7 @@ export class TestSeriesService {
     updatePayload.totalQuestionsCount = totalQuestionsCount;
 
     const updated = await this.examModel
-      .findByIdAndUpdate(test._id, { $set: updatePayload }, { new: true })
+      .findByIdAndUpdate(test._id, { $set: updatePayload }, { returnDocument: 'after' })
       .lean();
 
     this.cache.clear();
@@ -1773,7 +1773,7 @@ export class TestSeriesService {
               totalQuestionsCount: assembled.totalQuestionsCount,
             },
           },
-          { new: true },
+          { returnDocument: 'after' },
         )
         .lean();
 
@@ -1786,7 +1786,7 @@ export class TestSeriesService {
         .findByIdAndUpdate(
           test._id,
           { $set: { status: 'archived', isCurrentVersion: false } },
-          { new: true },
+          { returnDocument: 'after' },
         )
         .lean();
       this.cache.clear();
@@ -1807,7 +1807,7 @@ export class TestSeriesService {
       .findByIdAndUpdate(
         test._id,
         { $set: { status: 'draft', isCurrentVersion: false } },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .lean();
     this.cache.clear();

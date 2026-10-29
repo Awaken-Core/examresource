@@ -109,7 +109,7 @@ const canonicalUrl = `${siteUrl}/notifications`;
     </div>
 
     {/* Active Notifications List */}
-    <div id="notifications-list" class="space-y-2.5">
+    <div id="notifications-list" data-lenis-prevent class="space-y-2.5">
       <div class="py-12 text-center text-xs text-muted">
         <div class="w-7 h-7 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
         <p>Loading your notifications...</p>
@@ -166,7 +166,7 @@ const canonicalUrl = `${siteUrl}/notifications`;
 </Layout>
 
 <script>
-  import { getNotifications, relativeTime, iconFor } from '../lib/notifications';
+  import { getNotifications, refreshNotifications, relativeTime, iconFor } from '../lib/notifications';
 
   let currentFilter: 'unread' | 'all' = 'unread';
 
@@ -208,7 +208,10 @@ const canonicalUrl = `${siteUrl}/notifications`;
         !item.read ? 'border-accent/40 bg-accent/5' : 'border-border'
       }`;
       if (card instanceof HTMLAnchorElement && item.href) {
-        card.href = item.href;
+        const chosenLang = (localStorage.getItem('preferred_exam_lang') || 'hinglish').toLowerCase();
+        card.href = (chosenLang === 'en' && !item.href.includes('lang='))
+          ? `${item.href}${item.href.includes('?') ? '&' : '?'}lang=en`
+          : item.href;
         card.dataset.notificationLink = item.id;
       }
 
@@ -300,13 +303,20 @@ const canonicalUrl = `${siteUrl}/notifications`;
   // Initialize
   renderPageNotifications();
   setupFilterButtons();
+  void refreshNotifications();
+
+  window.addEventListener('exam:language-change', () => {
+    void refreshNotifications();
+  });
 
   window.addEventListener('notifications-updated', () => {
-    renderPageNotifications();
+    void refreshNotifications();
   });
 
   document.addEventListener('astro:page-load', () => {
-    renderPageNotifications();
+    void refreshNotifications();
     setupFilterButtons();
+    void refreshNotifications();
+  void refreshNotifications();
   });
 </script>

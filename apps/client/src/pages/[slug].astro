@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import BlogArticle from '../components/blog/BlogArticle.astro';
 import TopicNavigation from '../components/blog/TopicNavigation.astro';
 import Comments from '../components/blog/Comments.astro';
@@ -78,7 +78,68 @@ if (!livePost && !isProfile) {
   return Astro.rewrite('/404');
 }
 
-const { htmlBody } = processArticleHtml(livePost.htmlContent || '', livePost.title);
+async function optimizeBlogHtmlImages(html: string): Promise<string> {
+  if (!html || !html.includes('<img')) return html;
+  const imgRegex = /<img\b([^>]*)>/gi;
+  const matches = [...html.matchAll(imgRegex)];
+  if (matches.length === 0) return html;
+
+  let result = html;
+  for (const match of matches) {
+    const fullTag = match[0];
+    const attrs = match[1];
+
+    const srcMatch = /\bsrc=["']([^"']+)["']/i.exec(attrs);
+    if (!srcMatch) continue;
+    const rawSrc = srcMatch[1];
+    const decodedSrc = rawSrc.replace(/&amp;/g, '&');
+
+    if (decodedSrc.startsWith('data:') || decodedSrc.startsWith('/_image')) {
+      if (!fullTag.includes('data-image-component')) {
+        const replacement = fullTag.replace(/<img\b/i, '<img data-image-component="true"');
+        result = result.replace(fullTag, replacement);
+      }
+      continue;
+    }
+
+    const widthMatch = /\bwidth=["']?(\d+)["']?/i.exec(attrs);
+    const heightMatch = /\bheight=["']?(\d+)["']?/i.exec(attrs);
+    const width = widthMatch ? parseInt(widthMatch[1], 10) : 800;
+    const height = heightMatch ? parseInt(heightMatch[1], 10) : Math.round((width * 9) / 16);
+
+    try {
+      const optimized = await getImage({
+        src: decodedSrc,
+        width,
+        height,
+        format: 'webp',
+      });
+
+      let newTag = fullTag.replace(/\bsrc=["'][^"']*["']/i, `src="${optimized.src}"`);
+      if (optimized.srcSet?.attribute) {
+        if (newTag.includes('srcset=')) {
+          newTag = newTag.replace(/\bsrcset=["'][^"']*["']/i, `srcset="${optimized.srcSet.attribute}"`);
+        } else {
+          newTag = newTag.replace(/<img\b/i, `<img srcset="${optimized.srcSet.attribute}"`);
+        }
+      }
+      if (!newTag.includes('data-image-component')) {
+        newTag = newTag.replace(/<img\b/i, '<img data-image-component="true"');
+      }
+      result = result.replace(fullTag, newTag);
+    } catch {
+      if (!fullTag.includes('data-image-component')) {
+        const fallback = fullTag.replace(/<img\b/i, '<img data-image-component="true"');
+        result = result.replace(fullTag, fallback);
+      }
+    }
+  }
+
+  return result;
+}
+
+const { htmlBody: rawHtmlBody } = processArticleHtml(livePost.htmlContent || '', livePost.title);
+const htmlBody = await optimizeBlogHtmlImages(rawHtmlBody);
 
 const subjectSlug = livePost.category?.slug || 'general';
 
@@ -277,6 +338,7 @@ langBundle[currentLanguage] = buildLangVersion({
 
 if (alternatePost) {
   const altProcessed = processArticleHtml(alternatePost.htmlContent || '', alternatePost.title);
+  const altHtmlBody = await optimizeBlogHtmlImages(altProcessed.htmlBody);
   const altTitle = alternatePost.title;
   const altDesc = alternatePost.description || alternatePost.metaDescription || '';
   const altUpdated = alternatePost.updatedAt
@@ -288,7 +350,7 @@ if (alternatePost) {
     description: altDesc,
     pageTitle: makePageTitle(alternatePost.metaTitle, altTitle),
     pageDescription: makePageDescription(alternatePost, altTitle, altDesc),
-    htmlBody: altProcessed.htmlBody,
+    htmlBody: altHtmlBody,
     updatedDate: altUpdated,
     // Prefer alt cover; fall back to primary (images are synced across the group)
     coverImage: alternatePost.coverImage || livePost?.coverImage || null,
@@ -309,7 +371,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
 ---
 
 {isProfile ? (
-  <Layout title={`My Preparation | ${siteName}`} noindex>
+  <Layout title={`My Preparation | ${siteName}`} noindex isEditorialTheme={true}>
     <main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       <ProfileHub client:load />
     </main>
@@ -325,12 +387,13 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
   jsonLd={jsonLd}
   alternateLinks={alternateLinks}
   noindex={Boolean(livePost?.noindex)}
+  isEditorialTheme={true}
 >
   <script type="application/json" id="article-lang-data" set:html={langBundleJson} />
 
   <div
     id="overview-top"
-    class="blog-reading-view min-h-screen bg-canvas text-heading"
+    class="blog-reading-view min-h-screen bg-editorial-bg text-editorial-text selection:bg-editorial-accent/20 selection:text-editorial-accent"
     data-article-lang={blogLanguageToAppLang(currentLanguage)}
   >
     <article
@@ -342,9 +405,9 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
         <nav aria-label="Breadcrumb" class="mb-2 sm:mb-3 flex items-center gap-1.5 text-[11px] sm:text-xs text-muted overflow-x-auto scrollbar-none whitespace-nowrap py-0.5">
           <a href="/" class="hover:text-accent shrink-0">Home</a>
           <span class="text-muted/40 shrink-0">/</span>
-          <a href="/" class="hover:text-accent shrink-0">Articles</a>
+          <a href="/blogs" class="hover:text-accent shrink-0">Blogs</a>
           <span class="text-muted/40 shrink-0">/</span>
-          <a href={`/category/${article.subjectSlug}`} target="_blank" rel="noopener" data-astro-prefetch="false" class="hover:text-accent shrink-0">{article.subjectTitle}</a>
+          <a href={`/category/${article.subjectSlug}`} data-astro-prefetch="false" class="hover:text-accent shrink-0">{article.subjectTitle}</a>
           <span class="text-muted/40 shrink-0">/</span>
           <span class="truncate font-medium text-heading max-w-[170px] sm:max-w-xs md:max-w-none" data-article-crumb-title>{article.title}</span>
         </nav>
@@ -531,7 +594,7 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
                   </div>
                 </div>
                 <a
-                  href="/"
+                  href="/blogs"
                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-raised/60 hover:bg-surface-raised border border-border/70 hover:border-accent/40 text-[11px] sm:text-xs font-semibold text-accent transition-all shrink-0"
                   aria-label="View all posts"
                 >

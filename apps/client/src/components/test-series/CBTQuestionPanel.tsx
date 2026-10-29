@@ -77,7 +77,7 @@ export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
         style={{ zoom }}
       >
         <article className="relative flex min-h-0 flex-col border-border lg:border-r">
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5">
+          <div data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-5 custom-scrollbar">
             <div className="mb-3 flex h-8 items-center justify-between gap-2">
               <h2 className="truncate text-sm font-bold text-heading">
                 {mode === 'conduct'
@@ -211,7 +211,7 @@ export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
           </div>
         </article>
 
-        <section className="min-h-0 overflow-y-auto overscroll-contain bg-surface p-4 sm:p-5" aria-label="Options">
+        <section data-lenis-prevent className="min-h-0 overflow-y-auto overscroll-contain bg-surface p-4 sm:p-5 custom-scrollbar" aria-label="Options">
           <p className="mb-3 h-5 text-[11px] font-bold tracking-wider text-muted uppercase">
             {mode === 'conduct' ? 'Agreement' : multiple ? 'Select all that apply' : 'Options'}
           </p>

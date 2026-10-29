@@ -1098,7 +1098,7 @@ export class BlogService {
         const blogDoc = await this.blogModel.findByIdAndUpdate(
           existing.id,
           { $set: updateFields },
-          { new: true, session },
+          { returnDocument: 'after', session },
         );
         if (!blogDoc) throw new NotFoundException('Blog was not found.');
 
@@ -1493,7 +1493,7 @@ export class BlogService {
 
     try {
       const cat = await this.categoryModel
-        .findByIdAndUpdate(id, { $set: input }, { new: true })
+        .findByIdAndUpdate(id, { $set: input }, { returnDocument: 'after' })
         .lean();
       if (!cat) throw new NotFoundException('Category not found.');
       this.invalidateCache();
@@ -1623,7 +1623,7 @@ export class BlogService {
       .findOneAndUpdate(
         { _id: new Types.ObjectId(blockId), blogId: new Types.ObjectId(blogId) },
         { $set: updateData },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .lean();
 

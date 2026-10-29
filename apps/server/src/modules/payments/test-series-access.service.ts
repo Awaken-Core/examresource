@@ -82,7 +82,7 @@ export class TestSeriesAccessService {
                   razorpayPaymentId: paymentId,
                 },
               },
-              { upsert: true, new: true },
+              { upsert: true, returnDocument: 'after' },
             ).lean();
             if (created) return created;
           } catch {

@@ -1,4 +1,4 @@
----
+  ---
 import Layout from '../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { siteFaqs, telegramChannel, whatsappChannel, siteUrl, siteName, siteDomain } from '../data/site';
@@ -286,7 +286,7 @@ const jsonLd = {
 
     <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-5 sm:pt-6 pb-20">
 
-      <h1 class="sr-only">GovtPariksha — Verified Government Exam Notifications, Admit Cards &amp; Results</h1>
+      <h1 class="sr-only">GovtPariksha | Verified Government Exam Notifications, Admit Cards &amp; Results</h1>
 
       {/* ══════════════════════════════════════════════════════════
           1. HERO SECTION (Compact, Homepage Typography & Spacing)
@@ -302,7 +302,7 @@ const jsonLd = {
         </h2>
 
         <p class="mt-2.5 sm:mt-3 text-[13.5px] sm:text-[14.5px] leading-relaxed text-editorial-muted max-w-lg mx-auto font-['Geist'] font-normal">
-          Verified exam updates, admit cards, results, and important notices — from all major government exams, in one place.
+          Verified exam updates, admit cards, results, and important notices from all major government exams in one place.
         </p>
 
         {/* ══════════════════════════════════════════════════════════
@@ -444,15 +444,15 @@ const jsonLd = {
         {/* 3-Column Editorial Grid (Matching Reference Columns) */}
         <div 
           id="bento-cards-container" 
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-0 lg:divide-x lg:divide-editorial-border"
+          class="editorial-stream-grid"
         >
-          {bentoGridData.map((cat, idx) => (
+          {bentoGridData.map((cat) => (
             <article
               data-bento-card
               data-stream-slug={cat.slug}
               data-stream-name={cat.name.toLowerCase()}
               data-stream-keywords={cat.keywords.join(' ')}
-              class={`flex flex-col ${idx > 0 ? 'lg:pl-8' : ''} ${idx < bentoGridData.length - 1 ? 'lg:pr-8' : ''}`}
+              class="editorial-stream-card flex flex-col justify-between"
             >
               {/* Stream Header */}
               <div class="flex items-start gap-3.5 mb-3">
@@ -530,6 +530,8 @@ const jsonLd = {
                   cat.articles.map((art) => (
                     <a
                       href={art.slug}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       data-article-link={art.slugKey}
                       data-stream-item
                       data-stream-title={art.title.toLowerCase()}
@@ -948,5 +950,70 @@ const jsonLd = {
       }
     } catch (e) {}
   </script>
+
+
+  {/* Scoped CSS for the 3-column editorial grid: clean alignment, zero !important, responsive dividers */}
+  <style>
+    .editorial-stream-grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 2.5rem;
+    }
+
+    .editorial-stream-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+    }
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .editorial-stream-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: 2.5rem;
+        column-gap: 0;
+      }
+      .editorial-stream-card {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        border-right: 1px solid var(--color-editorial-border);
+      }
+      .editorial-stream-card:nth-child(2n) {
+        border-right: none;
+        padding-right: 0;
+      }
+      .editorial-stream-card:nth-child(2n + 1) {
+        padding-left: 0;
+      }
+      .editorial-stream-card:nth-child(n + 3) {
+        border-top: 1px solid var(--color-editorial-border);
+        padding-top: 2rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .editorial-stream-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        row-gap: 3rem;
+        column-gap: 0;
+      }
+      .editorial-stream-card {
+        padding-left: 2rem;
+        padding-right: 2rem;
+        border-right: 1px solid var(--color-editorial-border);
+      }
+      .editorial-stream-card:nth-child(3n) {
+        border-right: none;
+        padding-right: 0;
+      }
+      .editorial-stream-card:nth-child(3n + 1) {
+        padding-left: 0;
+      }
+      .editorial-stream-card:nth-child(n + 4) {
+        border-top: 1px solid var(--color-editorial-border);
+        padding-top: 2.5rem;
+      }
+    }
+  </style>
 
 </Layout>

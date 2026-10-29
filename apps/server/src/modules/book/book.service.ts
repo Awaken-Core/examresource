@@ -72,7 +72,7 @@ export class BookService {
       .findByIdAndUpdate(
         new Types.ObjectId(id),
         { $set: input },
-        { new: true },
+        { returnDocument: 'after' },
       )
       .lean();
 
