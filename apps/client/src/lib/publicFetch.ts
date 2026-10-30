@@ -6,7 +6,13 @@ interface CacheEntry<T> {
 const memoryCache = new Map<string, CacheEntry<any>>();
 const inFlightRequests = new Map<string, Promise<any>>();
 const DEFAULT_TTL_MS = 60_000; // 60 seconds SSR in-memory cache
+const MAX_STALE_MS = 5 * 60_000; // Allow stale fallback for at most 5 minutes on transient 5xx/network errors
 const MAX_CACHE_SIZE = 250;
+
+function isUsableStale<T>(cached: CacheEntry<T> | undefined, now: number): boolean {
+  if (!cached) return false;
+  return now - cached.expiresAt < MAX_STALE_MS;
+}
 
 export async function fetchPublicJson<T>(path: string, ttlMs = DEFAULT_TTL_MS): Promise<T | null> {
   const base = import.meta.env.PUBLIC_API_URL?.replace(/\/$/, '');
@@ -33,20 +39,39 @@ export async function fetchPublicJson<T>(path: string, ttlMs = DEFAULT_TTL_MS): 
         headers: { accept: 'application/json' },
         signal: AbortSignal.timeout(6000),
       });
-      if (!response.ok) {
-        if (cached) return cached.data as T;
+
+      // Never return stale data for 404 (resource was genuinely not found or deleted)
+      if (response.status === 404) {
+        memoryCache.delete(url);
         return null;
       }
+
+      if (!response.ok) {
+        // Return stale data only for transient server errors (>= 500) if within max stale window
+        if (response.status >= 500 && isUsableStale(cached, Date.now())) {
+          return cached!.data as T;
+        }
+        return null;
+      }
+
       const data = (await response.json()) as T;
 
-      if (memoryCache.size >= MAX_CACHE_SIZE) {
-        const oldestKey = memoryCache.keys().next().value;
-        if (oldestKey) memoryCache.delete(oldestKey);
+      // Avoid bloating cache with empty array responses for unknown category queries
+      const isEmptyCategory = Array.isArray(data) && data.length === 0 && url.includes('category=');
+      if (!isEmptyCategory) {
+        if (memoryCache.size >= MAX_CACHE_SIZE) {
+          const oldestKey = memoryCache.keys().next().value;
+          if (oldestKey) memoryCache.delete(oldestKey);
+        }
+        memoryCache.set(url, { data, expiresAt: Date.now() + ttlMs });
       }
-      memoryCache.set(url, { data, expiresAt: Date.now() + ttlMs });
+
       return data;
     } catch {
-      if (cached) return cached.data as T;
+      // Fallback to stale cache only on temporary network disconnect/timeout within max stale age
+      if (isUsableStale(cached, Date.now())) {
+        return cached!.data as T;
+      }
       return null;
     } finally {
       inFlightRequests.delete(url);

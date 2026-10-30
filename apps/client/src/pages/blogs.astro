@@ -15,7 +15,7 @@ const listLanguage = appLangToBlogLanguage(preferredAppLang);
 
 // Edge CDN caching: cache for 60s, serve stale up to 300s while revalidating in background
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
-Astro.response.headers.set('Vary', 'Accept-Encoding');
+Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
 
 const livePosts = (await fetchPublicJson<any[]>(`/blogs?limit=60&language=${listLanguage}&includeImages=false`, 60_000)) || [];
 

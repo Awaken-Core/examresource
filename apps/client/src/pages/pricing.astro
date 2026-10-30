@@ -4,7 +4,7 @@ import { contactEmail, siteName, siteUrl } from '../data/site';
 import { formatRupees, loadPassOffer } from '../lib/passOffer';
 
 // Edge CDN caching: 5 minutes
-Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
 Astro.response.headers.set('Vary', 'Accept-Encoding');
 
 const offer = await loadPassOffer();

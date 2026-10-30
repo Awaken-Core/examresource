@@ -50,7 +50,7 @@ let allCategories: any[] = [];
 
 // Edge CDN caching: cache category list for 120s, serve stale up to 600s while revalidating
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=120, stale-while-revalidate=600');
-Astro.response.headers.set('Vary', 'Accept-Encoding');
+Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
 
 try {
   const [posts, categories] = await Promise.all([
