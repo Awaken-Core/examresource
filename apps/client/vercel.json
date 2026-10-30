@@ -1,0 +1,22 @@
+{
+  "headers": [
+    {
+      "source": "/fonts/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/(favicon.ico|favicon.svg|apple-touch-icon.png|logo.png|site.webmanifest)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ]
+}

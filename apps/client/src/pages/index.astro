@@ -94,6 +94,9 @@ const ctaBarHeights = [
   190, 170, 150, 132, 114, 98, 82, 68, 56, 46, 38, 32, 32, 38, 46, 56, 68, 82, 98, 114, 132, 150,
   170, 190,
 ];
+
+// Edge CDN caching: cache homepage for 300s (5m), serve stale up to 900s (15m) while revalidating
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
 ---
 
 <Layout

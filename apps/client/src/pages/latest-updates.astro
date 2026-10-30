@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { fetchPublicJson } from '../lib/publicFetch';
 import { siteDomain, siteName, siteUrl, whatsappChannel, telegramChannel } from '../data/site';
 import {
   appLangToBlogLanguage,
@@ -7,7 +8,6 @@ import {
   preferredLangFromCookieHeader,
 } from '../lib/preferred-lang';
 
-const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
 const preferredAppLang = preferredLangFromCookieHeader(Astro.request.headers.get('cookie'));
 const listLanguage = appLangToBlogLanguage(preferredAppLang);
 
@@ -15,37 +15,7 @@ const listLanguage = appLangToBlogLanguage(preferredAppLang);
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
 Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
 
-let livePosts: any[] = [];
-let fetchError: { type: 'network' | 'http' | 'json' | 'empty'; message?: string; status?: number; durationMs: number } | null = null;
-
-const fetchStart = performance.now();
-try {
-  const res = await fetch(`${API_URL}/blogs?limit=100&language=${listLanguage}&includeImages=false`, {
-    signal: AbortSignal.timeout(6000),
-  });
-  const durationMs = Math.round(performance.now() - fetchStart);
-
-  if (!res.ok) {
-    fetchError = { type: 'http', status: res.status, durationMs };
-  } else {
-    try {
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        livePosts = data;
-        if (data.length === 0) {
-          fetchError = { type: 'empty', status: res.status, durationMs };
-        }
-      } else {
-        fetchError = { type: 'json', message: 'Payload is not an array', status: res.status, durationMs };
-      }
-    } catch (parseErr: any) {
-      fetchError = { type: 'json', message: parseErr?.message, status: res.status, durationMs };
-    }
-  }
-} catch (netErr: any) {
-  const durationMs = Math.round(performance.now() - fetchStart);
-  fetchError = { type: 'network', message: netErr?.message, durationMs };
-}
+const livePosts = (await fetchPublicJson<any[]>(`/blogs?limit=100&language=${listLanguage}&includeImages=false`, 60_000)) || [];
 
 // Compute NEW badge (within last 3 days) and format chronological list
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;

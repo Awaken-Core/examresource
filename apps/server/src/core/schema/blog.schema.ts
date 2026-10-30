@@ -68,6 +68,7 @@ export const BlogSchema = SchemaFactory.createForClass(Blog);
 BlogSchema.index({ slug: 1, language: 1 }, { unique: true });
 BlogSchema.index({ authorId: 1, createdAt: 1 });
 BlogSchema.index({ status: 1, publishedAt: 1 });
+BlogSchema.index({ status: 1, categoryId: 1, publishedAt: -1 });
 
 @Schema({ collection: 'blog_blocks', timestamps: true })
 export class BlogBlock {

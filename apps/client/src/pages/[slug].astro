@@ -175,6 +175,9 @@ Astro.response.headers.set(
     ? 'private, no-store'
     : 'public, max-age=0, s-maxage=300, stale-while-revalidate=900',
 );
+if (!isProfile) {
+  Astro.response.headers.set('Vary', 'Accept-Encoding');
+}
 
 function makePageTitle(metaTitle: string | undefined, title: string) {
   const base = metaTitle || title;
