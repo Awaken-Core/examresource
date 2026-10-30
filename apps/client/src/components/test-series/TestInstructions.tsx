@@ -48,7 +48,14 @@ export function TestInstructions({ testId, initialData }: Props) {
 
   useEffect(() => {
     // If initialData matches current testId or slug, adopt it immediately and skip fetch
-    if (initialData && (initialData.id === testId || (initialData as any)._id === testId || (initialData as any).slug === testId)) {
+    const matchesInitial =
+      initialData &&
+      (initialData.id === testId ||
+        (initialData as any)._id === testId ||
+        (initialData as any).slug?.toLowerCase() === testId.toLowerCase() ||
+        Boolean(initialData.id || (initialData as any)._id));
+
+    if (matchesInitial) {
       setTest(initialData);
       setIsLoading(false);
       return;

@@ -25,7 +25,11 @@ interface SeriesSeo {
   subjects?: Array<{ name?: string; customDisplayName?: string | null }>;
 }
 
-const seriesSeo = await fetchPublicJson<SeriesSeo>(`/test-series/${encodeURIComponent(id)}`);
+// Fetch series metadata and all published tests concurrently in a single round-trip
+const [seriesSeo, allPublishedTests] = await Promise.all([
+  fetchPublicJson<SeriesSeo>(`/test-series/${encodeURIComponent(id)}`),
+  fetchPublicJson<any[]>(`/test-series/${encodeURIComponent(id)}/tests`),
+]);
 
 if (!seriesSeo) {
   return Astro.redirect('/test-series');
@@ -36,8 +40,8 @@ if (seriesSeo.slug && id.toLowerCase() !== seriesSeo.slug.toLowerCase()) {
   return Astro.redirect(`/test-series/${seriesSeo.slug}`, 301);
 }
 
-const resolvedSeriesId = (seriesSeo as any).id || (seriesSeo as any)._id || id;
-const initialFullTests = await fetchPublicJson<any[]>(`/test-series/${encodeURIComponent(resolvedSeriesId)}/tests?testMode=full`);
+const initialTests = allPublishedTests || [];
+const initialFullTests = initialTests.filter((t: any) => t.testMode === 'full');
 
 const seriesTitle = seriesSeo?.title?.trim();
 const subjectNames = (seriesSeo?.subjects ?? [])
@@ -119,7 +123,8 @@ const jsonLd = seriesTitle
       client:load
       seriesIdOrSlug={id}
       initialData={seriesSeo as any}
-      initialFullTests={initialFullTests || []}
+      initialFullTests={initialFullTests}
+      initialAllTests={initialTests}
     />
 
     {seriesTitle && (

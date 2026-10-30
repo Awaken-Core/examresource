@@ -1,17 +1,17 @@
 # Graph Report - examresource  (2026-10-30)
 
 ## Corpus Check
-- 336 files · ~434,873 words
+- 341 files · ~437,289 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 22 file(s) not represented in the graph (top: (none) 9, .example 2, .ttf 2)
 
 ## Summary
-- 3119 nodes · 6505 edges · 184 communities (136 shown, 48 thin omitted)
-- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 375 edges (avg confidence: 0.86)
+- 3081 nodes · 6621 edges · 180 communities (121 shown, 59 thin omitted)
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 379 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bca027ac`
+- Built from commit: `a34525ac`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -24,28 +24,28 @@
 - CommentsService
 - .requireUser
 - CurrentUser
-- QuestionService
+- QuestionController
 - durable-model.ts
 - Layout.astro
-- payment.service.ts
+- @nestjs/mongoose
 - DailyQuizService
 - site.ts
-- auth.service.ts
+- test-series.service.ts
 - server/package.json
 - exam.schema.ts
-- blogs.astro
+- latest-updates.astro
 - site.ts
-- learner-analytics.service.ts
+- ExamController
 - [slug].astro
 - package.json
 - syncFindHighlights
-- @nestjs/common
+- Post
 - BookService
 - admin/api.ts
-- article-reading.ts
+- CBTQuestionPanel.tsx
 - astro
 - ArticlesManager.tsx
-- app.module.ts
+- @nestjs/common
 - insertBlock
 - notifications.ts
 - dependencies
@@ -53,18 +53,18 @@
 - test-series.dto.ts
 - AdminApp.tsx
 - editor
-- Post
-- zod
+- notification.store.ts
+- comments.service.ts
 - dependencies
 - adminSession.ts
 - ink-orbit-features.tsx
 - compilerOptions
-- react
-- TestInstructions.tsx
+- CBTTestRunner.tsx
+- lib/api.ts
 - scripts
 - contact.ts
 - StateFilterWidget.astro
-- test-series.service.ts
+- pricing.astro
 - postgres
 - GeminiService
 - TestSeriesDetail.tsx
@@ -74,62 +74,61 @@
 - blogData.ts
 - seed-dsssb-tgt-cs.ts
 - ProfileHub.tsx
-- mongo-durable-object.ts
+- question.service.ts
 - article-lang.ts
 - sharp.ts
 - Production Deployment Guide (DEPLOYMENT.md)
-- pricing.astro
+- blogs.astro
 - PaymentService
 - MediaService
 - handleEditorImagePaste
 - editor-nodes.ts
 - blog.module.ts
 - 4. Individual tests
-- Get
+- blog-content.adapter.ts
 - question.service.ts
 - seed-test-series.mjs
 - TestAttemptsManager.tsx
-- blogs.astro
-- blog.service.ts
+- exam.service.ts
+- AppService
 - devDependencies
-- TestResultAnalysis.tsx
+- html-sanitizer.ts
 - executeImageInsertion
-- .listPublishedTests
-- test-series.service.spec.ts
+- CBTCalculator.tsx
+- rank-predictor.astro
 - openSlashMenu
 - astro.config.mjs
-- sitemap.xml.ts
-- vitest
+- @tiptap/extension-table-header@^3.32.0
+- Comments.astro
 - GovtPariksha Platform (ExamResource Monorepo)
 - daily-quiz/index.astro
-- daily-quiz.schema.ts
+- QuestionService
 - oxlint.json
 - migrate-pg-to-mongo.mjs
 - tsconfig.build.json
 - scripts
 - nest-cli.json
-- blog-content.adapter.ts
+- [id].astro
 - test-series.ts
 - client/tsconfig.json
 - useAdminToast
 - AdSlot.astro
 - AdminLayout.astro
-- article-lang-swap.ts
+- blog.cache.spec.ts
 - cloudflare-workers.d.ts
-- cbt.ts
+- zustand
 - blog/TableOfContents.astro
 - examArticle.ts
 - middleware.ts
 - cloudflare-node.d.ts
 - tsconfig.json
-- rank-predictor.astro
-- DurableQuery
-- CBTPalette.tsx
+- Get
+- blog.dto.ts
 - POST
-- @tiptap/core
-- @tiptap/extension-table
-- CBTQuestionPanel.tsx
-- [id].astro
+- gemini.service.ts
+- dompurify
+- lenis
+- marked
 - 1. Shell Components
 - 2. Token Definitions
 - AdPlaceholder.astro
@@ -141,22 +140,23 @@
 - [topic].astro
 - hideArticlePreview
 - GovtPariksha Master Design System
-- comment.schema.ts
+- @tiptap/core
 - 1. Font Families
 - scanAndExtractImagesFromText
 - Blog & Article View (`/blogs`, `/[slug]`) Design Rules
 - Blog Formatting & SEO Guidelines
 - Dashboard & Admin Pages Design Rules
-- CBTCalculator.tsx
-- blog.cache.spec.ts
-- serializer.ts
+- @tiptap/extension-placeholder@^3.32.0
+- @tiptap/extension-table
+- @tiptap/extension-underline@^3.32.0
 - 🚀 Frontend Performance Architecture (`apps/client`)
-- 🔑 Production Environment Variables
+- turndown
 - Homepage (`/`) Design Rules
 - MongoDurableObject
 - Test Series & CBT Interface Design Rules
-- react-dom@^19.3.1
-- @tiptap/extension-table-cell@^3.32.0
+- sitemap.xml.ts
+- daily-quiz-seed.ts
+- rank-predictor.spec.ts
 - Design System — takeUforward-Inspired Dark Theme
 - server/README.md
 - GovtPariksha Test Series Seed Pack
@@ -184,106 +184,94 @@
 1. `CurrentUser` - 113 edges
 2. `TestSeriesService` - 62 edges
 3. `AuthService` - 57 edges
-4. `BlogService` - 54 edges
-5. `Post` - 54 edges
+4. `Post` - 54 edges
+5. `BlogService` - 54 edges
 6. `mongoose` - 51 edges
-7. `TestSeriesController` - 49 edges
-8. `@nestjs/common` - 48 edges
+7. `@nestjs/common` - 50 edges
+8. `TestSeriesController` - 49 edges
 9. `react` - 41 edges
 10. `@nestjs/mongoose` - 40 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `📚 Version 2 Architecture & Branching (`feat/textbook-v2`)` --references--> `main()`  [INFERRED]
-  AGENTS.md → seed/dsssb-tgt-cs/seed-dsssb-tgt-cs.ts
 - `Key Technical Characteristics` --references--> `MongoDurableObject`  [INFERRED]
   AGENTS.md → apps/server/src/core/database/mongo-durable-object.ts
-- `🚀 Key Architectural & Performance Patterns` --references--> `MongoDurableObject`  [INFERRED]
-  README.md → apps/server/src/core/database/mongo-durable-object.ts
-- `Security Guardrails:` --references--> `POST()`  [INFERRED]
-  docs/ARCHITECTURE.md → apps/client/src/pages/api/contact.ts
-- `📋 Ongoing Performance Maintenance Checklist` --references--> `main()`  [INFERRED]
-  docs/PERFORMANCE.md → seed/dsssb-tgt-cs/seed-dsssb-tgt-cs.ts
+- `2. Cloudflare Durable Object Database Proxy (`MONGO_DO`)` --references--> `MongoDurableObject`  [INFERRED]
+  docs/ARCHITECTURE.md → apps/server/src/core/database/mongo-durable-object.ts
+- `1. Dual-Runtime Execution (Node.js & Cloudflare Workers)` --references--> `sharp()`  [INFERRED]
+  docs/ARCHITECTURE.md → apps/server/src/worker-shims/sharp.ts
+- `📚 Version 2 Architecture & Branching (`feat/textbook-v2`)` --references--> `main()`  [INFERRED]
+  AGENTS.md → seed/dsssb-tgt-cs/seed-dsssb-tgt-cs.ts
+- `Option B: Git Revert on `main`` --references--> `main()`  [INFERRED]
+  docs/DEPLOYMENT.md → seed/dsssb-tgt-cs/seed-dsssb-tgt-cs.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (184 total, 48 thin omitted)
+## Communities (180 total, 59 thin omitted)
 
 ### Community 0 - "editor.astro"
 Cohesion: 0.01
 Nodes (231): acceptedImageTypes, activeFocusKeywords, addFaqRowBtn, addKeywordBtn, addKeywordInput, aiRefApplyCompareBtn, aiRefBottomCountBadge, aiRefBtnLabel (+223 more)
 
 ### Community 1 - "BlogService"
-Cohesion: 0.13
-Nodes (7): blocksToHtml(), htmlToBlocks(), syncImageBlocks(), BlogService, CreateBlockInput, CreateBlogInput, UpdateBlogInput
+Cohesion: 0.15
+Nodes (5): htmlToBlocks(), syncImageBlocks(), BlogService, CreateBlockInput, CreateBlogInput
 
 ### Community 2 - "AuthService"
-Cohesion: 0.07
-Nodes (9): AuthController, makeService(), AuthService, decodeBase64Url(), derive(), encodeBase64Url(), encoder, hashPassword() (+1 more)
-
-### Community 3 - "ExamService"
-Cohesion: 0.06
-Nodes (13): CreateExamInput, createExamSchema, SaveAnswerInput, saveAnswerSchema, testQuestionSchema, UpdateExamInput, updateExamSchema, UpdateSectionProgressInput (+5 more)
+Cohesion: 0.05
+Nodes (20): RateLimitRecord, SlidingWindowRateLimiter, AuthController, SessionRequest, makeService(), AuthService, email, forgotPasswordSchema (+12 more)
 
 ### Community 4 - "auth.service.ts"
-Cohesion: 0.09
-Nodes (23): EmailVerificationToken, EmailVerificationTokenDocument, EmailVerificationTokenSchema, OauthState, OauthStateDocument, OauthStateSchema, PasswordResetToken, PasswordResetTokenDocument (+15 more)
+Cohesion: 0.06
+Nodes (29): sharp@^0.35.5, EmailVerificationToken, EmailVerificationTokenDocument, EmailVerificationTokenSchema, OauthState, OauthStateDocument, OauthStateSchema, PasswordResetToken (+21 more)
 
 ### Community 5 - "CommentsService"
-Cohesion: 0.07
-Nodes (14): addText(), createComment(), formatDate(), initialize(), handleDelete(), handleEdit(), load(), onLanguageChange() (+6 more)
+Cohesion: 0.08
+Nodes (11): initialize(), handleDelete(), handleEdit(), load(), onLanguageChange(), renderComments(), startReply(), updateCount() (+3 more)
 
 ### Community 7 - "CurrentUser"
-Cohesion: 0.13
-Nodes (4): CurrentUser, CreateIndividualTestInput, TestQuestionItemInput, TestSeriesService
-
-### Community 8 - "QuestionService"
-Cohesion: 0.10
-Nodes (4): QuestionController, QuestionService, editor, makeService()
+Cohesion: 0.11
+Nodes (6): CurrentUser, CreateIndividualTestInput, ListIndividualTestsQueryInput, TestQuestionItemInput, MemoryCache, TestSeriesService
 
 ### Community 9 - "durable-model.ts"
-Cohesion: 0.21
-Nodes (11): createDurableConnection(), createDurableModelProxy(), enableWorkerDatabaseProxy(), getMongoDOStub(), isWorkerDatabaseProxyEnabled(), mongoDONamespaceContext, runWithMongoDONamespace(), setMongoDOStub() (+3 more)
+Cohesion: 0.09
+Nodes (19): DatabaseModule, createDurableConnection(), createDurableModelProxy(), DurableQuery, enableWorkerDatabaseProxy(), executeDatabaseOperation(), getMongoDOStub(), isWorkerDatabaseProxyEnabled() (+11 more)
 
 ### Community 10 - "Layout.astro"
-Cohesion: 0.10
-Nodes (36): API_URL, applyOptimisticAuth(), closeAllDropdowns(), closeDropdown(), closeMobileDrawer(), closeSearchModal(), domainDotIndex, getDisplayedArticleLang() (+28 more)
+Cohesion: 0.09
+Nodes (38): API_URL, applyOptimisticAuth(), closeAllDropdowns(), closeDropdown(), closeMobileDrawer(), closeSearchModal(), domainDotIndex, getDisplayedArticleLang() (+30 more)
 
-### Community 11 - "payment.service.ts"
-Cohesion: 0.12
-Nodes (12): PaymentOrder, PaymentOrderDocument, TestSeriesPass, TestSeriesPassDocument, PaymentService, RazorpayOrder, student, addCalendarMonths() (+4 more)
+### Community 11 - "@nestjs/mongoose"
+Cohesion: 0.14
+Nodes (13): PaymentOrder, PaymentOrderDocument, PaymentOrderSchema, TestSeriesPass, TestSeriesPassDocument, TestSeriesPassSchema, RazorpayOrder, QUIZ_TYPES (+5 more)
 
 ### Community 12 - "DailyQuizService"
-Cohesion: 0.13
-Nodes (3): DailyQuizController, sanitizeCategory(), DailyQuizService
+Cohesion: 0.07
+Nodes (24): DailyQuiz, DailyQuizAttempt, DailyQuizAttemptDocument, DailyQuizAttemptSchema, DailyQuizBilingualText, DailyQuizBilingualTextSchema, DailyQuizDocument, DailyQuizOption (+16 more)
 
 ### Community 13 - "site.ts"
-Cohesion: 0.07
-Nodes (30): [brandPrefix, ...brandRest], liveUpdates, Props, contactEmail, examPortals, govPortals, searchItems, siteFaqs (+22 more)
+Cohesion: 0.06
+Nodes (33): [brandPrefix, ...brandRest], liveUpdates, Props, contactEmail, examPortals, govPortals, searchItems, siteFaqs (+25 more)
 
-### Community 14 - "auth.service.ts"
-Cohesion: 0.09
-Nodes (15): NotificationController, NotificationService, createBlogPublishedNotification(), createBroadcastNotification(), deduplicateNotificationsByLanguage(), ensureWelcomeNotification(), listNotificationsForUser(), listPublicNotifications() (+7 more)
+### Community 14 - "test-series.service.ts"
+Cohesion: 0.22
+Nodes (19): Exam, ExamSchema, TestAttempt, TestAttemptSchema, QuestionSchema, Chapter, ChapterSchema, QuestionMapping (+11 more)
 
 ### Community 15 - "server/package.json"
-Cohesion: 0.07
-Nodes (38): author, description, devDependencies, @nestjs/cli@12.0.11, @nestjs/mau@0.2.9, @nestjs/schematics@12.0.11, oxlint@1.90.0, prettier@3.9.10 (+30 more)
+Cohesion: 0.06
+Nodes (45): author, @aws-sdk/client-s3@3.1157.0, cookie-parser@^1.4.7, description, devDependencies, @nestjs/cli@12.0.11, @nestjs/mau@0.2.9, @nestjs/schematics@12.0.11 (+37 more)
 
 ### Community 16 - "exam.schema.ts"
 Cohesion: 0.21
-Nodes (14): AttemptAnswer, AttemptAnswerSchema, AttemptSectionProgress, AttemptSectionProgressSchema, ExamQuestionItem, ExamQuestionItemSchema, ExamSection, ExamSectionSchema (+6 more)
+Nodes (13): AttemptAnswer, AttemptAnswerSchema, AttemptSectionProgress, AttemptSectionProgressSchema, ExamQuestionItem, ExamQuestionItemSchema, ExamSection, ExamSectionSchema (+5 more)
 
-### Community 17 - "blogs.astro"
-Cohesion: 0.09
-Nodes (28): refreshListingCardsInPlace(), AppLang, appLangToBlogLanguage(), articleHref(), BlogLanguage, blogLanguageToAppLang(), normalizeAppLang(), preferredLangFromCookieHeader() (+20 more)
+### Community 17 - "latest-updates.astro"
+Cohesion: 0.07
+Nodes (35): refreshListingCardsInPlace(), syncListingCardLinks(), AppLang, appLangToBlogLanguage(), articleHref(), BlogLanguage, blogLanguageToAppLang(), normalizeAppLang() (+27 more)
 
 ### Community 18 - "site.ts"
-Cohesion: 0.06
-Nodes (25): [brandPrefix, ...brandRest], Props, safeReturn, setupGoogleAuth(), Props, uniqueId, Props, [brandPrefix, ...brandRest] (+17 more)
-
-### Community 19 - "learner-analytics.service.ts"
-Cohesion: 0.13
-Nodes (17): ExamDocument, TestAttemptDocument, ChapterDocument, SubjectDocument, TestSeriesDocument, SessionRequest, email, forgotPasswordSchema (+9 more)
+Cohesion: 0.07
+Nodes (24): [brandPrefix, ...brandRest], Props, safeReturn, setupGoogleAuth(), Props, uniqueId, Props, [brandPrefix, ...brandRest] (+16 more)
 
 ### Community 20 - "[slug].astro"
 Cohesion: 0.07
@@ -297,53 +285,41 @@ Nodes (37): dependencies, jsonrepair@^3.15.0, devDependencies, concurrently@10.0
 Cohesion: 0.10
 Nodes (30): collectDocMatches(), FindMatch, FindReplace, findReplaceKey, findStringMatches(), isWordChar(), mapTextOffset(), applyImageLayout() (+22 more)
 
-### Community 23 - "@nestjs/common"
-Cohesion: 0.05
-Nodes (21): sharp@^0.35.5, createApplication(), env, EnvSchema, DatabaseModule, bootstrap(), CreateCommentInput, createCommentSchema (+13 more)
-
-### Community 24 - "BookService"
-Cohesion: 0.11
-Nodes (6): BookController, BookService, CreateBookInput, createBookSchema, UpdateBookInput, updateBookSchema
-
 ### Community 25 - "admin/api.ts"
 Cohesion: 0.12
 Nodes (23): adminApi, AdminAttemptDetailAnswer, AdminAttemptDetailAnswerOption, AdminAttemptDetailQuestion, AdminAttemptSectionProgress, AdminChapter, AdminIndividualTest, AdminQuestion (+15 more)
 
-### Community 26 - "article-reading.ts"
-Cohesion: 0.14
-Nodes (25): Props, rawLines, Props, articleElement(), bindArticleReading(), bindCodeCopy(), bindFaqAccordion(), bindLightbox() (+17 more)
-
-### Community 27 - "astro"
-Cohesion: 0.11
-Nodes (3): astro@7.4.2, prerender, astro
+### Community 26 - "CBTQuestionPanel.tsx"
+Cohesion: 0.17
+Nodes (15): CBTFlagIcon(), CBTPalette, Chevron(), chipClass(), isFlaggedStatus(), Props, CBTQuestionPanel, Props (+7 more)
 
 ### Community 28 - "ArticlesManager.tsx"
 Cohesion: 0.14
 Nodes (19): Category, ArticlesManager(), ArticlesManagerProps, AssignCategoriesModal(), AssignCategoriesModalProps, CategoriesManager(), CategoriesManagerProps, CategoryModal() (+11 more)
 
-### Community 29 - "app.module.ts"
-Cohesion: 0.08
-Nodes (15): AppController, AppModule, AppService, Book, BookDocument, BookSchema, AuthModule, BookModule (+7 more)
+### Community 29 - "@nestjs/common"
+Cohesion: 0.09
+Nodes (16): Book, BookDocument, BookSchema, BlogModule, BookModule, CreateBookInput, createBookSchema, UpdateBookInput (+8 more)
 
 ### Community 30 - "insertBlock"
 Cohesion: 0.10
 Nodes (26): apiFetch(), escapeHtmlSnippet(), generateBilingualFromReference(), insertBlock(), insertExamPattern(), insertMarkdownSnippet(), insertTableOfContentsBlock(), loadMediaLibrary() (+18 more)
 
 ### Community 31 - "notifications.ts"
-Cohesion: 0.16
+Cohesion: 0.17
 Nodes (25): allCachedNotifications, AppNotification, buildCard(), currentItems, deduplicateClientNotifications(), fireUnreadToSystem(), getCurrentSelectedLang(), getFiredIds() (+17 more)
 
 ### Community 32 - "dependencies"
-Cohesion: 0.07
-Nodes (27): dependencies, @aws-sdk/client-s3@3.1157.0, @aws-sdk/s3-request-presigner@3.1157.0, cookie-parser@^1.4.7, dotenv@18.0.9, google-auth-library@^11.3.1, jsonrepair@^3.15.0, mongoose@9.11.4 (+19 more)
+Cohesion: 0.09
+Nodes (23): dependencies, @aws-sdk/s3-request-presigner@3.1157.0, dotenv@18.0.9, google-auth-library@^11.3.1, jsonrepair@^3.15.0, mongoose@9.11.4, @nestjs/common@12.3.2, @nestjs/core@12.3.2 (+15 more)
 
 ### Community 33 - "LearnerAnalyticsService"
-Cohesion: 0.14
-Nodes (5): LearnerAnalyticsController, LearnerAnalyticsService, makeService(), studentA, studentB
+Cohesion: 0.16
+Nodes (4): ListPreparationAttemptsQuery, LearnerAnalyticsController, LearnerAnalyticsService, makeService()
 
 ### Community 34 - "test-series.dto.ts"
-Cohesion: 0.17
-Nodes (19): assignSubjectSchema, createChapterSchema, createIndividualTestSchema, createQuestionMappingSchema, createSubjectSchema, createTestSeriesSchema, listIndividualTestsQuerySchema, questionBankQuerySchema (+11 more)
+Cohesion: 0.08
+Nodes (33): AssignSubjectInput, assignSubjectSchema, CreateChapterInput, createChapterSchema, createIndividualTestSchema, CreateQuestionMappingInput, createQuestionMappingSchema, CreateSubjectInput (+25 more)
 
 ### Community 35 - "AdminApp.tsx"
 Cohesion: 0.14
@@ -353,13 +329,17 @@ Nodes (17): AdminApp(), AdminAppContent(), checkAuth(), AdminAppProps, AdminTab,
 Cohesion: 0.15
 Nodes (23): addSeoKeyword(), applyImportedMarkdown(), applyKeywordsAndTags(), deleteOutlineBlock(), duplicateOutlineBlock(), editor, fillAuthorSelect(), fillTags() (+15 more)
 
-### Community 38 - "zod"
-Cohesion: 0.23
-Nodes (6): VALID_CATEGORIES, DailyQuizCategory, createDailyQuizDtoSchema, dailyQuizOptionDtoSchema, dailyQuizQuestionDtoSchema, submitDailyQuizDtoSchema
+### Community 37 - "notification.store.ts"
+Cohesion: 0.09
+Nodes (21): Notification, NotificationRead, NotificationReadDocument, NotificationReadSchema, NotificationSchema, NotificationController, NotificationModule, NotificationService (+13 more)
+
+### Community 38 - "comments.service.ts"
+Cohesion: 0.10
+Nodes (16): AppModule, createApplication(), env, EnvSchema, Comment, CommentDocument, CommentSchema, CommentStatus (+8 more)
 
 ### Community 39 - "dependencies"
-Cohesion: 0.08
-Nodes (26): dependencies, @astrojs/node@11.1.9, dotenv@18.0.9, lenis@^1.3.27, react@^19.3.1, @tiptap/extension-character-count@^3.32.0, @tiptap/extension-placeholder@^3.32.0, @tiptap/extension-underline@^3.32.0 (+18 more)
+Cohesion: 0.10
+Nodes (21): dependencies, astro@7.4.2, @astrojs/node@11.1.9, @dicebear/core@^10.7.0, @dicebear/styles@^10.6.0, dotenv@18.0.9, react@^19.3.1, @tiptap/extension-table-cell@^3.32.0 (+13 more)
 
 ### Community 40 - "adminSession.ts"
 Cohesion: 0.20
@@ -373,89 +353,85 @@ Nodes (20): Brackets(), chartPaths(), clamp(), CopyBlock(), D_FEATURES, FlowCard
 Cohesion: 0.10
 Nodes (20): compilerOptions, allowSyntheticDefaultImports, declaration, emitDecoratorMetadata, esModuleInterop, experimentalDecorators, incremental, isolatedModules (+12 more)
 
-### Community 43 - "react"
-Cohesion: 0.15
-Nodes (18): BrandMark(), CBTCodeOfConductModal(), Props, CBTHeader(), formatTime(), Props, CBTKeyboardShortcutsModal(), Props (+10 more)
+### Community 43 - "CBTTestRunner.tsx"
+Cohesion: 0.10
+Nodes (31): BrandMark(), CBTCodeOfConductModal(), Props, CBTHeader(), formatTime(), Props, CBTKeyboardShortcutsModal(), Props (+23 more)
 
-### Community 44 - "TestInstructions.tsx"
-Cohesion: 0.12
-Nodes (18): CheckoutResult, loadCheckoutScript(), openTestSeriesCheckout(), RazorpayCheckout, RazorpaySuccess, readError(), Window, Props (+10 more)
+### Community 44 - "lib/api.ts"
+Cohesion: 0.17
+Nodes (9): AnalysisData, ChapterStrength, FilterButton(), FilterKey, OptionReview, QuestionReviewItem, SectionStat, TestResultAnalysis() (+1 more)
 
 ### Community 45 - "scripts"
 Cohesion: 0.10
 Nodes (20): scripts, build, deploy, format, lint, migrate:pg-to-mongo, seed:test-series, start (+12 more)
 
 ### Community 46 - "contact.ts"
-Cohesion: 0.18
-Nodes (10): 1. Astro 5 Server-Side Rendering (SSR), 2. Instant Bilingual Language Swapping Pattern, 🛡️ Authentication & Security Model, 🎨 Frontend Architecture (`apps/client`), 🏛️ High-Level System Architecture, 📁 Monorepo Workspace Structure, Security Guardrails:, System Architecture (ARCHITECTURE.md) (+2 more)
+Cohesion: 0.15
+Nodes (12): 1. Astro 5 Server-Side Rendering (SSR), 1. Dual-Runtime Execution (Node.js & Cloudflare Workers), 2. Cloudflare Durable Object Database Proxy (`MONGO_DO`), 2. Instant Bilingual Language Swapping Pattern, 3. Media Pipeline: Direct-to-R2 Signed Uploads, ⚙️ Backend Architecture (`apps/server`), 🎨 Frontend Architecture (`apps/client`), 🏛️ High-Level System Architecture (+4 more)
 
 ### Community 47 - "StateFilterWidget.astro"
 Cohesion: 0.11
 Nodes (16): activeCatBadge, activeStateBadge, cards, categoriesList, categorySelect, filteredCount, livePosts, noResultsMsg (+8 more)
 
-### Community 48 - "test-series.service.ts"
-Cohesion: 0.09
-Nodes (15): AssignSubjectInput, CreateChapterInput, CreateQuestionMappingInput, CreateSubjectInput, CreateTestSeriesInput, QuestionBankQueryInput, ReorderChaptersInput, UpdateChapterInput (+7 more)
+### Community 48 - "pricing.astro"
+Cohesion: 0.17
+Nodes (12): fallbackOffer, formatRupees(), loadPassOffer(), PassOffer, jsonLd, listPrice, price, save (+4 more)
 
 ### Community 49 - "postgres"
 Cohesion: 0.11
 Nodes (18): POSTGRES_DB, POSTGRES_PASSWORD, POSTGRES_USER, interval, retries, test, timeout, name (+10 more)
 
-### Community 50 - "GeminiService"
-Cohesion: 0.09
-Nodes (8): extractCandidateText(), GeminiService, isRecord(), parseRobustJson(), SeoOptimizationInput, SeoOptimizationOutput, TranslateArticleInput, TranslatedArticleOutput
-
 ### Community 51 - "TestSeriesDetail.tsx"
-Cohesion: 0.12
-Nodes (14): AssignedSubject, CardFilter, Chapter, LatestAttemptMeta, LearnerSeriesPrep, Props, PublishedTestItem, RealTestCard() (+6 more)
+Cohesion: 0.06
+Nodes (35): CheckoutResult, loadCheckoutScript(), openTestSeriesCheckout(), RazorpayCheckout, RazorpaySuccess, readError(), Window, Props (+27 more)
 
 ### Community 52 - "bookmarks.ts"
-Cohesion: 0.15
-Nodes (19): Props, BookmarkedArticle, clearAllBookmarks, clearAllFavorites(), FavoriteArticle, getBookmarks, getFavorites(), isBookmarked (+11 more)
+Cohesion: 0.18
+Nodes (16): Props, BookmarkedArticle, clearAllFavorites(), FavoriteArticle, getBookmarks, getFavorites(), isBookmarked, isFavorite() (+8 more)
 
 ### Community 53 - "parse-md.ts"
 Cohesion: 0.13
 Nodes (12): buckets, buf, CHAPTER_SLUG_MAP, __dirname, flushQuestion(), letterToIndex(), lines, MD_PATH (+4 more)
 
 ### Community 54 - "client/package.json"
-Cohesion: 0.09
-Nodes (21): @dicebear/core@^10.7.0, @dicebear/styles@^10.6.0, dompurify@^3.4.17, marked@18.1.2, @tiptap/extension-link@^3.32.0, @tiptap/extension-table-header@^3.32.0, @tiptap/extension-table-row@^3.32.0, @tiptap/extension-youtube@^3.32.0 (+13 more)
+Cohesion: 0.12
+Nodes (15): react-dom@^19.3.1, @tiptap/extension-character-count@^3.32.0, @tiptap/extension-link@^3.32.0, @tiptap/starter-kit@^3.32.0, @vercel/analytics@^2.0.1, engines, node, name (+7 more)
 
 ### Community 55 - "blogData.ts"
 Cohesion: 0.15
 Nodes (12): difficultyColors, Props, Props, difficultyBadge, Props, ArticleSection, CodeSnippet, SubjectData (+4 more)
 
 ### Community 56 - "seed-dsssb-tgt-cs.ts"
-Cohesion: 0.17
-Nodes (9): ChapterSchema, __dirname, QuestionMappingSchema, QuestionOptionSchema, QuestionSchema, SubjectSchema, TestSeriesSchema, TestSeriesSubjectSchema (+1 more)
+Cohesion: 0.12
+Nodes (18): 🚢 Production Deployment Protocol, The Standard Deployment Sequence, 🚢 Production Deployment, The Deployment Commands:, ChapterSchema, __dirname, getModels(), main() (+10 more)
 
 ### Community 57 - "ProfileHub.tsx"
 Cohesion: 0.15
 Nodes (12): Attempt, AttemptAnswer, AttemptCard(), FilterPill(), LoadState, MetricBlock(), PassInfo, ProfileHub() (+4 more)
 
-### Community 58 - "mongo-durable-object.ts"
-Cohesion: 0.13
-Nodes (30): SCHEMA_MAP, Exam, ExamSchema, TestAttemptSchema, PaymentOrderSchema, TestSeriesPassSchema, Question, QuestionDocument (+22 more)
+### Community 58 - "question.service.ts"
+Cohesion: 0.12
+Nodes (17): ExamDocument, TestAttemptDocument, Question, QuestionDocument, QuestionOption, QuestionOptionSchema, ReportedQuestion, ReportedQuestionDocument (+9 more)
 
 ### Community 59 - "article-lang.ts"
-Cohesion: 0.15
-Nodes (28): applyImageStyle(), buildLangVersion(), cleanPlainText(), closeOpenLists(), computeImageDimensions(), extractDetailsItems(), extractHeadingItems(), extractParagraphItems() (+20 more)
+Cohesion: 0.06
+Nodes (66): Props, rawLines, onArticleLangSwap(), persistLang(), Props, setupLangSwitchers(), softNavigate(), Props (+58 more)
 
 ### Community 60 - "sharp.ts"
-Cohesion: 0.17
-Nodes (6): fitName(), formatName(), ResizeOptions, SharpMetadata, WebpOptions, WorkerSharpPipeline
+Cohesion: 0.15
+Nodes (8): fitName(), formatName(), ResizeOptions, sharp(), SharpMetadata, WebpOptions, WorkerSharpPipeline, 🛠️ Cloudflare Worker Specifics
 
 ### Community 61 - "Production Deployment Guide (DEPLOYMENT.md)"
 Cohesion: 0.12
-Nodes (21): 🚢 Production Deployment Protocol, The Standard Deployment Sequence, Option A: Instant Vercel Rollback (Frontend), Option B: Git Revert on `main`, Option C: Cloudflare Workers Rollback (Backend), 🔍 Post-Deployment Verification, 📋 Pre-Flight Checklist, Production Deployment Guide (DEPLOYMENT.md) (+13 more)
+Nodes (15): 1. Frontend (`apps/client`), 2. Backend (`apps/server`), Option A: Instant Vercel Rollback (Frontend), Option B: Git Revert on `main`, Option C: Cloudflare Workers Rollback (Backend), 🔍 Post-Deployment Verification, 📋 Pre-Flight Checklist, Production Deployment Guide (DEPLOYMENT.md) (+7 more)
 
-### Community 62 - "pricing.astro"
-Cohesion: 0.17
-Nodes (12): fallbackOffer, formatRupees(), loadPassOffer(), PassOffer, jsonLd, listPrice, price, save (+4 more)
+### Community 62 - "blogs.astro"
+Cohesion: 0.08
+Nodes (19): allCategories, jsonLd, listLanguage, liveCategoryPosts, preferredAppLang, rawCategorySlug, relevantPortals, slugAliases (+11 more)
 
 ### Community 63 - "PaymentService"
-Cohesion: 0.09
-Nodes (5): PaymentController, makeService(), query(), student, TestSeriesAccessService
+Cohesion: 0.10
+Nodes (6): PaymentController, PaymentService, addCalendarMonths(), paymentSignature(), signaturesMatch(), webhookSignature()
 
 ### Community 65 - "handleEditorImagePaste"
 Cohesion: 0.21
@@ -467,47 +443,51 @@ Nodes (12): @tiptap/extension-image@^3.32.0, @tiptap/extension-list@3.32.0, Arti
 
 ### Community 67 - "blog.module.ts"
 Cohesion: 0.09
-Nodes (25): Blog, BlogBlock, BlogBlockDocument, BlogBlockSchema, BlogDocument, BlogRevision, BlogRevisionDocument, BlogRevisionSchema (+17 more)
+Nodes (30): SCHEMA_MAP, Blog, BlogBlock, BlogBlockDocument, BlogBlockSchema, BlogDocument, BlogRevision, BlogRevisionDocument (+22 more)
 
 ### Community 68 - "4. Individual tests"
 Cohesion: 0.06
 Nodes (31): 4. Individual tests, Arithmetic & Percentages Chapter Test 01, Bihar BPSC Prelims Full Mock Test 01, Bihar BPSC Prelims Full Mock Test 02, Bihar General Knowledge Practice Test 02, Bihar History & Culture Chapter Test 02, Constitution & Governance Chapter Test 01, General Intelligence & Reasoning Practice Test 02 (+23 more)
 
+### Community 69 - "blog-content.adapter.ts"
+Cohesion: 0.22
+Nodes (17): sanitizeHtml(), BlockRecord, blocksToHtml(), cleanHtmlEntities(), escapeHtml(), findTargetInsertionIndex(), guessCodeLanguage(), isHeadingBlock() (+9 more)
+
 ### Community 70 - "question.service.ts"
-Cohesion: 0.12
-Nodes (15): baseQuestionSchema, CreateQuestionsInput, createQuestionsSchema, GenerateQuestionsAiInput, generateQuestionsAiSchema, optionSchema, ParseRawQuestionsAiInput, parseRawQuestionsAiSchema (+7 more)
+Cohesion: 0.17
+Nodes (14): baseQuestionSchema, CreateQuestionsInput, createQuestionsSchema, GenerateQuestionsAiInput, generateQuestionsAiSchema, optionSchema, ParseRawQuestionsAiInput, parseRawQuestionsAiSchema (+6 more)
 
 ### Community 71 - "seed-test-series.mjs"
-Cohesion: 0.12
-Nodes (12): targetSlugs, __dirname, __filename, nodeEnv, runSeed(), seedPack, seedPackPath, toDeterministicObjectId() (+4 more)
+Cohesion: 0.10
+Nodes (14): targetSlugs, __dirname, __filename, nodeEnv, runSeed(), seedPack, seedPackPath, toDeterministicObjectId() (+6 more)
 
 ### Community 72 - "TestAttemptsManager.tsx"
 Cohesion: 0.20
 Nodes (7): AdminAttemptDetail, AdminAttemptListItem, ErrorBoundaryProps, ErrorBoundaryState, TestAttemptsErrorBoundary, TestAttemptsManager(), TestAttemptsManagerContent()
 
-### Community 73 - "blogs.astro"
-Cohesion: 0.07
-Nodes (25): API_URL, bentoGridData, displayArticles, fetchStart, jsonLd, listLanguage, livePosts, nowTime (+17 more)
-
-### Community 74 - "blog.service.ts"
-Cohesion: 0.07
-Nodes (17): CacheEntry, CurrentUser, blockTypes, blogLanguages, blogStatuses, createBlockSchema, createBlogSchema, CreateCategoryInput (+9 more)
+### Community 73 - "exam.service.ts"
+Cohesion: 0.29
+Nodes (9): CreateExamInput, createExamSchema, SaveAnswerInput, saveAnswerSchema, testQuestionSchema, UpdateExamInput, updateExamSchema, UpdateSectionProgressInput (+1 more)
 
 ### Community 75 - "devDependencies"
 Cohesion: 0.15
 Nodes (13): devDependencies, @astrojs/check@0.9.12, tailwindcss@^4.3.3, @types/react@^19.3.0, @types/react-dom@^19.3.0, @types/turndown@^5.0.6, typescript@^6.0.3, typescript (+5 more)
 
-### Community 76 - "TestResultAnalysis.tsx"
-Cohesion: 0.18
-Nodes (9): AnalysisData, ChapterStrength, FilterButton(), FilterKey, OptionReview, QuestionReviewItem, SectionStat, TestResultAnalysis() (+1 more)
+### Community 76 - "html-sanitizer.ts"
+Cohesion: 0.24
+Nodes (10): cleanAttributes(), DANGEROUS_ELEMENTS, decodeEntities(), isSafeUrl(), SAFE_ATTRIBUTES, SAFE_BLOCK_TAGS, SAFE_INLINE_TAGS, SAFE_LIST_TAGS (+2 more)
 
 ### Community 77 - "executeImageInsertion"
 Cohesion: 0.22
 Nodes (11): closeArticleImageModal(), evaluateAltKeywordHealth(), executeImageInsertion(), getArticleFocusKeywords(), refreshSidebarArticleImages(), selectedImageAlign(), selectedImageLayout(), selectedImageWidth() (+3 more)
 
-### Community 79 - "test-series.service.spec.ts"
-Cohesion: 0.40
-Nodes (4): admin, editor, makeService(), student
+### Community 78 - "CBTCalculator.tsx"
+Cohesion: 0.27
+Nodes (9): CBTCalculator(), evaluateExpression(), Fn, formatResult(), FUNCTIONS, Op, Props, Tok (+1 more)
+
+### Community 79 - "rank-predictor.astro"
+Cohesion: 0.33
+Nodes (5): CATEGORIES, EXAM_PRESETS, ExamConfig, RankPredictorIsland(), jsonLd
 
 ### Community 80 - "openSlashMenu"
 Cohesion: 0.28
@@ -517,25 +497,21 @@ Nodes (9): checkSlashCommand(), closeSlashMenu(), executeSlashItem(), openSlashM
 Cohesion: 0.25
 Nodes (7): isBuild, @astrojs/react@7.1.1, @astrojs/vercel@11.0.16, @tailwindcss/vite@^4.3.3, @astrojs/react, @astrojs/vercel, @tailwindcss/vite
 
-### Community 82 - "sitemap.xml.ts"
-Cohesion: 0.83
-Nodes (3): escapeXml(), GET(), safeCdata()
-
-### Community 83 - "vitest"
-Cohesion: 0.18
-Nodes (6): vite-tsconfig-paths@6.1.1, vitest@5.0.5, calculateRankPrediction(), normCdf(), vite-tsconfig-paths, vitest
+### Community 83 - "Comments.astro"
+Cohesion: 0.60
+Nodes (4): addText(), createComment(), formatDate(), Props
 
 ### Community 84 - "GovtPariksha Platform (ExamResource Monorepo)"
-Cohesion: 0.15
-Nodes (12): 1. Installation, 2. Environment Configuration, 3. Run Development Servers, 📜 Available Scripts, GovtPariksha Platform (ExamResource Monorepo), 🚀 Key Architectural & Performance Patterns, 🛠️ Local Development, Prerequisites (+4 more)
+Cohesion: 0.17
+Nodes (11): 1. Installation, 2. Environment Configuration, 3. Run Development Servers, 📜 Available Scripts, GovtPariksha Platform (ExamResource Monorepo), 🛠️ Local Development, Prerequisites, 🏛️ System Architecture Overview (+3 more)
 
 ### Community 85 - "daily-quiz/index.astro"
 Cohesion: 0.16
 Nodes (12): DailyQuizQuestion, DailyQuizRunner(), EvaluatedQuestion, Props, QuizDataPayload, QuizEvaluationResult, availableQuizzes, jsonLd (+4 more)
 
-### Community 86 - "daily-quiz.schema.ts"
-Cohesion: 0.18
-Nodes (13): DailyQuiz, DailyQuizAttempt, DailyQuizAttemptDocument, DailyQuizAttemptSchema, DailyQuizBilingualText, DailyQuizBilingualTextSchema, DailyQuizDocument, DailyQuizOption (+5 more)
+### Community 86 - "QuestionService"
+Cohesion: 0.16
+Nodes (4): TranslateExplainAiInput, QuestionService, editor, makeService()
 
 ### Community 87 - "oxlint.json"
 Cohesion: 0.29
@@ -557,9 +533,9 @@ Nodes (6): scripts, astro, build, dev, preview, start
 Cohesion: 0.33
 Nodes (5): collection, compilerOptions, deleteOutDir, $schema, sourceRoot
 
-### Community 92 - "blog-content.adapter.ts"
-Cohesion: 0.26
-Nodes (15): BlockRecord, cleanHtmlEntities(), escapeHtml(), findTargetInsertionIndex(), guessCodeLanguage(), isHeadingBlock(), parseBlockFromTag(), readImageTag() (+7 more)
+### Community 92 - "[id].astro"
+Cohesion: 0.19
+Nodes (9): fetchPublicJson(), initialFullTests, SeriesSeo, seriesTitle, subjectNames, jsonLd, jsonLd, TestSeo (+1 more)
 
 ### Community 93 - "test-series.ts"
 Cohesion: 0.40
@@ -577,37 +553,21 @@ Nodes (13): Toast, ToastContext, ToastContextType, ToastType, useAdminToast(), C
 Cohesion: 0.15
 Nodes (5): backdrop, closeBtn, mobileBtn, Props, sidebar
 
-### Community 98 - "article-lang-swap.ts"
-Cohesion: 0.24
-Nodes (13): onArticleLangSwap(), persistLang(), Props, setupLangSwitchers(), softNavigate(), ArticleLangBundle, ArticleLangVersion, canSwapArticleLanguage() (+5 more)
+### Community 98 - "blog.cache.spec.ts"
+Cohesion: 0.40
+Nodes (4): @nestjs/testing@12.3.2, supertest@7.3.1, @nestjs/testing, supertest
 
-### Community 100 - "cbt.ts"
-Cohesion: 0.27
-Nodes (9): leaveExamFullscreen(), navigateToResults(), useCBTAttempt(), UseCBTAttemptProps, AttemptDetail, PublishedTestMetadata, QuestionOption, QuestionPaletteStatus (+1 more)
-
-### Community 106 - "rank-predictor.astro"
-Cohesion: 0.33
-Nodes (5): CATEGORIES, EXAM_PRESETS, ExamConfig, RankPredictorIsland(), jsonLd
-
-### Community 107 - "DurableQuery"
-Cohesion: 0.24
-Nodes (3): DurableQuery, executeDatabaseOperation(), MongoDOQuery
-
-### Community 108 - "CBTPalette.tsx"
-Cohesion: 0.23
-Nodes (11): CBTFlagIcon(), CBTLegend, Props, CBTPalette, Chevron(), chipClass(), isFlaggedStatus(), Props (+3 more)
+### Community 107 - "blog.dto.ts"
+Cohesion: 0.15
+Nodes (16): blockTypes, blogLanguages, blogStatuses, createBlockSchema, createBlogSchema, CreateCategoryInput, createCategorySchema, CreateTagInput (+8 more)
 
 ### Community 109 - "POST"
-Cohesion: 0.20
-Nodes (9): ContactPayload, escapeHtml(), POST(), prerender, 📡 API Endpoints, 🔐 Architecture Overview, Authentication & Session Security (AUTH.md), 🍪 Cookie Configuration (+1 more)
+Cohesion: 0.14
+Nodes (13): escapeHtml(), POST(), 🛡️ Authentication & Security Model, Security Guardrails:, 📡 API Endpoints, 🔐 Architecture Overview, Authentication & Session Security (AUTH.md), 🍪 Cookie Configuration (+5 more)
 
-### Community 112 - "CBTQuestionPanel.tsx"
-Cohesion: 0.27
-Nodes (8): CBTQuestionPanel, Props, questionText(), typeLabel(), CBTQuestionReportModal(), ISSUE_REASONS, Props, QuestionDetail
-
-### Community 113 - "[id].astro"
-Cohesion: 0.16
-Nodes (10): TestInstructions(), fetchPublicJson(), initialFullTests, SeriesSeo, seriesTitle, subjectNames, jsonLd, jsonLd (+2 more)
+### Community 110 - "gemini.service.ts"
+Cohesion: 0.29
+Nodes (6): extractCandidateText(), isRecord(), SeoOptimizationInput, SeoOptimizationOutput, TranslateArticleInput, TranslatedArticleOutput
 
 ### Community 114 - "1. Shell Components"
 Cohesion: 0.20
@@ -620,10 +580,6 @@ Nodes (8): 1. Palette Architecture, 2. Token Definitions, 3. Best Practices, A. 
 ### Community 140 - "GovtPariksha Master Design System"
 Cohesion: 0.22
 Nodes (8): 1. Design Philosophy, 2. Token Architecture Overview, 3. Editorial Aliases, 4. Typography Hierarchy, 5. Layout & Breakpoints, 6. Prohibited Anti-Patterns, Core Principles, GovtPariksha Master Design System
-
-### Community 141 - "comment.schema.ts"
-Cohesion: 0.25
-Nodes (5): Comment, CommentDocument, CommentSchema, CommentStatus, commentStatuses
 
 ### Community 142 - "1. Font Families"
 Cohesion: 0.29
@@ -645,33 +601,17 @@ Nodes (14): 10. Security and rendering rules for developers, 11. Example article
 Cohesion: 0.50
 Nodes (3): Dashboard & Admin Pages Design Rules, Guidelines, Scope
 
-### Community 147 - "CBTCalculator.tsx"
-Cohesion: 0.27
-Nodes (9): CBTCalculator(), evaluateExpression(), Fn, formatResult(), FUNCTIONS, Op, Props, Tok (+1 more)
-
-### Community 148 - "blog.cache.spec.ts"
-Cohesion: 0.40
-Nodes (4): @nestjs/testing@12.3.2, supertest@7.3.1, @nestjs/testing, supertest
-
-### Community 149 - "serializer.ts"
-Cohesion: 0.60
-Nodes (4): deserializeInDO(), deserializeResultInWorker(), serializeForDO(), serializeResultFromDO()
-
 ### Community 150 - "🚀 Frontend Performance Architecture (`apps/client`)"
-Cohesion: 0.14
-Nodes (13): 1. Vercel Edge HTTP Caching, 1. Zero Render-Blocking Third-Party Scripts, 2. Backend In-Memory Service Cache (`apps/server`), 2. Font Loading Strategy, 3. Critical CSS & Design Tokens, 3. Resilient SSR Fetching & Timeout Guardrails, 4. Image Optimization Rules, 5. Instant Bilingual Language Swapping (Zero Latency) (+5 more)
-
-### Community 151 - "🔑 Production Environment Variables"
-Cohesion: 0.67
-Nodes (3): 1. Frontend (`apps/client`), 2. Backend (`apps/server`), 🔑 Production Environment Variables
+Cohesion: 0.18
+Nodes (10): 1. Zero Render-Blocking Third-Party Scripts, 2. Font Loading Strategy, 3. Critical CSS & Design Tokens, 4. Image Optimization Rules, 5. Instant Bilingual Language Swapping (Zero Latency), 🛠️ Cloudflare Worker Bundle & Cold-Start Optimization, 🚀 Frontend Performance Architecture (`apps/client`), 📋 Ongoing Performance Maintenance Checklist (+2 more)
 
 ### Community 152 - "Homepage (`/`) Design Rules"
 Cohesion: 0.50
 Nodes (3): Constraints, Homepage (`/`) Design Rules, Structure
 
-### Community 153 - "MongoDurableObject"
-Cohesion: 0.23
-Nodes (8): MongoDurableObject, sharp(), 1. Dual-Runtime Execution (Node.js & Cloudflare Workers), 2. Cloudflare Durable Object Database Proxy (`MONGO_DO`), 3. Media Pipeline: Direct-to-R2 Signed Uploads, ⚙️ Backend Architecture (`apps/server`), 🛠️ Cloudflare Worker Specifics, 🛠️ Cloudflare Worker Bundle & Cold-Start Optimization
+### Community 155 - "sitemap.xml.ts"
+Cohesion: 0.83
+Nodes (3): escapeXml(), GET(), safeCdata()
 
 ### Community 160 - "Design System — takeUforward-Inspired Dark Theme"
 Cohesion: 0.17
@@ -754,24 +694,24 @@ Cohesion: 0.67
 Nodes (3): Blog Content Rules, Design System, Key Design Principles
 
 ## Knowledge Gaps
-- **2 isolated node(s):** `./tsconfig.json`, `astro/tsconfigs/strict`
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1234 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **2 isolated node(s):** `astro/tsconfigs/strict`, `./tsconfig.json`
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1173 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **59 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `query()` connect `PaymentService` to `editor.astro`, `blogs.astro`?**
-  _High betweenness centrality (0.245) - this node is a cross-community bridge._
-- **What connects `./tsconfig.json`, `astro/tsconfigs/strict` to the rest of the system?**
+- **Why does `query()` connect `@nestjs/mongoose` to `editor.astro`, `blogs.astro`?**
+  _High betweenness centrality (0.229) - this node is a cross-community bridge._
+- **What connects `astro/tsconfigs/strict`, `./tsconfig.json` to the rest of the system?**
   _2 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `editor.astro` be split into smaller, more focused modules?**
   _Cohesion score 0.007662835249042145 - nodes in this community are weakly interconnected._
-- **Why does `mongoose` connect `@nestjs/common` to `AuthService`, `ExamService`, `auth.service.ts`, `durable-model.ts`, `payment.service.ts`, `comment.schema.ts`, `auth.service.ts`, `server/package.json`, `exam.schema.ts`, `learner-analytics.service.ts`, `serializer.ts`, `app.module.ts`, `dependencies`, `LearnerAnalyticsService`, `zod`, `test-series.service.ts`, `seed-dsssb-tgt-cs.ts`, `mongo-durable-object.ts`, `PaymentService`, `blog.module.ts`, `question.service.ts`, `seed-test-series.mjs`, `blog.service.ts`, `test-series.service.spec.ts`, `vitest`, `daily-quiz.schema.ts`, `migrate-pg-to-mongo.mjs`?**
-  _High betweenness centrality (0.173) - this node is a cross-community bridge._
+- **Why does `mongoose` connect `auth.service.ts` to `dependencies`, `AuthService`, `blog.module.ts`, `seed-dsssb-tgt-cs.ts`, `notification.store.ts`, `comments.service.ts`, `seed-test-series.mjs`, `durable-model.ts`, `exam.service.ts`, `@nestjs/mongoose`, `DailyQuizService`, `test-series.service.ts`, `server/package.json`, `exam.schema.ts`, `migrate-pg-to-mongo.mjs`, `question.service.ts`, `daily-quiz-seed.ts`, `@nestjs/common`?**
+  _High betweenness centrality (0.125) - this node is a cross-community bridge._
 - **Should `BlogService` be split into smaller, more focused modules?**
-  _Cohesion score 0.1329268292682927 - nodes in this community are weakly interconnected._
-- **Why does `Post` connect `Post` to `MediaService`, `AuthService`, `ExamService`, `CommentsService`, `.requireUser`, `QuestionService`, `DailyQuizService`, `auth.service.ts`, `BookService`, `admin/api.ts`, `ArticlesManager.tsx`, `PaymentService`?**
-  _High betweenness centrality (0.114) - this node is a cross-community bridge._
+  _Cohesion score 0.14714714714714713 - nodes in this community are weakly interconnected._
+- **Why does `Post` connect `.requireUser` to `MediaService`, `AuthService`, `CommentsService`, `notification.store.ts`, `QuestionController`, `DailyQuizService`, `ExamController`, `Post`, `admin/api.ts`, `ArticlesManager.tsx`, `PaymentService`?**
+  _High betweenness centrality (0.108) - this node is a cross-community bridge._
 - **Should `AuthService` be split into smaller, more focused modules?**
-  _Cohesion score 0.06982456140350878 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0528555431131019 - nodes in this community are weakly interconnected._
