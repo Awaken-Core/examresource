@@ -114,6 +114,7 @@ interface Props {
   seriesIdOrSlug: string;
   initialData?: TestSeriesDetailData | null;
   initialFullTests?: PublishedTestItem[] | null;
+  initialAllTests?: PublishedTestItem[] | null;
 }
 
 type TabType = 'full' | 'subject' | 'chapter' | 'syllabus';
@@ -127,10 +128,27 @@ function testRouteId(test: PublishedTestItem) {
   return test.slug || test.id || test._id || '';
 }
 
-export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests }: Props) {
+export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialAllTests }: Props) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
+
+  const partitionedInitial = useMemo(() => {
+    if (!initialAllTests || initialAllTests.length === 0) {
+      return {
+        full: initialFullTests || [],
+        subject: [] as PublishedTestItem[],
+        chapter: [] as PublishedTestItem[],
+        hasAll: false,
+      };
+    }
+    return {
+      full: initialAllTests.filter((t) => t.testMode === 'full'),
+      subject: initialAllTests.filter((t) => t.testMode === 'subject'),
+      chapter: initialAllTests.filter((t) => t.testMode === 'chapter'),
+      hasAll: true,
+    };
+  }, [initialAllTests, initialFullTests]);
 
   // Learner series progress state (after login)
   const [learnerPrep, setLearnerPrep] = useState<LearnerSeriesPrep | null>(null);
@@ -146,8 +164,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
   // Subject state
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
-  const [subjectTests, setSubjectTests] = useState<PublishedTestItem[]>([]);
-  const [loadingSubjectTests, setLoadingSubjectTests] = useState(false);
+  const [subjectTests, setSubjectTests] = useState<PublishedTestItem[]>(partitionedInitial.subject);
+  const [loadingSubjectTests, setLoadingSubjectTests] = useState(!partitionedInitial.hasAll && activeTab === 'subject');
 
   // Chapter state
   const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(() => initialData?.subjects?.[0]?.subjectId || null);
@@ -155,12 +173,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     const firstSub = initialData?.subjects?.[0];
     return firstSub?.chapters?.[0]?.id || firstSub?.chapters?.[0]?._id || null;
   });
-  const [chapterTests, setChapterTests] = useState<PublishedTestItem[]>([]);
-  const [loadingChapterTests, setLoadingChapterTests] = useState(false);
+  const [chapterTests, setChapterTests] = useState<PublishedTestItem[]>(partitionedInitial.chapter);
+  const [loadingChapterTests, setLoadingChapterTests] = useState(!partitionedInitial.hasAll && activeTab === 'chapter');
 
   // Full tests state
-  const [fullTests, setFullTests] = useState<PublishedTestItem[]>(initialFullTests || []);
-  const [loadingFullTests, setLoadingFullTests] = useState(!initialFullTests || initialFullTests.length === 0);
+  const [fullTests, setFullTests] = useState<PublishedTestItem[]>(partitionedInitial.full);
+  const [loadingFullTests, setLoadingFullTests] = useState(!partitionedInitial.hasAll && partitionedInitial.full.length === 0);
 
   // Syllabus state
   const [syllabusSubjectId, setSyllabusSubjectId] = useState<string | null>(null);
@@ -169,6 +187,24 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
   // In-memory cache for test query responses
   const testsCacheRef = useRef<Map<string, PublishedTestItem[]>>(new Map());
+
+  // Seed cache from SSR bundled tests for 0ms instant tab swapping
+  useEffect(() => {
+    if (!series) return;
+    const seriesId = series.id || series._id;
+    if (!seriesId) return;
+
+    if (partitionedInitial.hasAll) {
+      testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=full`, partitionedInitial.full);
+      testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=subject`, partitionedInitial.subject);
+      testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=chapter`, partitionedInitial.chapter);
+      if (series.slug) {
+        testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=full`, partitionedInitial.full);
+        testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=subject`, partitionedInitial.subject);
+        testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=chapter`, partitionedInitial.chapter);
+      }
+    }
+  }, [series, partitionedInitial]);
 
   // Load series details
   useEffect(() => {
@@ -606,6 +642,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
               {diagnosticTest && (
                 <a
                   href={`/test-series/instructions/${testRouteId(diagnosticTest)}`}
+                  data-astro-prefetch="hover"
                   className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {activeAttemptInProgress ? 'Resume In-Progress Test' : '+ Attempt Diagnostic Test'}
@@ -1313,7 +1350,7 @@ function RealTestCard({
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
-            <a href={`/test-series/instructions/${routeId}`}>
+            <a href={`/test-series/instructions/${routeId}`} data-astro-prefetch="hover">
               {test.title}
             </a>
           </h3>
@@ -1380,6 +1417,7 @@ function RealTestCard({
               {hasActivePass ? (
                 <a
                   href={`/test-series/instructions/${routeId}`}
+                  data-astro-prefetch="hover"
                   className="inline-flex items-center justify-center text-xs font-semibold text-accent hover:underline"
                 >
                   Reattempt
@@ -1409,6 +1447,7 @@ function RealTestCard({
             <div className="flex flex-col sm:items-end">
               <a
                 href={`/test-series/instructions/${routeId}`}
+                data-astro-prefetch="hover"
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-emerald-700"
               >
                 <span>{hasActivePass ? 'Start Test' : 'Start Free Mock'}</span>

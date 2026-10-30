@@ -1189,17 +1189,27 @@ export class TestSeriesService {
   // =========================================================================
 
   private async findSeriesById(idOrSlug: string) {
+    const cacheKey = `seriesDoc:${idOrSlug.toLowerCase()}`;
+    const cached = this.cache.get<any>(cacheKey);
+    if (cached) return cached;
+
+    let doc: any = null;
     if (Types.ObjectId.isValid(idOrSlug)) {
-      const doc = await this.testSeriesModel
+      doc = await this.testSeriesModel
         .findById(new Types.ObjectId(idOrSlug))
         .lean();
-      if (!doc) throw new NotFoundException('Test series was not found.');
-      return doc;
+    } else {
+      doc = await this.testSeriesModel
+        .findOne({ slug: idOrSlug.toLowerCase() })
+        .lean();
     }
-    const doc = await this.testSeriesModel
-      .findOne({ slug: idOrSlug.toLowerCase() })
-      .lean();
     if (!doc) throw new NotFoundException('Test series was not found.');
+
+    this.cache.set(cacheKey, doc, 60_000);
+    this.cache.set(`seriesDoc:${doc._id.toString()}`, doc, 60_000);
+    if (doc.slug) {
+      this.cache.set(`seriesDoc:${doc.slug.toLowerCase()}`, doc, 60_000);
+    }
     return doc;
   }
 
@@ -1395,6 +1405,10 @@ export class TestSeriesService {
 
     const formatted = docs.map((doc) => this.formatIndividualTest(doc, false));
     this.cache.set(cacheKey, formatted, 60_000);
+    this.cache.set(`listTests:${series._id.toString()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}`, formatted, 60_000);
+    if (series.slug) {
+      this.cache.set(`listTests:${series.slug.toLowerCase()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}`, formatted, 60_000);
+    }
     return formatted;
   }
 
@@ -1429,6 +1443,7 @@ export class TestSeriesService {
           },
         ],
       })
+      .select('-questions.snapshot -sections.questions.snapshot')
       .lean();
 
     if (!doc) {
@@ -1439,10 +1454,17 @@ export class TestSeriesService {
 
     // Ensure parent series is published
     if (doc.testSeriesId) {
-      const series = await this.testSeriesModel
-        .findById(doc.testSeriesId)
-        .lean();
-      if (!series || series.status !== 'published') {
+      const seriesCacheKey = `seriesStatus:${doc.testSeriesId.toString()}`;
+      let isPublished = this.cache.get<boolean>(seriesCacheKey);
+      if (isPublished === undefined) {
+        const series = await this.testSeriesModel
+          .findById(doc.testSeriesId)
+          .select('_id status')
+          .lean();
+        isPublished = Boolean(series && series.status === 'published');
+        this.cache.set(seriesCacheKey, isPublished, 120_000);
+      }
+      if (!isPublished) {
         throw new NotFoundException('Test series was not found.');
       }
     }

@@ -29,7 +29,7 @@ export default defineConfig({
 	output: 'server',
 	compressHTML: true,
 	prefetch: {
-		prefetchAll: false,
+		prefetchAll: true,
 		defaultStrategy: 'hover',
 	},
 	server: { port: Number(process.env.PORT || 3000), host: true },

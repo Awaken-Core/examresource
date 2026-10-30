@@ -168,6 +168,7 @@ export class Chapter {
 export const ChapterSchema = SchemaFactory.createForClass(Chapter);
 ChapterSchema.index({ testSeriesId: 1, subjectId: 1, slug: 1 }, { unique: true });
 ChapterSchema.index({ testSeriesId: 1, subjectId: 1, order: 1 });
+ChapterSchema.index({ testSeriesId: 1, status: 1, order: 1, name: 1 });
 
 /**
  * 5. Central Question Bank Mapping
