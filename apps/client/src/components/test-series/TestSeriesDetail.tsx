@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { API_URL } from '../../lib/api';
+import { API_URL, isClientAuthenticated } from '../../lib/api';
 import { TestSeriesPassCard } from './TestSeriesPassCard';
 
 export interface Chapter {
@@ -150,8 +150,11 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   const [loadingSubjectTests, setLoadingSubjectTests] = useState(false);
 
   // Chapter state
-  const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(null);
-  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(null);
+  const [chapterSubjectId, setChapterSubjectId] = useState<string | null>(() => initialData?.subjects?.[0]?.subjectId || null);
+  const [selectedChapterId, setSelectedChapterId] = useState<string | null>(() => {
+    const firstSub = initialData?.subjects?.[0];
+    return firstSub?.chapters?.[0]?.id || firstSub?.chapters?.[0]?._id || null;
+  });
   const [chapterTests, setChapterTests] = useState<PublishedTestItem[]>([]);
   const [loadingChapterTests, setLoadingChapterTests] = useState(false);
 
@@ -216,20 +219,27 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     if (!seriesId) return;
     const resolvedSeriesId = seriesId;
 
+    if (!isClientAuthenticated()) {
+      return;
+    }
+
     async function fetchPrepData() {
       try {
-        const res = await fetch(`${API_URL}/me/preparation/series/${resolvedSeriesId}`, {
-          credentials: 'include',
-        });
-        if (res.ok) {
+        const [res, accessRes] = await Promise.all([
+          fetch(`${API_URL}/me/preparation/series/${resolvedSeriesId}`, {
+            credentials: 'include',
+          }).catch(() => null),
+          fetch(
+            `${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`,
+            { credentials: 'include' },
+          ).catch(() => null),
+        ]);
+
+        if (res && res.ok) {
           const data = (await res.json()) as LearnerSeriesPrep;
           setLearnerPrep(data);
         }
-        const accessRes = await fetch(
-          `${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`,
-          { credentials: 'include' },
-        );
-        if (accessRes.ok) {
+        if (accessRes && accessRes.ok) {
           const access = await accessRes.json();
           setSeriesAccess({
             hasActivePass: Boolean(access.hasActivePass),
@@ -243,6 +253,35 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     }
 
     void fetchPrepData();
+  }, [series]);
+
+  // Re-fetch progress if user logs in dynamically
+  useEffect(() => {
+    const handleAuthChange = (e: any) => {
+      if (e?.detail?.user && series) {
+        const seriesId = series.id || series._id;
+        if (!seriesId) return;
+        const resolvedSeriesId = seriesId;
+        Promise.all([
+          fetch(`${API_URL}/me/preparation/series/${resolvedSeriesId}`, { credentials: 'include' }).then(r => r.ok ? r.json() : null).catch(() => null),
+          fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, { credentials: 'include' }).then(r => r.ok ? r.json() : null).catch(() => null),
+        ]).then(([prep, access]) => {
+          if (prep) setLearnerPrep(prep);
+          if (access) {
+            setSeriesAccess({
+              hasActivePass: Boolean(access.hasActivePass),
+              expiresAt: access.expiresAt ?? null,
+              freeTestId: access.freeTestId ?? null,
+            });
+          }
+        }).catch(() => {});
+      } else if (!e?.detail?.user) {
+        setLearnerPrep(null);
+        setSeriesAccess(null);
+      }
+    };
+    window.addEventListener('auth:change', handleAuthChange);
+    return () => window.removeEventListener('auth:change', handleAuthChange);
   }, [series]);
 
   // Load Subject-wise tests from real database API (all 20 subject tests cached)

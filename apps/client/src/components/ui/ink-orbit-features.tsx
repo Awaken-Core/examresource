@@ -708,7 +708,7 @@ function InsightsCard({
     pct +
     " percent from week 1"
 
-  const onMove = (event: React.PointerEvent<SVGSVGElement>) => {
+  const onMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
     if (!rect.width) return
     setHover(nearestIndex(points.map((q) => q[0]), ((event.clientX - rect.left) / rect.width) * W))
