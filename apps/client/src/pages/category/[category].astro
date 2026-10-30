@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import ArticleCard from '../../components/blog/ArticleCard.astro';
 import { Image } from 'astro:assets';
 import { API_URL } from '../../lib/api';
+import { fetchPublicJson } from '../../lib/publicFetch';
 import { siteUrl, siteName, whatsappChannel, telegramChannel } from '../../data/site';
 import {
   appLangToBlogLanguage,
@@ -49,23 +50,17 @@ let allCategories: any[] = [];
 
 // Edge CDN caching: cache category list for 120s, serve stale up to 600s while revalidating
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=120, stale-while-revalidate=600');
-Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
 
 try {
-  const [postRes, catRes] = await Promise.all([
-    fetch(`${API_URL}/blogs?category=${encodeURIComponent(categorySlug)}&limit=50&language=${listLanguage}&includeImages=true`, {
-      signal: AbortSignal.timeout(6000),
-    }),
-    fetch(`${API_URL}/categories`, {
-      signal: AbortSignal.timeout(6000),
-    }),
+  const [posts, categories] = await Promise.all([
+    fetchPublicJson<any[]>(`/blogs?category=${encodeURIComponent(categorySlug)}&limit=50&language=${listLanguage}&includeImages=true`, 60_000),
+    fetchPublicJson<any[]>('/categories', 300_000),
   ]);
 
-  if (postRes.ok) liveCategoryPosts = await postRes.json();
-  if (catRes.ok) {
-    allCategories = await catRes.json();
-    categoryInfo = allCategories.find((c: any) => c.slug === categorySlug);
-  }
+  liveCategoryPosts = posts || [];
+  allCategories = categories || [];
+  categoryInfo = allCategories.find((c: any) => c.slug === categorySlug);
 } catch (e) {
   liveCategoryPosts = [];
 }

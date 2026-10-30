@@ -6,6 +6,7 @@ import { TestSeriesExplorer } from '../../components/test-series/TestSeriesExplo
 
 // Edge CDN caching: 60s
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
 
 const initialSeries = (await fetchPublicJson<any[]>('/test-series')) || [];
 
@@ -120,7 +121,7 @@ const jsonLd = {
           2. PUBLISHED TEST SERIES EXPLORER (React Island)
           ══════════════════════════════════════════════════════════ */}
       <div class="w-full">
-        <TestSeriesExplorer client:load initialList={initialSeries} />
+        <TestSeriesExplorer client:idle initialList={initialSeries} />
       </div>
 
       {/* ══════════════════════════════════════════════════════════

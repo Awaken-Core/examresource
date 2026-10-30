@@ -11,6 +11,7 @@ if (!id) {
 }
 
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
 
 interface SeriesSeo {
   title?: string;
