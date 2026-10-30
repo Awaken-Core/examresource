@@ -819,7 +819,18 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
       if (video.duration) video.currentTime = (Number(progress.value) / 100) * video.duration;
     });
     video.muted = false;
-    void video.play().catch(() => syncPlayback());
+    void video.play().catch(() => {
+      // Browsers block autoplay with sound until the visitor interacts with the page.
+      video.muted = true;
+      syncMute();
+      void video.play().catch(() => syncPlayback());
+    });
+    const enableSound = () => {
+      video.muted = false;
+      syncMute();
+    };
+    window.addEventListener('pointerdown', enableSound, { once: true });
+    window.addEventListener('keydown', enableSound, { once: true });
     syncPlayback();
     syncMute();
     syncProgress();

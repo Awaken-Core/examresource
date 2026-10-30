@@ -65,13 +65,13 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         <BrandLogo size={32} class="hidden sm:block shrink-0 group-hover:scale-105 transition-transform" />
         <span
           id="header-brand-name"
-          class={`${isHomePage ? 'flex' : 'hidden'} items-center font-['Geist'] font-medium tracking-tight whitespace-nowrap ${
+          class={`${isHomePage ? 'flex' : 'hidden'} items-center font-semibold font-['Geist'] font-medium tracking-tight whitespace-nowrap ${
             isEditorialTheme 
               ? 'text-[16px] min-[360px]:text-[18px] sm:text-[23px] text-editorial-heading'
               : 'text-heading text-base sm:text-lg font-bold'
           }`}
         >
-          {brandPrefix}<span class={isEditorialTheme ? 'text-editorial-accent' : 'text-accent'}>{brandSuffix}</span>
+          {brandPrefix}<span class={isEditorialTheme ? 'text-editorial-accent' : 'text-accent font-semibold'}>{brandSuffix}</span>
         </span>
       </a>
 
