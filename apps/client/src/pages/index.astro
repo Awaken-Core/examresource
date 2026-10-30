@@ -131,7 +131,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
           <p
             class="mx-auto mt-7 max-w-[650px] font-['Geist'] text-[14px] leading-7 text-[#675F58] dark:text-[#A89D92] sm:text-[16px]"
           >
-            Verified exam updates, focused quizzes, and live tests—brought together to keep your
+            Verified exam updates, focused quizzes, and live tests brought together to keep your
             preparation clear and measurable.
           </p>
           <div class="mt-8 flex justify-center">
@@ -168,7 +168,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
                 />
                 {
                   homeCoverVideoUrl && (
-                    <div class="home-video-frame group absolute inset-0 h-full w-full overflow-hidden rounded-[12px] border border-white/70 bg-black p-[2px] shadow-[0_18px_50px_rgba(0,0,0,0.45),0_0_0_1px_rgba(0,0,0,0.55)] sm:inset-auto sm:left-1/2 sm:top-[12%] sm:h-[70%] sm:w-[68%] sm:-translate-x-1/2 sm:rounded-[15px] sm:p-[3px]">
+                    <div class="home-video-frame group absolute inset-0 h-full w-full overflow-hidden rounded-[12px] border-0 bg-black p-0 shadow-[0_18px_50px_rgba(0,0,0,0.45),0_0_0_1px_rgba(0,0,0,0.55)] sm:inset-auto sm:left-1/2 sm:top-[12%] sm:h-[70%] sm:w-[68%] sm:-translate-x-1/2 sm:rounded-[15px] sm:border sm:border-white/70 sm:p-[3px]">
                       <div class="relative h-full overflow-hidden rounded-[6px] bg-black sm:rounded-[11px]">
                         <video
                           id="home-cover-video"
@@ -182,27 +182,16 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
                           aria-label="GovtPariksha platform preview"
                         />
                         <div class="video-control-scrim pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent px-2 pb-2 pt-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 sm:px-3 sm:pb-3 sm:pt-12">
-                          <div class="pointer-events-auto flex items-center gap-1.5 sm:gap-2.5" data-video-controls>
+                          <div class="pointer-events-auto flex items-center justify-end gap-1.5 sm:justify-between sm:gap-2.5" data-video-controls>
                             <button
                               type="button"
-                              class="grid size-8 shrink-0 place-items-center rounded-full bg-editorial-accent text-white shadow-lg backdrop-blur-md transition-colors hover:bg-editorial-accent-hover focus-visible:outline-2 focus-visible:outline-white sm:size-10"
+                              class="hidden size-8 shrink-0 place-items-center rounded-full bg-editorial-accent text-white shadow-lg backdrop-blur-md transition-colors hover:bg-editorial-accent-hover focus-visible:outline-2 focus-visible:outline-white sm:grid sm:size-10"
                               data-video-play
                               aria-label="Play video"
                             >
                               <svg class="hidden size-4 sm:size-5" data-pause-icon viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5.5A1.5 1.5 0 0 1 8.5 4h1A1.5 1.5 0 0 1 11 5.5v13A1.5 1.5 0 0 1 9.5 20h-1A1.5 1.5 0 0 1 7 18.5v-13Zm6 0A1.5 1.5 0 0 1 14.5 4h1A1.5 1.5 0 0 1 17 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-13Z" /></svg>
                               <svg class="size-4 sm:size-5" data-play-icon viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.4 4.7A1.5 1.5 0 0 1 9 4.8l9.2 5.9a1.5 1.5 0 0 1 0 2.6L9 19.2A1.5 1.5 0 0 1 6.7 18V6a1.5 1.5 0 0 1 .7-1.3Z" /></svg>
                             </button>
-                            <input
-                              class="home-video-progress min-w-0 flex-1"
-                              data-video-progress
-                              type="range"
-                              min="0"
-                              max="100"
-                              value="0"
-                              step="0.1"
-                              aria-label="Video progress"
-                            />
-                            <span class="hidden min-w-[4.5rem] text-center font-sans text-[10px] tabular-nums text-white/80 sm:inline" data-video-time>0:00 / 0:00</span>
                             <button
                               type="button"
                               class="grid size-8 shrink-0 place-items-center rounded-full text-white/85 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-white sm:size-10"
@@ -642,50 +631,6 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
 </Layout>
 
 <style>
-  .home-video-progress {
-    --video-progress: 0%;
-    height: 1rem;
-    cursor: pointer;
-    appearance: none;
-    background: transparent;
-  }
-  .home-video-progress::-webkit-slider-runnable-track {
-    height: 0.25rem;
-    border-radius: 9999px;
-    background: linear-gradient(
-      to right,
-      var(--color-editorial-accent) 0 var(--video-progress),
-      rgb(255 255 255 / 0.3) var(--video-progress) 100%
-    );
-  }
-  .home-video-progress::-webkit-slider-thumb {
-    width: 0.75rem;
-    height: 0.75rem;
-    margin-top: -0.25rem;
-    appearance: none;
-    border: 2px solid white;
-    border-radius: 9999px;
-    background: var(--color-editorial-accent);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
-  }
-  .home-video-progress::-moz-range-track {
-    height: 0.25rem;
-    border-radius: 9999px;
-    background: rgb(255 255 255 / 0.3);
-  }
-  .home-video-progress::-moz-range-progress {
-    height: 0.25rem;
-    border-radius: 9999px;
-    background: var(--color-editorial-accent);
-  }
-  .home-video-progress::-moz-range-thumb {
-    width: 0.75rem;
-    height: 0.75rem;
-    border: 2px solid white;
-    border-radius: 9999px;
-    background: var(--color-editorial-accent);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
-  }
   @media (hover: none) {
     .video-control-scrim {
       opacity: 1;
@@ -763,22 +708,13 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
     const controls = frame?.querySelector('[data-video-controls]');
     const playButton = controls?.querySelector('[data-video-play]') as HTMLButtonElement | null;
     const muteButton = controls?.querySelector('[data-video-mute]') as HTMLButtonElement | null;
-    const progress = controls?.querySelector('[data-video-progress]') as HTMLInputElement | null;
-    const time = controls?.querySelector('[data-video-time]') as HTMLElement | null;
     const playIcon = playButton?.querySelector('[data-play-icon]');
     const pauseIcon = playButton?.querySelector('[data-pause-icon]');
     const mutedIcon = muteButton?.querySelector('[data-muted-icon]');
     const soundIcon = muteButton?.querySelector('[data-sound-icon]');
-    if (!frame || !playButton || !muteButton || !progress || !time) return;
+    if (!frame || !playButton || !muteButton) return;
 
     video.dataset.controlsBound = 'true';
-
-    const formatTime = (seconds: number) => {
-      if (!Number.isFinite(seconds)) return '0:00';
-      const minutes = Math.floor(seconds / 60);
-      const remainder = Math.floor(seconds % 60);
-      return `${minutes}:${remainder.toString().padStart(2, '0')}`;
-    };
 
     const syncPlayback = () => {
       const isPaused = video.paused;
@@ -793,13 +729,6 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
       muteButton.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
     };
 
-    const syncProgress = () => {
-      const percentage = video.duration ? (video.currentTime / video.duration) * 100 : 0;
-      progress.value = String(percentage);
-      progress.style.setProperty('--video-progress', `${percentage}%`);
-      time.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
-    };
-
     const togglePlayback = () => {
       if (video.paused) void video.play();
       else video.pause();
@@ -809,14 +738,9 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
     video.addEventListener('click', togglePlayback);
     video.addEventListener('play', syncPlayback);
     video.addEventListener('pause', syncPlayback);
-    video.addEventListener('timeupdate', syncProgress);
-    video.addEventListener('loadedmetadata', syncProgress);
     muteButton.addEventListener('click', () => {
       video.muted = !video.muted;
       syncMute();
-    });
-    progress.addEventListener('input', () => {
-      if (video.duration) video.currentTime = (Number(progress.value) / 100) * video.duration;
     });
     video.muted = false;
     void video.play().catch(() => {
@@ -833,7 +757,6 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
     window.addEventListener('keydown', enableSound, { once: true });
     syncPlayback();
     syncMute();
-    syncProgress();
   }
 
   function syncLandingAuthUI() {
