@@ -959,7 +959,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }
         }
 
-        function setLanguage(lang: string, shouldNavigate: boolean = false) {
+        let isUpdatingLanguage = false;
+
+        function setLanguage(lang: string, shouldNavigate: boolean = false, skipEvent: boolean = false) {
+          if (isUpdatingLanguage) return;
           const normalized = normalizeAppLang(lang);
           let previous: string = 'hinglish';
           try {
@@ -1001,7 +1004,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           // Keep listing card links aligned with preference
           syncListingCardLinks(normalized);
-          window.dispatchEvent(new CustomEvent('exam:language-change', { detail: { lang: normalized } }));
+
+          if (!skipEvent) {
+            isUpdatingLanguage = true;
+            try {
+              window.dispatchEvent(new CustomEvent('exam:language-change', { detail: { lang: normalized, origin: 'Layout' } }));
+            } finally {
+              isUpdatingLanguage = false;
+            }
+          }
+
           void refreshNotifications();
 
           if (!shouldNavigate) return;
@@ -1897,9 +1909,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           });
         }
 
+        let isReiniting = false;
         function reinitPageElements() {
-          // Initialize Lenis smooth scroll
-          initLenis({ headerOffset: -70 });
+          if (isReiniting) return;
+          isReiniting = true;
+          try {
+            // Initialize Lenis smooth scroll
+            initLenis({ headerOffset: -70 });
 
           // Instantly show logged-in shell from cache — zero network, zero delay
           applyOptimisticAuth();
@@ -1931,9 +1947,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           if (displayedArticleLang) {
             if (hasExplicitUrlLang) {
               // Explicit ?lang= wins — sync preference to match URL/content
-              setLanguage(displayedArticleLang, false);
+              setLanguage(displayedArticleLang, false, true);
             } else {
-              setLanguage(displayedArticleLang, false);
+              setLanguage(displayedArticleLang, false, true);
               if (preferred !== displayedArticleLang) {
                 void import('../lib/article-lang-swap').then(({ canSwapArticleLanguage }) => {
                   if (canSwapArticleLanguage(preferred)) {
@@ -1943,7 +1959,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               }
             }
           } else {
-            setLanguage(preferred, false);
+            setLanguage(preferred, false, true);
           }
 
 
@@ -1991,6 +2007,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             }
           }
           queueSyncAuthProfile();
+          } finally {
+            isReiniting = false;
+          }
         }
 
         /**
@@ -2131,7 +2150,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           // Window language change event
           window.addEventListener('exam:language-change', ((e: CustomEvent) => {
-            if (e.detail?.lang) setLanguage(e.detail.lang, false);
+            if (isUpdatingLanguage) return;
+            if (e.detail?.origin === 'Layout') return;
+            if (e.detail?.lang) setLanguage(e.detail.lang, false, true);
           }) as EventListener);
 
           // Apply optimistic auth to the newly swapped DOM immediately before browser paint
@@ -2150,10 +2171,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             closeMobileDrawer();
           });
 
-          // Dispatch astro:page-load so any components listening to it continue working seamlessly
-          try {
-            document.dispatchEvent(new Event('astro:page-load'));
-          } catch (e) {}
+
         }
 
         // Run smoothly without blocking initial layout paint or causing forced reflow

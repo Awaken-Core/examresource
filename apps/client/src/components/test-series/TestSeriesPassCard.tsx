@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API_URL } from '../../lib/api';
+import { API_URL, isClientAuthenticated } from '../../lib/api';
 import { openTestSeriesCheckout } from './openTestSeriesCheckout';
 
 type PassOffer = {
@@ -46,8 +46,13 @@ export function TestSeriesPassCard({
     let ignore = false;
     async function load() {
       try {
-        const res = await fetch(`${API_URL}/payments/test-series-pass`, { credentials: 'include' });
-        const publicOffer = await fetch(`${API_URL}/payments/test-series-pass/offer`);
+        const publicOfferPromise = fetch(`${API_URL}/payments/test-series-pass/offer`);
+        const isAuth = isClientAuthenticated();
+        const userPassPromise = isAuth
+          ? fetch(`${API_URL}/payments/test-series-pass`, { credentials: 'include' }).catch(() => null)
+          : Promise.resolve(null);
+
+        const [publicOffer, res] = await Promise.all([publicOfferPromise, userPassPromise]);
         if (!publicOffer.ok) {
           if (!ignore) setError('Pass details are unavailable right now.');
           return;
@@ -55,7 +60,7 @@ export function TestSeriesPassCard({
         const offerBody = (await publicOffer.json()) as PassOffer;
         if (ignore) return;
         setOffer(offerBody);
-        if (res.ok) {
+        if (res && res.ok) {
           const status = (await res.json()) as PassOffer;
           setActive(Boolean(status.active));
           setExpiresAt(status.expiresAt ?? null);

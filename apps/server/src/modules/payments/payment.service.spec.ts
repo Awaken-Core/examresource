@@ -87,6 +87,10 @@ describe('PaymentService pass grant', () => {
     });
     const previousFetch = globalThis.fetch;
     globalThis.fetch = fetchMock as typeof fetch;
+    const prevKey = (env as any).RAZORPAY_KEY_ID;
+    const prevSecret = (env as any).RAZORPAY_KEY_SECRET;
+    (env as any).RAZORPAY_KEY_ID = 'rzp_test_key';
+    (env as any).RAZORPAY_KEY_SECRET = 'rzp_test_secret';
     const orders: any = { create: vi.fn().mockResolvedValue({}) };
     const service = new PaymentService(orders, {} as any, {} as any);
 
@@ -99,6 +103,8 @@ describe('PaymentService pass grant', () => {
       expect(orders.create.mock.calls[0][0].amountPaise).toBe(6900);
     } finally {
       globalThis.fetch = previousFetch;
+      (env as any).RAZORPAY_KEY_ID = prevKey;
+      (env as any).RAZORPAY_KEY_SECRET = prevSecret;
     }
   });
 });
