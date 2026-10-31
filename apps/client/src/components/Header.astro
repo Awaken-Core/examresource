@@ -26,11 +26,11 @@ const loginHref = (!isAuthPage && currentPath !== '/')
   : '/login';
 ---
 
-<header id="main-header" class={`${
+<header id="main-header" class={`fixed lg:sticky top-0 inset-x-0 lg:inset-x-auto w-full ${
   isEditorialTheme 
     ? 'bg-editorial-bg/95 border-b border-editorial-border text-editorial-text' 
     : 'bg-surface/95 border-b border-border/60'
-} backdrop-blur-sm sticky top-0 z-[10000] relative h-14 sm:h-16`}>
+} backdrop-blur-md z-[10000] h-14 sm:h-16 transition-colors duration-200`}>
   {/* Main Navbar */}
   <div class="w-full flex items-center justify-between h-14 sm:h-16 px-2.5 sm:px-6 md:px-8">
 
@@ -41,7 +41,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
         id="mobile-drawer-toggle-btn"
         data-sidebar-toggle
         type="button"
-        class={`mobile-hamburger-btn group lg:hidden relative size-9 flex flex-col items-center justify-center gap-1.5 rounded-lg bg-transparent border-0 outline-none transition-all duration-300 cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-accent touch-manipulation z-[10005] -ml-1 sm:ml-0 ${
+        class={`mobile-hamburger-btn group lg:hidden relative size-9 min-h-[44px] min-w-[44px] flex flex-col items-center justify-center gap-1.5 rounded-lg bg-transparent border-0 outline-none transition-all duration-300 cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-accent touch-manipulation z-[10005] -ml-1 sm:ml-0 ${
           isEditorialTheme
             ? 'text-editorial-heading hover:text-editorial-accent'
             : 'text-heading hover:text-accent'
@@ -236,7 +236,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       </div>
 
       {/* Profile (logged in) */}
-      <div id="header-profile-section" class="header-auth-logged-in relative z-[1100]">
+      <div id="header-profile-section" class="header-auth-logged-in hidden relative z-[1100]">
         <button
           id="header-profile-trigger"
           data-profile-trigger="header-profile-dropdown"

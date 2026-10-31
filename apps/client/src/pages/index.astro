@@ -1,7 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image } from 'astro:assets';
-import videoBg from '../assets/video-bg.png';
 import BrandLogo from '../components/BrandLogo.astro';
 import InkOrbitFeatures from '../components/ui/ink-orbit-features';
 import { Avatar, Style } from '@dicebear/core';
@@ -159,151 +157,74 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
               class="relative rounded-[20px] border border-black/80 dark:border-white/20 bg-[#111111] dark:bg-[#1C1A18] p-[7px] sm:p-[9px]"
             >
               <div class="relative aspect-[16/10] overflow-hidden rounded-[13px] bg-[#111111]">
-                <Image
-                  src={videoBg}
-                  alt="GovtPariksha platform preview"
-                  loading="eager"
-                  fetchpriority="high"
-                  class="h-full w-full object-cover object-center"
-                />
+                {/* Brand SVG Logo Thumbnail Screen */}
+                <div class="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#1E1B18] via-[#141211] to-[#0D0C0B] p-6 text-center select-none">
+                  <div class="relative flex items-center justify-center">
+                    <div class="absolute -inset-6 rounded-full bg-editorial-accent/25 blur-2xl pointer-events-none"></div>
+                    <img
+                      src="/logo.svg"
+                      alt={`${siteDomain} logo`}
+                      width="96"
+                      height="96"
+                      class="relative size-20 sm:size-28 drop-shadow-[0_12px_30px_rgba(255,77,0,0.35)] transition-transform duration-300 hover:scale-105"
+                      loading="eager"
+                      fetchpriority="high"
+                    />
+                  </div>
+                  <p class="mt-4 font-serif text-xl sm:text-2xl font-normal text-white/95 tracking-tight">
+                    {siteName}
+                  </p>
+                  <p class="mt-1 font-['Geist'] text-xs sm:text-sm text-[#A89D92] tracking-wide">
+                    Government Exam Preparation, Simplified
+                  </p>
+                </div>
+
+                {/* Video Frame matching 100% of the Mac frame size */}
                 {
                   homeCoverVideoUrl && (
-                    <div class="home-video-frame group absolute inset-0 h-full w-full overflow-hidden rounded-[12px] border-0 bg-black p-0 shadow-[0_18px_50px_rgba(0,0,0,0.45),0_0_0_1px_rgba(0,0,0,0.55)] sm:inset-auto sm:left-1/2 sm:top-[12%] sm:h-[70%] sm:w-[68%] sm:-translate-x-1/2 sm:rounded-[15px] sm:border sm:border-white/70 sm:p-[3px]">
-                      <div class="relative h-full overflow-hidden rounded-[6px] bg-black sm:rounded-[11px]">
-                        <video
-                          id="home-cover-video"
-                          class="h-full w-full object-cover object-center"
-                          src={homeCoverVideoUrl}
-                          poster={videoBg.src}
-                          autoplay
-                          loop
-                          playsinline
-                          preload="metadata"
-                          aria-label="GovtPariksha platform preview"
-                        />
-                        <div class="video-control-scrim pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent px-2 pb-2 pt-8 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100 sm:px-3 sm:pb-3 sm:pt-12">
-                          <div class="pointer-events-auto flex items-center justify-end gap-1.5 sm:justify-between sm:gap-2.5" data-video-controls>
-                            <button
-                              type="button"
-                              class="hidden size-8 shrink-0 place-items-center rounded-full bg-editorial-accent text-white shadow-lg backdrop-blur-md transition-colors hover:bg-editorial-accent-hover focus-visible:outline-2 focus-visible:outline-white sm:grid sm:size-10"
-                              data-video-play
-                              aria-label="Play video"
-                            >
-                              <svg class="hidden size-4 sm:size-5" data-pause-icon viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5.5A1.5 1.5 0 0 1 8.5 4h1A1.5 1.5 0 0 1 11 5.5v13A1.5 1.5 0 0 1 9.5 20h-1A1.5 1.5 0 0 1 7 18.5v-13Zm6 0A1.5 1.5 0 0 1 14.5 4h1A1.5 1.5 0 0 1 17 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-13Z" /></svg>
-                              <svg class="size-4 sm:size-5" data-play-icon viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.4 4.7A1.5 1.5 0 0 1 9 4.8l9.2 5.9a1.5 1.5 0 0 1 0 2.6L9 19.2A1.5 1.5 0 0 1 6.7 18V6a1.5 1.5 0 0 1 .7-1.3Z" /></svg>
-                            </button>
-                            <button
-                              type="button"
-                              class="grid size-8 shrink-0 place-items-center rounded-full text-white/85 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-white sm:size-10"
-                              data-video-mute
-                              aria-label="Mute video"
-                            >
-                              <svg class="hidden size-4 sm:size-5" data-muted-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>
-                              <svg class="size-4 sm:size-5" data-sound-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8 8 0 0 1 0 12" stroke-linecap="round" /></svg>
-                            </button>
-                          </div>
+                    <div class="home-video-frame group absolute inset-0 z-10 h-full w-full overflow-hidden rounded-[13px] bg-black cursor-pointer">
+                      <video
+                        id="home-cover-video"
+                        class="h-full w-full object-cover object-center pointer-events-none"
+                        src={homeCoverVideoUrl}
+                        poster="/logo.svg"
+                        autoplay
+                        loop
+                        muted
+                        playsinline
+                        preload="auto"
+                        aria-label={`${siteDomain} platform preview`}
+                      />
+                      <div class="video-control-scrim pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent px-3 pb-3 pt-12 opacity-0 transition-opacity duration-200 sm:px-4 sm:pb-4 sm:pt-16">
+                        <div class="pointer-events-auto flex items-center justify-between gap-2.5" data-video-controls>
+                          <button
+                            type="button"
+                            class="grid size-9 sm:size-10 shrink-0 place-items-center rounded-full bg-editorial-accent text-white shadow-lg backdrop-blur-md transition-colors hover:bg-editorial-accent-hover focus-visible:outline-2 focus-visible:outline-white cursor-pointer"
+                            data-video-play
+                            aria-label="Play video"
+                          >
+                            <svg class="hidden size-4 sm:size-5" data-pause-icon viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5.5A1.5 1.5 0 0 1 8.5 4h1A1.5 1.5 0 0 1 11 5.5v13A1.5 1.5 0 0 1 9.5 20h-1A1.5 1.5 0 0 1 7 18.5v-13Zm6 0A1.5 1.5 0 0 1 14.5 4h1A1.5 1.5 0 0 1 17 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-13Z" /></svg>
+                            <svg class="size-4 sm:size-5" data-play-icon viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.4 4.7A1.5 1.5 0 0 1 9 4.8l9.2 5.9a1.5 1.5 0 0 1 0 2.6L9 19.2A1.5 1.5 0 0 1 6.7 18V6a1.5 1.5 0 0 1 .7-1.3Z" /></svg>
+                          </button>
+                          <button
+                            type="button"
+                            class="grid size-9 sm:size-10 shrink-0 place-items-center rounded-full bg-white/20 text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/30 focus-visible:outline-2 focus-visible:outline-white cursor-pointer"
+                            data-video-mute
+                            aria-label="Mute video"
+                          >
+                            <svg class="hidden size-4 sm:size-5" data-muted-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="m16 9 5 6m0-6-5 6" stroke-linecap="round" /></svg>
+                            <svg class="size-4 sm:size-5" data-sound-icon viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5Z" stroke-linejoin="round" /><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8 8 0 0 1 0 12" stroke-linecap="round" /></svg>
+                          </button>
                         </div>
                       </div>
                     </div>
                   )
                 }
+
+                {/* Mac Hardware Notch */}
                 <span
-                  class="absolute left-1/2 top-0 h-[15px] w-[74px] -translate-x-1/2 rounded-b-[9px] bg-[#111111] sm:h-[18px] sm:w-[98px]"
+                  class="pointer-events-none absolute left-1/2 top-0 z-20 h-[15px] w-[74px] -translate-x-1/2 rounded-b-[9px] bg-[#111111] sm:h-[18px] sm:w-[98px]"
                   aria-hidden="true"></span>
-                <div
-                  class="absolute bottom-4 left-1/2 hidden -translate-x-1/2 items-end gap-1.5 rounded-[18px] border border-white/35 bg-white/45 p-2 shadow-[0_8px_24px_rgba(0,0,0,0.18)] backdrop-blur-xl sm:flex"
-                  aria-hidden="true"
-                >
-                  <span
-                    class="grid size-7 place-items-center rounded-[7px] bg-white/90 sm:size-10 sm:rounded-[10px]"
-                  >
-                    <span class="grid grid-cols-3 gap-[2px] sm:gap-[3px]">
-                      <i class="size-[4px] rounded-[1px] bg-[#77DF2F] sm:size-[6px]"></i><i
-                        class="size-[4px] rounded-[1px] bg-[#FFD21E] sm:size-[6px]"></i><i
-                        class="size-[4px] rounded-[1px] bg-[#FF8A00] sm:size-[6px]"></i>
-                      <i class="size-[4px] rounded-[1px] bg-[#DC3C72] sm:size-[6px]"></i><i
-                        class="size-[4px] rounded-[1px] bg-[#5E6F75] sm:size-[6px]"></i><i
-                        class="size-[4px] rounded-[1px] bg-[#FF4E62] sm:size-[6px]"></i>
-                      <i class="size-[4px] rounded-[1px] bg-[#804CD9] sm:size-[6px]"></i><i
-                        class="size-[4px] rounded-[1px] bg-[#385CE5] sm:size-[6px]"></i><i
-                        class="size-[4px] rounded-[1px] bg-[#55C9AA] sm:size-[6px]"></i>
-                    </span>
-                  </span>
-                  <span
-                    class="relative grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#5AE5FF] to-[#1976F3] text-white sm:size-10 sm:rounded-[10px]"
-                  >
-                    <svg class="size-[72%]" viewBox="0 0 32 32" fill="none"
-                      ><circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="1.5"
-                      ></circle><path d="m18.2 13.8-7 7 2.6-9.6 9-2-4.6 4.6Z" fill="white"
-                      ></path><path d="m13.8 18.2 7-7-2.6 9.6-9 2 4.6-4.6Z" fill="#FF4D4D"
-                      ></path></svg
-                    >
-                    <i
-                      class="absolute -bottom-1 h-0.5 w-0.5 rounded-full bg-black/70 sm:-bottom-1.5"
-                    ></i>
-                  </span>
-                  <span
-                    class="grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#E8ECED] to-[#858B8D] text-[#333] sm:size-10 sm:rounded-[10px]"
-                  >
-                    <svg class="size-[76%]" viewBox="0 0 32 32" fill="none"
-                      ><circle cx="16" cy="16" r="9.2" stroke="currentColor" stroke-width="3"
-                      ></circle><circle
-                        cx="16"
-                        cy="16"
-                        r="3.5"
-                        stroke="currentColor"
-                        stroke-width="2"></circle><path
-                        d="M16 3v5M16 24v5M3 16h5M24 16h5M6.8 6.8l3.6 3.6M21.6 21.6l3.6 3.6M25.2 6.8l-3.6 3.6M10.4 21.6l-3.6 3.6"
-                        stroke="currentColor"
-                        stroke-width="2.2"
-                        stroke-linecap="round"></path></svg
-                    >
-                  </span>
-                  <span
-                    class="grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#168EFF] to-[#0758D7] font-['Geist'] text-[8px] font-semibold tracking-[-0.06em] text-white sm:size-10 sm:rounded-[10px] sm:text-[12px]"
-                  >
-                    zoom
-                  </span>
-                  <span
-                    class="grid size-7 place-items-center rounded-[7px] bg-gradient-to-b from-[#76CBFF] to-[#3896E8] text-white sm:size-10 sm:rounded-[10px]"
-                  >
-                    <svg class="size-[72%]" viewBox="0 0 32 32" fill="none"
-                      ><circle cx="16" cy="16" r="10.5" stroke="currentColor" stroke-width="2"
-                      ></circle><path
-                        d="m9 20.5 7-10 1.5 7.5 5.5-4.5"
-                        stroke="currentColor"
-                        stroke-width="2.2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"></path></svg
-                    >
-                  </span>
-                  <span class="mx-0.5 h-6 w-px bg-black/20 sm:h-9"></span>
-                  <span class="grid size-7 place-items-center sm:size-10">
-                    <svg class="h-full w-[80%] drop-shadow-sm" viewBox="0 0 32 38" fill="none"
-                      ><path
-                        d="M7 7.5h18l-1.6 27H8.6L7 7.5Z"
-                        fill="url(#trash-body)"
-                        stroke="#D4D0CC"></path><path
-                        d="M5 7.5h22M11 4h10"
-                        stroke="#D4D0CC"
-                        stroke-width="2"
-                        stroke-linecap="round"></path><path
-                        d="M12 12v17M16 12v17M20 12v17"
-                        stroke="#D7D2CD"></path><defs
-                        ><linearGradient
-                          id="trash-body"
-                          x1="16"
-                          y1="7.5"
-                          x2="16"
-                          y2="34.5"
-                          gradientUnits="userSpaceOnUse"
-                          ><stop stop-color="#FFF"></stop><stop offset="1" stop-color="#E9E4DE"
-                          ></stop></linearGradient
-                        ></defs
-                      ></svg
-                    >
-                  </span>
-                </div>
               </div>
             </div>
             <div
@@ -697,6 +618,19 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
     outline-style: solid;
     outline-offset: 2px;
   }
+  /* Desktop hover for video controls */
+  @media (hover: hover) and (pointer: fine) {
+    .home-video-frame:hover .video-control-scrim,
+    .home-video-frame:focus-within .video-control-scrim {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+  /* Reveal controls on click/tap for mobile & desktop */
+  .home-video-frame .video-control-scrim.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
 </style>
 
 <script>
@@ -705,6 +639,7 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
     if (!video || video.dataset.controlsBound === 'true') return;
 
     const frame = video.closest('.home-video-frame') as HTMLElement | null;
+    const scrim = frame?.querySelector('.video-control-scrim') as HTMLElement | null;
     const controls = frame?.querySelector('[data-video-controls]');
     const playButton = controls?.querySelector('[data-video-play]') as HTMLButtonElement | null;
     const muteButton = controls?.querySelector('[data-video-mute]') as HTMLButtonElement | null;
@@ -712,9 +647,32 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
     const pauseIcon = playButton?.querySelector('[data-pause-icon]');
     const mutedIcon = muteButton?.querySelector('[data-muted-icon]');
     const soundIcon = muteButton?.querySelector('[data-sound-icon]');
-    if (!frame || !playButton || !muteButton) return;
+    if (!frame || !scrim || !playButton || !muteButton) return;
 
     video.dataset.controlsBound = 'true';
+
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const showControls = () => {
+      scrim.classList.add('is-visible');
+      if (hideTimer) clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        scrim.classList.remove('is-visible');
+      }, 4000);
+    };
+
+    const hideControls = () => {
+      if (hideTimer) clearTimeout(hideTimer);
+      scrim.classList.remove('is-visible');
+    };
+
+    const toggleControls = () => {
+      if (scrim.classList.contains('is-visible')) {
+        hideControls();
+      } else {
+        showControls();
+      }
+    };
 
     const syncPlayback = () => {
       const isPaused = video.paused;
@@ -729,34 +687,41 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
       muteButton.setAttribute('aria-label', video.muted ? 'Unmute video' : 'Mute video');
     };
 
-    const togglePlayback = () => {
+    const togglePlayback = (e?: Event) => {
+      if (e) e.stopPropagation();
       if (video.paused) void video.play();
       else video.pause();
+      showControls();
     };
 
     playButton.addEventListener('click', togglePlayback);
-    video.addEventListener('click', togglePlayback);
-    video.addEventListener('play', syncPlayback);
-    video.addEventListener('pause', syncPlayback);
-    muteButton.addEventListener('click', () => {
+
+    muteButton.addEventListener('click', (e) => {
+      e.stopPropagation();
       video.muted = !video.muted;
       syncMute();
+      showControls();
     });
-    video.muted = false;
-    void video.play().catch(() => {
-      // Browsers block autoplay with sound until the visitor interacts with the page.
-      video.muted = true;
-      syncMute();
-      void video.play().catch(() => syncPlayback());
+
+    frame.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement)?.closest('button')) return;
+      toggleControls();
     });
-    const enableSound = () => {
-      video.muted = false;
-      syncMute();
-    };
-    window.addEventListener('pointerdown', enableSound, { once: true });
-    window.addEventListener('keydown', enableSound, { once: true });
-    syncPlayback();
+
+    document.addEventListener('pointerdown', (e) => {
+      if (!frame.contains(e.target as Node)) {
+        hideControls();
+      }
+    });
+
+    video.addEventListener('play', syncPlayback);
+    video.addEventListener('pause', syncPlayback);
+    video.muted = true;
     syncMute();
+    void video.play().catch(() => {
+      syncPlayback();
+    });
+    syncPlayback();
   }
 
   function syncLandingAuthUI() {

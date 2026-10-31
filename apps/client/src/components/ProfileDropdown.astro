@@ -22,7 +22,7 @@ const loginHref = (!isAuthPage && currentPath !== '/')
       ? "left-[calc(100%+12px)] bottom-0 w-64"
       : position === "mobile"
         ? "left-0 bottom-full mb-2 w-full max-w-[260px]"
-        : "top-full right-0 mt-2 w-72 max-w-[calc(100vw-24px)]"
+        : "top-full right-1.5 sm:right-0 mt-2 w-72 max-w-[calc(100vw-1.5rem)]"
   } ${isEditorialTheme ? 'bg-editorial-bg border-editorial-border text-editorial-text' : 'bg-surface border-border text-heading'} border rounded-2xl p-2 z-[9999] shadow-elevated transition-all duration-150 transform scale-95 opacity-0 select-none`}
   role="menu"
   aria-orientation="vertical"
