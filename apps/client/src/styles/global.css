@@ -1405,14 +1405,12 @@ html.sidebar-ready .sidebar-auth-btn {
               opacity 0.2s ease;
 }
 
-/* Collapsed (Rail) Mode — Half-way collapse keeping icons visible, centered and operational */
-:is(html[data-sidebar-collapsed="true"], html.sidebar-collapsed, #desktop-sidebar-wrapper.collapsed) {
-  #desktop-sidebar-wrapper {
-    width: 4.5rem !important;
-    min-width: 4.5rem !important;
-  }
+/* Collapsed (Rail) Mode — Half-way collapse keeping icons visible, centered and operational on desktop */
+:is(html[data-sidebar-collapsed="true"], html.sidebar-collapsed, #desktop-sidebar-wrapper.collapsed) #desktop-sidebar-wrapper {
+  width: 4.5rem !important;
+  min-width: 4.5rem !important;
 
-  #desktop-sidebar-wrapper > aside {
+  & > aside {
     width: 4.5rem !important;
     min-width: 4.5rem !important;
     transform: none !important;
@@ -1472,31 +1470,6 @@ html.sidebar-ready .sidebar-auth-btn {
   }
 
   .sidebar-preferences > * {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-
-  .sidebar-auth-logged-in {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 0.625rem !important;
-  }
-
-  .sidebar-auth-logged-in > * {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-  }
-
-  .sidebar-auth-logged-out {
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-
-  .sidebar-auth-logged-out > * {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
   }
@@ -2150,12 +2123,11 @@ html.theme-light .theme-icon-moon {
 
 /* ── Profile Dropdown Chevron Arrow Smooth Rotation ── */
 .profile-chevron-arrow {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
 
-[data-profile-trigger][aria-expanded="true"] .profile-chevron-arrow,
-.profile-chevron-arrow.rotate-180 {
+[data-profile-trigger][aria-expanded="true"] .profile-chevron-arrow {
   transform: rotate(180deg);
 }
 

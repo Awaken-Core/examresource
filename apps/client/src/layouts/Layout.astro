@@ -274,7 +274,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             } else {
               document.documentElement.removeAttribute('data-authenticated');
             }
-            var isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+            var isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : true;
+            var isCollapsed = isDesktop && localStorage.getItem('sidebar-collapsed') === 'true';
             if (isCollapsed) {
               document.documentElement.setAttribute('data-sidebar-collapsed', 'true');
               document.documentElement.classList.add('sidebar-collapsed');
@@ -300,10 +301,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               if (isAuth) {
                 e.newDocument.documentElement.setAttribute('data-authenticated', isAuth);
               }
-              var isCollapsed = document.documentElement.getAttribute('data-sidebar-collapsed');
+              var isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 1024 : true;
+              var isCollapsed = isDesktop && document.documentElement.getAttribute('data-sidebar-collapsed');
               if (isCollapsed) {
                 e.newDocument.documentElement.setAttribute('data-sidebar-collapsed', isCollapsed);
                 e.newDocument.documentElement.classList.add('sidebar-collapsed');
+              } else {
+                e.newDocument.documentElement.removeAttribute('data-sidebar-collapsed');
+                e.newDocument.documentElement.classList.remove('sidebar-collapsed');
               }
             }
           });
@@ -431,7 +436,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       )}
 
       {/* Main Area: Header + Content + Footer */}
-      <div id="main-content-wrapper" class="flex-1 min-w-0 flex flex-col min-h-screen">
+      <div id="main-content-wrapper" class={`flex-1 min-w-0 flex flex-col min-h-screen ${(!hideHeaderFooter && !hideHeader) ? 'pt-14 sm:pt-16 lg:pt-0' : ''}`}>
         {!hideHeaderFooter && !hideHeader && (
           <Header hideDesktopSidebar={hideDesktopSidebar} isEditorialTheme={isEditorialTheme} />
         )}
@@ -660,7 +665,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         </div>
 
         {/* Logged In */}
-        <div class="sidebar-auth-logged-in flex flex-col space-y-2 w-full">
+        <div class="sidebar-auth-logged-in hidden flex flex-col space-y-2 w-full">
           <button
             id="mobile-drawer-profile-trigger"
             data-profile-trigger="mobile-drawer-profile-dropdown"
@@ -696,7 +701,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     <div 
       id="global-toast" 
       transition:persist="global-toast"
-      class="fixed bottom-5 right-5 z-[10000] max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto bg-surface-raised border border-border/80 shadow-2xl rounded-2xl p-3.5 flex items-center justify-between gap-3 text-white text-xs transition-all duration-300 transform translate-y-12 opacity-0 pointer-events-none backdrop-blur-md"
+      class="fixed bottom-5 right-5 z-[10030] max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto bg-surface-raised border border-border/80 shadow-2xl rounded-2xl p-3.5 flex items-center justify-between gap-3 text-white text-xs transition-all duration-300 transform translate-y-12 opacity-0 pointer-events-none backdrop-blur-md"
       role="status"
       aria-live="polite"
     >
@@ -818,8 +823,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           document.querySelectorAll('[data-profile-trigger]').forEach((trigger) => {
             if (trigger.getAttribute('data-profile-trigger') === menu.id) {
               trigger.setAttribute('aria-expanded', 'false');
-              const arrow = trigger.querySelector('.profile-chevron-arrow');
-              if (arrow) arrow.classList.remove('rotate-180');
             }
           });
         }
@@ -837,8 +840,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             menu.classList.add('scale-100', 'opacity-100');
           });
           trigger.setAttribute('aria-expanded', 'true');
-          const arrow = trigger.querySelector('.profile-chevron-arrow');
-          if (arrow) arrow.classList.add('rotate-180');
         }
 
         function closeAllDropdowns(exceptMenu?: HTMLElement | null) {
@@ -850,8 +851,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           document.querySelectorAll('[data-profile-trigger]').forEach((trigger) => {
             if (!exceptMenu || trigger.getAttribute('data-profile-trigger') !== exceptMenu.id) {
               trigger.setAttribute('aria-expanded', 'false');
-              const arrow = trigger.querySelector('.profile-chevron-arrow');
-              if (arrow) arrow.classList.remove('rotate-180');
             }
           });
           // Close all notification popups
@@ -928,6 +927,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         // --- Desktop Sidebar Collapse Management (Matches Image 1) ---
 
         function setSidebarCollapsed(isCollapsed: boolean, immediate = false) {
+          if (window.innerWidth < 1024) return;
           const wrapper = document.getElementById('desktop-sidebar-wrapper');
           if (isCollapsed) {
             wrapper?.classList.add('collapsed');
@@ -1255,8 +1255,6 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             if (isAlreadyOpen) {
               closeDropdown(dropdown);
               trigger.setAttribute('aria-expanded', 'false');
-              const arrow = trigger.querySelector('.profile-chevron-arrow');
-              if (arrow) arrow.classList.remove('rotate-180');
             } else {
               closeAllDropdowns(dropdown);
               openDropdown(dropdown, trigger);
@@ -1841,7 +1839,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             emailEls.forEach(el => el.textContent = 'Sign in to access your profile');
             initialEls.forEach(el => {
               el.textContent = 'GU';
-              el.classList.remove('hidden');
+              el.classList.add('hidden');
             });
             adminPanelLinks.forEach((link) => {
               link.classList.add('hidden');
@@ -2158,6 +2156,38 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
                 }
               }
             } catch (e) {}
+          } else {
+            document.documentElement.removeAttribute('data-authenticated');
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-in').forEach(el => {
+              el.classList.add('hidden');
+              el.classList.remove('flex');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.header-auth-logged-out').forEach(el => {
+              el.classList.remove('hidden');
+              el.classList.add('flex');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-in').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.sidebar-auth-logged-out').forEach(el => {
+              el.classList.remove('hidden');
+              el.style.display = '';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-logged-in-only').forEach(el => {
+              el.classList.add('hidden');
+              el.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-logout-btn').forEach(b => {
+              b.classList.add('hidden');
+              b.style.display = 'none';
+            });
+            document.querySelectorAll<HTMLElement>('.auth-login-link').forEach(l => {
+              l.classList.remove('hidden');
+              l.style.display = 'flex';
+            });
           }
         }
 
