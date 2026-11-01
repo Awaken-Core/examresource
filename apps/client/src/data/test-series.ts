@@ -8,7 +8,7 @@ export interface MockExamCard {
   freeTests: number;
   languages: string[];
   description: string;
-  category: string; // 'central-government' | 'state-exams' | 'banking' | 'ssc-railways' | 'teaching' | 'defence' | 'others'
+  category: string; // 'central-government' | 'state-exams' | 'banking' | 'ssc-railways' | 'teaching' | 'defence' | 'aptitude' | 'others'
   badgeColor?: string;
   logoUrl?: string;
   initials?: string;
@@ -17,6 +17,54 @@ export interface MockExamCard {
 }
 
 export const mockTestSeriesData: MockExamCard[] = [
+  {
+    id: 'quantitative-aptitude-complete',
+    title: 'Quantitative Aptitude Complete',
+    organization: 'GovtPariksha',
+    badge: 'Trending',
+    access: 'Free Tests',
+    totalTests: 235,
+    freeTests: 55,
+    languages: ['Hindi', 'English'],
+    description: 'Comprehensive Quantitative Aptitude series with 292 real exam questions across 10 chapters — Number System, Profit/Loss, Time & Work, Speed, Algebra, Geometry, Data Interpretation and more.',
+    category: 'aptitude',
+    badgeColor: 'bg-[#ECFDF5] text-[#059669] border-[#D1FAE5]',
+    initials: 'QA',
+    initialBg: 'bg-[#059669]',
+    initialColor: 'text-white',
+  },
+  {
+    id: 'logical-reasoning-complete',
+    title: 'Logical Reasoning Complete',
+    organization: 'GovtPariksha',
+    badge: 'Popular',
+    access: 'Free Tests',
+    totalTests: 235,
+    freeTests: 55,
+    languages: ['Hindi', 'English'],
+    description: 'Comprehensive Logical Reasoning series with 220 real exam questions across 10 chapters — Series, Coding-Decoding, Blood Relations, Syllogism, Analogy, Puzzles, Venn Diagrams and more.',
+    category: 'aptitude',
+    badgeColor: 'bg-[#F3E8FF] text-[#9333EA] border-[#E9D5FF]',
+    initials: 'LR',
+    initialBg: 'bg-[#7C3AED]',
+    initialColor: 'text-white',
+  },
+  {
+    id: 'dsssb-tgt-computer-science',
+    title: 'DSSSB TGT Computer Science',
+    organization: 'Delhi Subordinate Services Selection Board',
+    badge: 'Popular',
+    access: 'Free Tests',
+    totalTests: 521,
+    freeTests: 101,
+    languages: ['Hindi', 'English'],
+    description: 'Complete mock test series for DSSSB TGT & PGT Computer Science featuring 521 tests across 11 chapters, sectional mastery, and 67 authentic previous year papers.',
+    category: 'teaching',
+    badgeColor: 'bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE]',
+    initials: 'DSSSB',
+    initialBg: 'bg-[#1E40AF]',
+    initialColor: 'text-white',
+  },
   {
     id: 'rrb-ntpc-graduate',
     title: 'RRB NTPC Graduate Level',
@@ -41,7 +89,7 @@ export const mockTestSeriesData: MockExamCard[] = [
     badge: 'Best for Practice',
     access: 'Premium',
     totalTests: 60,
-    freeTests: 3,
+    freeTests: 6,
     languages: ['Hindi', 'English'],
     description: 'Full length mocks, sectionals and previous year papers for SSC CGL.',
     category: 'ssc-railways',
