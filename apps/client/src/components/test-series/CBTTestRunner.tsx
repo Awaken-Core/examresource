@@ -12,6 +12,8 @@ import { CBTCodeOfConductModal } from './CBTCodeOfConductModal';
 import { CBTSubmitModal } from './CBTSubmitModal';
 import { CBTKeyboardShortcutsModal } from './CBTKeyboardShortcutsModal';
 import { CBTCalculator } from './CBTCalculator';
+import { CBTGovtExamView } from './CBTGovtExamView';
+import { CBTQuestionPaperModal } from './CBTQuestionPaperModal';
 
 interface Props {
   readonly attemptId: string;
@@ -71,11 +73,30 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [language, setLanguage] = useState<'English' | 'Hindi'>('English');
   const [candidateName, setCandidateName] = useState('Candidate');
+  const [candidateAvatar, setCandidateAvatar] = useState<string | null>(null);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [showConductModal, setShowConductModal] = useState(false);
+  const [showQuestionPaperModal, setShowQuestionPaperModal] = useState(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const [calculatorOpen, setCalculatorOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [uiMode, setUiMode] = useState<'modern' | 'govt'>(() => {
+    try {
+      return (localStorage.getItem('cbt_ui_mode') as 'modern' | 'govt') || 'modern';
+    } catch {
+      return 'modern';
+    }
+  });
+
+  const handleToggleUiMode = useCallback((mode: 'modern' | 'govt') => {
+    setUiMode(mode);
+    try {
+      localStorage.setItem('cbt_ui_mode', mode);
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const setPageFullscreen = useCallback((enabled: boolean) => {
     const doc = document as Document & {
@@ -195,12 +216,32 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
   }, []);
 
   useEffect(() => {
+    const onFsChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('cbt_default_language');
+      if (savedLang === 'English' || savedLang === 'Hindi') {
+        setLanguage(savedLang);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
     void fetch(`${API_URL}/me`, { credentials: 'include' })
       .then((response) => (response.ok ? response.json() : null))
-      .then((user: { name?: string } | null) => {
-        if (cancelled || !user?.name?.trim()) return;
-        setCandidateName(user.name.trim());
+      .then((user: { name?: string; avatarUrl?: string; avatar?: string } | null) => {
+        if (cancelled || !user) return;
+        if (user.name?.trim()) setCandidateName(user.name.trim());
+        if (user.avatarUrl || user.avatar) setCandidateAvatar(user.avatarUrl || user.avatar);
       })
       .catch(() => undefined);
     return () => {
@@ -419,6 +460,20 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
     if (nextIndex !== -1) setCurrentIndex(nextIndex);
   }, [selectedOptionIds, numericalInput, persistCurrent, activeAnswer?.status, isEndOfExam, setSubmitError, nextIndex]);
 
+  const handleMarkForReviewAndNext = useCallback(() => {
+    const hasSelection = selectedOptionIds.length > 0 || numericalInput.trim() !== '';
+    const nextStatus: QuestionPaletteStatus = hasSelection
+      ? 'answered_and_marked_for_review'
+      : 'marked_for_review';
+    persistCurrent(nextStatus);
+    if (isEndOfExam) {
+      setSubmitError(null);
+      setShowSubmitModal(true);
+      return;
+    }
+    if (nextIndex !== -1) setCurrentIndex(nextIndex);
+  }, [selectedOptionIds, numericalInput, persistCurrent, isEndOfExam, setSubmitError, nextIndex]);
+
   const handleToggleFlag = useCallback(() => {
     const flagged =
       activeAnswer?.status === 'marked_for_review' ||
@@ -563,6 +618,154 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
   const actionsDisabled = submitting;
   const viewingConduct = view === 'conduct' || !conductAgreed;
 
+  if (uiMode === 'govt' && !viewingConduct && attempt) {
+    return (
+      <div ref={shellRef} className="fixed inset-0 z-[10050] flex flex-col overflow-hidden bg-canvas text-slate-900 select-none dark:text-slate-100">
+        <CBTGovtExamView
+          portalName={siteName}
+          testTitle={loading ? 'Loading examination' : (testMeta?.title ?? 'Computer-based test')}
+          candidateName={candidateName}
+          candidateAvatar={candidateAvatar}
+          remainingSeconds={remainingSeconds}
+          uiMode={uiMode}
+          onToggleUiMode={handleToggleUiMode}
+          isFullscreen={isFullscreen}
+          onToggleFullscreen={() => setPageFullscreen(!isFullscreen)}
+          canPause={!viewingConduct && !paused && !submitting && !integrityWarning}
+          onPause={() => void pauseTest()}
+          calculatorOpen={calculatorOpen}
+          onToggleCalculator={() => setCalculatorOpen((open) => !open)}
+          zoom={zoom}
+          onZoomIn={() =>
+            setZoom((current) => {
+              const steps = [0.8, 0.9, 1, 1.1, 1.25, 1.5];
+              const index = steps.findIndex((step) => step > current + 0.001);
+              return index === -1 ? current : steps[index];
+            })
+          }
+          onZoomOut={() =>
+            setZoom((current) => {
+              const steps = [0.8, 0.9, 1, 1.1, 1.25, 1.5];
+              const smaller = steps.filter((step) => step < current - 0.001);
+              return smaller.length === 0 ? current : smaller[smaller.length - 1];
+            })
+          }
+          onOpenShortcuts={() => setShowShortcutsModal(true)}
+          sections={attempt?.sectionProgress ?? []}
+          activeSectionId={activeSectionId}
+          onSelectSection={openSection}
+          currentIndex={currentIndex}
+          totalQuestions={answersList.length}
+          activeAnswer={activeAnswer}
+          answersList={answersList}
+          currentSectionIndices={currentSectionIndices}
+          language={language}
+          onLanguageChange={setLanguage}
+          selectedOptionIds={selectedOptionIds}
+          numericalInput={numericalInput}
+          onToggleOption={handleToggleOption}
+          onNumericalChange={onNumericalChange}
+          onClearResponse={onClear}
+          onMarkForReviewAndNext={handleMarkForReviewAndNext}
+          onSaveAndNext={handleSaveAndNext}
+          onNavigateToQuestion={openQuestion}
+          isActionDisabled={actionsDisabled}
+          summaryCounts={summaryCounts}
+          onOpenQuestionPaper={() => setShowQuestionPaperModal(true)}
+          onOpenInstructions={() => setShowConductModal(true)}
+          onOpenSubmitModal={openEndDialog}
+        />
+
+        {calculatorOpen && (
+          <div className="absolute top-16 left-3 z-30 shadow-2xl">
+            <CBTCalculator
+              onClose={() => setCalculatorOpen(false)}
+              onUseValue={
+                activeAnswer?.question?.type === 'numerical'
+                  ? (value) => {
+                      if (value) onNumericalChange(value);
+                    }
+                  : undefined
+              }
+            />
+          </div>
+        )}
+
+        <CBTQuestionPaperModal
+          isOpen={showQuestionPaperModal}
+          testTitle={testMeta?.title ?? 'Computer-based examination'}
+          answers={answersList}
+          currentIndex={currentIndex}
+          language={language}
+          onClose={() => setShowQuestionPaperModal(false)}
+          onSelectQuestion={openQuestion}
+        />
+        <CBTCodeOfConductModal
+          isOpen={showConductModal}
+          onClose={() => setShowConductModal(false)}
+          testTitle={testMeta?.title ?? 'Computer-based examination'}
+          positiveMarks={activeAnswer?.question?.marks ?? 1}
+          negativeMarks={activeAnswer?.question?.negativeMarks ?? 0}
+          durationMinutes={testMeta?.durationMinutes ?? 120}
+          totalQuestions={answersList.length}
+        />
+        <CBTSubmitModal
+          isOpen={showSubmitModal}
+          submitting={submitting}
+          submitError={submitError}
+          summaryCounts={summaryCounts}
+          totalQuestions={answersList.length}
+          onClose={() => {
+            setSubmitError(null);
+            setShowSubmitModal(false);
+          }}
+          onConfirmSubmit={() => void handleFinalSubmit(false)}
+        />
+        <CBTKeyboardShortcutsModal isOpen={showShortcutsModal} onClose={() => setShowShortcutsModal(false)} />
+        {paused && !integrityWarning && (
+          <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/80 p-6">
+            <div className="w-full max-w-md rounded-lg border border-border bg-surface p-5 text-center">
+              <p className="text-base font-bold text-slate-900 dark:text-slate-100">Test paused</p>
+              <p className="mt-2 text-sm leading-6 text-slate-900 dark:text-slate-100">
+                The clock is stopped. Resume when you are ready to continue.
+              </p>
+              <button
+                type="button"
+                onClick={() => void resumeTest()}
+                className="mt-4 h-10 rounded bg-accent px-4 text-sm font-bold text-on-accent cursor-pointer"
+              >
+                Resume test
+              </button>
+            </div>
+          </div>
+        )}
+        {integrityWarning && (
+          <div className="absolute inset-0 z-40 flex items-center justify-center bg-slate-950/80 p-6">
+            <div className="w-full max-w-md rounded-lg border border-border bg-surface p-5 text-center" role="alertdialog" aria-labelledby="integrity-title-govt">
+              <p id="integrity-title-govt" className="text-base font-bold text-slate-900 dark:text-slate-100">
+                Practise in good faith
+              </p>
+              <p className="mt-2 text-sm leading-6 text-slate-900 dark:text-slate-100">
+                Learn each question honestly, and carry the same discipline into the real examination.
+                Stay on this screen. The paper is still open.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setIntegrityWarning(false);
+                  setPageFullscreen(true);
+                }}
+                className="mt-4 h-10 rounded bg-accent px-4 text-sm font-bold text-on-accent cursor-pointer"
+              >
+                Continue the examination
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div ref={shellRef} className="fixed inset-0 z-[10050] flex flex-col overflow-hidden bg-canvas text-slate-900 select-none dark:text-slate-100">
       <CBTHeader
@@ -592,6 +795,10 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
         }
         canPause={!viewingConduct && !paused && !submitting && !integrityWarning}
         onPause={() => void pauseTest()}
+        uiMode={uiMode}
+        onToggleUiMode={handleToggleUiMode}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={() => setPageFullscreen(!isFullscreen)}
       />
       {calculatorOpen && (
         <div className="absolute top-20 left-3 z-30">
@@ -706,12 +913,23 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
           </div>
         </div>
 
+      <CBTQuestionPaperModal
+        isOpen={showQuestionPaperModal}
+        testTitle={testMeta?.title ?? 'Computer-based examination'}
+        answers={answersList}
+        currentIndex={currentIndex}
+        language={language}
+        onClose={() => setShowQuestionPaperModal(false)}
+        onSelectQuestion={openQuestion}
+      />
       <CBTCodeOfConductModal
         isOpen={showConductModal}
         onClose={() => setShowConductModal(false)}
         testTitle={testMeta?.title ?? 'Computer-based examination'}
         positiveMarks={activeAnswer?.question?.marks ?? 1}
         negativeMarks={activeAnswer?.question?.negativeMarks ?? 0}
+        durationMinutes={testMeta?.durationMinutes ?? 120}
+        totalQuestions={answersList.length}
       />
       <CBTSubmitModal
         isOpen={showSubmitModal}

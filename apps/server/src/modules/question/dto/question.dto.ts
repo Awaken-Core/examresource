@@ -140,3 +140,9 @@ export type GenerateQuestionsAiInput = z.input<typeof generateQuestionsAiSchema>
 export type TranslateExplainAiInput = z.infer<typeof translateExplainAiSchema>;
 export type ParseRawQuestionsAiInput = z.infer<typeof parseRawQuestionsAiSchema>;
 
+export const updateReportStatusSchema = z.object({
+  status: z.enum(['pending', 'reviewed', 'resolved', 'dismissed']),
+  resolutionNote: z.string().trim().max(5_000).nullable().optional(),
+});
+export type UpdateReportStatusInput = z.infer<typeof updateReportStatusSchema>;
+

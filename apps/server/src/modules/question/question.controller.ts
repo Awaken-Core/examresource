@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import type { Request } from 'express';
@@ -19,6 +20,7 @@ import {
   reportQuestionSchema,
   translateExplainAiSchema,
   updateQuestionSchema,
+  updateReportStatusSchema,
 } from './dto/question.dto.js';
 import { QuestionService } from './question.service.js';
 
@@ -114,6 +116,45 @@ export class QuestionController {
       this.parse(reportQuestionSchema, req.body),
       await this.auth.requireUser(req),
     );
+  }
+
+  @Get('admin/question-reports')
+  async listReports(
+    @Req() req: Request,
+    @Query('status') status?: string,
+    @Query('reason') reason?: string,
+    @Query('search') search?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const user = await this.auth.requireUser(req);
+    return this.service.listReports(user, {
+      status,
+      reason,
+      search,
+      page: page ? Number.parseInt(page, 10) : undefined,
+      limit: limit ? Number.parseInt(limit, 10) : undefined,
+    });
+  }
+
+  @Patch('admin/question-reports/:id')
+  async updateReport(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ) {
+    const user = await this.auth.requireUser(req);
+    const body = this.parse(updateReportStatusSchema, req.body);
+    return this.service.updateReportStatus(id, body, user);
+  }
+
+  @Delete('admin/question-reports/:id')
+  @HttpCode(204)
+  async deleteReport(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ) {
+    const user = await this.auth.requireUser(req);
+    await this.service.deleteReport(id, user);
   }
 
   private parse<T extends z.ZodType>(schema: T, value: unknown): z.infer<T> {

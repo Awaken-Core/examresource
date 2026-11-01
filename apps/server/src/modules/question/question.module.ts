@@ -15,6 +15,8 @@ import {
   SubjectSchema,
   TestSeries,
   TestSeriesSchema,
+  User,
+  UserSchema,
 } from '../../core/schema/index.js';
 import { AuthModule } from '../auth/auth.module.js';
 import { BlogModule } from '../blog/blog.module.js';
@@ -33,6 +35,7 @@ import { QuestionService } from './question.service.js';
       { name: Subject.name, schema: SubjectSchema },
       { name: Chapter.name, schema: ChapterSchema },
       { name: TestSeries.name, schema: TestSeriesSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [QuestionController],

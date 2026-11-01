@@ -24,6 +24,7 @@ import { HierarchyManager } from './HierarchyManager';
 import { QuestionBankManager } from './QuestionBankManager';
 import { TestBuilderManager } from './TestBuilderManager';
 import { TestAttemptsManager } from './TestAttemptsManager';
+import { QuestionReportsManager } from './QuestionReportsManager';
 
 export type AdminTab =
   | 'posts'
@@ -35,7 +36,8 @@ export type AdminTab =
   | 'hierarchy'
   | 'question-bank'
   | 'test-builder'
-  | 'attempts';
+  | 'attempts'
+  | 'reports';
 
 const TAB_TITLES: Record<AdminTab, string> = {
   posts: 'Articles',
@@ -48,6 +50,7 @@ const TAB_TITLES: Record<AdminTab, string> = {
   'question-bank': 'Question Bank',
   'test-builder': 'Test Builder',
   attempts: 'Test Attempts',
+  reports: 'Question Reports',
 };
 
 interface AdminAppProps {
@@ -106,6 +109,7 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
       else if (path.startsWith(`${DESK_PATH}/notifications`)) setActiveTab('notifications');
       else if (path.startsWith(`${DESK_PATH}/comments`)) setActiveTab('comments');
       else if (path.includes('/attempts') || window.location.hash === '#attempts') setActiveTab('attempts');
+      else if (path.includes('/reports') || window.location.hash === '#reports') setActiveTab('reports');
       else if (path.includes('/series') || window.location.hash === '#series') setActiveTab('series');
       else if (path.includes('/hierarchy') || window.location.hash === '#hierarchy') setActiveTab('hierarchy');
       else if (path.includes('/question-bank') || window.location.hash === '#question-bank') setActiveTab('question-bank');
@@ -134,7 +138,9 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
             ? `${DESK_PATH}/comments`
             : tab === 'attempts'
               ? `${DESK_PATH}#attempts`
-              : tab === 'series'
+              : tab === 'reports'
+                ? `${DESK_PATH}#reports`
+                : tab === 'series'
                 ? `${DESK_PATH}#series`
                 : tab === 'hierarchy'
                   ? `${DESK_PATH}#hierarchy`
@@ -291,6 +297,7 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
             <NavButton active={activeTab === 'question-bank'} onClick={() => switchTab('question-bank')} icon="questions" label="Question Bank" />
             <NavButton active={activeTab === 'test-builder'} onClick={() => switchTab('test-builder')} icon="builder" label="Test Builder" />
             <NavButton active={activeTab === 'attempts'} onClick={() => switchTab('attempts')} icon="attempts" label="Student Attempts" />
+            <NavButton active={activeTab === 'reports'} onClick={() => switchTab('reports')} icon="reports" label="Question Reports" />
 
             {isAdmin && (
               <>
@@ -460,6 +467,12 @@ function AdminAppContent({ initialTab = 'posts' }: { initialTab?: AdminTab }) {
                 <TestAttemptsManager />
               </div>
             )}
+
+            {mountedTabs.includes('reports') && (
+              <div hidden={activeTab !== 'reports'}>
+                <QuestionReportsManager />
+              </div>
+            )}
           </div>
         </main>
       </div>
@@ -522,7 +535,8 @@ type IconName =
   | 'hierarchy'
   | 'questions'
   | 'builder'
-  | 'attempts';
+  | 'attempts'
+  | 'reports';
 
 function NavIcon({ name }: { name: IconName }) {
   const common = 'w-4 h-4 shrink-0';
@@ -600,6 +614,13 @@ function NavIcon({ name }: { name: IconName }) {
     return (
       <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    );
+  }
+  if (name === 'reports') {
+    return (
+      <svg className={common} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
     );
   }

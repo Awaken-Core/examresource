@@ -394,6 +394,56 @@ export const adminApi = {
       method: "DELETE",
     }),
 
+  // Question Reports & Issues
+  getQuestionReports: (params?: {
+    status?: string;
+    reason?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const sp = new URLSearchParams();
+    if (params?.status && params.status !== "all") sp.set("status", params.status);
+    if (params?.reason && params.reason !== "all") sp.set("reason", params.reason);
+    if (params?.search) sp.set("search", params.search);
+    if (params?.page) sp.set("page", String(params.page));
+    if (params?.limit) sp.set("limit", String(params.limit));
+    const qs = sp.toString() ? `?${sp.toString()}` : "";
+    return apiFetch<{
+      data: AdminQuestionReport[];
+      counts: {
+        pending: number;
+        reviewed: number;
+        resolved: number;
+        dismissed: number;
+        total: number;
+      };
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(`/admin/question-reports${qs}`);
+  },
+
+  updateQuestionReportStatus: (
+    id: string,
+    data: {
+      status: "pending" | "reviewed" | "resolved" | "dismissed";
+      resolutionNote?: string | null;
+    },
+  ) =>
+    apiFetch<AdminQuestionReport>(`/admin/question-reports/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  deleteQuestionReport: (id: string) =>
+    apiFetch(`/admin/question-reports/${id}`, {
+      method: "DELETE",
+    }),
+
   // AI Question Bank Tools
   generateAiQuestions: (data: {
     subject: string;
@@ -760,6 +810,51 @@ export interface AdminAttemptListItem {
     title: string;
     slug: string;
   } | null;
+}
+
+export interface AdminQuestionReport {
+  id: string;
+  _id?: string;
+  userId: string;
+  user?: {
+    id?: string;
+    name?: string;
+    email?: string;
+    avatar?: string | null;
+  } | null;
+  questionId: string;
+  question?: {
+    id?: string;
+    _id?: string;
+    content: string;
+    translations?: Record<string, string>;
+    options?: Array<{
+      id?: string;
+      content: string;
+      translations?: Record<string, string>;
+      isCorrect?: boolean;
+    }>;
+    explanation?: string | null;
+    explanationTranslations?: Record<string, string>;
+    type?: string;
+    subject?: string;
+    topic?: string | null;
+    marks?: number;
+    negativeMarks?: number;
+    status?: string;
+  } | null;
+  reason: string;
+  details?: string | null;
+  status: "pending" | "reviewed" | "resolved" | "dismissed";
+  reviewedBy?: {
+    id?: string;
+    name?: string;
+    email?: string;
+  } | null;
+  reviewedAt?: string | null;
+  resolutionNote?: string | null;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AdminAttemptDetailAnswerOption {

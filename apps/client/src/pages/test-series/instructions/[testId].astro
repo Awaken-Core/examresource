@@ -124,41 +124,19 @@ const jsonLd = {
   description={pageDescription}
   canonicalUrl={canonicalUrl}
   jsonLd={jsonLd}
+  hideHeaderFooter={true}
 >
-  <div class="w-full max-w-none px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
-    {/* Breadcrumbs */}
-    <nav class="flex items-center gap-1.5 text-xs text-muted mb-4" aria-label="Breadcrumb">
-      <a href="/" data-astro-prefetch="hover" class="hover:text-heading transition">Home</a>
-      <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-      <a href="/test-series" data-astro-prefetch="hover" class="hover:text-heading transition">Test Series</a>
-      <svg class="w-3.5 h-3.5 text-muted/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-      </svg>
-      <span class="text-heading font-medium">Pre-Test Instructions</span>
-    </nav>
-
+  <div class="fixed inset-0 z-50 flex flex-col bg-canvas overflow-hidden">
     {/* Dynamic Test Instructions Island */}
-    <TestInstructions client:load testId={testId} initialData={testSeo as any} />
+    <TestInstructions client:load testId={testId} initialData={testSeo as any} siteName={siteName} />
 
-    <section class="max-w-3xl mt-8 space-y-4" aria-labelledby="exam-rules-heading">
-      <h2 id="exam-rules-heading" class="text-lg font-bold text-slate-900 dark:text-white">
-        How this computer-based paper runs
-      </h2>
-      <p class="text-sm leading-6 text-muted">
+    {/* Accessible hidden text for search engines & assistive tech */}
+    <div class="sr-only" aria-hidden="true">
+      <h2>How this computer-based paper runs</h2>
+      <p>
         {testTitle ? `${testTitle} contains ${questionText} and runs for ${durationText}.` : `This paper contains ${questionText} and runs for ${durationText}.`}
         {' '}{markingText}
-        The question stays on the left. The options stay on the right. A round control means one answer. A square control means every correct option must be selected.
       </p>
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white">When do the questions open?</h3>
-      <p class="text-sm leading-6 text-muted">
-        After you agree to the code of conduct. Until that agreement, the question palette does not record an answer.
-      </p>
-      <h3 class="text-sm font-bold text-slate-900 dark:text-white">Which response is graded?</h3>
-      <p class="text-sm leading-6 text-muted">
-        Save and next stores the response before the next question. On the last question, save and end asks whether you are ready to end the examination. The latest saved response is the one that counts.
-      </p>
-    </section>
+    </div>
   </div>
 </Layout>

@@ -5,9 +5,9 @@ interface Props {
   readonly portalName: string;
   readonly testTitle: string;
   readonly candidateName: string;
-  readonly language: 'English' | 'Hindi';
+  readonly language?: 'English' | 'Hindi';
   readonly remainingSeconds: number | null;
-  readonly onLanguageChange: (lang: 'English' | 'Hindi') => void;
+  readonly onLanguageChange?: (lang: 'English' | 'Hindi') => void;
   readonly onOpenShortcuts: () => void;
   readonly calculatorOpen: boolean;
   readonly onToggleCalculator: () => void;
@@ -16,6 +16,10 @@ interface Props {
   readonly onZoomOut: () => void;
   readonly canPause: boolean;
   readonly onPause: () => void;
+  readonly uiMode?: 'modern' | 'govt';
+  readonly onToggleUiMode?: (mode: 'modern' | 'govt') => void;
+  readonly isFullscreen?: boolean;
+  readonly onToggleFullscreen?: () => void;
 }
 
 function formatTime(secs: number | null): string {
@@ -30,9 +34,7 @@ export function CBTHeader({
   portalName,
   testTitle,
   candidateName,
-  language,
   remainingSeconds,
-  onLanguageChange,
   onOpenShortcuts,
   calculatorOpen,
   onToggleCalculator,
@@ -41,6 +43,10 @@ export function CBTHeader({
   onZoomOut,
   canPause,
   onPause,
+  uiMode = 'modern',
+  onToggleUiMode,
+  isFullscreen = false,
+  onToggleFullscreen,
 }: Props) {
   const lowTime = remainingSeconds !== null && remainingSeconds < 300;
   const [dark, setDark] = useState(false);
@@ -79,19 +85,57 @@ export function CBTHeader({
           Time remaining {formatTime(remainingSeconds)}
         </p>
         <div className="flex min-w-0 items-center justify-end gap-2">
-          <p className="min-w-0 truncate text-sm text-slate-900 dark:text-slate-100">
-            Candidate: {candidateName}
+          {onToggleUiMode && (
+            <div className="inline-flex items-center rounded-lg border border-border bg-surface-raised p-0.5 text-[11px]">
+              <button
+                type="button"
+                onClick={() => onToggleUiMode('modern')}
+                className={`rounded px-2 py-0.5 font-semibold cursor-pointer transition ${
+                  uiMode === 'modern'
+                    ? 'bg-accent text-on-accent shadow-2xs'
+                    : 'text-muted hover:text-heading'
+                }`}
+              >
+                Modern
+              </button>
+              <button
+                type="button"
+                onClick={() => onToggleUiMode('govt')}
+                className={`rounded px-2 py-0.5 font-semibold cursor-pointer transition ${
+                  uiMode === 'govt'
+                    ? 'bg-accent text-on-accent shadow-2xs'
+                    : 'text-muted hover:text-heading'
+                }`}
+              >
+                Govt
+              </button>
+            </div>
+          )}
+
+          {onToggleFullscreen && (
+            <button
+              type="button"
+              onClick={onToggleFullscreen}
+              className="hidden sm:inline-flex h-8 items-center justify-center rounded border border-border bg-surface-raised px-2.5 text-xs font-semibold text-heading hover:bg-border/60 cursor-pointer transition-colors"
+            >
+              {isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen'}
+            </button>
+          )}
+
+          <p className="hidden lg:inline min-w-0 truncate text-xs text-slate-900 dark:text-slate-100">
+            {candidateName}
           </p>
+
           <button
             type="button"
             onClick={onToggleCalculator}
             aria-pressed={calculatorOpen}
             aria-label="Scientific calculator"
             title="Scientific calculator"
-            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border ${
+            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border cursor-pointer ${
               calculatorOpen
                 ? 'border-accent bg-accent text-on-accent'
-                : 'border-border bg-surface-raised text-slate-900 dark:text-slate-100'
+                : 'border-border bg-surface-raised text-slate-900 dark:text-slate-100 hover:bg-border/60'
             }`}
           >
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" className="h-[18px] w-[18px]">
@@ -108,26 +152,6 @@ export function CBTHeader({
               <circle cx="15.8" cy="18.6" r="0.9" fill="currentColor" />
             </svg>
           </button>
-          <div className="flex h-7 w-[72px] shrink-0 items-center rounded border border-border bg-surface-raised p-0.5 text-[11px]">
-            <button
-              type="button"
-              onClick={() => onLanguageChange('English')}
-              className={`h-6 flex-1 rounded font-semibold ${
-                language === 'English' ? 'bg-accent text-on-accent' : 'text-muted'
-              }`}
-            >
-              EN
-            </button>
-            <button
-              type="button"
-              onClick={() => onLanguageChange('Hindi')}
-              className={`h-6 flex-1 rounded font-semibold ${
-                language === 'Hindi' ? 'bg-accent text-on-accent' : 'text-muted'
-              }`}
-            >
-              HI
-            </button>
-          </div>
         </div>
       </header>
 
@@ -136,11 +160,20 @@ export function CBTHeader({
           Stay on this screen and practise in good faith.
         </p>
         <div className="flex shrink-0 items-center gap-1">
+          {onToggleFullscreen && (
+            <button
+              type="button"
+              onClick={onToggleFullscreen}
+              className="sm:hidden h-6 rounded border border-border px-2 text-[11px] font-semibold text-slate-900 hover:bg-surface-raised cursor-pointer dark:text-slate-100"
+            >
+              {isFullscreen ? 'Exit' : 'Full'}
+            </button>
+          )}
           <button
             type="button"
             onClick={onPause}
             disabled={!canPause}
-            className="h-6 rounded border border-border px-2 text-[11px] font-semibold text-slate-900 disabled:opacity-40 dark:text-slate-100"
+            className="h-6 rounded border border-border px-2 text-[11px] font-semibold text-slate-900 disabled:opacity-40 dark:text-slate-100 cursor-pointer"
           >
             Pause
           </button>
@@ -150,7 +183,7 @@ export function CBTHeader({
               onClick={onZoomOut}
               disabled={zoom <= 0.8}
               aria-label="Zoom out"
-              className="h-6 w-6 text-sm font-bold text-slate-900 disabled:opacity-40 dark:text-slate-100"
+              className="h-6 w-6 text-sm font-bold text-slate-900 disabled:opacity-40 dark:text-slate-100 cursor-pointer"
             >
               −
             </button>
@@ -162,7 +195,7 @@ export function CBTHeader({
               onClick={onZoomIn}
               disabled={zoom >= 1.5}
               aria-label="Zoom in"
-              className="h-6 w-6 text-sm font-bold text-slate-900 disabled:opacity-40 dark:text-slate-100"
+              className="h-6 w-6 text-sm font-bold text-slate-900 disabled:opacity-40 dark:text-slate-100 cursor-pointer"
             >
               +
             </button>
@@ -172,7 +205,7 @@ export function CBTHeader({
             onClick={toggleTheme}
             aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
             title={dark ? 'Light theme' : 'Dark theme'}
-            className="inline-flex h-6 w-6 items-center justify-center rounded border border-border text-slate-900 dark:text-slate-100"
+            className="inline-flex h-6 w-6 items-center justify-center rounded border border-border text-slate-900 dark:text-slate-100 cursor-pointer"
           >
             {dark ? (
               <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" className="h-3.5 w-3.5">
@@ -195,7 +228,7 @@ export function CBTHeader({
             type="button"
             onClick={onOpenShortcuts}
             title="Keyboard shortcuts"
-            className="h-6 w-6 rounded border border-border text-xs font-bold text-muted"
+            className="h-6 w-6 rounded border border-border text-xs font-bold text-muted hover:text-heading cursor-pointer flex items-center justify-center"
           >
             ?
           </button>

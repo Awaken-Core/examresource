@@ -32,6 +32,7 @@ import type {
   ReportQuestionInput,
   TranslateExplainAiInput,
   UpdateQuestionInput,
+  UpdateReportStatusInput,
 } from './dto/question.dto.js';
 import { GeminiService } from '../blog/gemini.service.js';
 
@@ -337,6 +338,192 @@ export class QuestionService {
         throw new ConflictException('You have already reported this question.');
       }
       throw error;
+    }
+  }
+
+  async listReports(
+    user: CurrentUser,
+    query: {
+      status?: string;
+      reason?: string;
+      search?: string;
+      page?: number;
+      limit?: number;
+    },
+  ) {
+    this.assertEditor(user);
+    const page = Math.max(1, query.page || 1);
+    const limit = Math.min(100, Math.max(1, query.limit || 20));
+    const skip = (page - 1) * limit;
+
+    const filter: any = {};
+    if (query.status && ['pending', 'reviewed', 'resolved', 'dismissed'].includes(query.status)) {
+      filter.status = query.status;
+    }
+    if (query.reason && query.reason !== 'all') {
+      filter.reason = query.reason;
+    }
+
+    const [
+      rawReports,
+      totalCount,
+      pendingCount,
+      reviewedCount,
+      resolvedCount,
+      dismissedCount,
+    ] = await Promise.all([
+      this.reportedQuestionModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate({
+          path: 'questionId',
+          select:
+            'content translations options explanation explanationTranslations type subject topic marks negativeMarks status',
+        })
+        .populate({
+          path: 'userId',
+          select: 'name email avatar',
+        })
+        .populate({
+          path: 'reviewedBy',
+          select: 'name email',
+        })
+        .lean(),
+      this.reportedQuestionModel.countDocuments(filter),
+      this.reportedQuestionModel.countDocuments({ status: 'pending' }),
+      this.reportedQuestionModel.countDocuments({ status: 'reviewed' }),
+      this.reportedQuestionModel.countDocuments({ status: 'resolved' }),
+      this.reportedQuestionModel.countDocuments({ status: 'dismissed' }),
+    ]);
+
+    let reports = rawReports.map((report: any) => ({
+      id: report._id.toString(),
+      _id: report._id.toString(),
+      userId:
+        report.userId?._id?.toString() ||
+        (report.userId ? String(report.userId) : ''),
+      user:
+        report.userId && typeof report.userId === 'object'
+          ? {
+              id: report.userId._id?.toString(),
+              name: report.userId.name,
+              email: report.userId.email,
+              avatar: report.userId.avatar,
+            }
+          : null,
+      questionId:
+        report.questionId?._id?.toString() ||
+        (report.questionId ? String(report.questionId) : ''),
+      question:
+        report.questionId && typeof report.questionId === 'object'
+          ? {
+              id: report.questionId._id?.toString(),
+              _id: report.questionId._id?.toString(),
+              content: report.questionId.content,
+              translations: report.questionId.translations,
+              options: report.questionId.options,
+              explanation: report.questionId.explanation,
+              explanationTranslations: report.questionId.explanationTranslations,
+              type: report.questionId.type,
+              subject: report.questionId.subject,
+              topic: report.questionId.topic,
+              marks: report.questionId.marks,
+              negativeMarks: report.questionId.negativeMarks,
+              status: report.questionId.status,
+            }
+          : null,
+      reason: report.reason,
+      details: report.details,
+      status: report.status,
+      reviewedBy:
+        report.reviewedBy && typeof report.reviewedBy === 'object'
+          ? {
+              id: report.reviewedBy._id?.toString(),
+              name: report.reviewedBy.name,
+              email: report.reviewedBy.email,
+            }
+          : null,
+      reviewedAt: report.reviewedAt,
+      resolutionNote: report.resolutionNote,
+      createdAt: report.createdAt,
+      updatedAt: report.updatedAt,
+    }));
+
+    if (query.search?.trim()) {
+      const term = query.search.trim().toLowerCase();
+      reports = reports.filter(
+        (r) =>
+          r.question?.content?.toLowerCase().includes(term) ||
+          r.details?.toLowerCase().includes(term) ||
+          r.reason?.toLowerCase().includes(term) ||
+          r.user?.name?.toLowerCase().includes(term) ||
+          r.user?.email?.toLowerCase().includes(term),
+      );
+    }
+
+    return {
+      data: reports,
+      counts: {
+        pending: pendingCount,
+        reviewed: reviewedCount,
+        resolved: resolvedCount,
+        dismissed: dismissedCount,
+        total: pendingCount + reviewedCount + resolvedCount + dismissedCount,
+      },
+      pagination: {
+        page,
+        limit,
+        total: totalCount,
+        totalPages: Math.ceil(totalCount / limit) || 1,
+      },
+    };
+  }
+
+  async updateReportStatus(
+    id: string,
+    input: UpdateReportStatusInput,
+    user: CurrentUser,
+  ) {
+    this.assertEditor(user);
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Report was not found.');
+    }
+
+    const report = await this.reportedQuestionModel.findById(new Types.ObjectId(id));
+    if (!report) {
+      throw new NotFoundException('Report was not found.');
+    }
+
+    report.status = input.status;
+    if (input.resolutionNote !== undefined) {
+      report.resolutionNote = input.resolutionNote;
+    }
+    report.reviewedBy = new Types.ObjectId(user.id);
+    report.reviewedAt = new Date();
+    await report.save();
+
+    return {
+      id: report._id.toString(),
+      _id: report._id.toString(),
+      status: report.status,
+      resolutionNote: report.resolutionNote,
+      reviewedBy: user.id,
+      reviewedAt: report.reviewedAt,
+    };
+  }
+
+  async deleteReport(id: string, user: CurrentUser) {
+    this.assertEditor(user);
+    if (!Types.ObjectId.isValid(id)) {
+      throw new NotFoundException('Report was not found.');
+    }
+    const result = await this.reportedQuestionModel.findByIdAndDelete(
+      new Types.ObjectId(id),
+    );
+    if (!result) {
+      throw new NotFoundException('Report was not found.');
     }
   }
 
