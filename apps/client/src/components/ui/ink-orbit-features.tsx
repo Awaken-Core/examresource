@@ -189,7 +189,7 @@ export default function InkOrbitFeatures({
       if (theme === "light") return false
       if (document.documentElement.classList.contains("theme-dark")) return true
       if (document.documentElement.classList.contains("theme-light")) return false
-      return scheme.matches
+      return false
     }
     const sync = () => {
       setDark(checkDark())

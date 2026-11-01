@@ -51,6 +51,17 @@ export interface SectionSummary {
   questionsCount?: number;
 }
 
+export interface UpcomingMockTest {
+  id: string;
+  mockNumber: number;
+  title: string;
+  totalQuestionsCount: number;
+  durationMinutes: number;
+  totalMarks: number;
+  negativeMarks: number;
+  sections: string[];
+}
+
 export interface PublishedTestItem {
   id: string;
   _id?: string;
@@ -118,7 +129,6 @@ interface Props {
 }
 
 type TabType = 'full' | 'subject' | 'chapter' | 'syllabus';
-type CardFilter = 'all' | 'free' | 'pass';
 
 function subjectLabel(subject?: Partial<AssignedSubject> | null) {
   return subject?.customDisplayName || subject?.name || '';
@@ -492,8 +502,55 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     );
   }
 
+  // Upcoming Locked Mock Tests (Coming Soon)
+  const upcomingMockTests = useMemo<UpcomingMockTest[]>(() => {
+    const examLabel = series?.targetExam || series?.title || 'Full Syllabus';
+    const numToGenerate = Math.max(5 - fullTests.length, 3);
+    const startIndex = fullTests.length + 1;
+
+    const defaultSections = (series?.subjects && series.subjects.length > 0)
+      ? series.subjects.slice(0, 5).map((s) => subjectLabel(s))
+      : ['General Awareness', 'General Intelligence & Reasoning', 'Numerical Ability', 'Hindi Language', 'Subject Knowledge'];
+
+    const mockSubtitles = [
+      'All India Live CBT Mock Simulation',
+      'High-Yield Full Syllabus Paper',
+      'Latest Exam Pattern Mock Drill',
+      'Advanced Speed & Accuracy Challenge',
+      'Final Revision Full Length Paper',
+      'Grand Booster Mock Test',
+    ];
+
+    const mocks: UpcomingMockTest[] = [];
+    for (let i = 0; i < numToGenerate; i++) {
+      const mockNum = startIndex + i;
+      const subtitle = mockSubtitles[i % mockSubtitles.length];
+      mocks.push({
+        id: `upcoming-mock-${mockNum}`,
+        mockNumber: mockNum,
+        title: `${examLabel} Full Mock Test ${String(mockNum).padStart(2, '0')} · ${subtitle}`,
+        totalQuestionsCount: 200,
+        durationMinutes: 120,
+        totalMarks: 200,
+        negativeMarks: 0.25,
+        sections: defaultSections,
+      });
+    }
+    return mocks;
+  }, [series, fullTests.length]);
+
+  const filteredUpcomingTests = useMemo(() => {
+    if (!testSearchQuery.trim()) return upcomingMockTests;
+    const q = testSearchQuery.toLowerCase();
+    return upcomingMockTests.filter(
+      (m) => m.title.toLowerCase().includes(q) || m.sections.some((s) => s.toLowerCase().includes(q)),
+    );
+  }, [upcomingMockTests, testSearchQuery]);
+
+  const totalFullMockCount = fullTests.length + upcomingMockTests.length;
+
   const completedCount = learnerPrep?.completedTestsCount ?? 0;
-  const totalCount = learnerPrep?.totalTestsCount ?? (fullTests.length + assignedSubjects.length + chapterCount);
+  const totalCount = learnerPrep?.totalTestsCount ?? (totalFullMockCount + assignedSubjects.length + chapterCount);
   const unattemptedCount = learnerPrep ? learnerPrep.unattemptedTestsCount : Math.max(0, totalCount - completedCount);
   const completionPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
@@ -505,6 +562,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
       (t) => t.title.toLowerCase().includes(q) || (t.description?.toLowerCase().includes(q) ?? false),
     );
   }, [fullTests, testSearchQuery]);
+
+
 
   // Filtered Subject Tests
   const filteredSubjectTests = useMemo(() => {
@@ -565,10 +624,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           <span className="rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-semibold text-heading">
             {series.organization || 'Delhi Subordinate Services Selection Board'}
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-400">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-            1 Free Test Included
-          </span>
         </div>
 
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-heading sm:text-4xl lg:text-[40px] leading-tight">
@@ -583,8 +638,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             'Exhaustive PYQ question bank & timed CBT mock simulation covering all 20 subjects and 103 chapters (2018-2024 verified papers). Crafted according to Delhi Subordinate Services Selection Board standards, featuring dual-pane CBT software, instant percentiles, and chapter-wise deep analytics.'}
         </p>
 
-        {/* 6 Stats Grid */}
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        {/* Stats Grid */}
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
             <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Assigned Subjects</p>
             <p className="mt-1 text-base font-bold text-heading tabular-nums">
@@ -600,22 +655,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
             <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Full Length Mocks</p>
             <p className="mt-1 text-base font-bold text-heading tabular-nums">
-              {fullTests.length} Tests
+              {totalFullMockCount} Tests
             </p>
           </div>
           <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
             <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Official PYQs</p>
             <p className="mt-1 text-base font-bold text-heading tabular-nums">2018 – 2024</p>
-          </div>
-          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
-            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Student Rating</p>
-            <p className="mt-1 flex items-center gap-1 text-base font-bold text-heading tabular-nums">
-              4.8 <span className="text-amber-500 text-xs">★★★★★</span>
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
-            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Active Aspirants</p>
-            <p className="mt-1 text-base font-bold text-heading tabular-nums">3,420+ Joined</p>
           </div>
         </div>
       </header>
@@ -671,14 +716,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                 style={{ width: `${completionPct}%` }}
               />
             </div>
-
-            <div className="mt-4 flex flex-wrap items-center gap-6 border-t border-white/10 pt-3.5 text-xs text-zinc-200 font-medium">
-              <span>• Avg Accuracy: {learnerPrep?.averageAccuracy != null ? `${learnerPrep.averageAccuracy}%` : '--%'}</span>
-              <span>• Predicted Cutoff Gap: Take 1st Mock</span>
-              <span className="flex items-center gap-1 font-semibold text-amber-400">
-                <span>✦</span> Estimated Target: 135+ / 200
-              </span>
-            </div>
           </section>
 
           {/* TABS NAVIGATION */}
@@ -703,7 +740,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       : 'bg-surface-raised border border-border text-muted'
                   }`}
                 >
-                  {fullTests.length}
+                  {totalFullMockCount}
                 </span>
               </button>
 
@@ -802,7 +839,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   )}
                 </div>
                 <span className="text-xs font-semibold text-muted">
-                  Showing {filteredFullTests.length} of {fullTests.length} tests
+                  Showing {filteredFullTests.length + filteredUpcomingTests.length} of {totalFullMockCount} tests
                 </span>
               </div>
 
@@ -812,7 +849,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     <div key={i} className="h-28 animate-pulse rounded-2xl bg-surface border border-border" />
                   ))}
                 </div>
-              ) : filteredFullTests.length === 0 ? (
+              ) : filteredFullTests.length === 0 && filteredUpcomingTests.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
                   <p className="text-sm font-semibold text-heading">No mock tests found.</p>
                   <p className="mt-1 text-xs text-muted">
@@ -820,24 +857,29 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   </p>
                 </div>
               ) : (
-                filteredFullTests.map((test, index) => {
-                  const testId = test.id || test._id || '';
-                  const latestAttempt = testAttemptMap.get(testId);
-                  const isLocked = isTestLocked(test);
-                  const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
-                  return (
-                    <RealTestCard
-                      key={testId}
-                      test={test}
-                      index={index}
-                      latestAttempt={latestAttempt}
-                      isLocked={isLocked}
-                      hasActivePass={hasActivePass}
-                      hasUsedFreeTest={hasUsedFreeTest}
-                      isClaimedFree={isClaimedFree}
-                    />
-                  );
-                })
+                <div className="space-y-4">
+                  {filteredFullTests.map((test, index) => {
+                    const testId = test.id || test._id || '';
+                    const latestAttempt = testAttemptMap.get(testId);
+                    const isLocked = isTestLocked(test);
+                    const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                    return (
+                      <RealTestCard
+                        key={testId}
+                        test={test}
+                        index={index}
+                        latestAttempt={latestAttempt}
+                        isLocked={isLocked}
+                        hasActivePass={hasActivePass}
+                        hasUsedFreeTest={hasUsedFreeTest}
+                        isClaimedFree={isClaimedFree}
+                      />
+                    );
+                  })}
+                  {filteredUpcomingTests.map((mock) => (
+                    <UpcomingLockedMockCard key={mock.id} mock={mock} />
+                  ))}
+                </div>
               )}
             </div>
           )}
@@ -1328,25 +1370,13 @@ function RealTestCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           {/* Top Status Pill */}
-          <div>
-            {hasActivePass ? (
-              <span className="inline-flex items-center rounded-full border border-emerald-600/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                INCLUDED IN PASS
-              </span>
-            ) : isClaimedFree ? (
-              <span className="inline-flex items-center rounded-full border border-emerald-600/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                YOUR CLAIMED FREE TEST
-              </span>
-            ) : isLocked ? (
+          {isLocked && (
+            <div>
               <span className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
                 PASS REQUIRED
               </span>
-            ) : (
-              <span className="inline-flex items-center rounded-full bg-emerald-600 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-2xs">
-                FREE ATTEMPT AVAILABLE • NO PASS NEEDED
-              </span>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
@@ -1368,8 +1398,7 @@ function RealTestCard({
                 <span className="font-semibold text-rose-600 dark:text-rose-400">-{test.negativeMarks} Neg.</span>
               </>
             )}
-            <span>•</span>
-            <span>🌐 Bilingual</span>
+            
           </div>
 
           {/* Section pills for Full Tests or details */}
@@ -1450,14 +1479,88 @@ function RealTestCard({
                 data-astro-prefetch="hover"
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-emerald-700"
               >
-                <span>{hasActivePass ? 'Start Test' : 'Start Free Mock'}</span>
+                <span>Start Test</span>
                 <span aria-hidden="true">→</span>
               </a>
-              <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
-                {hasActivePass ? 'Included in Pass' : '1 free test in this series'}
-              </span>
+              {hasActivePass && (
+                <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
+                  Included in Pass
+                </span>
+              )}
             </div>
           )}
+        </div>
+      </div>
+    </article>
+  );
+}
+// UPCOMING LOCKED MOCK CARD COMPONENT
+function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
+  return (
+    <article className="rounded-2xl border border-border bg-surface p-5 shadow-xs sm:p-6 transition hover:border-accent/30">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 flex-1 space-y-2">
+          {/* Top Status Pill: Locked • Coming Soon */}
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              <svg className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              <span>Locked • Coming Soon</span>
+            </span>
+          </div>
+
+          {/* Test Title */}
+          <h3 className="text-base font-bold text-heading sm:text-lg">
+            {mock.title}
+          </h3>
+
+          {/* Meta line */}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted font-medium">
+            <span>📄 <strong className="text-heading font-semibold tabular-nums">{mock.totalQuestionsCount}</strong> Questions</span>
+            <span>•</span>
+            <span>⏱ <strong className="text-heading font-semibold tabular-nums">{mock.durationMinutes} Mins</strong></span>
+            <span>•</span>
+            <span>🎯 <strong className="text-heading font-semibold tabular-nums">{mock.totalMarks}</strong> Marks</span>
+            {mock.negativeMarks > 0 && (
+              <>
+                <span>•</span>
+                <span className="font-semibold text-rose-600 dark:text-rose-400">-{mock.negativeMarks} Neg.</span>
+              </>
+            )}
+            
+          </div>
+
+          {/* Section pills */}
+          {mock.sections.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {mock.sections.map((section) => (
+                <span
+                  key={section}
+                  className="rounded-md border border-border bg-surface-raised px-2.5 py-0.5 text-[11px] font-medium text-heading"
+                >
+                  {section}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Action Button: Locked */}
+        <div className="flex shrink-0 flex-col sm:items-end">
+          <button
+            type="button"
+            disabled
+            className="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-border bg-surface-raised px-5 py-2.5 text-xs font-bold text-muted opacity-80 select-none shadow-2xs"
+          >
+            <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            <span>Locked · Coming Soon</span>
+          </button>
+          <span className="mt-1.5 text-center text-[10.5px] text-muted sm:text-right font-medium">
+            Test release scheduled soon
+          </span>
         </div>
       </div>
     </article>

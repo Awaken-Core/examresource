@@ -90,14 +90,14 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
-<html lang="en" data-site-domain={siteDomain}>
+<html lang="en" data-site-domain={siteDomain} class="theme-light">
   <head>
     {/* Instant zero-FOUC theme initialization before stylesheet or DOM rendering */}
     <script is:inline>
       (function() {
         try {
           var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
-          var isDark = pref ? pref === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = pref === 'dark';
           var root = document.documentElement;
           if (isDark) {
             root.classList.add('theme-dark');
@@ -317,7 +317,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         function syncThemeElements() {
           try {
             var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
-            var isDark = pref ? pref === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var isDark = pref === 'dark';
             var root = document.documentElement;
             root.classList.toggle('theme-dark', isDark);
             root.classList.toggle('theme-light', !isDark);

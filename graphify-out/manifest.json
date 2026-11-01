@@ -87,15 +87,15 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/Header.astro": {
-    "mtime": 1793456688.2014558,
-    "seen": 1793456964.7170255,
-    "ast_hash": "e34a4d3b492f7ed34058af692e771cc4",
+    "mtime": 1793526861.0919547,
+    "seen": 1793526884.7740278,
+    "ast_hash": "60e3f08819ed4233e3c92b2c1b54e86d",
     "semantic_hash": ""
   },
   "apps/client/src/components/LeftSidebar.astro": {
-    "mtime": 1793456702.533738,
-    "seen": 1793456964.7170274,
-    "ast_hash": "6572d39e6b854f34aa7bfb34d6564171",
+    "mtime": 1793526861.092963,
+    "seen": 1793526884.7740319,
+    "ast_hash": "60638276ca01568f22835e9435656021",
     "semantic_hash": ""
   },
   "apps/client/src/components/NotificationPopup.astro": {
@@ -105,9 +105,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/ProfileDropdown.astro": {
-    "mtime": 1793454302.1261783,
-    "seen": 1793454481.0943396,
-    "ast_hash": "23f9d40a6706e2a0d3e309cbcc4f4036",
+    "mtime": 1793526861.0944676,
+    "seen": 1793526884.7740366,
+    "ast_hash": "0dc625d8a64d3876cc055549c9b90326",
     "semantic_hash": ""
   },
   "apps/client/src/components/RelatedArticles.astro": {
@@ -117,8 +117,8 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/SearchModal.astro": {
-    "mtime": 1793456725.9820716,
-    "seen": 1793456964.7170506,
+    "mtime": 1793526861.096473,
+    "seen": 1793526884.7740421,
     "ast_hash": "30473a031d878537af788cfb3c017bcb",
     "semantic_hash": ""
   },
@@ -501,9 +501,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/layouts/Layout.astro": {
-    "mtime": 1793458060.3214378,
-    "seen": 1793458291.5326247,
-    "ast_hash": "dfd1f6bf870d9124f52353e6bd624f04",
+    "mtime": 1793526861.100482,
+    "seen": 1793526884.7742064,
+    "ast_hash": "ad164cbcc17756e7ef89b05cd742558b",
     "semantic_hash": ""
   },
   "apps/client/src/lib/adminSession.ts": {
@@ -771,9 +771,9 @@
     "semantic_hash": "0057f19a15b8027d3a7ee7707e3e1502"
   },
   "apps/client/src/pages/index.astro": {
-    "mtime": 1793458196.772965,
-    "seen": 1793458291.532679,
-    "ast_hash": "19017d8c7724f2fb3972503f298eb977",
+    "mtime": 1793526861.1030324,
+    "seen": 1793526884.774293,
+    "ast_hash": "a01fded7b2ac66355deacc258577fb61",
     "semantic_hash": ""
   },
   "apps/client/src/pages/llms-full.txt.ts": {

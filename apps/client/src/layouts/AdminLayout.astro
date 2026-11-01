@@ -16,14 +16,14 @@ const {
 ---
 
 <!doctype html>
-<html lang="en" class="h-full antialiased admin-theme auth-pending">
+<html lang="en" class="h-full antialiased admin-theme auth-pending theme-light">
   <head>
     <meta charset="utf-8" />
     <script is:inline>
       (function() {
         try {
           var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
-          var isDark = pref ? pref === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = pref === 'dark';
           var root = document.documentElement;
           root.classList.toggle('theme-dark', isDark);
           root.classList.toggle('theme-light', !isDark);

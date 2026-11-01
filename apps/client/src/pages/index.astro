@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { TestSeriesPassCard } from '../components/test-series/TestSeriesPassCard';
 import BrandLogo from '../components/BrandLogo.astro';
 import InkOrbitFeatures from '../components/ui/ink-orbit-features';
 import { Avatar, Style } from '@dicebear/core';
@@ -297,6 +298,105 @@ Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, st
                 ))
               }
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          ALL GOVERNMENT EXAM PASS / PAYMENT CARD SECTION
+          ══════════════════════════════════════════════════════════ */}
+      <section
+        id="pass-pricing"
+        class="bg-editorial-bg border-t border-[#191613]/10 dark:border-white/10 px-5 py-20 text-[#191613] dark:text-[#E7E0D8] sm:px-8 sm:py-24 lg:px-10 lg:py-28 transition-colors duration-200"
+        aria-labelledby="pass-pricing-heading"
+      >
+        <div class="mx-auto max-w-[1040px]">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+            {/* Left Column: Value Proposition & Information */}
+            <div class="lg:col-span-7 space-y-6">
+              <div>
+                <p class="font-['Geist'] text-[11px] font-semibold uppercase tracking-[0.16em] text-[#FF4D00]">
+                  ALL GOVERNMENT EXAM PASS
+                </p>
+                <h2
+                  id="pass-pricing-heading"
+                  class="mt-3 font-['EB_Garamond'] text-4xl font-normal leading-[1.1] tracking-[-0.02em] text-[#191613] dark:text-[#F5EEE6] sm:text-5xl"
+                >
+                  One simple pass.<br />
+                  <span class="text-[#8C827A] dark:text-[#B3A89D]">Every government exam.</span>
+                </h2>
+                <p class="mt-4 font-['Geist'] text-[14px] sm:text-[15px] leading-relaxed text-[#514A44] dark:text-[#A89D92] max-w-xl">
+                  Get full unlimited access to all published and upcoming mock test series across Delhi DSSSB, SSC, Railways, Banking, UPSC, and State Govt Exams.
+                </p>
+              </div>
+
+              {/* Feature Highlights Grid (Hidden on mobile / small devices) */}
+              <div class="hidden sm:grid sm:grid-cols-2 gap-4 pt-1 font-['Geist'] text-xs">
+                <div class="rounded-xl border border-[#191613]/10 dark:border-white/10 bg-[#fffaf1] dark:bg-[#1C1A18] p-4 shadow-2xs space-y-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#FF4D00]/10 text-[#FF4D00] text-sm font-bold">🏛</span>
+                    <h3 class="font-semibold text-[#191613] dark:text-[#F5EEE6]">All Exams Covered</h3>
+                  </div>
+                  <p class="text-[#675F58] dark:text-[#A89D92] leading-relaxed text-[11.5px]">
+                    No separate subscriptions for each exam. A single pass unlocks every series on the platform.
+                  </p>
+                </div>
+
+                <div class="rounded-xl border border-[#191613]/10 dark:border-white/10 bg-[#fffaf1] dark:bg-[#1C1A18] p-4 shadow-2xs space-y-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#FF4D00]/10 text-[#FF4D00] text-sm font-bold">⚡</span>
+                    <h3 class="font-semibold text-[#191613] dark:text-[#F5EEE6]">Rapid Updates</h3>
+                  </div>
+                  <p class="text-[#675F58] dark:text-[#A89D92] leading-relaxed text-[11.5px]">
+                    We are rapidly working to add more full mocks, chapter tests &amp; fresh question banks continuously.
+                  </p>
+                </div>
+
+                <div class="rounded-xl border border-[#191613]/10 dark:border-white/10 bg-[#fffaf1] dark:bg-[#1C1A18] p-4 shadow-2xs space-y-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#FF4D00]/10 text-[#FF4D00] text-sm font-bold">💻</span>
+                    <h3 class="font-semibold text-[#191613] dark:text-[#F5EEE6]">Real CBT Simulation</h3>
+                  </div>
+                  <p class="text-[#675F58] dark:text-[#A89D92] leading-relaxed text-[11.5px]">
+                    Real test palette, timer, section-switching, and instantaneous score analysis.
+                  </p>
+                </div>
+
+                <div class="rounded-xl border border-[#191613]/10 dark:border-white/10 bg-[#fffaf1] dark:bg-[#1C1A18] p-4 shadow-2xs space-y-1.5">
+                  <div class="flex items-center gap-2">
+                    <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#FF4D00]/10 text-[#FF4D00] text-sm font-bold">🔒</span>
+                    <h3 class="font-semibold text-[#191613] dark:text-[#F5EEE6]">Secure &amp; One-Time</h3>
+                  </div>
+                  <p class="text-[#675F58] dark:text-[#A89D92] leading-relaxed text-[11.5px]">
+                    Single one-time payment via Razorpay. Zero auto-debits, zero hidden fees.
+                  </p>
+                </div>
+              </div>
+
+              <div class="pt-2 flex flex-wrap items-center gap-4 text-xs font-['Geist']">
+                <a
+                  href="/test-series"
+                  class="inline-flex items-center gap-1.5 font-semibold text-[#FF4D00] hover:underline"
+                >
+                  <span>Explore all available test series</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+                <span class="text-muted/40">•</span>
+                <a
+                  href="/pricing"
+                  class="text-muted hover:text-heading transition"
+                >
+                  View detailed pricing policy
+                </a>
+              </div>
+            </div>
+
+            {/* Right Column: Interactive Payment Card (TestSeriesPassCard) */}
+            <div class="lg:col-span-5 w-full max-w-md mx-auto lg:max-w-none">
+              <TestSeriesPassCard client:visible variant="series" />
+            </div>
+
           </div>
         </div>
       </section>

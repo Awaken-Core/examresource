@@ -43,7 +43,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
   // Filters
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [search, setSearch] = useState('');
-  const [accessFilter, setAccessFilter] = useState('all');
+
   const [languageFilter, setLanguageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('recommended');
 
@@ -75,12 +75,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
     if (selectedCategory !== 'all' && s.category !== selectedCategory) {
       return false;
     }
-    if (accessFilter === 'free' && s.accessType === 'premium') {
-      return false;
-    }
-    if (accessFilter === 'premium' && s.accessType === 'free') {
-      return false;
-    }
+
     if (languageFilter !== 'all') {
       if (!s.supportedLanguages || !s.supportedLanguages.includes(languageFilter)) {
         return false;
@@ -99,7 +94,18 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
   const sortedList = [...filteredList].sort((a, b) => {
     if (sortBy === 'az') return a.title.localeCompare(b.title);
     if (sortBy === 'za') return b.title.localeCompare(a.title);
-    return (a.order ?? 0) - (b.order ?? 0);
+    const getPriority = (item: StudentTestSeries) => {
+      if (typeof item.order === 'number' && item.order > 0) return item.order;
+      const s = (item.slug || '').toLowerCase();
+      const t = (item.title || '').toLowerCase();
+      if (s.includes('dsssb') || t.includes('dsssb')) return 1;
+      if (s.includes('aptitude') || t.includes('aptitude') || s.includes('reasoning') || t.includes('reasoning')) return 2;
+      return 999;
+    };
+    const orderA = getPriority(a);
+    const orderB = getPriority(b);
+    if (orderA !== orderB) return orderA - orderB;
+    return a.title.localeCompare(b.title);
   });
 
   return (
@@ -149,18 +155,6 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-editorial-surface border border-editorial-border rounded-xl pl-9 pr-3.5 py-2 text-xs text-editorial-heading placeholder:text-editorial-muted/60 focus:border-editorial-accent focus:outline-hidden focus:ring-1 focus:ring-editorial-accent/20 transition shadow-2xs"
             />
-          </div>
-
-          <div className="shrink-0">
-            <select
-              value={accessFilter}
-              onChange={(e) => setAccessFilter(e.target.value)}
-              className="w-full sm:w-auto bg-editorial-surface border border-editorial-border text-editorial-heading rounded-xl px-3 py-2 text-xs font-medium focus:border-editorial-accent focus:outline-hidden cursor-pointer shadow-2xs"
-            >
-              <option value="all">Free & Premium</option>
-              <option value="free">Free Access</option>
-              <option value="premium">Premium Only</option>
-            </select>
           </div>
 
           <div className="shrink-0">
@@ -270,7 +264,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                         </div>
                       </div>
 
-                      {series.badge && (
+                      {series.badge && !/free|paid/i.test(series.badge) && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/25 shrink-0 whitespace-nowrap">
                           {series.badge}
                         </span>
@@ -293,17 +287,6 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                   {/* Card Footer: Metadata and CTA */}
                   <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase shrink-0 ${
-                          series.accessType === 'free'
-                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25'
-                            : series.accessType === 'freemium'
-                              ? 'bg-editorial-accent-soft text-editorial-accent border border-editorial-accent/25'
-                              : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/25'
-                        }`}
-                      >
-                        {series.accessType}
-                      </span>
                       <span className="text-[11.5px] text-editorial-muted truncate">
                         {series.supportedLanguages?.join('/') || 'Hindi/English'}
                       </span>

@@ -135,10 +135,10 @@ export function TestSeriesPassCard({
             </span>
           </div>
           <h2 id="series-pass-heading" className="mt-2 text-lg font-black tracking-tight !text-white">
-            TEST SERIES PASS
+            ALL GOVERNMENT EXAM PASS
           </h2>
           <p className="mt-0.5 text-xs text-zinc-200 font-medium">
-            Unrestricted entry to all mocks, tests &amp; PYQs
+            Unrestricted entry to all mocks, tests &amp; PYQs across all exams
           </p>
         </div>
 
@@ -177,11 +177,11 @@ export function TestSeriesPassCard({
             <ul className="mt-3 space-y-2 text-xs leading-relaxed text-heading font-medium">
               <li className="flex items-start gap-2">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">✔</span>
-                <span>All 48 Full Mocks &amp; PYQs with instant re-attempts</span>
+                <span>All Government Exam Pass — One pass unlocks all test series</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">✔</span>
-                <span>120 Chapter-wise drills for 20 designated subjects</span>
+                <span>Full mocks, chapter-wise &amp; subject-wise drills with instant re-attempts</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">✔</span>
@@ -189,11 +189,17 @@ export function TestSeriesPassCard({
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">✔</span>
-                <span>Bilingual detailed solutions + downloadable notes</span>
+                <span>Detailed step-by-step solutions with comprehensive explanations</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400">✔</span>
                 <span>Real CBT exam portal simulator with question palette</span>
+              </li>
+              <li className="flex items-start gap-2 rounded-lg bg-amber-500/10 p-2 text-amber-800 dark:text-amber-300 border border-amber-500/25">
+                <span className="font-bold text-amber-500">⚡</span>
+                <span className="font-semibold text-[11px] leading-snug">
+                  We are rapidly working to provide more mock tests &amp; fresh papers soon
+                </span>
               </li>
             </ul>
           </div>
@@ -212,7 +218,7 @@ export function TestSeriesPassCard({
 
           {active ? (
             <a
-              href="#paper-panel"
+              href="/test-series"
               className="mt-4 flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-accent px-4 text-sm font-bold !text-white shadow-md transition-all duration-200 hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
             >
               <span>Start Preparation Now</span>
@@ -233,12 +239,6 @@ export function TestSeriesPassCard({
           <p className="mt-2.5 text-center text-[11px] text-muted font-medium">
             Always stay free: Books &amp; Quizzes are not included in this pass.
           </p>
-
-          <div className="mt-4 flex items-center justify-center gap-3 border-t border-border pt-3 text-[11px] text-muted font-semibold">
-            <span>🔒 256-Bit SSL Encrypted</span>
-            <span>•</span>
-            <span>⚡ Instant Access</span>
-          </div>
 
           <div>{statusNote}</div>
         </div>
