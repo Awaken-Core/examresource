@@ -28,6 +28,7 @@ export interface TestInstructionsData {
   negativeMarkingEnabled: boolean;
   negativeMarks: number;
   maxAttempts?: number | null;
+  testSeriesId?: string;
   languages: string[];
   instructions?: string | null;
   version: number;
@@ -467,7 +468,12 @@ export function TestInstructions({ testId, initialData, siteName = 'GovtPariksha
               {/* Pass Card or Error */}
               {passRequired && (
                 <div className="pt-2">
-                  <TestSeriesPassCard variant="instructions" onPurchased={() => void handleStartTest()} />
+                  <TestSeriesPassCard
+                    seriesId={test?.testSeriesId}
+                    variant="instructions"
+                    layout="compact"
+                    onPurchased={() => void handleStartTest()}
+                  />
                 </div>
               )}
 

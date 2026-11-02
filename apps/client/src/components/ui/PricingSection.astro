@@ -1,0 +1,385 @@
+---
+interface Props {
+  seriesId?: string;
+}
+
+const { seriesId } = Astro.props;
+---
+
+<div class="pricing-root px-4 py-16 sm:py-20 mx-auto relative bg-canvas text-heading transition-colors" data-series-id={seriesId || ''}>
+  {/* Ambient background glow */}
+  <div
+    class="pointer-events-none absolute top-0 left-[10%] right-[10%] w-[80%] h-full z-0 opacity-25 dark:opacity-20"
+    style="background-image: radial-gradient(circle at center, var(--color-accent, #FF4D00) 0%, transparent 70%); mix-blend-mode: screen;"
+    aria-hidden="true"
+  ></div>
+
+  {/* Header Section */}
+  <div class="relative z-10 text-center mb-10 sm:mb-12 max-w-2xl mx-auto space-y-3">
+    <p class="font-sans text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+      TRANSPARENT PASS PLANS
+    </p>
+
+    <h2
+      id="pass-pricing-heading"
+      class="font-serif md:text-5xl sm:text-4xl text-3xl font-normal text-heading tracking-tight leading-[1.15]"
+    >
+      Simple, honest pricing.<br />
+      <span class="text-[#8C827A] dark:text-[#B3A89D]">Choose what fits your preparation.</span>
+    </h2>
+
+    <p class="font-sans sm:text-[15px] text-sm text-muted sm:w-[85%] w-[95%] mx-auto leading-relaxed">
+      Every student gets 1 free test attempt in each section. Unlock complete preparation with a single series pass (₹69) or the all-access yearly pass (₹399).
+    </p>
+  </div>
+
+  {/* TWO DEDICATED CARDS SIDE-BY-SIDE */}
+  <div class="relative z-10 grid md:grid-cols-2 max-w-5xl gap-6 py-2 mx-auto items-stretch">
+    {/* CARD 1: SINGLE SERIES PASS */}
+    <div class="flex">
+      <div
+        id="card-series"
+        class="pricing-card relative flex flex-col justify-between w-full border border-border rounded-2xl p-6 sm:p-8 bg-surface shadow-xs transition-all duration-200 hover:border-accent/40"
+      >
+        <div class="text-left p-0">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-accent px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20">
+                TARGETED EXAM
+              </span>
+              <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+                SAVE ₹130 (65% OFF)
+              </span>
+            </div>
+          </div>
+
+          <h3 class="text-2xl sm:text-3xl font-bold text-heading mb-2">
+            Single Series Pass
+          </h3>
+          <p class="text-xs sm:text-sm text-muted mb-4 font-medium leading-relaxed">
+            Complete access to this specific examination series with all mock tests &amp; drills.
+          </p>
+
+          <div class="flex items-baseline gap-2.5">
+            <span class="text-4xl sm:text-5xl font-black text-heading tabular-nums">
+              ₹69
+            </span>
+            <span class="text-base text-muted line-through font-medium">
+              ₹199
+            </span>
+            <span class="text-muted font-medium text-xs sm:text-sm">
+              / 6 Months
+            </span>
+          </div>
+
+          <p class="mt-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            One-time payment • Valid for 6 months
+          </p>
+        </div>
+
+        <div class="pt-6 p-0 flex flex-col justify-between flex-1">
+          <div>
+            <button
+              type="button"
+              id="btn-buy-series"
+              data-plan="series"
+              class="w-full mb-6 p-3.5 sm:p-4 text-sm sm:text-base font-bold rounded-xl cursor-pointer transition-all shadow-md bg-gradient-to-t from-neutral-900 to-neutral-700 dark:from-neutral-800 dark:to-neutral-600 text-white shadow-neutral-900/20 hover:opacity-95 border border-border disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Unlock This Series · ₹69
+            </button>
+
+            <ul class="space-y-3 font-semibold py-3">
+              <li class="flex items-start">
+                <span class="text-accent grid place-content-center mt-0.5 mr-2.5 shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7h-4V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"></path>
+                  </svg>
+                </span>
+                <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                  All Full Length Mock Tests tailored to exam syllabus
+                </span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-accent grid place-content-center mt-0.5 mr-2.5 shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                    <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path>
+                    <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path>
+                  </svg>
+                </span>
+                <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                  Subject-wise &amp; Chapter-wise practice test suites
+                </span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-accent grid place-content-center mt-0.5 mr-2.5 shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect>
+                    <rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect>
+                    <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                    <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                  </svg>
+                </span>
+                <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                  Official Previous Year Question Papers (PYQs)
+                </span>
+              </li>
+            </ul>
+
+            <div class="space-y-3 pt-4 border-t border-border mt-3">
+              <h4 class="font-semibold text-[11px] uppercase tracking-wider text-muted mb-2">
+                INCLUDED IN THIS PASS:
+              </h4>
+              <ul class="space-y-2 font-medium">
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    1 Free trial attempt slot per section included
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    Authentic CBT portal simulator with question palette
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    Detailed step-by-step bilingual solutions &amp; instant score
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    Valid for 6 full months from purchase date
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* CARD 2: ALL-ACCESS YEARLY PASS */}
+    <div class="flex">
+      <div
+        id="card-all"
+        class="pricing-card relative flex flex-col justify-between w-full border rounded-2xl p-6 sm:p-8 transition-all duration-200 ring-2 ring-accent border-accent/40 bg-surface shadow-xl shadow-accent/5 dark:shadow-accent/15"
+      >
+        <div class="text-left p-0">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-accent px-2 py-0.5 rounded-md bg-accent/10 border border-accent/20">
+                ALL EXAMS UNLOCKED
+              </span>
+              <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
+                SAVE ₹600 (60% OFF)
+              </span>
+            </div>
+            <span class="inline-flex items-center gap-1 bg-accent text-white px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow-xs">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path>
+              </svg>
+              Best Value
+            </span>
+          </div>
+
+          <h3 class="text-2xl sm:text-3xl font-bold text-heading mb-2">
+            All-Access Pass
+          </h3>
+          <p class="text-xs sm:text-sm text-muted mb-4 font-medium leading-relaxed">
+            One pass unlocks every single test series across the entire platform for 1 full year.
+          </p>
+
+          <div class="flex items-baseline gap-2.5">
+            <span class="text-4xl sm:text-5xl font-black text-heading tabular-nums">
+              ₹399
+            </span>
+            <span class="text-base text-muted line-through font-medium">
+              ₹999
+            </span>
+            <span class="text-muted font-medium text-xs sm:text-sm">
+              / 1 Year
+            </span>
+          </div>
+
+          <p class="mt-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+            Only ~₹33/month • Best value for serious aspirants
+          </p>
+        </div>
+
+        <div class="pt-6 p-0 flex flex-col justify-between flex-1">
+          <div>
+            <button
+              type="button"
+              id="btn-buy-all"
+              data-plan="all"
+              class="w-full mb-6 p-3.5 sm:p-4 text-sm sm:text-base font-bold rounded-xl cursor-pointer transition-all shadow-md bg-gradient-to-t from-accent to-accent-hover text-white shadow-accent/25 hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Get All-Access Pass · ₹399
+            </button>
+
+            <ul class="space-y-3 font-semibold py-3">
+              <li class="flex items-start">
+                <span class="text-accent grid place-content-center mt-0.5 mr-2.5 shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7h-4V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"></path>
+                  </svg>
+                </span>
+                <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                  All Test Series Unlocked — DSSSB, SSC, Teaching, Railways &amp; State Exams
+                </span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-accent grid place-content-center mt-0.5 mr-2.5 shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path>
+                  </svg>
+                </span>
+                <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                  All Upcoming Series added automatically at zero extra cost
+                </span>
+              </li>
+              <li class="flex items-start">
+                <span class="text-accent grid place-content-center mt-0.5 mr-2.5 shrink-0">
+                  <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect width="20" height="8" x="2" y="2" rx="2" ry="2"></rect>
+                    <rect width="20" height="8" x="2" y="14" rx="2" ry="2"></rect>
+                    <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                    <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                  </svg>
+                </span>
+                <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                  Unlimited re-attempts with All-India Rank (AIR) benchmarking
+                </span>
+              </li>
+            </ul>
+
+            <div class="space-y-3 pt-4 border-t border-border mt-3">
+              <h4 class="font-semibold text-[11px] uppercase tracking-wider text-muted mb-2">
+                EVERYTHING INCLUDED:
+              </h4>
+              <ul class="space-y-2 font-medium">
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    Authentic CBT portal simulator with question palette
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    Instant language swap between English and Hindi
+                  </span>
+                </li>
+                <li class="flex items-start">
+                  <span class="h-5 w-5 rounded-full bg-emerald-500/10 border border-emerald-500/30 grid place-content-center mt-0.5 mr-2.5 shrink-0 text-emerald-600 dark:text-emerald-400">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18 6L7 17l-5-5"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M22 10l-7.5 7.5L13 16"></path>
+                    </svg>
+                  </span>
+                  <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
+                    Detailed bilingual solutions with performance insights
+                  </span>
+                </li>
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Alert for Checkout errors */}
+  <div id="pricing-checkout-error" role="alert" class="hidden mt-4 mx-auto max-w-md rounded-xl border border-rose-500/30 bg-rose-500/10 p-3 text-xs text-rose-700 dark:text-rose-300 text-center"></div>
+</div>
+
+<script>
+  import { openTestSeriesCheckout } from '../test-series/openTestSeriesCheckout';
+
+  function initPricingSection() {
+    const root = document.querySelector('.pricing-root') as HTMLElement | null;
+    if (!root || root.dataset.initialized === 'true') return;
+    root.dataset.initialized = 'true';
+
+    const seriesId = root.dataset.seriesId || undefined;
+    const errBox = document.getElementById('pricing-checkout-error');
+    const btnBuySeries = document.getElementById('btn-buy-series') as HTMLButtonElement | null;
+    const btnBuyAll = document.getElementById('btn-buy-all') as HTMLButtonElement | null;
+
+    async function handleBuy(planType: 'series' | 'all', btn: HTMLButtonElement | null) {
+      if (!btn || btn.disabled) return;
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Opening checkout...';
+      if (errBox) errBox.classList.add('hidden');
+
+      try {
+        const validityMonths = planType === 'all' ? 12 : 6;
+        const result = await openTestSeriesCheckout({
+          planType,
+          seriesId: planType === 'series' ? seriesId : undefined,
+          validityMonths,
+        });
+
+        if (result.status === 'paid') {
+          window.location.reload();
+        } else if (result.status === 'failed' && errBox) {
+          errBox.textContent = result.message;
+          errBox.classList.remove('hidden');
+        }
+      } catch (err: any) {
+        if (errBox) {
+          errBox.textContent = err?.message || 'Unable to start checkout.';
+          errBox.classList.remove('hidden');
+        }
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    btnBuySeries?.addEventListener('click', () => void handleBuy('series', btnBuySeries));
+    btnBuyAll?.addEventListener('click', () => void handleBuy('all', btnBuyAll));
+  }
+
+  // Initialize on page load and on Astro view transitions
+  initPricingSection();
+  document.addEventListener('astro:page-load', initPricingSection);
+</script>

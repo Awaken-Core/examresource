@@ -1720,11 +1720,13 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         {/* RIGHT COLUMN: Sidebar Cards (Only shown if pass is NOT activated) */}
         {!hasActivePass && (
           <aside className="space-y-5 lg:sticky lg:top-6 lg:col-span-4">
-            {/* TEST SERIES PASS CARD */}
+            {/* TEST SERIES PASS CARDS (2 SEPARATE PLANS) */}
             <TestSeriesPassCard
               seriesId={series.id || series._id}
               variant="series"
+              layout="stacked"
               initialActive={hasActivePass}
+              initialPassType={seriesAccess?.passType ?? null}
               initialExpiresAt={seriesAccess?.expiresAt ?? null}
               onPurchased={() => {
                 const resolvedSeriesId = series.id || series._id;
