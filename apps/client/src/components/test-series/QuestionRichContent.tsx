@@ -27,7 +27,7 @@ export function QuestionRichContent({
   language: 'English' | 'Hindi';
 }) {
   if (!question) return <p>The question will appear here.</p>;
-  const blocks = (question.blocks ?? []) as Block[];
+  const blocks = (question.blocks ?? []) as unknown as Block[];
   if (blocks.length === 0) {
     const text = localized(question.content, question.translations, language);
     return <div className="whitespace-pre-wrap">{text}</div>;

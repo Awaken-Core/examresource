@@ -241,7 +241,7 @@ export function CBTTestRunner({ attemptId, siteName }: Props) {
       .then((user: { name?: string; avatarUrl?: string; avatar?: string } | null) => {
         if (cancelled || !user) return;
         if (user.name?.trim()) setCandidateName(user.name.trim());
-        if (user.avatarUrl || user.avatar) setCandidateAvatar(user.avatarUrl || user.avatar);
+        if (user.avatarUrl || user.avatar) setCandidateAvatar((user.avatarUrl || user.avatar) ?? null);
       })
       .catch(() => undefined);
     return () => {

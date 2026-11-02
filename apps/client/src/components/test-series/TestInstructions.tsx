@@ -66,7 +66,7 @@ export function TestInstructions({ testId, initialData, siteName = 'GovtPariksha
         if (cancelled || !user?.name?.trim()) return;
         setCandidateName(user.name.trim());
         if (user.avatarUrl || user.avatar) {
-          setCandidateAvatar(user.avatarUrl || user.avatar);
+          setCandidateAvatar((user.avatarUrl || user.avatar) ?? null);
         }
       })
       .catch(() => undefined);
