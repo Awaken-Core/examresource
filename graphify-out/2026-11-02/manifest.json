@@ -27,9 +27,9 @@
     "semantic_hash": ""
   },
   "apps/client/package.json": {
-    "mtime": 1793379035.2212741,
-    "seen": 1793380329.2395875,
-    "ast_hash": "049d33f5dafcb41045af709d85113cf0",
+    "mtime": 1793633264.2897303,
+    "seen": 1793633297.4113774,
+    "ast_hash": "f9f3dcec7d0a9aa7669e9209ef4a3eee",
     "semantic_hash": ""
   },
   "apps/client/src/components/ActivityTabs.astro": {
@@ -951,9 +951,9 @@
     "semantic_hash": "9e9c409bc45ae5ed02f5bd8453990bb6"
   },
   "apps/server/package.json": {
-    "mtime": 1793379073.2749186,
-    "seen": 1793380329.2397668,
-    "ast_hash": "ee3ee5fe7e952e8a31d2758b9014dad7",
+    "mtime": 1793633284.748523,
+    "seen": 1793633297.411564,
+    "ast_hash": "6b027b79ac7f6de34655d3eb94b50d9a",
     "semantic_hash": ""
   },
   "apps/server/scripts/ensure-notifications-table.mjs": {
@@ -2621,6 +2621,108 @@
     "mtime": 1793557788.759483,
     "seen": 1793564319.1718438,
     "ast_hash": "4b44f8670af8da7a903809075be2a4a7",
+    "semantic_hash": ""
+  },
+  "docs/scripts/bilingual/rebuild_and_repair_question_bank.py": {
+    "mtime": 1793567259.5940604,
+    "seen": 1793568103.3704708,
+    "ast_hash": "1cd328e305010103ffa7773637c579f6",
+    "semantic_hash": ""
+  },
+  "docs/scripts/bilingual/sync_exam_snapshots.py": {
+    "mtime": 1793568136.5422373,
+    "seen": 1793632540.597266,
+    "ast_hash": "986f2c604c8c3c7ac5bb33b2813b2acd",
+    "semantic_hash": ""
+  },
+  "docs/scripts/apply_4_options_and_sync_exams.py": {
+    "mtime": 1793633170.6226716,
+    "seen": 1793633297.4117043,
+    "ast_hash": "4515db755ed1a45f1c6154e3ddb9678c",
+    "semantic_hash": ""
+  },
+  "docs/scripts/audit_all_options.py": {
+    "mtime": 1793632807.9301355,
+    "seen": 1793633297.4117055,
+    "ast_hash": "fd85a8b3f611406168469f0807679d86",
+    "semantic_hash": ""
+  },
+  "docs/scripts/check_merged_options.py": {
+    "mtime": 1793632909.75219,
+    "seen": 1793633297.4117155,
+    "ast_hash": "c71d1c25a4074a5e5b0217708fa6e92a",
+    "semantic_hash": ""
+  },
+  "docs/scripts/check_page_distribution.py": {
+    "mtime": 1793632978.6538098,
+    "seen": 1793633297.4117167,
+    "ast_hash": "a3a595f3e23f8df86f9441d015b47dbf",
+    "semantic_hash": ""
+  },
+  "docs/scripts/check_pdf_options.py": {
+    "mtime": 1793632940.708889,
+    "seen": 1793633297.4117174,
+    "ast_hash": "510f8542419429329f3077b0a2b1030b",
+    "semantic_hash": ""
+  },
+  "docs/scripts/dump_bad_option_qs.py": {
+    "mtime": 1793632749.0426426,
+    "seen": 1793633297.4117236,
+    "ast_hash": "2afff4568fe40b7765131486f62309b4",
+    "semantic_hash": ""
+  },
+  "docs/scripts/find_all_exam_numerical.py": {
+    "mtime": 1793632868.8755357,
+    "seen": 1793633297.4117243,
+    "ast_hash": "ed36cfea192a0cbf80f527ffeb1b3657",
+    "semantic_hash": ""
+  },
+  "docs/scripts/generate_all_4_options.py": {
+    "mtime": 1793633127.980019,
+    "seen": 1793633297.4117322,
+    "ast_hash": "00fc895b28128dd6a2b046d54e23a487",
+    "semantic_hash": ""
+  },
+  "docs/scripts/inspect_all_89.py": {
+    "mtime": 1793632962.1097107,
+    "seen": 1793633297.4117343,
+    "ast_hash": "dd3566acedfe1fe5382dac60dd07fb04",
+    "semantic_hash": ""
+  },
+  "docs/scripts/inspect_numerical_questions.py": {
+    "mtime": 1793632696.7205992,
+    "seen": 1793633297.4117374,
+    "ast_hash": "df1e6c029abcca23e65c3146be15cf8f",
+    "semantic_hash": ""
+  },
+  "docs/scripts/inspect_q_fcb.py": {
+    "mtime": 1793632892.879118,
+    "seen": 1793633297.4117386,
+    "ast_hash": "f9c6304b5e3390106c88a237f8b5cc93",
+    "semantic_hash": ""
+  },
+  "docs/scripts/inspect_zero_option_snapshots.py": {
+    "mtime": 1793632825.5939195,
+    "seen": 1793633297.4117396,
+    "ast_hash": "1a0c0a028a3f6ae39b7d284878d41053",
+    "semantic_hash": ""
+  },
+  "docs/scripts/test_option_expansion.py": {
+    "mtime": 1793633029.5122395,
+    "seen": 1793633297.4117494,
+    "ast_hash": "227cbbf736159081e9793b4055c22b97",
+    "semantic_hash": ""
+  },
+  "docs/scripts/test_pdf_option_recovery.py": {
+    "mtime": 1793632996.8435538,
+    "seen": 1793633297.4117503,
+    "ast_hash": "9547ab7a60a2b8c0c96b1a6938233fca",
+    "semantic_hash": ""
+  },
+  "docs/scripts/verify_repaired_json.py": {
+    "mtime": 1793633086.2668474,
+    "seen": 1793633297.4117548,
+    "ast_hash": "b44caa3bbdcf2d4bf238396afcfbc194",
     "semantic_hash": ""
   }
 }

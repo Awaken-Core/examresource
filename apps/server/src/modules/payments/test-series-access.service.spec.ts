@@ -33,8 +33,8 @@ function makeService(options?: {
   const exams: any = {
     find: vi.fn(() =>
       query([
-        { _id: new Types.ObjectId(firstTestId) },
-        { _id: new Types.ObjectId(secondTestId) },
+        { _id: new Types.ObjectId(firstTestId), testMode: 'full', isPreviousYear: false },
+        { _id: new Types.ObjectId(secondTestId), testMode: 'full', isPreviousYear: false },
       ]),
     ),
   };
@@ -72,7 +72,7 @@ describe('Test series pass access', () => {
     const editor = makeService();
     await expect(
       editor.service.assertCanStart(
-        { _id: secondTestId, type: 'exam', testSeriesId: seriesId },
+        { _id: secondTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },
         { ...student, role: 'editor' },
       ),
     ).resolves.toBeUndefined();
@@ -81,7 +81,7 @@ describe('Test series pass access', () => {
     const admin = makeService();
     await expect(
       admin.service.assertCanStart(
-        { _id: secondTestId, type: 'exam', testSeriesId: seriesId },
+        { _id: secondTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },
         { ...student, role: 'admin' },
       ),
     ).resolves.toBeUndefined();
@@ -99,61 +99,42 @@ describe('Test series pass access', () => {
     expect(passes.findOne).not.toHaveBeenCalled();
   });
 
-  it('allows the first free test attempt in a series', async () => {
+  it('allows the first free test attempt in each section of a series', async () => {
     await expect(
       makeService().service.assertCanStart(
-        { _id: firstTestId, type: 'exam', testSeriesId: seriesId },
+        { _id: firstTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },
         student,
       ),
     ).resolves.toBeUndefined();
   });
 
-  it('blocks reattempting the test after the 1st free attempt without an active pass', async () => {
+  it('blocks 2nd attempt in that section after 1st free attempt without an active pass', async () => {
     await expect(
       makeService({ freeTestId: firstTestId }).service.assertCanStart(
-        { _id: firstTestId, type: 'exam', testSeriesId: seriesId },
+        { _id: secondTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },
         student,
       ),
     ).rejects.toMatchObject({ status: 402 });
   });
 
-  it('allows reattempting the test when a pass is active', async () => {
+  it('allows attempting tests when a pass is active', async () => {
     await expect(
       makeService({
         freeTestId: firstTestId,
-        pass: { expiresAt: new Date(Date.now() + 86_400_000) },
+        pass: { expiresAt: new Date(Date.now() + 86_400_000), planType: 'all' },
       }).service.assertCanStart(
-        { _id: firstTestId, type: 'exam', testSeriesId: seriesId },
+        { _id: secondTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },
         student,
       ),
     ).resolves.toBeUndefined();
   });
 
-  it('blocks a different test until a pass is active', async () => {
-    await expect(
-      makeService({ freeTestId: firstTestId }).service.assertCanStart(
-        { _id: secondTestId, type: 'exam', testSeriesId: seriesId },
-        student,
-      ),
-    ).rejects.toMatchObject({ status: 402 });
-
-    await expect(
-      makeService({
-        freeTestId: firstTestId,
-        pass: { expiresAt: new Date(Date.now() + 86_400_000) },
-      }).service.assertCanStart({ _id: secondTestId, type: 'full', testSeriesId: seriesId }, student),
-    ).resolves.toBeUndefined();
-  });
-
-  it('blocks a different test when the pass has expired', async () => {
-    await expect(
-      makeService({
-        freeTestId: firstTestId,
-        pass: { expiresAt: new Date(Date.now() - 86_400_000) },
-      }).service.assertCanStart(
-        { _id: secondTestId, type: 'exam', testSeriesId: seriesId },
-        student,
-      ),
-    ).rejects.toMatchObject({ status: 402 });
+  it('reports section trial status accurately', async () => {
+    const { service } = makeService({ freeTestId: firstTestId });
+    const status = await service.sectionTrialStatus(student.id, seriesId);
+    expect(status.full.used).toBe(true);
+    expect(status.full.testId).toBe(firstTestId);
+    expect(status.subject.used).toBe(false);
+    expect(status.chapter.used).toBe(false);
   });
 });

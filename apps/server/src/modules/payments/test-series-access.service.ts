@@ -23,6 +23,15 @@ import { addCalendarMonths } from './payment.signature.js';
 
 const QUIZ_TYPES = new Set(['quiz', 'current_affairs_quiz']);
 
+export type TestSeriesSectionKey = 'full' | 'subject' | 'chapter' | 'pyq';
+
+export function getExamSectionKey(exam: { testMode?: string; isPreviousYear?: boolean }): TestSeriesSectionKey {
+  if (exam.testMode === 'pyq' || exam.isPreviousYear) return 'pyq';
+  if (exam.testMode === 'subject') return 'subject';
+  if (exam.testMode === 'chapter') return 'chapter';
+  return 'full';
+}
+
 @Injectable()
 export class TestSeriesAccessService {
   constructor(
@@ -37,35 +46,59 @@ export class TestSeriesAccessService {
     private readonly orderModel?: Model<PaymentOrderDocument>,
   ) {}
 
-  async activePass(userId: string) {
+  async activePass(userId: string, seriesId?: string) {
     if (!Types.ObjectId.isValid(userId)) return null;
     const userObjectId = new Types.ObjectId(userId);
+    const now = new Date();
+
+    const query: any = {
+      userId: userObjectId,
+      status: 'paid',
+      expiresAt: { $gt: now },
+    };
+
+    if (seriesId && Types.ObjectId.isValid(seriesId)) {
+      query.$or = [
+        { planType: 'all' },
+        { testSeriesId: null },
+        { testSeriesId: new Types.ObjectId(seriesId) },
+        { planType: { $exists: false } },
+      ];
+    }
+
     const pass = await this.passModel
-      .findOne({
-        userId: userObjectId,
-        status: 'paid',
-        expiresAt: { $gt: new Date() },
-      })
+      .findOne(query)
       .sort({ expiresAt: -1 })
       .lean();
+
     if (pass?.expiresAt && new Date(pass.expiresAt).getTime() > Date.now()) {
       return pass;
     }
 
     // Auto-sync fallback: If an order was marked 'paid' in payment_orders
-    // (e.g. manually in Compass or through reconciliations) but missing in test_series_passes
     if (this.orderModel) {
+      const orderQuery: any = {
+        userId: userObjectId,
+        status: 'paid',
+      };
+      if (seriesId && Types.ObjectId.isValid(seriesId)) {
+        orderQuery.$or = [
+          { planType: 'all' },
+          { testSeriesId: null },
+          { testSeriesId: new Types.ObjectId(seriesId) },
+          { planType: { $exists: false } },
+        ];
+      }
+
       const paidOrder = await this.orderModel
-        .findOne({
-          userId: userObjectId,
-          status: 'paid',
-        })
+        .findOne(orderQuery)
         .sort({ updatedAt: -1, createdAt: -1 })
         .lean();
 
       if (paidOrder) {
         const orderDate = paidOrder.updatedAt || paidOrder.createdAt || new Date();
-        const expiresAt = addCalendarMonths(new Date(orderDate), env.RAZORPAY_PASS_VALIDITY_MONTHS);
+        const validityMonths = (paidOrder as any).planType === 'all' ? 12 : 6;
+        const expiresAt = addCalendarMonths(new Date(orderDate), validityMonths);
         if (expiresAt.getTime() > Date.now()) {
           const paymentId =
             paidOrder.razorpayPaymentId || `manual_${paidOrder._id.toString()}`;
@@ -76,6 +109,8 @@ export class TestSeriesAccessService {
                 $setOnInsert: {
                   userId: paidOrder.userId,
                   status: 'paid',
+                  planType: (paidOrder as any).planType || 'series',
+                  testSeriesId: (paidOrder as any).testSeriesId || null,
                   startsAt: new Date(orderDate),
                   expiresAt,
                   paymentOrderId: paidOrder._id,
@@ -96,67 +131,95 @@ export class TestSeriesAccessService {
     return null;
   }
 
-  async freeTestIdForSeries(userId: string, seriesId: string) {
+  async sectionTrialStatus(userId: string, seriesId: string) {
+    const defaultStatus = {
+      full: { used: false, testId: null as string | null },
+      subject: { used: false, testId: null as string | null },
+      chapter: { used: false, testId: null as string | null },
+      pyq: { used: false, testId: null as string | null },
+    };
+
     if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(seriesId)) {
-      return null;
+      return defaultStatus;
     }
+
+    const seriesObjectId = new Types.ObjectId(seriesId);
+    const userObjectId = new Types.ObjectId(userId);
+
     const exams = await this.examModel
-      .find({ testSeriesId: new Types.ObjectId(seriesId) })
-      .select('_id')
+      .find({ testSeriesId: seriesObjectId })
+      .select('_id testMode isPreviousYear')
       .lean();
-    if (exams.length === 0) return null;
-    const first = await this.testAttemptModel
-      .findOne({
-        userId: new Types.ObjectId(userId),
-        testId: { $in: exams.map((exam) => exam._id) },
-      })
-      .sort({ startedAt: 1, _id: 1 })
-      .select('testId')
-      .lean();
-    return first?.testId ? first.testId.toString() : null;
+
+    if (exams.length === 0) return defaultStatus;
+
+    const idsBySection: Record<TestSeriesSectionKey, Types.ObjectId[]> = {
+      full: [],
+      subject: [],
+      chapter: [],
+      pyq: [],
+    };
+
+    for (const ex of exams) {
+      const key = getExamSectionKey(ex as any);
+      idsBySection[key].push(ex._id as Types.ObjectId);
+    }
+
+    const [fullAtt, subjAtt, chapAtt, pyqAtt] = await Promise.all([
+      idsBySection.full.length
+        ? this.testAttemptModel.findOne({ userId: userObjectId, testId: { $in: idsBySection.full } }).select('testId').lean()
+        : null,
+      idsBySection.subject.length
+        ? this.testAttemptModel.findOne({ userId: userObjectId, testId: { $in: idsBySection.subject } }).select('testId').lean()
+        : null,
+      idsBySection.chapter.length
+        ? this.testAttemptModel.findOne({ userId: userObjectId, testId: { $in: idsBySection.chapter } }).select('testId').lean()
+        : null,
+      idsBySection.pyq.length
+        ? this.testAttemptModel.findOne({ userId: userObjectId, testId: { $in: idsBySection.pyq } }).select('testId').lean()
+        : null,
+    ]);
+
+    return {
+      full: { used: Boolean(fullAtt), testId: fullAtt?.testId ? String(fullAtt.testId) : null },
+      subject: { used: Boolean(subjAtt), testId: subjAtt?.testId ? String(subjAtt.testId) : null },
+      chapter: { used: Boolean(chapAtt), testId: chapAtt?.testId ? String(chapAtt.testId) : null },
+      pyq: { used: Boolean(pyqAtt), testId: pyqAtt?.testId ? String(pyqAtt.testId) : null },
+    };
   }
 
-  async assertCanStart(exam: { _id?: unknown; type?: string; testSeriesId?: unknown }, user: CurrentUser) {
+  async assertCanStart(
+    exam: { _id?: unknown; type?: string; testSeriesId?: unknown; testMode?: string; isPreviousYear?: boolean },
+    user: CurrentUser,
+  ) {
     if (user.role === 'admin' || user.role === 'editor') return;
     if (!exam.testSeriesId) return;
     if (exam.type && QUIZ_TYPES.has(exam.type)) return;
 
-    const pass = await this.activePass(user.id);
+    const seriesId = exam.testSeriesId.toString();
+
+    // 1. If user has active pass covering this series (or All-Access): allow start!
+    const pass = await this.activePass(user.id, seriesId);
     if (pass) return;
 
-    const seriesId = exam.testSeriesId.toString();
-    const testId = exam._id ? String(exam._id) : '';
+    // 2. Otherwise check trial slot in this section
+    const sectionKey = getExamSectionKey(exam);
+    const trials = await this.sectionTrialStatus(user.id, seriesId);
+    const secTrial = trials[sectionKey];
 
-    // Check if the user has already attempted this test before (prevent reattempting for free)
-    if (Types.ObjectId.isValid(user.id) && Types.ObjectId.isValid(testId)) {
-      const existingAttempt = await this.testAttemptModel
-        .findOne({
-          userId: new Types.ObjectId(user.id),
-          testId: new Types.ObjectId(testId),
-        })
-        .select('_id')
-        .lean();
-
-      if (existingAttempt) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.PAYMENT_REQUIRED,
-            code: 'TEST_SERIES_PASS_REQUIRED',
-            message: 'A test series pass is required to reattempt this test.',
-          },
-          HttpStatus.PAYMENT_REQUIRED,
-        );
-      }
+    // If 1st attempt in this section: allow start for free!
+    if (!secTrial.used) {
+      return;
     }
 
-    const freeTestId = await this.freeTestIdForSeries(user.id, seriesId);
-    if (!freeTestId) return;
-
+    // 1 free slot has already been used in this section
     throw new HttpException(
       {
         statusCode: HttpStatus.PAYMENT_REQUIRED,
         code: 'TEST_SERIES_PASS_REQUIRED',
-        message: 'A test series pass is required to start this test.',
+        message: 'Your 1 free trial attempt in this section has been used. Please purchase the Series Plan (₹69 for 6 months) or All-Access Pass (₹399 for 1 year) to continue.',
+        section: sectionKey,
+        usedTestId: secTrial.testId,
       },
       HttpStatus.PAYMENT_REQUIRED,
     );
@@ -166,12 +229,14 @@ export class TestSeriesAccessService {
     if (!Types.ObjectId.isValid(seriesId)) {
       throw new BadRequestException('Test series was not found.');
     }
-    const pass = await this.activePass(userId);
-    const freeTestId = await this.freeTestIdForSeries(userId, seriesId);
+    const pass = await this.activePass(userId, seriesId);
+    const sectionTrials = await this.sectionTrialStatus(userId, seriesId);
     return {
       hasActivePass: Boolean(pass),
+      passType: pass ? ((pass as any).planType || 'series') : null,
       expiresAt: pass?.expiresAt ? new Date(pass.expiresAt).toISOString() : null,
-      freeTestId,
+      sectionTrials,
+      freeTestId: sectionTrials.full.testId || sectionTrials.subject.testId || null,
     };
   }
 }

@@ -25,6 +25,17 @@ type RazorpayOrder = {
   currency: string;
 };
 
+export interface PassPlan {
+  id: 'series' | 'all';
+  name: string;
+  price: number;
+  amountPaise: number;
+  listPricePaise: number;
+  validityMonths: number;
+  description: string;
+  currency: string;
+}
+
 @Injectable()
 export class PaymentService {
   constructor(
@@ -35,11 +46,37 @@ export class PaymentService {
     private readonly access: TestSeriesAccessService,
   ) {}
 
+  plans(): PassPlan[] {
+    return [
+      {
+        id: 'series',
+        name: 'Single Series Plan',
+        price: 69,
+        amountPaise: 6900,
+        listPricePaise: 19900,
+        validityMonths: 6,
+        description: 'Complete 6-month access to this specific test series (Mock tests, subject tests, chapter tests & PYQs)',
+        currency: 'INR',
+      },
+      {
+        id: 'all',
+        name: 'Yearly All-Access Pass',
+        price: 399,
+        amountPaise: 39900,
+        listPricePaise: 99900,
+        validityMonths: 12,
+        description: 'Unlimited access to all test series across all exams on the platform for 1 full year',
+        currency: 'INR',
+      },
+    ];
+  }
+
   offer() {
     return {
-      amountPaise: env.RAZORPAY_PASS_AMOUNT_PAISE,
-      listPricePaise: env.RAZORPAY_PASS_LIST_PRICE_PAISE,
-      validityMonths: env.RAZORPAY_PASS_VALIDITY_MONTHS,
+      plans: this.plans(),
+      amountPaise: 6900,
+      listPricePaise: 19900,
+      validityMonths: 6,
       currency: 'INR',
     };
   }
@@ -49,6 +86,7 @@ export class PaymentService {
     return {
       ...this.offer(),
       active: Boolean(pass),
+      passType: pass ? ((pass as any).planType || 'series') : null,
       expiresAt: pass?.expiresAt ? new Date(pass.expiresAt).toISOString() : null,
     };
   }
@@ -58,13 +96,19 @@ export class PaymentService {
     return { ...this.offer(), ...access };
   }
 
-  async createOrder(user: CurrentUser) {
+  async createOrder(user: CurrentUser, input?: { planType?: 'series' | 'all'; seriesId?: string }) {
     const keyId = env.RAZORPAY_KEY_ID;
     const keySecret = env.RAZORPAY_KEY_SECRET;
     if (!keyId || !keySecret) {
       throw new ServiceUnavailableException('Payments are not configured.');
     }
-    const amount = env.RAZORPAY_PASS_AMOUNT_PAISE;
+
+    const planType = input?.planType === 'all' ? 'all' : 'series';
+    const seriesId = input?.seriesId && Types.ObjectId.isValid(input.seriesId) ? input.seriesId : null;
+
+    const amount = planType === 'all' ? 39900 : 6900;
+    const validityMonths = planType === 'all' ? 12 : 6;
+
     if (!Number.isInteger(amount) || amount < 100) {
       throw new BadRequestException('Pass amount must be at least 100 paise.');
     }
@@ -74,6 +118,8 @@ export class PaymentService {
     await this.orderModel.create({
       userId: new Types.ObjectId(user.id),
       purpose: 'test_series_pass',
+      planType,
+      testSeriesId: seriesId ? new Types.ObjectId(seriesId) : null,
       amountPaise: amount,
       currency: 'INR',
       razorpayOrderId: order.id,
@@ -85,6 +131,9 @@ export class PaymentService {
       order_id: order.id,
       amount: order.amount,
       currency: order.currency,
+      planType,
+      seriesId,
+      validityMonths,
       keyId,
       prefill: {
         name: user.name,
@@ -159,16 +208,27 @@ export class PaymentService {
     if (!order) throw new NotFoundException('Payment order was not found.');
 
     const now = new Date();
+    const planType = (order as any).planType || 'series';
+    const testSeriesId = (order as any).testSeriesId || null;
+    const validityMonths = planType === 'all' ? 12 : 6;
+
+    const passFilter: any = {
+      userId: order.userId,
+      status: 'paid',
+      expiresAt: { $gt: now },
+    };
+    if (planType === 'series' && testSeriesId) {
+      passFilter.testSeriesId = testSeriesId;
+    } else if (planType === 'all') {
+      passFilter.planType = 'all';
+    }
+
     const current = await this.passModel
-      .findOne({
-        userId: order.userId,
-        status: 'paid',
-        expiresAt: { $gt: now },
-      })
+      .findOne(passFilter)
       .sort({ expiresAt: -1 })
       .lean();
     const base = current?.expiresAt && new Date(current.expiresAt) > now ? new Date(current.expiresAt) : now;
-    const expiresAt = addCalendarMonths(base, env.RAZORPAY_PASS_VALIDITY_MONTHS);
+    const expiresAt = addCalendarMonths(base, validityMonths);
 
     await this.orderModel.updateOne(
       { _id: order._id },
@@ -179,6 +239,8 @@ export class PaymentService {
       const created = await this.passModel.create({
         userId: order.userId,
         status: 'paid',
+        planType,
+        testSeriesId,
         startsAt: now,
         expiresAt,
         paymentOrderId: order._id,
@@ -194,9 +256,10 @@ export class PaymentService {
     }
   }
 
-  private formatPass(pass: { expiresAt: Date; startsAt?: Date; razorpayPaymentId: string }) {
+  private formatPass(pass: { expiresAt: Date; startsAt?: Date; razorpayPaymentId: string; planType?: string }) {
     return {
       active: new Date(pass.expiresAt).getTime() > Date.now(),
+      planType: pass.planType || 'series',
       startsAt: pass.startsAt ? new Date(pass.startsAt).toISOString() : null,
       expiresAt: new Date(pass.expiresAt).toISOString(),
       razorpayPaymentId: pass.razorpayPaymentId,

@@ -12,6 +12,12 @@ export class PaymentOrder {
   @Prop({ type: String, required: true, default: 'test_series_pass' })
   purpose: 'test_series_pass';
 
+  @Prop({ type: String, enum: ['series', 'all'], default: 'series' })
+  planType: 'series' | 'all';
+
+  @Prop({ type: Types.ObjectId, ref: 'TestSeries', default: null, index: true })
+  testSeriesId?: Types.ObjectId | null;
+
   @Prop({ type: Number, required: true })
   amountPaise: number;
 
@@ -49,6 +55,12 @@ export class TestSeriesPass {
   @Prop({ type: String, enum: ['paid'], default: 'paid' })
   status: 'paid';
 
+  @Prop({ type: String, enum: ['series', 'all'], default: 'series' })
+  planType: 'series' | 'all';
+
+  @Prop({ type: Types.ObjectId, ref: 'TestSeries', default: null, index: true })
+  testSeriesId?: Types.ObjectId | null;
+
   @Prop({ type: Date, required: true })
   startsAt: Date;
 
@@ -67,3 +79,4 @@ export class TestSeriesPass {
 
 export const TestSeriesPassSchema = SchemaFactory.createForClass(TestSeriesPass);
 TestSeriesPassSchema.index({ userId: 1, expiresAt: -1 });
+TestSeriesPassSchema.index({ userId: 1, testSeriesId: 1, expiresAt: -1 });

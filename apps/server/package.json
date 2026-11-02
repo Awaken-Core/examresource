@@ -28,12 +28,12 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1159.0",
-    "@aws-sdk/s3-request-presigner": "3.1159.0",
+    "@aws-sdk/client-s3": "3.1161.0",
+    "@aws-sdk/s3-request-presigner": "3.1161.0",
     "@nestjs/common": "12.3.2",
     "@nestjs/core": "12.3.2",
     "@nestjs/mongoose": "^12.0.0",
-    "@nestjs/observe": "0.3.20",
+    "@nestjs/observe": "0.3.22",
     "@nestjs/platform-express": "12.3.2",
     "cookie-parser": "^1.4.7",
     "dotenv": "18.0.9",
@@ -65,6 +65,6 @@
     "typescript": "^6.0.3",
     "vite-tsconfig-paths": "6.1.1",
     "vitest": "5.0.5",
-    "wrangler": "4.155.0"
+    "wrangler": "4.156.1"
   }
 }

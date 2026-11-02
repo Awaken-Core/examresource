@@ -20,6 +20,11 @@ const verifySchema = z.object({
   razorpay_signature: z.string().min(1),
 });
 
+const createOrderSchema = z.object({
+  planType: z.enum(['series', 'all']).optional().default('series'),
+  seriesId: z.string().optional(),
+});
+
 @Controller('api/v1')
 export class PaymentController {
   constructor(
@@ -44,9 +49,13 @@ export class PaymentController {
   }
 
   @Post('payments/test-series-pass/orders')
-  async createOrder(@Req() req: Request) {
+  async createOrder(@Req() req: Request, @Body() body: unknown) {
     this.assertBrowserMutation(req);
-    return this.payments.createOrder(await this.auth.requireUser(req));
+    const parsed = createOrderSchema.safeParse(body || {});
+    return this.payments.createOrder(
+      await this.auth.requireUser(req),
+      parsed.success ? parsed.data : undefined,
+    );
   }
 
   @Post('payments/test-series-pass/verify')

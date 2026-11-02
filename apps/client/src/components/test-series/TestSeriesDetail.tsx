@@ -181,7 +181,14 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   const [learnerPrep, setLearnerPrep] = useState<LearnerSeriesPrep | null>(null);
   const [seriesAccess, setSeriesAccess] = useState<{
     hasActivePass: boolean;
+    passType?: 'series' | 'all' | null;
     expiresAt: string | null;
+    sectionTrials?: {
+      full?: { used: boolean; attemptId?: string; examId?: string };
+      subject?: { used: boolean; attemptId?: string; examId?: string };
+      chapter?: { used: boolean; attemptId?: string; examId?: string };
+      pyq?: { used: boolean; attemptId?: string; examId?: string };
+    };
     freeTestId: string | null;
   } | null>(null);
 
@@ -314,7 +321,9 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           const access = await accessRes.json();
           setSeriesAccess({
             hasActivePass: Boolean(access.hasActivePass),
+            passType: access.passType ?? null,
             expiresAt: access.expiresAt ?? null,
+            sectionTrials: access.sectionTrials ?? undefined,
             freeTestId: access.freeTestId ?? null,
           });
         }
@@ -341,7 +350,9 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           if (access) {
             setSeriesAccess({
               hasActivePass: Boolean(access.hasActivePass),
+              passType: access.passType ?? null,
               expiresAt: access.expiresAt ?? null,
+              sectionTrials: access.sectionTrials ?? undefined,
               freeTestId: access.freeTestId ?? null,
             });
           }
@@ -511,15 +522,24 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   const freeTestId = seriesAccess?.freeTestId ?? null;
   const hasUsedFreeTest = Boolean(freeTestId);
 
+  const getTestSectionKey = (test: PublishedTestItem): 'full' | 'subject' | 'chapter' | 'pyq' => {
+    if (test.testMode === 'pyq' || isPyqTest(test)) return 'pyq';
+    if (test.testMode === 'subject') return 'subject';
+    if (test.testMode === 'chapter') return 'chapter';
+    return 'full';
+  };
+
   const isTestLocked = (test: PublishedTestItem) => {
     if (hasActivePass) return false;
+    const secKey = getTestSectionKey(test);
+    const trial = seriesAccess?.sectionTrials?.[secKey];
     const testId = test.id || test._id;
-    if (!hasUsedFreeTest) {
-      // User can solve ANY 1 test for free! No test is locked!
+    if (!trial || !trial.used) {
+      // 1 free trial attempt slot is available in each section for the student!
       return false;
     }
-    // Free test already claimed: only the claimed free test is unlocked. All other tests need pass!
-    return testId !== freeTestId;
+    // Trial used: only the attempted test can be reopened without pass
+    return testId !== trial.examId;
   };
 
   // Primary diagnostic test target
@@ -970,7 +990,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     const testId = test.id || test._id || '';
                     const latestAttempt = testAttemptMap.get(testId);
                     const isLocked = isTestLocked(test);
-                    const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                    const secKey = getTestSectionKey(test);
+                    const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
                     return (
                       <RealTestCard
                         key={testId}
@@ -979,8 +1000,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         latestAttempt={latestAttempt}
                         isLocked={isLocked}
                         hasActivePass={hasActivePass}
-                        hasUsedFreeTest={hasUsedFreeTest}
-                        isClaimedFree={isClaimedFree}
+                        isTrialAvailable={isTrialAvailable}
                       />
                     );
                   })}
@@ -1121,7 +1141,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     const testId = test.id || test._id || '';
                     const latestAttempt = testAttemptMap.get(testId);
                     const isLocked = isTestLocked(test);
-                    const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                    const secKey = getTestSectionKey(test);
+                    const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
                     return (
                       <RealTestCard
                         key={testId}
@@ -1130,8 +1151,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         latestAttempt={latestAttempt}
                         isLocked={isLocked}
                         hasActivePass={hasActivePass}
-                        hasUsedFreeTest={hasUsedFreeTest}
-                        isClaimedFree={isClaimedFree}
+                        isTrialAvailable={isTrialAvailable}
                       />
                     );
                   })}
@@ -1294,7 +1314,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   const testId = test.id || test._id || '';
                   const latestAttempt = testAttemptMap.get(testId);
                   const isLocked = isTestLocked(test);
-                  const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                  const secKey = getTestSectionKey(test);
+                  const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
                   return (
                     <RealTestCard
                       key={testId}
@@ -1303,8 +1324,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       latestAttempt={latestAttempt}
                       isLocked={isLocked}
                       hasActivePass={hasActivePass}
-                      hasUsedFreeTest={hasUsedFreeTest}
-                      isClaimedFree={isClaimedFree}
+                      isTrialAvailable={isTrialAvailable}
                     />
                   );
                 })
@@ -1492,7 +1512,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   const testId = test.id || test._id || '';
                   const latestAttempt = testAttemptMap.get(testId);
                   const isLocked = isTestLocked(test);
-                  const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                  const secKey = getTestSectionKey(test);
+                  const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
                   return (
                     <RealTestCard
                       key={testId}
@@ -1501,8 +1522,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       latestAttempt={latestAttempt}
                       isLocked={isLocked}
                       hasActivePass={hasActivePass}
-                      hasUsedFreeTest={hasUsedFreeTest}
-                      isClaimedFree={isClaimedFree}
+                      isTrialAvailable={isTrialAvailable}
                     />
                   );
                 })
@@ -1702,9 +1722,21 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           <aside className="space-y-5 lg:sticky lg:top-6 lg:col-span-4">
             {/* TEST SERIES PASS CARD */}
             <TestSeriesPassCard
+              seriesId={series.id || series._id}
               variant="series"
-              initialActive={false}
-              initialExpiresAt={null}
+              initialActive={hasActivePass}
+              initialExpiresAt={seriesAccess?.expiresAt ?? null}
+              onPurchased={() => {
+                const resolvedSeriesId = series.id || series._id;
+                if (resolvedSeriesId) {
+                  fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, { credentials: 'include' })
+                    .then((r) => (r.ok ? r.json() : null))
+                    .then((access) => {
+                      if (access) setSeriesAccess(access);
+                    })
+                    .catch(() => {});
+                }
+              }}
             />
           </aside>
         )}
@@ -1720,16 +1752,14 @@ function RealTestCard({
   latestAttempt,
   isLocked,
   hasActivePass,
-  hasUsedFreeTest,
-  isClaimedFree,
+  isTrialAvailable = false,
 }: {
   test: PublishedTestItem;
   index?: number;
   latestAttempt?: LatestAttemptMeta | null;
   isLocked: boolean;
   hasActivePass: boolean;
-  hasUsedFreeTest: boolean;
-  isClaimedFree: boolean;
+  isTrialAvailable?: boolean;
 }) {
   const routeId = testRouteId(test);
   const testId = test.id || test._id || '';
@@ -1738,7 +1768,7 @@ function RealTestCard({
   const totalMarks = test.positiveMarks * test.totalQuestionsCount;
   const sections = test.sections || [];
 
-  const isHighlighted = !hasActivePass && !hasUsedFreeTest && index === 0;
+  const isHighlighted = isTrialAvailable && index === 0;
 
   return (
     <article
@@ -1751,13 +1781,19 @@ function RealTestCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           {/* Top Status Pill */}
-          {isLocked && (
+          {isLocked ? (
             <div>
               <span className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
                 PASS REQUIRED
               </span>
             </div>
-          )}
+          ) : isTrialAvailable ? (
+            <div>
+              <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                1 FREE ATTEMPT AVAILABLE
+              </span>
+            </div>
+          ) : null}
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
@@ -1846,12 +1882,12 @@ function RealTestCard({
             <div className="flex flex-col sm:items-end">
               <a
                 href="#series-pass"
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface-raised px-4 py-2.5 text-xs font-bold text-heading transition hover:bg-surface"
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2.5 text-xs font-bold text-accent transition hover:bg-accent hover:text-white"
               >
-                <span>🔒 Unlock with Pass</span>
+                <span>🔒 Unlock (from ₹69)</span>
               </a>
               <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
-                Unlock all tests with Pass
+                Pass needed for 2nd test
               </span>
             </div>
           ) : (
@@ -1859,16 +1895,20 @@ function RealTestCard({
               <a
                 href={`/test-series/instructions/${routeId}`}
                 data-astro-prefetch="hover"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-emerald-700"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-accent-hover"
               >
-                <span>Start Test</span>
+                <span>{isTrialAvailable ? 'Start Free Attempt' : 'Start Test'}</span>
                 <span aria-hidden="true">→</span>
               </a>
-              {hasActivePass && (
+              {hasActivePass ? (
                 <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
                   Included in Pass
                 </span>
-              )}
+              ) : isTrialAvailable ? (
+                <span className="mt-1.5 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 sm:text-right">
+                  1 Free Slot
+                </span>
+              ) : null}
             </div>
           )}
         </div>
