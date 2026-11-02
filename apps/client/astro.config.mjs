@@ -1,8 +1,7 @@
 // @ts-check
-import 'dotenv/config';
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import vercel from '@astrojs/vercel';
+import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 
 const isBuild = process.argv.includes('build');
@@ -13,6 +12,7 @@ if (!isBuild && !process.env.NODE_ENV) {
 // https://astro.build/config
 export default defineConfig({
 	site: process.env.PUBLIC_SITE_URL,
+	session: false,
 	image: {
 		remotePatterns: [
 			{
@@ -44,16 +44,13 @@ export default defineConfig({
 	build: {
 		inlineStylesheets: 'always',
 	},
-	adapter: vercel(),
+	adapter: cloudflare(),
 	integrations: [react()],
   vite: {
-    resolve: {
-      preserveSymlinks: true,
-    },
     cacheDir: isBuild ? 'node_modules/.vite/build' : 'node_modules/.vite/dev',
     server: {
       watch: {
-        ignored: ['**/.vercel/**', '**/dist/**'],
+        ignored: ['**/.wrangler/**', '**/dist/**'],
       },
     },
     plugins: [tailwindcss()],
