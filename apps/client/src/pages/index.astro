@@ -3,8 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import PricingSection from '../components/ui/PricingSection.astro';
 import BrandLogo from '../components/BrandLogo.astro';
 import InkOrbitFeatures from '../components/ui/ink-orbit-features';
-import { Avatar, Style } from '@dicebear/core';
-import lorelei from '@dicebear/styles/lorelei.json' with { type: 'json' };
 import {
   contactEmail,
   examPortals,
@@ -17,32 +15,23 @@ import {
   siteUrl,
 } from '../data/site';
 
-const avatarStyle = new Style(lorelei);
 const studentPerspectives = [
   {
     title: 'Find deadlines faster',
     body: 'Clear dates, concise summaries, and direct official links make important updates easier to act on.',
-    seed: 'exam-planner',
+    avatar: '/avatars/exam-planner.svg',
   },
   {
     title: 'Prepare in one place',
     body: 'Exam streams and focused resources keep preparation organised without jumping between scattered sources.',
-    seed: 'focused-learner',
+    avatar: '/avatars/focused-learner.svg',
   },
   {
     title: 'Verify before applying',
     body: 'Every guide points back to the relevant official portal so critical details can be checked confidently.',
-    seed: 'careful-candidate',
+    avatar: '/avatars/careful-candidate.svg',
   },
-].map((item) => ({
-  ...item,
-  avatar: new Avatar(avatarStyle, {
-    seed: item.seed,
-    size: 96,
-    borderRadius: 50,
-    backgroundColor: ['#FFE1D3', '#F1E7DB', '#FFD0BA'],
-  }).toDataUri(),
-}));
+];
 
 const groups = [
   {

@@ -35,18 +35,8 @@ export function toHeadingSlug(text: string): string {
 }
 
 function stripHtmlTags(html: string): string {
-  let out = '';
-  let inTag = false;
-  for (const char of html) {
-    if (char === '<') {
-      inTag = true;
-    } else if (char === '>') {
-      inTag = false;
-    } else if (!inTag) {
-      out += char;
-    }
-  }
-  return out;
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, ' ');
 }
 
 function cleanPlainText(str: string): string {

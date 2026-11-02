@@ -17,8 +17,6 @@
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.4",
     "@astrojs/react": "7.1.2",
-    "@dicebear/core": "^10.7.0",
-    "@dicebear/styles": "^10.6.0",
     "@tiptap/core": "3.32.2",
     "@tiptap/extension-character-count": "3.32.2",
     "@tiptap/extension-image": "3.32.2",

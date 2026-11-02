@@ -84,54 +84,61 @@ async function optimizeBlogHtmlImages(html: string): Promise<string> {
   const matches = [...html.matchAll(imgRegex)];
   if (matches.length === 0) return html;
 
-  let result = html;
-  for (const match of matches) {
-    const fullTag = match[0];
-    const attrs = match[1];
+  const replacements = await Promise.all(
+    matches.map(async (match) => {
+      const fullTag = match[0];
+      const attrs = match[1];
 
-    const srcMatch = /\bsrc=["']([^"']+)["']/i.exec(attrs);
-    if (!srcMatch) continue;
-    const rawSrc = srcMatch[1];
-    const decodedSrc = rawSrc.replace(/&amp;/g, '&');
+      const srcMatch = /\bsrc=["']([^"']+)["']/i.exec(attrs);
+      if (!srcMatch) return { fullTag, newTag: fullTag };
+      const rawSrc = srcMatch[1];
+      const decodedSrc = rawSrc.replace(/&amp;/g, '&');
 
-    if (decodedSrc.startsWith('data:') || decodedSrc.startsWith('/_image')) {
-      if (!fullTag.includes('data-image-component')) {
-        const replacement = fullTag.replace(/<img\b/i, '<img data-image-component="true"');
-        result = result.replace(fullTag, replacement);
-      }
-      continue;
-    }
-
-    const widthMatch = /\bwidth=["']?(\d+)["']?/i.exec(attrs);
-    const heightMatch = /\bheight=["']?(\d+)["']?/i.exec(attrs);
-    const width = widthMatch ? parseInt(widthMatch[1], 10) : 800;
-    const height = heightMatch ? parseInt(heightMatch[1], 10) : Math.round((width * 9) / 16);
-
-    try {
-      const optimized = await getImage({
-        src: decodedSrc,
-        width,
-        height,
-        format: 'webp',
-      });
-
-      let newTag = fullTag.replace(/\bsrc=["'][^"']*["']/i, `src="${optimized.src}"`);
-      if (optimized.srcSet?.attribute) {
-        if (newTag.includes('srcset=')) {
-          newTag = newTag.replace(/\bsrcset=["'][^"']*["']/i, `srcset="${optimized.srcSet.attribute}"`);
-        } else {
-          newTag = newTag.replace(/<img\b/i, `<img srcset="${optimized.srcSet.attribute}"`);
+      if (decodedSrc.startsWith('data:') || decodedSrc.startsWith('/_image')) {
+        if (!fullTag.includes('data-image-component')) {
+          return { fullTag, newTag: fullTag.replace(/<img\b/i, '<img data-image-component="true"') };
         }
+        return { fullTag, newTag: fullTag };
       }
-      if (!newTag.includes('data-image-component')) {
-        newTag = newTag.replace(/<img\b/i, '<img data-image-component="true"');
+
+      const widthMatch = /\bwidth=["']?(\d+)["']?/i.exec(attrs);
+      const heightMatch = /\bheight=["']?(\d+)["']?/i.exec(attrs);
+      const width = widthMatch ? parseInt(widthMatch[1], 10) : 800;
+      const height = heightMatch ? parseInt(heightMatch[1], 10) : Math.round((width * 9) / 16);
+
+      try {
+        const optimized = await getImage({
+          src: decodedSrc,
+          width,
+          height,
+          format: 'webp',
+        });
+
+        let newTag = fullTag.replace(/\bsrc=["'][^"']*["']/i, `src="${optimized.src}"`);
+        if (optimized.srcSet?.attribute) {
+          if (newTag.includes('srcset=')) {
+            newTag = newTag.replace(/\bsrcset=["'][^"']*["']/i, `srcset="${optimized.srcSet.attribute}"`);
+          } else {
+            newTag = newTag.replace(/<img\b/i, `<img srcset="${optimized.srcSet.attribute}"`);
+          }
+        }
+        if (!newTag.includes('data-image-component')) {
+          newTag = newTag.replace(/<img\b/i, '<img data-image-component="true"');
+        }
+        return { fullTag, newTag };
+      } catch {
+        if (!fullTag.includes('data-image-component')) {
+          return { fullTag, newTag: fullTag.replace(/<img\b/i, '<img data-image-component="true"') };
+        }
+        return { fullTag, newTag: fullTag };
       }
+    })
+  );
+
+  let result = html;
+  for (const { fullTag, newTag } of replacements) {
+    if (fullTag !== newTag) {
       result = result.replace(fullTag, newTag);
-    } catch {
-      if (!fullTag.includes('data-image-component')) {
-        const fallback = fullTag.replace(/<img\b/i, '<img data-image-component="true"');
-        result = result.replace(fullTag, fallback);
-      }
     }
   }
 
