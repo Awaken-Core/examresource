@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { QuestionDetail } from './types/cbt';
+import { QuestionRichContent } from './QuestionRichContent';
 import { CBTFlagIcon } from './CBTFlagIcon';
 import { CBTQuestionReportModal } from './CBTQuestionReportModal';
 
@@ -32,12 +33,6 @@ function typeLabel(type: string): string {
   if (type === 'numerical') return 'Numerical';
   if (type === 'multiple_choice') return 'MSQ';
   return 'MCQ';
-}
-
-function questionText(question: QuestionDetail | null, language: 'English' | 'Hindi'): string {
-  if (!question) return 'The question will appear here.';
-  if (language === 'Hindi' && question.translations?.hi) return question.translations.hi;
-  return question.content;
 }
 
 export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
@@ -204,8 +199,8 @@ export const CBTQuestionPanel = React.memo(function CBTQuestionPanel({
                 </button>
               </div>
             ) : (
-              <div className="text-base leading-7 whitespace-pre-wrap text-heading sm:text-[17px]">
-                {questionText(question, language)}
+              <div className="text-base leading-7 text-heading sm:text-[17px]">
+                <QuestionRichContent question={question} language={language} />
               </div>
             )}
           </div>

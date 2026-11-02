@@ -20,7 +20,7 @@ export interface TestInstructionsData {
   _id?: string;
   title: string;
   description?: string | null;
-  testMode: 'subject' | 'chapter' | 'full';
+  testMode: 'subject' | 'chapter' | 'full' | 'pyq';
   access: 'free' | 'premium';
   durationMinutes?: number | null;
   totalQuestionsCount: number;
@@ -212,7 +212,7 @@ export function TestInstructions({ testId, initialData, siteName = 'GovtPariksha
   const positiveMarks = test.positiveMarks || 1;
   const negativeMarks = test.negativeMarkingEnabled ? (test.negativeMarks || 0.25) : 0;
   const totalMarks =
-    test.testMode === 'full' && sections.length > 0
+    (test.testMode === 'full' || test.testMode === 'pyq') && sections.length > 0
       ? sections.reduce(
           (sum, s) =>
             sum + (s.questionsCount || s.requiredQuestionCount || 0) * (s.positiveMarks || 1),

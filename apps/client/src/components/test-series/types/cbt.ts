@@ -20,6 +20,8 @@ export interface QuestionDetail {
   readonly id: string;
   readonly content: string;
   readonly translations?: Record<string, string>;
+  readonly blocks?: ReadonlyArray<Record<string, unknown>>;
+  readonly images?: ReadonlyArray<{ url: string; alt?: string | null; order?: number }>;
   readonly type: 'single_choice' | 'multiple_choice' | 'numerical';
   readonly options: readonly QuestionOption[];
   readonly marks: number;
@@ -74,7 +76,8 @@ export interface AttemptDetail {
 export interface PublishedTestMetadata {
   readonly id: string;
   readonly title: string;
-  readonly testMode: 'subject' | 'chapter' | 'full';
+  readonly testMode: 'subject' | 'chapter' | 'full' | 'pyq';
+  readonly isPreviousYear?: boolean;
   readonly durationMinutes?: number | null;
   readonly sections?: ReadonlyArray<{
     readonly id?: string;

@@ -238,7 +238,7 @@ export class ExamService {
     let resolvedQuestions: any[] = [];
     let sectionProgress: any[] = [];
 
-    if (exam.testMode === 'full' && exam.sections && exam.sections.length > 0) {
+    if ((exam.testMode === 'full' || exam.testMode === 'pyq') && exam.sections && exam.sections.length > 0) {
       // Build from sections
       for (const sec of exam.sections) {
         const secId =
@@ -842,6 +842,8 @@ export class ExamService {
 
         const snapshot = {
           ...rawSnapshot,
+          blocks: rawSnapshot.blocks || qDoc.blocks || [],
+          images: rawSnapshot.images || qDoc.images || [],
           translations: this.sanitizeStringMap(rawSnapshot.translations),
           explanationTranslations: this.sanitizeStringMap(rawSnapshot.explanationTranslations),
           options: (rawSnapshot.options && rawSnapshot.options.length > 0 ? rawSnapshot.options : options).map(
@@ -862,6 +864,8 @@ export class ExamService {
           sectionId: item.sectionId || null,
           content: qDoc.content,
           translations: qDoc.translations || {},
+          blocks: qDoc.blocks || [],
+          images: qDoc.images || [],
           subject: qDoc.subject,
           subjectId: qDoc.subjectId?.toString() || null,
           chapterId: qDoc.chapterId?.toString() || null,
@@ -1315,6 +1319,8 @@ export class ExamService {
                 id: (snap.questionId || ans.questionId)?.toString() || '',
                 content: snap.content,
                 translations: snap.translations || {},
+                blocks: snap.blocks || [],
+                images: snap.images || [],
                 type: snap.type,
                 options: (snap.options || []).map((opt: any, idx: number) => ({
                   id:

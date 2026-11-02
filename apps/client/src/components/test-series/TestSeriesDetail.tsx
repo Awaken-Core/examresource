@@ -9,6 +9,8 @@ export interface Chapter {
   slug: string;
   order: number;
   status: string;
+  questionsCount?: number;
+  testsCount?: number;
 }
 
 export interface AssignedSubject {
@@ -21,6 +23,8 @@ export interface AssignedSubject {
   description?: string | null;
   iconUrl?: string | null;
   order: number;
+  questionsCount?: number;
+  testsCount?: number;
   chapters: Chapter[];
 }
 
@@ -68,7 +72,8 @@ export interface PublishedTestItem {
   title: string;
   slug?: string | null;
   description?: string | null;
-  testMode: 'subject' | 'chapter' | 'full';
+  testMode: 'subject' | 'chapter' | 'full' | 'pyq';
+  isPreviousYear?: boolean;
   subjectId?: string | null;
   chapterId?: string | null;
   access: 'free' | 'premium';
@@ -125,40 +130,52 @@ interface Props {
   seriesIdOrSlug: string;
   initialData?: TestSeriesDetailData | null;
   initialFullTests?: PublishedTestItem[] | null;
+  initialPyqTests?: PublishedTestItem[] | null;
   initialAllTests?: PublishedTestItem[] | null;
 }
 
-type TabType = 'full' | 'subject' | 'chapter' | 'syllabus';
+type TabType = 'full' | 'pyq' | 'subject' | 'chapter' | 'syllabus';
 
 function subjectLabel(subject?: Partial<AssignedSubject> | null) {
   return subject?.customDisplayName || subject?.name || '';
+}
+
+function isPyqTest(test: { title?: string; slug?: string | null; testMode?: string }) {
+  if (test.testMode === 'pyq') return true;
+  if (test.slug && test.slug.toLowerCase().startsWith('pyq-')) return true;
+  if (test.title && (test.title.startsWith('[PYQ]') || test.title.includes('PYQ'))) return true;
+  return false;
 }
 
 function testRouteId(test: PublishedTestItem) {
   return test.slug || test.id || test._id || '';
 }
 
-export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialAllTests }: Props) {
+export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialPyqTests, initialAllTests }: Props) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
 
   const partitionedInitial = useMemo(() => {
     if (!initialAllTests || initialAllTests.length === 0) {
+      const fullList = (initialFullTests || []).filter((t) => !isPyqTest(t));
+      const pyqList = initialPyqTests || (initialFullTests || []).filter(isPyqTest);
       return {
-        full: initialFullTests || [],
+        full: fullList,
+        pyq: pyqList,
         subject: [] as PublishedTestItem[],
         chapter: [] as PublishedTestItem[],
         hasAll: false,
       };
     }
     return {
-      full: initialAllTests.filter((t) => t.testMode === 'full'),
+      full: initialAllTests.filter((t) => (t.testMode === 'full' || (!t.testMode && !isPyqTest(t))) && !isPyqTest(t)),
+      pyq: initialAllTests.filter((t) => t.testMode === 'pyq' || isPyqTest(t)),
       subject: initialAllTests.filter((t) => t.testMode === 'subject'),
       chapter: initialAllTests.filter((t) => t.testMode === 'chapter'),
       hasAll: true,
     };
-  }, [initialAllTests, initialFullTests]);
+  }, [initialAllTests, initialFullTests, initialPyqTests]);
 
   // Learner series progress state (after login)
   const [learnerPrep, setLearnerPrep] = useState<LearnerSeriesPrep | null>(null);
@@ -186,9 +203,15 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   const [chapterTests, setChapterTests] = useState<PublishedTestItem[]>(partitionedInitial.chapter);
   const [loadingChapterTests, setLoadingChapterTests] = useState(!partitionedInitial.hasAll && activeTab === 'chapter');
 
-  // Full tests state
+  // Full tests state (strictly mock tests, excluding PYQs)
   const [fullTests, setFullTests] = useState<PublishedTestItem[]>(partitionedInitial.full);
   const [loadingFullTests, setLoadingFullTests] = useState(!partitionedInitial.hasAll && partitionedInitial.full.length === 0);
+
+  // PYQ tests state (dedicated official papers section)
+  const [pyqTests, setPyqTests] = useState<PublishedTestItem[]>(partitionedInitial.pyq);
+  const [loadingPyqTests, setLoadingPyqTests] = useState(!partitionedInitial.hasAll && activeTab === 'pyq');
+  const [pyqYearFilter, setPyqYearFilter] = useState<string>('ALL');
+  const [pyqExamFilter, setPyqExamFilter] = useState<string>('ALL');
 
   // Syllabus state
   const [syllabusSubjectId, setSyllabusSubjectId] = useState<string | null>(null);
@@ -206,10 +229,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
     if (partitionedInitial.hasAll) {
       testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=full`, partitionedInitial.full);
+      testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=pyq`, partitionedInitial.pyq);
       testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=subject`, partitionedInitial.subject);
       testsCacheRef.current.set(`${API_URL}/test-series/${seriesId}/tests?testMode=chapter`, partitionedInitial.chapter);
       if (series.slug) {
         testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=full`, partitionedInitial.full);
+        testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=pyq`, partitionedInitial.pyq);
         testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=subject`, partitionedInitial.subject);
         testsCacheRef.current.set(`${API_URL}/test-series/${series.slug}/tests?testMode=chapter`, partitionedInitial.chapter);
       }
@@ -423,6 +448,41 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     fetchFullTests();
   }, [series, initialFullTests]);
 
+  // Load PYQ tests from real database API
+  useEffect(() => {
+    if (!series) return;
+    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=pyq`;
+    if (initialPyqTests && initialPyqTests.length > 0 && !testsCacheRef.current.has(url)) {
+      testsCacheRef.current.set(url, initialPyqTests);
+      setPyqTests(initialPyqTests);
+      setLoadingPyqTests(false);
+      return;
+    }
+    if (testsCacheRef.current.has(url)) {
+      setPyqTests(testsCacheRef.current.get(url)!);
+      setLoadingPyqTests(false);
+      return;
+    }
+    async function fetchPyqTests() {
+      setLoadingPyqTests(true);
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const tests = await res.json();
+          testsCacheRef.current.set(url, tests || []);
+          setPyqTests(tests || []);
+        } else {
+          setPyqTests([]);
+        }
+      } catch {
+        setPyqTests([]);
+      } finally {
+        setLoadingPyqTests(false);
+      }
+    }
+    fetchPyqTests();
+  }, [series, initialPyqTests]);
+
   // Create fast map of latest attempt by test ID
   const testAttemptMap = useMemo(() => {
     const map = new Map<string, LatestAttemptMeta>();
@@ -550,9 +610,32 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   const totalFullMockCount = fullTests.length + upcomingMockTests.length;
 
   const completedCount = learnerPrep?.completedTestsCount ?? 0;
-  const totalCount = learnerPrep?.totalTestsCount ?? (totalFullMockCount + assignedSubjects.length + chapterCount);
+  const totalCount = learnerPrep?.totalTestsCount ?? (totalFullMockCount + pyqTests.length + assignedSubjects.length + chapterCount);
   const unattemptedCount = learnerPrep ? learnerPrep.unattemptedTestsCount : Math.max(0, totalCount - completedCount);
   const completionPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  // Filtered PYQ Tests
+  const filteredPyqTests = useMemo(() => {
+    return pyqTests.filter((t) => {
+      if (pyqYearFilter !== 'ALL') {
+        const str = `${t.title} ${t.slug || ''}`;
+        if (!str.includes(pyqYearFilter)) return false;
+      }
+      if (pyqExamFilter !== 'ALL') {
+        const str = `${t.title} ${t.slug || ''}`.toUpperCase();
+        if (!str.includes(pyqExamFilter.toUpperCase())) return false;
+      }
+      if (testSearchQuery.trim()) {
+        const q = testSearchQuery.toLowerCase();
+        const match =
+          t.title.toLowerCase().includes(q) ||
+          (t.slug?.toLowerCase().includes(q) ?? false) ||
+          (t.description?.toLowerCase().includes(q) ?? false);
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [pyqTests, pyqYearFilter, pyqExamFilter, testSearchQuery]);
 
   // Filtered Full Tests
   const filteredFullTests = useMemo(() => {
@@ -641,6 +724,18 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         {/* Stats Grid */}
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Full Length Mocks</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">
+              {totalFullMockCount} Tests
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
+            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Previous Year Papers</p>
+            <p className="mt-1 text-base font-bold text-heading tabular-nums">
+              {pyqTests.length} Official Papers
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
             <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Assigned Subjects</p>
             <p className="mt-1 text-base font-bold text-heading tabular-nums">
               {assignedSubjects.length} Subjects
@@ -651,16 +746,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             <p className="mt-1 text-base font-bold text-heading tabular-nums">
               {chapterCount} Chapters
             </p>
-          </div>
-          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
-            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Full Length Mocks</p>
-            <p className="mt-1 text-base font-bold text-heading tabular-nums">
-              {totalFullMockCount} Tests
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
-            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Official PYQs</p>
-            <p className="mt-1 text-base font-bold text-heading tabular-nums">2018 – 2024</p>
           </div>
         </div>
       </header>
@@ -744,6 +829,29 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                 </span>
               </button>
 
+
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === 'pyq'}
+                onClick={() => setActiveTab('pyq')}
+                className={`inline-flex cursor-pointer items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
+                  activeTab === 'pyq'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-muted hover:text-heading'
+                }`}
+              >
+                Previous Year Papers
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+                    activeTab === 'pyq'
+                      ? 'bg-accent-badge text-accent'
+                      : 'bg-surface-raised border border-border text-muted'
+                  }`}
+                >
+                  {pyqTests.length}
+                </span>
+              </button>
               <button
                 type="button"
                 role="tab"
@@ -884,16 +992,216 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             </div>
           )}
 
-          {/* TAB 2: SUBJECT TESTS */}
+
+          {/* TAB 2: PREVIOUS YEAR PAPERS (PYQ SECTION) */}
+          {activeTab === 'pyq' && (
+            <div className="space-y-4">
+              {/* Official Archive Header Card */}
+              <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5 shadow-2xs">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                        Official Exam Archive
+                      </span>
+                      <span className="text-xs font-semibold text-muted">2018 – 2024 Verified Papers</span>
+                    </div>
+                    <h2 className="mt-1 text-base font-bold text-heading sm:text-lg">
+                      Previous Year Question Papers (PYQ)
+                    </h2>
+                    <p className="mt-1 text-xs text-muted leading-relaxed">
+                      Complete authentic exam simulations with negative marking (+1.00 / -0.25), CBT question palette, and detailed bilingual solutions.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Filter Controls: Exam Board & Year */}
+                <div className="mt-4 flex flex-wrap items-center gap-1.5 pt-3 border-t border-border">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted mr-1.5">Exam:</span>
+                  {['ALL', 'DSSSB', 'KVS', 'NVS', 'Bihar STET', 'BPSC', 'HTET', 'EMRS'].map((examName) => (
+                    <button
+                      key={examName}
+                      type="button"
+                      onClick={() => setPyqExamFilter(examName)}
+                      className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors ${
+                        pyqExamFilter === examName
+                          ? 'bg-accent text-on-accent shadow-2xs'
+                          : 'bg-surface-raised border border-border text-muted hover:text-heading'
+                      }`}
+                    >
+                      {examName}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-muted mr-1.5">Year:</span>
+                  {['ALL', '2024', '2023', '2022', '2021', '2020', '2019', '2018'].map((year) => (
+                    <button
+                      key={year}
+                      type="button"
+                      onClick={() => setPyqYearFilter(year)}
+                      className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-semibold transition-colors ${
+                        pyqYearFilter === year
+                          ? 'bg-accent text-on-accent shadow-2xs'
+                          : 'bg-surface-raised border border-border text-muted hover:text-heading'
+                      }`}
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* PYQ Search Bar */}
+              <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <input
+                    type="search"
+                    value={testSearchQuery}
+                    onChange={(e) => setTestSearchQuery(e.target.value)}
+                    placeholder="Search PYQ papers by title, date, or shift..."
+                    className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
+                  />
+                  <svg
+                    className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  {testSearchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setTestSearchQuery('')}
+                      className="absolute right-2.5 top-2 text-xs font-bold text-muted hover:text-heading cursor-pointer"
+                      title="Clear search"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+                <span className="text-xs font-semibold text-muted">
+                  Showing {filteredPyqTests.length} of {pyqTests.length} official papers
+                </span>
+              </div>
+
+              {loadingPyqTests ? (
+                <div className="space-y-3 py-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-28 animate-pulse rounded-2xl bg-surface border border-border" />
+                  ))}
+                </div>
+              ) : filteredPyqTests.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
+                  <p className="text-sm font-semibold text-heading">No previous year papers match the selected filter.</p>
+                  <p className="mt-1 text-xs text-muted">
+                    {testSearchQuery || pyqYearFilter !== 'ALL' || pyqExamFilter !== 'ALL'
+                      ? 'Try clearing the filters or search term to see all official papers.'
+                      : 'PYQ papers will appear here.'}
+                  </p>
+                  {(testSearchQuery || pyqYearFilter !== 'ALL' || pyqExamFilter !== 'ALL') && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTestSearchQuery('');
+                        setPyqYearFilter('ALL');
+                        setPyqExamFilter('ALL');
+                      }}
+                      className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-surface-raised border border-border px-3 py-1.5 text-xs font-semibold text-heading hover:border-accent cursor-pointer"
+                    >
+                      Reset All Filters
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredPyqTests.map((test, index) => {
+                    const testId = test.id || test._id || '';
+                    const latestAttempt = testAttemptMap.get(testId);
+                    const isLocked = isTestLocked(test);
+                    const isClaimedFree = Boolean(freeTestId && freeTestId === testId);
+                    return (
+                      <RealTestCard
+                        key={testId}
+                        test={test}
+                        index={index}
+                        latestAttempt={latestAttempt}
+                        isLocked={isLocked}
+                        hasActivePass={hasActivePass}
+                        hasUsedFreeTest={hasUsedFreeTest}
+                        isClaimedFree={isClaimedFree}
+                      />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 3: SUBJECT TESTS */}
           {activeTab === 'subject' && (
             <div className="space-y-4">
+              {/* Subject Quick Selector Cards Grid */}
+              {assignedSubjects.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs text-muted">
+                    <span className="font-bold uppercase tracking-wider text-[11px]">Select a Subject for Deep Practice:</span>
+                    <span>{assignedSubjects.length} Core Subjects</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedSubjectId(null)}
+                      className={`flex flex-col items-start rounded-xl border p-2.5 text-left transition cursor-pointer ${
+                        !selectedSubjectId
+                          ? 'border-accent bg-accent/5 ring-1 ring-accent'
+                          : 'border-border bg-surface hover:border-accent/40'
+                      }`}
+                    >
+                      <span className="text-xs font-bold text-heading">All Subjects</span>
+                      <span className="text-[10px] text-muted">
+                        {assignedSubjects.reduce((acc, s) => acc + (s.questionsCount || 0), 0)} Questions Bank
+                      </span>
+                    </button>
+                    {assignedSubjects.map((sub) => {
+                      const isSelected = selectedSubjectId === sub.subjectId;
+                      return (
+                        <button
+                          key={sub.subjectId}
+                          type="button"
+                          onClick={() => setSelectedSubjectId(isSelected ? null : sub.subjectId)}
+                          className={`flex flex-col items-start rounded-xl border p-2.5 text-left transition cursor-pointer ${
+                            isSelected
+                              ? 'border-accent bg-accent/5 ring-1 ring-accent'
+                              : 'border-border bg-surface hover:border-accent/40'
+                          }`}
+                        >
+                          <span className="truncate w-full text-xs font-bold text-heading" title={subjectLabel(sub)}>
+                            {subjectLabel(sub)}
+                          </span>
+                          <div className="mt-1 flex items-center gap-1.5 text-[10px] text-muted">
+                            {typeof sub.questionsCount === 'number' && (
+                              <span className="font-semibold text-accent">{sub.questionsCount} Qs</span>
+                            )}
+                            <span>•</span>
+                            <span>{sub.chapters?.length || 0} chaps</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Subject Filter Bar: Dropdown + Search + Clear */}
               <div className="space-y-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   {/* Subject Dropdown */}
                   <div className="flex flex-1 flex-wrap items-center gap-2">
                     <label htmlFor="subject-filter-select" className="text-xs font-bold uppercase tracking-wider text-muted shrink-0">
-                      Subject:
+                      Filter Subject:
                     </label>
                     <div className="relative min-w-[220px] max-w-xs flex-1">
                       <select
@@ -905,7 +1213,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         <option value="">All Subjects ({assignedSubjects.length})</option>
                         {assignedSubjects.map((sub) => (
                           <option key={sub.subjectId} value={sub.subjectId}>
-                            {subjectLabel(sub)}
+                            {subjectLabel(sub)} ({sub.questionsCount ? `${sub.questionsCount} Qs` : `${sub.chapters?.length || 0} chaps`})
                           </option>
                         ))}
                       </select>
@@ -960,7 +1268,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   <span>
                     {selectedSubjectId
                       ? `Filtered by: ${subjectLabel(assignedSubjects.find((s) => s.subjectId === selectedSubjectId) || { name: '' })}`
-                      : 'All 20 Designated Exam Subjects'}
+                      : `All ${assignedSubjects.length} Designated Exam Subjects`}
                   </span>
                   <span className="font-semibold">
                     Showing {filteredSubjectTests.length} of {subjectTests.length} tests
@@ -1013,7 +1321,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   {/* Subject Dropdown */}
                   <div className="sm:col-span-4">
                     <label htmlFor="chapter-subject-select" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">
-                      Select Subject
+                      1. Select Subject
                     </label>
                     <div className="relative">
                       <select
@@ -1029,7 +1337,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         <option value="">All Subjects ({assignedSubjects.length})</option>
                         {assignedSubjects.map((sub) => (
                           <option key={sub.subjectId} value={sub.subjectId}>
-                            {subjectLabel(sub)} ({sub.chapters?.length || 0} chaps)
+                            {subjectLabel(sub)} ({sub.questionsCount ? `${sub.questionsCount} Qs, ` : ''}{sub.chapters?.length || 0} chaps)
                           </option>
                         ))}
                       </select>
@@ -1040,7 +1348,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   {/* Chapter Dropdown */}
                   <div className="sm:col-span-4">
                     <label htmlFor="chapter-select" className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted">
-                      Select Chapter
+                      2. Select Chapter
                     </label>
                     <div className="relative">
                       <select
@@ -1057,7 +1365,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         </option>
                         {currentSubjectChapters.map((chap) => (
                           <option key={chap.id || chap._id || chap.name} value={chap.id || chap._id}>
-                            {chap.name}
+                            {chap.name} ({chap.questionsCount ? `${chap.questionsCount} Qs` : ''})
                           </option>
                         ))}
                       </select>
@@ -1101,12 +1409,52 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   </div>
                 </div>
 
+                {/* Chapter Quick Chips for Active Subject */}
+                {currentSubjectChapters.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedChapterId(null)}
+                      className={`rounded-lg px-2.5 py-1 text-[11px] font-semibold transition cursor-pointer ${
+                        !selectedChapterId
+                          ? 'bg-accent text-white'
+                          : 'border border-border bg-surface text-muted hover:text-heading'
+                      }`}
+                    >
+                      All {currentSubjectChapters.length} Chapters
+                    </button>
+                    {currentSubjectChapters.map((chap) => {
+                      const cId = chap.id || chap._id || chap.name;
+                      const isSel = selectedChapterId === cId;
+                      return (
+                        <button
+                          key={cId}
+                          type="button"
+                          onClick={() => setSelectedChapterId(isSel ? null : cId)}
+                          className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition cursor-pointer ${
+                            isSel
+                              ? 'bg-accent text-white'
+                              : 'border border-border bg-surface text-muted hover:text-heading'
+                          }`}
+                        >
+                          <span>{chap.name}</span>
+                          {typeof chap.questionsCount === 'number' && chap.questionsCount > 0 && (
+                            <span className={`text-[10px] rounded-full px-1.5 py-0.2 ${isSel ? 'bg-white/20 text-white' : 'bg-surface-raised text-muted'}`}>
+                              {chap.questionsCount}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
                   <div className="flex items-center gap-2">
                     <span>
                       {chapterSubjectId
                         ? `Filtered by: ${subjectLabel(assignedSubjects.find((s) => s.subjectId === chapterSubjectId) || { name: '' })}`
-                        : 'All Chapters across 20 Subjects'}
+                        : `All Chapters across ${assignedSubjects.length} Subjects`}
                     </span>
                     {(chapterSubjectId || selectedChapterId || testSearchQuery) && (
                       <button
@@ -1278,30 +1626,63 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                           }}
                           className="flex w-full cursor-pointer items-center justify-between text-left"
                         >
-                          <span className="text-sm font-bold text-heading">
-                            {subjectLabel(sub)}
-                          </span>
-                          <span className="rounded-full bg-surface-raised border border-border px-2 py-0.5 text-xs font-semibold text-muted">
+                          <div className="flex items-center gap-2 min-w-0 pr-2">
+                            <span className="truncate text-sm font-bold text-heading">
+                              {subjectLabel(sub)}
+                            </span>
+                            {typeof sub.questionsCount === 'number' && sub.questionsCount > 0 && (
+                              <span className="rounded-full bg-accent/10 text-accent px-2 py-0.5 text-[10px] font-bold shrink-0">
+                                {sub.questionsCount} Qs
+                              </span>
+                            )}
+                          </div>
+                          <span className="rounded-full bg-surface-raised border border-border px-2 py-0.5 text-xs font-semibold text-muted shrink-0">
                             {chaps.length} chaps
                           </span>
                         </button>
                         {isOpen && (
-                          <div className="mt-3 space-y-2 border-t border-border pt-3 text-xs text-muted">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setSelectedSubjectId(sub.subjectId);
-                                setActiveTab('subject');
-                              }}
-                              className="font-bold text-accent hover:underline cursor-pointer"
-                            >
-                              Open Subject Test →
-                            </button>
+                          <div className="mt-3 space-y-3 border-t border-border pt-3 text-xs text-muted">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSelectedSubjectId(sub.subjectId);
+                                  setActiveTab('subject');
+                                }}
+                                className="inline-flex items-center gap-1.5 rounded-lg bg-accent/10 px-2.5 py-1 text-xs font-bold text-accent hover:bg-accent/20 transition cursor-pointer"
+                              >
+                                Attempt Subject Tests ({sub.testsCount || 4} Tests) →
+                              </button>
+                              <span className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-300">
+                                ✓ Covered in Full Mocks
+                              </span>
+                            </div>
                             <ul className="space-y-1.5 pt-1">
                               {chaps.map((c) => (
-                                <li key={c.id || c._id || c.name} className="flex items-center gap-1.5">
-                                  <span className="h-1 w-1 rounded-full bg-muted" />
-                                  <span className="text-heading font-medium">{c.name}</span>
+                                <li
+                                  key={c.id || c._id || c.name}
+                                  className="flex items-center justify-between rounded-lg bg-surface-raised/40 p-2 border border-border/50"
+                                >
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <span className="h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
+                                    <span className="truncate text-heading font-medium">{c.name}</span>
+                                    {typeof c.questionsCount === 'number' && c.questionsCount > 0 && (
+                                      <span className="rounded-md border border-border bg-surface px-1.5 py-0.2 text-[10px] font-semibold text-muted shrink-0">
+                                        {c.questionsCount} Qs
+                                      </span>
+                                    )}
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setChapterSubjectId(sub.subjectId);
+                                      setSelectedChapterId(c.id || c._id || null);
+                                      setActiveTab('chapter');
+                                    }}
+                                    className="text-[11px] font-bold text-accent hover:underline cursor-pointer shrink-0 ml-2"
+                                  >
+                                    Practice Test →
+                                  </button>
                                 </li>
                               ))}
                             </ul>
@@ -1403,11 +1784,12 @@ function RealTestCard({
 
           {/* Section pills for Full Tests or details */}
           {sections.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-1">
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted">Sections:</span>
               {sections.map((section) => (
                 <span
                   key={section.id || section.name}
-                  className="rounded-md border border-border bg-surface-raised px-2.5 py-0.5 text-[11px] font-medium text-heading"
+                  className="rounded-md border border-border bg-surface-raised px-2 py-0.5 text-[10px] font-semibold text-heading"
                 >
                   {section.name}
                 </span>

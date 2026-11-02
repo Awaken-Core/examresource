@@ -181,3 +181,4 @@ console.log(`  Total Aptitude+Reasoning: ${finalApt + finalReason}`);
 
 await mongoose.disconnect();
 console.log('[migrate] Done!');
+

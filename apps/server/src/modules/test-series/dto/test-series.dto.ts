@@ -219,7 +219,7 @@ export const createIndividualTestSchema = z.object({
     .regex(slugRegex, 'Slug must contain only lowercase alphanumeric characters and hyphens.')
     .optional(),
   description: z.string().trim().max(5_000).nullable().optional(),
-  testMode: z.enum(['subject', 'chapter', 'full']),
+  testMode: z.enum(['subject', 'chapter', 'full', 'pyq']),
   subjectId: z.string().trim().nullable().optional(),
   chapterId: z.string().trim().nullable().optional(),
   access: z.enum(['free', 'premium']).default('free'),
@@ -262,7 +262,7 @@ export const updateTestStatusSchema = z.object({
 });
 
 export const listIndividualTestsQuerySchema = z.object({
-  testMode: z.enum(['subject', 'chapter', 'full']).optional(),
+  testMode: z.enum(['subject', 'chapter', 'full', 'pyq']).optional(),
   subjectId: z.string().trim().optional(),
   chapterId: z.string().trim().optional(),
   access: z.enum(['free', 'premium']).optional(),

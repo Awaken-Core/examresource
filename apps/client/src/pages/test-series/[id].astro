@@ -10,6 +10,11 @@ if (!id) {
   return Astro.redirect('/test-series');
 }
 
+// Redirect legacy or alternate slugs to canonical series
+if (id.toLowerCase() === 'dsssb-tgt-cs') {
+  return Astro.redirect('/test-series/dsssb-tgt-computer-science', 301);
+}
+
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
 Astro.response.headers.set('Vary', 'Accept-Encoding');
 
@@ -41,7 +46,12 @@ if (seriesSeo.slug && id.toLowerCase() !== seriesSeo.slug.toLowerCase()) {
 }
 
 const initialTests = allPublishedTests || [];
-const initialFullTests = initialTests.filter((t: any) => t.testMode === 'full');
+const isPyqPaper = (t: any) =>
+  t.testMode === 'pyq' ||
+  (t.slug && t.slug.toLowerCase().startsWith('pyq-')) ||
+  (t.title && (t.title.startsWith('[PYQ]') || t.title.includes('PYQ')));
+const initialFullTests = initialTests.filter((t: any) => t.testMode === 'full' && !isPyqPaper(t));
+const initialPyqTests = initialTests.filter((t: any) => isPyqPaper(t));
 
 const seriesTitle = seriesSeo?.title?.trim();
 const subjectNames = (seriesSeo?.subjects ?? [])

@@ -28,6 +28,25 @@ const baseQuestionSchema = z.object({
   marks: z.number().positive().max(10_000).default(1),
   negativeMarks: z.number().min(0).max(10_000).default(0),
   source: z.string().trim().max(2_000).nullable().optional(),
+  blocks: z.array(z.record(z.string(), z.unknown())).max(40).optional(),
+  images: z
+    .array(
+      z.object({
+        url: z.string().trim().max(2_000),
+        alt: z.string().trim().max(500).nullable().optional(),
+        order: z.number().int().min(0).max(50).optional(),
+      }),
+    )
+    .max(12)
+    .optional(),
+  qualityStatus: z
+    .enum(['pending_review', 'extracted', 'needs_correction', 'verified', 'rejected'])
+    .optional(),
+  extractionConfidence: z.number().min(0).max(1).nullable().optional(),
+  qualityFlags: z.array(z.string().trim().max(80)).max(30).optional(),
+  sourcePdf: z.string().trim().max(500).nullable().optional(),
+  sourcePage: z.number().int().min(0).max(20_000).nullable().optional(),
+  sourceQuestionNumber: z.number().int().min(0).max(20_000).nullable().optional(),
   options: z.array(optionSchema).max(20).default([]),
 });
 

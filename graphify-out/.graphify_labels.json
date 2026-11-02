@@ -1,6 +1,5 @@
 {
   "0": "editor.astro",
-  "2": "AuthService",
   "5": "CommentsService",
   "10": "Layout.astro",
   "20": "[slug].astro",
@@ -12,7 +11,6 @@
   "28": "ArticlesManager.tsx",
   "30": "insertBlock",
   "31": "notifications.ts",
-  "32": "dependencies",
   "33": "LearnerAnalyticsService",
   "35": "AdminApp.tsx",
   "36": "editor",
@@ -23,7 +21,6 @@
   "47": "StateFilterWidget.astro",
   "49": "postgres",
   "52": "bookmarks.ts",
-  "53": "parse-md.ts",
   "55": "blogData.ts",
   "57": "ProfileHub.tsx",
   "60": "sharp.ts",

@@ -118,6 +118,40 @@ export class Question {
   @Prop({ type: String, default: null })
   source?: string | null;
 
+  /**
+   * Structured stem. Paragraphs, tables, code, and images stay separate
+   * from the plain-text `content` fallback. Hindi lives on each block's
+   * `translations.hi` and is never concatenated into `content`.
+   */
+  @Prop({ type: Array, default: [] })
+  blocks: Array<Record<string, unknown>>;
+
+  @Prop({ type: Array, default: [] })
+  images: Array<{ url: string; alt?: string | null; order?: number }>;
+
+  @Prop({
+    type: String,
+    enum: ['pending_review', 'extracted', 'needs_correction', 'verified', 'rejected'],
+    default: 'extracted',
+    index: true,
+  })
+  qualityStatus: 'pending_review' | 'extracted' | 'needs_correction' | 'verified' | 'rejected';
+
+  @Prop({ type: Number, default: null })
+  extractionConfidence?: number | null;
+
+  @Prop({ type: [String], default: [] })
+  qualityFlags: string[];
+
+  @Prop({ type: String, default: null })
+  sourcePdf?: string | null;
+
+  @Prop({ type: Number, default: null })
+  sourcePage?: number | null;
+
+  @Prop({ type: Number, default: null })
+  sourceQuestionNumber?: number | null;
+
   @Prop({ type: Types.ObjectId, ref: 'User', required: true, index: true })
   createdBy: Types.ObjectId;
 

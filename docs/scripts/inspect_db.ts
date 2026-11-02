@@ -43,3 +43,4 @@ const reasonCount = await db.collection('questions').countDocuments({ subject: '
 console.log(`\nQ COUNTS: CS=${csCount}, Aptitude=${aptCount}, Reasoning=${reasonCount}`);
 
 await mongoose.disconnect();
+

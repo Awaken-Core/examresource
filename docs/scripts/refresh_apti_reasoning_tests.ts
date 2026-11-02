@@ -33,3 +33,4 @@ console.log(`[refresh] Deleted ${reasonDel.deletedCount} Reasoning tests`);
 
 await mongoose.disconnect();
 console.log('[refresh] Done! Now run generate_aptitude_reasoning_tests.ts');
+

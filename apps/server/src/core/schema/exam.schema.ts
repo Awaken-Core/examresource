@@ -72,6 +72,12 @@ export class QuestionSnapshot {
 
   @Prop({ type: Number, default: 0 })
   negativeMarks: number;
+
+  @Prop({ type: Array, default: [] })
+  blocks: Array<Record<string, unknown>>;
+
+  @Prop({ type: Array, default: [] })
+  images: Array<{ url: string; alt?: string | null; order?: number }>;
 }
 
 export const QuestionSnapshotSchema = SchemaFactory.createForClass(QuestionSnapshot);
@@ -189,11 +195,11 @@ export class Exam {
    */
   @Prop({
     type: String,
-    enum: ['exam', 'quiz', 'current_affairs_quiz', 'subject', 'chapter', 'full'],
+    enum: ['exam', 'quiz', 'current_affairs_quiz', 'subject', 'chapter', 'full', 'pyq'],
     required: true,
     index: true,
   })
-  type: 'exam' | 'quiz' | 'current_affairs_quiz' | 'subject' | 'chapter' | 'full';
+  type: 'exam' | 'quiz' | 'current_affairs_quiz' | 'subject' | 'chapter' | 'full' | 'pyq';
 
   /**
    * Explicit test series mode:
@@ -203,11 +209,14 @@ export class Exam {
    */
   @Prop({
     type: String,
-    enum: ['subject', 'chapter', 'full', 'legacy'],
+    enum: ['subject', 'chapter', 'full', 'pyq', 'legacy'],
     default: 'legacy',
     index: true,
   })
-  testMode: 'subject' | 'chapter' | 'full' | 'legacy';
+  testMode: 'subject' | 'chapter' | 'full' | 'pyq' | 'legacy';
+
+  @Prop({ type: Boolean, default: false, index: true })
+  isPreviousYear?: boolean;
 
   @Prop({
     type: String,

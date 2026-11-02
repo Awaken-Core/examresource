@@ -3,6 +3,7 @@ import { BrandMark } from '../BrandMark';
 import { CBTStatusShape } from './CBTStatusShape';
 import type { AttemptAnswer, PaletteSummaryCounts, SectionProgressItem } from './types/cbt';
 import { CBTQuestionReportModal } from './CBTQuestionReportModal';
+import { QuestionRichContent } from './QuestionRichContent';
 
 interface Props {
   readonly portalName: string;
@@ -138,11 +139,6 @@ export function CBTGovtExamView({
   const questionType = question?.type ?? 'single_choice';
   const isNumerical = questionType === 'numerical';
   const isMultiple = questionType === 'multiple_choice';
-
-  const qText =
-    language === 'Hindi' && question?.translations?.hi
-      ? question.translations.hi
-      : question?.content ?? 'Question content unavailable.';
 
   const positiveMarks = question?.marks ?? 1;
   const negativeMarks = question?.negativeMarks ?? 0.25;
@@ -456,8 +452,8 @@ export function CBTGovtExamView({
             style={{ zoom }}
           >
             {/* Question Text */}
-            <div className="text-sm sm:text-base leading-relaxed text-heading whitespace-pre-wrap font-sans">
-              {qText}
+            <div className="text-sm sm:text-base leading-relaxed text-heading font-sans">
+              <QuestionRichContent question={question ?? null} language={language} />
             </div>
 
             {/* Question Options */}

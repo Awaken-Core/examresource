@@ -1308,8 +1308,10 @@ Requirements:
 1. Detect each question statement, question number, and options (A, B, C, D / 1, 2, 3, 4).
 2. Clean OCR noise, extraneous page numbers, headers, and footers.
 3. Identify the correct answer key if mentioned in the text. If not explicitly stated, accurately deduce the correct answer.
-4. If the text has only English or only Hindi, translate the missing counterpart so each question is bilingual (English content + Hindi in translations.hi, and English options with Hindi translations).
-5. Extract or synthesize a helpful step-by-step explanation.
+4. Keep English and Hindi separate. Put English in "content" and original Devanagari Hindi in "translations.hi". Do the same for options and explanations. Never join the two languages with a slash or into one string.
+5. Do not translate a language that is absent from the source. Leave the missing field empty. Do not invent Hindi or English wording.
+6. Preserve tables as rows of cells, code with its indentation, and the original technical terms. Do not flatten a table into a paragraph.
+7. Extract a step-by-step explanation only when the source states one. Do not invent an answer key that the paper does not give.
 
 Return ONLY valid JSON matching this schema:
 {

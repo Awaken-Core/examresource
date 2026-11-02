@@ -437,8 +437,15 @@ export class TestSeriesService {
   ) {
     const series = knownSeries || (await this.findSeriesById(seriesId));
 
-    // Parallelize assignment and chapter queries
-    const [assignments, chapters] = await Promise.all([
+    // Parallelize assignment, chapter, question count, and test count queries
+    const [
+      assignments,
+      chapters,
+      qSubCounts,
+      qChapCounts,
+      tSubCounts,
+      tChapCounts,
+    ] = await Promise.all([
       this.testSeriesSubjectModel
         .find({ testSeriesId: series._id })
         .sort({ order: 1 })
@@ -451,7 +458,49 @@ export class TestSeriesService {
         })
         .sort({ order: 1, name: 1 })
         .lean(),
+      this.questionMappingModel.aggregate([
+        { $match: { testSeriesId: series._id } },
+        { $group: { _id: '$subjectId', count: { $sum: 1 } } },
+      ]),
+      this.questionMappingModel.aggregate([
+        { $match: { testSeriesId: series._id, chapterId: { $ne: null } } },
+        { $group: { _id: '$chapterId', count: { $sum: 1 } } },
+      ]),
+      this.examModel.aggregate([
+        {
+          $match: {
+            testSeriesId: series._id,
+            status: 'published',
+            isCurrentVersion: true,
+          },
+        },
+        { $group: { _id: '$subjectId', count: { $sum: 1 } } },
+      ]),
+      this.examModel.aggregate([
+        {
+          $match: {
+            testSeriesId: series._id,
+            status: 'published',
+            isCurrentVersion: true,
+            chapterId: { $ne: null },
+          },
+        },
+        { $group: { _id: '$chapterId', count: { $sum: 1 } } },
+      ]),
     ]);
+
+    const qSubMap = new Map<string, number>(
+      qSubCounts.map((c: any) => [c._id?.toString() || '', c.count]),
+    );
+    const qChapMap = new Map<string, number>(
+      qChapCounts.map((c: any) => [c._id?.toString() || '', c.count]),
+    );
+    const tSubMap = new Map<string, number>(
+      tSubCounts.map((c: any) => [c._id?.toString() || '', c.count]),
+    );
+    const tChapMap = new Map<string, number>(
+      tChapCounts.map((c: any) => [c._id?.toString() || '', c.count]),
+    );
 
     const subjectIds = new Set(
       assignments.map((a) => a.subjectId?._id?.toString()).filter(Boolean),
@@ -464,7 +513,14 @@ export class TestSeriesService {
       if (!chaptersBySubject.has(sId)) {
         chaptersBySubject.set(sId, []);
       }
-      chaptersBySubject.get(sId)!.push(this.formatChapter(chap));
+      const chapIdStr = chap._id.toString();
+      chaptersBySubject.get(sId)!.push(
+        this.formatChapter(
+          chap,
+          qChapMap.get(chapIdStr) || 0,
+          tChapMap.get(chapIdStr) || 0,
+        ),
+      );
     }
 
     return assignments
@@ -483,6 +539,8 @@ export class TestSeriesService {
           description: sub.description || null,
           iconUrl: sub.iconUrl || null,
           order: a.order,
+          questionsCount: qSubMap.get(subIdStr) || 0,
+          testsCount: tSubMap.get(subIdStr) || 0,
           chapters: chaptersBySubject.get(subIdStr) || [],
         };
       });
@@ -1283,7 +1341,7 @@ export class TestSeriesService {
     };
   }
 
-  private formatChapter(doc: any) {
+  private formatChapter(doc: any, questionsCount = 0, testsCount = 0) {
     return {
       id: doc._id.toString(),
       _id: doc._id.toString(),
@@ -1294,6 +1352,8 @@ export class TestSeriesService {
       description: doc.description || null,
       order: doc.order ?? 0,
       status: doc.status,
+      questionsCount,
+      testsCount,
       createdBy: doc.createdBy?.toString() || null,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
@@ -1623,7 +1683,7 @@ export class TestSeriesService {
     }
 
     const testMode = (input.testMode ?? test.testMode) as
-      'subject' | 'chapter' | 'full';
+      'subject' | 'chapter' | 'full' | 'pyq';
     const seriesId = test.testSeriesId!;
 
     let subjectId = test.subjectId ?? null;
@@ -1762,7 +1822,7 @@ export class TestSeriesService {
       // Re-verify hierarchy, questions, snapshots, and pool validity
       const assembled = await this.assembleAndValidateTestQuestions({
         seriesId: test.testSeriesId!,
-        testMode: test.testMode as 'subject' | 'chapter' | 'full',
+        testMode: test.testMode as 'subject' | 'chapter' | 'full' | 'pyq',
         subjectId: test.subjectId ?? null,
         chapterId: test.chapterId ?? null,
         input: test as any,
@@ -1986,7 +2046,7 @@ export class TestSeriesService {
 
   private async validateTestHierarchy(
     seriesId: Types.ObjectId,
-    testMode: 'subject' | 'chapter' | 'full',
+    testMode: 'subject' | 'chapter' | 'full' | 'pyq',
     subjectIdStr?: string | null,
     chapterIdStr?: string | null,
   ): Promise<{
@@ -2059,7 +2119,7 @@ export class TestSeriesService {
 
   private async assembleAndValidateTestQuestions(params: {
     seriesId: Types.ObjectId;
-    testMode: 'subject' | 'chapter' | 'full';
+    testMode: 'subject' | 'chapter' | 'full' | 'pyq';
     subjectId: Types.ObjectId | null;
     chapterId: Types.ObjectId | null;
     input: CreateIndividualTestInput;
@@ -2072,7 +2132,7 @@ export class TestSeriesService {
     const { seriesId, testMode, subjectId, chapterId, input, isPublishing } =
       params;
 
-    if (testMode === 'full') {
+    if (testMode === 'full' || testMode === 'pyq') {
       if (!input.sections || input.sections.length === 0) {
         throw new BadRequestException(
           'A Full Test must contain at least one section.',
@@ -2353,6 +2413,7 @@ export class TestSeriesService {
         _id: { $in: candidateIds },
         status: 'published',
         isAvailableForNewTests: { $ne: false },
+        qualityStatus: { $nin: ['needs_correction', 'rejected', 'pending_review'] },
       })
       .lean();
 
@@ -2379,6 +2440,8 @@ export class TestSeriesService {
       questionId: questionDoc._id,
       content: questionDoc.content,
       translations: questionDoc.translations || {},
+      blocks: questionDoc.blocks || [],
+      images: questionDoc.images || [],
       explanation: questionDoc.explanation || null,
       explanationTranslations: questionDoc.explanationTranslations || {},
       type: questionDoc.type,

@@ -50,3 +50,4 @@ const total = await db.collection('questions').countDocuments();
 console.log(`Total all questions in DB: ${total}`);
 
 await mongoose.disconnect();
+

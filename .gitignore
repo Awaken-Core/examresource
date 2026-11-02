@@ -47,3 +47,6 @@ graphify-out/.graphify_root
 *.apk
 *.apkm
 rea/
+
+# Extracted PDF data & media
+docs/extracted/

@@ -35,6 +35,7 @@ import type {
   UpdateReportStatusInput,
 } from './dto/question.dto.js';
 import { GeminiService } from '../blog/gemini.service.js';
+import { assessQuestionQuality } from './question-quality.js';
 
 @Injectable()
 export class QuestionService {
@@ -170,6 +171,18 @@ export class QuestionService {
         }
       }
 
+      const quality = assessQuestionQuality({
+        content: rest.content,
+        translations: rest.translations,
+        explanation: rest.explanation,
+        options,
+        type: rest.type,
+        subject: subjectName,
+        blocks: rest.blocks,
+        status: rest.status,
+        qualityStatus: rest.qualityStatus,
+      });
+
       return {
         ...rest,
         subject: subjectName,
@@ -177,6 +190,11 @@ export class QuestionService {
         chapterId,
         topic,
         createdBy: userObjectId,
+        qualityStatus: quality.qualityStatus,
+        extractionConfidence: quality.extractionConfidence,
+        qualityFlags: quality.qualityFlags,
+        isAvailableForNewTests: quality.isAvailableForNewTests,
+        status: quality.status,
         options: options.map((option, position) => ({
           _id: new Types.ObjectId(),
           content: option.content,
@@ -213,6 +231,22 @@ export class QuestionService {
 
     const { options, ...rest } = input;
     const updatePayload: Record<string, any> = { ...rest };
+    const quality = assessQuestionQuality({
+      content: rest.content ?? existing.content,
+      translations: rest.translations ?? existing.translations,
+      explanation: rest.explanation ?? existing.explanation,
+      options: options ?? existing.options,
+      type: rest.type ?? existing.type,
+      subject: rest.subject ?? existing.subject,
+      blocks: rest.blocks ?? existing.blocks,
+      status: rest.status ?? existing.status,
+      qualityStatus: rest.qualityStatus ?? existing.qualityStatus,
+    });
+    updatePayload.qualityStatus = quality.qualityStatus;
+    updatePayload.extractionConfidence = quality.extractionConfidence;
+    updatePayload.qualityFlags = quality.qualityFlags;
+    updatePayload.isAvailableForNewTests = quality.isAvailableForNewTests;
+    updatePayload.status = quality.status;
 
     if (updatePayload.subjectId && Types.ObjectId.isValid(updatePayload.subjectId)) {
       updatePayload.subjectId = new Types.ObjectId(updatePayload.subjectId);
@@ -230,6 +264,7 @@ export class QuestionService {
         imageUrl: option.imageUrl || null,
         position,
         isCorrect: option.isCorrect,
+        translations: option.translations || {},
       }));
     }
 
@@ -612,6 +647,14 @@ export class QuestionService {
       marks: doc.marks,
       negativeMarks: doc.negativeMarks,
       source: doc.source || null,
+      blocks: doc.blocks || [],
+      images: doc.images || [],
+      qualityStatus: doc.qualityStatus || 'extracted',
+      extractionConfidence: doc.extractionConfidence ?? null,
+      qualityFlags: doc.qualityFlags || [],
+      sourcePdf: doc.sourcePdf || null,
+      sourcePage: doc.sourcePage ?? null,
+      sourceQuestionNumber: doc.sourceQuestionNumber ?? null,
       createdBy: doc.createdBy?.toString(),
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
