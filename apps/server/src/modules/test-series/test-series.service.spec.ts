@@ -1324,25 +1324,28 @@ describe('TestSeriesService Hierarchy & Operations', () => {
     const { service, testSeriesModel, examModel } = makeService();
     const seriesId = new Types.ObjectId();
 
+    const seriesLimit = vi.fn().mockReturnValue({
+      lean: vi.fn().mockResolvedValue([
+        {
+          _id: seriesId,
+          title: 'SSC CGL Tier 1',
+          slug: 'ssc-cgl-tier-1',
+          status: 'published',
+          targetExam: 'SSC CGL',
+          category: 'ssc-railways',
+          accessType: 'free',
+        },
+      ]),
+    });
+    const seriesSkip = vi.fn().mockReturnValue({
+      limit: seriesLimit,
+    });
+    const seriesSort = vi.fn().mockReturnValue({
+      skip: seriesSkip,
+    });
     testSeriesModel.countDocuments = vi.fn().mockResolvedValue(25);
     testSeriesModel.find.mockReturnValue({
-      sort: vi.fn().mockReturnValue({
-        skip: vi.fn().mockReturnValue({
-          limit: vi.fn().mockReturnValue({
-            lean: vi.fn().mockResolvedValue([
-              {
-                _id: seriesId,
-                title: 'SSC CGL Tier 1',
-                slug: 'ssc-cgl-tier-1',
-                status: 'published',
-                targetExam: 'SSC CGL',
-                category: 'ssc-railways',
-                accessType: 'free',
-              },
-            ]),
-          }),
-        }),
-      }),
+      sort: seriesSort,
     });
 
     const paginatedSeries: any = await service.listPublished('ssc-railways', 1, 10);
@@ -1351,6 +1354,9 @@ describe('TestSeriesService Hierarchy & Operations', () => {
     expect(paginatedSeries.limit).toBe(10);
     expect(paginatedSeries.totalPages).toBe(3);
     expect(paginatedSeries.data.length).toBe(1);
+    expect(seriesSort).toHaveBeenCalledWith({ order: 1, createdAt: -1, _id: 1 });
+    expect(seriesSkip).toHaveBeenCalledWith(0);
+    expect(seriesLimit).toHaveBeenCalledWith(10);
 
     testSeriesModel.findById.mockReturnValue({
       lean: vi.fn().mockResolvedValue({
@@ -1360,27 +1366,30 @@ describe('TestSeriesService Hierarchy & Operations', () => {
       }),
     });
 
+    const examLimit = vi.fn().mockReturnValue({
+      lean: vi.fn().mockResolvedValue([
+        {
+          _id: new Types.ObjectId(),
+          title: 'Mock 01',
+          slug: 'mock-01',
+          status: 'published',
+          testMode: 'full',
+          totalQuestionsCount: 100,
+          positiveMarks: 1,
+          negativeMarks: 0.25,
+        },
+      ]),
+    });
+    const examSkip = vi.fn().mockReturnValue({
+      limit: examLimit,
+    });
+    const examSort = vi.fn().mockReturnValue({
+      skip: examSkip,
+    });
     examModel.countDocuments = vi.fn().mockResolvedValue(50);
     examModel.find.mockReturnValue({
       select: vi.fn().mockReturnValue({
-        sort: vi.fn().mockReturnValue({
-          skip: vi.fn().mockReturnValue({
-            limit: vi.fn().mockReturnValue({
-              lean: vi.fn().mockResolvedValue([
-                {
-                  _id: new Types.ObjectId(),
-                  title: 'Mock 01',
-                  slug: 'mock-01',
-                  status: 'published',
-                  testMode: 'full',
-                  totalQuestionsCount: 100,
-                  positiveMarks: 1,
-                  negativeMarks: 0.25,
-                },
-              ]),
-            }),
-          }),
-        }),
+        sort: examSort,
       }),
     });
 
@@ -1394,5 +1403,63 @@ describe('TestSeriesService Hierarchy & Operations', () => {
     expect(paginatedTests.limit).toBe(10);
     expect(paginatedTests.totalPages).toBe(5);
     expect(paginatedTests.data.length).toBe(1);
+    expect(examSort).toHaveBeenCalledWith({ createdAt: -1, _id: 1 });
+    expect(examSkip).toHaveBeenCalledWith(10);
+    expect(examLimit).toHaveBeenCalledWith(10);
+  });
+
+  it('supports pagination on listManageableTests when page or limit is provided', async () => {
+    const { service, testSeriesModel, examModel } = makeService();
+    const seriesId = new Types.ObjectId();
+
+    testSeriesModel.findById.mockReturnValue({
+      lean: vi.fn().mockResolvedValue({
+        _id: seriesId,
+        status: 'published',
+        slug: 'ssc-cgl-tier-1',
+      }),
+    });
+
+    const adminExamLimit = vi.fn().mockReturnValue({
+      lean: vi.fn().mockResolvedValue([
+        {
+          _id: new Types.ObjectId(),
+          title: 'Mock 02',
+          slug: 'mock-02',
+          status: 'draft',
+          testMode: 'full',
+          totalQuestionsCount: 100,
+          positiveMarks: 1,
+          negativeMarks: 0.25,
+          version: 1,
+        },
+      ]),
+    });
+    const adminExamSkip = vi.fn().mockReturnValue({
+      limit: adminExamLimit,
+    });
+    const adminExamSort = vi.fn().mockReturnValue({
+      skip: adminExamSkip,
+    });
+
+    examModel.countDocuments = vi.fn().mockResolvedValue(15);
+    examModel.find.mockReturnValue({
+      sort: adminExamSort,
+    });
+
+    const result: any = await service.listManageableTests(
+      seriesId.toString(),
+      { page: 2, limit: 5 },
+      editor,
+    );
+
+    expect(result.total).toBe(15);
+    expect(result.page).toBe(2);
+    expect(result.limit).toBe(5);
+    expect(result.totalPages).toBe(3);
+    expect(result.data.length).toBe(1);
+    expect(adminExamSort).toHaveBeenCalledWith({ version: -1, createdAt: -1, _id: 1 });
+    expect(adminExamSkip).toHaveBeenCalledWith(5);
+    expect(adminExamLimit).toHaveBeenCalledWith(5);
   });
 });

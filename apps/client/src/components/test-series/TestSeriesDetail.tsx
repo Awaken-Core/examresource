@@ -567,7 +567,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
   const hasActivePass = Boolean(seriesAccess?.hasActivePass);
   const freeTestId = seriesAccess?.freeTestId ?? null;
-  const hasUsedFreeTest = Boolean(freeTestId);
 
   const getTestSectionKey = (test: PublishedTestItem): 'full' | 'subject' | 'chapter' | 'pyq' => {
     if (test.testMode === 'pyq' || isPyqTest(test)) return 'pyq';
@@ -1072,7 +1071,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         <RealTestCard
                           key={testId}
                           test={test}
-                          index={index}
+                          index={(fullPage - 1) * TESTS_PAGE_SIZE + index}
                           latestAttempt={latestAttempt}
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
@@ -1236,7 +1235,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         <RealTestCard
                           key={testId}
                           test={test}
-                          index={index}
+                          index={(pyqPage - 1) * TESTS_PAGE_SIZE + index}
                           latestAttempt={latestAttempt}
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
@@ -1423,7 +1422,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         <RealTestCard
                           key={testId}
                           test={test}
-                          index={index}
+                          index={(subjectPage - 1) * TESTS_PAGE_SIZE + index}
                           latestAttempt={latestAttempt}
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
@@ -1636,7 +1635,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         <RealTestCard
                           key={testId}
                           test={test}
-                          index={index}
+                          index={(chapterPage - 1) * TESTS_PAGE_SIZE + index}
                           latestAttempt={latestAttempt}
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
@@ -1899,7 +1898,6 @@ function RealTestCard({
   const isInProgress = latestAttempt?.status === 'in_progress';
   const isSubmitted = latestAttempt?.status === 'submitted';
   const totalMarks = test.positiveMarks * test.totalQuestionsCount;
-  const sections = test.sections || [];
 
   const isHighlighted = isTrialAvailable && index === 0;
 

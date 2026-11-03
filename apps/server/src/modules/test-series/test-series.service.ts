@@ -131,7 +131,7 @@ export class TestSeriesService {
         this.testSeriesModel.countDocuments(filter),
         this.testSeriesModel
           .find(filter)
-          .sort({ order: 1, createdAt: -1 })
+          .sort({ order: 1, createdAt: -1, _id: 1 })
           .skip((pageNum - 1) * limitNum)
           .limit(limitNum)
           .lean(),
@@ -150,7 +150,7 @@ export class TestSeriesService {
 
     const docs: any[] = await this.testSeriesModel
       .find(filter)
-      .sort({ order: 1, createdAt: -1 })
+      .sort({ order: 1, createdAt: -1, _id: 1 })
       .lean();
 
     const formatted = docs.map((doc) => this.formatTestSeries(doc));
@@ -1505,7 +1505,7 @@ export class TestSeriesService {
         this.examModel
           .find(filter)
           .select('-questions.snapshot -sections.questions.snapshot')
-          .sort({ createdAt: -1 })
+          .sort({ createdAt: -1, _id: 1 })
           .skip((pageNum - 1) * limitNum)
           .limit(limitNum)
           .lean(),
@@ -1525,7 +1525,7 @@ export class TestSeriesService {
     const docs = await this.examModel
       .find(filter)
       .select('-questions.snapshot -sections.questions.snapshot')
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: 1 })
       .lean();
 
     const formatted = docs.map((doc) => this.formatIndividualTest(doc, false));
@@ -1631,9 +1631,32 @@ export class TestSeriesService {
     }
     if (query.access) filter.access = query.access;
 
+    const isPaginated = query.page !== undefined || query.limit !== undefined;
+
+    if (isPaginated) {
+      const pageNum = Math.max(1, query.page || 1);
+      const limitNum = Math.min(100, Math.max(1, query.limit || 20));
+      const [total, docs] = await Promise.all([
+        this.examModel.countDocuments(filter),
+        this.examModel
+          .find(filter)
+          .sort({ version: -1, createdAt: -1, _id: 1 })
+          .skip((pageNum - 1) * limitNum)
+          .limit(limitNum)
+          .lean(),
+      ]);
+      return {
+        data: docs.map((doc: any) => this.formatIndividualTest(doc, true)),
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      };
+    }
+
     const docs = await this.examModel
       .find(filter)
-      .sort({ version: -1, createdAt: -1 })
+      .sort({ version: -1, createdAt: -1, _id: 1 })
       .lean();
 
     return docs.map((doc) => this.formatIndividualTest(doc, true));
