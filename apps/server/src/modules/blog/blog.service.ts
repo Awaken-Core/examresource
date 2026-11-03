@@ -418,64 +418,116 @@ export class BlogService {
     const cleanSlug = slug.replace(/-(english|hinglish)$/i, '');
     const slugCandidates = Array.from(new Set([slug, cleanSlug, `${cleanSlug}-english`, `${cleanSlug}-hinglish`]));
 
-    const baseCondition: any = {
-      slug: { $in: slugCandidates },
-      language: requestedLang,
-      $or: [
-        { status: 'PUBLISHED' },
-        { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-      ],
-    };
-
-    let rawBlog = await this.blogModel
-      .findOne(baseCondition)
+    // 1. Batch lookup for slug candidates in a single round-trip
+    const candidateBlogs = await this.blogModel
+      .find({
+        slug: { $in: slugCandidates },
+        $or: [
+          { status: 'PUBLISHED' },
+          { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+        ],
+      })
       .populate<{ categoryId: CategoryDocument }>('categoryId')
       .populate<{ authorId: UserDocument }>('authorId')
       .lean();
 
-    if (!rawBlog) {
-      const anyBlogWithSlug = await this.blogModel
-        .findOne({
-          slug: { $in: slugCandidates },
-          $or: [
-            { status: 'PUBLISHED' },
-            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-          ],
-        })
-        .select({ _id: 1, translationGroupId: 1 })
-        .lean();
+    const otherLang = requestedLang === 'ENGLISH' ? 'HINGLISH' : 'ENGLISH';
+    const normalizedSlug = slug.toLowerCase().trim();
 
-      if (anyBlogWithSlug?.translationGroupId) {
-        const groupMatch = await this.blogModel
-          .findOne({
-            translationGroupId: anyBlogWithSlug.translationGroupId,
-            language: requestedLang,
-            $or: [
-              { status: 'PUBLISHED' },
-              { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-            ],
-          })
-          .populate<{ categoryId: CategoryDocument }>('categoryId')
-          .populate<{ authorId: UserDocument }>('authorId')
-          .lean();
+    let rawBlog: any = null;
 
-        if (groupMatch) rawBlog = groupMatch;
+    if (candidateBlogs.length > 0) {
+      // Step A: Check for an exact requested slug match first
+      const exactSlugMatch = candidateBlogs.find(
+        (b: any) => (b.slug || '').toLowerCase() === normalizedSlug,
+      );
+
+      if (exactSlugMatch) {
+        if (exactSlugMatch.language === requestedLang) {
+          rawBlog = exactSlugMatch;
+        } else if (exactSlugMatch.translationGroupId) {
+          // Check if the translated sibling in the requested language exists in the fetched candidates
+          const siblingInBatch = candidateBlogs.find(
+            (b: any) =>
+              b.translationGroupId === exactSlugMatch.translationGroupId &&
+              b.language === requestedLang,
+          );
+          if (siblingInBatch) {
+            rawBlog = siblingInBatch;
+          } else {
+            // Query specifically for the translation group sibling
+            const translatedDoc = await this.blogModel
+              .findOne({
+                translationGroupId: exactSlugMatch.translationGroupId,
+                language: requestedLang,
+                $or: [
+                  { status: 'PUBLISHED' },
+                  { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+                ],
+              })
+              .populate<{ categoryId: CategoryDocument }>('categoryId')
+              .populate<{ authorId: UserDocument }>('authorId')
+              .lean();
+            rawBlog = translatedDoc || exactSlugMatch;
+          }
+        } else {
+          rawBlog = exactSlugMatch;
+        }
+      } else {
+        // Step B: No exact slug match. Rank fallback candidates deterministically
+        const langSuffixedSlug = `${cleanSlug}-${requestedLang.toLowerCase()}`;
+        const matchLangSuffix = candidateBlogs.find(
+          (b: any) => (b.slug || '').toLowerCase() === langSuffixedSlug,
+        );
+
+        const matchCleanWithLang = candidateBlogs.find(
+          (b: any) =>
+            (b.slug || '').toLowerCase() === cleanSlug && b.language === requestedLang,
+        );
+
+        const matchCleanAny = candidateBlogs.find(
+          (b: any) => (b.slug || '').toLowerCase() === cleanSlug,
+        );
+
+        const otherSuffixedSlug = `${cleanSlug}-${otherLang.toLowerCase()}`;
+        const matchOtherSuffix = candidateBlogs.find(
+          (b: any) => (b.slug || '').toLowerCase() === otherSuffixedSlug,
+        );
+
+        const primaryAnchor =
+          matchLangSuffix || matchCleanWithLang || matchCleanAny || matchOtherSuffix || candidateBlogs[0];
+
+        if (primaryAnchor) {
+          if (primaryAnchor.language === requestedLang) {
+            rawBlog = primaryAnchor;
+          } else if (primaryAnchor.translationGroupId) {
+            const siblingInBatch = candidateBlogs.find(
+              (b: any) =>
+                b.translationGroupId === primaryAnchor.translationGroupId &&
+                b.language === requestedLang,
+            );
+            if (siblingInBatch) {
+              rawBlog = siblingInBatch;
+            } else {
+              const translatedDoc = await this.blogModel
+                .findOne({
+                  translationGroupId: primaryAnchor.translationGroupId,
+                  language: requestedLang,
+                  $or: [
+                    { status: 'PUBLISHED' },
+                    { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+                  ],
+                })
+                .populate<{ categoryId: CategoryDocument }>('categoryId')
+                .populate<{ authorId: UserDocument }>('authorId')
+                .lean();
+              rawBlog = translatedDoc || primaryAnchor;
+            }
+          } else {
+            rawBlog = primaryAnchor;
+          }
+        }
       }
-    }
-
-    if (!rawBlog) {
-      const fallback = await this.blogModel
-        .findOne({
-          slug: { $in: slugCandidates },
-          $or: [
-            { status: 'PUBLISHED' },
-            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-          ],
-        })
-        .populate<{ categoryId: CategoryDocument }>('categoryId')
-        .populate<{ authorId: UserDocument }>('authorId')
-        .lean();
-      if (fallback) rawBlog = fallback;
     }
 
     if (!rawBlog) {
@@ -528,47 +580,50 @@ export class BlogService {
         : null,
     };
 
-    let hasAlternateLanguage = false;
-    let effectiveBlocks = await this.getBlocks(blog.id);
+    // 2. Fetch primary blocks, alt blog, tags, and categories concurrently in parallel
+    const [primaryBlocks, altBlog, postTagsList, postCategories] = await Promise.all([
+      this.getBlocks(blog.id),
+      blog.translationGroupId
+        ? this.blogModel
+            .findOne({
+              translationGroupId: blog.translationGroupId,
+              _id: { $ne: rawBlog._id },
+              $or: [
+                { status: 'PUBLISHED' },
+                { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+              ],
+            })
+            .lean()
+        : Promise.resolve(null),
+      this.getBlogTags(blog.id),
+      this.getBlogCategories(blog.id),
+    ]);
+
+    let effectiveBlocks = primaryBlocks;
     let alternateArticle: any = null;
+    const hasAlternateLanguage = Boolean(altBlog);
 
-    if (blog.translationGroupId) {
-      const alt = await this.blogModel
-        .findOne({
-          translationGroupId: blog.translationGroupId,
-          _id: { $ne: rawBlog._id },
-          $or: [
-            { status: 'PUBLISHED' },
-            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-          ],
-        })
-        .lean();
-      hasAlternateLanguage = !!alt;
-
-      if (alt) {
-        const altId = alt._id.toString();
-        const altBlocks = await this.getBlocks(altId);
-        effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
-        alternateArticle = {
-          id: altId,
-          title: alt.title,
-          slug: alt.slug,
-          language: alt.language,
-          description: alt.description ?? null,
-          coverImage: alt.coverImage ?? null,
-          imageAlt: alt.imageAlt ?? null,
-          imageCaption: alt.imageCaption ?? null,
-          metaTitle: alt.metaTitle ?? null,
-          metaDescription: alt.metaDescription ?? null,
-          publishedAt: alt.publishedAt ?? null,
-          updatedAt: (alt as any).updatedAt,
-          htmlContent: blocksToHtml(altBlocks as any),
-        };
-      }
+    if (altBlog) {
+      const altId = (altBlog as any)._id.toString();
+      const altBlocks = await this.getBlocks(altId);
+      effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
+      alternateArticle = {
+        id: altId,
+        title: (altBlog as any).title,
+        slug: (altBlog as any).slug,
+        language: (altBlog as any).language,
+        description: (altBlog as any).description ?? null,
+        coverImage: (altBlog as any).coverImage ?? null,
+        imageAlt: (altBlog as any).imageAlt ?? null,
+        imageCaption: (altBlog as any).imageCaption ?? null,
+        metaTitle: (altBlog as any).metaTitle ?? null,
+        metaDescription: (altBlog as any).metaDescription ?? null,
+        publishedAt: (altBlog as any).publishedAt ?? null,
+        updatedAt: (altBlog as any).updatedAt,
+        htmlContent: blocksToHtml(altBlocks as any),
+      };
     }
 
-    const postTagsList = await this.getBlogTags(blog.id);
-    const postCategories = await this.getBlogCategories(blog.id);
     const primaryCategory = postCategories[0] || blog.category;
     const html = blocksToHtml(effectiveBlocks as any);
 

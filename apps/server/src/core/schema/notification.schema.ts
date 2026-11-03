@@ -37,6 +37,8 @@ export class Notification {
   blogId?: Types.ObjectId | null;
 }
 export const NotificationSchema = SchemaFactory.createForClass(Notification);
+NotificationSchema.index({ audienceUserId: 1, createdAt: -1 });
+NotificationSchema.index({ createdAt: -1 });
 
 @Schema({ collection: 'notification_reads', timestamps: true })
 export class NotificationRead {

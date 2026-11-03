@@ -1280,5 +1280,43 @@ describe('TestSeriesService Hierarchy & Operations', () => {
     // Crucial check: shared questions are untouched
     expect(questionModel.deleteMany).toBeUndefined();
   });
-});
+  it('listPublishedTests correctly classifies PYQ and Full mock tests with legacy compatibility', async () => {
+    const { service, testSeriesModel, examModel } = makeService();
+    const seriesId = new Types.ObjectId();
 
+    testSeriesModel.findById.mockReturnValue({
+      lean: vi.fn().mockResolvedValue({
+        _id: seriesId,
+        status: 'published',
+        slug: 'ssc-cgl-series',
+      }),
+    });
+
+    let capturedFilter: any = null;
+    examModel.find.mockImplementation((filter: any) => {
+      capturedFilter = filter;
+      return {
+        select: vi.fn().mockReturnValue({
+          sort: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([]),
+          }),
+        }),
+      };
+    });
+
+    // 1. Query testMode=pyq
+    await service.listPublishedTests(seriesId.toString(), { testMode: 'pyq' });
+    expect(capturedFilter.$or).toBeDefined();
+    expect(capturedFilter.$or).toEqual([
+      { testMode: 'pyq' },
+      { slug: { $regex: '^pyq-', $options: 'i' } },
+      { title: { $regex: '\\[PYQ\\]|\\bPYQ\\b', $options: 'i' } },
+    ]);
+
+    // 2. Query testMode=full
+    await service.listPublishedTests(seriesId.toString(), { testMode: 'full' });
+    expect(capturedFilter.testMode).toBe('full');
+    expect(capturedFilter.slug).toEqual({ $not: { $regex: '^pyq-', $options: 'i' } });
+    expect(capturedFilter.title).toEqual({ $not: { $regex: '\\[PYQ\\]|\\bPYQ\\b', $options: 'i' } });
+  });
+});

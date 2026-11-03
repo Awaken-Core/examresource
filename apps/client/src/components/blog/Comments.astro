@@ -350,10 +350,25 @@ const { slug, language } = Astro.props;
             var commentsResponse = await fetch(apiUrl + '/blogs/' + encodeURIComponent(slug) + '/comments?language=' + encodeURIComponent(language));
             if (!commentsResponse.ok) throw new Error('Unable to load comments.');
             var data = await commentsResponse.json();
-            // Authentication is optional for reading comments; never let it hide public discussion.
-            user = await fetch(apiUrl + '/me', { credentials: 'include' })
-              .then(function (response) { return response.ok ? response.json() : null; })
-              .catch(function () { return null; });
+            // Read authentication from memory / local storage cache to eliminate duplicate network calls
+            if (window.__currentUser) {
+              user = window.__currentUser;
+            } else if (localStorage.getItem('auth_active') === '1') {
+              try {
+                user = JSON.parse(localStorage.getItem('auth_user') || 'null');
+              } catch (e) {
+                user = null;
+              }
+            } else if (document.cookie.includes('logged_in=1')) {
+              user = await fetch(apiUrl + '/me', { credentials: 'include' })
+                .then(function (response) {
+                  var ct = response.headers.get('content-type') || '';
+                  return response.ok && ct.includes('application/json') ? response.json() : null;
+                })
+                .catch(function () { return null; });
+            } else {
+              user = null;
+            }
             if (user) {
               rule.textContent = 'Commenting as ' + user.name + (user.role === 'admin' ? ' (Admin)' : user.role === 'editor' ? ' (Editor)' : '') + '.';
             } else {

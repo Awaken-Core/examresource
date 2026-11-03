@@ -1,3 +1,5 @@
+import { API_URL } from './api';
+
 interface CacheEntry<T> {
   data: T;
   expiresAt: number;
@@ -15,7 +17,7 @@ function isUsableStale<T>(cached: CacheEntry<T> | undefined, now: number): boole
 }
 
 export async function fetchPublicJson<T>(path: string, ttlMs = DEFAULT_TTL_MS): Promise<T | null> {
-  const base = import.meta.env.PUBLIC_API_URL?.replace(/\/$/, '');
+  const base = API_URL;
   if (!base) return null;
 
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
@@ -51,6 +53,11 @@ export async function fetchPublicJson<T>(path: string, ttlMs = DEFAULT_TTL_MS): 
         if (response.status >= 500 && isUsableStale(cached, Date.now())) {
           return cached!.data as T;
         }
+        return null;
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
         return null;
       }
 

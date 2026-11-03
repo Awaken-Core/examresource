@@ -30,10 +30,10 @@ interface SeriesSeo {
   subjects?: Array<{ name?: string; customDisplayName?: string | null }>;
 }
 
-// Fetch series metadata and all published tests concurrently in a single round-trip
-const [seriesSeo, allPublishedTests] = await Promise.all([
+// Fetch series metadata and initial active full mock tests concurrently in a single round-trip
+const [seriesSeo, fullTestsRes] = await Promise.all([
   fetchPublicJson<SeriesSeo>(`/test-series/${encodeURIComponent(id)}`),
-  fetchPublicJson<any[]>(`/test-series/${encodeURIComponent(id)}/tests`),
+  fetchPublicJson<any[]>(`/test-series/${encodeURIComponent(id)}/tests?testMode=full`),
 ]);
 
 if (!seriesSeo) {
@@ -45,13 +45,13 @@ if (seriesSeo.slug && id.toLowerCase() !== seriesSeo.slug.toLowerCase()) {
   return Astro.redirect(`/test-series/${seriesSeo.slug}`, 301);
 }
 
-const initialTests = allPublishedTests || [];
 const isPyqPaper = (t: any) =>
   t.testMode === 'pyq' ||
   (t.slug && t.slug.toLowerCase().startsWith('pyq-')) ||
   (t.title && (t.title.startsWith('[PYQ]') || t.title.includes('PYQ')));
-const initialFullTests = initialTests.filter((t: any) => t.testMode === 'full' && !isPyqPaper(t));
-const initialPyqTests = initialTests.filter((t: any) => isPyqPaper(t));
+
+const initialFullTests = (fullTestsRes || []).filter((t: any) => !isPyqPaper(t));
+const initialPyqTests = (fullTestsRes || []).filter((t: any) => isPyqPaper(t));
 
 const seriesTitle = seriesSeo?.title?.trim();
 const subjectNames = (seriesSeo?.subjects ?? [])
@@ -134,7 +134,7 @@ const jsonLd = seriesTitle
       seriesIdOrSlug={id}
       initialData={seriesSeo as any}
       initialFullTests={initialFullTests}
-      initialAllTests={initialTests}
+      initialPyqTests={initialPyqTests}
     />
 
     {seriesTitle && (

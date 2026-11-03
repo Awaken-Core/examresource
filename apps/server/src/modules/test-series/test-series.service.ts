@@ -1442,7 +1442,21 @@ export class TestSeriesService {
       ],
     };
 
-    if (query.testMode) filter.testMode = query.testMode;
+    if (query.testMode === 'pyq') {
+      // Return tests explicitly tagged pyq OR legacy papers identified by slug or title
+      filter.$or = [
+        { testMode: 'pyq' },
+        { slug: { $regex: '^pyq-', $options: 'i' } },
+        { title: { $regex: '\\[PYQ\\]|\\bPYQ\\b', $options: 'i' } },
+      ];
+    } else if (query.testMode === 'full') {
+      // Return full mock tests, strictly excluding any PYQ papers
+      filter.testMode = 'full';
+      filter.slug = { $not: { $regex: '^pyq-', $options: 'i' } };
+      filter.title = { $not: { $regex: '\\[PYQ\\]|\\bPYQ\\b', $options: 'i' } };
+    } else if (query.testMode) {
+      filter.testMode = query.testMode;
+    }
     if (query.subjectId) {
       if (!Types.ObjectId.isValid(query.subjectId)) {
         throw new BadRequestException('Invalid subject ID.');

@@ -729,7 +729,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       } from '../lib/notifications';
 
       const siteDomain = document.documentElement.getAttribute('data-site-domain') || window.location.hostname;
-      const API_URL = (import.meta.env.PUBLIC_API_URL || '').replace(/\/$/, '');
+      import { API_URL } from '../lib/api';
 
       function getDisplayedArticleLang(): 'hinglish' | 'en' | null {
         const view = document.querySelector<HTMLElement>('.blog-reading-view, [data-article-lang]');
@@ -1682,6 +1682,13 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             } catch (e) {}
           }
 
+          // Skip redundant /me calls on client transitions if verified guest with no login intent
+          const isGuestVerified = sessionStorage.getItem('guest_verified') === '1';
+          const hasLoginIntent = window.location.search.includes('login=success') || document.cookie.includes('logged_in=1') || localStorage.getItem('auth_active') === '1';
+          if (isGuestVerified && !hasLoginIntent) {
+            return;
+          }
+
           const apiUrl = API_URL;
           const response = await fetch(`${apiUrl}/me`, { priority: 'high', cache: 'no-store', credentials: 'include' } as any).catch(() => null);
 
@@ -1689,8 +1696,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           // NEVER touch auth state or reset UI to logged-out. Keep optimistic state intact!
           if (!response || response.status >= 500) return;
 
+          const contentType = response.headers.get('content-type') || '';
+          if (!contentType.includes('application/json')) return;
+
           if (response.status === 401) {
             try {
+              sessionStorage.setItem('guest_verified', '1');
               localStorage.removeItem('auth_active');
               localStorage.removeItem('auth_user');
             } catch (e) {}
@@ -1701,6 +1712,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           if (isUserLoggedIn) {
             try {
+              sessionStorage.removeItem('guest_verified');
               localStorage.setItem('auth_active', '1');
               localStorage.setItem('auth_user', JSON.stringify({
                 id: user.id,
@@ -1711,6 +1723,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
             } catch (e) {}
           } else if (response.status === 401 || (response.ok && !user)) {
             try {
+              sessionStorage.setItem('guest_verified', '1');
               localStorage.removeItem('auth_active');
               localStorage.removeItem('auth_user');
             } catch (e) {}
@@ -1732,7 +1745,8 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }
 
           // Directly trigger native browser notification permission prompt on visit
-          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default' && !(window as any).__notifPromptBound) {
+            (window as any).__notifPromptBound = true;
             const promptDirect = () => {
               if (Notification.permission === 'default') {
                 void requestBrowserNotificationPermission();

@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image, getImage } from 'astro:assets';
+import { Image } from 'astro:assets';
 import BlogArticle from '../components/blog/BlogArticle.astro';
 import TopicNavigation from '../components/blog/TopicNavigation.astro';
 import Comments from '../components/blog/Comments.astro';
@@ -12,6 +12,7 @@ import { siteUrl, siteName, siteDomain } from '../data/site';
 import { buildLangVersion, processArticleHtml, type ArticleLangBundle } from '../lib/article-lang';
 import { blogLanguageToAppLang, resolveArticleLanguage } from '../lib/preferred-lang';
 import { ProfileHub } from '../components/profile/ProfileHub';
+import { saveArticleToCache, getStaleArticleFromCache } from '../lib/article-cache';
 
 const { slug: slugParam } = Astro.params;
 const slugKey = (slugParam || '').toLowerCase();
@@ -38,6 +39,9 @@ const requestedLanguage = resolveArticleLanguage({
 let livePost: any = isProfile ? { htmlContent: '', slug: '', title: '' } : null;
 let alternatePost: any = null;
 let redirectUrl: string | null = null;
+let isGenuineNotFound = false;
+let isBackendFailure = false;
+let isBackendUnavailable = false;
 
 // Fetch primary article AND recent posts concurrently during SSR for instant TTFB & reliable layout
 let recentPosts: ListingPost[] = [];
@@ -45,8 +49,8 @@ let recentPosts: ListingPost[] = [];
 try {
   const [primaryRes, fetchedRecent] = await Promise.all([
     fetch(`${API_URL}/blogs/${slugKey}?language=${requestedLanguage}`, {
-      signal: AbortSignal.timeout(5000),
-    }),
+      signal: AbortSignal.timeout(6000),
+    }).catch(() => null),
     getRecentPosts(requestedLanguage, slugKey).catch(() => []),
   ]);
 
@@ -54,19 +58,30 @@ try {
     ? fetchedRecent 
     : getCachedRecentPostsSync(requestedLanguage, slugKey);
 
-  if (primaryRes.ok) {
-    livePost = await primaryRes.json();
-    const alt = livePost?.alternateArticle;
-    if (alt?.language && alt.language !== livePost?.language && alt.htmlContent != null) {
-      alternatePost = alt;
+  if (primaryRes && primaryRes.ok) {
+    const contentType = primaryRes.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      livePost = await primaryRes.json();
+      const alt = livePost?.alternateArticle;
+      if (alt?.language && alt.language !== livePost?.language && alt.htmlContent != null) {
+        alternatePost = alt;
+      }
+      saveArticleToCache(slugKey, requestedLanguage, livePost, alternatePost);
+    } else {
+      isBackendFailure = true;
     }
-  } else if (primaryRes.status === 404) {
+  } else if (primaryRes && primaryRes.status === 404) {
+    isGenuineNotFound = true;
     try {
       const errData = await primaryRes.json();
       if (errData?.redirectUrl) redirectUrl = errData.redirectUrl;
     } catch {}
+  } else {
+    // Timeout, network failure, or HTTP 5xx
+    isBackendFailure = true;
   }
 } catch (e) {
+  isBackendFailure = true;
   recentPosts = getCachedRecentPostsSync(requestedLanguage, slugKey);
 }
 
@@ -74,99 +89,73 @@ if (redirectUrl) {
   return Astro.redirect(redirectUrl, 301);
 }
 
-if (!livePost && !isProfile) {
-  return Astro.rewrite('/404');
-}
-
-async function optimizeBlogHtmlImages(html: string): Promise<string> {
-  if (!html || !html.includes('<img')) return html;
-  const imgRegex = /<img\b([^>]*)>/gi;
-  const matches = [...html.matchAll(imgRegex)];
-  if (matches.length === 0) return html;
-
-  const replacements = await Promise.all(
-    matches.map(async (match) => {
-      const fullTag = match[0];
-      const attrs = match[1];
-
-      const srcMatch = /\bsrc=["']([^"']+)["']/i.exec(attrs);
-      if (!srcMatch) return { fullTag, newTag: fullTag };
-      const rawSrc = srcMatch[1];
-      const decodedSrc = rawSrc.replace(/&amp;/g, '&');
-
-      if (decodedSrc.startsWith('data:') || decodedSrc.startsWith('/_image')) {
-        if (!fullTag.includes('data-image-component')) {
-          return { fullTag, newTag: fullTag.replace(/<img\b/i, '<img data-image-component="true"') };
-        }
-        return { fullTag, newTag: fullTag };
-      }
-
-      const widthMatch = /\bwidth=["']?(\d+)["']?/i.exec(attrs);
-      const heightMatch = /\bheight=["']?(\d+)["']?/i.exec(attrs);
-      const width = widthMatch ? parseInt(widthMatch[1], 10) : 800;
-      const height = heightMatch ? parseInt(heightMatch[1], 10) : Math.round((width * 9) / 16);
-
-      try {
-        const optimized = await getImage({
-          src: decodedSrc,
-          width,
-          height,
-          format: 'webp',
-        });
-
-        let newTag = fullTag.replace(/\bsrc=["'][^"']*["']/i, `src="${optimized.src}"`);
-        if (optimized.srcSet?.attribute) {
-          if (newTag.includes('srcset=')) {
-            newTag = newTag.replace(/\bsrcset=["'][^"']*["']/i, `srcset="${optimized.srcSet.attribute}"`);
-          } else {
-            newTag = newTag.replace(/<img\b/i, `<img srcset="${optimized.srcSet.attribute}"`);
-          }
-        }
-        if (!newTag.includes('data-image-component')) {
-          newTag = newTag.replace(/<img\b/i, '<img data-image-component="true"');
-        }
-        return { fullTag, newTag };
-      } catch {
-        if (!fullTag.includes('data-image-component')) {
-          return { fullTag, newTag: fullTag.replace(/<img\b/i, '<img data-image-component="true"') };
-        }
-        return { fullTag, newTag: fullTag };
-      }
-    })
-  );
-
-  let result = html;
-  for (const { fullTag, newTag } of replacements) {
-    if (fullTag !== newTag) {
-      result = result.replace(fullTag, newTag);
-    }
+// Fallback to stale cached article on transient backend failure/timeout
+if (!livePost && isBackendFailure) {
+  const stale = getStaleArticleFromCache(slugKey, requestedLanguage);
+  if (stale) {
+    livePost = stale.livePost;
+    alternatePost = stale.alternatePost;
+    Astro.response.headers.set('X-Article-Cache', 'STALE');
   }
-
-  return result;
 }
 
-const { htmlBody: rawHtmlBody } = processArticleHtml(livePost.htmlContent || '', livePost.title);
-const htmlBody = await optimizeBlogHtmlImages(rawHtmlBody);
+if (!livePost && !isProfile) {
+  if (isGenuineNotFound) {
+    return Astro.rewrite('/404');
+  }
+  isBackendUnavailable = true;
+}
 
-const subjectSlug = livePost.category?.slug || 'general';
+function optimizeBlogHtmlImages(html: string): string {
+  if (!html || !html.includes('<img')) return html;
+  return html.replace(/<img\b([^>]*)>/gi, (_match, attrs) => {
+    let newAttrs = attrs;
+    if (!/\bloading=["']/i.test(newAttrs)) {
+      newAttrs += ' loading="lazy"';
+    }
+    if (!/\bdecoding=["']/i.test(newAttrs)) {
+      newAttrs += ' decoding="async"';
+    }
+    if (!/\bdata-image-component=["']/i.test(newAttrs)) {
+      newAttrs += ' data-image-component="true"';
+    }
+    return `<img${newAttrs}>`;
+  });
+}
+
+const safePost = livePost || {
+  slug: slugKey,
+  title: 'Article Temporarily Unavailable',
+  htmlContent: '',
+  category: null,
+  description: '',
+  metaDescription: '',
+  publishedAt: null,
+  updatedAt: null,
+};
+
+const { htmlBody: rawHtmlBody } = processArticleHtml(safePost.htmlContent || '', safePost.title);
+const htmlBody = optimizeBlogHtmlImages(rawHtmlBody);
+
+const subjectSlug = safePost.category?.slug || 'general';
 
 const article: TopicDetail = {
-  slug: livePost.slug,
-  title: livePost.title,
+  slug: safePost.slug,
+  title: safePost.title,
   subjectSlug,
-  subjectTitle: livePost.category?.name || 'General',
-  description: livePost.description || livePost.metaDescription || '',
+  subjectTitle: safePost.category?.name || 'General',
+  description: safePost.description || safePost.metaDescription || '',
   readTime: '4 min read',
   difficulty: 'Intermediate',
-  category: livePost.category?.name || 'Articles',
-  publishedDate: livePost.publishedAt ? new Date(livePost.publishedAt).toISOString().split('T')[0] : '2026-10-13',
-  updatedDate: livePost.updatedAt ? new Date(livePost.updatedAt).toISOString().split('T')[0] : '2026-10-13',
+  category: safePost.category?.name || 'Articles',
+  publishedDate: safePost.publishedAt ? new Date(safePost.publishedAt).toISOString().split('T')[0] : '2026-10-13',
+  updatedDate: safePost.updatedAt ? new Date(safePost.updatedAt).toISOString().split('T')[0] : '2026-10-13',
   introParagraphs: [
-    livePost.description || 'Detailed guide and notification information.',
+    safePost.description || 'Detailed guide and notification information.',
   ],
   sections: [],
   summaryPoints: [
-    `Official publication for ${livePost.title}.`,
+    `Official publication for ${safePost.title}.`,
     'Review complete eligibility, timelines, and guidelines below.',
   ],
 };
@@ -175,16 +164,7 @@ const plainText = (htmlBody || article.introParagraphs.join(' ')).replace(/<[^>]
 const wordCount = plainText ? plainText.split(' ').length : 0;
 const readMinutes = Math.max(1, Math.round(wordCount / 200));
 
-// Edge CDN caching: cache article HTML for 5 minutes, serve stale up to 15 minutes
-Astro.response.headers.set(
-  'Cache-Control',
-  isProfile
-    ? 'private, no-store'
-    : 'public, max-age=0, s-maxage=300, stale-while-revalidate=900',
-);
-if (!isProfile) {
-  Astro.response.headers.set('Vary', 'Accept-Encoding');
-}
+
 
 function makePageTitle(metaTitle: string | undefined, title: string) {
   const base = metaTitle || title;
@@ -330,7 +310,7 @@ if (hasAlternateLanguage) {
   alternateLinks.push({ hreflang: 'en', href: `${siteOrigin}/${article.slug}` });
 }
 
-// Embed both language versions for instant client-side swap (no navigation)
+// Lean metadata bundle for instant language switcher and on-demand client swap
 const langBundle: ArticleLangBundle = {};
 langBundle[currentLanguage] = buildLangVersion({
   language: currentLanguage,
@@ -338,7 +318,7 @@ langBundle[currentLanguage] = buildLangVersion({
   description: article.description,
   pageTitle,
   pageDescription,
-  htmlBody: htmlBody || '',
+  htmlBody: '', // Already rendered in SSR #article-body DOM
   updatedDate: article.updatedDate,
   coverImage: livePost?.coverImage || null,
   imageAlt: livePost?.imageAlt || null,
@@ -347,21 +327,26 @@ langBundle[currentLanguage] = buildLangVersion({
 });
 
 if (alternatePost) {
-  const altProcessed = processArticleHtml(alternatePost.htmlContent || '', alternatePost.title);
-  const altHtmlBody = await optimizeBlogHtmlImages(altProcessed.htmlBody);
   const altTitle = alternatePost.title;
   const altDesc = alternatePost.description || alternatePost.metaDescription || '';
   const altUpdated = alternatePost.updatedAt
     ? new Date(alternatePost.updatedAt).toISOString().split('T')[0]
     : article.updatedDate;
+  let altReadMinutes = readMinutes;
+  if (alternatePost.htmlContent) {
+    const altPlain = (alternatePost.htmlContent || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    const altWords = altPlain ? altPlain.split(' ').length : 0;
+    altReadMinutes = Math.max(1, Math.round(altWords / 200));
+  }
   langBundle[alternateLanguage] = buildLangVersion({
     language: alternateLanguage,
     title: altTitle,
     description: altDesc,
     pageTitle: makePageTitle(alternatePost.metaTitle, altTitle),
     pageDescription: makePageDescription(alternatePost, altTitle, altDesc),
-    htmlBody: altHtmlBody,
+    htmlBody: '', // Fetched on demand when student toggles language
     updatedDate: altUpdated,
+    readMinutes: altReadMinutes,
     // Prefer alt cover; fall back to primary (images are synced across the group)
     coverImage: alternatePost.coverImage || livePost?.coverImage || null,
     imageAlt: alternatePost.imageAlt || livePost?.imageAlt || null,
@@ -378,9 +363,62 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
   if (!publishedAt) return false;
   return Date.now() - new Date(publishedAt).getTime() < THREE_DAYS_MS;
 }
+
+// Authoritative cache headers assignment (applied once after all response states are finalized)
+const cookieHeader = Astro.request.headers.get('cookie') || '';
+const hasCookieOverride = Boolean(cookieHeader.includes('preferred_lang=') && !langParam);
+const isStale = Boolean(Astro.response.headers.get('X-Article-Cache') === 'STALE');
+
+if (isProfile) {
+  Astro.response.headers.set('Cache-Control', 'private, no-store');
+} else if (isBackendUnavailable) {
+  // Temporary 503 response: enforce strict no-store and Retry-After
+  Astro.response.status = 503;
+  Astro.response.headers.set('Retry-After', '5');
+  Astro.response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+} else if (isStale) {
+  // Stale fallback response: do not cache publicly on edge CDN
+  Astro.response.headers.set('Cache-Control', 'private, no-cache, no-store');
+  Astro.response.headers.set('Vary', 'Accept-Encoding');
+} else if (livePost) {
+  if (hasCookieOverride) {
+    // Cookie-selected language on bare URL: private caching only to avoid shared cache poisoning
+    Astro.response.headers.set('Cache-Control', 'private, no-cache');
+    Astro.response.headers.set('Vary', 'Cookie, Accept-Encoding');
+  } else {
+    // Canonical default or explicit ?lang= query parameter: safe for shared public edge caching
+    Astro.response.headers.set(
+      'Cache-Control',
+      'public, max-age=0, s-maxage=300, stale-while-revalidate=900',
+    );
+    Astro.response.headers.set('Vary', 'Accept-Encoding');
+  }
+}
 ---
 
-{isProfile ? (
+{isBackendUnavailable ? (
+  <Layout title={`Article Temporarily Unavailable | ${siteName}`} noindex isEditorialTheme={true}>
+    <main class="mx-auto w-full max-w-2xl px-4 py-16 sm:px-6 lg:px-8 text-center">
+      <div class="rounded-2xl border border-border bg-surface p-8 shadow-sm">
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-500/10 text-amber-500 mb-4">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold text-heading">Article Temporarily Unavailable</h1>
+        <p class="mt-2 text-sm text-muted">We encountered a temporary delay loading this article. Please refresh or try again in a few moments.</p>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <button onclick="window.location.reload()" class="px-5 py-2.5 rounded-full bg-accent text-white font-medium text-sm hover:opacity-90 transition cursor-pointer shadow-sm">
+            Retry Now
+          </button>
+          <a href="/" class="px-5 py-2.5 rounded-full border border-border bg-surface-raised font-medium text-sm text-heading hover:bg-surface transition">
+            Go to Homepage
+          </a>
+        </div>
+      </div>
+    </main>
+  </Layout>
+) : isProfile ? (
   <Layout title={`My Preparation | ${siteName}`} noindex isEditorialTheme={true}>
     <main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       <ProfileHub client:load />
@@ -399,12 +437,13 @@ function computeIsNew(publishedAt: string | null | undefined): boolean {
   noindex={Boolean(livePost?.noindex)}
   isEditorialTheme={true}
 >
-  <script type="application/json" id="article-lang-data" set:html={langBundleJson} />
+  <script type="application/json" id="article-lang-data" data-slug={article.slug} set:html={langBundleJson} />
 
   <div
     id="overview-top"
     class="blog-reading-view min-h-screen bg-editorial-bg text-editorial-text selection:bg-editorial-accent/20 selection:text-editorial-accent"
     data-article-lang={blogLanguageToAppLang(currentLanguage)}
+    data-article-slug={article.slug}
   >
     <article
       class="w-full px-3.5 py-3 sm:px-6 sm:py-6 lg:px-8 max-w-7xl mx-auto flex flex-col gap-3.5 sm:gap-6 xl:grid xl:grid-cols-[minmax(0,1fr)_300px] xl:gap-x-8 xl:gap-y-5 xl:items-start"
