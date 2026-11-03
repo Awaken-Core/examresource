@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
+import { siteUrl } from '../data/site';
 
 export const GET: APIRoute = () => {
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const content = `# Default rules for all web search crawlers
 User-agent: *
 Allow: /
@@ -14,6 +14,7 @@ Disallow: /editor/
 Disallow: /login
 Disallow: /signup
 Disallow: /test-series/cbt/
+Disallow: /test-series/instructions/
 Disallow: /test-series/results/
 
 # Explicit permissions for AI Search Engines & Grounding Bots (OpenAI ChatGPT, Anthropic Claude, Grok, Gemini, Perplexity)

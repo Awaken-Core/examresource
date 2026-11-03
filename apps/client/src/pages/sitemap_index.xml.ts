@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
+import { siteUrl } from '../data/site';
 
 export const GET: APIRoute = () => {
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const currentDate = new Date().toISOString().split('T')[0];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
