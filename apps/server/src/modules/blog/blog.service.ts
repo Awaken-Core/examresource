@@ -661,11 +661,13 @@ export class BlogService {
       .lean();
 
     return items.map((i: any) => ({
+      title: i.title,
       slug: (i.slug || '').replace(/-(english|hinglish)$/i, ''),
       language: i.language,
       categorySlug: i.categoryId?.slug ?? null,
       updatedAt: i.updatedAt,
       publishedAt: i.publishedAt,
+      coverImage: i.coverImage ?? null,
       noindex: i.noindex,
     }));
   }

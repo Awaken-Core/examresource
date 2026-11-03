@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
+import { siteUrl } from '../data/site';
 
 export const GET: APIRoute = () => {
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   return new Response(null, {
     status: 301,
     headers: {

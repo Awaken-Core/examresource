@@ -1,11 +1,8 @@
 import type { APIRoute } from 'astro';
 import { API_URL } from '../lib/api';
+import { siteUrl, siteName, siteDomain } from '../data/site';
 
 export const GET: APIRoute = async () => {
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
-  const siteName = import.meta.env.PUBLIC_SITE_NAME;
-  const siteDomain = import.meta.env.PUBLIC_SITE_DOMAIN;
-
   let livePosts: any[] = [];
   try {
     const res = await fetch(`${API_URL}/blogs?limit=50`, { signal: AbortSignal.timeout(6000) }).catch(() => null);

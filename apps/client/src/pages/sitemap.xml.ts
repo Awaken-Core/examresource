@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { API_URL } from '../lib/api';
+import { siteUrl, siteName } from '../data/site';
 
 function escapeXml(str: string): string {
   if (!str) return '';
@@ -17,8 +18,6 @@ function safeCdata(str: string): string {
 }
 
 export const GET: APIRoute = async () => {
-  const siteUrl = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
-  const siteName = import.meta.env.PUBLIC_SITE_NAME;
   const currentDate = new Date().toISOString().split('T')[0];
 
   let sitemapEntries: any[] = [];
@@ -66,6 +65,26 @@ export const GET: APIRoute = async () => {
       },
     },
     {
+      loc: `${siteUrl}/blogs`,
+      changefreq: 'daily',
+      priority: '0.90',
+      lastmod: currentDate,
+      image: {
+        loc: `${siteUrl}/og-image.jpg`,
+        title: `${siteName} | Recruitment Blogs & Exam Guides`,
+      },
+    },
+    {
+      loc: `${siteUrl}/latest-updates`,
+      changefreq: 'daily',
+      priority: '0.90',
+      lastmod: currentDate,
+      image: {
+        loc: `${siteUrl}/og-image.jpg`,
+        title: `${siteName} | Latest Government Exam Updates & Alerts`,
+      },
+    },
+    {
       loc: `${siteUrl}/test-series`,
       changefreq: 'daily',
       priority: '0.95',
@@ -75,12 +94,35 @@ export const GET: APIRoute = async () => {
         title: `${siteName} | Free Online Test Series & CBT Mock Tests`,
       },
     },
-    { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
-    { loc: `${siteUrl}/terms-of-service`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
-    { loc: `${siteUrl}/pricing`, changefreq: 'monthly', priority: '0.6', lastmod: currentDate },
-    { loc: `${siteUrl}/refund-policy`, changefreq: 'monthly', priority: '0.4', lastmod: currentDate },
-    { loc: `${siteUrl}/contact-us`, changefreq: 'monthly', priority: '0.5', lastmod: currentDate },
-    { loc: `${siteUrl}/sitemap`, changefreq: 'weekly', priority: '0.7', lastmod: currentDate },
+    {
+      loc: `${siteUrl}/daily-quiz`,
+      changefreq: 'daily',
+      priority: '0.85',
+      lastmod: currentDate,
+    },
+    {
+      loc: `${siteUrl}/rank-predictor`,
+      changefreq: 'weekly',
+      priority: '0.85',
+      lastmod: currentDate,
+    },
+    { loc: `${siteUrl}/pricing`, changefreq: 'monthly', priority: '0.60', lastmod: currentDate },
+    { loc: `${siteUrl}/sitemap`, changefreq: 'weekly', priority: '0.70', lastmod: currentDate },
+    { loc: `${siteUrl}/contact-us`, changefreq: 'monthly', priority: '0.50', lastmod: currentDate },
+    { loc: `${siteUrl}/privacy-policy`, changefreq: 'monthly', priority: '0.40', lastmod: currentDate },
+    { loc: `${siteUrl}/terms-of-service`, changefreq: 'monthly', priority: '0.40', lastmod: currentDate },
+    { loc: `${siteUrl}/refund-policy`, changefreq: 'monthly', priority: '0.40', lastmod: currentDate },
+  ];
+
+  const fallbackCategories = [
+    'central-government',
+    'state-exams',
+    'banking',
+    'railways',
+    'teaching',
+    'defence',
+    'police',
+    'psu-engineering',
   ];
 
   if (Array.isArray(categories) && categories.length > 0) {
@@ -88,6 +130,15 @@ export const GET: APIRoute = async () => {
       if (!c?.slug) continue;
       staticUrls.push({
         loc: `${siteUrl}/category/${c.slug}`,
+        changefreq: 'daily',
+        priority: '0.85',
+        lastmod: currentDate,
+      });
+    }
+  } else {
+    for (const slug of fallbackCategories) {
+      staticUrls.push({
+        loc: `${siteUrl}/category/${slug}`,
         changefreq: 'daily',
         priority: '0.85',
         lastmod: currentDate,
@@ -105,6 +156,16 @@ export const GET: APIRoute = async () => {
     'afcat-2-2026-notification-exam-date-eligibility',
     'up-polytechnic-jeecup-2027-application-form',
     'fifa-world-cup-2026-standings-points-table-results',
+  ];
+
+  const fallbackSeriesSlugs = [
+    'quantitative-aptitude-complete',
+    'logical-reasoning-complete',
+    'general-awareness-complete',
+    'english-comprehension-complete',
+    'dsssb-tgt-computer-science',
+    'rrb-alp-cbt-1-mock-test',
+    'ssc-cgl-tier-1-all-india-mock-test',
   ];
 
   const seenUrls = new Set<string>(staticUrls.map((u) => u.loc));
@@ -175,6 +236,19 @@ export const GET: APIRoute = async () => {
         });
       }
     }
+  } else {
+    for (const slug of fallbackSeriesSlugs) {
+      const loc = `${siteUrl}/test-series/${slug}`;
+      if (!seenUrls.has(loc)) {
+        seenUrls.add(loc);
+        dynamicUrls.push({
+          loc,
+          lastmod: currentDate,
+          changefreq: 'weekly',
+          priority: '0.85',
+        });
+      }
+    }
   }
 
   const allUrls = [...staticUrls, ...dynamicUrls];
@@ -210,4 +284,3 @@ ${allUrls
     },
   });
 };
-
