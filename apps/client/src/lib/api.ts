@@ -1,5 +1,4 @@
 const DEFAULT_DEV_API_URL = 'http://localhost:5000/api/v1';
-const DEFAULT_PROD_API_URL = 'https://examresource.awakenstudioss.workers.dev/api/v1';
 
 function resolveApiUrl(): string {
   const envUrl = (import.meta.env.PUBLIC_API_URL || '').trim().replace(/\/$/, '');
@@ -8,23 +7,27 @@ function resolveApiUrl(): string {
     if (/^https?:\/\//i.test(envUrl)) {
       return envUrl;
     }
+    // Relative path resolution in browser
     if (typeof window !== 'undefined') {
       return `${window.location.origin}${envUrl.startsWith('/') ? '' : '/'}${envUrl}`;
     }
+    // Relative path resolution during SSR using PUBLIC_SITE_URL
+    const siteUrl = (import.meta.env.PUBLIC_SITE_URL || '').trim().replace(/\/$/, '');
+    if (siteUrl && /^https?:\/\//i.test(siteUrl)) {
+      return `${siteUrl}${envUrl.startsWith('/') ? '' : '/'}${envUrl}`;
+    }
+    return envUrl;
   }
 
-  // Check if we are running in production mode or deployed on production domain
-  const isProd =
-    import.meta.env.PROD ||
-    (typeof window !== 'undefined' &&
-      (window.location.hostname === 'govtpariksha.com' ||
-        window.location.hostname.endsWith('.govtpariksha.com')));
-
-  if (isProd) {
-    return DEFAULT_PROD_API_URL;
+  // Development environment fallback to local API server
+  if (import.meta.env.DEV) {
+    return DEFAULT_DEV_API_URL;
   }
 
-  return DEFAULT_DEV_API_URL;
+  // In production, preview, or staging builds, do not silently fallback to an assumed production URL
+  throw new Error(
+    '[api] Missing required environment variable PUBLIC_API_URL for non-development build. Configure PUBLIC_API_URL in deployment settings.',
+  );
 }
 
 export const API_URL = resolveApiUrl();

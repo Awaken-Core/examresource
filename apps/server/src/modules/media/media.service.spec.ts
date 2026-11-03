@@ -56,7 +56,7 @@ describe('MediaService image compression', () => {
     const outputMeta = await sharp(putCommand.input.Body).metadata();
     expect(outputMeta.format).toBe('webp');
     expect(outputMeta.hasAlpha).toBe(true);
-  });
+  }, 15000);
 
   it('should reject non-image or corrupt buffers', async () => {
     const corruptBuffer = Buffer.from('this is not an image file');

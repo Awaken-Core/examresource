@@ -431,28 +431,102 @@ export class BlogService {
       .populate<{ authorId: UserDocument }>('authorId')
       .lean();
 
-    let rawBlog = candidateBlogs.find((b: any) => b.language === requestedLang);
+    const otherLang = requestedLang === 'ENGLISH' ? 'HINGLISH' : 'ENGLISH';
+    const normalizedSlug = slug.toLowerCase().trim();
 
-    if (!rawBlog && candidateBlogs.length > 0) {
-      // Find candidate with translationGroupId to locate the translated sibling
-      const candidateWithGroup = candidateBlogs.find((b: any) => Boolean(b.translationGroupId));
-      if (candidateWithGroup?.translationGroupId) {
-        rawBlog = await this.blogModel
-          .findOne({
-            translationGroupId: candidateWithGroup.translationGroupId,
-            language: requestedLang,
-            $or: [
-              { status: 'PUBLISHED' },
-              { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-            ],
-          })
-          .populate<{ categoryId: CategoryDocument }>('categoryId')
-          .populate<{ authorId: UserDocument }>('authorId')
-          .lean() || undefined;
-      }
-      // If still not found, fall back to first candidate
-      if (!rawBlog) {
-        rawBlog = candidateBlogs[0];
+    let rawBlog: any = null;
+
+    if (candidateBlogs.length > 0) {
+      // Step A: Check for an exact requested slug match first
+      const exactSlugMatch = candidateBlogs.find(
+        (b: any) => (b.slug || '').toLowerCase() === normalizedSlug,
+      );
+
+      if (exactSlugMatch) {
+        if (exactSlugMatch.language === requestedLang) {
+          rawBlog = exactSlugMatch;
+        } else if (exactSlugMatch.translationGroupId) {
+          // Check if the translated sibling in the requested language exists in the fetched candidates
+          const siblingInBatch = candidateBlogs.find(
+            (b: any) =>
+              b.translationGroupId === exactSlugMatch.translationGroupId &&
+              b.language === requestedLang,
+          );
+          if (siblingInBatch) {
+            rawBlog = siblingInBatch;
+          } else {
+            // Query specifically for the translation group sibling
+            const translatedDoc = await this.blogModel
+              .findOne({
+                translationGroupId: exactSlugMatch.translationGroupId,
+                language: requestedLang,
+                $or: [
+                  { status: 'PUBLISHED' },
+                  { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+                ],
+              })
+              .populate<{ categoryId: CategoryDocument }>('categoryId')
+              .populate<{ authorId: UserDocument }>('authorId')
+              .lean();
+            rawBlog = translatedDoc || exactSlugMatch;
+          }
+        } else {
+          rawBlog = exactSlugMatch;
+        }
+      } else {
+        // Step B: No exact slug match. Rank fallback candidates deterministically
+        const langSuffixedSlug = `${cleanSlug}-${requestedLang.toLowerCase()}`;
+        const matchLangSuffix = candidateBlogs.find(
+          (b: any) => (b.slug || '').toLowerCase() === langSuffixedSlug,
+        );
+
+        const matchCleanWithLang = candidateBlogs.find(
+          (b: any) =>
+            (b.slug || '').toLowerCase() === cleanSlug && b.language === requestedLang,
+        );
+
+        const matchCleanAny = candidateBlogs.find(
+          (b: any) => (b.slug || '').toLowerCase() === cleanSlug,
+        );
+
+        const otherSuffixedSlug = `${cleanSlug}-${otherLang.toLowerCase()}`;
+        const matchOtherSuffix = candidateBlogs.find(
+          (b: any) => (b.slug || '').toLowerCase() === otherSuffixedSlug,
+        );
+
+        const primaryAnchor =
+          matchLangSuffix || matchCleanWithLang || matchCleanAny || matchOtherSuffix || candidateBlogs[0];
+
+        if (primaryAnchor) {
+          if (primaryAnchor.language === requestedLang) {
+            rawBlog = primaryAnchor;
+          } else if (primaryAnchor.translationGroupId) {
+            const siblingInBatch = candidateBlogs.find(
+              (b: any) =>
+                b.translationGroupId === primaryAnchor.translationGroupId &&
+                b.language === requestedLang,
+            );
+            if (siblingInBatch) {
+              rawBlog = siblingInBatch;
+            } else {
+              const translatedDoc = await this.blogModel
+                .findOne({
+                  translationGroupId: primaryAnchor.translationGroupId,
+                  language: requestedLang,
+                  $or: [
+                    { status: 'PUBLISHED' },
+                    { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+                  ],
+                })
+                .populate<{ categoryId: CategoryDocument }>('categoryId')
+                .populate<{ authorId: UserDocument }>('authorId')
+                .lean();
+              rawBlog = translatedDoc || primaryAnchor;
+            }
+          } else {
+            rawBlog = primaryAnchor;
+          }
+        }
       }
     }
 

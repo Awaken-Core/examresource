@@ -2,6 +2,9 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "examresource",
   "main": "dist/worker.js",
+  "build": {
+    "command": "bun run build"
+  },
   "compatibility_date": "2026-10-16",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,

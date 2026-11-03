@@ -51,6 +51,7 @@ const isPyqPaper = (t: any) =>
   (t.title && (t.title.startsWith('[PYQ]') || t.title.includes('PYQ')));
 
 const initialFullTests = (fullTestsRes || []).filter((t: any) => !isPyqPaper(t));
+const initialPyqTests = (fullTestsRes || []).filter((t: any) => isPyqPaper(t));
 
 const seriesTitle = seriesSeo?.title?.trim();
 const subjectNames = (seriesSeo?.subjects ?? [])
@@ -133,6 +134,7 @@ const jsonLd = seriesTitle
       seriesIdOrSlug={id}
       initialData={seriesSeo as any}
       initialFullTests={initialFullTests}
+      initialPyqTests={initialPyqTests}
     />
 
     {seriesTitle && (

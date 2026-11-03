@@ -463,30 +463,32 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   useEffect(() => {
     if (!series) return;
     const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=pyq`;
-    if (initialPyqTests && initialPyqTests.length > 0 && !testsCacheRef.current.has(url)) {
-      testsCacheRef.current.set(url, initialPyqTests);
-      setPyqTests(initialPyqTests);
-      setLoadingPyqTests(false);
-      return;
-    }
     if (testsCacheRef.current.has(url)) {
       setPyqTests(testsCacheRef.current.get(url)!);
       setLoadingPyqTests(false);
       return;
     }
     async function fetchPyqTests() {
+      if (initialPyqTests && initialPyqTests.length > 0 && pyqTests.length === 0) {
+        setPyqTests(initialPyqTests);
+      }
       setLoadingPyqTests(true);
       try {
         const res = await fetch(url);
         if (res.ok) {
-          const tests = await res.json();
-          testsCacheRef.current.set(url, tests || []);
-          setPyqTests(tests || []);
+          const tests = (await res.json()) || [];
+          const merged = Array.from(
+            new Map(
+              [...(initialPyqTests || []), ...tests].map((t: any) => [t.id || t._id, t]),
+            ).values(),
+          );
+          testsCacheRef.current.set(url, merged);
+          setPyqTests(merged);
         } else {
-          setPyqTests([]);
+          setPyqTests(initialPyqTests || []);
         }
       } catch {
-        setPyqTests([]);
+        setPyqTests(initialPyqTests || []);
       } finally {
         setLoadingPyqTests(false);
       }

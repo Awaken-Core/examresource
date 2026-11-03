@@ -22,7 +22,8 @@ let currentToken: string | null = null;
 let lastNotifFetchTime = 0;
 let lastFetchLang = '';
 let lastFetchToken: string | null = null;
-const NOTIF_FETCH_MIN_INTERVAL = 60_000;
+const NOTIF_FETCH_MIN_INTERVAL = 20_000;
+let inFlightPromise: Promise<void> | null = null;
 
 export function relativeTime(iso: string) {
   const delta = Date.now() - new Date(iso).getTime();
@@ -439,7 +440,7 @@ export function getNotifications(): AppNotification[] {
   return currentItems;
 }
 
-export async function refreshNotifications(token?: string | null) {
+export async function refreshNotifications(token?: string | null, forceRefresh = false) {
   if (token === undefined) {
     if (currentToken) {
       token = currentToken;
@@ -454,9 +455,15 @@ export async function refreshNotifications(token?: string | null) {
       token = null;
     }
   }
+
+  // Clear cache if user session/account changes
+  if (lastFetchToken !== null && lastFetchToken !== token) {
+    allCachedNotifications.clear();
+    currentItems = [];
+  }
+
   currentToken = token;
   const chosenLang = getCurrentSelectedLang();
-
 
   // Instant optimistic switch from cached notifications
   if (allCachedNotifications.size > 0) {
@@ -464,8 +471,9 @@ export async function refreshNotifications(token?: string | null) {
     currentItems = !currentToken ? optimistic.slice(0, 3) : optimistic;
     paint(currentItems);
 
-    // If recently fetched for the same token and language, skip network fetch
+    // If recently fetched for the same token and language, and not a forced refresh, skip network fetch
     if (
+      !forceRefresh &&
       lastFetchToken === token &&
       lastFetchLang === chosenLang &&
       Date.now() - lastNotifFetchTime < NOTIF_FETCH_MIN_INTERVAL
@@ -474,6 +482,12 @@ export async function refreshNotifications(token?: string | null) {
     }
   }
 
+  // Return existing in-flight promise to prevent duplicate concurrent network fetches
+  if (inFlightPromise) {
+    return inFlightPromise;
+  }
+
+  inFlightPromise = (async () => {
   try {
     const endpoint = token
       ? `${API_URL}/me/notifications?lang=${encodeURIComponent(chosenLang)}`
@@ -518,7 +532,11 @@ export async function refreshNotifications(token?: string | null) {
     void fireUnreadToSystem(currentItems.filter((item) => !item.read));
   } catch {
     // Keep the last rendered list if the request fails
+  } finally {
+    inFlightPromise = null;
   }
+  })();
+  return inFlightPromise;
 }
 
 export async function markAllNotificationsRead() {
@@ -588,10 +606,10 @@ export function markNotificationRead(id: string) {
 }
 
 // Automatically reload notifications when user changes their language anywhere on the platform
-if (typeof window !== 'undefined' && !(window as any).__NOTIF_LANG_LISTENER_BOUND__) {
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function' && !(window as any).__NOTIF_LANG_LISTENER_BOUND__) {
   (window as any).__NOTIF_LANG_LISTENER_BOUND__ = true;
   const onLangChange = () => {
-    void refreshNotifications();
+    void refreshNotifications(undefined, true);
   };
   window.addEventListener('exam:language-change', onLangChange);
   window.addEventListener('exam:article-lang-swap', onLangChange);

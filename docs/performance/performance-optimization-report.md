@@ -393,24 +393,39 @@ To activate edge caching without risking authenticated session leaks, configure 
   (http.request.uri.path starts_with "/admin") or
   (http.request.uri.path starts_with "/administrator") or
   (http.request.uri.path contains "/test/") or
+  (http.request.uri.path starts_with "/test-series/cbt/") or
+  (http.request.uri.path starts_with "/test-series/instructions/") or
+  (http.request.uri.path starts_with "/test-series/results/") or
   (http.request.uri.path eq "/login") or
   (http.request.uri.path eq "/signup") or
   (http.request.uri.path eq "/profile") or
-  (http.cookie contains "auth_active=1") or
-  (http.cookie contains "session=")
+  (http.cookie contains "__Host-sid") or
+  (http.cookie contains "session=") or
+  (http.cookie contains "logged_in=") or
+  (http.cookie contains "auth_active=")
   ```
 - **Action:**
   - Cache Eligibility: **Bypass cache**
+- **Security Justification:**
+  - Completely isolates private CBT exam sessions, real-time question responses, candidate rank/score analytics, and pre-exam instructions from being cached at Cloudflare edge.
+  - Matches all session cookie signatures (`__Host-sid` in production, `session=` in local/staging, `logged_in=`, `auth_active=`) so logged-in candidate requests never hit shared edge caches.
 
 ### Rule 2: Cache Public Editorial HTML at the Edge (Priority 2)
 - **Rule Name:** `Cache Public HTML Pages`
 - **Expression:**
   ```text
-  (http.request.uri.path eq "/") or
-  (http.request.uri.path eq "/blogs") or
-  (http.request.uri.path starts_with "/category/") or
-  (http.request.uri.path eq "/test-series") or
-  (http.request.uri.path starts_with "/test-series/")
+  ((http.request.uri.path eq "/") or
+   (http.request.uri.path eq "/blogs") or
+   (http.request.uri.path starts_with "/category/") or
+   (http.request.uri.path eq "/test-series") or
+   ((http.request.uri.path starts_with "/test-series/") and
+    not http.request.uri.path contains "/cbt/" and
+    not http.request.uri.path contains "/instructions/" and
+    not http.request.uri.path contains "/results/")) and
+  not (http.cookie contains "__Host-sid") and
+  not (http.cookie contains "session=") and
+  not (http.cookie contains "logged_in=") and
+  not (http.cookie contains "auth_active=")
   ```
 - **Action:**
   - Cache Eligibility: **Eligible for cache**

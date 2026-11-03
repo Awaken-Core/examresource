@@ -542,11 +542,15 @@ export function buildLangVersion(opts: {
   imageAlt?: string | null;
   imageCaption?: string | null;
   slug: string;
+  readMinutes?: number;
 }): ArticleLangVersion {
-  const rawText = opts.htmlBody || opts.description || '';
-  const plainText = stripHtmlTags(rawText).replace(/\s+/g, ' ').trim();
-  const wordCount = plainText ? plainText.split(' ').length : 0;
-  const readMinutes = Math.max(1, Math.round(wordCount / 200));
+  let readMinutes = opts.readMinutes;
+  if (!readMinutes || readMinutes < 1) {
+    const rawText = opts.htmlBody || opts.description || '';
+    const plainText = stripHtmlTags(rawText).replace(/\s+/g, ' ').trim();
+    const wordCount = plainText ? plainText.split(' ').length : 0;
+    readMinutes = Math.max(1, Math.round(wordCount / 200));
+  }
 
   return {
     language: opts.language,
