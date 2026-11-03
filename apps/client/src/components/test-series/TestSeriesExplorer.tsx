@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { API_URL } from '../../lib/api';
+
+const ITEMS_PER_PAGE = 9;
 
 export interface StudentTestSeries {
   id: string;
@@ -46,6 +48,10 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
 
   const [languageFilter, setLanguageFilter] = useState('all');
   const [sortBy, setSortBy] = useState('recommended');
+
+  // Pagination state (9 suites per page: optimal 3x3 layout)
+  const [currentPage, setCurrentPage] = useState(1);
+  const gridTopRef = useRef<HTMLDivElement>(null);
 
   const fetchPublishedSeries = async () => {
     setIsLoading(true);
@@ -107,6 +113,46 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
     if (orderA !== orderB) return orderA - orderB;
     return a.title.localeCompare(b.title);
   });
+
+  // Reset to first page when any filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, search, languageFilter, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedList.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+
+  const paginatedList = useMemo(() => {
+    const start = (safePage - 1) * ITEMS_PER_PAGE;
+    return sortedList.slice(start, start + ITEMS_PER_PAGE);
+  }, [sortedList, safePage]);
+
+  const handlePageChange = (newPage: number) => {
+    const clamped = Math.max(1, Math.min(newPage, totalPages));
+    setCurrentPage(clamped);
+    if (typeof window !== 'undefined') {
+      const topOffset = gridTopRef.current?.getBoundingClientRect().top ?? 0;
+      if (topOffset < 0) {
+        gridTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
+  const pageNumbers = useMemo(() => {
+    const pages: (number | 'dots')[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (safePage > 3) pages.push('dots');
+      const start = Math.max(2, safePage - 1);
+      const end = Math.min(totalPages - 1, safePage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (safePage < totalPages - 2) pages.push('dots');
+      pages.push(totalPages);
+    }
+    return pages;
+  }, [totalPages, safePage]);
 
   return (
     <div className="space-y-4 font-['Geist']">
@@ -184,7 +230,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
       </section>
 
       {/* Popular Test Series Header */}
-      <section className="space-y-3.5 pt-2">
+      <section className="space-y-3.5 pt-2" ref={gridTopRef}>
         <div className="flex items-center justify-between pb-3 border-b border-editorial-border">
           <div className="flex items-center gap-2.5">
             <span className="w-1.5 h-4.5 bg-editorial-accent rounded-full inline-block"></span>
@@ -236,83 +282,145 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
 
         {/* Grid of Real Cards */}
         {!isLoading && !fetchError && sortedList.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sortedList.map((series) => {
-              const seriesId = series.id || series._id!;
-              const seriesSlug = series.slug || seriesId;
-              return (
-                <a
-                  key={seriesId}
-                  href={`/test-series/${seriesSlug}`}
-                  data-astro-prefetch="hover"
-                  className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-editorial-surface border border-editorial-border hover:border-editorial-accent/50 hover:shadow-md transition-all duration-200"
-                >
-                  <div className="space-y-3">
-                    {/* Header: Organization and Badge */}
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                        <div className="w-8 h-8 rounded-xl bg-editorial-accent-soft border border-editorial-accent/25 text-editorial-accent flex items-center justify-center font-bold text-xs shrink-0">
-                          {series.targetExam ? series.targetExam.slice(0, 3).toUpperCase() : 'EX'}
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {paginatedList.map((series) => {
+                const seriesId = series.id || series._id!;
+                const seriesSlug = series.slug || seriesId;
+                return (
+                  <a
+                    key={seriesId}
+                    href={`/test-series/${seriesSlug}`}
+                    data-astro-prefetch="hover"
+                    className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-editorial-surface border border-editorial-border hover:border-editorial-accent/50 hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="space-y-3">
+                      {/* Header: Organization and Badge */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <div className="w-8 h-8 rounded-xl bg-editorial-accent-soft border border-editorial-accent/25 text-editorial-accent flex items-center justify-center font-bold text-xs shrink-0">
+                            {series.targetExam ? series.targetExam.slice(0, 3).toUpperCase() : 'EX'}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span
+                              className="block text-[11.5px] font-medium text-editorial-muted truncate"
+                              title={series.organization || series.targetExam}
+                            >
+                              {series.organization || series.targetExam}
+                            </span>
+                          </div>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <span
-                            className="block text-[11.5px] font-medium text-editorial-muted truncate"
-                            title={series.organization || series.targetExam}
-                          >
-                            {series.organization || series.targetExam}
+
+                        {series.badge && !/free|paid/i.test(series.badge) && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/25 shrink-0 whitespace-nowrap">
+                            {series.badge}
                           </span>
-                        </div>
+                        )}
                       </div>
 
-                      {series.badge && !/free|paid/i.test(series.badge) && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/25 shrink-0 whitespace-nowrap">
-                          {series.badge}
-                        </span>
+                      {/* Title */}
+                      <h3 className="font-['EB_Garamond'] text-[17px] sm:text-[18px] font-medium text-editorial-heading group-hover:text-editorial-accent transition-colors line-clamp-2 leading-snug">
+                        {series.title}
+                      </h3>
+
+                      {/* Description if present */}
+                      {series.description && (
+                        <p className="text-[12.5px] text-editorial-muted line-clamp-2 leading-relaxed">
+                          {series.description}
+                        </p>
                       )}
                     </div>
 
-                    {/* Title */}
-                    <h3 className="font-['EB_Garamond'] text-[17px] sm:text-[18px] font-medium text-editorial-heading group-hover:text-editorial-accent transition-colors line-clamp-2 leading-snug">
-                      {series.title}
-                    </h3>
+                    {/* Card Footer: Metadata and CTA */}
+                    <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[11.5px] text-editorial-muted truncate">
+                          {series.supportedLanguages?.join('/') || 'Hindi/English'}
+                        </span>
+                      </div>
 
-                    {/* Description if present */}
-                    {series.description && (
-                      <p className="text-[12.5px] text-editorial-muted line-clamp-2 leading-relaxed">
-                        {series.description}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Card Footer: Metadata and CTA */}
-                  <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-[11.5px] text-editorial-muted truncate">
-                        {series.supportedLanguages?.join('/') || 'Hindi/English'}
-                      </span>
+                      <div className="flex items-center gap-1 text-editorial-accent font-semibold text-xs shrink-0 group-hover:translate-x-0.5 transition-transform">
+                        <span>Explore Tests</span>
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
                     </div>
+                  </a>
+                );
+              })}
+            </div>
 
-                    <div className="flex items-center gap-1 text-editorial-accent font-semibold text-xs shrink-0 group-hover:translate-x-0.5 transition-transform">
-                      <span>Explore Tests</span>
-                      <svg
-                        className="w-3.5 h-3.5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <nav
+                aria-label="Test series pagination"
+                className="pt-6 mt-4 border-t border-editorial-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-editorial-muted"
+              >
+                <div>
+                  Showing <strong className="text-editorial-heading font-semibold tabular-nums">{(safePage - 1) * ITEMS_PER_PAGE + 1}</strong>–<strong className="text-editorial-heading font-semibold tabular-nums">{Math.min(safePage * ITEMS_PER_PAGE, sortedList.length)}</strong> of <strong className="text-editorial-heading font-semibold tabular-nums">{sortedList.length}</strong> suites
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <button
+                    type="button"
+                    disabled={safePage <= 1}
+                    onClick={() => handlePageChange(safePage - 1)}
+                    className="px-3 py-1.5 rounded-lg border border-editorial-border bg-editorial-surface text-editorial-heading hover:bg-editorial-accent-soft disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition font-medium select-none shadow-2xs"
+                    aria-label="Previous page"
+                  >
+                    Previous
+                  </button>
+
+                  {pageNumbers.map((p, idx) => {
+                    if (p === 'dots') {
+                      return (
+                        <span key={`dots-${idx}`} className="px-1 text-editorial-muted select-none">
+                          …
+                        </span>
+                      );
+                    }
+                    const isActive = p === safePage;
+                    return (
+                      <button
+                        key={p}
+                        type="button"
+                        onClick={() => handlePageChange(p)}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={`min-w-8 h-8 px-2.5 rounded-lg text-xs font-semibold transition cursor-pointer select-none ${
+                          isActive
+                            ? 'bg-editorial-accent text-white border border-editorial-accent shadow-2xs'
+                            : 'border border-editorial-border bg-editorial-surface text-editorial-heading hover:bg-editorial-accent-soft'
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </a>
-              );
-            })}
-          </div>
+                        {p}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    type="button"
+                    disabled={safePage >= totalPages}
+                    onClick={() => handlePageChange(safePage + 1)}
+                    className="px-3 py-1.5 rounded-lg border border-editorial-border bg-editorial-surface text-editorial-heading hover:bg-editorial-accent-soft disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer transition font-medium select-none shadow-2xs"
+                    aria-label="Next page"
+                  >
+                    Next
+                  </button>
+                </div>
+              </nav>
+            )}
+          </>
         )}
       </section>
     </div>

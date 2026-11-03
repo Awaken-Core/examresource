@@ -397,9 +397,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestInstructions.tsx": {
-    "mtime": 1793647134.9793828,
-    "seen": 1793647219.3520844,
-    "ast_hash": "4fee91c3523d578c795919962904a73a",
+    "mtime": 1793692183.389702,
+    "seen": 1793692509.8605206,
+    "ast_hash": "549adb58989a0fff18c8fbe1e91d62ca",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestResultAnalysis.tsx": {
@@ -409,9 +409,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesDetail.tsx": {
-    "mtime": 1793691138.8581443,
-    "seen": 1793691156.70889,
-    "ast_hash": "67dd33f349a1586c2f66cc50f30957fd",
+    "mtime": 1793695103.8789005,
+    "seen": 1793695196.6529996,
+    "ast_hash": "75ffdb9437ba5001d46998f0b50a0ab6",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesExplorer.tsx": {
@@ -421,9 +421,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesPassCard.tsx": {
-    "mtime": 1793646252.851308,
-    "seen": 1793646357.606427,
-    "ast_hash": "c79607ade3c00c0e53dad3d671b3375c",
+    "mtime": 1793694134.4546964,
+    "seen": 1793694216.9944465,
+    "ast_hash": "40a861e9178df51d6c4b6782dd64192e",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/hooks/useCBTAttempt.ts": {
@@ -913,9 +913,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/pages/test-series/instructions/[testId].astro": {
-    "mtime": 1793535783.5550704,
-    "seen": 1793646357.6065938,
-    "ast_hash": "13763fc1e914dc1d548ce7c4954f8201",
+    "mtime": 1793692057.77513,
+    "seen": 1793692509.8606756,
+    "ast_hash": "b81be01e3c6dc810bd056fd261b08771",
     "semantic_hash": ""
   },
   "apps/client/src/pages/test-series/results/[attemptId].astro": {

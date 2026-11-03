@@ -48,8 +48,14 @@ export class TestSeriesController {
 
   @Get('test-series')
   @Header('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=300')
-  listPublished(@Query('category') category?: string) {
-    return this.service.listPublished(category);
+  listPublished(
+    @Query('category') category?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : undefined;
+    const limitNum = limit ? parseInt(limit, 10) : undefined;
+    return this.service.listPublished(category, pageNum, limitNum);
   }
 
   @Get('test-series/:idOrSlug')

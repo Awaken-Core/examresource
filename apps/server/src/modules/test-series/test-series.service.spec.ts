@@ -1319,4 +1319,80 @@ describe('TestSeriesService Hierarchy & Operations', () => {
     expect(capturedFilter.slug).toEqual({ $not: { $regex: '^pyq-', $options: 'i' } });
     expect(capturedFilter.title).toEqual({ $not: { $regex: '\\[PYQ\\]|\\bPYQ\\b', $options: 'i' } });
   });
+
+  it('supports pagination on listPublished and listPublishedTests to reduce compute', async () => {
+    const { service, testSeriesModel, examModel } = makeService();
+    const seriesId = new Types.ObjectId();
+
+    testSeriesModel.countDocuments = vi.fn().mockResolvedValue(25);
+    testSeriesModel.find.mockReturnValue({
+      sort: vi.fn().mockReturnValue({
+        skip: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([
+              {
+                _id: seriesId,
+                title: 'SSC CGL Tier 1',
+                slug: 'ssc-cgl-tier-1',
+                status: 'published',
+                targetExam: 'SSC CGL',
+                category: 'ssc-railways',
+                accessType: 'free',
+              },
+            ]),
+          }),
+        }),
+      }),
+    });
+
+    const paginatedSeries: any = await service.listPublished('ssc-railways', 1, 10);
+    expect(paginatedSeries.total).toBe(25);
+    expect(paginatedSeries.page).toBe(1);
+    expect(paginatedSeries.limit).toBe(10);
+    expect(paginatedSeries.totalPages).toBe(3);
+    expect(paginatedSeries.data.length).toBe(1);
+
+    testSeriesModel.findById.mockReturnValue({
+      lean: vi.fn().mockResolvedValue({
+        _id: seriesId,
+        status: 'published',
+        slug: 'ssc-cgl-tier-1',
+      }),
+    });
+
+    examModel.countDocuments = vi.fn().mockResolvedValue(50);
+    examModel.find.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        sort: vi.fn().mockReturnValue({
+          skip: vi.fn().mockReturnValue({
+            limit: vi.fn().mockReturnValue({
+              lean: vi.fn().mockResolvedValue([
+                {
+                  _id: new Types.ObjectId(),
+                  title: 'Mock 01',
+                  slug: 'mock-01',
+                  status: 'published',
+                  testMode: 'full',
+                  totalQuestionsCount: 100,
+                  positiveMarks: 1,
+                  negativeMarks: 0.25,
+                },
+              ]),
+            }),
+          }),
+        }),
+      }),
+    });
+
+    const paginatedTests: any = await service.listPublishedTests(seriesId.toString(), {
+      testMode: 'full',
+      page: 2,
+      limit: 10,
+    });
+    expect(paginatedTests.total).toBe(50);
+    expect(paginatedTests.page).toBe(2);
+    expect(paginatedTests.limit).toBe(10);
+    expect(paginatedTests.totalPages).toBe(5);
+    expect(paginatedTests.data.length).toBe(1);
+  });
 });
