@@ -274,38 +274,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     }
   };
 
-  // Pagination state (10 tests per page to minimize DOM footprint and React render compute)
-  const [fullPage, setFullPage] = useState(1);
-  const [pyqPage, setPyqPage] = useState(1);
-  const [subjectPage, setSubjectPage] = useState(1);
-  const [chapterPage, setChapterPage] = useState(1);
-  const testListTopRef = useRef<HTMLDivElement>(null);
-
-  // Reset pagination when filters change
-  useEffect(() => {
-    setFullPage(1);
-  }, [testSearchQuery]);
-
-  useEffect(() => {
-    setPyqPage(1);
-  }, [testSearchQuery, pyqYearFilter, pyqExamFilter]);
-
-  useEffect(() => {
-    setSubjectPage(1);
-  }, [testSearchQuery, selectedSubjectId]);
-
-  useEffect(() => {
-    setChapterPage(1);
-  }, [testSearchQuery, chapterSubjectId, selectedChapterId]);
-
-  const scrollToTestList = () => {
-    if (typeof window !== 'undefined') {
-      const topOffset = testListTopRef.current?.getBoundingClientRect().top ?? 0;
-      if (topOffset < 0) {
-        testListTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  };
 
   // In-memory cache for test query responses
   const testsCacheRef = useRef<Map<string, PublishedTestItem[]>>(new Map());

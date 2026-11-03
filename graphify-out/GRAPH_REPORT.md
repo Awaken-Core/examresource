@@ -1,7 +1,7 @@
 # Graph Report - examresource  (2026-11-03)
 
 ## Corpus Check
-- 434 files · ~530,007 words
+- 434 files · ~529,901 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 31 file(s) not represented in the graph (top: (none) 10, .ttf 5, .woff2 3)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e78a5f20`
+- Built from commit: `01419d82`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

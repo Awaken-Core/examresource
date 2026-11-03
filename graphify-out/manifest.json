@@ -409,9 +409,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesDetail.tsx": {
-    "mtime": 1793706844.662861,
-    "seen": 1793706869.2746449,
-    "ast_hash": "7ee7ed9d08602159f9fa532ac0788c33",
+    "mtime": 1793706984.722095,
+    "seen": 1793707051.5616682,
+    "ast_hash": "5bc2978214433ca9abe5c5bed8ff26ec",
     "semantic_hash": ""
   },
   "apps/client/src/components/test-series/TestSeriesExplorer.tsx": {
