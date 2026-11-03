@@ -267,6 +267,8 @@ export const listIndividualTestsQuerySchema = z.object({
   chapterId: z.string().trim().optional(),
   access: z.enum(['free', 'premium']).optional(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().max(100).optional(),
 });
 
 export type TestQuestionItemInput = z.infer<typeof testQuestionItemInputSchema>;

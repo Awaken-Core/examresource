@@ -237,6 +237,39 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   const [subjectQuery, setSubjectQuery] = useState('');
   const [expandedSyllabusIds, setExpandedSyllabusIds] = useState<string[]>([]);
 
+  // Pagination state (10 tests per page to minimize DOM footprint and React render compute)
+  const [fullPage, setFullPage] = useState(1);
+  const [pyqPage, setPyqPage] = useState(1);
+  const [subjectPage, setSubjectPage] = useState(1);
+  const [chapterPage, setChapterPage] = useState(1);
+  const testListTopRef = useRef<HTMLDivElement>(null);
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setFullPage(1);
+  }, [testSearchQuery]);
+
+  useEffect(() => {
+    setPyqPage(1);
+  }, [testSearchQuery, pyqYearFilter, pyqExamFilter]);
+
+  useEffect(() => {
+    setSubjectPage(1);
+  }, [testSearchQuery, selectedSubjectId]);
+
+  useEffect(() => {
+    setChapterPage(1);
+  }, [testSearchQuery, chapterSubjectId, selectedChapterId]);
+
+  const scrollToTestList = () => {
+    if (typeof window !== 'undefined') {
+      const topOffset = testListTopRef.current?.getBoundingClientRect().top ?? 0;
+      if (topOffset < 0) {
+        testListTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
+
   // In-memory cache for test query responses
   const testsCacheRef = useRef<Map<string, PublishedTestItem[]>>(new Map());
 
@@ -534,7 +567,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
   const hasActivePass = Boolean(seriesAccess?.hasActivePass);
   const freeTestId = seriesAccess?.freeTestId ?? null;
-  const hasUsedFreeTest = Boolean(freeTestId);
 
   const getTestSectionKey = (test: PublishedTestItem): 'full' | 'subject' | 'chapter' | 'pyq' => {
     if (test.testMode === 'pyq' || isPyqTest(test)) return 'pyq';
@@ -714,6 +746,29 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     });
   }, [chapterTests, chapterSubjectId, selectedChapterId, testSearchQuery]);
 
+  const TESTS_PAGE_SIZE = 10;
+
+  // Paginated slices for minimal DOM tree and zero layout thrashing
+  const paginatedFullTests = useMemo(() => {
+    const start = (fullPage - 1) * TESTS_PAGE_SIZE;
+    return filteredFullTests.slice(start, start + TESTS_PAGE_SIZE);
+  }, [filteredFullTests, fullPage]);
+
+  const paginatedPyqTests = useMemo(() => {
+    const start = (pyqPage - 1) * TESTS_PAGE_SIZE;
+    return filteredPyqTests.slice(start, start + TESTS_PAGE_SIZE);
+  }, [filteredPyqTests, pyqPage]);
+
+  const paginatedSubjectTests = useMemo(() => {
+    const start = (subjectPage - 1) * TESTS_PAGE_SIZE;
+    return filteredSubjectTests.slice(start, start + TESTS_PAGE_SIZE);
+  }, [filteredSubjectTests, subjectPage]);
+
+  const paginatedChapterTests = useMemo(() => {
+    const start = (chapterPage - 1) * TESTS_PAGE_SIZE;
+    return filteredChapterTests.slice(start, start + TESTS_PAGE_SIZE);
+  }, [filteredChapterTests, chapterPage]);
+
   // Syllabus visible subjects
   const visibleSubjects = useMemo(() => {
     let list = assignedSubjects;
@@ -792,7 +847,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           {/* YOUR PREPARATION PROGRESS CARD */}
           <section
             data-dark-card="true"
-            className="dark-card rounded-2xl border border-white/10 bg-[#141312] p-5 !text-white shadow-md sm:p-6"
+            className="dark-card rounded-2xl border border-white/10 bg-[#141312] p-5 text-white shadow-md sm:p-6"
             aria-label="Preparation progress"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -816,7 +871,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
               )}
             </div>
 
-            <p className="mt-2 text-xl font-bold tracking-tight !text-white sm:text-2xl tabular-nums">
+            <p className="mt-2 text-xl font-bold tracking-tight text-white sm:text-2xl tabular-nums">
               {completedCount} of {totalCount} tests completed
             </p>
 
@@ -950,6 +1005,9 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             </div>
           </div>
 
+          {/* Top anchor for smooth tab pagination scrolling */}
+          <div ref={testListTopRef} className="scroll-mt-6" />
+
           {/* TAB 1: FULL MOCK TESTS */}
           {activeTab === 'full' && (
             <div className="space-y-4">
@@ -1001,29 +1059,42 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   </p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {filteredFullTests.map((test, index) => {
-                    const testId = test.id || test._id || '';
-                    const latestAttempt = testAttemptMap.get(testId);
-                    const isLocked = isTestLocked(test);
-                    const secKey = getTestSectionKey(test);
-                    const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
-                    return (
-                      <RealTestCard
-                        key={testId}
-                        test={test}
-                        index={index}
-                        latestAttempt={latestAttempt}
-                        isLocked={isLocked}
-                        hasActivePass={hasActivePass}
-                        isTrialAvailable={isTrialAvailable}
-                      />
-                    );
-                  })}
-                  {filteredUpcomingTests.map((mock) => (
-                    <UpcomingLockedMockCard key={mock.id} mock={mock} />
-                  ))}
-                </div>
+                <>
+                  <div className="space-y-4">
+                    {paginatedFullTests.map((test, index) => {
+                      const testId = test.id || test._id || '';
+                      const latestAttempt = testAttemptMap.get(testId);
+                      const isLocked = isTestLocked(test);
+                      const secKey = getTestSectionKey(test);
+                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      return (
+                        <RealTestCard
+                          key={testId}
+                          test={test}
+                          index={(fullPage - 1) * TESTS_PAGE_SIZE + index}
+                          latestAttempt={latestAttempt}
+                          isLocked={isLocked}
+                          hasActivePass={hasActivePass}
+                          isTrialAvailable={isTrialAvailable}
+                        />
+                      );
+                    })}
+                    {filteredUpcomingTests.map((mock) => (
+                      <UpcomingLockedMockCard key={mock.id} mock={mock} />
+                    ))}
+                  </div>
+
+                  <PaginationControl
+                    currentPage={fullPage}
+                    totalItems={filteredFullTests.length}
+                    pageSize={TESTS_PAGE_SIZE}
+                    onPageChange={(p) => {
+                      setFullPage(p);
+                      scrollToTestList();
+                    }}
+                    itemName="mock tests"
+                  />
+                </>
               )}
             </div>
           )}
@@ -1152,26 +1223,39 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   )}
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {filteredPyqTests.map((test, index) => {
-                    const testId = test.id || test._id || '';
-                    const latestAttempt = testAttemptMap.get(testId);
-                    const isLocked = isTestLocked(test);
-                    const secKey = getTestSectionKey(test);
-                    const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
-                    return (
-                      <RealTestCard
-                        key={testId}
-                        test={test}
-                        index={index}
-                        latestAttempt={latestAttempt}
-                        isLocked={isLocked}
-                        hasActivePass={hasActivePass}
-                        isTrialAvailable={isTrialAvailable}
-                      />
-                    );
-                  })}
-                </div>
+                <>
+                  <div className="space-y-4">
+                    {paginatedPyqTests.map((test, index) => {
+                      const testId = test.id || test._id || '';
+                      const latestAttempt = testAttemptMap.get(testId);
+                      const isLocked = isTestLocked(test);
+                      const secKey = getTestSectionKey(test);
+                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      return (
+                        <RealTestCard
+                          key={testId}
+                          test={test}
+                          index={(pyqPage - 1) * TESTS_PAGE_SIZE + index}
+                          latestAttempt={latestAttempt}
+                          isLocked={isLocked}
+                          hasActivePass={hasActivePass}
+                          isTrialAvailable={isTrialAvailable}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  <PaginationControl
+                    currentPage={pyqPage}
+                    totalItems={filteredPyqTests.length}
+                    pageSize={TESTS_PAGE_SIZE}
+                    onPageChange={(p) => {
+                      setPyqPage(p);
+                      scrollToTestList();
+                    }}
+                    itemName="official papers"
+                  />
+                </>
               )}
             </div>
           )}
@@ -1326,24 +1410,39 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   </p>
                 </div>
               ) : (
-                filteredSubjectTests.map((test, index) => {
-                  const testId = test.id || test._id || '';
-                  const latestAttempt = testAttemptMap.get(testId);
-                  const isLocked = isTestLocked(test);
-                  const secKey = getTestSectionKey(test);
-                  const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
-                  return (
-                    <RealTestCard
-                      key={testId}
-                      test={test}
-                      index={index}
-                      latestAttempt={latestAttempt}
-                      isLocked={isLocked}
-                      hasActivePass={hasActivePass}
-                      isTrialAvailable={isTrialAvailable}
-                    />
-                  );
-                })
+                <>
+                  <div className="space-y-4">
+                    {paginatedSubjectTests.map((test, index) => {
+                      const testId = test.id || test._id || '';
+                      const latestAttempt = testAttemptMap.get(testId);
+                      const isLocked = isTestLocked(test);
+                      const secKey = getTestSectionKey(test);
+                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      return (
+                        <RealTestCard
+                          key={testId}
+                          test={test}
+                          index={(subjectPage - 1) * TESTS_PAGE_SIZE + index}
+                          latestAttempt={latestAttempt}
+                          isLocked={isLocked}
+                          hasActivePass={hasActivePass}
+                          isTrialAvailable={isTrialAvailable}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  <PaginationControl
+                    currentPage={subjectPage}
+                    totalItems={filteredSubjectTests.length}
+                    pageSize={TESTS_PAGE_SIZE}
+                    onPageChange={(p) => {
+                      setSubjectPage(p);
+                      scrollToTestList();
+                    }}
+                    itemName="subject tests"
+                  />
+                </>
               )}
             </div>
           )}
@@ -1524,24 +1623,39 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   <p className="mt-1 text-xs text-muted">Pick another chapter, subject or adjust your search.</p>
                 </div>
               ) : (
-                filteredChapterTests.map((test, index) => {
-                  const testId = test.id || test._id || '';
-                  const latestAttempt = testAttemptMap.get(testId);
-                  const isLocked = isTestLocked(test);
-                  const secKey = getTestSectionKey(test);
-                  const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
-                  return (
-                    <RealTestCard
-                      key={testId}
-                      test={test}
-                      index={index}
-                      latestAttempt={latestAttempt}
-                      isLocked={isLocked}
-                      hasActivePass={hasActivePass}
-                      isTrialAvailable={isTrialAvailable}
-                    />
-                  );
-                })
+                <>
+                  <div className="space-y-4">
+                    {paginatedChapterTests.map((test, index) => {
+                      const testId = test.id || test._id || '';
+                      const latestAttempt = testAttemptMap.get(testId);
+                      const isLocked = isTestLocked(test);
+                      const secKey = getTestSectionKey(test);
+                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      return (
+                        <RealTestCard
+                          key={testId}
+                          test={test}
+                          index={(chapterPage - 1) * TESTS_PAGE_SIZE + index}
+                          latestAttempt={latestAttempt}
+                          isLocked={isLocked}
+                          hasActivePass={hasActivePass}
+                          isTrialAvailable={isTrialAvailable}
+                        />
+                      );
+                    })}
+                  </div>
+
+                  <PaginationControl
+                    currentPage={chapterPage}
+                    totalItems={filteredChapterTests.length}
+                    pageSize={TESTS_PAGE_SIZE}
+                    onPageChange={(p) => {
+                      setChapterPage(p);
+                      scrollToTestList();
+                    }}
+                    itemName="chapter tests"
+                  />
+                </>
               )}
             </div>
           )}
@@ -1784,7 +1898,6 @@ function RealTestCard({
   const isInProgress = latestAttempt?.status === 'in_progress';
   const isSubmitted = latestAttempt?.status === 'submitted';
   const totalMarks = test.positiveMarks * test.totalQuestionsCount;
-  const sections = test.sections || [];
 
   const isHighlighted = isTrialAvailable && index === 0;
 
@@ -1799,19 +1912,13 @@ function RealTestCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           {/* Top Status Pill */}
-          {isLocked ? (
+          {isLocked && (
             <div>
               <span className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
                 PASS REQUIRED
               </span>
             </div>
-          ) : isTrialAvailable ? (
-            <div>
-              <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
-                1 FREE ATTEMPT AVAILABLE
-              </span>
-            </div>
-          ) : null}
+          )}
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
@@ -1840,20 +1947,6 @@ function RealTestCard({
             
           </div>
 
-          {/* Section pills for Full Tests or details */}
-          {sections.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted">Sections:</span>
-              {sections.map((section) => (
-                <span
-                  key={section.id || section.name}
-                  className="rounded-md border border-border bg-surface-raised px-2 py-0.5 text-[10px] font-semibold text-heading"
-                >
-                  {section.name}
-                </span>
-              ))}
-            </div>
-          )}
 
           {/* Score line if submitted */}
           {isSubmitted && latestAttempt && (
@@ -1870,7 +1963,7 @@ function RealTestCard({
             <a
               href={`/exams/${testId}/attempt`}
               onClick={(e) => handleTestNavigate(e, `/exams/${testId}/attempt`)}
-              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold !text-white transition hover:bg-accent-hover"
+              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-white transition hover:bg-accent-hover"
             >
               <span>Resume Test</span>
               <span aria-hidden="true">→</span>
@@ -1879,7 +1972,7 @@ function RealTestCard({
             <div className="flex flex-col gap-1.5 sm:items-end">
               <a
                 href={`/test-series/results/${latestAttempt!.id}`}
-                className="inline-flex min-h-10 items-center justify-center gap-1 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold !text-white transition hover:bg-emerald-700"
+                className="inline-flex min-h-10 items-center justify-center gap-1 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
               >
                 <span>View Result</span>
                 <span aria-hidden="true">→</span>
@@ -1920,7 +2013,7 @@ function RealTestCard({
                 href={`/test-series/instructions/${routeId}`}
                 onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
                 data-astro-prefetch="hover"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-accent-hover"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-accent-hover"
               >
                 <span>{isTrialAvailable ? 'Start Free Attempt' : 'Start Test'}</span>
                 <span aria-hidden="true">→</span>
@@ -1941,6 +2034,7 @@ function RealTestCard({
     </article>
   );
 }
+
 // UPCOMING LOCKED MOCK CARD COMPONENT
 function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
   return (
@@ -1978,19 +2072,6 @@ function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
             
           </div>
           
-          {/* Section pills */}
-          {mock.sections.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {mock.sections.map((section) => (
-                <span
-                  key={section}
-                  className="rounded-md border border-border bg-surface-raised px-2.5 py-0.5 text-[11px] font-medium text-heading"
-                >
-                  {section}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* Action Button: Locked */}
@@ -2011,5 +2092,96 @@ function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
         </div>
       </div>
     </article>
+  );
+}
+
+// REUSABLE TEST LIST PAGINATION BAR
+function PaginationControl({
+  currentPage,
+  totalItems,
+  pageSize = 10,
+  onPageChange,
+  itemName = 'tests',
+}: {
+  currentPage: number;
+  totalItems: number;
+  pageSize?: number;
+  onPageChange: (page: number) => void;
+  itemName?: string;
+}) {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  if (totalPages <= 1) return null;
+
+  const startItem = (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalItems);
+
+  const pages: (number | 'dots')[] = [];
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (currentPage > 3) pages.push('dots');
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (currentPage < totalPages - 2) pages.push('dots');
+    pages.push(totalPages);
+  }
+
+  return (
+    <nav
+      aria-label={`${itemName} pagination`}
+      className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 text-xs sm:flex-row sm:items-center sm:justify-between shadow-2xs"
+    >
+      <span className="font-medium text-muted">
+        Showing <strong className="font-semibold text-heading tabular-nums">{startItem}</strong>–<strong className="font-semibold text-heading tabular-nums">{endItem}</strong> of <strong className="font-semibold text-heading tabular-nums">{totalItems}</strong> {itemName}
+      </span>
+
+      <div className="flex flex-wrap items-center gap-1.5">
+        <button
+          type="button"
+          disabled={currentPage <= 1}
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          className="inline-flex min-h-9 items-center justify-center rounded-xl border border-border bg-surface-raised px-3 py-1.5 font-semibold text-heading hover:border-accent/40 disabled:cursor-not-allowed disabled:opacity-40 transition cursor-pointer select-none"
+        >
+          Previous
+        </button>
+
+        {pages.map((p, idx) => {
+          if (p === 'dots') {
+            return (
+              <span key={`dots-${idx}`} className="px-1 text-muted select-none">
+                …
+              </span>
+            );
+          }
+          const isActive = p === currentPage;
+          return (
+            <button
+              key={p}
+              type="button"
+              onClick={() => onPageChange(p)}
+              aria-current={isActive ? 'page' : undefined}
+              className={`inline-flex min-h-9 min-w-9 items-center justify-center rounded-xl px-2.5 py-1 text-xs font-bold transition cursor-pointer select-none ${
+                isActive
+                  ? 'bg-accent text-white shadow-2xs'
+                  : 'border border-border bg-surface-raised text-heading hover:border-accent/40'
+              }`}
+            >
+              {p}
+            </button>
+          );
+        })}
+
+        <button
+          type="button"
+          disabled={currentPage >= totalPages}
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          className="inline-flex min-h-9 items-center justify-center rounded-xl border border-border bg-surface-raised px-3 py-1.5 font-semibold text-heading hover:border-accent/40 disabled:cursor-not-allowed disabled:opacity-40 transition cursor-pointer select-none"
+        >
+          Next
+        </button>
+      </div>
+    </nav>
   );
 }

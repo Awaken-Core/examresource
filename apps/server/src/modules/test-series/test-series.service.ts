@@ -113,9 +113,10 @@ export class TestSeriesService {
   // 1. TEST SERIES MANAGEMENT
   // =========================================================================
 
-  async listPublished(category?: string) {
-    const cacheKey = `listPublished:${category || 'all'}`;
-    const cached = this.cache.get<any[]>(cacheKey);
+  async listPublished(category?: string, page?: number, limit?: number) {
+    const isPaginated = typeof limit === 'number' && limit > 0;
+    const cacheKey = `listPublished:${category || 'all'}:${isPaginated ? `${page || 1}:${limit}` : 'all'}`;
+    const cached = this.cache.get<any>(cacheKey);
     if (cached) return cached;
 
     const filter: Record<string, any> = { status: 'published' };
@@ -123,9 +124,33 @@ export class TestSeriesService {
       filter.category = category;
     }
 
+    if (isPaginated) {
+      const pageNum = Math.max(1, page || 1);
+      const limitNum = Math.min(100, Math.max(1, limit!));
+      const [total, docs] = await Promise.all([
+        this.testSeriesModel.countDocuments(filter),
+        this.testSeriesModel
+          .find(filter)
+          .sort({ order: 1, createdAt: -1, _id: 1 })
+          .skip((pageNum - 1) * limitNum)
+          .limit(limitNum)
+          .lean(),
+      ]);
+      const formatted = (docs as any[]).map((doc) => this.formatTestSeries(doc));
+      const result = {
+        data: formatted,
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      };
+      this.cache.set(cacheKey, result, 60_000);
+      return result;
+    }
+
     const docs: any[] = await this.testSeriesModel
       .find(filter)
-      .sort({ order: 1, createdAt: -1 })
+      .sort({ order: 1, createdAt: -1, _id: 1 })
       .lean();
 
     const formatted = docs.map((doc) => this.formatTestSeries(doc));
@@ -1410,8 +1435,9 @@ export class TestSeriesService {
     seriesId: string,
     query: ListIndividualTestsQueryInput,
   ) {
-    const cacheKey = `listTests:${seriesId}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}`;
-    const cached = this.cache.get<any[]>(cacheKey);
+    const isPaginated = typeof query.limit === 'number' && query.limit > 0;
+    const cacheKey = `listTests:${seriesId}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}:${isPaginated ? `${query.page || 1}:${query.limit}` : 'all'}`;
+    const cached = this.cache.get<any>(cacheKey);
     if (cached) return cached;
 
     const series = await this.findSeriesById(seriesId);
@@ -1471,17 +1497,42 @@ export class TestSeriesService {
     }
     if (query.access) filter.access = query.access;
 
+    if (isPaginated) {
+      const pageNum = Math.max(1, query.page || 1);
+      const limitNum = Math.min(100, Math.max(1, query.limit!));
+      const [total, docs] = await Promise.all([
+        this.examModel.countDocuments(filter),
+        this.examModel
+          .find(filter)
+          .select('-questions.snapshot -sections.questions.snapshot')
+          .sort({ createdAt: -1, _id: 1 })
+          .skip((pageNum - 1) * limitNum)
+          .limit(limitNum)
+          .lean(),
+      ]);
+      const formatted = docs.map((doc: any) => this.formatIndividualTest(doc, false));
+      const result = {
+        data: formatted,
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      };
+      this.cache.set(cacheKey, result, 60_000);
+      return result;
+    }
+
     const docs = await this.examModel
       .find(filter)
       .select('-questions.snapshot -sections.questions.snapshot')
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: 1 })
       .lean();
 
     const formatted = docs.map((doc) => this.formatIndividualTest(doc, false));
     this.cache.set(cacheKey, formatted, 60_000);
-    this.cache.set(`listTests:${series._id.toString()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}`, formatted, 60_000);
+    this.cache.set(`listTests:${series._id.toString()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}:all`, formatted, 60_000);
     if (series.slug) {
-      this.cache.set(`listTests:${series.slug.toLowerCase()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}`, formatted, 60_000);
+      this.cache.set(`listTests:${series.slug.toLowerCase()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}:all`, formatted, 60_000);
     }
     return formatted;
   }
@@ -1580,9 +1631,32 @@ export class TestSeriesService {
     }
     if (query.access) filter.access = query.access;
 
+    const isPaginated = query.page !== undefined || query.limit !== undefined;
+
+    if (isPaginated) {
+      const pageNum = Math.max(1, query.page || 1);
+      const limitNum = Math.min(100, Math.max(1, query.limit || 20));
+      const [total, docs] = await Promise.all([
+        this.examModel.countDocuments(filter),
+        this.examModel
+          .find(filter)
+          .sort({ version: -1, createdAt: -1, _id: 1 })
+          .skip((pageNum - 1) * limitNum)
+          .limit(limitNum)
+          .lean(),
+      ]);
+      return {
+        data: docs.map((doc: any) => this.formatIndividualTest(doc, true)),
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      };
+    }
+
     const docs = await this.examModel
       .find(filter)
-      .sort({ version: -1, createdAt: -1 })
+      .sort({ version: -1, createdAt: -1, _id: 1 })
       .lean();
 
     return docs.map((doc) => this.formatIndividualTest(doc, true));
