@@ -27,6 +27,8 @@ function parseBundle(): ArticleLangBundle | null {
 
 // In-memory cache for resolved article bodies across language toggles
 const memoryBodyCache = new Map<string, string>();
+let currentSwapGeneration = 0;
+let latestSwapLangKey: 'HINGLISH' | 'ENGLISH' | null = null;
 
 function renderBodyHtml(version: ArticleLangVersion, bodyContent?: string): string {
   const parts: string[] = [];
@@ -72,26 +74,7 @@ function updateSwitcherUi(langKey: 'HINGLISH' | 'ENGLISH') {
   });
 }
 
-/** Swap article content client-side with on-demand body loading and memory caching. */
-export async function swapArticleLanguage(lang: string): Promise<boolean> {
-  const normalized = lang === 'en' || lang === 'english' || lang === 'ENGLISH' ? 'en' : 'hinglish';
-  const langKey = normalized === 'en' ? 'ENGLISH' : 'HINGLISH';
-  const currentLangAttr = document.querySelector<HTMLElement>('[data-article-lang]')?.dataset.articleLang || 'hinglish';
-  const currentLangKey = currentLangAttr === 'en' ? 'ENGLISH' : 'HINGLISH';
-
-  const bundle = parseBundle();
-  const version = bundle?.[langKey];
-  if (!version) return false;
-
-  const bodyEl = document.getElementById('article-body');
-
-  // Cache current body before switching away so returning is 0ms instant
-  if (bodyEl && !memoryBodyCache.has(currentLangKey)) {
-    const renderedHtml = bodyEl.innerHTML;
-    memoryBodyCache.set(currentLangKey, renderedHtml);
-  }
-
-  // Update UI metadata immediately
+function applyVersionMetadata(version: ArticleLangVersion, normalized: 'en' | 'hinglish', langKey: 'HINGLISH' | 'ENGLISH') {
   const titleEl = document.querySelector<HTMLElement>('[data-article-title]');
   if (titleEl) titleEl.textContent = version.title;
 
@@ -124,7 +107,6 @@ export async function swapArticleLanguage(lang: string): Promise<boolean> {
   const ogDesc = document.querySelector('meta[property="og:description"]');
   if (ogDesc) ogDesc.setAttribute('content', version.pageDescription);
 
-  // Keep clean URL
   history.replaceState({ articleLang: normalized }, '', window.location.pathname);
 
   document.querySelectorAll<HTMLElement>('[data-article-lang]').forEach((el) => {
@@ -136,50 +118,144 @@ export async function swapArticleLanguage(lang: string): Promise<boolean> {
   });
 
   updateSwitcherUi(langKey);
+}
+
+/** Swap article content client-side with on-demand body loading, race condition guard, and memory caching. */
+export async function swapArticleLanguage(lang: string): Promise<boolean> {
+  const normalized = lang === 'en' || lang === 'english' || lang === 'ENGLISH' ? 'en' : 'hinglish';
+  const langKey = normalized === 'en' ? 'ENGLISH' : 'HINGLISH';
+  const currentLangAttr = document.querySelector<HTMLElement>('[data-article-lang]')?.dataset.articleLang || 'hinglish';
+  const currentNormalized = currentLangAttr === 'en' ? 'en' : 'hinglish';
+  const currentLangKey = currentNormalized === 'en' ? 'ENGLISH' : 'HINGLISH';
+
+  const bodyEl = document.getElementById('article-body');
+
+  // If already displaying the requested language and not in a loading placeholder state, no-op
+  if (currentLangKey === langKey && (!bodyEl || !bodyEl.hasAttribute('data-is-loading'))) {
+    return true;
+  }
+
+  const bundle = parseBundle();
+  const version = bundle?.[langKey];
+  const previousVersion = bundle?.[currentLangKey];
+  if (!version) return false;
+
+  // Cache current body before switching away ONLY if it's a real rendered body (never cache loading placeholder)
+  if (bodyEl && !bodyEl.hasAttribute('data-is-loading') && !memoryBodyCache.has(currentLangKey)) {
+    const renderedHtml = bodyEl.innerHTML;
+    if (!renderedHtml.includes('animate-pulse')) {
+      memoryBodyCache.set(currentLangKey, renderedHtml);
+    }
+  }
+
+  // Increment request generation and set latest requested language
+  const generation = ++currentSwapGeneration;
+  latestSwapLangKey = langKey;
+
+  // Update UI metadata immediately
+  applyVersionMetadata(version, normalized, langKey);
 
   // Render body: check memory cache first, then version.htmlBody, else fetch on demand
   if (bodyEl) {
     if (memoryBodyCache.has(langKey)) {
+      bodyEl.removeAttribute('data-is-loading');
       bodyEl.innerHTML = memoryBodyCache.get(langKey)!;
       bindArticleReading();
-    } else if (version.htmlBody) {
+      window.dispatchEvent(
+        new CustomEvent('exam:language-change', { detail: { lang: normalized, source: 'article-swap' } }),
+      );
+      return true;
+    }
+
+    if (version.htmlBody) {
       const html = renderBodyHtml(version);
       memoryBodyCache.set(langKey, html);
+      bodyEl.removeAttribute('data-is-loading');
       bodyEl.innerHTML = html;
       bindArticleReading();
-    } else {
-      // Show smooth loading placeholder while fetching alternate language body
-      bodyEl.innerHTML = `
-        <div class="animate-pulse space-y-4 py-8 max-w-none">
-          <div class="h-6 bg-slate-200 dark:bg-slate-800 rounded-lg w-3/4"></div>
-          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
-          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6"></div>
-          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-4/5"></div>
-          <div class="h-32 bg-slate-200/60 dark:bg-slate-800/60 rounded-xl w-full my-4"></div>
-          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
-          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
-        </div>
-      `;
+      window.dispatchEvent(
+        new CustomEvent('exam:language-change', { detail: { lang: normalized, source: 'article-swap' } }),
+      );
+      return true;
+    }
 
-      try {
-        const articleSlug = (version.url || window.location.pathname).replace(/^\//, '');
-        const res = await fetch(`${API_URL}/blogs/${encodeURIComponent(articleSlug)}?language=${langKey}`);
-        if (res.ok) {
-          const contentType = res.headers.get('content-type') || '';
-          if (contentType.includes('application/json')) {
-            const data = await res.json();
-            const processed = processArticleHtml(data.htmlContent || '', version.title);
-            version.htmlBody = processed.htmlBody;
-            const fullHtml = renderBodyHtml(version);
-            memoryBodyCache.set(langKey, fullHtml);
-            bodyEl.innerHTML = fullHtml;
-            bindArticleReading();
-          }
-        }
-      } catch {
-        // Fallback: reload page with query param if on-demand fetch fails
+    // Show smooth loading placeholder while fetching alternate language body
+    bodyEl.setAttribute('data-is-loading', 'true');
+    bodyEl.innerHTML = `
+      <div class="animate-pulse space-y-4 py-8 max-w-none">
+        <div class="h-6 bg-slate-200 dark:bg-slate-800 rounded-lg w-3/4"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-4/5"></div>
+        <div class="h-32 bg-slate-200/60 dark:bg-slate-800/60 rounded-xl w-full my-4"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
+        <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
+      </div>
+    `;
+
+    try {
+      const articleSlug = (version.url || window.location.pathname).replace(/^\//, '');
+      const res = await fetch(`${API_URL}/blogs/${encodeURIComponent(articleSlug)}?language=${langKey}`);
+      
+      // Treat non-OK as failure
+      if (!res.ok) {
+        throw new Error(`Failed to fetch article body: HTTP ${res.status}`);
+      }
+
+      // Treat non-JSON as failure
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Invalid response content-type: expected application/json');
+      }
+
+      const data = await res.json();
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response body format');
+      }
+
+      const processed = processArticleHtml(data.htmlContent || '', version.title);
+      version.htmlBody = processed.htmlBody;
+      const fullHtml = renderBodyHtml(version);
+      
+      // Cache valid parsed HTML into memory cache
+      memoryBodyCache.set(langKey, fullHtml);
+
+      // Verify this fetch is STILL the latest requested language and generation
+      if (generation !== currentSwapGeneration || latestSwapLangKey !== langKey) {
+        // User switched to another language in the meantime!
+        // Do not overwrite the DOM with out-of-date content.
+        return false;
+      }
+
+      bodyEl.removeAttribute('data-is-loading');
+      bodyEl.innerHTML = fullHtml;
+      bindArticleReading();
+
+      window.dispatchEvent(
+        new CustomEvent('exam:language-change', { detail: { lang: normalized, source: 'article-swap' } }),
+      );
+      return true;
+    } catch (err) {
+      // If a newer swap was already initiated, ignore this failure
+      if (generation !== currentSwapGeneration) {
+        return false;
+      }
+
+      bodyEl.removeAttribute('data-is-loading');
+
+      // Revert to previous body and metadata if available
+      if (previousVersion && memoryBodyCache.has(currentLangKey)) {
+        applyVersionMetadata(previousVersion, currentNormalized, currentLangKey);
+        bodyEl.innerHTML = memoryBodyCache.get(currentLangKey)!;
+        bindArticleReading();
+        window.dispatchEvent(
+          new CustomEvent('exam:language-change', { detail: { lang: currentNormalized, source: 'article-swap' } }),
+        );
+      } else {
+        // Fallback: reload page with query param
         window.location.search = `lang=${normalized}`;
       }
+      return false;
     }
   }
 
