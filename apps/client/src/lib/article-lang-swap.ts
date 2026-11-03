@@ -1,5 +1,7 @@
 import { bindArticleReading } from './article-reading';
 import type { ArticleLangBundle, ArticleLangVersion } from './article-lang';
+import { API_URL } from './api';
+import { processArticleHtml } from './article-lang';
 
 function escapeAttr(value: string): string {
   let text = value || '';
@@ -23,7 +25,10 @@ function parseBundle(): ArticleLangBundle | null {
   }
 }
 
-function renderBodyHtml(version: ArticleLangVersion): string {
+// In-memory cache for resolved article bodies across language toggles
+const memoryBodyCache = new Map<string, string>();
+
+function renderBodyHtml(version: ArticleLangVersion, bodyContent?: string): string {
   const parts: string[] = [];
   if (version.coverImage) {
     const alt = escapeAttr(version.imageAlt || version.title);
@@ -42,7 +47,8 @@ function renderBodyHtml(version: ArticleLangVersion): string {
       ${version.imageCaption ? `<figcaption class="mt-1.5 text-center text-xs text-muted">${escapeAttr(version.imageCaption)}</figcaption>` : ''}
     </figure>`);
   }
-  parts.push(`<div class="prose-markdown markdown-preview-content max-w-none" data-article-html>${version.htmlBody}</div>`);
+  const content = bodyContent || version.htmlBody || '';
+  parts.push(`<div class="prose-markdown markdown-preview-content max-w-none" data-article-html>${content}</div>`);
   return parts.join('');
 }
 
@@ -66,14 +72,26 @@ function updateSwitcherUi(langKey: 'HINGLISH' | 'ENGLISH') {
   });
 }
 
-/** Swap article content client-side. Returns true if swap succeeded. */
-export function swapArticleLanguage(lang: string): boolean {
+/** Swap article content client-side with on-demand body loading and memory caching. */
+export async function swapArticleLanguage(lang: string): Promise<boolean> {
   const normalized = lang === 'en' || lang === 'english' || lang === 'ENGLISH' ? 'en' : 'hinglish';
   const langKey = normalized === 'en' ? 'ENGLISH' : 'HINGLISH';
+  const currentLangAttr = document.querySelector<HTMLElement>('[data-article-lang]')?.dataset.articleLang || 'hinglish';
+  const currentLangKey = currentLangAttr === 'en' ? 'ENGLISH' : 'HINGLISH';
+
   const bundle = parseBundle();
   const version = bundle?.[langKey];
   if (!version) return false;
 
+  const bodyEl = document.getElementById('article-body');
+
+  // Cache current body before switching away so returning is 0ms instant
+  if (bodyEl && !memoryBodyCache.has(currentLangKey)) {
+    const renderedHtml = bodyEl.innerHTML;
+    memoryBodyCache.set(currentLangKey, renderedHtml);
+  }
+
+  // Update UI metadata immediately
   const titleEl = document.querySelector<HTMLElement>('[data-article-title]');
   if (titleEl) titleEl.textContent = version.title;
 
@@ -97,11 +115,6 @@ export function swapArticleLanguage(lang: string): boolean {
   const updatedEl = document.querySelector<HTMLElement>('[data-article-updated]');
   if (updatedEl) updatedEl.textContent = `Updated ${version.updatedDate}`;
 
-  const bodyEl = document.getElementById('article-body');
-  if (bodyEl) {
-    bodyEl.innerHTML = renderBodyHtml(version);
-  }
-
   document.title = version.pageTitle;
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute('content', version.pageDescription);
@@ -111,7 +124,7 @@ export function swapArticleLanguage(lang: string): boolean {
   const ogDesc = document.querySelector('meta[property="og:description"]');
   if (ogDesc) ogDesc.setAttribute('content', version.pageDescription);
 
-  // Keep the exact same clean URL without ?lang=en or /language extension
+  // Keep clean URL
   history.replaceState({ articleLang: normalized }, '', window.location.pathname);
 
   document.querySelectorAll<HTMLElement>('[data-article-lang]').forEach((el) => {
@@ -123,7 +136,52 @@ export function swapArticleLanguage(lang: string): boolean {
   });
 
   updateSwitcherUi(langKey);
-  bindArticleReading();
+
+  // Render body: check memory cache first, then version.htmlBody, else fetch on demand
+  if (bodyEl) {
+    if (memoryBodyCache.has(langKey)) {
+      bodyEl.innerHTML = memoryBodyCache.get(langKey)!;
+      bindArticleReading();
+    } else if (version.htmlBody) {
+      const html = renderBodyHtml(version);
+      memoryBodyCache.set(langKey, html);
+      bodyEl.innerHTML = html;
+      bindArticleReading();
+    } else {
+      // Show smooth loading placeholder while fetching alternate language body
+      bodyEl.innerHTML = `
+        <div class="animate-pulse space-y-4 py-8 max-w-none">
+          <div class="h-6 bg-slate-200 dark:bg-slate-800 rounded-lg w-3/4"></div>
+          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
+          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-5/6"></div>
+          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-4/5"></div>
+          <div class="h-32 bg-slate-200/60 dark:bg-slate-800/60 rounded-xl w-full my-4"></div>
+          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
+          <div class="h-4 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
+        </div>
+      `;
+
+      try {
+        const articleSlug = (version.url || window.location.pathname).replace(/^\//, '');
+        const res = await fetch(`${API_URL}/blogs/${encodeURIComponent(articleSlug)}?language=${langKey}`);
+        if (res.ok) {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('application/json')) {
+            const data = await res.json();
+            const processed = processArticleHtml(data.htmlContent || '', version.title);
+            version.htmlBody = processed.htmlBody;
+            const fullHtml = renderBodyHtml(version);
+            memoryBodyCache.set(langKey, fullHtml);
+            bodyEl.innerHTML = fullHtml;
+            bindArticleReading();
+          }
+        }
+      } catch {
+        // Fallback: reload page with query param if on-demand fetch fails
+        window.location.search = `lang=${normalized}`;
+      }
+    }
+  }
 
   window.dispatchEvent(
     new CustomEvent('exam:language-change', { detail: { lang: normalized, source: 'article-swap' } }),

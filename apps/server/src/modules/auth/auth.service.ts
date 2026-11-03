@@ -270,10 +270,13 @@ export class AuthService {
     const user = await this.userModel.findById(session.userId);
     if (!user || user.status !== 'active') return null;
 
-    await this.sessionModel.updateOne(
-      { _id: session._id },
-      { $set: { lastUsedAt: new Date() } },
-    );
+    const oneHourAgo = Date.now() - 60 * 60 * 1000;
+    if (!session.lastUsedAt || new Date(session.lastUsedAt).getTime() < oneHourAgo) {
+      await this.sessionModel.updateOne(
+        { _id: session._id },
+        { $set: { lastUsedAt: new Date() } },
+      );
+    }
 
     return {
       session: {

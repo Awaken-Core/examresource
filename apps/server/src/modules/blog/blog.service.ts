@@ -418,37 +418,28 @@ export class BlogService {
     const cleanSlug = slug.replace(/-(english|hinglish)$/i, '');
     const slugCandidates = Array.from(new Set([slug, cleanSlug, `${cleanSlug}-english`, `${cleanSlug}-hinglish`]));
 
-    const baseCondition: any = {
-      slug: { $in: slugCandidates },
-      language: requestedLang,
-      $or: [
-        { status: 'PUBLISHED' },
-        { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-      ],
-    };
-
-    let rawBlog = await this.blogModel
-      .findOne(baseCondition)
+    // 1. Batch lookup for slug candidates in a single round-trip
+    const candidateBlogs = await this.blogModel
+      .find({
+        slug: { $in: slugCandidates },
+        $or: [
+          { status: 'PUBLISHED' },
+          { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+        ],
+      })
       .populate<{ categoryId: CategoryDocument }>('categoryId')
       .populate<{ authorId: UserDocument }>('authorId')
       .lean();
 
-    if (!rawBlog) {
-      const anyBlogWithSlug = await this.blogModel
-        .findOne({
-          slug: { $in: slugCandidates },
-          $or: [
-            { status: 'PUBLISHED' },
-            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-          ],
-        })
-        .select({ _id: 1, translationGroupId: 1 })
-        .lean();
+    let rawBlog = candidateBlogs.find((b: any) => b.language === requestedLang);
 
-      if (anyBlogWithSlug?.translationGroupId) {
-        const groupMatch = await this.blogModel
+    if (!rawBlog && candidateBlogs.length > 0) {
+      // Find candidate with translationGroupId to locate the translated sibling
+      const candidateWithGroup = candidateBlogs.find((b: any) => Boolean(b.translationGroupId));
+      if (candidateWithGroup?.translationGroupId) {
+        rawBlog = await this.blogModel
           .findOne({
-            translationGroupId: anyBlogWithSlug.translationGroupId,
+            translationGroupId: candidateWithGroup.translationGroupId,
             language: requestedLang,
             $or: [
               { status: 'PUBLISHED' },
@@ -457,25 +448,12 @@ export class BlogService {
           })
           .populate<{ categoryId: CategoryDocument }>('categoryId')
           .populate<{ authorId: UserDocument }>('authorId')
-          .lean();
-
-        if (groupMatch) rawBlog = groupMatch;
+          .lean() || undefined;
       }
-    }
-
-    if (!rawBlog) {
-      const fallback = await this.blogModel
-        .findOne({
-          slug: { $in: slugCandidates },
-          $or: [
-            { status: 'PUBLISHED' },
-            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-          ],
-        })
-        .populate<{ categoryId: CategoryDocument }>('categoryId')
-        .populate<{ authorId: UserDocument }>('authorId')
-        .lean();
-      if (fallback) rawBlog = fallback;
+      // If still not found, fall back to first candidate
+      if (!rawBlog) {
+        rawBlog = candidateBlogs[0];
+      }
     }
 
     if (!rawBlog) {
@@ -528,47 +506,50 @@ export class BlogService {
         : null,
     };
 
-    let hasAlternateLanguage = false;
-    let effectiveBlocks = await this.getBlocks(blog.id);
+    // 2. Fetch primary blocks, alt blog, tags, and categories concurrently in parallel
+    const [primaryBlocks, altBlog, postTagsList, postCategories] = await Promise.all([
+      this.getBlocks(blog.id),
+      blog.translationGroupId
+        ? this.blogModel
+            .findOne({
+              translationGroupId: blog.translationGroupId,
+              _id: { $ne: rawBlog._id },
+              $or: [
+                { status: 'PUBLISHED' },
+                { status: 'SCHEDULED', scheduledAt: { $lte: now } },
+              ],
+            })
+            .lean()
+        : Promise.resolve(null),
+      this.getBlogTags(blog.id),
+      this.getBlogCategories(blog.id),
+    ]);
+
+    let effectiveBlocks = primaryBlocks;
     let alternateArticle: any = null;
+    const hasAlternateLanguage = Boolean(altBlog);
 
-    if (blog.translationGroupId) {
-      const alt = await this.blogModel
-        .findOne({
-          translationGroupId: blog.translationGroupId,
-          _id: { $ne: rawBlog._id },
-          $or: [
-            { status: 'PUBLISHED' },
-            { status: 'SCHEDULED', scheduledAt: { $lte: now } },
-          ],
-        })
-        .lean();
-      hasAlternateLanguage = !!alt;
-
-      if (alt) {
-        const altId = alt._id.toString();
-        const altBlocks = await this.getBlocks(altId);
-        effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
-        alternateArticle = {
-          id: altId,
-          title: alt.title,
-          slug: alt.slug,
-          language: alt.language,
-          description: alt.description ?? null,
-          coverImage: alt.coverImage ?? null,
-          imageAlt: alt.imageAlt ?? null,
-          imageCaption: alt.imageCaption ?? null,
-          metaTitle: alt.metaTitle ?? null,
-          metaDescription: alt.metaDescription ?? null,
-          publishedAt: alt.publishedAt ?? null,
-          updatedAt: (alt as any).updatedAt,
-          htmlContent: blocksToHtml(altBlocks as any),
-        };
-      }
+    if (altBlog) {
+      const altId = (altBlog as any)._id.toString();
+      const altBlocks = await this.getBlocks(altId);
+      effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
+      alternateArticle = {
+        id: altId,
+        title: (altBlog as any).title,
+        slug: (altBlog as any).slug,
+        language: (altBlog as any).language,
+        description: (altBlog as any).description ?? null,
+        coverImage: (altBlog as any).coverImage ?? null,
+        imageAlt: (altBlog as any).imageAlt ?? null,
+        imageCaption: (altBlog as any).imageCaption ?? null,
+        metaTitle: (altBlog as any).metaTitle ?? null,
+        metaDescription: (altBlog as any).metaDescription ?? null,
+        publishedAt: (altBlog as any).publishedAt ?? null,
+        updatedAt: (altBlog as any).updatedAt,
+        htmlContent: blocksToHtml(altBlocks as any),
+      };
     }
 
-    const postTagsList = await this.getBlogTags(blog.id);
-    const postCategories = await this.getBlogCategories(blog.id);
     const primaryCategory = postCategories[0] || blog.category;
     const html = blocksToHtml(effectiveBlocks as any);
 

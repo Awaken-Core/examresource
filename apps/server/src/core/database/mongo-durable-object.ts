@@ -145,8 +145,10 @@ export class MongoDurableObject extends DurableObject {
       }
 
       await mongoose.connect(dbUrl, {
-        maxPoolSize: 2,
-        minPoolSize: 0,
+        maxPoolSize: 10,
+        minPoolSize: 2,
+        maxIdleTimeMS: 60000,
+        waitQueueTimeoutMS: 10000,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 30000,
       });

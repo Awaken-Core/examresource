@@ -1,3 +1,5 @@
+import { API_URL } from './api';
+
 export type PassOffer = {
   amountPaise: number;
   listPricePaise: number;
@@ -13,13 +15,15 @@ const fallbackOffer: PassOffer = {
 };
 
 export async function loadPassOffer(): Promise<PassOffer> {
-  const api = import.meta.env.PUBLIC_API_URL?.replace(/\/$/, '');
+  const api = API_URL;
   if (!api) return fallbackOffer;
   try {
     const response = await fetch(`${api}/payments/test-series-pass/offer`, {
       signal: AbortSignal.timeout(6000),
     });
     if (!response.ok) return fallbackOffer;
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return fallbackOffer;
     const data = await response.json();
     const amountPaise = Number(data.amountPaise);
     const listPricePaise = Number(data.listPricePaise);

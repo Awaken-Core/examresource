@@ -19,6 +19,10 @@ const GUEST_READ_STORAGE_KEY = 'gp_guest_read_notification_ids';
 let currentItems: AppNotification[] = [];
 let allCachedNotifications = new Map<string, AppNotification>();
 let currentToken: string | null = null;
+let lastNotifFetchTime = 0;
+let lastFetchLang = '';
+let lastFetchToken: string | null = null;
+const NOTIF_FETCH_MIN_INTERVAL = 60_000;
 
 export function relativeTime(iso: string) {
   const delta = Date.now() - new Date(iso).getTime();
@@ -459,10 +463,16 @@ export async function refreshNotifications(token?: string | null) {
     const optimistic = deduplicateClientNotifications(Array.from(allCachedNotifications.values()), chosenLang);
     currentItems = !currentToken ? optimistic.slice(0, 3) : optimistic;
     paint(currentItems);
+
+    // If recently fetched for the same token and language, skip network fetch
+    if (
+      lastFetchToken === token &&
+      lastFetchLang === chosenLang &&
+      Date.now() - lastNotifFetchTime < NOTIF_FETCH_MIN_INTERVAL
+    ) {
+      return;
+    }
   }
-
-
-
 
   try {
     const endpoint = token
@@ -500,6 +510,9 @@ export async function refreshNotifications(token?: string | null) {
       }));
     }
 
+    lastNotifFetchTime = Date.now();
+    lastFetchLang = chosenLang;
+    lastFetchToken = token;
     currentItems = items;
     paint(currentItems);
     void fireUnreadToSystem(currentItems.filter((item) => !item.read));

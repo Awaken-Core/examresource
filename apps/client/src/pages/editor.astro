@@ -2975,6 +2975,7 @@ import { siteName, siteUrl } from '../data/site';
   import DOMPurify from 'dompurify';
   import { transformFaqSection } from '../lib/article-lang';
   import { bindFaqAccordion } from '../lib/article-reading';
+  import { API_URL } from '../lib/api';
 
   // Configure marked for GitHub flavored markdown with tables and standard rules
   const markedRenderer = new marked.Renderer();
@@ -3075,7 +3076,7 @@ import { siteName, siteUrl } from '../data/site';
   });
 
 
-  const API_URL = import.meta.env.PUBLIC_API_URL.replace(/\/$/, '');
+  // API_URL imported from ../lib/api
   const SITE_URL = import.meta.env.PUBLIC_SITE_URL.replace(/\/$/, '');
   const SITE_NAME = import.meta.env.PUBLIC_SITE_NAME || 'GovtPariksha';
 
