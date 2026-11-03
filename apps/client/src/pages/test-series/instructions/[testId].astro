@@ -126,6 +126,23 @@ const jsonLd = {
   jsonLd={jsonLd}
   hideHeaderFooter={true}
 >
+  {/* Auth guard: unauthenticated users must login before viewing test instructions */}
+  <script is:inline>
+    (function() {
+      try {
+        var isAuth =
+          localStorage.getItem('auth_active') === '1' ||
+          document.cookie.indexOf('logged_in=1') !== -1 ||
+          window.location.search.indexOf('login=success') !== -1 ||
+          document.documentElement.getAttribute('data-authenticated') === 'true';
+        if (!isAuth) {
+          var target = window.location.pathname + window.location.search;
+          window.location.replace('/login?redirect=' + encodeURIComponent(target));
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <div class="fixed inset-0 z-50 flex flex-col bg-canvas overflow-hidden">
     {/* Dynamic Test Instructions Island */}
     <TestInstructions client:load testId={testId} initialData={testSeo as any} siteName={siteName} />

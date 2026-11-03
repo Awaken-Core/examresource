@@ -151,6 +151,18 @@ function testRouteId(test: PublishedTestItem) {
   return test.slug || test.id || test._id || '';
 }
 
+function handleTestNavigate(e: React.MouseEvent<HTMLAnchorElement>, targetPath: string) {
+  if (!isClientAuthenticated()) {
+    e.preventDefault();
+    const loginUrl = `/login?redirect=${encodeURIComponent(targetPath)}`;
+    void import('astro:transitions/client')
+      .then(({ navigate }) => navigate(loginUrl))
+      .catch(() => {
+        window.location.href = loginUrl;
+      });
+  }
+}
+
 export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialPyqTests, initialAllTests }: Props) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
@@ -584,11 +596,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     );
   }
 
-  // Upcoming Locked Mock Tests (Coming Soon)
+  // Upcoming Locked Mock Tests (Coming Soon) - only show placeholder when no real full tests exist
   const upcomingMockTests = useMemo<UpcomingMockTest[]>(() => {
+    if (fullTests.length > 0) return [];
     const examLabel = series?.targetExam || series?.title || 'Full Syllabus';
-    const numToGenerate = Math.max(5 - fullTests.length, 3);
-    const startIndex = fullTests.length + 1;
+    const numToGenerate = 3;
+    const startIndex = 1;
 
     const defaultSections = (series?.subjects && series.subjects.length > 0)
       ? series.subjects.slice(0, 5).map((s) => subjectLabel(s))
@@ -794,6 +807,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
               {diagnosticTest && (
                 <a
                   href={`/test-series/instructions/${testRouteId(diagnosticTest)}`}
+                  onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${testRouteId(diagnosticTest)}`)}
                   data-astro-prefetch="hover"
                   className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
@@ -1721,8 +1735,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
         {/* RIGHT COLUMN: Sidebar Cards (Only shown if pass is NOT activated) */}
         {!hasActivePass && (
-          <aside className="space-y-5 lg:sticky lg:top-6 lg:col-span-4">
-            {/* TEST SERIES PASS CARDS (2 SEPARATE PLANS) */}
+          <aside className="space-y-5 lg:sticky lg:top-20 lg:col-span-4">
+            {/* TEST SERIES PASS CARDS */}
             <TestSeriesPassCard
               seriesId={series.id || series._id}
               variant="series"
@@ -1801,7 +1815,11 @@ function RealTestCard({
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
-            <a href={`/test-series/instructions/${routeId}`} data-astro-prefetch="hover">
+            <a
+              href={`/test-series/instructions/${routeId}`}
+              onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
+              data-astro-prefetch="hover"
+            >
               {test.title}
             </a>
           </h3>
@@ -1851,6 +1869,7 @@ function RealTestCard({
           {isInProgress ? (
             <a
               href={`/exams/${testId}/attempt`}
+              onClick={(e) => handleTestNavigate(e, `/exams/${testId}/attempt`)}
               className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold !text-white transition hover:bg-accent-hover"
             >
               <span>Resume Test</span>
@@ -1868,6 +1887,7 @@ function RealTestCard({
               {hasActivePass ? (
                 <a
                   href={`/test-series/instructions/${routeId}`}
+                  onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
                   data-astro-prefetch="hover"
                   className="inline-flex items-center justify-center text-xs font-semibold text-accent hover:underline"
                 >
@@ -1898,6 +1918,7 @@ function RealTestCard({
             <div className="flex flex-col sm:items-end">
               <a
                 href={`/test-series/instructions/${routeId}`}
+                onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
                 data-astro-prefetch="hover"
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold !text-white shadow-xs transition hover:bg-accent-hover"
               >
@@ -1956,7 +1977,7 @@ function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
             )}
             
           </div>
-
+          
           {/* Section pills */}
           {mock.sections.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-1">

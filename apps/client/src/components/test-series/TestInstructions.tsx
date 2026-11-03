@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../../lib/api';
+import { API_URL, getCachedCurrentUser, isClientAuthenticated } from '../../lib/api';
 import { BrandMark } from '../BrandMark';
 import { CBTStatusShape } from './CBTStatusShape';
 import { TestSeriesPassCard } from './TestSeriesPassCard';
@@ -55,18 +55,49 @@ export function TestInstructions({ testId, initialData, siteName = 'GovtPariksha
   const [passRequired, setPassRequired] = useState(false);
 
   // Candidate Profile
-  const [candidateName, setCandidateName] = useState('Shivam');
-  const [candidateAvatar, setCandidateAvatar] = useState<string | null>(null);
+  const [candidateName, setCandidateName] = useState(() => {
+    const cached = getCachedCurrentUser();
+    return cached?.name?.trim() || cached?.email?.split('@')[0] || 'Candidate';
+  });
+  const [candidateAvatar, setCandidateAvatar] = useState<string | null>(() => {
+    const cached = getCachedCurrentUser();
+    return (cached?.avatarUrl || cached?.avatar) ?? null;
+  });
+  const [candidateRollNo, setCandidateRollNo] = useState<string>(() => {
+    const cached = getCachedCurrentUser();
+    const id = cached?.id || cached?._id;
+    return id ? `CBT-${String(id).slice(-6).toUpperCase()}` : 'CBT-CANDIDATE';
+  });
 
   useEffect(() => {
     let cancelled = false;
+
+    // Guard: if unauthenticated, redirect immediately to login
+    if (!isClientAuthenticated()) {
+      const loginUrl = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      window.location.replace(loginUrl);
+      return;
+    }
+
     void fetch(`${API_URL}/me`, { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((user: { name?: string; avatarUrl?: string; avatar?: string } | null) => {
-        if (cancelled || !user?.name?.trim()) return;
-        setCandidateName(user.name.trim());
+      .then((res) => {
+        if (!res.ok) {
+          const loginUrl = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+          window.location.replace(loginUrl);
+          return null;
+        }
+        return res.json();
+      })
+      .then((user: { id?: string; _id?: string; name?: string; email?: string; avatarUrl?: string; avatar?: string } | null) => {
+        if (cancelled || !user) return;
+        const name = user.name?.trim() || user.email?.split('@')[0] || 'Candidate';
+        setCandidateName(name);
         if (user.avatarUrl || user.avatar) {
           setCandidateAvatar((user.avatarUrl || user.avatar) ?? null);
+        }
+        const resolvedId = user.id || user._id;
+        if (resolvedId) {
+          setCandidateRollNo(`CBT-${String(resolvedId).slice(-6).toUpperCase()}`);
         }
       })
       .catch(() => undefined);
@@ -509,7 +540,7 @@ export function TestInstructions({ testId, initialData, siteName = 'GovtPariksha
             <p className="text-base font-bold text-heading">{candidateName}</p>
             <p className="text-xs text-muted">Candidate Roll No.</p>
             <span className="inline-block rounded-md bg-surface-raised border border-border px-2.5 py-0.5 font-mono text-[11px] font-semibold text-muted">
-              CBT-2026-ROLL
+              {candidateRollNo}
             </span>
           </div>
 
