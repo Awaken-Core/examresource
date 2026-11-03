@@ -86,6 +86,7 @@ export const createChapterSchema = z.object({
     ),
   subjectId: z.string().min(1),
   description: z.string().trim().max(2_000).nullable().optional(),
+  topics: z.array(z.string().trim()).optional(),
   order: z.number().int().min(0).default(0),
   status: z.enum(['draft', 'published', 'archived']).default('published'),
 });
@@ -104,6 +105,7 @@ export const updateChapterSchema = z
       )
       .optional(),
     description: z.string().trim().max(2_000).nullable().optional(),
+    topics: z.array(z.string().trim()).optional(),
     order: z.number().int().min(0).optional(),
     status: z.enum(['draft', 'published', 'archived']).optional(),
   })

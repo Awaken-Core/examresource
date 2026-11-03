@@ -147,6 +147,9 @@ export class Chapter {
   @Prop({ type: String, default: null, trim: true })
   description?: string | null;
 
+  @Prop({ type: [String], default: [] })
+  topics?: string[];
+
   @Prop({ type: Number, default: 0 })
   order: number;
 

@@ -24,6 +24,7 @@ export interface StudentTestSeries {
 
 const CATEGORIES = [
   { id: 'all', label: 'All Exams' },
+  { id: 'aptitude-reasoning', label: 'Aptitude & Reasoning' },
   { id: 'central-government', label: 'Central Govt' },
   { id: 'state-exams', label: 'State Exams' },
   { id: 'banking', label: 'Banking' },

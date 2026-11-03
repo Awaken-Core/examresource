@@ -18,6 +18,22 @@ export interface MockExamCard {
 
 export const mockTestSeriesData: MockExamCard[] = [
   {
+    id: 'aptitude-reasoning-master-exam-2026',
+    title: 'Aptitude & Reasoning Master Exam 2026',
+    organization: 'GovtPariksha',
+    badge: 'Recommended',
+    access: 'Free Tests',
+    totalTests: 68,
+    freeTests: 40,
+    languages: ['Hindi', 'English'],
+    description: 'Master examination and timed CBT simulation for Quantitative Aptitude and Logical Reasoning across 37 comprehensive syllabus-aligned chapters with dual-section full mocks.',
+    category: 'aptitude-reasoning',
+    badgeColor: 'bg-[#FFF7ED] text-[#EA580C] border-[#FFEDD5]',
+    initials: 'AR',
+    initialBg: 'bg-[#FF4D00]',
+    initialColor: 'text-white',
+  },
+  {
     id: 'quantitative-aptitude-complete',
     title: 'Quantitative Aptitude Complete',
     organization: 'GovtPariksha',

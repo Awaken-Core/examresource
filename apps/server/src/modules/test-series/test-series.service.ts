@@ -1375,6 +1375,7 @@ export class TestSeriesService {
       testSeriesId: doc.testSeriesId.toString(),
       subjectId: doc.subjectId.toString(),
       description: doc.description || null,
+      topics: doc.topics || [],
       order: doc.order ?? 0,
       status: doc.status,
       questionsCount,
