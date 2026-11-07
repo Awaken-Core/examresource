@@ -130,7 +130,7 @@ export function TestSeriesBannerCarousel() {
           onClick={prevSlide}
           aria-hidden="true"
           title="Previous slide preview"
-          className="hidden sm:block absolute left-1 sm:left-2 md:left-3 lg:left-4 w-[11%] sm:w-[12%] md:w-[13%] h-[86%] sm:h-[88%] rounded-2xl overflow-hidden opacity-35 hover:opacity-70 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
+          className="hidden sm:block absolute left-1 sm:left-2 md:left-3 lg:left-4 w-[12%] sm:w-[13%] md:w-[14%] h-[86%] sm:h-[88%] rounded-2xl overflow-hidden opacity-35 hover:opacity-70 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
         >
           <div
             className="w-full h-full transform scale-105"
@@ -148,15 +148,15 @@ export function TestSeriesBannerCarousel() {
           type="button"
           onClick={prevSlide}
           aria-label="Previous Slide"
-          className="absolute left-1 sm:left-2 md:left-4 lg:left-5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-90 group-hover:opacity-100"
+          className="absolute left-1 sm:left-2 md:left-4 lg:left-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-90 group-hover:opacity-100"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
-        {/* Center Active Stage (Wide & Majestic Height: ~260-285px matching Testbook) */}
-        <div className="relative w-[88%] sm:w-[86%] md:w-[84%] lg:w-[83%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl h-[245px] xs:h-[258px] sm:h-[272px] md:h-[285px] border border-editorial-border/80 z-10 bg-editorial-surface">
+        {/* Center Active Stage (Optimized: Width slightly reduced, Height increased to ~300-318px) */}
+        <div className="relative w-[84%] sm:w-[80%] md:w-[78%] lg:w-[76%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl h-[265px] xs:h-[280px] sm:h-[300px] md:h-[318px] border border-editorial-border/80 z-10 bg-editorial-surface">
           {/* SLIDE 0: DIWALI DHAMAKA SALE */}
           <div
             className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
@@ -476,7 +476,7 @@ export function TestSeriesBannerCarousel() {
           type="button"
           onClick={nextSlide}
           aria-label="Next Slide"
-          className="absolute right-1 sm:right-2 md:right-4 lg:right-5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-90 group-hover:opacity-100"
+          className="absolute right-1 sm:right-2 md:right-4 lg:right-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-90 group-hover:opacity-100"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
@@ -488,7 +488,7 @@ export function TestSeriesBannerCarousel() {
           onClick={nextSlide}
           aria-hidden="true"
           title="Next slide preview"
-          className="hidden sm:block absolute right-1 sm:right-2 md:right-3 lg:right-4 w-[11%] sm:w-[12%] md:w-[13%] h-[86%] sm:h-[88%] rounded-2xl overflow-hidden opacity-35 hover:opacity-70 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
+          className="hidden sm:block absolute right-1 sm:right-2 md:right-3 lg:right-4 w-[12%] sm:w-[13%] md:w-[14%] h-[86%] sm:h-[88%] rounded-2xl overflow-hidden opacity-35 hover:opacity-70 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
         >
           <div
             className="w-full h-full transform scale-105"
