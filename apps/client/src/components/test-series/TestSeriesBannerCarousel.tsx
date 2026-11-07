@@ -125,22 +125,21 @@ export function TestSeriesBannerCarousel() {
         aria-roledescription="carousel"
         aria-label="Featured Test Series & Promotional Offers"
       >
-        {/* Left Peek Card (Previous Slide Preview) */}
+        {/* Left Peek Card (Previous Slide Preview - Crisp & Subtle Peek, No Blur, Full Visibility) */}
         <div
           onClick={prevSlide}
           aria-hidden="true"
           title="Previous slide preview"
-          className="hidden sm:block absolute left-1 sm:left-2 md:left-3 lg:left-4 w-[12%] sm:w-[13%] md:w-[14%] h-[86%] sm:h-[88%] rounded-2xl overflow-hidden opacity-35 hover:opacity-70 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
+          className="hidden sm:block absolute left-0 sm:left-1 md:left-2 w-[8%] sm:w-[9%] md:w-[9.5%] h-[88%] sm:h-[90%] rounded-2xl overflow-hidden opacity-100 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
         >
           <div
-            className="w-full h-full transform scale-105"
+            className="w-full h-full transform scale-100"
             style={{
               backgroundImage: `url(${SLIDES[prevIndex].bgImage})`,
-              backgroundPosition: 'center',
+              backgroundPosition: SLIDES[prevIndex].bgPosition || 'center',
               backgroundSize: 'cover',
             }}
           />
-          <div className="absolute inset-0 bg-black/45 backdrop-blur-[0.5px]" />
         </div>
 
         {/* Floating Left Arrow (OUTSIDE Center Card, Over Left Peek Card) */}
@@ -148,15 +147,15 @@ export function TestSeriesBannerCarousel() {
           type="button"
           onClick={prevSlide}
           aria-label="Previous Slide"
-          className="absolute left-1 sm:left-2 md:left-4 lg:left-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-90 group-hover:opacity-100"
+          className="absolute left-0 sm:left-1 md:left-2 lg:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-95 group-hover:opacity-100"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
 
-        {/* Center Active Stage (Optimized: Width slightly reduced, Height increased to ~300-318px) */}
-        <div className="relative w-[84%] sm:w-[80%] md:w-[78%] lg:w-[76%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl h-[265px] xs:h-[280px] sm:h-[300px] md:h-[318px] border border-editorial-border/80 z-10 bg-editorial-surface">
+        {/* Center Active Stage (Subtle Peek Proportions: ~90-92% Width, ~300-318px Height) */}
+        <div className="relative w-[89%] sm:w-[90%] md:w-[91%] lg:w-[92%] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl h-[265px] xs:h-[280px] sm:h-[300px] md:h-[318px] border border-editorial-border/80 z-10 bg-editorial-surface">
           {/* SLIDE 0: DIWALI DHAMAKA SALE */}
           <div
             className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
@@ -476,29 +475,28 @@ export function TestSeriesBannerCarousel() {
           type="button"
           onClick={nextSlide}
           aria-label="Next Slide"
-          className="absolute right-1 sm:right-2 md:right-4 lg:right-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-90 group-hover:opacity-100"
+          className="absolute right-0 sm:right-1 md:right-2 lg:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-95 group-hover:opacity-100"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
-        {/* Right Peek Card (Next Slide Preview) */}
+        {/* Right Peek Card (Next Slide Preview - Crisp & Subtle Peek, No Blur, Full Visibility) */}
         <div
           onClick={nextSlide}
           aria-hidden="true"
           title="Next slide preview"
-          className="hidden sm:block absolute right-1 sm:right-2 md:right-3 lg:right-4 w-[12%] sm:w-[13%] md:w-[14%] h-[86%] sm:h-[88%] rounded-2xl overflow-hidden opacity-35 hover:opacity-70 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
+          className="hidden sm:block absolute right-0 sm:right-1 md:right-2 w-[8%] sm:w-[9%] md:w-[9.5%] h-[88%] sm:h-[90%] rounded-2xl overflow-hidden opacity-100 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
         >
           <div
-            className="w-full h-full transform scale-105"
+            className="w-full h-full transform scale-100"
             style={{
               backgroundImage: `url(${SLIDES[nextIndex].bgImage})`,
-              backgroundPosition: 'center',
+              backgroundPosition: SLIDES[nextIndex].bgPosition || 'center',
               backgroundSize: 'cover',
             }}
           />
-          <div className="absolute inset-0 bg-black/45 backdrop-blur-[0.5px]" />
         </div>
       </div>
 
