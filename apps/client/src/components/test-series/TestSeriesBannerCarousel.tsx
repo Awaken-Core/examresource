@@ -209,8 +209,8 @@ export function TestSeriesBannerCarousel() {
                     <div className="w-1.5 h-2.5 bg-amber-100 rounded-full blur-[0.5px]" />
                   </div>
 
-                  {/* "Diwali" in glowing golden-white cursive serif */}
-                  <span className="font-['EB_Garamond'] italic text-2xl sm:text-[28px] md:text-[32px] font-bold text-white drop-shadow-[0_2px_8px_rgba(251,191,36,0.85)] tracking-tight leading-none mt-0.5">
+                  {/* "Diwali" in glowing golden sans */}
+                  <span className="font-['Geist'] text-xl sm:text-2xl md:text-[26px] font-extrabold text-amber-200 tracking-wider uppercase drop-shadow-[0_2px_8px_rgba(251,191,36,0.85)] leading-none mt-0.5">
                     Diwali
                   </span>
 
@@ -397,7 +397,7 @@ export function TestSeriesBannerCarousel() {
             </div>
           </div>
 
-          {/* SLIDE 2: DSSSB TGT & PGT COMPUTER SCIENCE — Premium Live Card */}
+          {/* SLIDE 2: DSSSB TGT & PGT COMPUTER SCIENCE — Symmetrical Illuminated Design (Matching Diwali Card) */}
           <div
             className={`absolute inset-0 w-full h-full transition-opacity duration-400 ease-in-out flex items-center ${
               currentSlide === 2 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
@@ -412,109 +412,131 @@ export function TestSeriesBannerCarousel() {
             aria-roledescription="slide"
             aria-label="3 of 3: DSSSB Computer Science CBT"
           >
-            {/* Deep Dark Navy Overlay for premium contrast */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#020d1e]/97 via-[#071a36]/92 sm:via-[#071a36]/85 to-[#0a1e3d]/40 pointer-events-none" />
+            {/* Deep Cyber Night Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#031127]/95 via-[#072147]/88 to-[#04142d]/95 pointer-events-none" />
 
             <div
               key={`slide-2-${currentSlide}`}
-              className={`relative z-10 w-full p-4 sm:p-5 md:p-6 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-center ${
+              className={`relative z-10 w-full h-full px-4 sm:px-6 py-2 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 items-center ${
                 currentSlide === 2 ? 'banner-content-animate' : ''
               }`}
             >
-              {/* Left Column: DSSSB Overview — Premium Typography */}
-              <div className="md:col-span-7 space-y-2 sm:space-y-2.5 text-left">
-                {/* Live Pill Badge — Bright & Eye-catching */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold tracking-widest uppercase bg-emerald-500/25 border border-emerald-400/60 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span>LIVE CBT MOCKS · 2026 PATTERN</span>
+              {/* Left Column: Illuminated Tech Emblem Frame */}
+              <div className="md:col-span-6 flex flex-col items-center justify-center text-center py-1">
+                {/* Brand Logo & Name */}
+                <div className="flex items-center justify-center gap-1.5 pb-1">
+                  <div className="w-4 h-4 rounded-md bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-xs">
+                    <span className="text-slate-950 font-black text-[9px]">G</span>
+                  </div>
+                  <span className="font-['Geist'] text-[11px] font-bold text-white tracking-wider">
+                    Govt<span className="text-cyan-400">Pariksha</span>
+                  </span>
                 </div>
 
-                <div className="space-y-1">
-                  <h2
-                    style={{ color: '#ffffff' }}
-                    className="font-['EB_Garamond'] text-[22px] xs:text-[26px] sm:text-[30px] font-bold tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
-                  >
-                    DSSSB TGT & PGT <br className="hidden sm:inline" />
-                    <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-cyan-400 bg-clip-text text-transparent font-extrabold">
-                      Computer Science
-                    </span>
-                  </h2>
+                {/* Central Ornate Arch Frame */}
+                <div className="relative inline-flex flex-col items-center justify-center px-6 sm:px-8 pt-3 pb-2 rounded-t-[34px] rounded-b-2xl bg-gradient-to-b from-[#0a2c52] via-[#061e38] to-[#031121] border-2 border-cyan-400/90 shadow-[0_0_25px_rgba(34,211,238,0.5),inset_0_0_18px_rgba(56,189,248,0.3)]">
+                  {/* Glowing Tech Terminal Icon at apex */}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-gradient-to-t from-cyan-500 via-sky-300 to-white flex items-center justify-center shadow-[0_0_12px_rgba(34,211,238,0.9)] animate-pulse">
+                    <span className="text-[10px]">💻</span>
+                  </div>
 
-                  <p
-                    style={{ color: '#cbd5e1' }}
-                    className="font-['Geist'] text-[11px] sm:text-xs text-slate-300 font-medium drop-shadow max-w-md"
-                  >
-                    Delhi Subordinate Services Selection Board Comprehensive CBT Practice with real exam interface
-                  </p>
+                  {/* "DSSSB" in crisp sans-serif */}
+                  <span className="font-['Geist'] text-xl sm:text-2xl md:text-[26px] font-extrabold text-cyan-200 tracking-wider uppercase drop-shadow-[0_2px_8px_rgba(34,211,238,0.85)] leading-none mt-0.5">
+                    DSSSB
+                  </span>
+
+                  {/* "COMPUTER SCIENCE" in giant 3D extruded font */}
+                  <span className="font-['Geist'] font-black text-2xl sm:text-[28px] md:text-[32px] tracking-tight bg-gradient-to-b from-white via-cyan-200 to-sky-400 bg-clip-text text-transparent drop-shadow-[0_3px_8px_rgba(0,0,0,0.95)] uppercase leading-none my-0.5">
+                    Comp Science
+                  </span>
+
+                  {/* Curved ribbon banner */}
+                  <div className="relative mt-0.5 px-5 py-0.5 rounded-full bg-gradient-to-r from-cyan-400 via-sky-300 to-cyan-500 text-slate-950 font-black text-[10.5px] sm:text-xs uppercase tracking-widest shadow-md border border-cyan-200/80">
+                    TGT & PGT 2026
+                  </div>
                 </div>
 
-                {/* Section Tags — Pill-style Feature Chips */}
-                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-200 border border-cyan-400/30 text-[10px] font-semibold">
-                    <span className="text-cyan-400 font-bold">✓</span> Section A (General)
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-200 border border-cyan-400/30 text-[10px] font-semibold">
-                    <span className="text-cyan-400 font-bold">✓</span> Section B (CS & IT)
-                  </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-200 border border-cyan-400/30 text-[10px] font-semibold">
-                    <span className="text-cyan-400 font-bold">✓</span> 0.25 Negative Marking
-                  </span>
+                {/* Sub-badge */}
+                <div className="mt-1.5 inline-flex items-center px-3.5 py-0.5 rounded-full bg-slate-950/85 border border-cyan-400/60 text-cyan-200 text-[9.5px] sm:text-[10px] font-semibold tracking-wide shadow-md">
+                  Authentic Exam CBT · TCS Interface
+                </div>
+
+                {/* Bottom Feature Chips */}
+                <div className="flex items-center justify-center gap-2 pt-1 text-[10px] font-semibold text-cyan-200">
+                  <span className="px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40">⏱️ Real Timer</span>
+                  <span className="px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40">📊 AI Rank</span>
+                  <span className="px-2 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40">💡 Bilingual</span>
                 </div>
               </div>
 
-              {/* Right Column: Premium CBT Stats Card */}
-              <div className="md:col-span-5 flex flex-col items-start md:items-end justify-center">
-                <div className="w-full max-w-[250px] sm:max-w-[265px] rounded-xl overflow-hidden bg-slate-950/90 border border-cyan-400/40 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
-                  {/* Card Header */}
-                  <div className="flex items-center justify-between px-3.5 py-2 bg-gradient-to-r from-cyan-900/40 to-slate-900/40 border-b border-cyan-500/30">
-                    <span style={{ color: '#e2e8f0' }} className="font-semibold text-[11px] text-slate-200">
-                      CBT Simulation
-                    </span>
-                    <span className="text-emerald-400 font-mono font-bold text-[10.5px] flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                      Free Open
-                    </span>
-                  </div>
+              {/* Subtle Cyan Diagonal Divider Line */}
+              <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-cyan-400/40 to-transparent transform -translate-x-1/2 rotate-3" />
 
-                  {/* Stats Grid */}
-                  <div className="px-3.5 py-2 space-y-1.5 text-[11px]">
-                    <div className="flex justify-between py-0.5">
-                      <span style={{ color: '#94a3b8' }} className="text-slate-400">
-                        Total Tests:
-                      </span>
-                      <strong style={{ color: '#ffffff' }} className="text-white font-semibold tabular-nums">
-                        520+ Tests
-                      </strong>
-                    </div>
-                    <div className="flex justify-between py-0.5">
-                      <span style={{ color: '#94a3b8' }} className="text-slate-400">
-                        Languages:
-                      </span>
-                      <strong style={{ color: '#ffffff' }} className="text-white font-semibold">
-                        Bilingual
-                      </strong>
-                    </div>
-                    <div className="flex justify-between py-0.5">
-                      <span style={{ color: '#94a3b8' }} className="text-slate-400">
-                        Rank Predictor:
-                      </span>
-                      <strong className="text-cyan-300 font-semibold">AI Powered</strong>
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <div className="px-3.5 pb-3 pt-1">
-                    <a
-                      href="/test-series/dsssb-tgt-computer-science"
-                      className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg font-extrabold text-xs text-white bg-gradient-to-r from-[#ff4d00] to-[#ff6a26] hover:from-[#e04400] hover:to-[#ff5500] shadow-[0_3px_18px_rgba(255,77,0,0.5)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
-                    >
-                      <span>Start Free Mock</span>
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </a>
+              {/* Right Column: Structured Live Offer Stack (Exact Diwali Layout) */}
+              <div className="md:col-span-6 flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 text-center py-1">
+                {/* 1. Arched Crest */}
+                <div className="relative px-4 sm:px-5 py-0.5 rounded-t-xl rounded-b-md bg-gradient-to-r from-sky-950 via-cyan-900 to-sky-950 border border-cyan-400/90 shadow-[0_0_15px_rgba(34,211,238,0.55)]">
+                  <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-black tracking-widest text-cyan-300 uppercase">
+                    <span className="text-cyan-300 text-xs animate-ping">⚡</span>
+                    <span>LIVE CBT IS ACTIVE</span>
+                    <span className="text-cyan-300 text-xs animate-ping">⚡</span>
                   </div>
                 </div>
+
+                {/* 2. Dual badge pill */}
+                <div className="inline-flex items-center justify-center gap-2 px-3 py-0.5 rounded-full bg-slate-950/80 border border-cyan-400/50 shadow-md">
+                  <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-cyan-400 to-sky-400 text-slate-950 font-black text-[9.5px] sm:text-[10px] uppercase tracking-wider shadow-xs">
+                    Target 2026
+                  </span>
+                  <span className="text-white font-bold text-[11px] sm:text-xs flex items-center gap-1.5">
+                    DSSSB CBT
+                    <span className="px-1.5 py-0.2 rounded bg-emerald-500 text-white font-black text-[8.5px] tracking-wider uppercase shadow-xs">
+                      FREE MOCK
+                    </span>
+                  </span>
+                </div>
+
+                {/* 3. Connector */}
+                <div className="flex items-center justify-center gap-2 text-cyan-200/90 text-[10px] font-medium">
+                  <span className="w-8 sm:w-10 h-px bg-gradient-to-r from-transparent to-cyan-300/70" />
+                  <span className="italic">Full CBT Test</span>
+                  <span className="w-8 sm:w-10 h-px bg-gradient-to-l from-transparent to-cyan-300/70" />
+                </div>
+
+                {/* 4. Illuminated Ticket Box */}
+                <div className="relative w-full max-w-[210px] sm:max-w-[230px] py-1 px-4 rounded-xl bg-gradient-to-r from-[#dbeafe] via-[#bae6fd] to-[#7dd3fc] border-2 border-cyan-400 shadow-[0_4px_18px_rgba(34,211,238,0.5)] text-center">
+                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-cyan-900/60 font-serif text-sm">❧</div>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 text-cyan-900/60 font-serif text-sm">☙</div>
+
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-3xl sm:text-[34px] font-black text-slate-950 tracking-tight leading-none drop-shadow-xs">
+                      FREE
+                    </span>
+                    <span className="text-xs line-through text-slate-700 font-semibold">
+                      ₹499
+                    </span>
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-200 uppercase">
+                      100% OFF
+                    </span>
+                  </div>
+                </div>
+
+                {/* 5. Pattern / Syllabus Pill */}
+                <div className="inline-flex items-center justify-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-950/85 border border-cyan-400/50 text-cyan-200 text-[9px] sm:text-[9.5px] font-semibold shadow-xs">
+                  <span>📋</span>
+                  <span>Section A (General) + Section B (CS & IT)</span>
+                </div>
+
+                {/* 6. Big Glossy Green Button (Matching Diwali Buy Now) */}
+                <a
+                  href="/test-series/dsssb-tgt-computer-science"
+                  className="w-full max-w-[190px] sm:max-w-[210px] inline-flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-6 rounded-full font-black text-sm text-white bg-gradient-to-b from-[#22c55e] via-[#16a34a] to-[#15803d] hover:from-[#16a34a] hover:to-[#15803d] shadow-[0_4px_20px_rgba(34,197,94,0.65)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border border-green-300/40"
+                >
+                  <span>Start Free Mock</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
