@@ -503,7 +503,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                       {/* Description */}
                       <p className="text-[12px] text-editorial-muted line-clamp-2 leading-relaxed">
                         {series.slug?.includes('dsssb')
-                          ? '20 Days • 20 Tests Challenge — Complete Part B (Computer Science & IT - 100 Marks) mock test series with instant AI rank and detailed solutions.'
+                          ? '20 Days • 20 Tests Challenge - Complete Part B (Computer Science & IT - 100 Marks) mock test series with instant AI rank and detailed solutions.'
                           : series.description}
                       </p>
 
@@ -563,7 +563,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                 className="pt-6 mt-4 border-t border-editorial-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-editorial-muted"
               >
                 <div>
-                  Showing <strong className="text-editorial-heading font-semibold tabular-nums">{(safePage - 1) * ITEMS_PER_PAGE + 1}</strong>–<strong className="text-editorial-heading font-semibold tabular-nums">{Math.min(safePage * ITEMS_PER_PAGE, sortedList.length)}</strong> of <strong className="text-editorial-heading font-semibold tabular-nums">{sortedList.length}</strong> suites
+                  Showing <strong className="text-editorial-heading font-semibold tabular-nums">{(safePage - 1) * ITEMS_PER_PAGE + 1}</strong>-<strong className="text-editorial-heading font-semibold tabular-nums">{Math.min(safePage * ITEMS_PER_PAGE, sortedList.length)}</strong> of <strong className="text-editorial-heading font-semibold tabular-nums">{sortedList.length}</strong> suites
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1.5">

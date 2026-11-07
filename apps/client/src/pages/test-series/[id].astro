@@ -53,7 +53,7 @@ const isPyqPaper = (t: any) =>
 const initialFullTests = (fullTestsRes || []).filter((t: any) => !isPyqPaper(t));
 const initialPyqTests = (fullTestsRes || []).filter((t: any) => isPyqPaper(t));
 
-const seriesTitle = seriesSeo?.title?.trim();
+const seriesTitle = seriesSeo?.title?.replace(/[\u2014\u2013]/g, ' - ').replace(/\s+-\s+/g, ' - ').trim();
 const subjectNames = (seriesSeo?.subjects ?? [])
   .map((subject) => subject.customDisplayName?.trim() || subject.name?.trim())
   .filter((name): name is string => Boolean(name))

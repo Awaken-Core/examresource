@@ -781,7 +781,7 @@ for (let i = 1; i <= 25; i++) {
   const isFree = i <= 5; // First 5 full mocks are free
   const testNum = String(i).padStart(2, '0');
   const slug = `dsssb-tgt-cs-grand-mock-${i}`;
-  const title = `DSSSB TGT CS — Grand Mock Test ${testNum} (Full Length 100 Qs)`;
+  const title = `DSSSB TGT CS - Grand Mock Test ${testNum} (Full Length 100 Qs)`;
   const description = `Authentic 100-question full-length CBT examination simulation with 5 internal subject sections, negative marking (-0.25), and instant performance analysis.`;
 
   const sectionsData: any[] = [];

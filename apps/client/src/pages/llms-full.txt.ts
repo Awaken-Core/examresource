@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { siteUrl, siteName, siteDomain } from '../data/site';
 
 export const GET: APIRoute = () => {
-  const content = `# ${siteName} (${siteDomain}) — Full AI Agent Knowledge Base
+  const content = `# ${siteName} (${siteDomain}) - Full AI Agent Knowledge Base
 
 ## Organization Overview
 - **Name**: ${siteName}

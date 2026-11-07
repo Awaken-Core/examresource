@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { API_URL, isClientAuthenticated } from '../../lib/api';
+import { setCachedSeriesAccess } from '../../lib/passAccess';
 import {
   calculateDiscount,
   formatValidity,
@@ -36,6 +37,7 @@ export function TestSeriesPassCard({
   seriesId,
   variant = 'series',
   layout = 'stacked',
+  defaultPlan = 'series',
   initialActive = false,
   initialPassType = null,
   initialExpiresAt = null,
@@ -44,6 +46,7 @@ export function TestSeriesPassCard({
   seriesId?: string;
   variant?: 'series' | 'instructions';
   layout?: 'dual' | 'stacked' | 'compact';
+  defaultPlan?: 'all' | 'series';
   initialActive?: boolean;
   initialPassType?: PassPlanType;
   initialExpiresAt?: string | null;
@@ -53,7 +56,7 @@ export function TestSeriesPassCard({
   const [active, setActive] = useState(initialActive);
   const [passType, setPassType] = useState<PassPlanType>(initialPassType);
   const [expiresAt, setExpiresAt] = useState<string | null>(initialExpiresAt);
-  const [selectedPlan, setSelectedPlan] = useState<'all' | 'series'>('all');
+  const [selectedPlan, setSelectedPlan] = useState<'all' | 'series'>(defaultPlan);
   const [buyingPlan, setBuyingPlan] = useState<'series' | 'all' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cancelled, setCancelled] = useState(false);
@@ -87,9 +90,18 @@ export function TestSeriesPassCard({
         setOffer(offerBody);
         if (res?.ok) {
           const status = (await res.json()) as any;
-          setActive(Boolean(status.active || status.hasActivePass));
+          const isActive = Boolean(status.active || status.hasActivePass);
+          setActive(isActive);
           setPassType(status.passType ?? null);
           setExpiresAt(status.expiresAt ?? null);
+          if (seriesId) {
+            setCachedSeriesAccess(seriesId, {
+              hasActivePass: isActive,
+              passType: status.passType ?? null,
+              expiresAt: status.expiresAt ?? null,
+              freeTestId: status.freeTestId ?? null,
+            });
+          }
         }
       } catch {
         if (!ignore) setError('Pass details are unavailable right now.');
@@ -99,6 +111,37 @@ export function TestSeriesPassCard({
     return () => {
       ignore = true;
     };
+  }, [seriesId]);
+
+  // Synchronize on user account switch / logout
+  useEffect(() => {
+    const handleAuth = (e: any) => {
+      const user = e?.detail?.user;
+      if (!user) {
+        setActive(false);
+        setPassType(null);
+        setExpiresAt(null);
+      } else if (seriesId) {
+        const accessUrl = `${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(seriesId)}`;
+        fetch(accessUrl, { credentials: 'include' })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((status) => {
+            if (status) {
+              const isActive = Boolean(status.active || status.hasActivePass);
+              setActive(isActive);
+              setPassType(status.passType ?? null);
+              setExpiresAt(status.expiresAt ?? null);
+            } else {
+              setActive(false);
+              setPassType(null);
+              setExpiresAt(null);
+            }
+          })
+          .catch(() => {});
+      }
+    };
+    window.addEventListener('auth:change', handleAuth);
+    return () => window.removeEventListener('auth:change', handleAuth);
   }, [seriesId]);
 
   const plans = offer?.plans || DEFAULT_PLANS;

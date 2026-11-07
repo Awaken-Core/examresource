@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { API_URL, isClientAuthenticated } from '../../lib/api';
 import { formatRupees, getClientPlanDefaults } from '../../lib/passOffer';
+import { getCachedSeriesAccess, setCachedSeriesAccess, clearCachedPassAccess } from '../../lib/passAccess';
 import { TestSeriesPassCard } from './TestSeriesPassCard';
 import { openTestSeriesCheckout } from './openTestSeriesCheckout';
+
+export function cleanDisplayTitle(str?: string | null): string {
+  if (!str) return '';
+  return str.replace(/[\u2014\u2013]/g, ' - ').replace(/\s+-\s+/g, ' - ').trim();
+}
 
 export interface Chapter {
   id: string;
@@ -224,7 +230,14 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
       pyq?: { used: boolean; attemptId?: string; examId?: string };
     };
     freeTestId: string | null;
-  } | null>(null);
+  } | null>(() => {
+    return (
+      getCachedSeriesAccess(seriesIdOrSlug) ||
+      (initialData?.id ? getCachedSeriesAccess(initialData.id) : null) ||
+      (initialData?._id ? getCachedSeriesAccess(initialData._id) : null) ||
+      (initialData?.slug ? getCachedSeriesAccess(initialData.slug) : null)
+    );
+  });
 
   // Active Tab & Filters
   const [activeTab, setActiveTab] = useState<TabType>('full');
@@ -389,13 +402,17 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         }
         if (accessRes?.ok) {
           const access = await accessRes.json();
-          setSeriesAccess({
+          const accessData = {
             hasActivePass: Boolean(access.hasActivePass),
             passType: access.passType ?? null,
             expiresAt: access.expiresAt ?? null,
             sectionTrials: access.sectionTrials ?? undefined,
             freeTestId: access.freeTestId ?? null,
-          });
+          };
+          setSeriesAccess(accessData);
+          setCachedSeriesAccess(resolvedSeriesId, accessData);
+          if (series.slug) setCachedSeriesAccess(series.slug, accessData);
+          if (seriesIdOrSlug) setCachedSeriesAccess(seriesIdOrSlug, accessData);
         }
       } catch {
         // Non-fatal if student is not signed in
@@ -405,35 +422,96 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     void fetchPrepData();
   }, [series]);
 
-  // Re-fetch progress if user logs in dynamically
+  // Re-fetch progress if user logs in dynamically or switches accounts
   useEffect(() => {
     const handleAuthChange = (e: any) => {
-      if (e?.detail?.user && series) {
+      const newUser = e?.detail?.user;
+      if (newUser && series) {
         const seriesId = series.id || series._id;
         if (!seriesId) return;
         const resolvedSeriesId = seriesId;
+
+        // Reset previous learner state immediately
+        setLearnerPrep(null);
+        // Load the new user's cached access immediately (or null if none)
+        const freshCached = getCachedSeriesAccess(seriesIdOrSlug) || getCachedSeriesAccess(resolvedSeriesId);
+        setSeriesAccess(freshCached);
+
         Promise.all([
           fetch(`${API_URL}/me/preparation/series/${resolvedSeriesId}`, { credentials: 'include' }).then(r => r.ok ? r.json() : null).catch(() => null),
           fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, { credentials: 'include' }).then(r => r.ok ? r.json() : null).catch(() => null),
         ]).then(([prep, access]) => {
-          if (prep) setLearnerPrep(prep);
+          setLearnerPrep(prep ?? null);
           if (access) {
-            setSeriesAccess({
+            const accessData = {
               hasActivePass: Boolean(access.hasActivePass),
               passType: access.passType ?? null,
               expiresAt: access.expiresAt ?? null,
               sectionTrials: access.sectionTrials ?? undefined,
               freeTestId: access.freeTestId ?? null,
-            });
+            };
+            setSeriesAccess(accessData);
+            setCachedSeriesAccess(resolvedSeriesId, accessData);
+            if (series.slug) setCachedSeriesAccess(series.slug, accessData);
+            if (seriesIdOrSlug) setCachedSeriesAccess(seriesIdOrSlug, accessData);
+          } else {
+            setSeriesAccess(null);
           }
         }).catch(() => {});
-      } else if (!e?.detail?.user) {
+      } else if (!newUser) {
         setLearnerPrep(null);
         setSeriesAccess(null);
+        clearCachedPassAccess();
       }
     };
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'auth_user' || e.key === 'auth_active') {
+        const currentUser = getCachedCurrentUser();
+        if (!currentUser?.id) {
+          setLearnerPrep(null);
+          setSeriesAccess(null);
+          clearCachedPassAccess();
+        } else {
+          setLearnerPrep(null);
+          setSeriesAccess(getCachedSeriesAccess(seriesIdOrSlug));
+          if (series) {
+            const resolvedSeriesId = series.id || series._id;
+            if (resolvedSeriesId) {
+              void fetch(`${API_URL}/me/preparation/series/${resolvedSeriesId}`, { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .then(prep => setLearnerPrep(prep ?? null))
+                .catch(() => {});
+              void fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, { credentials: 'include' })
+                .then(r => r.ok ? r.json() : null)
+                .then(access => {
+                  if (access) {
+                    const accessData = {
+                      hasActivePass: Boolean(access.hasActivePass),
+                      passType: access.passType ?? null,
+                      expiresAt: access.expiresAt ?? null,
+                      sectionTrials: access.sectionTrials ?? undefined,
+                      freeTestId: access.freeTestId ?? null,
+                    };
+                    setSeriesAccess(accessData);
+                    setCachedSeriesAccess(resolvedSeriesId, accessData);
+                  } else {
+                    setSeriesAccess(null);
+                  }
+                })
+                .catch(() => {});
+            }
+          }
+        }
+      }
+    };
+
     window.addEventListener('auth:change', handleAuthChange);
-    return () => window.removeEventListener('auth:change', handleAuthChange);
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('auth:change', handleAuthChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, [series]);
 
   // Load Subject-wise tests from real database API (all 20 subject tests cached)
@@ -635,12 +713,21 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
       if (result.status === 'paid') {
         // Unlock all tests immediately
+        const passData = {
+          hasActivePass: true,
+          passType: 'series' as const,
+          expiresAt: result.expiresAt,
+          freeTestId: seriesAccess?.freeTestId ?? null,
+        };
         setSeriesAccess((prev) => ({
           hasActivePass: true,
           passType: 'series',
           expiresAt: result.expiresAt,
           freeTestId: prev?.freeTestId ?? null,
         }));
+        if (resolvedSeriesId) setCachedSeriesAccess(resolvedSeriesId, passData);
+        if (series?.slug) setCachedSeriesAccess(series.slug, passData);
+        if (seriesIdOrSlug) setCachedSeriesAccess(seriesIdOrSlug, passData);
 
         if (resolvedSeriesId) {
           fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, {
@@ -648,7 +735,11 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           })
             .then((r) => (r.ok ? r.json() : null))
             .then((access) => {
-              if (access) setSeriesAccess(access);
+              if (access) {
+                setSeriesAccess(access);
+                if (resolvedSeriesId) setCachedSeriesAccess(resolvedSeriesId, access);
+                if (series?.slug) setCachedSeriesAccess(series.slug, access);
+              }
             })
             .catch(() => {});
         }
@@ -872,7 +963,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         </div>
 
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-heading sm:text-4xl lg:text-[40px] leading-tight">
-          {series.title || 'DSSSB TGT Computer Science'}
+          {cleanDisplayTitle(series.title) || 'DSSSB TGT Computer Science'}
           <span className="ml-2 font-serif italic font-normal text-sky-700 dark:text-sky-400">
             Test Series
           </span>
@@ -884,7 +975,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             <span>🔥 20 DAYS SPRINT</span>
           </span>
           <p className="text-sm font-bold text-heading sm:text-base">
-            <strong className="text-accent font-extrabold">20 Days • 20 Tests Challenge</strong> — 100% Authentic Previous Year Questions compiled from Multiple CS Exams!
+            <strong className="text-accent font-extrabold">20 Days • 20 Tests Challenge</strong> - 100% Authentic Previous Year Questions compiled from Multiple CS Exams!
           </p>
         </div>
 
@@ -1163,7 +1254,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       <span className="inline-flex items-center rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px] font-bold text-amber-600 dark:text-amber-400">
                         Official Exam Archive
                       </span>
-                      <span className="text-xs font-semibold text-muted">2018 – 2024 Verified Papers</span>
+                      <span className="text-xs font-semibold text-muted">2018 - 2024 Verified Papers</span>
                     </div>
                     <h2 className="mt-1 text-base font-bold text-heading sm:text-lg">
                       Previous Year Question Papers (PYQ)
@@ -1748,7 +1839,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, { credentials: 'include' })
                     .then((r) => (r.ok ? r.json() : null))
                     .then((access) => {
-                      if (access) setSeriesAccess(access);
+                      if (access) {
+                        setSeriesAccess(access);
+                        if (resolvedSeriesId) setCachedSeriesAccess(resolvedSeriesId, access);
+                        if (series?.slug) setCachedSeriesAccess(series.slug, access);
+                        if (seriesIdOrSlug) setCachedSeriesAccess(seriesIdOrSlug, access);
+                      }
                     })
                     .catch(() => {});
                 }
@@ -1916,7 +2012,7 @@ function RealTestCard({
               onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
               data-astro-prefetch="hover"
             >
-              {test.title}
+              {cleanDisplayTitle(test.title)}
             </a>
           </h3>
 
@@ -1981,7 +2077,7 @@ function UpcomingLockedMockCard({ mock }: Readonly<{ mock: UpcomingMockTest }>) 
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading sm:text-lg">
-            {mock.title}
+            {cleanDisplayTitle(mock.title)}
           </h3>
 
           {/* Meta line */}
@@ -2060,7 +2156,7 @@ function PaginationControl({
       className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 text-xs sm:flex-row sm:items-center sm:justify-between shadow-2xs"
     >
       <span className="font-medium text-muted">
-        Showing <strong className="font-semibold text-heading tabular-nums">{startItem}</strong>–<strong className="font-semibold text-heading tabular-nums">{endItem}</strong> of <strong className="font-semibold text-heading tabular-nums">{totalItems}</strong> {itemName}
+        Showing <strong className="font-semibold text-heading tabular-nums">{startItem}</strong>-<strong className="font-semibold text-heading tabular-nums">{endItem}</strong> of <strong className="font-semibold text-heading tabular-nums">{totalItems}</strong> {itemName}
       </span>
 
       <div className="flex flex-wrap items-center gap-1.5">

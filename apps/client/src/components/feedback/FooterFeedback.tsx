@@ -160,7 +160,7 @@ export function FooterFeedback() {
             Share Your Feedback
           </h3>
           <p className="text-xs text-muted mt-0.5">
-            Suggestions, platform ideas, or bug reports — we read all learner notes.
+            Suggestions, platform ideas, or bug reports - we read all learner notes.
           </p>
         </div>
 

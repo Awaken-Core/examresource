@@ -847,7 +847,7 @@ for (const spec of FULL_MOCK_SPECS) {
   };
 
   examsToInsert.push({
-    title: `Aptitude & Reasoning — Full Mock Test ${numPadded}`,
+    title: `Aptitude & Reasoning - Full Mock Test ${numPadded}`,
     slug: `aptitude-reasoning-full-mock-${numPadded}`,
     description: `Full-length ${totalQ}-question examination featuring Section 1: Quantitative Aptitude (${sampledQA.length} Qs) and Section 2: Logical Reasoning (${sampledLR.length} Qs) with TCS iON CBT simulation.`,
     type: 'full',
@@ -862,7 +862,7 @@ for (const spec of FULL_MOCK_SPECS) {
     durationMinutes: spec.duration,
     maxAttempts: null,
     languages: ['Hindi', 'English'],
-    instructions: `Aptitude & Reasoning Master Exam 2026 — Full Length Mock Test\n• Total Questions: ${totalQ} across 2 Sections (Quantitative Aptitude & Logical Reasoning)\n• Total Duration: ${spec.duration} Minutes | Total Marks: ${totalQ}\n• Marking: +1.00 for correct answer, -0.25 penalty for incorrect answer\n• Bilingual: Toggle between English and Hindi anytime during the exam.`,
+    instructions: `Aptitude & Reasoning Master Exam 2026 - Full Length Mock Test\n• Total Questions: ${totalQ} across 2 Sections (Quantitative Aptitude & Logical Reasoning)\n• Total Duration: ${spec.duration} Minutes | Total Marks: ${totalQ}\n• Marking: +1.00 for correct answer, -0.25 penalty for incorrect answer\n• Bilingual: Toggle between English and Hindi anytime during the exam.`,
     positiveMarks: 1,
     negativeMarkingEnabled: true,
     negativeMarks: 0.25,
@@ -884,15 +884,15 @@ for (const spec of FULL_MOCK_SPECS) {
 // ─── 9. Generate Subject Tests (Quantitative Aptitude & Logical Reasoning) ──
 console.log(' Generating Subject Tests for Quantitative Aptitude & Logical Reasoning...');
 const SUBJECT_TEST_SPECS = [
-  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 1, count: 50, duration: 60, title: 'Quantitative Aptitude — Comprehensive Subject Test 01', slug: 'qa-comprehensive-subject-test-01', isFree: true },
-  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 2, count: 50, duration: 60, title: 'Quantitative Aptitude — Comprehensive Subject Test 02', slug: 'qa-comprehensive-subject-test-02', isFree: false },
-  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 3, count: 30, duration: 35, title: 'Quantitative Aptitude — Speed & Accuracy Test 01', slug: 'qa-speed-accuracy-test-01', isFree: true },
-  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 4, count: 30, duration: 35, title: 'Quantitative Aptitude — Speed & Accuracy Test 02', slug: 'qa-speed-accuracy-test-02', isFree: false },
+  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 1, count: 50, duration: 60, title: 'Quantitative Aptitude - Comprehensive Subject Test 01', slug: 'qa-comprehensive-subject-test-01', isFree: true },
+  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 2, count: 50, duration: 60, title: 'Quantitative Aptitude - Comprehensive Subject Test 02', slug: 'qa-comprehensive-subject-test-02', isFree: false },
+  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 3, count: 30, duration: 35, title: 'Quantitative Aptitude - Speed & Accuracy Test 01', slug: 'qa-speed-accuracy-test-01', isFree: true },
+  { subject: 'Quantitative Aptitude', subjectId: qaSubjectId, qPool: qaQuestions, num: 4, count: 30, duration: 35, title: 'Quantitative Aptitude - Speed & Accuracy Test 02', slug: 'qa-speed-accuracy-test-02', isFree: false },
 
-  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 1, count: 50, duration: 60, title: 'Logical Reasoning — Comprehensive Subject Test 01', slug: 'lr-comprehensive-subject-test-01', isFree: true },
-  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 2, count: 50, duration: 60, title: 'Logical Reasoning — Comprehensive Subject Test 02', slug: 'lr-comprehensive-subject-test-02', isFree: false },
-  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 3, count: 30, duration: 35, title: 'Logical Reasoning — Speed & Accuracy Test 01', slug: 'lr-speed-accuracy-test-01', isFree: true },
-  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 4, count: 30, duration: 35, title: 'Logical Reasoning — Speed & Accuracy Test 02', slug: 'lr-speed-accuracy-test-02', isFree: false },
+  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 1, count: 50, duration: 60, title: 'Logical Reasoning - Comprehensive Subject Test 01', slug: 'lr-comprehensive-subject-test-01', isFree: true },
+  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 2, count: 50, duration: 60, title: 'Logical Reasoning - Comprehensive Subject Test 02', slug: 'lr-comprehensive-subject-test-02', isFree: false },
+  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 3, count: 30, duration: 35, title: 'Logical Reasoning - Speed & Accuracy Test 01', slug: 'lr-speed-accuracy-test-01', isFree: true },
+  { subject: 'Logical Reasoning', subjectId: lrSubjectId, qPool: lrQuestions, num: 4, count: 30, duration: 35, title: 'Logical Reasoning - Speed & Accuracy Test 02', slug: 'lr-speed-accuracy-test-02', isFree: false },
 ];
 
 for (const spec of SUBJECT_TEST_SPECS) {

@@ -545,7 +545,7 @@ export const TOPIC_DETAILS_MOCK: Record<string, TopicDetail> = {
     publishedDate: '2026-03-15',
     updatedDate: '2026-04-02',
     introParagraphs: [
-      'In Java, memory management is primarily handled automatically by the Java Virtual Machine (JVM). However, understanding the exact stages an object traverses—from declaration and memory allocation on the heap to becoming unreachable and getting reaped by garbage collection—is essential for designing stable, low-latency applications.',
+      'In Java, memory management is primarily handled automatically by the Java Virtual Machine (JVM). However, understanding the exact stages an object traverses - from declaration and memory allocation on the heap to becoming unreachable and getting reaped by garbage collection - is essential for designing stable, low-latency applications.',
       'Unlike languages such as C or C++ where developers explicitly invoke malloc() and free(), Java abstracts explicit deallocation away. Let us inspect the 5 distinct phases of every Java object lifecycle.',
     ],
     overviewCode: {

@@ -1326,6 +1326,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
                 localStorage.removeItem('auth_active');
                 localStorage.removeItem('auth_user');
                 sessionStorage.removeItem('desk_user');
+                Object.keys(localStorage).forEach((k) => {
+                  if (k.startsWith('gp_pass_') || k.startsWith('gp_global_pass_')) localStorage.removeItem(k);
+                });
               } catch (e) {}
               const apiUrl = API_URL;
               void fetch(`${apiUrl}/auth/logout`, {
@@ -1719,6 +1722,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               sessionStorage.setItem('guest_verified', '1');
               localStorage.removeItem('auth_active');
               localStorage.removeItem('auth_user');
+              Object.keys(localStorage).forEach((k) => {
+                if (k.startsWith('gp_pass_') || k.startsWith('gp_global_pass_')) localStorage.removeItem(k);
+              });
             } catch (e) {}
           }
 
@@ -1727,6 +1733,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           if (isUserLoggedIn) {
             try {
+              const prevRaw = localStorage.getItem('auth_user');
+              const prevUser = prevRaw ? JSON.parse(prevRaw) : null;
+              if (prevUser?.id && prevUser.id !== user.id) {
+                // User account switched: purge previous user's pass & preparation caches immediately
+                Object.keys(localStorage).forEach((k) => {
+                  if (k.startsWith('gp_pass_') || k.startsWith('gp_global_pass_') || k.startsWith('learner_prep_')) {
+                    localStorage.removeItem(k);
+                  }
+                });
+              }
               sessionStorage.removeItem('guest_verified');
               localStorage.setItem('auth_active', '1');
               localStorage.setItem('auth_user', JSON.stringify({
@@ -1741,6 +1757,9 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
               sessionStorage.setItem('guest_verified', '1');
               localStorage.removeItem('auth_active');
               localStorage.removeItem('auth_user');
+              Object.keys(localStorage).forEach((k) => {
+                if (k.startsWith('gp_pass_') || k.startsWith('gp_global_pass_')) localStorage.removeItem(k);
+              });
             } catch (e) {}
           }
 

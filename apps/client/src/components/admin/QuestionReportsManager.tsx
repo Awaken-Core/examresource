@@ -78,10 +78,10 @@ const REPORT_REASONS = [
 ] as const;
 
 const RESOLUTION_TEMPLATES = [
-  'Verified answer key — updated in question bank.',
+  'Verified answer key - updated in question bank.',
   'Question text typo corrected.',
   'Translation discrepancy fixed in Hindi version.',
-  'Report investigated — question and answer key verified accurate.',
+  'Report investigated - question and answer key verified accurate.',
   'Clarified explanation and added reference steps.',
   'Diagram / formula formatting re-uploaded.',
 ];

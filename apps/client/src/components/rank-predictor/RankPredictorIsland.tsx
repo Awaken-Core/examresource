@@ -225,7 +225,7 @@ export function RankPredictorIsland() {
               <div className="rounded-xl border border-border bg-canvas p-4">
                 <p className="text-xs font-semibold text-muted">Projected All-India Rank (AIR)</p>
                 <p className="mt-2 text-2xl font-black text-accent">
-                  {minRank.toLocaleString('en-IN')} – {maxRank.toLocaleString('en-IN')}
+                  {minRank.toLocaleString('en-IN')} - {maxRank.toLocaleString('en-IN')}
                 </p>
                 <p className="mt-1 text-[11px] text-muted">
                   Among {totalAspirants.toLocaleString('en-IN')}+ estimated candidates
