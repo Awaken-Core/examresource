@@ -28,7 +28,7 @@ const SLIDES: SlideConfig[] = [
   },
 ];
 
-const AUTO_SCROLL_INTERVAL = 4200; // 4.2s for snappy, engaging auto-animation
+const AUTO_SCROLL_INTERVAL = 3000; // 3.0s (faster and snappy auto-animation)
 
 export function TestSeriesBannerCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -104,7 +104,7 @@ export function TestSeriesBannerCarousel() {
           }
         }
         .banner-content-animate {
-          animation: bannerFadeInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: bannerFadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         .banner-progress-bar {
           animation: bannerProgress ${AUTO_SCROLL_INTERVAL}ms linear forwards;
@@ -158,9 +158,9 @@ export function TestSeriesBannerCarousel() {
 
           {/* Center Active Stage (Exact Testbook Spec: max-w-[805px] × 322px / 762px × 305px - NO WIDTH INCREASE) */}
           <div className="relative w-full h-full rounded-2xl md:rounded-[20px] overflow-hidden shadow-2xl border border-editorial-border/80 z-10 bg-editorial-surface">
-            {/* SLIDE 0: DIWALI DHAMAKA SALE */}
+            {/* SLIDE 0: DIWALI DHAMAKA SALE (Exact Testbook Recreation) */}
           <div
-            className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
+            className={`absolute inset-0 w-full h-full transition-opacity duration-400 ease-in-out flex items-center ${
               currentSlide === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
             }`}
             style={{
@@ -173,106 +173,138 @@ export function TestSeriesBannerCarousel() {
             aria-roledescription="slide"
             aria-label="1 of 3: Diwali Dhamaka Sale"
           >
-            {/* Dark Festive Gradient Overlay for high-contrast text */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#17052e]/95 via-[#230742]/85 to-transparent/30 pointer-events-none" />
+            {/* Rich Nocturnal Purple Festive Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1a0433]/92 via-[#2b0754]/80 to-[#19032f]/92 pointer-events-none" />
 
             <div
               key={`slide-0-${currentSlide}`}
-              className={`relative z-10 w-full p-4 sm:p-5 md:p-6 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-center ${
+              className={`relative z-10 w-full h-full px-4 sm:px-6 py-2 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 items-center ${
                 currentSlide === 0 ? 'banner-content-animate' : ''
               }`}
             >
-              {/* Left Column: Festive Branding & Titles */}
-              <div className="md:col-span-7 space-y-1.5 sm:space-y-2 text-left">
-                {/* Top Badge: SALE IS LIVE */}
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-amber-400/20 border border-amber-300/50 text-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.3)]">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                  <span>SALE IS LIVE · FESTIVE SPECIAL</span>
+              {/* Left Column: Ornate Festive Branding & Illuminated Diwali Dhamaka Emblem */}
+              <div className="md:col-span-6 flex flex-col items-center justify-center text-center py-1">
+                {/* Brand Logo & Name */}
+                <div className="flex items-center justify-center gap-1.5 pb-1">
+                  <div className="w-4 h-4 rounded-md bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xs">
+                    <span className="text-slate-950 font-black text-[9px]">G</span>
+                  </div>
+                  <span className="font-['Geist'] text-[11px] font-bold text-white tracking-wider">
+                    Govt<span className="text-amber-400">Pariksha</span>
+                  </span>
                 </div>
 
-                {/* Main Festive Title */}
-                <div className="space-y-0.5">
-                  <h2
-                    style={{ color: '#ffffff' }}
-                    className="font-['EB_Garamond'] text-xl xs:text-2xl sm:text-[27px] font-bold tracking-tight text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]"
-                  >
-                    Diwali{' '}
-                    <span className="bg-gradient-to-r from-amber-200 via-amber-300 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(251,191,36,0.6)]">
-                      Dhamaka
-                    </span>{' '}
+                {/* Central Ornate Arch Frame */}
+                <div className="relative inline-flex flex-col items-center justify-center px-6 sm:px-8 pt-3 pb-2 rounded-t-[34px] rounded-b-2xl bg-gradient-to-b from-[#6b092b] via-[#430519] to-[#20020a] border-2 border-amber-400/90 shadow-[0_0_25px_rgba(251,191,36,0.55),inset_0_0_18px_rgba(244,63,94,0.35)]">
+                  {/* Glowing Diya Flame at apex */}
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-gradient-to-t from-amber-500 via-yellow-300 to-white flex items-center justify-center shadow-[0_0_12px_rgba(251,191,36,0.9)] animate-pulse">
+                    <div className="w-1.5 h-2.5 bg-amber-100 rounded-full blur-[0.5px]" />
+                  </div>
+
+                  {/* "Diwali" in glowing golden-white cursive serif */}
+                  <span className="font-['EB_Garamond'] italic text-2xl sm:text-[28px] md:text-[32px] font-bold text-white drop-shadow-[0_2px_8px_rgba(251,191,36,0.85)] tracking-tight leading-none mt-0.5">
+                    Diwali
+                  </span>
+
+                  {/* "Dhamaka" in giant 3D extruded gold font */}
+                  <span className="font-['Geist'] font-black text-2xl sm:text-[30px] md:text-[34px] tracking-tight bg-gradient-to-b from-yellow-100 via-amber-300 to-yellow-500 bg-clip-text text-transparent drop-shadow-[0_3px_8px_rgba(0,0,0,0.95)] uppercase leading-none my-0.5">
+                    Dhamaka
+                  </span>
+
+                  {/* "Sale" in curved golden ribbon banner */}
+                  <div className="relative mt-0.5 px-5 py-0.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 text-rose-950 font-black text-[10.5px] sm:text-xs uppercase tracking-widest shadow-md border border-amber-200/80">
                     Sale
-                  </h2>
-
-                  <p
-                    style={{ color: '#f3e8ff' }}
-                    className="font-['Geist'] text-[11px] sm:text-xs text-purple-100 font-medium drop-shadow-sm"
-                  >
-                    Quality Mocks. Festive Prices. Complete Govt Exam Preparation.
-                  </p>
+                  </div>
                 </div>
 
-                {/* Benefits checkmarks */}
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10.5px] sm:text-[11px] text-purple-100 pt-0.5">
-                  <span className="flex items-center gap-1 drop-shadow">
-                    <span className="text-amber-300 font-bold">✓</span> Real CBT Simulator
-                  </span>
-                  <span className="flex items-center gap-1 drop-shadow">
-                    <span className="text-amber-300 font-bold">✓</span> 500+ Sectional Tests
-                  </span>
-                  <span className="flex items-center gap-1 drop-shadow">
-                    <span className="text-amber-300 font-bold">✓</span> Hindi & English Solutions
-                  </span>
+                {/* Sub-badge: Quality Mocks. Festive Prices. */}
+                <div className="mt-1.5 inline-flex items-center px-3.5 py-0.5 rounded-full bg-rose-950/85 border border-amber-400/60 text-amber-200 text-[9.5px] sm:text-[10px] font-semibold tracking-wide shadow-md">
+                  Quality Mocks. Festive Prices.
+                </div>
+
+                {/* Bottom Illumination: Diyas */}
+                <div className="flex items-center justify-center gap-3 pt-1 text-amber-300 text-sm sm:text-base drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
+                  <span className="transform -scale-x-100 animate-pulse">🪔</span>
+                  <span className="text-base sm:text-lg scale-110 animate-pulse">🪔</span>
+                  <span className="animate-pulse">🪔</span>
                 </div>
               </div>
 
-              {/* Right Column: Festive Price Card & CTA Button */}
-              <div className="md:col-span-5 flex flex-col items-start md:items-end justify-center">
-                <div className="w-full max-w-[245px] sm:max-w-[260px] p-3 sm:p-3.5 rounded-xl bg-gradient-to-b from-purple-950/85 to-[#1e0738]/95 border border-amber-400/60 backdrop-blur-md shadow-[0_8px_25px_rgba(0,0,0,0.55)] text-center space-y-2">
-                  <div className="flex items-center justify-center gap-1.5">
-                    <span className="px-2 py-0.5 rounded-full text-[8.5px] sm:text-[9px] font-extrabold tracking-wider uppercase bg-amber-400 text-purple-950">
-                      YEARLY PASS
-                    </span>
-                    <span style={{ color: '#f3e8ff' }} className="text-[10.5px] sm:text-[11px] font-semibold text-purple-200">
-                      GovtPariksha PASS
-                    </span>
-                  </div>
+              {/* Subtle Golden Diagonal Divider Line */}
+              <div className="hidden md:block absolute left-1/2 top-4 bottom-4 w-px bg-gradient-to-b from-transparent via-amber-400/40 to-transparent transform -translate-x-1/2 rotate-3" />
 
-                  <div className="flex items-baseline justify-center gap-1.5">
-                    <span style={{ color: '#e9d5ff' }} className="text-xs text-purple-200 font-medium">
-                      at Just
+              {/* Right Column: Festive Offer & Pricing Stack (Exact Testbook Layout) */}
+              <div className="md:col-span-6 flex flex-col items-center justify-center space-y-1.5 sm:space-y-2 text-center py-1">
+                {/* 1. Ornate SALE IS LIVE Crest */}
+                <div className="relative px-4 sm:px-5 py-0.5 rounded-t-xl rounded-b-md bg-gradient-to-r from-rose-950 via-red-900 to-rose-950 border border-amber-400/90 shadow-[0_0_15px_rgba(239,68,68,0.55)]">
+                  <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-black tracking-widest text-amber-300 uppercase">
+                    <span className="text-amber-300 text-xs animate-ping">✨</span>
+                    <span>SALE IS LIVE</span>
+                    <span className="text-amber-300 text-xs animate-ping">✨</span>
+                  </div>
+                </div>
+
+                {/* 2. Yearly GovtPariksha PASS Pill */}
+                <div className="inline-flex items-center justify-center gap-2 px-3 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 shadow-md">
+                  <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-300 to-amber-400 text-slate-950 font-black text-[9.5px] sm:text-[10px] uppercase tracking-wider shadow-xs">
+                    Yearly
+                  </span>
+                  <span className="text-white font-bold text-[11px] sm:text-xs flex items-center gap-1.5">
+                    GovtPariksha
+                    <span className="px-1.5 py-0.2 rounded bg-sky-500 text-white font-black text-[8.5px] tracking-wider uppercase shadow-xs">
+                      PASS
                     </span>
-                    <span className="text-2xl sm:text-[27px] font-extrabold text-amber-300 tracking-tight drop-shadow-[0_2px_8px_rgba(251,191,36,0.6)]">
+                  </span>
+                </div>
+
+                {/* 3. Golden Connector: at Just */}
+                <div className="flex items-center justify-center gap-2 text-amber-200/90 text-[10px] font-medium">
+                  <span className="w-8 sm:w-10 h-px bg-gradient-to-r from-transparent to-amber-300/70" />
+                  <span className="italic">at Just</span>
+                  <span className="w-8 sm:w-10 h-px bg-gradient-to-l from-transparent to-amber-300/70" />
+                </div>
+
+                {/* 4. Golden Parchment Ticket Card */}
+                <div className="relative w-full max-w-[210px] sm:max-w-[230px] py-1 px-4 rounded-xl bg-gradient-to-r from-[#fef08a] via-[#fde047] to-[#eab308] border-2 border-amber-400 shadow-[0_4px_18px_rgba(251,191,36,0.6)] text-center">
+                  <div className="absolute left-2 top-1/2 -translate-y-1/2 text-amber-800/60 font-serif text-sm">❧</div>
+                  <div className="absolute right-2 top-1/2 -translate-y-1/2 text-amber-800/60 font-serif text-sm">☙</div>
+
+                  <div className="flex items-baseline justify-center gap-2">
+                    <span className="text-3xl sm:text-[34px] font-black text-rose-950 tracking-tight leading-none drop-shadow-xs">
                       ₹299
                     </span>
-                    <span style={{ color: '#c084fc' }} className="text-[11px] line-through text-purple-300/70">
+                    <span className="text-xs line-through text-rose-900/70 font-semibold">
                       ₹999
                     </span>
-                    <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-500/25 text-emerald-300 border border-emerald-400/40">
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-rose-900 text-amber-300 uppercase">
                       70% OFF
                     </span>
                   </div>
-
-                  <p style={{ color: '#e9d5ff' }} className="text-[10px] text-purple-200/90 font-medium">
-                    Validity: 1 Full Year All-Access
-                  </p>
-
-                  <a
-                    href="/pricing"
-                    className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-4 rounded-lg font-bold text-xs text-white bg-gradient-to-r from-emerald-500 via-green-600 to-emerald-600 hover:from-emerald-400 hover:to-green-500 shadow-[0_3px_15px_rgba(16,185,129,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <span>Buy Pass Now</span>
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
                 </div>
+
+                {/* 5. Date Validity Pill */}
+                <div className="inline-flex items-center justify-center gap-1.5 px-3 py-0.5 rounded-full bg-rose-950/85 border border-amber-400/50 text-amber-200 text-[9px] sm:text-[9.5px] font-semibold shadow-xs">
+                  <span>📅</span>
+                  <span>7th - 8th November · 1 Year All-Access</span>
+                </div>
+
+                {/* 6. Big Glossy Green Buy Now Button */}
+                <a
+                  href="/pricing"
+                  className="w-full max-w-[190px] sm:max-w-[210px] inline-flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-6 rounded-full font-black text-sm text-white bg-gradient-to-b from-[#22c55e] via-[#16a34a] to-[#15803d] hover:from-[#16a34a] hover:to-[#15803d] shadow-[0_4px_20px_rgba(34,197,94,0.65)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border border-green-300/40"
+                >
+                  <span>Buy Now</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
 
           {/* SLIDE 1: ATTEMPT THE FREE 2 MOCK TESTS (Testbook Style Light/Clean Card with Rupee Coin) */}
           <div
-            className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
+            className={`absolute inset-0 w-full h-full transition-opacity duration-400 ease-in-out flex items-center ${
               currentSlide === 1 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
             }`}
             style={{
@@ -359,7 +391,7 @@ export function TestSeriesBannerCarousel() {
 
           {/* SLIDE 2: DSSSB TGT & PGT COMPUTER SCIENCE */}
           <div
-            className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
+            className={`absolute inset-0 w-full h-full transition-opacity duration-400 ease-in-out flex items-center ${
               currentSlide === 2 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
             }`}
             style={{
