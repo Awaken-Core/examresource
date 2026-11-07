@@ -5,6 +5,7 @@ export const siteSlogan = import.meta.env.PUBLIC_SITE_SLOGAN || 'Government Exam
 export const whatsappChannel = import.meta.env.PUBLIC_WHATSAPP_URL || '';
 export const telegramChannel = import.meta.env.PUBLIC_TELEGRAM_URL || '';
 export const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL || 'contact@example.com';
+export const supportPhone = import.meta.env.PUBLIC_SUPPORT_PHONE || '9326126931';
 
 export const siteFaqs = [
   {

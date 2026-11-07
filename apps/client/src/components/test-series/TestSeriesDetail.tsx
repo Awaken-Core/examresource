@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { API_URL, isClientAuthenticated } from '../../lib/api';
+import { formatRupees, getClientPlanDefaults } from '../../lib/passOffer';
 import { TestSeriesPassCard } from './TestSeriesPassCard';
 import { openTestSeriesCheckout } from './openTestSeriesCheckout';
 
@@ -145,8 +146,8 @@ function subjectLabel(subject?: Partial<AssignedSubject> | null) {
 
 function isPyqTest(test: { title?: string; slug?: string | null; testMode?: string }) {
   if (test.testMode === 'pyq') return true;
-  if (test.slug && test.slug.toLowerCase().startsWith('pyq-')) return true;
-  if (test.title && (test.title.startsWith('[PYQ]') || test.title.includes('PYQ'))) return true;
+  if (test.slug?.toLowerCase().startsWith('pyq-')) return true;
+  if (test.title?.startsWith('[PYQ]') || test.title?.includes('PYQ')) return true;
   return false;
 }
 
@@ -154,9 +155,11 @@ function testRouteId(test: PublishedTestItem) {
   return test.slug || test.id || test._id || '';
 }
 
+const TEST_NUMBER_REGEX = /(?:Mock\s*Test|Grand\s*Mock|Mock|Test|Paper)\s*#?(\d+)/i;
+
 function extractTestNumber(title: string): number | null {
-  const match = title.match(/(?:Mock\s*Test|Grand\s*Mock|Mock|Test|Paper)\s*#?(\d+)/i);
-  return match ? parseInt(match[1], 10) : null;
+  const match = TEST_NUMBER_REGEX.exec(title);
+  return match ? Number.parseInt(match[1], 10) : null;
 }
 
 function sortTestsAscending(tests: PublishedTestItem[]): PublishedTestItem[] {
@@ -182,7 +185,7 @@ function handleTestNavigate(e: React.MouseEvent<HTMLAnchorElement>, targetPath: 
   }
 }
 
-export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialPyqTests, initialAllTests }: Props) {
+export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialPyqTests, initialAllTests }: Readonly<Props>) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
@@ -354,7 +357,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         setIsLoading(false);
       }
     }
-    loadSeries();
+    void loadSeries();
   }, [seriesIdOrSlug, initialData]);
 
   // Load Learner's Personal Preparation Progress & Pass Access for this Series
@@ -380,11 +383,11 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           ).catch(() => null),
         ]);
 
-        if (res && res.ok) {
+        if (res?.ok) {
           const data = (await res.json()) as LearnerSeriesPrep;
           setLearnerPrep(data);
         }
-        if (accessRes && accessRes.ok) {
+        if (accessRes?.ok) {
           const access = await accessRes.json();
           setSeriesAccess({
             hasActivePass: Boolean(access.hasActivePass),
@@ -459,7 +462,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         setLoadingSubjectTests(false);
       }
     }
-    fetchSubTests();
+    void fetchSubTests();
   }, [series, activeTab]);
 
   // Load Chapter-wise tests from real database API (all 102 chapter tests cached)
@@ -488,7 +491,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         setLoadingChapterTests(false);
       }
     }
-    fetchChapTests();
+    void fetchChapTests();
   }, [series, activeTab]);
 
   // Load Full tests from real database API
@@ -523,7 +526,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         setLoadingFullTests(false);
       }
     }
-    fetchFullTests();
+    void fetchFullTests();
   }, [series, initialFullTests]);
 
   // Load PYQ tests from real database API
@@ -560,7 +563,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
         setLoadingPyqTests(false);
       }
     }
-    fetchPyqTests();
+    void fetchPyqTests();
   }, [series, initialPyqTests]);
 
   // Create fast map of latest attempt by test ID
@@ -582,29 +585,17 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
   }, [learnerPrep]);
 
   const assignedSubjects = series?.subjects || [];
-  const chapterCount = assignedSubjects.reduce(
-    (total, subject) => total + (subject.chapters?.length || 0),
-    0,
-  );
-
   const hasActivePass = Boolean(seriesAccess?.hasActivePass);
   const freeTestId = seriesAccess?.freeTestId ?? null;
 
-  const getTestSectionKey = (test: PublishedTestItem): 'full' | 'subject' | 'chapter' | 'pyq' => {
-    if (test.testMode === 'pyq' || isPyqTest(test)) return 'pyq';
-    if (test.testMode === 'subject') return 'subject';
-    if (test.testMode === 'chapter') return 'chapter';
-    return 'full';
-  };
-
-  // STRICTLY 2 FREE TESTS ONLY: Only Mock 01 and Mock 02 in Full Mocks are free.
-  // All other tests (Mock 03 to 25, all PYQs, all Subject Tests) are strictly locked and require the ₹99 Pass.
+  // STRICTLY 1 FREE TEST ONLY: Only Mock 01 in Full Mocks is free.
+  // All other tests (Mock 02 onwards, all PYQs, all Subject Tests) are strictly locked and require the Pass / Series Plan.
   const freeTestIds = useMemo(() => {
     const ids = new Set<string>();
     const sortedFull = sortTestsAscending(fullTests);
 
-    // Strictly the first 2 Full Mock Tests (Mock 01 & Mock 02) are free
-    sortedFull.slice(0, 2).forEach((t) => {
+    // Strictly the first Full Mock Test (Mock 01) is free
+    sortedFull.slice(0, 1).forEach((t) => {
       const id = t.id || t._id;
       if (id) ids.add(id);
     });
@@ -635,10 +626,11 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     setUnlockingTestId(testId);
     try {
       const resolvedSeriesId = series?.id || series?._id || '';
+      const planDefaults = getClientPlanDefaults();
       const result = await openTestSeriesCheckout({
         planType: 'series',
         seriesId: resolvedSeriesId || undefined,
-        validityMonths: 6,
+        validityMonths: planDefaults.seriesPlan.validityMonths,
       });
 
       if (result.status === 'paid') {
@@ -972,18 +964,14 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
               <span>{unattemptedCount} unattempted tests remaining</span>
             </div>
 
-            <div
-              className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-zinc-800"
-              role="progressbar"
-              aria-valuenow={completionPct}
-              aria-valuemin={0}
-              aria-valuemax={100}
+            <progress
+              className="mt-1.5 h-2 w-full overflow-hidden rounded-full appearance-none bg-zinc-800 [&::-webkit-progress-bar]:bg-zinc-800 [&::-webkit-progress-value]:bg-accent [&::-moz-progress-bar]:bg-accent"
+              value={completionPct}
+              max={100}
+              aria-label="Overall test completion progress"
             >
-              <div
-                className="h-full rounded-full bg-accent transition-all duration-500"
-                style={{ width: `${completionPct}%` }}
-              />
-            </div>
+              {completionPct}%
+            </progress>
           </section>
 
           {/* TABS NAVIGATION */}
@@ -1000,7 +988,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     : 'border-transparent text-muted hover:text-heading'
                 }`}
               >
-                Full Mock Tests
+                <span>Full Mock Tests</span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-bold ${
                     activeTab === 'full'
@@ -1011,7 +999,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                   {totalFullMockCount}
                 </span>
               </button>
-
 
               {pyqTests.length > 0 && (
                 <button
@@ -1025,7 +1012,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       : 'border-transparent text-muted hover:text-heading'
                   }`}
                 >
-                  Previous Year Papers
+                  <span>Previous Year Papers</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-bold ${
                       activeTab === 'pyq'
@@ -1048,7 +1035,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     : 'border-transparent text-muted hover:text-heading'
                 }`}
               >
-                Subject Tests
+                <span>Subject Tests</span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-bold ${
                     activeTab === 'subject'
@@ -1081,6 +1068,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
                   />
                   <svg
+                    aria-hidden="true"
                     className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -1104,20 +1092,24 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                 </span>
               </div>
 
-              {loadingFullTests ? (
+              {loadingFullTests && (
                 <div className="space-y-3 py-4">
                   {[1, 2].map((i) => (
                     <div key={i} className="h-28 animate-pulse rounded-2xl bg-surface border border-border" />
                   ))}
                 </div>
-              ) : filteredFullTests.length === 0 && filteredUpcomingTests.length === 0 ? (
+              )}
+
+              {!loadingFullTests && filteredFullTests.length === 0 && filteredUpcomingTests.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
                   <p className="text-sm font-semibold text-heading">No mock tests found.</p>
                   <p className="mt-1 text-xs text-muted">
                     {testSearchQuery ? 'Try adjusting your search query.' : 'Tests for this mode will appear here.'}
                   </p>
                 </div>
-              ) : (
+              )}
+
+              {!loadingFullTests && (filteredFullTests.length > 0 || filteredUpcomingTests.length > 0) && (
                 <>
                   <div className="space-y-4">
                     {paginatedFullTests.map((test, index) => {
@@ -1231,6 +1223,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
                   />
                   <svg
+                    aria-hidden="true"
                     className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -1254,13 +1247,15 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                 </span>
               </div>
 
-              {loadingPyqTests ? (
+              {loadingPyqTests && (
                 <div className="space-y-3 py-4">
                   {[1, 2, 3].map((i) => (
                     <div key={i} className="h-28 animate-pulse rounded-2xl bg-surface border border-border" />
                   ))}
                 </div>
-              ) : filteredPyqTests.length === 0 ? (
+              )}
+
+              {!loadingPyqTests && filteredPyqTests.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
                   <p className="text-sm font-semibold text-heading">No previous year papers match the selected filter.</p>
                   <p className="mt-1 text-xs text-muted">
@@ -1282,7 +1277,9 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     </button>
                   )}
                 </div>
-              ) : (
+              )}
+
+              {!loadingPyqTests && filteredPyqTests.length > 0 && (
                 <>
                   <div className="space-y-4">
                     {paginatedPyqTests.map((test, index) => {
@@ -1425,6 +1422,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       className="w-full rounded-xl border border-border bg-surface px-3.5 py-2 pl-9 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
                     />
                     <svg
+                      aria-hidden="true"
                       className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -1457,20 +1455,24 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                 </div>
               </div>
 
-              {loadingSubjectTests ? (
+              {loadingSubjectTests && (
                 <div className="space-y-3 py-4">
                   {[1, 2].map((i) => (
                     <div key={i} className="h-24 animate-pulse rounded-2xl bg-surface border border-border" />
                   ))}
                 </div>
-              ) : filteredSubjectTests.length === 0 ? (
+              )}
+
+              {!loadingSubjectTests && filteredSubjectTests.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
                   <p className="text-sm font-semibold text-heading">No subject tests found.</p>
                   <p className="mt-1 text-xs text-muted">
                     {testSearchQuery || selectedSubjectId ? 'Try adjusting your subject or search query.' : 'Tests for this mode will appear here.'}
                   </p>
                 </div>
-              ) : (
+              )}
+
+              {!loadingSubjectTests && filteredSubjectTests.length > 0 && (
                 <>
                   <div className="space-y-4">
                     {paginatedSubjectTests.map((test, index) => {
@@ -1585,6 +1587,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                         className="w-full rounded-xl border border-border bg-surface px-3 py-2 pl-8 text-xs text-heading placeholder:text-muted focus:border-accent focus:outline-none"
                       />
                       <svg
+                        aria-hidden="true"
                         className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted pointer-events-none"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -1673,18 +1676,22 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                 </div>
               </div>
 
-              {loadingChapterTests ? (
+              {loadingChapterTests && (
                 <div className="space-y-3 py-4">
                   {[1, 2].map((i) => (
                     <div key={i} className="h-24 animate-pulse rounded-2xl bg-surface border border-border" />
                   ))}
                 </div>
-              ) : filteredChapterTests.length === 0 ? (
+              )}
+
+              {!loadingChapterTests && filteredChapterTests.length === 0 && (
                 <div className="rounded-2xl border border-dashed border-border bg-surface p-8 text-center">
                   <p className="text-sm font-semibold text-heading">No chapter tests found for this selection.</p>
                   <p className="mt-1 text-xs text-muted">Pick another chapter, subject or adjust your search.</p>
                 </div>
-              ) : (
+              )}
+
+              {!loadingChapterTests && filteredChapterTests.length > 0 && (
                 <>
                   <div className="space-y-4">
                     {paginatedChapterTests.map((test, index) => {
@@ -1764,7 +1771,7 @@ function RealTestCard({
   isTrialAvailable = false,
   onUnlock,
   isUnlocking = false,
-}: {
+}: Readonly<{
   test: PublishedTestItem;
   index?: number;
   latestAttempt?: LatestAttemptMeta | null;
@@ -1773,7 +1780,7 @@ function RealTestCard({
   isTrialAvailable?: boolean;
   onUnlock?: () => void;
   isUnlocking?: boolean;
-}) {
+}>) {
   const routeId = testRouteId(test);
   const testId = test.id || test._id || '';
   const isInProgress = latestAttempt?.status === 'in_progress';
@@ -1781,6 +1788,100 @@ function RealTestCard({
   const totalMarks = test.positiveMarks * test.totalQuestionsCount;
 
   const isHighlighted = isTrialAvailable && index === 0;
+
+  function renderCardAction() {
+    if (isInProgress) {
+      return (
+        <a
+          href={`/exams/${testId}/attempt`}
+          onClick={(e) => handleTestNavigate(e, `/exams/${testId}/attempt`)}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-white transition hover:bg-accent-hover"
+        >
+          <span>Resume Test</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      );
+    }
+
+    if (isSubmitted) {
+      return (
+        <div className="flex flex-col gap-1.5 sm:items-end">
+          <a
+            href={`/test-series/results/${latestAttempt!.id}`}
+            className="inline-flex min-h-10 items-center justify-center gap-1 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
+          >
+            <span>View Result</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          {hasActivePass ? (
+            <a
+              href={`/test-series/instructions/${routeId}`}
+              onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
+              data-astro-prefetch="hover"
+              className="inline-flex items-center justify-center text-xs font-semibold text-accent hover:underline"
+            >
+              Reattempt
+            </a>
+          ) : (
+            <a
+              href="#series-pass"
+              className="text-[11px] text-muted hover:text-accent hover:underline font-medium"
+            >
+              Reattempt requires Pass
+            </a>
+          )}
+        </div>
+      );
+    }
+
+    if (isLocked) {
+      return (
+        <div className="flex flex-col sm:items-end">
+          <button
+            type="button"
+            onClick={onUnlock}
+            disabled={isUnlocking}
+            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2.5 text-xs font-bold text-accent transition hover:bg-accent hover:text-white cursor-pointer disabled:cursor-wait disabled:opacity-60"
+          >
+            <span>{isUnlocking ? 'Opening Checkout...' : `🔒 Unlock (from ${formatRupees(getClientPlanDefaults().seriesPlan.amountPaise)})`}</span>
+          </button>
+          <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
+            Pass needed to attempt
+          </span>
+        </div>
+      );
+    }
+
+    let subLabel = null;
+    if (hasActivePass) {
+      subLabel = (
+        <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
+          Included in Pass
+        </span>
+      );
+    } else if (isTrialAvailable) {
+      subLabel = (
+        <span className="mt-1.5 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 sm:text-right">
+          100% Free Mock
+        </span>
+      );
+    }
+
+    return (
+      <div className="flex flex-col sm:items-end">
+        <a
+          href={`/test-series/instructions/${routeId}`}
+          onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
+          data-astro-prefetch="hover"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-accent-hover"
+        >
+          <span>{isTrialAvailable ? 'Start Free Attempt' : 'Start Test'}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        {subLabel}
+      </div>
+    );
+  }
 
   return (
     <article
@@ -1793,19 +1894,20 @@ function RealTestCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           {/* Top Status Pill */}
-          {isLocked ? (
+          {isLocked && (
             <div>
               <span className="inline-flex items-center gap-1 rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
                 <span>🔒 PASS REQUIRED</span>
               </span>
             </div>
-          ) : !hasActivePass ? (
+          )}
+          {!isLocked && !hasActivePass && (
             <div>
               <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                 <span>FREE TEST</span>
               </span>
             </div>
-          ) : null}
+          )}
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
@@ -1841,9 +1943,7 @@ function RealTestCard({
                 <span className="font-semibold text-rose-600 dark:text-rose-400">-{test.negativeMarks} Neg.</span>
               </>
             )}
-            
           </div>
-
 
           {/* Score line if submitted */}
           {isSubmitted && latestAttempt && (
@@ -1856,78 +1956,7 @@ function RealTestCard({
 
         {/* Action Button */}
         <div className="flex shrink-0 flex-col sm:items-end">
-          {isInProgress ? (
-            <a
-              href={`/exams/${testId}/attempt`}
-              onClick={(e) => handleTestNavigate(e, `/exams/${testId}/attempt`)}
-              className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-white transition hover:bg-accent-hover"
-            >
-              <span>Resume Test</span>
-              <span aria-hidden="true">→</span>
-            </a>
-          ) : isSubmitted ? (
-            <div className="flex flex-col gap-1.5 sm:items-end">
-              <a
-                href={`/test-series/results/${latestAttempt!.id}`}
-                className="inline-flex min-h-10 items-center justify-center gap-1 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white transition hover:bg-emerald-700"
-              >
-                <span>View Result</span>
-                <span aria-hidden="true">→</span>
-              </a>
-              {hasActivePass ? (
-                <a
-                  href={`/test-series/instructions/${routeId}`}
-                  onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
-                  data-astro-prefetch="hover"
-                  className="inline-flex items-center justify-center text-xs font-semibold text-accent hover:underline"
-                >
-                  Reattempt
-                </a>
-              ) : (
-                <a
-                  href="#series-pass"
-                  className="text-[11px] text-muted hover:text-accent hover:underline font-medium"
-                >
-                  Reattempt requires Pass
-                </a>
-              )}
-            </div>
-          ) : isLocked ? (
-            <div className="flex flex-col sm:items-end">
-              <button
-                type="button"
-                onClick={onUnlock}
-                disabled={isUnlocking}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2.5 text-xs font-bold text-accent transition hover:bg-accent hover:text-white cursor-pointer disabled:cursor-wait disabled:opacity-60"
-              >
-                <span>{isUnlocking ? 'Opening Checkout...' : '🔒 Unlock (from ₹99)'}</span>
-              </button>
-              <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
-                Pass needed to attempt
-              </span>
-            </div>
-          ) : (
-            <div className="flex flex-col sm:items-end">
-              <a
-                href={`/test-series/instructions/${routeId}`}
-                onClick={(e) => handleTestNavigate(e, `/test-series/instructions/${routeId}`)}
-                data-astro-prefetch="hover"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm font-bold text-white shadow-xs transition hover:bg-accent-hover"
-              >
-                <span>{isTrialAvailable ? 'Start Free Attempt' : 'Start Test'}</span>
-                <span aria-hidden="true">→</span>
-              </a>
-              {hasActivePass ? (
-                <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
-                  Included in Pass
-                </span>
-              ) : isTrialAvailable ? (
-                <span className="mt-1.5 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 sm:text-right">
-                  100% Free Mock
-                </span>
-              ) : null}
-            </div>
-          )}
+          {renderCardAction()}
         </div>
       </div>
     </article>
@@ -1935,7 +1964,7 @@ function RealTestCard({
 }
 
 // UPCOMING LOCKED MOCK CARD COMPONENT
-function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
+function UpcomingLockedMockCard({ mock }: Readonly<{ mock: UpcomingMockTest }>) {
   return (
     <article className="rounded-2xl border border-border bg-surface p-5 shadow-xs sm:p-6 transition hover:border-accent/30">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -1943,7 +1972,7 @@ function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
           {/* Top Status Pill: Locked • Coming Soon */}
           <div>
             <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-600/30 bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
-              <svg className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg aria-hidden="true" className="h-3 w-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               <span>Locked • Coming Soon</span>
@@ -1968,9 +1997,7 @@ function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
                 <span className="font-semibold text-rose-600 dark:text-rose-400">-{mock.negativeMarks} Neg.</span>
               </>
             )}
-            
           </div>
-          
         </div>
 
         {/* Action Button: Locked */}
@@ -1980,7 +2007,7 @@ function UpcomingLockedMockCard({ mock }: { mock: UpcomingMockTest }) {
             disabled
             className="inline-flex min-h-11 cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-border bg-surface-raised px-5 py-2.5 text-xs font-bold text-muted opacity-80 select-none shadow-2xs"
           >
-            <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg aria-hidden="true" className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
             <span>Locked · Coming Soon</span>
@@ -2001,13 +2028,13 @@ function PaginationControl({
   pageSize = 10,
   onPageChange,
   itemName = 'tests',
-}: {
+}: Readonly<{
   currentPage: number;
   totalItems: number;
   pageSize?: number;
   onPageChange: (page: number) => void;
   itemName?: string;
-}) {
+}>) {
   const totalPages = Math.ceil(totalItems / pageSize);
   if (totalPages <= 1) return null;
 
@@ -2048,8 +2075,9 @@ function PaginationControl({
 
         {pages.map((p, idx) => {
           if (p === 'dots') {
+            const dotsKey = idx < 4 ? 'dots-prev' : 'dots-next';
             return (
-              <span key={`dots-${idx}`} className="px-1 text-muted select-none">
+              <span key={dotsKey} className="px-1 text-muted select-none">
                 …
               </span>
             );

@@ -260,6 +260,102 @@ export class BlogController {
     }
   }
 
+  @Post('blogs/ai-update')
+  async aiUpdateArticle(@Req() req: Request) {
+    const body = (req.body as any) || {};
+    const content = body.currentContent || body.hinglishContent || body.englishContent;
+    if (!content || typeof content !== 'string' || !content.trim()) {
+      throw new BadRequestException('currentContent is required.');
+    }
+    if (!body.instructions || typeof body.instructions !== 'string' || !body.instructions.trim()) {
+      throw new BadRequestException('instructions prompt is required.');
+    }
+    const currentUser = await this.currentUser(req);
+    const requestedModel = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : undefined;
+    const language = body.language === 'ENGLISH' ? 'ENGLISH' : body.language === 'HINGLISH' ? 'HINGLISH' : 'BOTH';
+    return this.blogs.updateArticleWithAi(
+      {
+        title: body.title,
+        currentContent: body.currentContent || content,
+        fullArticleContent: body.fullArticleContent,
+        sectionTitle: body.sectionTitle,
+        scope: body.scope === 'section' ? 'section' : 'full',
+        instructions: body.instructions,
+        extraContent: body.extraContent,
+        language,
+        model: requestedModel,
+        hinglishContent: body.hinglishContent,
+        englishContent: body.englishContent,
+        hinglishTitle: body.hinglishTitle,
+        englishTitle: body.englishTitle,
+      },
+      currentUser,
+    );
+  }
+
+  @Post('blogs/ai-update/stream')
+  async aiUpdateArticleStream(@Req() req: Request, @Res() res: Response) {
+    const body = (req.body as any) || {};
+    const content = body.currentContent || body.hinglishContent || body.englishContent;
+    if (!content || typeof content !== 'string' || !content.trim()) {
+      res.status(400).json({ message: 'currentContent is required.' });
+      return;
+    }
+    if (!body.instructions || typeof body.instructions !== 'string' || !body.instructions.trim()) {
+      res.status(400).json({ message: 'instructions prompt is required.' });
+      return;
+    }
+    const currentUser = await this.currentUser(req);
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    if (typeof (res as any).flushHeaders === 'function') {
+      (res as any).flushHeaders();
+    }
+
+    const sendEvent = (eventData: any) => {
+      res.write(`data: ${JSON.stringify(eventData)}\n\n`);
+      if (typeof (res as any).flush === 'function') {
+        (res as any).flush();
+      }
+    };
+
+    const requestedModel = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : 'gemini-3.8-flash';
+    sendEvent({ type: 'stage', stage: 'CONNECTED', message: `Connected to pipeline. Selected Model: ${requestedModel}` });
+
+    try {
+      const language = body.language === 'ENGLISH' ? 'ENGLISH' : body.language === 'HINGLISH' ? 'HINGLISH' : 'BOTH';
+      const result = await this.blogs.updateArticleWithAi(
+        {
+          title: body.title,
+          currentContent: body.currentContent || content,
+          fullArticleContent: body.fullArticleContent,
+          sectionTitle: body.sectionTitle,
+          scope: body.scope === 'section' ? 'section' : 'full',
+          instructions: body.instructions,
+          extraContent: body.extraContent,
+          language,
+          model: requestedModel,
+          hinglishContent: body.hinglishContent,
+          englishContent: body.englishContent,
+          hinglishTitle: body.hinglishTitle,
+          englishTitle: body.englishTitle,
+        },
+        currentUser,
+        (stage, message) => {
+          sendEvent({ type: 'stage', stage, message });
+        },
+      );
+
+      sendEvent({ type: 'complete', result });
+      res.end();
+    } catch (err: any) {
+      sendEvent({ type: 'error', message: err?.message || 'AI Article update failed. Please try again.' });
+      res.end();
+    }
+  }
+
   @Patch('blogs/:id')
   async update(@Param('id') id: string, @Req() req: Request) {
     const currentUser = await this.currentUser(req);

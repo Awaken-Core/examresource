@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
 import { API_URL, isClientAuthenticated } from '../../lib/api';
+import {
+  calculateDiscount,
+  formatValidity,
+  getClientPlanDefaults,
+  type PlanItem,
+} from '../../lib/passOffer';
 import { openTestSeriesCheckout } from './openTestSeriesCheckout';
 
-export interface PlanItem {
-  id: 'series' | 'all';
-  name: string;
-  badge?: string;
-  price: number;
-  amountPaise: number;
-  listPricePaise: number;
-  validityMonths: number;
-  description: string;
-}
+export type { PlanItem };
+export type PassPlanType = 'series' | 'all' | null;
 
 type PassOffer = {
   plans?: PlanItem[];
@@ -20,32 +18,11 @@ type PassOffer = {
   validityMonths: number;
   currency: string;
   active?: boolean;
-  passType?: 'series' | 'all' | null;
+  passType?: PassPlanType;
   expiresAt?: string | null;
 };
 
-const DEFAULT_PLANS: PlanItem[] = [
-  {
-    id: 'series',
-    name: 'Single Series Plan',
-    badge: 'TARGETED PREP',
-    price: 99,
-    amountPaise: 9900,
-    listPricePaise: 29900,
-    validityMonths: 6,
-    description: 'Complete access to this specific test series for 6 months',
-  },
-  {
-    id: 'all',
-    name: 'All-Access Pass',
-    badge: 'BEST VALUE · ALL EXAMS',
-    price: 399,
-    amountPaise: 39900,
-    listPricePaise: 99900,
-    validityMonths: 12,
-    description: 'Unrestricted access to all test series across the platform for 1 year',
-  },
-];
+const DEFAULT_PLANS: PlanItem[] = getClientPlanDefaults().plans;
 
 function rupees(paise: number) {
   return new Intl.NumberFormat('en-IN', {
@@ -63,18 +40,18 @@ export function TestSeriesPassCard({
   initialPassType = null,
   initialExpiresAt = null,
   onPurchased,
-}: {
+}: Readonly<{
   seriesId?: string;
   variant?: 'series' | 'instructions';
   layout?: 'dual' | 'stacked' | 'compact';
   initialActive?: boolean;
-  initialPassType?: 'series' | 'all' | null;
+  initialPassType?: PassPlanType;
   initialExpiresAt?: string | null;
   onPurchased?: () => void;
-}) {
+}>) {
   const [offer, setOffer] = useState<PassOffer | null>(null);
   const [active, setActive] = useState(initialActive);
-  const [passType, setPassType] = useState<'series' | 'all' | null>(initialPassType);
+  const [passType, setPassType] = useState<PassPlanType>(initialPassType);
   const [expiresAt, setExpiresAt] = useState<string | null>(initialExpiresAt);
   const [selectedPlan, setSelectedPlan] = useState<'all' | 'series'>('all');
   const [buyingPlan, setBuyingPlan] = useState<'series' | 'all' | null>(null);
@@ -93,13 +70,11 @@ export function TestSeriesPassCard({
       try {
         const publicOfferPromise = fetch(`${API_URL}/payments/test-series-pass/offer`);
         const isAuth = isClientAuthenticated();
+        const accessUrl = seriesId
+          ? `${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(seriesId)}`
+          : `${API_URL}/payments/test-series-pass`;
         const userPassPromise = isAuth
-          ? fetch(
-              seriesId
-                ? `${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(seriesId)}`
-                : `${API_URL}/payments/test-series-pass`,
-              { credentials: 'include' },
-            ).catch(() => null)
+          ? fetch(accessUrl, { credentials: 'include' }).catch(() => null)
           : Promise.resolve(null);
 
         const [publicOffer, res] = await Promise.all([publicOfferPromise, userPassPromise]);
@@ -110,7 +85,7 @@ export function TestSeriesPassCard({
         const offerBody = (await publicOffer.json()) as PassOffer;
         if (ignore) return;
         setOffer(offerBody);
-        if (res && res.ok) {
+        if (res?.ok) {
           const status = (await res.json()) as any;
           setActive(Boolean(status.active || status.hasActivePass));
           setPassType(status.passType ?? null);
@@ -129,6 +104,8 @@ export function TestSeriesPassCard({
   const plans = offer?.plans || DEFAULT_PLANS;
   const seriesPlan = plans.find((p) => p.id === 'series') || DEFAULT_PLANS[0];
   const allAccessPlan = plans.find((p) => p.id === 'all') || DEFAULT_PLANS[1];
+  const seriesDiscount = calculateDiscount(seriesPlan.amountPaise, seriesPlan.listPricePaise);
+  const allAccessDiscount = calculateDiscount(allAccessPlan.amountPaise, allAccessPlan.listPricePaise);
 
   const buy = async (planId: 'series' | 'all') => {
     if (buyingPlan) return;
@@ -201,7 +178,7 @@ export function TestSeriesPassCard({
                   {seriesPlan.badge || 'TARGETED EXAM'}
                 </span>
                 <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400">
-                  SAVE ₹130 (65% OFF)
+                  SAVE {seriesDiscount.saveRupees} ({seriesDiscount.discountPercent}% OFF)
                 </span>
               </div>
               <h3 id="card-series-plan-heading" className="mt-3 text-xl font-black tracking-tight text-heading sm:text-2xl">
@@ -295,14 +272,14 @@ export function TestSeriesPassCard({
                   {allAccessPlan.badge || 'ALL EXAMS UNLOCKED'}
                 </span>
                 <span className="rounded-full bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-700 dark:text-amber-400">
-                  SAVE ₹600 (60% OFF)
+                  SAVE {allAccessDiscount.saveRupees} ({allAccessDiscount.discountPercent}% OFF)
                 </span>
               </div>
               <h3 id="card-all-access-heading" className="mt-3 text-xl font-black tracking-tight text-heading sm:text-2xl">
                 All-Access Pass
               </h3>
               <p className="mt-1 text-xs text-muted leading-relaxed font-medium">
-                One pass unlocks every single test series across the entire platform for 1 full year.
+                One pass unlocks every single test series across the entire platform for {allAccessPlan.validityMonths >= 12 ? `${Math.round(allAccessPlan.validityMonths / 12)} full years` : `${allAccessPlan.validityMonths} months`}.
               </p>
               <div className="mt-5 rounded-xl border border-accent/20 bg-accent/5 p-4">
                 <div className="flex items-baseline gap-2">
@@ -313,11 +290,11 @@ export function TestSeriesPassCard({
                     {rupees(allAccessPlan.listPricePaise)}
                   </span>
                   <span className="text-xs font-semibold text-muted ml-auto">
-                    / 1 Year
+                    / {allAccessPlan.validityMonths >= 12 ? `${Math.round(allAccessPlan.validityMonths / 12)} Years` : `${allAccessPlan.validityMonths} Months`}
                   </span>
                 </div>
                 <p className="mt-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-                  Only ~₹33/month • Best value for serious aspirants
+                  Only ~₹{Math.round(allAccessPlan.amountPaise / 100 / allAccessPlan.validityMonths)}/month • Best value for serious aspirants
                 </p>
               </div>
               <div className="mt-5">
@@ -347,7 +324,7 @@ export function TestSeriesPassCard({
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
-                    <span>Unlimited test attempts valid for 1 full year</span>
+                    <span>Unlimited test attempts valid for {allAccessPlan.validityMonths >= 12 ? `${Math.round(allAccessPlan.validityMonths / 12)} full years` : `${allAccessPlan.validityMonths} months`}</span>
                   </li>
                 </ul>
               </div>
@@ -389,6 +366,15 @@ export function TestSeriesPassCard({
   const isAllSelected = selectedPlan === 'all';
   const currentPlan = isAllSelected ? allAccessPlan : seriesPlan;
   const isEnrolledInCurrent = active && (passType === 'all' || (passType === 'series' && !isAllSelected));
+  const allValidity = formatValidity(allAccessPlan.validityMonths);
+  const seriesValidity = formatValidity(seriesPlan.validityMonths);
+
+  let submitButtonText = 'Opening checkout...';
+  if (buyingPlan !== selectedPlan) {
+    submitButtonText = isAllSelected
+      ? `Get All-Access Pass · ${rupees(allAccessPlan.amountPaise)}`
+      : `Unlock This Series · ${rupees(seriesPlan.amountPaise)}`;
+  }
 
   return (
     <div className="w-full">
@@ -403,13 +389,13 @@ export function TestSeriesPassCard({
             {isAllSelected ? 'All-Access Pass' : 'Single Series Pass'}
           </h3>
           <span className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
-            {isAllSelected ? 'Save 60%' : 'Save 65%'}
+            {isAllSelected ? `Save ${allAccessDiscount.discountPercent}%` : `Save ${seriesDiscount.discountPercent}%`}
           </span>
         </div>
         <p className="mt-1 text-xs text-muted leading-relaxed">
           {isAllSelected
-            ? 'Access all mock tests across the platform for 1 full year.'
-            : 'Access all mock tests and practice sets for this exam series.'}
+            ? `Access all mock tests across the platform for ${allValidity}.`
+            : `Access all mock tests and practice sets for this exam series for ${seriesValidity}.`}
         </p>
 
         {/* ── Plan Switcher: 2 Selectable Plan Option Tiles ── */}
@@ -435,7 +421,7 @@ export function TestSeriesPassCard({
               <span className="text-[10px] text-muted line-through tabular-nums">{rupees(allAccessPlan.listPricePaise)}</span>
             </div>
             <span className="mt-0.5 text-[10.5px] font-medium text-emerald-700 dark:text-emerald-400">
-              1 Year · All Exams
+              {allValidity} · All Exams
             </span>
           </button>
 
@@ -460,7 +446,7 @@ export function TestSeriesPassCard({
               <span className="text-[10px] text-muted line-through tabular-nums">{rupees(seriesPlan.listPricePaise)}</span>
             </div>
             <span className="mt-0.5 text-[10.5px] font-medium text-muted">
-              {seriesPlan.validityMonths} Months · This Exam
+              {seriesValidity} · This Exam
             </span>
           </button>
         </div>
@@ -477,7 +463,7 @@ export function TestSeriesPassCard({
               </span>
             </div>
             <span className="text-xs font-semibold text-muted">
-              {isAllSelected ? '1 Year Access' : `${seriesPlan.validityMonths} Months Access`}
+              {isAllSelected ? `${allValidity} Access` : `${seriesValidity} Access`}
             </span>
           </div>
           <p className="mt-1 text-[11px] text-muted">
@@ -517,7 +503,7 @@ export function TestSeriesPassCard({
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
-                  <span>Unlimited test attempts valid for 1 full year</span>
+                  <span>Unlimited test attempts valid for {allAccessPlan.validityMonths >= 12 ? `${Math.round(allAccessPlan.validityMonths / 12)} full years` : `${allAccessPlan.validityMonths} months`}</span>
                 </li>
               </>
             ) : (
@@ -544,7 +530,7 @@ export function TestSeriesPassCard({
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-600 dark:text-emerald-400 font-bold shrink-0">✓</span>
-                  <span>6 months validity with re-attempt access</span>
+                  <span>{seriesPlan.validityMonths} months validity with re-attempt access</span>
                 </li>
               </>
             )}
@@ -570,21 +556,15 @@ export function TestSeriesPassCard({
               disabled={Boolean(buyingPlan)}
               className="flex min-h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-accent px-4 text-xs sm:text-sm font-bold text-white shadow-xs transition-all duration-200 hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <span>
-                {buyingPlan === selectedPlan
-                  ? 'Opening checkout...'
-                  : isAllSelected
-                  ? `Get All-Access Pass · ${rupees(allAccessPlan.amountPaise)}`
-                  : `Unlock This Series · ${rupees(seriesPlan.amountPaise)}`}
-              </span>
+              <span>{submitButtonText}</span>
               <span aria-hidden="true">→</span>
             </button>
           )}
 
           <p className="mt-2 text-center text-[10.5px] text-muted">
             {isAllSelected
-              ? 'Valid for 1 year across all exams on the platform.'
-              : 'Valid for 6 months for this specific exam series.'}
+              ? `Valid for ${allValidity} across all exams on the platform.`
+              : `Valid for ${seriesValidity} for this specific exam series.`}
           </p>
 
           {/* Quick Toggle Link */}
@@ -609,6 +589,20 @@ export function TestSeriesPassCard({
               )}
             </div>
           )}
+
+          {/* Direct Support Assistance */}
+          <div className="mt-3.5 pt-3 border-t border-border/60 flex items-center justify-center gap-1.5 text-[11px] text-muted">
+            <svg aria-hidden="true" className="w-3.5 h-3.5 text-accent shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span>Need help with enrollment? Call/WhatsApp:</span>
+            <a
+              href="tel:+919326126931"
+              className="font-bold text-heading hover:text-accent transition-colors"
+            >
+              +91 9326126931
+            </a>
+          </div>
         </div>
       </section>
 

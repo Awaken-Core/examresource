@@ -101,16 +101,16 @@ const jsonLd = {
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          2. FEATURED BANNER SLIDER / CAROUSEL (Testbook-style)
+          2. FEATURED BANNER SLIDER / CAROUSEL (Desktop only)
           ══════════════════════════════════════════════════════════ */}
-      <section aria-label="Promotional and Featured Banners" transition:persist="banner-carousel">
+      <section class="hidden lg:block" aria-label="Promotional and Featured Banners" transition:persist="banner-carousel">
         <TestSeriesBannerCarousel client:load />
       </section>
 
       {/* ══════════════════════════════════════════════════════════
           3. CURATED TEST SERIES EXPLORER (React Island)
           ══════════════════════════════════════════════════════════ */}
-      <section aria-label="Curated Test Series Explorer" class="pt-6 sm:pt-8 border-t border-editorial-border/60" transition:persist="test-explorer">
+      <section aria-label="Curated Test Series Explorer" class="pt-2 lg:pt-8 lg:border-t lg:border-editorial-border/60" transition:persist="test-explorer">
         <TestSeriesExplorer client:load initialList={initialSeries} />
       </section>
 

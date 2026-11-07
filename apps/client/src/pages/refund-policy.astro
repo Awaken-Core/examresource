@@ -4,10 +4,9 @@ import { contactEmail, siteName, siteUrl } from '../data/site';
 import { formatRupees, loadPassOffer } from '../lib/passOffer';
 
 const offer = await loadPassOffer();
-const price = formatRupees(offer.amountPaise);
-const lastUpdated = 'October 27, 2026';
+const lastUpdated = 'November 07, 2026';
 const pageTitle = `Refund and Cancellation Policy | ${siteName}`;
-const pageDescription = `Refund and cancellation rules for the ${siteName} Test Series Pass. The pass is a one-time ${offer.validityMonths}-month purchase of ${price}. It does not auto-renew.`;
+const pageDescription = `Refund and cancellation rules for the ${siteName} Test Series Pass plans. Passes are one-time payments that do not auto-renew.`;
 const canonicalUrl = `${siteUrl}/refund-policy`;
 
 const jsonLd = {
@@ -60,14 +59,14 @@ const sections = [
             <section id="product" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
               <h2 class="text-base font-bold text-white">What can be refunded</h2>
               <p>
-                The only paid product is the Test Series Pass, currently {price} for {offer.validityMonths} months. A refund request can cover that payment. It does not cover a government exam fee, a book, or a quiz, because those are not charged by this pass.
+                The paid products on {siteName} are the Test Series Passes (Single Series Pass and All-Access Pass). A refund request can cover that payment. It does not cover a government exam application fee, a textbook, or an unaffiliated third-party service.
               </p>
             </section>
 
             <section id="no-subscription" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
               <h2 class="text-base font-bold text-white">No subscription to cancel</h2>
               <p>
-                The pass is a single payment. It does not renew, and Razorpay is not asked to charge the card again when the {offer.validityMonths} months end. There is no cancellation of a future debit. When the pass expires, access to locked tests stops until a new pass is bought.
+                Every pass purchase is a strictly one-time payment. It does not renew automatically, and Razorpay is never authorized to charge your account again when the pass validity ends. There is no recurring fee or cancellation penalty. When a pass expires, access to locked tests concludes until you decide to purchase a new pass.
               </p>
             </section>
 

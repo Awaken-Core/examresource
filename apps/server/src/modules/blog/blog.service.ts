@@ -879,10 +879,18 @@ export class BlogService {
           slug: alt.slug,
           description: alt.description ?? null,
           coverImage: alt.coverImage ?? null,
+          imageAlt: alt.imageAlt ?? null,
+          imageCaption: alt.imageCaption ?? null,
+          categoryId: alt.categoryId ? alt.categoryId.toString() : null,
+          metaTitle: alt.metaTitle ?? null,
+          metaDescription: alt.metaDescription ?? null,
+          canonicalUrl: alt.canonicalUrl ?? null,
+          noindex: alt.noindex ?? false,
           status: alt.status,
           language: alt.language,
           translationGroupId: alt.translationGroupId,
           version: alt.version,
+          tags: await this.getBlogTags(altId),
           blocks: altBlocks,
           htmlContent: blocksToHtml(altBlocks as any),
         };
@@ -1858,16 +1866,53 @@ export class BlogService {
   ) {
     const blogObjectId = new Types.ObjectId(blogId);
     await this.blogTagModel.deleteMany({ blogId: blogObjectId }, { session });
-    if (tagIds.length > 0) {
-      const docs = tagIds
-        .filter((tid) => Types.ObjectId.isValid(tid))
-        .map((tid) => ({
-          blogId: blogObjectId,
-          tagId: new Types.ObjectId(tid),
-        }));
-      if (docs.length > 0) {
-        await this.blogTagModel.insertMany(docs, { session });
+    if (!tagIds || tagIds.length === 0) return;
+
+    const resolvedTagObjectIds: Types.ObjectId[] = [];
+    for (const rawTag of tagIds) {
+      if (!rawTag || typeof rawTag !== 'string') continue;
+      const trimmed = rawTag.trim();
+      if (!trimmed) continue;
+
+      if (Types.ObjectId.isValid(trimmed) && trimmed.length === 24) {
+        const objId = new Types.ObjectId(trimmed);
+        if (!resolvedTagObjectIds.some((id) => id.equals(objId))) {
+          resolvedTagObjectIds.push(objId);
+        }
+      } else {
+        // Tag name / keyword passed as string (e.g. from AI rewriter or user input)
+        const tagSlug = trimmed
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '') || 'tag';
+
+        let tagDoc = await this.tagModel.findOne({
+          $or: [{ slug: tagSlug }, { name: trimmed }],
+        }).session(session || null);
+
+        if (!tagDoc) {
+          const createOptions = session ? { session } : undefined;
+          const [created] = await this.tagModel.create(
+            [{ name: trimmed, slug: tagSlug }],
+            createOptions,
+          );
+          tagDoc = created;
+          this.invalidateCache();
+        }
+        if (tagDoc && !resolvedTagObjectIds.some((id) => id.equals(tagDoc._id))) {
+          resolvedTagObjectIds.push(tagDoc._id);
+        }
       }
+    }
+
+    if (resolvedTagObjectIds.length > 0) {
+      const docs = resolvedTagObjectIds.map((tid) => ({
+        blogId: blogObjectId,
+        tagId: tid,
+      }));
+      await this.blogTagModel.insertMany(docs, { session });
     }
   }
 
@@ -2292,10 +2337,15 @@ export class BlogService {
       );
     }
 
+    const [hTags, eTags] = await Promise.all([
+      this.getBlogTags(hinglishPost.id),
+      this.getBlogTags(englishPost.id),
+    ]);
+
     return {
       translationGroupId,
-      hinglish: hinglishPost,
-      english: englishPost,
+      hinglish: { ...hinglishPost, tags: hTags },
+      english: { ...englishPost, tags: eTags },
     };
   }
 
@@ -2329,6 +2379,29 @@ export class BlogService {
     }
 
     return this.gemini.generateBilingualFromReference({ ...input, availableCategories }, onStage);
+  }
+
+  async updateArticleWithAi(
+    input: {
+      title?: string;
+      currentContent: string;
+      fullArticleContent?: string;
+      sectionTitle?: string;
+      scope?: 'full' | 'section';
+      instructions: string;
+      extraContent?: string;
+      language?: 'BOTH' | 'HINGLISH' | 'ENGLISH';
+      model?: string;
+      hinglishContent?: string;
+      englishContent?: string;
+      hinglishTitle?: string;
+      englishTitle?: string;
+    },
+    currentUser?: CurrentUser,
+    onStage?: (stage: string, message: string) => void,
+  ) {
+    if (currentUser) this.assertCanWrite(currentUser);
+    return this.gemini.updateArticleWithAi(input, onStage);
   }
 
   private assertCanWrite(currentUser: CurrentUser) {

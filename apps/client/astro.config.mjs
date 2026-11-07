@@ -42,7 +42,7 @@ export default defineConfig({
 		'/live-test/(.*)': '/test-series',
 	},
 	build: {
-		inlineStylesheets: 'auto',
+		inlineStylesheets: 'always',
 	},
 	adapter: cloudflare(),
 	integrations: [react()],

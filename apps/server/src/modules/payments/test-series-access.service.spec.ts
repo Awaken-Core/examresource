@@ -37,6 +37,7 @@ function makeService(options?: {
         { _id: new Types.ObjectId(secondTestId), testMode: 'full', isPreviousYear: false },
       ]),
     ),
+    findOne: vi.fn(() => query({ _id: new Types.ObjectId(firstTestId) })),
   };
   const attempts: any = {
     findOne: vi.fn((filter?: any) => {
@@ -99,7 +100,7 @@ describe('Test series pass access', () => {
     expect(passes.findOne).not.toHaveBeenCalled();
   });
 
-  it('allows the first free test attempt in each section of a series', async () => {
+  it('allows the first free test attempt in the full mock section of a series', async () => {
     await expect(
       makeService().service.assertCanStart(
         { _id: firstTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },
@@ -108,7 +109,16 @@ describe('Test series pass access', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('blocks 2nd attempt in that section after 1st free attempt without an active pass', async () => {
+  it('blocks non-full sections (subject/chapter/pyq) without an active pass', async () => {
+    await expect(
+      makeService().service.assertCanStart(
+        { _id: firstTestId, type: 'exam', testSeriesId: seriesId, testMode: 'subject' },
+        student,
+      ),
+    ).rejects.toMatchObject({ status: 402 });
+  });
+
+  it('blocks 2nd test or attempt in full section without an active pass', async () => {
     await expect(
       makeService({ freeTestId: firstTestId }).service.assertCanStart(
         { _id: secondTestId, type: 'exam', testSeriesId: seriesId, testMode: 'full' },

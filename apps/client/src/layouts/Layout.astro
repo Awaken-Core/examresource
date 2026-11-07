@@ -90,8 +90,18 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 <!doctype html>
 <html lang="en" data-site-domain={siteDomain} class="theme-light">
   <head>
-    {/* Instant zero-FOUC theme initialization before stylesheet or DOM rendering */}
+    {/* Instant zero-FOUC theme initialization & global esbuild helper shim */}
     <script is:inline>
+      var __name = (typeof window !== 'undefined' && window.__name) || function(target, value) {
+        try {
+          return Object.defineProperty(target, 'name', { value: value, configurable: true });
+        } catch (e) {
+          return target;
+        }
+      };
+      if (typeof window !== 'undefined') {
+        window.__name = __name;
+      }
       (function() {
         try {
           var pref = localStorage.getItem('theme_preference') || localStorage.getItem('theme');
@@ -109,6 +119,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    {/* Preconnect Critical Origins for Zero Connection Latency */}
+    <link rel="preconnect" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" crossorigin />
+    <link rel="dns-prefetch" href="https://pub-68568854a58845bc975b176de76b1ad5.r2.dev" />
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
     <!-- Google tag (gtag.js) & GTM (Deferred for zero render-blocking & maximum mobile speed) -->
     <script is:inline define:vars={{ gaMeasurementId, gtmId }}>

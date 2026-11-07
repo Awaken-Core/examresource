@@ -6,7 +6,7 @@ export const GET: APIRoute = () => {
 
 ## Organization Overview
 - **Name**: ${siteName}
-- **Domain**: ${siteUrl}/
+- **Domain**: [${siteDomain}](${siteUrl}/)
 - **Description**: India's verified informational education portal delivering real-time, noise-free updates on government recruitment notifications, admit cards, answer keys, results, and exam syllabi.
 - **Languages**: English and Hinglish (Hindi written in Latin script)
 - **Primary Audience**: Aspirants preparing for central and state government competitive exams across India.
@@ -19,43 +19,44 @@ Every recruitment summary published on ${siteName} is verified against official 
 - We maintain bilingual parity across major exam notices.
 
 ## Core Content Directory & URL Taxonomy
-1. **Homepage**: ${siteUrl}/
-2. **Blogs & Exam Guides**: ${siteUrl}/blogs
-3. **Latest Updates**: ${siteUrl}/latest-updates
-4. **Test Series & CBT Mocks**: ${siteUrl}/test-series
-5. **Daily Quiz**: ${siteUrl}/daily-quiz
-6. **Rank Predictor**: ${siteUrl}/rank-predictor
-7. **Official Commission Portal Directory**: ${siteUrl}/#important-links
-8. **Exam Categories**:
-   - Central Government: ${siteUrl}/category/central-government
-   - Staff Selection Commission: ${siteUrl}/category/ssc
-   - Railway Recruitment Board: ${siteUrl}/category/railways
-   - Banking & Financial: ${siteUrl}/category/banking
-   - Latest State Jobs: ${siteUrl}/category/latest-jobs
-   - Defence Services: ${siteUrl}/category/defence
-   - Teaching & Education: ${siteUrl}/category/teaching
-   - Police Recruitment: ${siteUrl}/category/police
-   - PSU & Engineering: ${siteUrl}/category/psu-engineering
-9. **Legal, Compliance & Support**:
-   - Privacy Policy (DPDP Act 2023): ${siteUrl}/privacy-policy
-   - Terms of Service: ${siteUrl}/terms-of-service
-   - Test Series Pass Pricing: ${siteUrl}/pricing
-   - Refund & Cancellation Policy: ${siteUrl}/refund-policy
-   - Contact Desk: ${siteUrl}/contact-us
+- [Homepage](${siteUrl}/): Real-time live feed of active notifications and official links
+- [Blogs & Exam Guides](${siteUrl}/blogs): Comprehensive index of recruitment guides and examination articles
+- [Latest Updates](${siteUrl}/latest-updates): Chronological feed of active notifications, admit cards, and results
+- [Test Series & CBT Mocks](${siteUrl}/test-series): Free and premium All-India computer-based test series
+- [Daily Quiz](${siteUrl}/daily-quiz): Daily exam preparation quiz runner
+- [Rank Predictor](${siteUrl}/rank-predictor): Statistical percentile and AIR predictor
+- [Official Commission Directory](${siteUrl}/#important-links): Central & state recruitment portals directory
+
+## Exam Categories
+- [Central Government Exams](${siteUrl}/category/central-government): UPSC Civil Services, Central Ministries, and national recruitment agencies
+- [Staff Selection Commission (SSC)](${siteUrl}/category/ssc): SSC CGL, CHSL, MTS, CPO, GD Constable, Stenographer
+- [Railway Recruitment Board (RRB)](${siteUrl}/category/railways): RRB NTPC, ALP, Technician, Group D, RPF
+- [Banking & Insurance](${siteUrl}/category/banking): IBPS PO/Clerk, SBI PO/Clerk, RBI Grade B, LIC
+- [Latest State Govt Jobs](${siteUrl}/category/latest-jobs): State PSCs (UPPSC, BPSC, MPPSC, MPSC, RPSC) and State Boards
+- [Defence & Paramilitary](${siteUrl}/category/defence): NDA, CDS, AFCAT, CAPF AC, Indian Coast Guard, Agniveer
+- [Teaching & Education](${siteUrl}/category/teaching): CTET, State TETs, KVS, NVS, DSSSB
+- [Police Recruitment](${siteUrl}/category/police): State police constable and sub-inspector exams
+- [PSU & Engineering](${siteUrl}/category/psu-engineering): GATE PSU recruitment, ISRO, DRDO, BEL, BHEL, IOCL
+
+## Legal, Compliance & Support
+- [Privacy Policy (DPDP Act 2023)](${siteUrl}/privacy-policy): Platform data practices, cookie policy, and candidate privacy standards
+- [Terms of Service](${siteUrl}/terms-of-service): Terms governing the use of informational content and tools
+- [Test Series Pass Pricing](${siteUrl}/pricing): Details on single series and 3-year all-access pass pricing
+- [Refund & Cancellation Policy](${siteUrl}/refund-policy): Transparent refund rules and timeframes
+- [Contact & Support Desk](${siteUrl}/contact-us): Support desk, feedback, and editorial contact
 
 ## Machine Discovery Protocols
-- **XML Sitemap**: ${siteUrl}/sitemap.xml
-- **XML Sitemap Index**: ${siteUrl}/sitemap_index.xml
-- **RSS Syndication**: ${siteUrl}/rss.xml
-- **Robots Directives**: ${siteUrl}/robots.txt
-- **LLM Summary**: ${siteUrl}/llms.txt
+- [XML Sitemap](${siteUrl}/sitemap.xml): Complete URL index of all published recruitment articles and categories
+- [RSS Feed](${siteUrl}/rss.xml): Real-time syndication feed for RSS readers and news aggregators
+- [Robots Directives](${siteUrl}/robots.txt): Machine crawler instructions
+- [LLM Summary](${siteUrl}/llms.txt): Core summary and discovery links for AI agents
 `;
 
   return new Response(content, {
     status: 200,
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, max-age=86400',
+      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
     },
   });
 };

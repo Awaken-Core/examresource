@@ -50,6 +50,49 @@ export interface SeoOptimizationOutput {
   suggestions: string[];
 }
 
+export interface AiUpdateArticleInput {
+  title?: string;
+  currentContent: string;
+  fullArticleContent?: string;
+  sectionTitle?: string;
+  scope?: 'full' | 'section';
+  instructions: string;
+  extraContent?: string;
+  language?: 'BOTH' | 'HINGLISH' | 'ENGLISH';
+  model?: string;
+  hinglishContent?: string;
+  englishContent?: string;
+  hinglishTitle?: string;
+  englishTitle?: string;
+}
+
+export interface AiUpdateArticleOutput {
+  updatedTitle?: string;
+  updatedContent: string;
+  summaryOfChanges: string;
+  modelUsed: string;
+  hinglish?: {
+    title?: string;
+    updatedTitle?: string;
+    content?: string;
+    updatedContent: string;
+    excerpt?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+  english?: {
+    title?: string;
+    updatedTitle?: string;
+    content?: string;
+    updatedContent: string;
+    excerpt?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
@@ -102,6 +145,29 @@ function parseRobustJson(raw: string): any {
       }
     }
   }
+}
+
+function extractReferenceExplicitMetadata(rawText: string) {
+  const clean = rawText || '';
+  const metaTitleMatch = clean.match(/(?:^|\n)\s*[*#_~-]*\s*(?:Meta\s*Title|SEO\s*Title)\s*[*#_~-]*\s*:\s*[*_"`']*\s*([^\n\r*"`']+)/i);
+  const metaDescMatch = clean.match(/(?:^|\n)\s*[*#_~-]*\s*(?:Meta\s*Description|SEO\s*Description)\s*[*#_~-]*\s*:\s*[*_"`']*\s*([^\n\r*"`']+)/i);
+  const focusKeywordMatch = clean.match(/(?:^|\n)\s*[*#_~-]*\s*(?:Focus\s*Keywords?|Primary\s*Keywords?|Main\s*Keywords?)\s*[*#_~-]*\s*:\s*[*_"`']*\s*([^\n\r*"`']+)/i);
+  const secondaryKeywordsMatch = clean.match(/(?:^|\n)\s*[*#_~-]*\s*(?:Secondary\s*Keywords?|Target\s*Keywords?|Keywords?|Tags?)\s*[*#_~-]*\s*:\s*[*_"`']*\s*([^\n\r*"`']+)/i);
+
+  const focusKeyword = focusKeywordMatch ? focusKeywordMatch[1].trim().replace(/\.$/, '').replace(/^["']|["']$/g, '') : '';
+  const secondaryKeywords = secondaryKeywordsMatch
+    ? secondaryKeywordsMatch[1]
+        .split(/[,;|\n]/)
+        .map((k) => k.trim().replace(/\.$/, '').replace(/^["']|["']$/g, ''))
+        .filter(Boolean)
+    : [];
+
+  return {
+    metaTitle: metaTitleMatch ? metaTitleMatch[1].trim().replace(/^["']|["']$/g, '') : '',
+    metaDescription: metaDescMatch ? metaDescMatch[1].trim().replace(/^["']|["']$/g, '') : '',
+    focusKeyword,
+    secondaryKeywords,
+  };
 }
 
 @Injectable()
@@ -768,6 +834,323 @@ Return ONLY valid JSON:
   }
 
   /**
+   * Rewrite/update an existing article or specific section with user prompt instructions and extra content.
+   */
+  async updateArticleWithAi(
+    input: AiUpdateArticleInput,
+    onStage?: (stage: string, message: string) => void,
+  ): Promise<AiUpdateArticleOutput> {
+    onStage?.('INGESTING', 'Analyzing existing article content and update instructions...');
+
+    const isBoth = input.language === 'BOTH' || !input.language;
+    const isHinglish = input.language === 'HINGLISH';
+    const isSectionScope = input.scope === 'section' && Boolean(input.sectionTitle || input.currentContent);
+
+    const systemPrompt = isBoth
+      ? `You are an elite bilingual educational exam content editor, updater, and Answer Engine Optimization (AEO/SEO) specialist for an Indian government exam & recruitment portal (GovtPariksha / BiharHelp / SarkariResult style).
+
+Your task: You are given an article (or specific section) to update in BOTH Hindi/Hinglish and English, update instructions (user prompt), and optionally extra/updated reference content (e.g. newly published notice, revised exam dates, corrigendum, vacancy change, eligibility update). You must REWRITE and UPDATE BOTH EDITIONS strictly following the user's instructions.
+
+CRITICAL BILINGUAL MANDATE (NEVER LEAVE HINDI OR ENGLISH EMPTY):
+1. Target Scope:
+${
+  isSectionScope
+    ? `   - SCOPE IS A SPECIFIC SECTION${input.sectionTitle ? `: "${input.sectionTitle}"` : ''}.
+   - You must rewrite ONLY this section in both Hinglish and English.
+   - Return ONLY the updated section markdown for each language (including its heading e.g. "## ${input.sectionTitle || 'Section'}"). Do NOT return the entire document.`
+    : `   - SCOPE IS THE FULL ARTICLE.
+   - Seamlessly merge the new information into both full articles.
+   - Maintain the overall structure, headings hierarchy (#, ##, ###), tables, callouts, and unaffected sections intact in both editions.
+   - Do NOT omit, summarize away, or truncate unaffected sections unless explicitly asked to remove them.`
+}
+
+2. Language & Tone:
+   - "hinglish": Natural, engaging DEVANAGARI HINDI (देवनागरी लिपि) mixed naturally with standard English technical terms (e.g. "Railway Recruitment Boards", "Important Dates", "Application Fee", "Selection Process", "Eligibility Criteria", "Age Limit", "Admit Card", "Cut-Off", "Exam Pattern", "Direct Link", "Official Website", "Salary / Pay Scale").
+     Even if the input was only in English, you MUST translate and adapt it into Devanagari Hindi for the "hinglish" edition. NEVER return empty or untranslated English text in the "hinglish" object!
+   - "english": Authoritative, publication-ready English adhering to journalistic accuracy.
+   - BOTH editions must be 100% complete and standalone. Neither edition may be left empty or truncated.
+
+3. Precision & Fact Integration:
+   - Carefully read the "instructions" prompt and any "extraContent" provided.
+   - Update dates, links, eligibility criteria, numbers of vacancies, steps, syllabus points, and details accurately across BOTH editions.
+   - If tables exist (e.g. Important Dates, Vacancy Breakdown, Exam Pattern), update table rows cleanly in standard GitHub Flavored Markdown (GFM) syntax:
+     | Event / Post | Detail / Date |
+     | --- | --- |
+   - Preserve or add FAQs if relevant to the update.
+
+4. Output Format:
+You MUST output ONLY valid JSON matching this exact schema:
+{
+  "summaryOfChanges": "Concise bullet-point summary describing exactly what was updated or added across both editions",
+  "hinglish": {
+    "title": "Updated Hinglish article title in Devanagari + English technical terms",
+    "updatedTitle": "Updated Hinglish article title in Devanagari + English technical terms",
+    "content": "The rewritten updated Hinglish markdown content string in Devanagari script",
+    "updatedContent": "The rewritten updated Hinglish markdown content string in Devanagari script",
+    "excerpt": "Short 1-2 sentence excerpt in Hindi"
+  },
+  "english": {
+    "title": "Updated English article title",
+    "updatedTitle": "Updated English article title",
+    "content": "The rewritten updated English markdown content string",
+    "updatedContent": "The rewritten updated English markdown content string",
+    "excerpt": "Short 1-2 sentence excerpt in English"
+  }
+}`
+      : `You are an elite educational exam content editor, updater, and Answer Engine Optimization (AEO/SEO) specialist for an Indian government exam & recruitment portal (GovtPariksha / BiharHelp / SarkariResult style).
+
+Your task: You are given an existing article (or section), update instructions (user prompt), and optionally extra/updated reference content (e.g. newly published notice, revised exam dates, corrigendum, vacancy change, eligibility update). You must REWRITE and UPDATE the content strictly following the user's instructions.
+
+Editorial & Content Rules:
+1. Target Scope:
+${
+  isSectionScope
+    ? `   - SCOPE IS A SPECIFIC SECTION${input.sectionTitle ? `: "${input.sectionTitle}"` : ''}.
+   - You must rewrite ONLY this section while using the surrounding full article context (if provided) to ensure continuity.
+   - Return ONLY the updated section markdown (including its heading e.g. "## ${input.sectionTitle || 'Section'}"). Do NOT return the entire document.`
+    : `   - SCOPE IS THE FULL ARTICLE.
+   - Seamlessly merge the new information into the existing article.
+   - Maintain the overall structure, headings hierarchy (#, ##, ###), tables, callouts, and unaffected sections intact.
+   - Do NOT omit, summarize away, or truncate unaffected sections unless explicitly asked to remove them.`
+}
+
+2. Language & Tone:
+${
+  isHinglish
+    ? `   - Language is HINGLISH / HINDI (GovtPariksha / BiharHelp standard): High-quality Devanagari Hindi (देवनागरी लिपि) mixed naturally with standard English technical terms.
+   - Keep official terms in English: "Railway Recruitment Boards", "Important Dates", "Application Fee", "Selection Process", "Eligibility Criteria", "Age Limit", "Admit Card", "Cut-Off", "Exam Pattern", "Direct Link", "Official Website", "Salary / Pay Scale".`
+    : `   - Language is ENGLISH: Authoritative, clear, professional, publication-ready English adhering to journalistic accuracy.`
+}
+
+3. Precision & Fact Integration:
+   - Carefully read the "instructions" prompt and any "extraContent" provided.
+   - Update dates, links, eligibility criteria, numbers of vacancies, steps, syllabus points, and details accurately.
+   - If a table exists (e.g. Important Dates, Vacancy Breakdown, Exam Pattern), update the table rows cleanly in standard GitHub Flavored Markdown (GFM) syntax:
+     | Event / Post | Detail / Date |
+     | --- | --- |
+   - Preserve or add FAQs if relevant to the update.
+
+4. Output Format:
+You MUST output ONLY valid JSON matching this exact schema:
+{
+  "updatedTitle": "Updated article title string (if title needs update based on new notification/year/dates, else return existing title)",
+  "updatedContent": "The rewritten updated markdown content string",
+  "summaryOfChanges": "Concise bullet-point summary in plain text describing exactly what was updated or added"
+}`;
+
+    const userPrompt = isBoth
+      ? JSON.stringify({
+          scope: input.scope || 'full',
+          sectionTitle: input.sectionTitle || null,
+          instructions: input.instructions,
+          extraContent: input.extraContent || '',
+          hinglishTitle: input.hinglishTitle || input.title || '',
+          hinglishContent: input.hinglishContent || input.currentContent,
+          englishTitle: input.englishTitle || input.title || '',
+          englishContent: input.englishContent || input.currentContent,
+        })
+      : JSON.stringify({
+          scope: input.scope || 'full',
+          sectionTitle: input.sectionTitle || null,
+          currentTitle: input.title || '',
+          instructions: input.instructions,
+          extraContent: input.extraContent || '',
+          currentContent: input.currentContent,
+          fullArticleContext:
+            input.fullArticleContent && input.fullArticleContent !== input.currentContent
+              ? input.fullArticleContent.slice(0, 15000)
+              : null,
+          language: input.language || 'HINGLISH',
+        });
+
+    onStage?.('REWRITING', isBoth ? 'AI rewriting both Hindi and English editions with updates...' : 'AI rewriting and integrating requested updates...');
+
+    const requestedModel = input.model || 'gemini-3.8-flash';
+    const { text, modelUsed } = await this.callAiModel(
+      systemPrompt,
+      userPrompt,
+      undefined,
+      (msg) => onStage?.('MODEL_SWITCH', msg),
+      requestedModel,
+    );
+
+    onStage?.('POLISHING', 'Validating revised content and change summary...');
+
+    try {
+      const parsed = parseRobustJson(text);
+
+      if (isBoth) {
+        const hObj =
+          parsed.hinglish ||
+          parsed.hindi ||
+          parsed.devanagari ||
+          parsed.hindi_version ||
+          parsed.hinglish_version;
+        const eObj =
+          parsed.english ||
+          parsed.english_version;
+
+        let hinglishContent =
+          (typeof hObj === 'string' ? hObj : (hObj?.updatedContent || hObj?.content || hObj?.markdown || hObj?.text)) ||
+          '';
+        let englishContent =
+          (typeof eObj === 'string' ? eObj : (eObj?.updatedContent || eObj?.content || eObj?.markdown || eObj?.text)) ||
+          '';
+
+        let hinglishTitle =
+          (typeof hObj === 'object' ? (hObj?.updatedTitle || hObj?.title) : '') ||
+          input.hinglishTitle ||
+          input.title ||
+          '';
+        let englishTitle =
+          (typeof eObj === 'object' ? (eObj?.updatedTitle || eObj?.title) : '') ||
+          input.englishTitle ||
+          input.title ||
+          '';
+
+        const hinglishExcerpt =
+          (typeof hObj === 'object' ? (hObj?.excerpt || hObj?.description) : '') || '';
+        const englishExcerpt =
+          (typeof eObj === 'object' ? (eObj?.excerpt || eObj?.description) : '') || '';
+
+        // If both were completely omitted from nested objects, check top-level updatedContent
+        if (!hinglishContent && !englishContent && parsed.updatedContent) {
+          englishContent = parsed.updatedContent;
+        }
+
+        // AUTO-COMPLETION / TRANSLATION FALLBACK:
+        // Ensure Hindi/Hinglish is NOT empty and contains genuine Devanagari Hindi
+        const hasDevanagari = /[\u0900-\u097F]/.test(hinglishContent);
+        if (!hinglishContent || hinglishContent.trim().length < 50 || !hasDevanagari) {
+          const sourceTextForHindi = englishContent || input.currentContent || input.fullArticleContent || '';
+          if (sourceTextForHindi.trim()) {
+            this.logger.warn('AI update output for Hindi is empty or lacks Devanagari. Auto-completing Hindi edition via translation...');
+            onStage?.('TRANSLATING', 'Translating and generating full Devanagari Hindi edition...');
+            try {
+              const trans = await this.translateMarkdownContent({
+                title: englishTitle || input.title || '',
+                markdown: sourceTextForHindi,
+                sourceLanguage: 'ENGLISH',
+                targetLanguage: 'HINGLISH',
+              });
+              if (trans?.markdown) {
+                hinglishContent = trans.markdown;
+                if (trans.title && (!hinglishTitle || !/[\u0900-\u097F]/.test(hinglishTitle))) {
+                  hinglishTitle = trans.title;
+                }
+              }
+            } catch (tErr) {
+              this.logger.error('Failed to auto-translate Hindi edition in updater', tErr);
+              if (!hinglishContent && input.hinglishContent) {
+                hinglishContent = input.hinglishContent;
+              }
+            }
+          }
+        }
+
+        // Ensure English is NOT empty
+        if (!englishContent || englishContent.trim().length < 50) {
+          const sourceTextForEnglish = hinglishContent || input.currentContent || input.fullArticleContent || '';
+          if (sourceTextForEnglish.trim()) {
+            this.logger.warn('AI update output for English is empty. Auto-completing English edition via translation...');
+            onStage?.('TRANSLATING', 'Translating and generating full English edition...');
+            try {
+              const trans = await this.translateMarkdownContent({
+                title: hinglishTitle || input.title || '',
+                markdown: sourceTextForEnglish,
+                sourceLanguage: 'HINGLISH',
+                targetLanguage: 'ENGLISH',
+              });
+              if (trans?.markdown) {
+                englishContent = trans.markdown;
+                if (trans.title && !englishTitle) {
+                  englishTitle = trans.title;
+                }
+              }
+            } catch (tErr) {
+              this.logger.error('Failed to auto-translate English edition in updater', tErr);
+              if (!englishContent && input.englishContent) {
+                englishContent = input.englishContent;
+              }
+            }
+          }
+        }
+
+        return {
+          updatedTitle: englishTitle || hinglishTitle,
+          updatedContent: englishContent || hinglishContent,
+          summaryOfChanges:
+            parsed.summaryOfChanges || 'Both Hindi and English editions updated successfully according to prompt instructions.',
+          modelUsed,
+          hinglish: {
+            title: hinglishTitle,
+            updatedTitle: hinglishTitle,
+            content: hinglishContent,
+            updatedContent: hinglishContent,
+            excerpt: hinglishExcerpt,
+            metaTitle: (typeof hObj === 'object' && hObj?.metaTitle) || hinglishTitle,
+            metaDescription: (typeof hObj === 'object' && hObj?.metaDescription) || hinglishExcerpt || '',
+          },
+          english: {
+            title: englishTitle,
+            updatedTitle: englishTitle,
+            content: englishContent,
+            updatedContent: englishContent,
+            excerpt: englishExcerpt,
+            metaTitle: (typeof eObj === 'object' && eObj?.metaTitle) || englishTitle,
+            metaDescription: (typeof eObj === 'object' && eObj?.metaDescription) || englishExcerpt || '',
+          },
+        };
+      }
+
+      const updatedContent = parsed.updatedContent || parsed.markdown || input.currentContent;
+      const updatedTitle = parsed.updatedTitle || input.title || '';
+
+      return {
+        updatedTitle,
+        updatedContent,
+        summaryOfChanges:
+          parsed.summaryOfChanges || 'Article content updated successfully according to prompt instructions.',
+        modelUsed,
+        hinglish: isHinglish
+          ? {
+              updatedTitle,
+              updatedContent,
+            }
+          : undefined,
+        english: !isHinglish
+          ? {
+              updatedTitle,
+              updatedContent,
+            }
+          : undefined,
+      };
+    } catch (err: any) {
+      this.logger.error('Failed to parse AI update response JSON', err);
+      const cleanFallback = text
+        .replace(/<think>[\s\S]*?<\/think>/gi, '')
+        .replace(/^```(?:markdown)?\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+      if (cleanFallback && cleanFallback.length > 50) {
+        return {
+          updatedTitle: input.title || '',
+          updatedContent: cleanFallback,
+          summaryOfChanges: 'Updated content generated (raw formatting applied).',
+          modelUsed,
+          hinglish: isBoth || isHinglish
+            ? { updatedTitle: input.hinglishTitle || input.title || '', updatedContent: cleanFallback }
+            : undefined,
+          english: isBoth || !isHinglish
+            ? { updatedTitle: input.englishTitle || input.title || '', updatedContent: cleanFallback }
+            : undefined,
+        };
+      }
+      throw new BadRequestException('Failed to process AI article update response.');
+    }
+  }
+
+  /**
    * Generate complete bilingual blog (Hinglish + English) + SEO from a reference article.
    * Input can be raw text, Markdown, or HTML — Gemini normalises and rewrites fresh content.
    */
@@ -950,6 +1333,19 @@ SEO METADATA FOR BOTH:
 - excerpt: 1-2 compelling summary sentences
 
 ══════════════════════════════════════════════════════════════════════════════
+EXPLICIT REFERENCE SEO METADATA & KEYWORDS (CRITICAL REQUIREMENT):
+══════════════════════════════════════════════════════════════════════════════
+If the reference content contains explicit lines like "Meta Title:", "Meta Description:", "Focus Keyword:", and/or "Secondary Keywords:":
+1. In "english":
+   - "metaTitle": You MUST prioritize using the explicit Meta Title provided in the reference (shortened cleanly if > 60 chars).
+   - "metaDescription": You MUST prioritize using the explicit Meta Description provided in the reference (within 160 chars).
+   - "keywords": You MUST include the Focus Keyword as the very first keyword, followed by all Secondary Keywords.
+2. In "hinglish":
+   - "metaTitle": Must include the core Focus Keyword along with high-CTR Hindi Devanagari phrase (within 60 chars).
+   - "metaDescription": Adapt the explicit Meta Description into natural Devanagari Hindi + English terms (within 155 chars).
+   - "keywords": Include the same focus and secondary keywords.
+
+══════════════════════════════════════════════════════════════════════════════
 WORD COUNT & DEPTH MANDATE: MINIMUM 1,500 WORDS TO MAXIMUM 3,500 WORDS:
 ══════════════════════════════════════════════════════════════════════════════
 - Length Target: Each article (both "hinglish" and "english") MUST be between 1,500 words (minimum) and 3,500 words (maximum), scaling adaptively depending on topic complexity, completeness of details, and language nuance.
@@ -1021,73 +1417,113 @@ Output ONLY valid JSON (no markdown fences, no extra text):
       let englishMetaDescription = parsed.english?.metaDescription || '';
       let englishKeywords = Array.isArray(parsed.english?.keywords) ? parsed.english.keywords : [];
 
-      // If the English version was truncated or incomplete (< 300 words while Hinglish is long):
-      const hinglishWordCount = (parsed.hinglish?.content || '').trim().split(/\s+/).length;
+      let hinglishTitle = parsed.hinglish?.title || '';
+      let hinglishExcerpt = parsed.hinglish?.excerpt || '';
+      let hinglishContent = parsed.hinglish?.content || '';
+      let hinglishMetaTitle = parsed.hinglish?.metaTitle || '';
+      let hinglishMetaDesc = parsed.hinglish?.metaDescription || '';
+      let hinglishKeywords = Array.isArray(parsed.hinglish?.keywords) ? parsed.hinglish.keywords : [];
+
+      const hinglishWordCount = hinglishContent.trim().split(/\s+/).filter(Boolean).length;
       const englishWordCount = englishContent.trim().split(/\s+/).filter(Boolean).length;
+      const hinglishHasDevanagari = /[\u0900-\u097F]/.test(hinglishContent);
 
-      if (!englishContent || englishWordCount < 300 && hinglishWordCount >= 600) {
-        this.logger.warn(`AI returned incomplete English edition (${englishWordCount} words vs ${hinglishWordCount} Hinglish words). Auto-completing full English edition...`);
-        onStage?.('TRANSLATING', 'Auto-completing full 1.5k–3.5k word English edition from draft...');
+      // Auto-complete or translate missing/truncated Devanagari Hindi edition
+      if (!hinglishContent || hinglishWordCount < 300 || !hinglishHasDevanagari) {
+        this.logger.warn(`AI returned incomplete or non-Devanagari Hindi edition in Reference Rewriter (${hinglishWordCount} words, hasDevanagari=${hinglishHasDevanagari}). Auto-generating full Hindi edition...`);
+        onStage?.('TRANSLATING', 'Translating & adapting draft into authentic Devanagari Hindi edition...');
         try {
-          const completionPrompt = `Translate and adapt the following comprehensive Indian educational/job article from Hindi/Hinglish into high-authority, publication-ready English with complete GitHub Flavored Markdown (tables, headings, FAQs intact).
-Target Length: Minimum 1,500 words to maximum 3,500 words matching the depth of the source draft.
-Article Title: ${parsed.hinglish?.title || ''}
-Article Content (Markdown):
-${parsed.hinglish?.content || ''}
-
-Output ONLY valid JSON matching this schema:
-{
-  "title": "Clear English Title",
-  "excerpt": "Compelling English excerpt (1-2 sentences)",
-  "content": "Complete 1,500 to 3,500 words English markdown with tables and FAQs",
-  "metaTitle": "SEO title under 60 chars",
-  "metaDescription": "SEO description under 155 chars",
-  "keywords": ["keyword 1", "keyword 2"]
-}`;
-          const fallbackRes = await this.callAiModel(
-            'You are an expert bilingual editor for exam and educational portals. Output ONLY valid JSON.',
-            completionPrompt,
-            undefined,
-            undefined,
-            requestedModel,
-          );
-          const parsedEnglishFallback = parseRobustJson(fallbackRes.text);
-          if (parsedEnglishFallback?.content) {
-            englishTitle = parsedEnglishFallback.title || englishTitle;
-            englishExcerpt = parsedEnglishFallback.excerpt || englishExcerpt;
-            englishContent = parsedEnglishFallback.content;
-            englishMetaTitle = parsedEnglishFallback.metaTitle || englishTitle;
-            englishMetaDescription = parsedEnglishFallback.metaDescription || englishExcerpt;
-            if (Array.isArray(parsedEnglishFallback.keywords) && parsedEnglishFallback.keywords.length > 0) {
-              englishKeywords = parsedEnglishFallback.keywords;
-            }
+          const trans = await this.translateMarkdownContent({
+            title: englishTitle || input.referenceContent.slice(0, 100),
+            markdown: englishContent || input.referenceContent,
+            sourceLanguage: 'ENGLISH',
+            targetLanguage: 'HINGLISH',
+          });
+          if (trans?.markdown && /[\u0900-\u097F]/.test(trans.markdown)) {
+            hinglishContent = trans.markdown;
+            hinglishTitle = trans.title || hinglishTitle || englishTitle;
+            hinglishExcerpt = trans.excerpt || hinglishExcerpt || englishExcerpt;
+            hinglishMetaTitle = trans.metaTitle || hinglishMetaTitle;
+            hinglishMetaDesc = trans.metaDescription || hinglishMetaDesc;
           }
         } catch (recoveryErr) {
-          this.logger.error('Failed to auto-complete English article fallback', recoveryErr);
+          this.logger.error('Failed to auto-generate Hindi article fallback in Reference Rewriter', recoveryErr);
         }
       }
 
-      const hinglishTitle = parsed.hinglish?.title || 'Untitled Hinglish Article';
-      const canonicalSlug = parsed.hinglish?.slug || parsed.english?.slug || 'article';
+      // Auto-complete or translate missing/truncated English edition
+      if (!englishContent || englishWordCount < 300) {
+        this.logger.warn(`AI returned incomplete English edition (${englishWordCount} words). Auto-completing full English edition...`);
+        onStage?.('TRANSLATING', 'Auto-completing full English edition from draft...');
+        try {
+          const trans = await this.translateMarkdownContent({
+            title: hinglishTitle || input.referenceContent.slice(0, 100),
+            markdown: hinglishContent || input.referenceContent,
+            sourceLanguage: 'HINGLISH',
+            targetLanguage: 'ENGLISH',
+          });
+          if (trans?.markdown) {
+            englishContent = trans.markdown;
+            englishTitle = trans.title || englishTitle;
+            englishExcerpt = trans.excerpt || englishExcerpt;
+            englishMetaTitle = trans.metaTitle || englishMetaTitle;
+            englishMetaDescription = trans.metaDescription || englishMetaDescription;
+          }
+        } catch (recoveryErr) {
+          this.logger.error('Failed to auto-complete English article fallback in Reference Rewriter', recoveryErr);
+        }
+      }
+
+      const explicitMeta = extractReferenceExplicitMetadata(input.referenceContent);
+      const explicitKeywords = [
+        ...(explicitMeta.focusKeyword ? [explicitMeta.focusKeyword] : []),
+        ...explicitMeta.secondaryKeywords,
+      ];
+
+      if (explicitMeta.metaTitle) {
+        englishMetaTitle = explicitMeta.metaTitle;
+      }
+      if (explicitMeta.metaDescription) {
+        englishMetaDescription = explicitMeta.metaDescription;
+      }
+
+      if (explicitKeywords.length > 0) {
+        englishKeywords = Array.from(new Set([...explicitKeywords, ...englishKeywords]));
+        hinglishKeywords = Array.from(new Set([...explicitKeywords, ...hinglishKeywords]));
+      }
+
+      const canonicalSlug = (parsed.hinglish?.slug || parsed.english?.slug || (englishTitle || hinglishTitle || 'article'))
+        .toLowerCase()
+        .replace(/-(hinglish|english)$/i, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '') || 'article';
+
+      hinglishTitle = hinglishTitle || 'Untitled Hinglish Article';
+      englishTitle = englishTitle || hinglishTitle;
+      hinglishMetaTitle = hinglishMetaTitle || explicitMeta.metaTitle || hinglishTitle;
+      hinglishMetaDesc = hinglishMetaDesc || explicitMeta.metaDescription || hinglishExcerpt || '';
+      englishMetaTitle = englishMetaTitle || explicitMeta.metaTitle || englishTitle;
+      englishMetaDescription = englishMetaDescription || explicitMeta.metaDescription || englishExcerpt || '';
 
       return {
         hinglish: {
           title: hinglishTitle,
           slug: canonicalSlug,
-          excerpt: parsed.hinglish?.excerpt || '',
-          content: parsed.hinglish?.content || '',
-          metaTitle: parsed.hinglish?.metaTitle || hinglishTitle,
-          metaDescription: parsed.hinglish?.metaDescription || parsed.hinglish?.excerpt || '',
-          keywords: Array.isArray(parsed.hinglish?.keywords) ? parsed.hinglish.keywords : [],
+          excerpt: hinglishExcerpt,
+          content: hinglishContent,
+          metaTitle: hinglishMetaTitle,
+          metaDescription: hinglishMetaDesc,
+          keywords: hinglishKeywords.length > 0 ? hinglishKeywords : explicitKeywords,
         },
         english: {
-          title: englishTitle || hinglishTitle,
+          title: englishTitle,
           slug: canonicalSlug,
-          excerpt: englishExcerpt || parsed.hinglish?.excerpt || '',
-          content: englishContent || parsed.hinglish?.content || '',
-          metaTitle: englishMetaTitle || englishTitle || hinglishTitle,
-          metaDescription: englishMetaDescription || englishExcerpt || '',
-          keywords: englishKeywords.length > 0 ? englishKeywords : (parsed.hinglish?.keywords || []),
+          excerpt: englishExcerpt,
+          content: englishContent,
+          metaTitle: englishMetaTitle,
+          metaDescription: englishMetaDescription,
+          keywords: englishKeywords.length > 0 ? englishKeywords : explicitKeywords,
         },
         detectedCategory: parsed.detectedCategory || input.category,
         modelUsed: result.modelUsed || this.lastUsedModel,

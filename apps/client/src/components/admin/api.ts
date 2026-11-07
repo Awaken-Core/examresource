@@ -119,6 +119,26 @@ export async function apiFetch<T = any>(endpoint: string, options: RequestInit =
   return null as unknown as T;
 }
 
+export interface AdminFeedbackItem {
+  id: string;
+  source: 'test_result' | 'footer' | 'general';
+  message: string;
+  rating?: number | null;
+  category?: string | null;
+  testId?: string | null;
+  testTitle?: string | null;
+  attemptId?: string | null;
+  userId?: string | null;
+  userName?: string | null;
+  userEmail?: string | null;
+  userPhone?: string | null;
+  status: 'NEW' | 'REVIEWED' | 'ARCHIVED';
+  adminNotes?: string | null;
+  reviewedAt?: string | null;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
 export const adminApi = {
   // Current user
   getCurrentUser: () => apiFetch<CurrentUser>('/me'),
@@ -138,6 +158,26 @@ export const adminApi = {
       { method: 'PATCH', body: JSON.stringify({ status }) },
     ),
   deleteComment: (id: string) => apiFetch(`/admin/comments/${id}`, { method: 'DELETE' }),
+
+  // Feedback Moderation
+  getFeedbacks: (params?: { source?: string; status?: string; search?: string; page?: number; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.source && params.source !== 'ALL') q.set('source', params.source);
+    if (params?.status && params.status !== 'ALL') q.set('status', params.status);
+    if (params?.search) q.set('search', params.search);
+    if (params?.page) q.set('page', String(params.page));
+    if (params?.limit) q.set('limit', String(params.limit));
+    return apiFetch<{ feedbacks: AdminFeedbackItem[]; total: number; page: number; limit: number; pages: number }>(
+      `/admin/feedback${q.toString() ? `?${q.toString()}` : ''}`,
+    );
+  },
+  updateFeedbackStatus: (id: string, status: 'NEW' | 'REVIEWED' | 'ARCHIVED', adminNotes?: string | null) =>
+    apiFetch<{ success: boolean; id: string; status: string }>(
+      `/admin/feedback/${id}`,
+      { method: 'PATCH', body: JSON.stringify({ status, adminNotes }) },
+    ),
+  deleteFeedback: (id: string) =>
+    apiFetch<{ success: boolean }>(`/admin/feedback/${id}`, { method: 'DELETE' }),
 
   // Articles
   getArticles: (params: {

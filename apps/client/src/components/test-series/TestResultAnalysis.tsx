@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { API_URL } from '../../lib/api';
+import { TestResultFeedback } from '../feedback/TestResultFeedback';
 
 type OptionReview = {
   id: string;
@@ -855,6 +856,15 @@ export function TestResultAnalysis({ attemptId }: { attemptId: string }) {
           </a>
         </div>
       </section>
+
+      {/* ══════════════════════════════════════════════════════════════
+          7. TEST FEEDBACK & QUALITY REVIEW WIDGET
+          ══════════════════════════════════════════════════════════════ */}
+      <TestResultFeedback
+        testId={data.testId}
+        testTitle={data.testTitle}
+        attemptId={attemptId}
+      />
     </div>
   );
 }

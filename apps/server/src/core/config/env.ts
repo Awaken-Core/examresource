@@ -50,6 +50,12 @@ export const EnvSchema = z.object({
   RAZORPAY_PASS_AMOUNT_PAISE: z.coerce.number().int().min(100).default(9900),
   RAZORPAY_PASS_LIST_PRICE_PAISE: z.coerce.number().int().min(100).default(29900),
   RAZORPAY_PASS_VALIDITY_MONTHS: z.coerce.number().int().min(1).max(36).default(6),
+  PLAN_SERIES_AMOUNT_PAISE: z.coerce.number().int().min(100).default(9900),
+  PLAN_SERIES_LIST_PRICE_PAISE: z.coerce.number().int().min(100).default(29900),
+  PLAN_SERIES_VALIDITY_MONTHS: z.coerce.number().int().min(1).max(60).default(6),
+  PLAN_PASS_AMOUNT_PAISE: z.coerce.number().int().min(100).default(39900),
+  PLAN_PASS_LIST_PRICE_PAISE: z.coerce.number().int().min(100).default(99900),
+  PLAN_PASS_VALIDITY_MONTHS: z.coerce.number().int().min(1).max(120).default(36),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -1,9 +1,29 @@
 ---
+import {
+  calculateDiscount,
+  formatRupees,
+  formatValidity,
+  loadPassOffer,
+} from '../../lib/passOffer';
+
 interface Props {
   seriesId?: string;
 }
 
 const { seriesId } = Astro.props;
+const offer = await loadPassOffer();
+const { seriesPlan, allAccessPlan } = offer;
+
+const seriesPrice = formatRupees(seriesPlan.amountPaise);
+const seriesListPrice = formatRupees(seriesPlan.listPricePaise);
+const seriesDiscount = calculateDiscount(seriesPlan.amountPaise, seriesPlan.listPricePaise);
+const seriesValidity = formatValidity(seriesPlan.validityMonths);
+
+const passPrice = formatRupees(allAccessPlan.amountPaise);
+const passListPrice = formatRupees(allAccessPlan.listPricePaise);
+const passDiscount = calculateDiscount(allAccessPlan.amountPaise, allAccessPlan.listPricePaise);
+const passValidity = formatValidity(allAccessPlan.validityMonths);
+const passMonthlyApprox = Math.round(allAccessPlan.price / Math.max(1, allAccessPlan.validityMonths));
 ---
 
 <div class="pricing-root px-4 py-16 sm:py-20 mx-auto relative bg-canvas text-heading transition-colors" data-series-id={seriesId || ''}>
@@ -29,7 +49,7 @@ const { seriesId } = Astro.props;
     </h2>
 
     <p class="font-sans sm:text-[15px] text-sm text-muted sm:w-[85%] w-[95%] mx-auto leading-relaxed">
-      Every student gets 1 free test attempt in each section. Unlock complete preparation with a single series pass (₹69) or the all-access yearly pass (₹399).
+      Every student gets 1 free test attempt in each section. Unlock complete preparation with a single series pass ({seriesPrice}) or the all-access pass ({passPrice} for {passValidity}).
     </p>
   </div>
 
@@ -48,7 +68,7 @@ const { seriesId } = Astro.props;
                 TARGETED EXAM
               </span>
               <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-                SAVE ₹130 (65% OFF)
+                SAVE {seriesDiscount.saveRupees} ({seriesDiscount.discountPercent}% OFF)
               </span>
             </div>
           </div>
@@ -62,18 +82,18 @@ const { seriesId } = Astro.props;
 
           <div class="flex items-baseline gap-2.5">
             <span class="text-4xl sm:text-5xl font-black text-heading tabular-nums">
-              ₹69
+              {seriesPrice}
             </span>
             <span class="text-base text-muted line-through font-medium">
-              ₹199
+              {seriesListPrice}
             </span>
             <span class="text-muted font-medium text-xs sm:text-sm">
-              / 6 Months
+              / {seriesValidity}
             </span>
           </div>
 
           <p class="mt-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            One-time payment • Valid for 6 months
+            One-time payment • Valid for {seriesValidity}
           </p>
         </div>
 
@@ -83,9 +103,10 @@ const { seriesId } = Astro.props;
               type="button"
               id="btn-buy-series"
               data-plan="series"
+              data-validity={seriesPlan.validityMonths}
               class="w-full mb-6 p-3.5 sm:p-4 text-sm sm:text-base font-bold rounded-xl cursor-pointer transition-all shadow-md bg-gradient-to-t from-neutral-900 to-neutral-700 dark:from-neutral-800 dark:to-neutral-600 text-white shadow-neutral-900/20 hover:opacity-95 border border-border disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Unlock This Series · ₹69
+              Unlock This Series · {seriesPrice}
             </button>
 
             <ul class="space-y-3 font-semibold py-3">
@@ -173,7 +194,7 @@ const { seriesId } = Astro.props;
                     </svg>
                   </span>
                   <span class="text-xs sm:text-sm text-heading font-medium leading-tight">
-                    Valid for 6 full months from purchase date
+                    Valid for {seriesValidity} from purchase date
                   </span>
                 </li>
               </ul>
@@ -183,7 +204,7 @@ const { seriesId } = Astro.props;
       </div>
     </div>
 
-    {/* CARD 2: ALL-ACCESS YEARLY PASS */}
+    {/* CARD 2: ALL-ACCESS PASS */}
     <div class="flex">
       <div
         id="card-all"
@@ -196,7 +217,7 @@ const { seriesId } = Astro.props;
                 ALL EXAMS UNLOCKED
               </span>
               <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20">
-                SAVE ₹600 (60% OFF)
+                SAVE {passDiscount.saveRupees} ({passDiscount.discountPercent}% OFF)
               </span>
             </div>
             <span class="inline-flex items-center gap-1 bg-accent text-white px-2.5 py-0.5 rounded-full text-[11px] font-bold shadow-xs">
@@ -211,23 +232,23 @@ const { seriesId } = Astro.props;
             All-Access Pass
           </h3>
           <p class="text-xs sm:text-sm text-muted mb-4 font-medium leading-relaxed">
-            One pass unlocks every single test series across the entire platform for 1 full year.
+            One pass unlocks every single test series across the entire platform for {passValidity}.
           </p>
 
           <div class="flex items-baseline gap-2.5">
             <span class="text-4xl sm:text-5xl font-black text-heading tabular-nums">
-              ₹399
+              {passPrice}
             </span>
             <span class="text-base text-muted line-through font-medium">
-              ₹999
+              {passListPrice}
             </span>
             <span class="text-muted font-medium text-xs sm:text-sm">
-              / 1 Year
+              / {passValidity}
             </span>
           </div>
 
           <p class="mt-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            Only ~₹33/month • Best value for serious aspirants
+            Only ~₹{passMonthlyApprox}/month • Best value for serious aspirants
           </p>
         </div>
 
@@ -237,9 +258,10 @@ const { seriesId } = Astro.props;
               type="button"
               id="btn-buy-all"
               data-plan="all"
+              data-validity={allAccessPlan.validityMonths}
               class="w-full mb-6 p-3.5 sm:p-4 text-sm sm:text-base font-bold rounded-xl cursor-pointer transition-all shadow-md bg-gradient-to-t from-accent to-accent-hover text-white shadow-accent/25 hover:opacity-95 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Get All-Access Pass · ₹399
+              Get All-Access Pass · {passPrice}
             </button>
 
             <ul class="space-y-3 font-semibold py-3">
@@ -317,7 +339,6 @@ const { seriesId } = Astro.props;
                     Detailed bilingual solutions with performance insights
                   </span>
                 </li>
-
               </ul>
             </div>
           </div>
@@ -351,7 +372,7 @@ const { seriesId } = Astro.props;
       if (errBox) errBox.classList.add('hidden');
 
       try {
-        const validityMonths = planType === 'all' ? 12 : 6;
+        const validityMonths = Number(btn.dataset.validity) || (planType === 'all' ? 36 : 6);
         const result = await openTestSeriesCheckout({
           planType,
           seriesId: planType === 'series' ? seriesId : undefined,

@@ -1,43 +1,70 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { contactEmail, siteName, siteUrl } from '../data/site';
-import { formatRupees, loadPassOffer } from '../lib/passOffer';
+import PricingSection from '../components/ui/PricingSection.astro';
+import { contactEmail, siteName, siteUrl, supportPhone } from '../data/site';
+import {
+  calculateDiscount,
+  formatRupees,
+  formatValidity,
+  loadPassOffer,
+} from '../lib/passOffer';
 
 // Edge CDN caching: 5 minutes
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
 Astro.response.headers.set('Vary', 'Accept-Encoding');
 
 const offer = await loadPassOffer();
-const price = formatRupees(offer.amountPaise);
-const listPrice = formatRupees(offer.listPricePaise);
-const save = formatRupees(offer.listPricePaise - offer.amountPaise);
-const lastUpdated = 'October 27, 2026';
+const { seriesPlan, allAccessPlan } = offer;
+
+const seriesPrice = formatRupees(seriesPlan.amountPaise);
+const seriesListPrice = formatRupees(seriesPlan.listPricePaise);
+const seriesDiscount = calculateDiscount(seriesPlan.amountPaise, seriesPlan.listPricePaise);
+const seriesValidity = formatValidity(seriesPlan.validityMonths);
+
+const passPrice = formatRupees(allAccessPlan.amountPaise);
+const passListPrice = formatRupees(allAccessPlan.listPricePaise);
+const passDiscount = calculateDiscount(allAccessPlan.amountPaise, allAccessPlan.listPricePaise);
+const passValidity = formatValidity(allAccessPlan.validityMonths);
+
+const lastUpdated = 'November 07, 2026';
 const pageTitle = `Test Series Pass Pricing | ${siteName}`;
-const pageDescription = `The ${siteName} Test Series Pass costs ${price} for ${offer.validityMonths} months and unlocks every published mock test series. One test in each series stays free. Blogs stay free. Books and quizzes are not included.`;
+const pageDescription = `The ${siteName} mock test plans: Single Series Pass at ${seriesPrice} (${seriesValidity} validity) and All-Access Pass at ${passPrice} (${passValidity} validity). One test in each series stays free.`;
 const canonicalUrl = `${siteUrl}/pricing`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Product',
-  name: 'Test Series Pass',
+  name: `${siteName} Test Series Pass Plans`,
   description: pageDescription,
   url: canonicalUrl,
   brand: { '@type': 'Brand', name: siteName },
-  offers: {
-    '@type': 'Offer',
-    priceCurrency: 'INR',
-    price: (offer.amountPaise / 100).toFixed(2),
-    url: canonicalUrl,
-    availability: 'https://schema.org/InStock',
-  },
+  offers: [
+    {
+      '@type': 'Offer',
+      name: seriesPlan.name,
+      priceCurrency: 'INR',
+      price: (seriesPlan.amountPaise / 100).toFixed(2),
+      url: canonicalUrl,
+      availability: 'https://schema.org/InStock',
+    },
+    {
+      '@type': 'Offer',
+      name: allAccessPlan.name,
+      priceCurrency: 'INR',
+      price: (allAccessPlan.amountPaise / 100).toFixed(2),
+      url: canonicalUrl,
+      availability: 'https://schema.org/InStock',
+    },
+  ],
 };
 
 const sections = [
+  { id: 'choose-plan', title: 'Choose your pass' },
+  { id: 'plans-overview', title: 'Plan comparison & price' },
   { id: 'what-you-get', title: 'What the pass includes' },
-  { id: 'price', title: 'Price' },
-  { id: 'free-test', title: 'Free test' },
+  { id: 'free-test', title: 'Free trial test' },
   { id: 'not-included', title: 'What is not included' },
-  { id: 'how-to-buy', title: 'How to buy' },
+  { id: 'how-to-buy', title: 'How to buy & support' },
 ];
 ---
 
@@ -55,75 +82,107 @@ const sections = [
           <section class="p-6 sm:p-7 bg-surface border border-border rounded-xl shadow-2xs space-y-3">
             <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-surface-raised border border-border text-white text-xs font-semibold">
               <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
-              <span>Test Series Pass</span>
+              <span>Test Series Pass Plans</span>
             </div>
             <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">Pricing</h1>
             <p class="text-xs sm:text-sm text-muted leading-relaxed max-w-3xl">
-              One pass unlocks every published mock test series on {siteName} for {offer.validityMonths} months. Articles, exam notices, and the first test in each series stay free.
+              Transparent, student-friendly pricing with zero hidden charges. Choose targeted single-exam preparation ({seriesPrice} for {seriesValidity}) or complete all-exam coverage ({passPrice} for {passValidity}).
             </p>
             <p class="text-xs text-muted">Last updated: <strong class="text-white">{lastUpdated}</strong></p>
           </section>
 
+          {/* Interactive Pricing Cards */}
+          <section id="choose-plan" class="scroll-mt-24">
+            <PricingSection />
+          </section>
+
           <main class="space-y-6 text-sm text-muted leading-relaxed">
-            <section id="price" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
-              <h2 class="text-base font-bold text-white">Price</h2>
-              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <div class="bg-surface-raised/40 border border-border/80 rounded-xl p-3">
-                  <span class="text-[11px] text-muted block">Price</span>
-                  <span class="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">
-                    <span class="line-through text-muted font-medium mr-2">{listPrice}</span>
-                    {price}
-                  </span>
+            <section id="plans-overview" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-4">
+              <h2 class="text-base font-bold text-white">Plan Comparison &amp; Pricing</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Single Series Plan Summary */}
+                <div class="bg-surface-raised/40 border border-border/80 rounded-xl p-4 space-y-2">
+                  <span class="text-xs font-bold text-accent uppercase tracking-wider">Plan 1: Single Series</span>
+                  <div class="text-2xl font-black text-white">
+                    {seriesPrice}
+                    <span class="text-xs text-muted line-through ml-2 font-normal">{seriesListPrice}</span>
+                  </div>
+                  <div class="text-xs text-emerald-400 font-semibold">
+                    Save {seriesDiscount.saveRupees} ({seriesDiscount.discountPercent}% OFF)
+                  </div>
+                  <p class="text-xs text-muted pt-1">
+                    Valid for {seriesValidity} from payment date. Complete access to one specific exam series (all full mocks, subject tests, chapter tests &amp; PYQs).
+                  </p>
                 </div>
-                <div class="bg-surface-raised/40 border border-border/80 rounded-xl p-3">
-                  <span class="text-[11px] text-muted block">You save</span>
-                  <span class="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">{save}</span>
-                </div>
-                <div class="bg-surface-raised/40 border border-border/80 rounded-xl p-3 col-span-2 sm:col-span-1">
-                  <span class="text-[11px] text-muted block">Validity</span>
-                  <span class="text-base font-bold text-slate-900 dark:text-white mt-0.5 block">{offer.validityMonths} months</span>
+
+                {/* All-Access Pass Summary */}
+                <div class="bg-surface-raised/40 border border-accent/40 rounded-xl p-4 space-y-2 relative">
+                  <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Plan 2: All-Access Pass</span>
+                  <div class="text-2xl font-black text-white">
+                    {passPrice}
+                    <span class="text-xs text-muted line-through ml-2 font-normal">{passListPrice}</span>
+                  </div>
+                  <div class="text-xs text-emerald-400 font-semibold">
+                    Save {passDiscount.saveRupees} ({passDiscount.discountPercent}% OFF)
+                  </div>
+                  <p class="text-xs text-muted pt-1">
+                    Valid for {passValidity} from payment date. Unrestricted access to every test series across all exams on {siteName}, plus all upcoming series.
+                  </p>
                 </div>
               </div>
-              <p>
-                The amount charged is {price}. The {listPrice} figure is the list price shown on the page. Payment is collected once through Razorpay. The pass does not renew by itself.
+              <p class="text-xs text-muted">
+                Payments are securely processed via Razorpay. Subscriptions are strictly one-time payments with zero automatic recurring debits.
               </p>
             </section>
 
             <section id="what-you-get" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
               <h2 class="text-base font-bold text-white">What the pass includes</h2>
               <ul class="list-disc pl-5 space-y-2">
-                <li>Every published test series on {siteName}, including subject tests, chapter tests, and full mock tests.</li>
-                <li>Access for {offer.validityMonths} months from the time the payment is confirmed.</li>
-                <li>A later purchase adds another {offer.validityMonths} months onto any time still left.</li>
-                <li>The pass is tied to the account that paid. Signing in on a new device signs out the previous device.</li>
+                <li>Authentic Computer-Based Test (CBT) portal simulation with timer, question palette, and negative marking.</li>
+                <li>Comprehensive step-by-step bilingual solutions in Hindi and English with instant score report and All-India Rank benchmarking.</li>
+                <li>Single Series Pass ({seriesPrice}) includes all full mocks, subject tests, chapter drills, and official PYQs for that specific exam series for {seriesValidity}.</li>
+                <li>All-Access Pass ({passPrice}) includes all current and upcoming series across DSSSB, SSC, Teaching, Railways &amp; State exams for {passValidity}.</li>
+                <li>Purchasing again extends existing validity by adding {seriesValidity} or {passValidity} onto remaining time.</li>
               </ul>
             </section>
 
             <section id="free-test" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
-              <h2 class="text-base font-bold text-white">Free test</h2>
+              <h2 class="text-base font-bold text-white">Free trial test</h2>
               <p>
-                A new student can start one test inside each series without paying to sample the examination experience. Reattempting or unlocking further tests in the series requires the pass.
+                Every candidate can attempt the first full mock test (Mock 01) in each test series 100% free with zero payment required. Unlocking the remaining full mocks, sectional practice drills, chapter tests, and previous year papers requires either the Single Series Pass or the All-Access Pass.
               </p>
             </section>
 
             <section id="not-included" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
               <h2 class="text-base font-bold text-white">What is not included</h2>
               <ul class="list-disc pl-5 space-y-2">
-                <li>Blogs and exam notices stay free for everyone and are not part of the pass.</li>
-                <li>Books are not included.</li>
-                <li>Quizzes and current-affairs quizzes are not included.</li>
-                <li>The pass does not submit an application or pay a fee to any government commission.</li>
+                <li>Articles, syllabi, previous cut-offs, and exam notifications remain completely free for everyone.</li>
+                <li>Physical textbook shipments or standalone book editions are not included.</li>
+                <li>The pass does not submit an application or pay an official examination fee to any government commission.</li>
               </ul>
             </section>
 
             <section id="how-to-buy" class="p-6 bg-surface border border-border rounded-xl shadow-2xs scroll-mt-24 space-y-3">
-              <h2 class="text-base font-bold text-white">How to buy</h2>
+              <h2 class="text-base font-bold text-white">How to buy &amp; Candidate Support</h2>
               <p>
-                Open any <a href="/test-series" class="text-accent hover:underline">test series</a>, sign in, and choose Buy pass. Razorpay opens the payment window. After a successful payment, the series unlocks on the same account.
+                Click any "Unlock This Series" or "Get All-Access Pass" button on this page or inside any <a href="/test-series" class="text-accent hover:underline">test series</a>. Razorpay opens the secure checkout window. Upon successful transaction, your pass activates immediately.
               </p>
               <p>
-                Refunds are described on the <a href="/refund-policy" class="text-accent hover:underline">refund and cancellation policy</a>. Questions can be sent to <a href={`mailto:${contactEmail}`} class="text-accent hover:underline">{contactEmail}</a> or through <a href="/contact-us" class="text-accent hover:underline">Contact Us</a>.
+                Refund rules are detailed on our <a href="/refund-policy" class="text-accent hover:underline">refund and cancellation policy</a>. If you need any assistance, reach out directly:
               </p>
+              <div class="mt-3 flex flex-wrap gap-4 text-xs font-semibold">
+                <a href={`tel:+91${supportPhone}`} class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-raised border border-border text-white hover:border-accent transition">
+                  <span>📞 Call / WhatsApp:</span>
+                  <span class="text-accent">+91 {supportPhone}</span>
+                </a>
+                <a href={`mailto:${contactEmail}`} class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-raised border border-border text-white hover:border-accent transition">
+                  <span>✉️ Email:</span>
+                  <span class="text-accent">{contactEmail}</span>
+                </a>
+                <a href="/contact-us" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-raised border border-border text-white hover:border-accent transition">
+                  <span>💬 Contact Form</span>
+                </a>
+              </div>
             </section>
           </main>
         </div>

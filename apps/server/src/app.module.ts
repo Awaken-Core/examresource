@@ -14,6 +14,7 @@ import { TestSeriesModule } from './modules/test-series/test-series.module.js';
 import { CommentsModule } from './modules/comments/comments.module.js';
 import { PaymentsModule } from './modules/payments/payment.module.js';
 import { DailyQuizModule } from './modules/daily-quiz/daily-quiz.module.js';
+import { FeedbackModule } from './modules/feedback/feedback.module.js';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { DailyQuizModule } from './modules/daily-quiz/daily-quiz.module.js';
     CommentsModule,
     PaymentsModule,
     DailyQuizModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

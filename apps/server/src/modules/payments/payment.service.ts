@@ -47,36 +47,47 @@ export class PaymentService {
   ) {}
 
   plans(): PassPlan[] {
+    const seriesPaise = env.PLAN_SERIES_AMOUNT_PAISE;
+    const seriesListPaise = env.PLAN_SERIES_LIST_PRICE_PAISE;
+    const seriesMonths = env.PLAN_SERIES_VALIDITY_MONTHS;
+
+    const passPaise = env.PLAN_PASS_AMOUNT_PAISE;
+    const passListPaise = env.PLAN_PASS_LIST_PRICE_PAISE;
+    const passMonths = env.PLAN_PASS_VALIDITY_MONTHS;
+
     return [
       {
         id: 'series',
         name: 'Single Series Plan',
-        price: 99,
-        amountPaise: 9900,
-        listPricePaise: 29900,
-        validityMonths: 6,
-        description: 'Complete 6-month access to this specific test series (Mock tests, subject tests, chapter tests & PYQs)',
+        price: Math.round(seriesPaise / 100),
+        amountPaise: seriesPaise,
+        listPricePaise: seriesListPaise,
+        validityMonths: seriesMonths,
+        description: `Complete ${seriesMonths}-month access to this specific test series (Mock tests, subject tests, chapter tests & PYQs)`,
         currency: 'INR',
       },
       {
         id: 'all',
-        name: 'Yearly All-Access Pass',
-        price: 399,
-        amountPaise: 39900,
-        listPricePaise: 99900,
-        validityMonths: 12,
-        description: 'Unlimited access to all test series across all exams on the platform for 1 full year',
+        name: 'All-Access Pass',
+        price: Math.round(passPaise / 100),
+        amountPaise: passPaise,
+        listPricePaise: passListPaise,
+        validityMonths: passMonths,
+        description: `Unlimited access to all test series across all exams on the platform for ${passMonths >= 12 ? `${Math.round(passMonths / 12)} years` : `${passMonths} months`}`,
         currency: 'INR',
       },
     ];
   }
 
   offer() {
+    const seriesPaise = env.PLAN_SERIES_AMOUNT_PAISE;
+    const seriesListPaise = env.PLAN_SERIES_LIST_PRICE_PAISE;
+    const seriesMonths = env.PLAN_SERIES_VALIDITY_MONTHS;
     return {
       plans: this.plans(),
-      amountPaise: 9900,
-      listPricePaise: 29900,
-      validityMonths: 6,
+      amountPaise: seriesPaise,
+      listPricePaise: seriesListPaise,
+      validityMonths: seriesMonths,
       currency: 'INR',
     };
   }
@@ -106,8 +117,8 @@ export class PaymentService {
     const planType = input?.planType === 'all' ? 'all' : 'series';
     const seriesId = input?.seriesId && Types.ObjectId.isValid(input.seriesId) ? input.seriesId : null;
 
-    const amount = planType === 'all' ? 39900 : 9900;
-    const validityMonths = planType === 'all' ? 12 : 6;
+    const amount = planType === 'all' ? env.PLAN_PASS_AMOUNT_PAISE : env.PLAN_SERIES_AMOUNT_PAISE;
+    const validityMonths = planType === 'all' ? env.PLAN_PASS_VALIDITY_MONTHS : env.PLAN_SERIES_VALIDITY_MONTHS;
 
     if (!Number.isInteger(amount) || amount < 100) {
       throw new BadRequestException('Pass amount must be at least 100 paise.');
@@ -210,7 +221,7 @@ export class PaymentService {
     const now = new Date();
     const planType = (order as any).planType || 'series';
     const testSeriesId = (order as any).testSeriesId || null;
-    const validityMonths = planType === 'all' ? 12 : 6;
+    const validityMonths = planType === 'all' ? env.PLAN_PASS_VALIDITY_MONTHS : env.PLAN_SERIES_VALIDITY_MONTHS;
 
     const passFilter: any = {
       userId: order.userId,

@@ -97,7 +97,10 @@ export class TestSeriesAccessService {
 
       if (paidOrder) {
         const orderDate = paidOrder.updatedAt || paidOrder.createdAt || new Date();
-        const validityMonths = (paidOrder as any).planType === 'all' ? 12 : 6;
+        const validityMonths =
+          (paidOrder as any).planType === 'all'
+            ? env.PLAN_PASS_VALIDITY_MONTHS
+            : env.PLAN_SERIES_VALIDITY_MONTHS;
         const expiresAt = addCalendarMonths(new Date(orderDate), validityMonths);
         if (expiresAt.getTime() > Date.now()) {
           const paymentId =
@@ -202,27 +205,61 @@ export class TestSeriesAccessService {
     const pass = await this.activePass(user.id, seriesId);
     if (pass) return;
 
-    // 2. Otherwise check trial slot in this section
+    // 2. Free access is strictly limited to the 1st test in the Full Mock Test section
     const sectionKey = getExamSectionKey(exam);
-    const trials = await this.sectionTrialStatus(user.id, seriesId);
-    const secTrial = trials[sectionKey];
-
-    // If 1st attempt in this section: allow start for free!
-    if (!secTrial.used) {
-      return;
+    if (sectionKey !== 'full') {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.PAYMENT_REQUIRED,
+          code: 'TEST_SERIES_PASS_REQUIRED',
+          message: 'Only the 1st test in the Full Mock section is free. Please purchase the Series Plan (₹99 for 6 months) or All-Access Pass (₹399 for 3 years) to access Subject, Chapter, and PYQ tests.',
+          section: sectionKey,
+        },
+        HttpStatus.PAYMENT_REQUIRED,
+      );
     }
 
-    // 1 free slot has already been used in this section
-    throw new HttpException(
-      {
-        statusCode: HttpStatus.PAYMENT_REQUIRED,
-        code: 'TEST_SERIES_PASS_REQUIRED',
-        message: 'Your 1 free trial attempt in this section has been used. Please purchase the Series Plan (₹99 for 6 months) or All-Access Pass (₹399 for 1 year) to continue.',
-        section: sectionKey,
-        usedTestId: secTrial.testId,
-      },
-      HttpStatus.PAYMENT_REQUIRED,
-    );
+    // 3. In Full Mocks, check that this is the 1st test in this series
+    const firstFullExam = await this.examModel
+      .findOne({
+        testSeriesId: new Types.ObjectId(seriesId),
+        testMode: { $nin: ['subject', 'chapter', 'pyq'] },
+        isPreviousYear: { $ne: true },
+      })
+      .sort({ order: 1, createdAt: 1, title: 1 })
+      .select('_id')
+      .lean();
+
+    if (firstFullExam && String(firstFullExam._id) !== String(exam._id)) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.PAYMENT_REQUIRED,
+          code: 'TEST_SERIES_PASS_REQUIRED',
+          message: 'Only the 1st Full Mock Test (Mock 01) is free in this series. Please purchase the Series Plan (₹99 for 6 months) or All-Access Pass (₹399 for 3 years) to unlock this test.',
+          section: 'full',
+        },
+        HttpStatus.PAYMENT_REQUIRED,
+      );
+    }
+
+    // 4. Check if user already used their 1 free attempt in full mocks
+    const trials = await this.sectionTrialStatus(user.id, seriesId);
+    const secTrial = trials.full;
+    if (secTrial.used) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.PAYMENT_REQUIRED,
+          code: 'TEST_SERIES_PASS_REQUIRED',
+          message: 'Your 1 free trial attempt in the Full Mock section has already been used. Please purchase the Series Plan (₹99 for 6 months) or All-Access Pass (₹399 for 3 years) to continue.',
+          section: 'full',
+          usedTestId: secTrial.testId,
+        },
+        HttpStatus.PAYMENT_REQUIRED,
+      );
+    }
+
+    // User is eligible for the 1 free full mock test
+    return;
   }
 
   async seriesAccess(userId: string, seriesId: string) {
