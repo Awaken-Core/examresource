@@ -1,31 +1,46 @@
-# Cloudflare Cache Rules (Ops Checklist)
+# Cloudflare Caching (Ops Checklist)
 
-Origin pages already emit `Cache-Control` with `s-maxage` + `stale-while-revalidate`. Without matching Cloudflare Cache Rules, anonymous HTML often stays `DYNAMIC` / `MISS` and TTFB stays origin-bound.
+Origin pages already emit `Cache-Control` with `s-maxage` + `stale-while-revalidate`. HTML for `govtpariksha.com` is served by the **`examresource-client` Worker**, so **zone Cache Rules do not cache Worker HTML**. Workers Cache (in front of the Worker) is required for `CF-Cache-Status: HIT` on SSR pages.
 
-## Required dashboard rules
+## 1. Workers Cache (required — code / wrangler)
 
-1. **Cache public HTML**
-   - Match: hostname = production site; path does **not** start with `/api`, `/admin`, `/administrator`, `/profile`, `/login`, `/signup`, `/favorites`, `/notifications`, `/test-series/cbt`, `/test-series/results`
-   - Cache eligibility: **Eligible for cache**
-   - Edge TTL: **Respect origin Cache-Control headers**
-   - Browser TTL: Respect origin / bypass if `max-age=0`
+In `apps/client/wrangler.jsonc`:
 
-2. **Bypass private / auth surfaces**
-   - Match: paths above + any request with `Cookie` containing session indicators if needed
-   - Cache eligibility: **Bypass cache**
+```jsonc
+{
+  "name": "examresource-client",
+  "cache": { "enabled": true }
+}
+```
 
-3. **Immutable assets**
-   - Match: `/_astro/*`, `/fonts/*`, hashed static assets
-   - Edge TTL: long (months); browser TTL: 1 year when `immutable` is present
+Middleware (`src/middleware.ts`) rewrites public responses:
 
-## Verification
+- `Cache-Control: public, max-age=0` (browsers)
+- `CDN-Cache-Control: public, max-age=<s-maxage>, stale-while-revalidate=<swr>` (Workers Cache edge)
+
+Private routes keep `private, no-store` and stay uncached.
+
+Deploy / verify:
 
 ```bash
-curl -sI https://<PUBLIC_SITE_URL>/
-# Expect: CF-Cache-Status: HIT (on second request) and Cache-Control containing s-maxage
-
-curl -sI https://<PUBLIC_SITE_URL>/profile
-# Expect: private / no-store behavior (MISS or DYNAMIC is OK)
+cd apps/client
+bun run build   # with production PUBLIC_* env
+bunx wrangler deploy --keep-vars
 ```
+
+```bash
+curl -sI https://govtpariksha.com/
+# Expect: CF-Cache-Status: MISS then HIT; CDN-Cache-Control with max-age
+curl -sI https://govtpariksha.com/profile
+# Expect: private / no-store (MISS or BYPASS is OK)
+```
+
+## 2. Zone Cache Rules (optional — static assets)
+
+Zone rules still help **non-Worker** / asset paths (fonts, `/_astro/*`) when those bypass the SSR entrypoint:
+
+1. **Bypass private HTML** — `/api`, `/admin`, `/administrator`, `/profile`, `/login`, `/signup`, `/favorites`, `/notifications`, `/test-series/cbt`, `/test-series/results`
+2. **Cache public HTML respect origin** — GET + not private prefixes; Eligible for cache; Edge TTL = Respect origin
+3. **Immutable static assets** — `/_astro/*`, `/fonts/*`, favicons; long Edge + Browser TTL
 
 Do **not** cache authenticated HTML that embeds private data. Keep `/me` and user shells client-fetched.

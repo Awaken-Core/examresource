@@ -1,9 +1,16 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "exam-client",
+  // Must match the production Worker script name bound to govtpariksha.com.
+  "name": "examresource-client",
   "main": "@astrojs/cloudflare/entrypoints/server",
   "compatibility_date": "2026-11-02",
   "compatibility_flags": ["nodejs_compat"],
+  // Workers Cache sits in front of the Worker so public HTML can return
+  // CF-Cache-Status: HIT without invoking SSR. Zone Cache Rules do not apply
+  // to Worker responses — this flag is required.
+  "cache": {
+    "enabled": true
+  },
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist"

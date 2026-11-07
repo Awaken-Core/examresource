@@ -51,22 +51,35 @@ export function calculateDiscount(amountPaise: number, listPricePaise: number): 
   };
 }
 
+/**
+ * Offline / build fallback defaults if the API server is unreachable.
+ * The authoritative source of truth for pricing is strictly the server API:
+ * GET /api/v1/payments/test-series-pass/offer
+ */
+const DEFAULT_SERIES_PRICE = 99;
+const DEFAULT_SERIES_LIST_PRICE = 299;
+const DEFAULT_SERIES_VALIDITY_MONTHS = 6;
+
+const DEFAULT_PASS_PRICE = 399;
+const DEFAULT_PASS_LIST_PRICE = 999;
+const DEFAULT_PASS_VALIDITY_MONTHS = 36;
+
 export function getClientPlanDefaults(): {
   plans: PlanItem[];
   seriesPlan: PlanItem;
   allAccessPlan: PlanItem;
 } {
-  const seriesPrice = Number(import.meta.env.PUBLIC_PLAN_SERIES_PRICE) || 99;
-  const seriesAmountPaise = Number(import.meta.env.PUBLIC_PLAN_SERIES_AMOUNT_PAISE) || seriesPrice * 100;
-  const seriesListPrice = Number(import.meta.env.PUBLIC_PLAN_SERIES_LIST_PRICE) || 299;
-  const seriesListPricePaise = Number(import.meta.env.PUBLIC_PLAN_SERIES_LIST_PRICE_PAISE) || seriesListPrice * 100;
-  const seriesValidityMonths = Number(import.meta.env.PUBLIC_PLAN_SERIES_VALIDITY_MONTHS) || 6;
+  const seriesPrice = DEFAULT_SERIES_PRICE;
+  const seriesAmountPaise = seriesPrice * 100;
+  const seriesListPrice = DEFAULT_SERIES_LIST_PRICE;
+  const seriesListPricePaise = seriesListPrice * 100;
+  const seriesValidityMonths = DEFAULT_SERIES_VALIDITY_MONTHS;
 
-  const passPrice = Number(import.meta.env.PUBLIC_PLAN_PASS_PRICE) || 399;
-  const passAmountPaise = Number(import.meta.env.PUBLIC_PLAN_PASS_AMOUNT_PAISE) || passPrice * 100;
-  const passListPrice = Number(import.meta.env.PUBLIC_PLAN_PASS_LIST_PRICE) || 999;
-  const passListPricePaise = Number(import.meta.env.PUBLIC_PLAN_PASS_LIST_PRICE_PAISE) || passListPrice * 100;
-  const passValidityMonths = Number(import.meta.env.PUBLIC_PLAN_PASS_VALIDITY_MONTHS) || 36;
+  const passPrice = DEFAULT_PASS_PRICE;
+  const passAmountPaise = passPrice * 100;
+  const passListPrice = DEFAULT_PASS_LIST_PRICE;
+  const passListPricePaise = passListPrice * 100;
+  const passValidityMonths = DEFAULT_PASS_VALIDITY_MONTHS;
 
   const seriesPlan: PlanItem = {
     id: 'series',

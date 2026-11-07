@@ -33,7 +33,6 @@
   "99": "cloudflare-workers.d.ts",
   "101": "blog/TableOfContents.astro",
   "102": "examArticle.ts",
-  "103": "middleware.ts",
   "104": "cloudflare-node.d.ts",
   "105": "tsconfig.json",
   "116": "AdPlaceholder.astro",

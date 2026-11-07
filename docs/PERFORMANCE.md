@@ -62,7 +62,7 @@ Instead of forcing a full page reload when a user toggles between English and Hi
 - `/blogs` and `/latest-updates` use smaller first pages; latest-updates supports load-more.
 - Ctrl+K spotlight merges static portals with **debounced live** blog + test-series API hits (`spotlight-search.ts`).
 - Article language controls **prefetch** the inactive body on hover/idle.
-- Ops: apply [Cloudflare cache rules](./performance/cloudflare-cache-rules.md). CI: `bun run lhci` (requires local preview).
+- Edge HTML: Workers Cache enabled on `examresource-client` (`wrangler.jsonc` `cache.enabled` + `CDN-Cache-Control` middleware). Zone rules alone do not HIT Worker HTML — see [cloudflare-cache-rules.md](./performance/cloudflare-cache-rules.md). CI: `bun run lhci` (requires local preview).
 
 ---
 

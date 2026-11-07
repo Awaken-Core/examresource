@@ -583,9 +583,9 @@
     "semantic_hash": ""
   },
   "apps/client/src/lib/passOffer.ts": {
-    "mtime": 1794046358.5868652,
-    "seen": 1794047241.0663779,
-    "ast_hash": "7b6313991d0bf6b0c0f1ac6ed807e04d",
+    "mtime": 1794062041.9603736,
+    "seen": 1794062098.7952726,
+    "ast_hash": "2b3febcbd4bb354cf13e0865f1dca9a4",
     "semantic_hash": ""
   },
   "apps/client/src/lib/preferred-lang.ts": {
@@ -607,10 +607,10 @@
     "semantic_hash": ""
   },
   "apps/client/src/middleware.ts": {
-    "mtime": 1792400315.0564828,
-    "seen": 1793646357.6064906,
-    "ast_hash": "854e11868f3c466e952bc3fa9876eea1",
-    "semantic_hash": "854e11868f3c466e952bc3fa9876eea1"
+    "mtime": 1794061917.3373256,
+    "seen": 1794062007.5561326,
+    "ast_hash": "b9eb82bc6ce76dbbbbd3bdbfc1a22511",
+    "semantic_hash": ""
   },
   "apps/client/src/pages/.well-known/agent-card.json.ts": {
     "mtime": 1792595318.1983292,
@@ -1895,9 +1895,9 @@
     "semantic_hash": ""
   },
   "docs/PERFORMANCE.md": {
-    "mtime": 1794057953.691769,
-    "seen": 1794057963.7249532,
-    "ast_hash": "262e41cd8056c09626506eff21461ed4",
+    "mtime": 1794061997.819154,
+    "seen": 1794062007.5566337,
+    "ast_hash": "e6d07525c77b3508b0265d0731004d2a",
     "semantic_hash": ""
   },
   "docs/cloudflare-r2.md": {
@@ -3053,9 +3053,21 @@
     "semantic_hash": ""
   },
   "docs/performance/cloudflare-cache-rules.md": {
-    "mtime": 1794059651.2663455,
-    "seen": 1794059724.5170007,
-    "ast_hash": "00c3dcb0499edf7bb4fcd6330d500ac0",
+    "mtime": 1794061927.2631986,
+    "seen": 1794062007.5566368,
+    "ast_hash": "92721a2a14fd0df62a84c4f59143fcb7",
+    "semantic_hash": ""
+  },
+  "apps/client/src/lib/workers-cache-headers.ts": {
+    "mtime": 1794061915.8564618,
+    "seen": 1794062007.5561306,
+    "ast_hash": "4101b50709e9ad32a38dce2ed2b8e5ab",
+    "semantic_hash": ""
+  },
+  "apps/client/test/workers-cache-headers.spec.ts": {
+    "mtime": 1794061923.3311872,
+    "seen": 1794062007.5562258,
+    "ast_hash": "bd244bb034f4172e6382cdd60090cc7d",
     "semantic_hash": ""
   }
 }
