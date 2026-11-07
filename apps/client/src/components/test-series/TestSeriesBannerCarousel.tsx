@@ -115,7 +115,7 @@ export function TestSeriesBannerCarousel() {
           1. EXACT TESTBOOK PROPORTIONS (805px × 322px / 762px × 305px)
           ══════════════════════════════════════════════════════════════ */}
       <div
-        className="relative w-full max-w-6xl mx-auto flex items-center justify-center select-none group px-2 sm:px-3 md:px-4"
+        className="relative w-full overflow-hidden flex items-center justify-center select-none group py-1"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -125,38 +125,40 @@ export function TestSeriesBannerCarousel() {
         aria-roledescription="carousel"
         aria-label="Featured Test Series & Promotional Offers"
       >
-        {/* Left Peek Card (Previous Slide Preview - Crisp & Subtle Peek, No Blur, Full Visibility) */}
-        <div
-          onClick={prevSlide}
-          aria-hidden="true"
-          title="Previous slide preview"
-          className="hidden sm:block absolute left-1 sm:left-2 md:left-3 lg:left-4 xl:left-6 w-[10%] lg:w-[12%] xl:w-[13%] h-[260px] xs:h-[280px] sm:h-[305px] md:h-[322px] rounded-2xl md:rounded-[20px] overflow-hidden opacity-100 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
-        >
+        {/* Stage Wrapper (Centers the 805px / 762px card and anchors adjacent cards with exact 10px gap) */}
+        <div className="relative w-[84%] sm:w-[80%] md:w-[76%] lg:max-w-[805px] lg:w-full h-[260px] xs:h-[280px] sm:h-[305px] md:h-[322px] mx-auto">
+          {/* Left Peek Card (Exact 10px Gap from Center Card, matching Testbook seam!) */}
           <div
-            className="w-full h-full transform scale-100"
-            style={{
-              backgroundImage: `url(${SLIDES[prevIndex].bgImage})`,
-              backgroundPosition: SLIDES[prevIndex].bgPosition || 'center',
-              backgroundSize: 'cover',
-            }}
-          />
-        </div>
+            onClick={prevSlide}
+            aria-hidden="true"
+            title="Previous slide preview"
+            className="hidden sm:block absolute right-[calc(100%+10px)] top-0 w-[140px] md:w-[180px] lg:w-[220px] h-full rounded-2xl md:rounded-[20px] overflow-hidden opacity-100 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
+          >
+            <div
+              className="w-full h-full transform scale-100"
+              style={{
+                backgroundImage: `url(${SLIDES[prevIndex].bgImage})`,
+                backgroundPosition: 'right center',
+                backgroundSize: 'cover',
+              }}
+            />
+          </div>
 
-        {/* Floating Left Arrow (OUTSIDE Center Card, Over Left Peek Card) */}
-        <button
-          type="button"
-          onClick={prevSlide}
-          aria-label="Previous Slide"
-          className="absolute left-0.5 sm:left-1 md:left-2 lg:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-95 group-hover:opacity-100"
-        >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
+          {/* Floating Left Arrow (Positioned over the Left Peek Card seam!) */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            aria-label="Previous Slide"
+            className="absolute -left-4 sm:-left-5 md:-left-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-95 group-hover:opacity-100"
+          >
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
 
-        {/* Center Active Stage (Exact Testbook Spec: max-w-[805px] × 322px / 762px × 305px, 2.5:1 Ratio) */}
-        <div className="relative w-[84%] sm:w-[80%] md:w-[76%] lg:max-w-[805px] lg:w-full rounded-2xl md:rounded-[20px] overflow-hidden shadow-2xl h-[260px] xs:h-[280px] sm:h-[305px] md:h-[322px] border border-editorial-border/80 z-10 bg-editorial-surface">
-          {/* SLIDE 0: DIWALI DHAMAKA SALE */}
+          {/* Center Active Stage (Exact Testbook Spec: max-w-[805px] × 322px / 762px × 305px - NO WIDTH INCREASE) */}
+          <div className="relative w-full h-full rounded-2xl md:rounded-[20px] overflow-hidden shadow-2xl border border-editorial-border/80 z-10 bg-editorial-surface">
+            {/* SLIDE 0: DIWALI DHAMAKA SALE */}
           <div
             className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
               currentSlide === 0 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
@@ -470,33 +472,34 @@ export function TestSeriesBannerCarousel() {
           </div>
         </div>
 
-        {/* Floating Right Arrow (OUTSIDE Center Card, Over Right Peek Card) */}
+        {/* Floating Right Arrow (Positioned over the Right Peek Card seam, matching Testbook crop!) */}
         <button
           type="button"
-          onClick={nextSlide}
-          aria-label="Next Slide"
-          className="absolute right-0.5 sm:right-1 md:right-2 lg:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-95 group-hover:opacity-100"
-        >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+            onClick={nextSlide}
+            aria-label="Next Slide"
+            className="absolute -right-4 sm:-right-5 md:-right-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white text-slate-800 dark:bg-slate-900 dark:text-white shadow-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer hover:scale-110 z-20 opacity-95 group-hover:opacity-100"
+          >
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
 
-        {/* Right Peek Card (Next Slide Preview - Crisp & Subtle Peek, No Blur, Full Visibility) */}
-        <div
-          onClick={nextSlide}
-          aria-hidden="true"
-          title="Next slide preview"
-          className="hidden sm:block absolute right-1 sm:right-2 md:right-3 lg:right-4 xl:right-6 w-[10%] lg:w-[12%] xl:w-[13%] h-[260px] xs:h-[280px] sm:h-[305px] md:h-[322px] rounded-2xl md:rounded-[20px] overflow-hidden opacity-100 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
-        >
+          {/* Right Peek Card (Exact 10px Gap from Center Card, matching Testbook seam!) */}
           <div
-            className="w-full h-full transform scale-100"
-            style={{
-              backgroundImage: `url(${SLIDES[nextIndex].bgImage})`,
-              backgroundPosition: SLIDES[nextIndex].bgPosition || 'center',
-              backgroundSize: 'cover',
-            }}
-          />
+            onClick={nextSlide}
+            aria-hidden="true"
+            title="Next slide preview"
+            className="hidden sm:block absolute left-[calc(100%+10px)] top-0 w-[140px] md:w-[180px] lg:w-[220px] h-full rounded-2xl md:rounded-[20px] overflow-hidden opacity-100 transition-all duration-300 cursor-pointer shadow-md border border-editorial-border/60 z-0"
+          >
+            <div
+              className="w-full h-full transform scale-100"
+              style={{
+                backgroundImage: `url(${SLIDES[nextIndex].bgImage})`,
+                backgroundPosition: 'left center',
+                backgroundSize: 'cover',
+              }}
+            />
+          </div>
         </div>
       </div>
 
