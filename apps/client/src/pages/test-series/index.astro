@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { siteName, siteDomain, siteUrl } from '../../data/site';
 import { fetchPublicJson } from '../../lib/publicFetch';
 import { TestSeriesExplorer } from '../../components/test-series/TestSeriesExplorer';
+import { TestSeriesBannerCarousel } from '../../components/test-series/TestSeriesBannerCarousel';
 
 // Edge CDN caching: 60s
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
@@ -10,10 +11,8 @@ Astro.response.headers.set('Vary', 'Accept-Encoding');
 
 const initialSeries = (await fetchPublicJson<any[]>('/test-series')) || [];
 
-
-
 const pageTitle = `Online Test Series & Free Mock Tests 2026 | ${siteName}`;
-const pageDescription = `Practice online mock test series for SSC, RRB Railways, Banking, UPSC, and State Govt Exams on ${siteDomain}. Free subject-wise, chapter-wise & full CBT mock tests with instant score analysis.`;
+const pageDescription = `Practice online mock test series for DSSSB TGT Computer Science, SSC CGL, RRB Railways, and Teaching Govt Exams on ${siteDomain}. Free subject-wise, chapter-wise & full CBT mock tests with instant score analysis.`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -84,12 +83,13 @@ const jsonLd = {
   <div class="relative min-h-screen bg-editorial-bg text-editorial-text selection:bg-editorial-accent/20 selection:text-editorial-accent">
 
     {/* Main Container aligned with Blogs max-w-6xl */}
-    <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 lg:px-12 pt-5 sm:pt-7 pb-20 flex flex-col gap-10 sm:gap-14">
+    <div class="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4 pb-16 flex flex-col gap-5 sm:gap-6">
 
       {/* ══════════════════════════════════════════════════════════
-          1. BREADCRUMBS & COMPACT EDITORIAL HERO
+          1. BREADCRUMBS
           ══════════════════════════════════════════════════════════ */}
-      <section class="space-y-3" aria-label="Hero Introduction">
+      <section class="space-y-2" aria-label="Breadcrumb Navigation">
+        <h1 class="sr-only">Online Test Series & Free Mock Tests 2026</h1>
         {/* Subtle Breadcrumbs */}
         <nav class="flex items-center gap-1.5 font-['Geist'] text-[11.5px] text-editorial-muted" aria-label="Breadcrumb">
           <a href="/" data-astro-prefetch="hover" class="hover:text-editorial-heading transition-colors">Home</a>
@@ -98,39 +98,29 @@ const jsonLd = {
           </svg>
           <span class="text-editorial-heading font-medium">Test Series</span>
         </nav>
-
-        {/* Hero Copy (Compact & Editorial) */}
-        <div class="max-w-3xl space-y-2 pt-1">
-          <p class="font-['Geist'] text-[11px] font-semibold tracking-[0.2em] text-editorial-accent uppercase">
-            YOUR PRACTICE SPACE
-          </p>
-
-          <h1 class="font-['EB_Garamond'] text-[clamp(2.1rem,3.8vw,3.4rem)] font-normal leading-[1.05] tracking-[-0.03em] text-editorial-heading">
-            Practice with purpose.<br />
-            <span class="text-editorial-subheading">Perform with confidence.</span>
-          </h1>
-
-          <p class="font-['Geist'] text-[13.5px] sm:text-[14.5px] text-editorial-muted leading-relaxed max-w-2xl font-normal pt-0.5">
-            Prepare for government exams with structured mock tests, chapter-wise practice, and focused revision.
-          </p>
-        </div>
-
       </section>
 
       {/* ══════════════════════════════════════════════════════════
-          2. PUBLISHED TEST SERIES EXPLORER (React Island)
+          2. FEATURED BANNER SLIDER / CAROUSEL (Testbook-style)
           ══════════════════════════════════════════════════════════ */}
-      <div class="w-full">
-        <TestSeriesExplorer client:load initialList={initialSeries} />
-      </div>
+      <section aria-label="Promotional and Featured Banners" transition:persist="banner-carousel">
+        <TestSeriesBannerCarousel client:load />
+      </section>
 
       {/* ══════════════════════════════════════════════════════════
-          5. CBT FAQ ACCORDION / EDITORIAL GUIDE
+          3. CURATED TEST SERIES EXPLORER (React Island)
+          ══════════════════════════════════════════════════════════ */}
+      <section aria-label="Curated Test Series Explorer" class="pt-6 sm:pt-8 border-t border-editorial-border/60" transition:persist="test-explorer">
+        <TestSeriesExplorer client:load initialList={initialSeries} />
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════
+          4. CBT FAQ ACCORDION / EDITORIAL GUIDE
           ══════════════════════════════════════════════════════════ */}
       <section class="mt-2 sm:mt-4 p-6 sm:p-7 rounded-2xl bg-editorial-surface border border-editorial-border space-y-4 font-['Geist']" aria-labelledby="cbt-faq-heading">
         <div class="flex items-center gap-2 pb-2 border-b border-editorial-border">
           <span class="w-1.5 h-4 bg-editorial-accent rounded-full inline-block"></span>
-          <h2 id="cbt-faq-heading" class="font-['EB_Garamond'] text-xl sm:text-2xl font-normal text-editorial-heading tracking-tight">
+          <h2 id="cbt-faq-heading" class="text-xl sm:text-2xl font-bold text-editorial-heading tracking-tight">
             How Computer-Based Tests Work
           </h2>
         </div>

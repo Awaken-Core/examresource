@@ -20,27 +20,113 @@ export interface StudentTestSeries {
   order: number;
   subjectsCount?: number;
   testsCount?: number;
+  isComingSoon?: boolean;
 }
 
 const CATEGORIES = [
   { id: 'all', label: 'All Exams' },
-  { id: 'aptitude-reasoning', label: 'Aptitude & Reasoning' },
+  { id: 'teaching', label: 'Teaching' },
+  { id: 'ssc-railways', label: 'SSC & Railways' },
   { id: 'central-government', label: 'Central Govt' },
   { id: 'state-exams', label: 'State Exams' },
   { id: 'banking', label: 'Banking' },
-  { id: 'ssc-railways', label: 'SSC & Railways' },
-  { id: 'teaching', label: 'Teaching' },
   { id: 'defence', label: 'Defence' },
   { id: 'others', label: 'Others' },
 ];
+
+const CURATED_COMING_SOON_SERIES: StudentTestSeries[] = [
+  {
+    id: 'ssc-cgl-2026-cbt',
+    title: 'SSC CGL Tier 1 & Tier 2 CBT Series 2026',
+    slug: 'ssc-cgl-2026-cbt',
+    targetExam: 'SSC CGL 2026',
+    organization: 'Staff Selection Commission (SSC)',
+    category: 'ssc-railways',
+    badge: 'COMING SOON',
+    status: 'published',
+    accessType: 'free',
+    supportedLanguages: ['Hindi', 'English'],
+    description: 'Comprehensive Tier-1 & Tier-2 mock tests on latest 2026 TCS pattern, General Awareness updates, and sectional time-limit practice.',
+    order: 2,
+    isComingSoon: true,
+  },
+  {
+    id: 'rrb-ntpc-group-d-2026',
+    title: 'RRB NTPC & Group D CBT Mock Series 2026',
+    slug: 'rrb-ntpc-group-d-2026',
+    targetExam: 'RRB NTPC 2026',
+    organization: 'Railway Recruitment Board (RRB)',
+    category: 'ssc-railways',
+    badge: 'COMING SOON',
+    status: 'published',
+    accessType: 'free',
+    supportedLanguages: ['Hindi', 'English'],
+    description: 'Stage 1 & Stage 2 CBT practice papers with exact Railway exam interface, negative marking simulation, and chapter-wise tests.',
+    order: 3,
+    isComingSoon: true,
+  },
+  {
+    id: 'ctet-teaching-series-2026',
+    title: 'CTET & State TET Teaching Mock Series 2026',
+    slug: 'ctet-teaching-series-2026',
+    targetExam: 'CTET & State TETs 2026',
+    organization: 'CBSE & State Examination Boards',
+    category: 'teaching',
+    badge: 'COMING SOON',
+    status: 'published',
+    accessType: 'free',
+    supportedLanguages: ['Hindi', 'English'],
+    description: 'Paper-1 & Paper-2 bilingual mock tests covering Child Development, Pedagogy, Mathematics, Science, and Social Studies.',
+    order: 4,
+    isComingSoon: true,
+  },
+];
+
+function curateTestSeries(rawList: StudentTestSeries[]): StudentTestSeries[] {
+  // Find DSSSB from rawList if present
+  const dsssbFromDb = rawList.find(
+    (s) =>
+      s.slug?.toLowerCase().includes('dsssb') ||
+      s.title?.toLowerCase().includes('dsssb') ||
+      s.targetExam?.toLowerCase().includes('dsssb')
+  );
+
+  const liveDsssb: StudentTestSeries = dsssbFromDb
+    ? {
+        ...dsssbFromDb,
+        badge: 'LIVE CBT · POPULAR',
+        category: 'teaching',
+        order: 1,
+        isComingSoon: false,
+      }
+    : {
+        id: 'dsssb-tgt-computer-science',
+        title: 'DSSSB TGT Computer Science',
+        slug: 'dsssb-tgt-computer-science',
+        targetExam: 'DSSSB TGT CS 2026',
+        organization: 'Delhi Subordinate Services Selection Board',
+        category: 'teaching',
+        status: 'published',
+        accessType: 'freemium',
+        supportedLanguages: ['Hindi', 'English'],
+        badge: 'LIVE CBT · POPULAR',
+        description: 'Complete mock test series for DSSSB TGT & PGT Computer Science featuring full examination simulations, sectional tests, and subject practice.',
+        order: 1,
+        isComingSoon: false,
+      };
+
+  return [liveDsssb, ...CURATED_COMING_SOON_SERIES];
+}
 
 interface TestSeriesExplorerProps {
   initialList?: StudentTestSeries[];
 }
 
 export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}) {
-  const [seriesList, setSeriesList] = useState<StudentTestSeries[]>(initialList || []);
-  const [isLoading, setIsLoading] = useState(!initialList || initialList.length === 0);
+  const [seriesList, setSeriesList] = useState<StudentTestSeries[]>(() =>
+    curateTestSeries(initialList || [])
+  );
+  const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   // Filters
@@ -63,7 +149,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
         throw new Error(`Failed to load test series (status ${res.status})`);
       }
       const data = await res.json();
-      setSeriesList(data || []);
+      setSeriesList(curateTestSeries(data || []));
     } catch (err: any) {
       setFetchError(err.message || 'Unable to connect to the test series service.');
     } finally {
@@ -79,8 +165,21 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
 
   // Filter & sort logic
   const filteredList = seriesList.filter((s) => {
-    if (selectedCategory !== 'all' && s.category !== selectedCategory) {
-      return false;
+    if (selectedCategory !== 'all') {
+      if (selectedCategory === 'central-government') {
+        const matchOrg = (s.organization || '').toLowerCase();
+        const matchExam = (s.targetExam || '').toLowerCase();
+        if (!matchOrg.includes('delhi') && !matchExam.includes('ssc') && !matchOrg.includes('staff')) {
+          return false;
+        }
+      } else if (selectedCategory === 'state-exams') {
+        const matchExam = (s.targetExam || '').toLowerCase();
+        if (!matchExam.includes('tet') && !matchExam.includes('dsssb')) {
+          return false;
+        }
+      } else if (s.category !== selectedCategory) {
+        return false;
+      }
     }
 
     if (languageFilter !== 'all') {
@@ -106,7 +205,6 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
       const s = (item.slug || '').toLowerCase();
       const t = (item.title || '').toLowerCase();
       if (s.includes('dsssb') || t.includes('dsssb')) return 1;
-      if (s.includes('aptitude') || t.includes('aptitude') || s.includes('reasoning') || t.includes('reasoning')) return 2;
       return 999;
     };
     const orderA = getPriority(a);
@@ -156,7 +254,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
   }, [totalPages, safePage]);
 
   return (
-    <div className="space-y-4 font-['Geist']">
+    <div id="test-series-grid-anchor" className="space-y-4 font-['Geist'] scroll-mt-6">
       {/* Category Tabs */}
       <section className="space-y-2.5 pt-1">
         <div
@@ -236,16 +334,16 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
           <div className="flex items-center gap-2.5">
             <span className="w-1.5 h-4.5 bg-editorial-accent rounded-full inline-block"></span>
             <div>
-              <h2 className="font-['EB_Garamond'] text-xl sm:text-[23px] font-normal text-editorial-heading tracking-tight leading-tight">
-                Published Test Series
+              <h2 className="text-lg sm:text-xl font-bold text-editorial-heading tracking-tight leading-tight">
+                Curated Exam Test Series
               </h2>
               <p className="text-[12px] text-editorial-muted">
-                Select an exam suite to practice Subject-wise tests, Chapter-wise tests, and Full Mock Tests.
+                Active examination suites and upcoming CBT question banks.
               </p>
             </div>
           </div>
           <span className="text-[11.5px] font-medium text-editorial-accent bg-editorial-accent-badge px-3 py-0.5 rounded-full border border-editorial-accent/20 shrink-0">
-            {sortedList.length} Suites Available
+            {sortedList.length} Suites ({sortedList.filter((s) => !s.isComingSoon).length} Live · {sortedList.filter((s) => s.isComingSoon).length} In Prep)
           </span>
         </div>
 
@@ -275,9 +373,19 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
 
         {/* Empty State */}
         {!isLoading && !fetchError && sortedList.length === 0 && (
-          <div className="py-16 text-center rounded-2xl border border-dashed border-editorial-border bg-editorial-surface/50 p-8 space-y-2">
-            <p className="text-sm font-semibold text-editorial-heading">No test series found</p>
-            <p className="text-xs text-editorial-muted">Try resetting your category or search filters.</p>
+          <div className="py-16 text-center rounded-2xl border border-dashed border-editorial-border bg-editorial-surface/50 p-8 space-y-3">
+            <p className="text-sm font-semibold text-editorial-heading">No test series found under this filter</p>
+            <p className="text-xs text-editorial-muted">We are actively preparing new exam suites. Check out All Exams to explore available tests.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedCategory('all');
+                setSearch('');
+              }}
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-editorial-accent text-white hover:bg-editorial-accent-hover transition cursor-pointer shadow-2xs"
+            >
+              Show All Exams
+            </button>
           </div>
         )}
 
@@ -288,23 +396,87 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
               {paginatedList.map((series) => {
                 const seriesId = series.id || series._id!;
                 const seriesSlug = series.slug || seriesId;
+                const isComingSoon = Boolean(series.isComingSoon);
+
+                if (isComingSoon) {
+                  return (
+                    <div
+                      key={seriesId}
+                      className="group relative flex flex-col justify-between rounded-2xl overflow-hidden bg-editorial-surface border border-editorial-border hover:border-amber-400/50 hover:shadow-sm transition-all duration-200"
+                    >
+                      <div className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col">
+                        {/* Header: Organization and Coming Soon Badge */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-[10px] shrink-0">
+                              {series.targetExam ? series.targetExam.slice(0, 3).toUpperCase() : 'EX'}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <span
+                                className="block text-[11px] font-medium text-editorial-muted truncate"
+                                title={series.organization || series.targetExam}
+                              >
+                                {series.organization || series.targetExam}
+                              </span>
+                            </div>
+                          </div>
+
+                          <span className="px-2.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0 whitespace-nowrap flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            Coming Soon
+                          </span>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="text-[16px] sm:text-[17px] font-semibold text-editorial-heading leading-snug tracking-tight">
+                          {series.title}
+                        </h3>
+
+                        {/* Description */}
+                        {series.description && (
+                          <p className="text-[12px] text-editorial-muted line-clamp-2 leading-relaxed">
+                            {series.description}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Card Footer */}
+                      <div className="px-4 sm:px-5 py-3 border-t border-editorial-border/60 flex items-center justify-between gap-2 text-xs">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[11px] text-editorial-muted truncate">
+                            {series.supportedLanguages?.join('/') || 'Hindi/English'}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 text-amber-600/90 dark:text-amber-400 font-semibold text-[11px] shrink-0 select-none bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/25">
+                          <svg className="w-3.5 h-3.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                          <span>Launching Soon</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Live Active Test Series Card (DSSSB) — Clean, Consistent Design
                 return (
                   <a
                     key={seriesId}
                     href={`/test-series/${seriesSlug}`}
                     data-astro-prefetch="hover"
-                    className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-editorial-surface border border-editorial-border hover:border-editorial-accent/50 hover:shadow-md transition-all duration-200"
+                    className="group relative flex flex-col justify-between rounded-2xl overflow-hidden border border-editorial-border hover:border-editorial-accent/60 shadow-2xs hover:shadow-md transition-all duration-200 bg-editorial-surface"
                   >
-                    <div className="space-y-3">
-                      {/* Header: Organization and Badge */}
+                    <div className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col">
+                      {/* Header: Organization and Live Badge */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <div className="w-8 h-8 rounded-xl bg-editorial-accent-soft border border-editorial-accent/25 text-editorial-accent flex items-center justify-center font-bold text-xs shrink-0">
-                            {series.targetExam ? series.targetExam.slice(0, 3).toUpperCase() : 'EX'}
+                          <div className="w-8 h-8 rounded-xl bg-editorial-accent-soft border border-editorial-accent/25 text-editorial-accent flex items-center justify-center font-bold text-[10px] shrink-0">
+                            DSS
                           </div>
                           <div className="min-w-0 flex-1">
                             <span
-                              className="block text-[11.5px] font-medium text-editorial-muted truncate"
+                              className="block text-[11px] font-medium text-editorial-muted truncate"
                               title={series.organization || series.targetExam}
                             >
                               {series.organization || series.targetExam}
@@ -312,30 +484,52 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                           </div>
                         </div>
 
-                        {series.badge && !/free|paid/i.test(series.badge) && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-editorial-accent-badge text-editorial-accent border border-editorial-accent/25 shrink-0 whitespace-nowrap">
-                            {series.badge}
-                          </span>
-                        )}
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0 whitespace-nowrap flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                          LIVE CBT
+                        </span>
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-['EB_Garamond'] text-[17px] sm:text-[18px] font-medium text-editorial-heading group-hover:text-editorial-accent transition-colors line-clamp-2 leading-snug">
+                      <h3 className="text-[16px] sm:text-[17px] font-semibold text-editorial-heading group-hover:text-editorial-accent transition-colors leading-snug tracking-tight">
                         {series.title}
+                        {series.slug?.includes('dsssb') && (
+                          <span className="ml-1.5 inline-block text-xs font-bold text-accent">
+                            (Part B Special)
+                          </span>
+                        )}
                       </h3>
 
-                      {/* Description if present */}
-                      {series.description && (
-                        <p className="text-[12.5px] text-editorial-muted line-clamp-2 leading-relaxed">
-                          {series.description}
-                        </p>
+                      {/* Description */}
+                      <p className="text-[12px] text-editorial-muted line-clamp-2 leading-relaxed">
+                        {series.slug?.includes('dsssb')
+                          ? '20 Days • 20 Tests Challenge — Complete Part B (Computer Science & IT - 100 Marks) mock test series with instant AI rank and detailed solutions.'
+                          : series.description}
+                      </p>
+
+                      {/* Feature pills */}
+                      {series.slug?.includes('dsssb') && (
+                        <div className="flex flex-wrap gap-1.5 pt-0.5">
+                          <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 border border-amber-500/25">
+                            🔥 20 Days Sprint
+                          </span>
+                          <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-500/25">
+                            100% Multi-Exam PYQs
+                          </span>
+                          <span className="rounded-md bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-700 dark:text-sky-300 border border-sky-500/25">
+                            Part B (CS Only)
+                          </span>
+                          <span className="rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent border border-accent/25">
+                            2 Free Tests Only
+                          </span>
+                        </div>
                       )}
                     </div>
 
-                    {/* Card Footer: Metadata and CTA */}
-                    <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
+                    {/* Card Footer */}
+                    <div className="px-4 sm:px-5 py-3 border-t border-editorial-border/60 flex items-center justify-between gap-2 text-xs">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[11.5px] text-editorial-muted truncate">
+                        <span className="text-[11px] text-editorial-muted truncate">
                           {series.supportedLanguages?.join('/') || 'Hindi/English'}
                         </span>
                       </div>

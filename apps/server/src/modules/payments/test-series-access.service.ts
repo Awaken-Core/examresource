@@ -217,7 +217,7 @@ export class TestSeriesAccessService {
       {
         statusCode: HttpStatus.PAYMENT_REQUIRED,
         code: 'TEST_SERIES_PASS_REQUIRED',
-        message: 'Your 1 free trial attempt in this section has been used. Please purchase the Series Plan (₹69 for 6 months) or All-Access Pass (₹399 for 1 year) to continue.',
+        message: 'Your 1 free trial attempt in this section has been used. Please purchase the Series Plan (₹99 for 6 months) or All-Access Pass (₹399 for 1 year) to continue.',
         section: sectionKey,
         usedTestId: secTrial.testId,
       },

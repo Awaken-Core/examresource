@@ -239,7 +239,12 @@ export class LearnerAnalyticsService {
         throw new BadRequestException('Invalid seriesId parameter.');
       }
       const exams = await this.examModel
-        .find({ seriesId: new Types.ObjectId(query.seriesId) })
+        .find({
+          $or: [
+            { testSeriesId: new Types.ObjectId(query.seriesId) },
+            { seriesId: new Types.ObjectId(query.seriesId) },
+          ],
+        })
         .select({ _id: 1 })
         .lean();
       const examIds = exams.map((e) => e._id);
@@ -267,7 +272,7 @@ export class LearnerAnalyticsService {
       }),
       this.testAttemptModel
         .find(filter)
-        .populate('testId', 'title seriesId durationMinutes totalMarks testMode type')
+        .populate('testId', 'title seriesId testSeriesId durationMinutes totalMarks testMode type')
         .sort(sortOption)
         .limit(limit)
         .lean(),
@@ -275,7 +280,7 @@ export class LearnerAnalyticsService {
 
     // Gather series names
     const seriesIds = docs
-      .map((d: any) => d.testId?.seriesId)
+      .map((d: any) => d.testId?.testSeriesId || d.testId?.seriesId)
       .filter((id) => id && Types.ObjectId.isValid(id.toString()));
 
     const seriesDocs =
@@ -294,7 +299,7 @@ export class LearnerAnalyticsService {
     const items = docs.map((doc: any) => {
       const test = doc.testId && typeof doc.testId === 'object' ? doc.testId : null;
       const testIdStr = (test?._id || doc.testId)?.toString() || '';
-      const sId = test?.seriesId ? test.seriesId.toString() : null;
+      const sId = (test?.testSeriesId || test?.seriesId) ? (test?.testSeriesId || test?.seriesId).toString() : null;
 
       const scorePercent =
         doc.maximumMarks && doc.maximumMarks > 0
@@ -346,7 +351,13 @@ export class LearnerAnalyticsService {
     }
 
     const exams = await this.examModel
-      .find({ seriesId: new Types.ObjectId(seriesId), status: 'published' })
+      .find({
+        $or: [
+          { testSeriesId: new Types.ObjectId(seriesId) },
+          { seriesId: new Types.ObjectId(seriesId) },
+        ],
+        status: 'published',
+      })
       .select({ _id: 1, title: 1, testMode: 1, type: 1, durationMinutes: 1 })
       .lean();
 
@@ -466,7 +477,12 @@ export class LearnerAnalyticsService {
     }
 
     const exams = await this.examModel
-      .find({ seriesId: new Types.ObjectId(seriesId) })
+      .find({
+        $or: [
+          { testSeriesId: new Types.ObjectId(seriesId) },
+          { seriesId: new Types.ObjectId(seriesId) },
+        ],
+      })
       .select({ _id: 1 })
       .lean();
     const examIds = exams.map((e) => e._id);
