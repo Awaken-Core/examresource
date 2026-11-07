@@ -1530,6 +1530,18 @@ export class TestSeriesService {
       .lean();
 
     const formatted = docs.map((doc) => this.formatIndividualTest(doc, false));
+    const extractTestNum = (title: string) => {
+      const match = title.match(/(?:Mock\s*Test|Grand\s*Mock|Mock|Test|Paper)\s*#?(\d+)/i);
+      return match ? Number.parseInt(match[1], 10) : null;
+    };
+    formatted.sort((a, b) => {
+      const numA = extractTestNum(a.title);
+      const numB = extractTestNum(b.title);
+      if (numA !== null && numB !== null) return numA - numB;
+      if (numA !== null) return -1;
+      if (numB !== null) return 1;
+      return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
+    });
     this.cache.set(cacheKey, formatted, 60_000);
     this.cache.set(`listTests:${series._id.toString()}:${query.testMode || ''}:${query.subjectId || ''}:${query.chapterId || ''}:${query.access || ''}:all`, formatted, 60_000);
     if (series.slug) {

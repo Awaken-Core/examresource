@@ -490,8 +490,8 @@ export function TestSeriesBannerCarousel() {
                   </span>
                   <span className="text-white font-bold text-[11px] sm:text-xs flex items-center gap-1.5">
                     DSSSB CBT
-                    <span className="px-1.5 py-0.2 rounded bg-emerald-500 text-white font-black text-[8.5px] tracking-wider uppercase shadow-xs">
-                      FREE MOCK
+                    <span className="px-1.5 py-0.2 rounded bg-sky-500 text-white font-black text-[8.5px] tracking-wider uppercase shadow-xs">
+                      SERIES PASS
                     </span>
                   </span>
                 </div>
@@ -499,7 +499,7 @@ export function TestSeriesBannerCarousel() {
                 {/* 3. Connector */}
                 <div className="flex items-center justify-center gap-2 text-cyan-200/90 text-[10px] font-medium">
                   <span className="w-8 sm:w-10 h-px bg-gradient-to-r from-transparent to-cyan-300/70" />
-                  <span className="italic">Full CBT Test</span>
+                  <span className="italic">at Just</span>
                   <span className="w-8 sm:w-10 h-px bg-gradient-to-l from-transparent to-cyan-300/70" />
                 </div>
 
@@ -510,29 +510,29 @@ export function TestSeriesBannerCarousel() {
 
                   <div className="flex items-baseline justify-center gap-2">
                     <span className="text-3xl sm:text-[34px] font-black text-slate-950 tracking-tight leading-none drop-shadow-xs">
-                      FREE
+                      ₹99
                     </span>
                     <span className="text-xs line-through text-slate-700 font-semibold">
-                      ₹499
+                      ₹299
                     </span>
                     <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-cyan-950 text-cyan-200 uppercase">
-                      100% OFF
+                      67% OFF
                     </span>
                   </div>
                 </div>
 
                 {/* 5. Pattern / Syllabus Pill */}
                 <div className="inline-flex items-center justify-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-950/85 border border-cyan-400/50 text-cyan-200 text-[9px] sm:text-[9.5px] font-semibold shadow-xs">
-                  <span>📋</span>
-                  <span>Section A (General) + Section B (CS & IT)</span>
+                  <span>📅</span>
+                  <span>6 Months Access · Section A & B</span>
                 </div>
 
-                {/* 6. Big Glossy Green Button (Matching Diwali Buy Now) */}
+                {/* 6. Big Glossy Green Button */}
                 <a
                   href="/test-series/dsssb-tgt-computer-science"
                   className="w-full max-w-[190px] sm:max-w-[210px] inline-flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-6 rounded-full font-black text-sm text-white bg-gradient-to-b from-[#22c55e] via-[#16a34a] to-[#15803d] hover:from-[#16a34a] hover:to-[#15803d] shadow-[0_4px_20px_rgba(34,197,94,0.65)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border border-green-300/40"
                 >
-                  <span>Start Free Mock</span>
+                  <span>Buy Pass @ ₹99</span>
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>

@@ -8,8 +8,8 @@ export type PassOffer = {
 };
 
 const fallbackOffer: PassOffer = {
-  amountPaise: 6900,
-  listPricePaise: 19900,
+  amountPaise: 9900,
+  listPricePaise: 29900,
   validityMonths: 6,
   currency: 'INR',
 };

@@ -47,8 +47,8 @@ export const EnvSchema = z.object({
     .string()
     .optional()
     .transform((value) => (value?.trim() ? value.trim() : undefined)),
-  RAZORPAY_PASS_AMOUNT_PAISE: z.coerce.number().int().min(100).default(6900),
-  RAZORPAY_PASS_LIST_PRICE_PAISE: z.coerce.number().int().min(100).default(19900),
+  RAZORPAY_PASS_AMOUNT_PAISE: z.coerce.number().int().min(100).default(9900),
+  RAZORPAY_PASS_LIST_PRICE_PAISE: z.coerce.number().int().min(100).default(29900),
   RAZORPAY_PASS_VALIDITY_MONTHS: z.coerce.number().int().min(1).max(36).default(6),
 });
 

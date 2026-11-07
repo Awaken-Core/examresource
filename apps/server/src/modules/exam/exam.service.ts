@@ -385,7 +385,12 @@ export class ExamService {
       visitedAt: null,
       lastViewedAt: null,
       answeredAt: null,
-      questionSnapshot: q.snapshot || null,
+      questionSnapshot: q.snapshot
+        ? {
+            ...q.snapshot,
+            questionId: q.snapshot.questionId || q.questionId || new Types.ObjectId(q.id),
+          }
+        : null,
     }));
 
     let attempt: any;
@@ -827,21 +832,28 @@ export class ExamService {
           };
         });
 
-        const rawSnapshot = item.snapshot || {
-          questionId: qDoc._id,
-          content: qDoc.content,
-          translations: qDoc.translations || {},
-          explanation: qDoc.explanation || null,
-          explanationTranslations: qDoc.explanationTranslations || {},
-          type: qDoc.type,
-          numericalAnswer: qDoc.numericalAnswer || null,
-          options,
-          marks: item.marks ?? qDoc.marks,
-          negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
-        };
+        const questionId = item?.questionId || qDoc?._id;
+        const rawSnapshot = item.snapshot
+          ? {
+              ...item.snapshot,
+              questionId: item.snapshot.questionId || questionId,
+            }
+          : {
+              questionId,
+              content: qDoc.content,
+              translations: qDoc.translations || {},
+              explanation: qDoc.explanation || null,
+              explanationTranslations: qDoc.explanationTranslations || {},
+              type: qDoc.type,
+              numericalAnswer: qDoc.numericalAnswer || null,
+              options,
+              marks: item.marks ?? qDoc.marks,
+              negativeMarks: item.negativeMarks ?? qDoc.negativeMarks,
+            };
 
         const snapshot = {
           ...rawSnapshot,
+          questionId: rawSnapshot.questionId || questionId,
           blocks: rawSnapshot.blocks || qDoc.blocks || [],
           images: rawSnapshot.images || qDoc.images || [],
           translations: this.sanitizeStringMap(rawSnapshot.translations),

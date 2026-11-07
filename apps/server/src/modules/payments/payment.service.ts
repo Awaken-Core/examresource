@@ -51,9 +51,9 @@ export class PaymentService {
       {
         id: 'series',
         name: 'Single Series Plan',
-        price: 69,
-        amountPaise: 6900,
-        listPricePaise: 19900,
+        price: 99,
+        amountPaise: 9900,
+        listPricePaise: 29900,
         validityMonths: 6,
         description: 'Complete 6-month access to this specific test series (Mock tests, subject tests, chapter tests & PYQs)',
         currency: 'INR',
@@ -74,8 +74,8 @@ export class PaymentService {
   offer() {
     return {
       plans: this.plans(),
-      amountPaise: 6900,
-      listPricePaise: 19900,
+      amountPaise: 9900,
+      listPricePaise: 29900,
       validityMonths: 6,
       currency: 'INR',
     };
@@ -106,7 +106,7 @@ export class PaymentService {
     const planType = input?.planType === 'all' ? 'all' : 'series';
     const seriesId = input?.seriesId && Types.ObjectId.isValid(input.seriesId) ? input.seriesId : null;
 
-    const amount = planType === 'all' ? 39900 : 6900;
+    const amount = planType === 'all' ? 39900 : 9900;
     const validityMonths = planType === 'all' ? 12 : 6;
 
     if (!Number.isInteger(amount) || amount < 100) {

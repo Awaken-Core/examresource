@@ -78,12 +78,12 @@ describe('PaymentService pass grant', () => {
   });
 
   it('asks Razorpay for the server pass amount, not the list price', async () => {
-    expect(env.RAZORPAY_PASS_AMOUNT_PAISE).toBe(6900);
-    expect(env.RAZORPAY_PASS_LIST_PRICE_PAISE).toBe(19900);
+    expect(env.RAZORPAY_PASS_AMOUNT_PAISE).toBe(9900);
+    expect(env.RAZORPAY_PASS_LIST_PRICE_PAISE).toBe(29900);
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => ({ id: 'order_test', amount: 6900, currency: 'INR' }),
+      json: async () => ({ id: 'order_test', amount: 9900, currency: 'INR' }),
     });
     const previousFetch = globalThis.fetch;
     globalThis.fetch = fetchMock as typeof fetch;
@@ -97,10 +97,10 @@ describe('PaymentService pass grant', () => {
     try {
       const created = await service.createOrder(student);
       const body = JSON.parse(fetchMock.mock.calls[0][1].body);
-      expect(body.amount).toBe(6900);
+      expect(body.amount).toBe(9900);
       expect(body.currency).toBe('INR');
-      expect(created.amount).toBe(6900);
-      expect(orders.create.mock.calls[0][0].amountPaise).toBe(6900);
+      expect(created.amount).toBe(9900);
+      expect(orders.create.mock.calls[0][0].amountPaise).toBe(9900);
     } finally {
       globalThis.fetch = previousFetch;
       (env as any).RAZORPAY_KEY_ID = prevKey;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { API_URL, isClientAuthenticated } from '../../lib/api';
 import { TestSeriesPassCard } from './TestSeriesPassCard';
+import { openTestSeriesCheckout } from './openTestSeriesCheckout';
 
 export interface Chapter {
   id: string;
@@ -153,6 +154,22 @@ function testRouteId(test: PublishedTestItem) {
   return test.slug || test.id || test._id || '';
 }
 
+function extractTestNumber(title: string): number | null {
+  const match = title.match(/(?:Mock\s*Test|Grand\s*Mock|Mock|Test|Paper)\s*#?(\d+)/i);
+  return match ? parseInt(match[1], 10) : null;
+}
+
+function sortTestsAscending(tests: PublishedTestItem[]): PublishedTestItem[] {
+  return [...tests].sort((a, b) => {
+    const numA = extractTestNumber(a.title);
+    const numB = extractTestNumber(b.title);
+    if (numA !== null && numB !== null) return numA - numB;
+    if (numA !== null) return -1;
+    if (numB !== null) return 1;
+    return a.title.localeCompare(b.title, undefined, { numeric: true, sensitivity: 'base' });
+  });
+}
+
 function handleTestNavigate(e: React.MouseEvent<HTMLAnchorElement>, targetPath: string) {
   if (!isClientAuthenticated()) {
     e.preventDefault();
@@ -258,9 +275,9 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     setChapterPage(1);
   }, [testSearchQuery, chapterSubjectId, selectedChapterId]);
 
-  // Fall back to full mocks if activeTab is pyq but this series has no PYQ tests
+  // Fall back to full mocks if activeTab is pyq (with 0 pyqs) or chapter
   useEffect(() => {
-    if (activeTab === 'pyq' && pyqTests.length === 0) {
+    if ((activeTab === 'pyq' && pyqTests.length === 0) || activeTab === 'chapter') {
       setActiveTab('full');
     }
   }, [pyqTests.length, activeTab]);
@@ -580,17 +597,76 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     return 'full';
   };
 
+  // STRICTLY 2 FREE TESTS ONLY: Only Mock 01 and Mock 02 in Full Mocks are free.
+  // All other tests (Mock 03 to 25, all PYQs, all Subject Tests) are strictly locked and require the ₹99 Pass.
+  const freeTestIds = useMemo(() => {
+    const ids = new Set<string>();
+    const sortedFull = sortTestsAscending(fullTests);
+
+    // Strictly the first 2 Full Mock Tests (Mock 01 & Mock 02) are free
+    sortedFull.slice(0, 2).forEach((t) => {
+      const id = t.id || t._id;
+      if (id) ids.add(id);
+    });
+
+    return ids;
+  }, [fullTests]);
+
   const isTestLocked = (test: PublishedTestItem) => {
     if (hasActivePass) return false;
-    const secKey = getTestSectionKey(test);
-    const trial = seriesAccess?.sectionTrials?.[secKey];
     const testId = test.id || test._id;
-    if (!trial || !trial.used) {
-      // 1 free trial attempt slot is available in each section for the student!
-      return false;
+    if (!testId) return false;
+    return !freeTestIds.has(testId);
+  };
+
+  const [unlockingTestId, setUnlockingTestId] = useState<string | null>(null);
+
+  const handleUnlockTest = async (testId: string) => {
+    if (!isClientAuthenticated()) {
+      const loginUrl = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      void import('astro:transitions/client')
+        .then(({ navigate }) => navigate(loginUrl))
+        .catch(() => {
+          window.location.href = loginUrl;
+        });
+      return;
     }
-    // Trial used: only the attempted test can be reopened without pass
-    return testId !== trial.examId;
+
+    setUnlockingTestId(testId);
+    try {
+      const resolvedSeriesId = series?.id || series?._id || '';
+      const result = await openTestSeriesCheckout({
+        planType: 'series',
+        seriesId: resolvedSeriesId || undefined,
+        validityMonths: 6,
+      });
+
+      if (result.status === 'paid') {
+        // Unlock all tests immediately
+        setSeriesAccess((prev) => ({
+          hasActivePass: true,
+          passType: 'series',
+          expiresAt: result.expiresAt,
+          freeTestId: prev?.freeTestId ?? null,
+        }));
+
+        if (resolvedSeriesId) {
+          fetch(`${API_URL}/payments/test-series-access?seriesId=${encodeURIComponent(resolvedSeriesId)}`, {
+            credentials: 'include',
+          })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((access) => {
+              if (access) setSeriesAccess(access);
+            })
+            .catch(() => {});
+        }
+      } else if (result.status === 'cancelled') {
+        const cardEl = document.getElementById('series-pass');
+        cardEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } finally {
+      setUnlockingTestId(null);
+    }
   };
 
   // Primary diagnostic test target
@@ -684,9 +760,18 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     return assignedSubjects.reduce((acc, s) => acc + (s.questionsCount || 0), 0);
   }, [assignedSubjects]);
 
-  const completedCount = learnerPrep?.completedTestsCount ?? 0;
-  const totalCount = learnerPrep?.totalTestsCount ?? (totalFullMockCount + pyqTests.length + assignedSubjects.length + chapterCount);
-  const unattemptedCount = learnerPrep ? learnerPrep.unattemptedTestsCount : Math.max(0, totalCount - completedCount);
+  const totalAvailableTests = useMemo(() => {
+    const subCount = subjectTests.length > 0 ? subjectTests.length : (assignedSubjects.length * 4);
+    return totalFullMockCount + pyqTests.length + subCount;
+  }, [totalFullMockCount, pyqTests.length, subjectTests.length, assignedSubjects.length]);
+
+  const completedCount = useMemo(() => {
+    if (!learnerPrep?.tests) return learnerPrep?.completedTestsCount ?? 0;
+    return learnerPrep.tests.filter((t) => t.latestAttempt?.status === 'submitted' && t.testMode !== 'chapter').length;
+  }, [learnerPrep]);
+
+  const totalCount = Math.max(learnerPrep?.totalTestsCount || 0, totalAvailableTests);
+  const unattemptedCount = Math.max(0, totalCount - completedCount);
   const completionPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   // Filtered PYQ Tests
@@ -712,11 +797,12 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     });
   }, [pyqTests, pyqYearFilter, pyqExamFilter, testSearchQuery]);
 
-  // Filtered Full Tests
+  // Filtered Full Tests - Sorted ascending starting from Mock 1!
   const filteredFullTests = useMemo(() => {
-    if (!testSearchQuery.trim()) return fullTests;
+    const sorted = sortTestsAscending(fullTests);
+    if (!testSearchQuery.trim()) return sorted;
     const q = testSearchQuery.toLowerCase();
-    return fullTests.filter(
+    return sorted.filter(
       (t) => t.title.toLowerCase().includes(q) || (t.description?.toLowerCase().includes(q) ?? false),
     );
   }, [fullTests, testSearchQuery]);
@@ -783,31 +869,43 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
       <header className="rounded-3xl border border-border bg-surface-raised p-6 shadow-xs sm:p-8">
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-heading px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-surface">
-            {series.targetExam || 'Aptitude & Reasoning'}
+            {series.targetExam || 'DSSSB TGT'}
           </span>
-          <span className="rounded-full border border-border bg-surface px-3.5 py-1 text-xs font-semibold text-heading">
-            {series.organization || 'GovtPariksha'}
+          <span className="rounded-full border border-border bg-surface px-3 py-1 text-xs font-semibold text-heading">
+            {series.organization || 'Delhi Subordinate Services Selection Board'}
+          </span>
+          <span className="rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 text-xs font-bold text-sky-700 dark:text-sky-300">
+            Part B (Computer Science & IT)
           </span>
         </div>
 
         <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-heading sm:text-4xl lg:text-[40px] leading-tight">
-          {series.title || 'Aptitude & Reasoning Master Exam 2026'}
+          {series.title || 'DSSSB TGT Computer Science'}
           <span className="ml-2 font-serif italic font-normal text-sky-700 dark:text-sky-400">
             Test Series
           </span>
         </h1>
 
+        {/* 20 Days • 20 Tests Sprint Banner */}
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-amber-500/30 bg-linear-to-r from-amber-500/10 via-orange-500/10 to-transparent p-3.5 sm:p-4">
+          <span className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-2.5 py-1 text-xs font-black uppercase tracking-wider text-white shadow-xs">
+            <span>🔥 20 DAYS SPRINT</span>
+          </span>
+          <p className="text-sm font-bold text-heading sm:text-base">
+            <strong className="text-accent font-extrabold">20 Days • 20 Tests Challenge</strong> — 100% Authentic Previous Year Questions compiled from Multiple CS Exams!
+          </p>
+        </div>
+
         <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted sm:text-[15px]">
-          {series.description ||
-            'Master examination and timed CBT simulation for Quantitative Aptitude and Logical Reasoning across 37 comprehensive syllabus-aligned chapters with dual-section full mocks.'}
+          Dedicated CBT practice series featuring real PYQs curated from DSSSB, KVS, NVS, EMRS and State Teacher recruitment exams. Covers the complete Part B syllabus (100 Questions • 60 Mins • 100 Marks) with exact TCS-pattern interface, negative marking, and bilingual solutions.
         </p>
 
-        {/* Stats Grid */}
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Stats Grid - 3 Columns (Chapters Covered removed per user request) */}
+        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
             <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Full Length Mocks</p>
             <p className="mt-1 text-base font-bold text-heading tabular-nums">
-              {totalFullMockCount} Tests
+              {totalFullMockCount} Tests (Part B)
             </p>
           </div>
           {pyqTests.length > 0 ? (
@@ -829,12 +927,6 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Assigned Subjects</p>
             <p className="mt-1 text-base font-bold text-heading tabular-nums">
               {assignedSubjects.length} Subjects
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-surface p-3.5 shadow-2xs">
-            <p className="text-[11px] font-bold text-muted uppercase tracking-wider">Chapters Covered</p>
-            <p className="mt-1 text-base font-bold text-heading tabular-nums">
-              {chapterCount} Chapters
             </p>
           </div>
         </div>
@@ -964,32 +1056,11 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       : 'bg-surface-raised border border-border text-muted'
                   }`}
                 >
-                  {assignedSubjects.length}
+                  {subjectTests.length > 0 ? subjectTests.length : (assignedSubjects.length * 4)}
                 </span>
               </button>
 
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === 'chapter'}
-                onClick={() => setActiveTab('chapter')}
-                className={`inline-flex cursor-pointer items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
-                  activeTab === 'chapter'
-                    ? 'border-accent text-accent'
-                    : 'border-transparent text-muted hover:text-heading'
-                }`}
-              >
-                Chapter Tests
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                    activeTab === 'chapter'
-                      ? 'bg-accent-badge text-accent'
-                      : 'bg-surface-raised border border-border text-muted'
-                  }`}
-                >
-                  {chapterCount}
-                </span>
-              </button>
+{/* Chapter Tests tab removed per user request */}
             </div>
           </div>
 
@@ -1053,8 +1124,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       const testId = test.id || test._id || '';
                       const latestAttempt = testAttemptMap.get(testId);
                       const isLocked = isTestLocked(test);
-                      const secKey = getTestSectionKey(test);
-                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      const isTrialAvailable = !hasActivePass && freeTestIds.has(testId);
                       return (
                         <RealTestCard
                           key={testId}
@@ -1064,6 +1134,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
                           isTrialAvailable={isTrialAvailable}
+                          onUnlock={() => void handleUnlockTest(testId)}
+                          isUnlocking={unlockingTestId === testId}
                         />
                       );
                     })}
@@ -1217,8 +1289,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       const testId = test.id || test._id || '';
                       const latestAttempt = testAttemptMap.get(testId);
                       const isLocked = isTestLocked(test);
-                      const secKey = getTestSectionKey(test);
-                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      const isTrialAvailable = !hasActivePass && freeTestIds.has(testId);
                       return (
                         <RealTestCard
                           key={testId}
@@ -1228,6 +1299,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
                           isTrialAvailable={isTrialAvailable}
+                          onUnlock={() => void handleUnlockTest(testId)}
+                          isUnlocking={unlockingTestId === testId}
                         />
                       );
                     })}
@@ -1404,8 +1477,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       const testId = test.id || test._id || '';
                       const latestAttempt = testAttemptMap.get(testId);
                       const isLocked = isTestLocked(test);
-                      const secKey = getTestSectionKey(test);
-                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      const isTrialAvailable = !hasActivePass && freeTestIds.has(testId);
                       return (
                         <RealTestCard
                           key={testId}
@@ -1415,6 +1487,8 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                           isLocked={isLocked}
                           hasActivePass={hasActivePass}
                           isTrialAvailable={isTrialAvailable}
+                          onUnlock={() => void handleUnlockTest(testId)}
+                          isUnlocking={unlockingTestId === testId}
                         />
                       );
                     })}
@@ -1617,8 +1691,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                       const testId = test.id || test._id || '';
                       const latestAttempt = testAttemptMap.get(testId);
                       const isLocked = isTestLocked(test);
-                      const secKey = getTestSectionKey(test);
-                      const isTrialAvailable = !hasActivePass && !seriesAccess?.sectionTrials?.[secKey]?.used;
+                      const isTrialAvailable = !hasActivePass && freeTestIds.has(testId);
                       return (
                         <RealTestCard
                           key={testId}
@@ -1689,6 +1762,8 @@ function RealTestCard({
   isLocked,
   hasActivePass,
   isTrialAvailable = false,
+  onUnlock,
+  isUnlocking = false,
 }: {
   test: PublishedTestItem;
   index?: number;
@@ -1696,6 +1771,8 @@ function RealTestCard({
   isLocked: boolean;
   hasActivePass: boolean;
   isTrialAvailable?: boolean;
+  onUnlock?: () => void;
+  isUnlocking?: boolean;
 }) {
   const routeId = testRouteId(test);
   const testId = test.id || test._id || '';
@@ -1716,13 +1793,19 @@ function RealTestCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1 space-y-2">
           {/* Top Status Pill */}
-          {isLocked && (
+          {isLocked ? (
             <div>
-              <span className="inline-flex items-center rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
-                PASS REQUIRED
+              <span className="inline-flex items-center gap-1 rounded-full border border-border bg-surface-raised px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted">
+                <span>🔒 PASS REQUIRED</span>
               </span>
             </div>
-          )}
+          ) : !hasActivePass ? (
+            <div>
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                <span>FREE TEST</span>
+              </span>
+            </div>
+          ) : null}
 
           {/* Test Title */}
           <h3 className="text-base font-bold text-heading hover:text-accent transition sm:text-lg">
@@ -1737,6 +1820,16 @@ function RealTestCard({
 
           {/* Meta line */}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted font-medium">
+            {test.testMode === 'full' && (
+              <>
+                <span className="inline-flex items-center rounded-md bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-700 dark:text-sky-300">
+                  Part B • CS
+                </span>
+                <span className="inline-flex items-center rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                  Multi-Exam PYQs
+                </span>
+              </>
+            )}
             <span>📄 <strong className="text-heading font-semibold tabular-nums">{test.totalQuestionsCount}</strong> Questions</span>
             <span>•</span>
             <span>⏱ <strong className="text-heading font-semibold tabular-nums">{test.durationMinutes ? `${test.durationMinutes} Mins` : 'Untimed'}</strong></span>
@@ -1801,14 +1894,16 @@ function RealTestCard({
             </div>
           ) : isLocked ? (
             <div className="flex flex-col sm:items-end">
-              <a
-                href="#series-pass"
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2.5 text-xs font-bold text-accent transition hover:bg-accent hover:text-white"
+              <button
+                type="button"
+                onClick={onUnlock}
+                disabled={isUnlocking}
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-accent/40 bg-accent/10 px-4 py-2.5 text-xs font-bold text-accent transition hover:bg-accent hover:text-white cursor-pointer disabled:cursor-wait disabled:opacity-60"
               >
-                <span>🔒 Unlock (from ₹69)</span>
-              </a>
+                <span>{isUnlocking ? 'Opening Checkout...' : '🔒 Unlock (from ₹99)'}</span>
+              </button>
               <span className="mt-1.5 text-center text-[11px] text-muted sm:text-right font-medium">
-                Pass needed for 2nd test
+                Pass needed to attempt
               </span>
             </div>
           ) : (
@@ -1828,7 +1923,7 @@ function RealTestCard({
                 </span>
               ) : isTrialAvailable ? (
                 <span className="mt-1.5 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 sm:text-right">
-                  1 Free Slot
+                  100% Free Mock
                 </span>
               ) : null}
             </div>

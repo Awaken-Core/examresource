@@ -493,13 +493,36 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                       {/* Title */}
                       <h3 className="text-[16px] sm:text-[17px] font-semibold text-editorial-heading group-hover:text-editorial-accent transition-colors leading-snug tracking-tight">
                         {series.title}
+                        {series.slug?.includes('dsssb') && (
+                          <span className="ml-1.5 inline-block text-xs font-bold text-accent">
+                            (Part B Special)
+                          </span>
+                        )}
                       </h3>
 
                       {/* Description */}
-                      {series.description && (
-                        <p className="text-[12px] text-editorial-muted line-clamp-2 leading-relaxed">
-                          {series.description}
-                        </p>
+                      <p className="text-[12px] text-editorial-muted line-clamp-2 leading-relaxed">
+                        {series.slug?.includes('dsssb')
+                          ? '20 Days • 20 Tests Challenge — Complete Part B (Computer Science & IT - 100 Marks) mock test series with instant AI rank and detailed solutions.'
+                          : series.description}
+                      </p>
+
+                      {/* Feature pills */}
+                      {series.slug?.includes('dsssb') && (
+                        <div className="flex flex-wrap gap-1.5 pt-0.5">
+                          <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 border border-amber-500/25">
+                            🔥 20 Days Sprint
+                          </span>
+                          <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-500/25">
+                            100% Multi-Exam PYQs
+                          </span>
+                          <span className="rounded-md bg-sky-500/10 px-2 py-0.5 text-[10px] font-bold text-sky-700 dark:text-sky-300 border border-sky-500/25">
+                            Part B (CS Only)
+                          </span>
+                          <span className="rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold text-accent border border-accent/25">
+                            2 Free Tests Only
+                          </span>
+                        </div>
                       )}
                     </div>
 
