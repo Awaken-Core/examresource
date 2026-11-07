@@ -402,18 +402,21 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                   return (
                     <div
                       key={seriesId}
-                      className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-editorial-surface/80 border border-editorial-border hover:border-amber-500/40 hover:shadow-sm transition-all duration-200"
+                      className="group relative flex flex-col justify-between rounded-2xl overflow-hidden bg-editorial-surface/60 border border-editorial-border hover:border-amber-400/50 hover:shadow-sm transition-all duration-200"
                     >
-                      <div className="space-y-3">
+                      {/* Subtle Top Accent */}
+                      <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+
+                      <div className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col">
                         {/* Header: Organization and Coming Soon Badge */}
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                            <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xs shrink-0">
+                            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-[10px] shrink-0 tracking-tight">
                               {series.targetExam ? series.targetExam.slice(0, 3).toUpperCase() : 'EX'}
                             </div>
                             <div className="min-w-0 flex-1">
                               <span
-                                className="block text-[11.5px] font-medium text-editorial-muted truncate"
+                                className="block text-[11px] font-semibold text-editorial-muted truncate"
                                 title={series.organization || series.targetExam}
                               >
                                 {series.organization || series.targetExam}
@@ -421,34 +424,34 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                             </div>
                           </div>
 
-                          <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0 whitespace-nowrap flex items-center gap-1.5">
+                          <span className="px-2.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0 whitespace-nowrap flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                             Coming Soon
                           </span>
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-['EB_Garamond'] text-[17px] sm:text-[18px] font-medium text-editorial-heading leading-snug">
+                        <h3 className="font-['EB_Garamond'] text-[18px] sm:text-[19px] font-medium text-editorial-heading leading-snug tracking-tight">
                           {series.title}
                         </h3>
 
                         {/* Description */}
                         {series.description && (
-                          <p className="text-[12.5px] text-editorial-muted line-clamp-2 leading-relaxed">
+                          <p className="text-[12px] text-editorial-muted line-clamp-2 leading-relaxed">
                             {series.description}
                           </p>
                         )}
                       </div>
 
-                      {/* Card Footer: Metadata and Status Button */}
-                      <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
+                      {/* Card Footer */}
+                      <div className="px-4 sm:px-5 py-3 border-t border-editorial-border/60 flex items-center justify-between gap-2 text-xs bg-editorial-surface/40">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-[11.5px] text-editorial-muted truncate">
+                          <span className="text-[11px] text-editorial-muted truncate">
                             {series.supportedLanguages?.join('/') || 'Hindi/English'}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-amber-600/90 dark:text-amber-400 font-semibold text-[11.5px] shrink-0 select-none bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/25">
+                        <div className="flex items-center gap-1.5 text-amber-600/90 dark:text-amber-400 font-semibold text-[11px] shrink-0 select-none bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/25">
                           <svg className="w-3.5 h-3.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                           </svg>
@@ -459,24 +462,27 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                   );
                 }
 
-                // Live Active Test Series Card (DSSSB)
+                // Live Active Test Series Card (DSSSB) — Premium Highlighted Design
                 return (
                   <a
                     key={seriesId}
                     href={`/test-series/${seriesSlug}`}
                     data-astro-prefetch="hover"
-                    className="group relative flex flex-col justify-between p-4 sm:p-5 rounded-2xl bg-editorial-surface border border-editorial-accent/30 hover:border-editorial-accent hover:shadow-md transition-all duration-200"
+                    className="group relative flex flex-col justify-between rounded-2xl overflow-hidden border-2 border-editorial-accent/40 hover:border-editorial-accent shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-editorial-surface via-editorial-surface to-editorial-accent-soft"
                   >
-                    <div className="space-y-3">
-                      {/* Header: Organization and Badge */}
+                    {/* Premium Top Accent Bar */}
+                    <div className="h-1 w-full bg-gradient-to-r from-editorial-accent via-amber-500 to-editorial-accent" />
+
+                    <div className="p-4 sm:p-5 space-y-3 flex-1 flex flex-col">
+                      {/* Header: Organization and Live Badge */}
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                          <div className="w-8 h-8 rounded-xl bg-editorial-accent-soft border border-editorial-accent/25 text-editorial-accent flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-editorial-accent to-editorial-accent-hover text-white flex items-center justify-center font-black text-[11px] shrink-0 shadow-md tracking-tight">
                             DSS
                           </div>
                           <div className="min-w-0 flex-1">
                             <span
-                              className="block text-[11.5px] font-medium text-editorial-muted truncate"
+                              className="block text-[11px] font-semibold text-editorial-muted truncate"
                               title={series.organization || series.targetExam}
                             >
                               {series.organization || series.targetExam}
@@ -484,37 +490,51 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                           </div>
                         </div>
 
-                        <span className="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 shrink-0 whitespace-nowrap flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-emerald-500 text-white shadow-[0_2px_10px_rgba(16,185,129,0.5)] shrink-0 whitespace-nowrap flex items-center gap-1.5 animate-pulse">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
                           LIVE CBT
                         </span>
                       </div>
 
-                      {/* Title */}
-                      <h3 className="font-['EB_Garamond'] text-[17px] sm:text-[18px] font-medium text-editorial-heading group-hover:text-editorial-accent transition-colors line-clamp-2 leading-snug">
+                      {/* Title — Large, Bold, Premium Font */}
+                      <h3 className="font-['EB_Garamond'] text-[20px] sm:text-[22px] font-semibold text-editorial-heading group-hover:text-editorial-accent transition-colors leading-snug tracking-tight">
                         {series.title}
                       </h3>
 
-                      {/* Description if present */}
+                      {/* Description */}
                       {series.description && (
                         <p className="text-[12.5px] text-editorial-muted line-clamp-2 leading-relaxed">
                           {series.description}
                         </p>
                       )}
-                    </div>
 
-                    {/* Card Footer: Metadata and CTA */}
-                    <div className="pt-3.5 mt-3.5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[11.5px] text-editorial-muted truncate">
-                          {series.supportedLanguages?.join('/') || 'Hindi/English'}
+                      {/* Feature Tags */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-editorial-accent-soft text-editorial-accent text-[10px] font-semibold border border-editorial-accent/20">
+                          <span>📝</span> Full-Length Mocks
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 text-[10px] font-semibold border border-cyan-500/20">
+                          <span>📊</span> AI Rank
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-700 dark:text-violet-300 text-[10px] font-semibold border border-violet-500/20">
+                          <span>💡</span> Bilingual
                         </span>
                       </div>
+                    </div>
 
-                      <div className="flex items-center gap-1 text-editorial-accent font-semibold text-xs shrink-0 group-hover:translate-x-0.5 transition-transform">
+                    {/* Card Footer: Premium CTA */}
+                    <div className="px-4 sm:px-5 py-3 bg-gradient-to-r from-editorial-accent/5 via-transparent to-editorial-accent/5 border-t border-editorial-border flex items-center justify-between gap-2 text-xs">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[11px] text-editorial-muted truncate">
+                          {series.supportedLanguages?.join('/') || 'Hindi/English'}
+                        </span>
+                        <span className="hidden sm:inline-flex px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">FREE</span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-white font-bold text-[11px] shrink-0 bg-editorial-accent hover:bg-editorial-accent-hover px-3.5 py-1.5 rounded-lg shadow-sm group-hover:shadow-md transition-all">
                         <span>Explore Tests</span>
                         <svg
-                          className="w-3.5 h-3.5"
+                          className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -522,7 +542,7 @@ export function TestSeriesExplorer({ initialList }: TestSeriesExplorerProps = {}
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            strokeWidth="2"
+                            strokeWidth="2.5"
                             d="M9 5l7 7-7 7"
                           />
                         </svg>

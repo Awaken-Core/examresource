@@ -33,10 +33,18 @@ const AUTO_SCROLL_INTERVAL = 3000; // 3.0s (faster and snappy auto-animation)
 export function TestSeriesBannerCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [mountKey, setMountKey] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
   const totalSlides = SLIDES.length;
+
+  // Force re-render when Astro ViewTransitions navigates back (restores cached page)
+  useEffect(() => {
+    const handlePageLoad = () => setMountKey((k) => k + 1);
+    document.addEventListener('astro:page-load', handlePageLoad);
+    return () => document.removeEventListener('astro:page-load', handlePageLoad);
+  }, []);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % totalSlides);
@@ -86,7 +94,7 @@ export function TestSeriesBannerCarousel() {
   const nextIndex = (currentSlide + 1) % totalSlides;
 
   return (
-    <div className="w-full space-y-3 sm:space-y-4 font-['Geist']">
+    <div key={mountKey} className="w-full space-y-3 sm:space-y-4 font-['Geist']">
       {/* Inline styles for auto-animation & progress bar */}
       <style>{`
         @keyframes bannerProgress {
@@ -389,7 +397,7 @@ export function TestSeriesBannerCarousel() {
             </div>
           </div>
 
-          {/* SLIDE 2: DSSSB TGT & PGT COMPUTER SCIENCE */}
+          {/* SLIDE 2: DSSSB TGT & PGT COMPUTER SCIENCE — Premium Live Card */}
           <div
             className={`absolute inset-0 w-full h-full transition-opacity duration-400 ease-in-out flex items-center ${
               currentSlide === 2 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
@@ -404,8 +412,8 @@ export function TestSeriesBannerCarousel() {
             aria-roledescription="slide"
             aria-label="3 of 3: DSSSB Computer Science CBT"
           >
-            {/* Dark Overlay for clear text reading */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#041122]/95 via-[#081e3a]/90 sm:via-[#081e3a]/80 to-transparent/30 pointer-events-none" />
+            {/* Deep Dark Navy Overlay for premium contrast */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#020d1e]/97 via-[#071a36]/92 sm:via-[#071a36]/85 to-[#0a1e3d]/40 pointer-events-none" />
 
             <div
               key={`slide-2-${currentSlide}`}
@@ -413,67 +421,72 @@ export function TestSeriesBannerCarousel() {
                 currentSlide === 2 ? 'banner-content-animate' : ''
               }`}
             >
-              {/* Left Column: DSSSB Overview */}
-              <div className="md:col-span-7 space-y-1.5 sm:space-y-2 text-left">
-                {/* Live Pill Badge */}
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold tracking-wider uppercase bg-emerald-500/20 border border-emerald-400/50 text-emerald-300">
+              {/* Left Column: DSSSB Overview — Premium Typography */}
+              <div className="md:col-span-7 space-y-2 sm:space-y-2.5 text-left">
+                {/* Live Pill Badge — Bright & Eye-catching */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold tracking-widest uppercase bg-emerald-500/25 border border-emerald-400/60 text-emerald-300 shadow-[0_0_12px_rgba(16,185,129,0.3)]">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                   <span>LIVE CBT MOCKS · 2026 PATTERN</span>
                 </div>
 
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   <h2
                     style={{ color: '#ffffff' }}
-                    className="font-['EB_Garamond'] text-xl xs:text-2xl sm:text-[27px] font-bold tracking-tight text-white leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.85)]"
+                    className="font-['EB_Garamond'] text-[22px] xs:text-[26px] sm:text-[30px] font-bold tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
                   >
                     DSSSB TGT & PGT <br className="hidden sm:inline" />
-                    <span className="text-cyan-300 font-extrabold">Computer Science</span> Suite
+                    <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-cyan-400 bg-clip-text text-transparent font-extrabold">
+                      Computer Science
+                    </span>
                   </h2>
 
                   <p
                     style={{ color: '#cbd5e1' }}
-                    className="font-['Geist'] text-[11px] sm:text-xs text-slate-300 font-medium drop-shadow"
+                    className="font-['Geist'] text-[11px] sm:text-xs text-slate-300 font-medium drop-shadow max-w-md"
                   >
-                    Delhi Subordinate Services Selection Board (DSSSB) Comprehensive CBT Practice
+                    Delhi Subordinate Services Selection Board Comprehensive CBT Practice with real exam interface
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10.5px] sm:text-[11px] text-slate-200 pt-0.5">
-                  <span className="flex items-center gap-1 drop-shadow">
+                {/* Section Tags — Pill-style Feature Chips */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-200 border border-cyan-400/30 text-[10px] font-semibold">
                     <span className="text-cyan-400 font-bold">✓</span> Section A (General)
                   </span>
-                  <span className="flex items-center gap-1 drop-shadow">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-200 border border-cyan-400/30 text-[10px] font-semibold">
                     <span className="text-cyan-400 font-bold">✓</span> Section B (CS & IT)
                   </span>
-                  <span className="flex items-center gap-1 drop-shadow">
-                    <span className="text-cyan-400 font-bold">✓</span> Authentic 0.25 Negative Marking
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-cyan-500/15 text-cyan-200 border border-cyan-400/30 text-[10px] font-semibold">
+                    <span className="text-cyan-400 font-bold">✓</span> 0.25 Negative Marking
                   </span>
                 </div>
               </div>
 
-              {/* Right Column: CBT Stats Card & Action */}
+              {/* Right Column: Premium CBT Stats Card */}
               <div className="md:col-span-5 flex flex-col items-start md:items-end justify-center">
-                <div className="w-full max-w-[245px] sm:max-w-[260px] p-3 sm:p-3.5 rounded-xl bg-slate-900/85 border border-cyan-400/40 backdrop-blur-md shadow-xl space-y-2">
-                  <div className="flex items-center justify-between text-[11px] pb-1.5 border-b border-slate-700">
-                    <span style={{ color: '#cbd5e1' }} className="font-semibold text-slate-300">
+                <div className="w-full max-w-[250px] sm:max-w-[265px] rounded-xl overflow-hidden bg-slate-950/90 border border-cyan-400/40 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
+                  {/* Card Header */}
+                  <div className="flex items-center justify-between px-3.5 py-2 bg-gradient-to-r from-cyan-900/40 to-slate-900/40 border-b border-cyan-500/30">
+                    <span style={{ color: '#e2e8f0' }} className="font-semibold text-[11px] text-slate-200">
                       CBT Simulation
                     </span>
-                    <span className="text-emerald-400 font-mono font-bold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                    <span className="text-emerald-400 font-mono font-bold text-[10.5px] flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
                       Free Open
                     </span>
                   </div>
 
-                  <div className="space-y-1 text-left text-[11px]">
-                    <div className="flex justify-between py-0.5 border-b border-slate-800">
+                  {/* Stats Grid */}
+                  <div className="px-3.5 py-2 space-y-1.5 text-[11px]">
+                    <div className="flex justify-between py-0.5">
                       <span style={{ color: '#94a3b8' }} className="text-slate-400">
                         Total Tests:
                       </span>
-                      <strong style={{ color: '#ffffff' }} className="text-white font-semibold">
+                      <strong style={{ color: '#ffffff' }} className="text-white font-semibold tabular-nums">
                         520+ Tests
                       </strong>
                     </div>
-                    <div className="flex justify-between py-0.5 border-b border-slate-800">
+                    <div className="flex justify-between py-0.5">
                       <span style={{ color: '#94a3b8' }} className="text-slate-400">
                         Languages:
                       </span>
@@ -489,15 +502,18 @@ export function TestSeriesBannerCarousel() {
                     </div>
                   </div>
 
-                  <a
-                    href="/test-series/dsssb-tgt-computer-science"
-                    className="w-full inline-flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-4 rounded-lg font-bold text-xs text-white bg-gradient-to-r from-[#ff4d00] to-[#ff6a26] hover:from-[#e04400] hover:to-[#ff5500] shadow-[0_3px_15px_rgba(255,77,0,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <span>Start Free Mock</span>
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
+                  {/* CTA Button */}
+                  <div className="px-3.5 pb-3 pt-1">
+                    <a
+                      href="/test-series/dsssb-tgt-computer-science"
+                      className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-4 rounded-lg font-extrabold text-xs text-white bg-gradient-to-r from-[#ff4d00] to-[#ff6a26] hover:from-[#e04400] hover:to-[#ff5500] shadow-[0_3px_18px_rgba(255,77,0,0.5)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                    >
+                      <span>Start Free Mock</span>
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
