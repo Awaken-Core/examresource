@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 
-interface Slide {
+interface SlideItem {
   id: string;
-  type: 'diwali' | 'dsssb' | 'upcoming';
+  type: 'diwali' | 'pass-rupee' | 'dsssb';
 }
 
-const SLIDES: Slide[] = [
+const SLIDES: SlideItem[] = [
   { id: 'diwali-sale', type: 'diwali' },
-  { id: 'dsssb-live', type: 'dsssb' },
-  { id: 'upcoming-2026', type: 'upcoming' },
+  { id: 'pass-rupee', type: 'pass-rupee' },
+  { id: 'dsssb-cs', type: 'dsssb' },
 ];
 
 const AUTO_SCROLL_INTERVAL = 5500; // 5.5 seconds
@@ -65,21 +65,13 @@ export function TestSeriesBannerCarousel() {
     touchEndX.current = null;
   };
 
-  const scrollToExplorer = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const target = document.getElementById('test-series-grid-anchor');
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
-    <div className="w-full space-y-4 font-['Geist']">
+    <div className="w-full space-y-3 sm:space-y-4 font-['Geist']">
       {/* ══════════════════════════════════════════════════════════════
-          1. MAIN AUTO-SCROLLING HERO BANNER CAROUSEL
+          1. MAIN PEEK HERO BANNER CAROUSEL (Testbook Style)
           ══════════════════════════════════════════════════════════════ */}
       <div
-        className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl select-none group border border-amber-500/20"
+        className="relative w-full overflow-hidden select-none group py-1"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
@@ -87,323 +79,303 @@ export function TestSeriesBannerCarousel() {
         onTouchEnd={handleTouchEnd}
         role="region"
         aria-roledescription="carousel"
-        aria-label="Featured Test Series & Festive Promotions"
+        aria-label="Featured Test Series & Promotional Offers"
       >
-        {/* Slides Track */}
+        {/* Slides Track with Center Peek Effect */}
         <div
-          className="flex transition-transform duration-700 ease-out will-change-transform"
-          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          className="flex transition-transform duration-600 ease-out will-change-transform"
+          style={{ transform: `translateX(calc(-${currentSlide * 88}% + 6%))` }}
         >
           {/* ──────────────────────────────────────────────────────────
-              SLIDE 1: DIWALI DHAMAKA SALE (Testbook Style)
+              SLIDE 1: DIWALI DHAMAKA SALE (Photorealistic 3D Festive Banner)
               ────────────────────────────────────────────────────────── */}
           <div
-            className="w-full shrink-0 relative overflow-hidden bg-gradient-to-br from-[#1b0738] via-[#2c0a4e] to-[#450e7a] text-white p-5 sm:p-8 md:p-10 min-h-[340px] sm:min-h-[380px] flex items-center"
+            className={`w-[88%] shrink-0 px-1 sm:px-2 transition-all duration-500 ${
+              currentSlide === 0 ? 'opacity-100 scale-100' : 'opacity-50 scale-[0.97]'
+            }`}
             role="group"
             aria-roledescription="slide"
             aria-label="1 of 3: Diwali Dhamaka Sale"
           >
-            {/* Ambient Festive Radial Glows */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-amber-500/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-fuchsia-600/25 blur-3xl pointer-events-none" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-amber-400/10 blur-[100px] pointer-events-none" />
+            <div
+              className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl min-h-[300px] xs:min-h-[330px] sm:min-h-[360px] md:min-h-[390px] flex items-center border border-amber-400/40"
+              style={{
+                backgroundImage: "url('/images/banners/diwali-banner.webp')",
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+              }}
+            >
+              {/* Dark Gradient Overlay on left for perfect text readability */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#17052e]/95 via-[#230742]/85 sm:via-[#230742]/75 to-transparent pointer-events-none" />
 
-            {/* Decorative Hanging Lanterns (Kandeels) SVG - Left & Right */}
-            <div className="absolute top-0 left-4 sm:left-10 opacity-70 pointer-events-none hidden xs:block">
-              <svg width="48" height="110" viewBox="0 0 48 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="24" y1="0" x2="24" y2="35" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="2 2" />
-                {/* Lantern Body */}
-                <polygon points="24,35 44,55 24,75 4,55" fill="#f59e0b" fillOpacity="0.85" stroke="#fbbf24" strokeWidth="1.5" />
-                <polygon points="24,42 38,55 24,68 10,55" fill="#fef08a" fillOpacity="0.95" />
-                <circle cx="24" cy="55" r="4" fill="#ffffff" />
-                {/* Tassels */}
-                <line x1="16" y1="75" x2="14" y2="105" stroke="#f59e0b" strokeWidth="1.5" />
-                <line x1="24" y1="75" x2="24" y2="108" stroke="#fbbf24" strokeWidth="1.5" />
-                <line x1="32" y1="75" x2="34" y2="105" stroke="#f59e0b" strokeWidth="1.5" />
-              </svg>
-            </div>
+              <div className="relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+                {/* Left Column: Festive Branding & Titles */}
+                <div className="md:col-span-7 space-y-2.5 sm:space-y-3.5 text-left">
+                  {/* Top Badge: SALE IS LIVE */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/20 border border-amber-300/50 text-amber-200 shadow-[0_0_15px_rgba(251,191,36,0.35)]">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+                    <span>SALE IS LIVE · FESTIVE SPECIAL</span>
+                  </div>
 
-            <div className="absolute top-0 right-4 sm:right-10 opacity-70 pointer-events-none hidden md:block">
-              <svg width="48" height="110" viewBox="0 0 48 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="24" y1="0" x2="24" y2="40" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="2 2" />
-                <polygon points="24,40 44,60 24,80 4,60" fill="#f59e0b" fillOpacity="0.85" stroke="#fbbf24" strokeWidth="1.5" />
-                <polygon points="24,47 38,60 24,73 10,60" fill="#fef08a" fillOpacity="0.95" />
-                <circle cx="24" cy="60" r="4" fill="#ffffff" />
-                <line x1="16" y1="80" x2="14" y2="105" stroke="#f59e0b" strokeWidth="1.5" />
-                <line x1="24" y1="80" x2="24" y2="108" stroke="#fbbf24" strokeWidth="1.5" />
-                <line x1="32" y1="80" x2="34" y2="105" stroke="#f59e0b" strokeWidth="1.5" />
-              </svg>
-            </div>
-
-            {/* Sparkles / Fireworks Vectors */}
-            <div className="absolute inset-0 pointer-events-none opacity-40">
-              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="15%" cy="25%" r="1.5" fill="#fef08a" />
-                <circle cx="85%" cy="30%" r="2" fill="#fef08a" />
-                <circle cx="50%" cy="15%" r="1.5" fill="#f59e0b" />
-                <circle cx="78%" cy="75%" r="2" fill="#fbbf24" />
-                <circle cx="25%" cy="80%" r="1.5" fill="#fef08a" />
-                {/* 4-point sparkle stars */}
-                <path d="M 220 50 Q 220 60 230 60 Q 220 60 220 70 Q 220 60 210 60 Q 220 60 220 50 Z" fill="#fbbf24" />
-                <path d="M 720 90 Q 720 98 728 98 Q 720 98 720 106 Q 720 98 712 98 Q 720 98 720 90 Z" fill="#fef08a" />
-              </svg>
-            </div>
-
-            {/* Slide Content Grid: Left Diya & Text, Right Offer Box & CTAs */}
-            <div className="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-              {/* Left Column: Festive Branding & Grand Titles (md: 7 cols) */}
-              <div className="md:col-span-7 space-y-3 sm:space-y-4 text-center md:text-left">
-                {/* Top Badge: SALE IS LIVE */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/15 border border-amber-300/40 text-amber-200 shadow-[0_0_12px_rgba(251,191,36,0.3)]">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-                  <span>SALE IS LIVE · FESTIVE SPECIAL</span>
-                </div>
-
-                {/* Main Festive Title with Diya Accents */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-center md:justify-start gap-2.5">
-                    {/* Glowing Diya SVG */}
-                    <div className="shrink-0 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]">
-                      <svg width="34" height="34" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        {/* Flame */}
-                        <path d="M18 4C19.5 8.5 23 12 23 16C23 19 20.8 21 18 21C15.2 21 13 19 13 16C13 12 16.5 8.5 18 4Z" fill="url(#flameGrad)" />
-                        <circle cx="18" cy="16" r="3" fill="#ffffff" />
-                        {/* Diya Base */}
-                        <path d="M7 21C7 27 12 29 18 29C24 29 29 27 29 21C29 20 28 20 26 21C23 22.5 13 22.5 10 21C8 20 7 20 7 21Z" fill="#d97706" stroke="#fbbf24" strokeWidth="1" />
-                        <ellipse cx="18" cy="21.5" rx="9" ry="2" fill="#78350f" />
-                        <defs>
-                          <linearGradient id="flameGrad" x1="18" y1="4" x2="18" y2="21" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="#fef08a" />
-                            <stop offset="0.5" stopColor="#f59e0b" />
-                            <stop offset="1" stopColor="#dc2626" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-
-                    <h2 className="font-['EB_Garamond'] text-2xl xs:text-3xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-tight">
-                      Diwali <span className="font-bold bg-gradient-to-r from-amber-200 via-amber-300 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(251,191,36,0.4)]">Dhamaka</span> Sale
+                  {/* Main Festive Title */}
+                  <div className="space-y-1">
+                    <h2
+                      style={{ color: '#ffffff' }}
+                      className="font-['EB_Garamond'] text-2xl xs:text-3xl sm:text-4xl lg:text-[44px] font-bold tracking-tight text-white leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]"
+                    >
+                      Diwali{' '}
+                      <span className="bg-gradient-to-r from-amber-200 via-amber-300 to-yellow-400 bg-clip-text text-transparent drop-shadow-[0_2px_14px_rgba(251,191,36,0.6)]">
+                        Dhamaka
+                      </span>{' '}
+                      Sale
                     </h2>
+
+                    <p
+                      style={{ color: '#f3e8ff' }}
+                      className="font-['Geist'] text-xs sm:text-[13.5px] text-purple-100 font-medium drop-shadow-md"
+                    >
+                      Quality Mocks. Festive Prices. Complete Govt Exam Preparation.
+                    </p>
                   </div>
 
-                  <p className="font-['Geist'] text-xs sm:text-sm text-purple-200/90 font-medium">
-                    Quality Mocks. Festive Prices. Unlimited Exam Preparation.
-                  </p>
+                  {/* Benefits checkmarks */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] sm:text-xs text-purple-100">
+                    <span className="flex items-center gap-1.5 drop-shadow">
+                      <span className="text-amber-300 font-bold">✓</span> Real CBT Simulator
+                    </span>
+                    <span className="flex items-center gap-1.5 drop-shadow">
+                      <span className="text-amber-300 font-bold">✓</span> 500+ Sectional Tests
+                    </span>
+                    <span className="flex items-center gap-1.5 drop-shadow">
+                      <span className="text-amber-300 font-bold">✓</span> Hindi & English Solutions
+                    </span>
+                  </div>
                 </div>
 
-                {/* Key Benefits List */}
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-[11.5px] sm:text-xs text-purple-100">
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-amber-400 font-bold">✓</span> Real CBT Interface
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-amber-400 font-bold">✓</span> 500+ Sectional & Full Mocks
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-amber-400 font-bold">✓</span> Hindi & English Solutions
-                  </span>
-                </div>
-              </div>
+                {/* Right Column: Festive Price Card & CTA Button */}
+                <div className="md:col-span-5 flex flex-col items-start md:items-end justify-center">
+                  <div className="w-full max-w-sm p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-purple-950/80 to-[#1e0738]/95 border-2 border-amber-400/60 backdrop-blur-md shadow-[0_10px_35px_rgba(0,0,0,0.6)] text-center space-y-3">
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-amber-400 text-purple-950">
+                        YEARLY PASS
+                      </span>
+                      <span style={{ color: '#f3e8ff' }} className="text-xs font-semibold text-purple-200">GovtPariksha PASS</span>
+                    </div>
 
-              {/* Right Column: Festive Price Box & Action (md: 5 cols) */}
-              <div className="md:col-span-5 flex flex-col items-center md:items-end justify-center">
-                <div className="w-full max-w-sm p-4 sm:p-5 rounded-2xl bg-gradient-to-b from-purple-900/60 to-purple-950/80 border-2 border-amber-400/50 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.45)] text-center space-y-3">
-                  {/* Pass Title */}
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-400 text-purple-950">
-                      YEARLY PASS
-                    </span>
-                    <span className="text-xs font-semibold text-purple-200">GovtPariksha PASS</span>
+                    <div className="flex items-baseline justify-center gap-2">
+                      <span style={{ color: '#e9d5ff' }} className="text-xs sm:text-sm text-purple-200 font-medium">at Just</span>
+                      <span className="text-3xl sm:text-4xl font-extrabold text-amber-300 tracking-tight drop-shadow-[0_2px_10px_rgba(251,191,36,0.6)]">
+                        ₹299
+                      </span>
+                      <span style={{ color: '#c084fc' }} className="text-xs sm:text-sm line-through text-purple-300/70">₹999</span>
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/25 text-emerald-300 border border-emerald-400/40">
+                        70% OFF
+                      </span>
+                    </div>
+
+                    <p style={{ color: '#e9d5ff' }} className="text-[11px] text-purple-200/90 font-medium">
+                      Validity: 1 Full Year All-Access to All CBT Mocks
+                    </p>
+
+                    <a
+                      href="/pricing"
+                      className="w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-emerald-500 via-green-600 to-emerald-600 hover:from-emerald-400 hover:to-green-500 shadow-[0_4px_20px_rgba(16,185,129,0.5)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                    >
+                      <span>Buy Pass Now</span>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </a>
                   </div>
-
-                  {/* Price */}
-                  <div className="flex items-baseline justify-center gap-2">
-                    <span className="text-xs sm:text-sm text-purple-300 font-medium">at Just</span>
-                    <span className="text-3xl sm:text-4xl font-extrabold text-amber-300 tracking-tight drop-shadow-[0_2px_8px_rgba(251,191,36,0.5)]">
-                      ₹299
-                    </span>
-                    <span className="text-xs sm:text-sm line-through text-purple-300/60">₹999</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                      70% OFF
-                    </span>
-                  </div>
-
-                  <p className="text-[11px] text-purple-200/80">
-                    Validity: 1 Full Year All-Access to All Exams & CBT Mocks
-                  </p>
-
-                  {/* Buy Now Button */}
-                  <a
-                    href="/pricing"
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-emerald-500 via-green-600 to-emerald-600 hover:from-emerald-400 hover:to-green-500 shadow-[0_4px_18px_rgba(16,185,129,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <span>Buy Pass Now</span>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
                 </div>
               </div>
             </div>
           </div>
 
           {/* ──────────────────────────────────────────────────────────
-              SLIDE 2: DSSSB TGT COMPUTER SCIENCE (Live Series)
+              SLIDE 2: ONE SUBSCRIPTION / SUPER PASS (@ ₹1 Trial)
               ────────────────────────────────────────────────────────── */}
           <div
-            className="w-full shrink-0 relative overflow-hidden bg-gradient-to-br from-[#07162c] via-[#0d2a4e] to-[#16406e] text-white p-5 sm:p-8 md:p-10 min-h-[340px] sm:min-h-[380px] flex items-center"
+            className={`w-[88%] shrink-0 px-1 sm:px-2 transition-all duration-500 ${
+              currentSlide === 1 ? 'opacity-100 scale-100' : 'opacity-50 scale-[0.97]'
+            }`}
             role="group"
             aria-roledescription="slide"
-            aria-label="2 of 3: DSSSB TGT Computer Science Live Series"
+            aria-label="2 of 3: Super Pass Trial"
           >
-            {/* Ambient Cyan / Blue Glows */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-cyan-500/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-orange-600/20 blur-3xl pointer-events-none" />
+            <div
+              className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl min-h-[300px] xs:min-h-[330px] sm:min-h-[360px] md:min-h-[390px] flex items-center border border-blue-400/30"
+              style={{
+                backgroundImage: "url('/images/banners/pass-rupee-banner.webp')",
+                backgroundPosition: 'right center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+              }}
+            >
+              {/* Gradient Overlay for high-contrast legible text */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 sm:via-white/90 to-transparent/10 dark:from-[#091322] dark:via-[#091322]/95 sm:dark:via-[#091322]/90 dark:to-transparent/20 pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-              {/* Left Column: DSSSB Overview */}
-              <div className="md:col-span-7 space-y-3 sm:space-y-4 text-center md:text-left">
-                {/* Live Pill Badge */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-500/15 border border-emerald-400/40 text-emerald-300">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                  <span>LIVE CBT MOCKS · 2026 PATTERN</span>
-                </div>
+              <div className="relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+                {/* Left Content */}
+                <div className="md:col-span-8 space-y-2.5 sm:space-y-3.5 text-left">
+                  {/* Brand Pill */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-extrabold tracking-wider uppercase bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-900 shadow-2xs">
+                    <span className="text-[#ff4d00] font-black">GovtPariksha</span>
+                    <span className="bg-rose-600 text-white px-1.5 py-0.5 rounded text-[9.5px]">SUPER</span>
+                    <span className="text-blue-900 dark:text-blue-200 font-black">PASS</span>
+                  </div>
 
-                <div className="space-y-1">
-                  <h2 className="font-['EB_Garamond'] text-2xl xs:text-3xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-tight">
-                    DSSSB TGT & PGT <br className="hidden sm:inline" />
-                    <span className="font-bold text-cyan-300">Computer Science</span> Suite
-                  </h2>
+                  <div className="space-y-1">
+                    <h2 className="font-['Geist'] text-2xl xs:text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
+                      One Subscription for{' '}
+                      <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-[#ff4d00] bg-clip-text text-transparent">
+                        375+ Govt. Exams
+                      </span>
+                    </h2>
 
-                  <p className="font-['Geist'] text-xs sm:text-sm text-slate-200/90 font-medium">
-                    Delhi Subordinate Services Selection Board (DSSSB) Comprehensive CBT Practice
-                  </p>
-                </div>
+                    <p className="font-['Geist'] text-xs sm:text-[13.5px] text-slate-600 dark:text-slate-300 font-medium">
+                      All-access pass for DSSSB, SSC CGL, RRB Railways, and Teaching Examination CBT Mocks.
+                    </p>
+                  </div>
 
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-[11.5px] sm:text-xs text-slate-200">
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-cyan-400 font-bold">✓</span> Section A (GK, Reasoning, Math, English, Hindi)
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-cyan-400 font-bold">✓</span> Section B (CS, Python, DBMS, OS, Networks)
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-cyan-400 font-bold">✓</span> Authentic 0.25 Negative Marking Simulation
-                  </span>
-                </div>
-              </div>
-
-              {/* Right Column: CBT Preview & Action Button */}
-              <div className="md:col-span-5 flex flex-col items-center md:items-end justify-center">
-                <div className="w-full max-w-sm p-4 sm:p-5 rounded-2xl bg-slate-900/70 border border-cyan-400/30 backdrop-blur-md shadow-2xl space-y-3.5">
-                  <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-700">
-                    <span className="font-semibold text-slate-300">CBT Hall Simulation</span>
-                    <span className="text-emerald-400 font-mono font-bold flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
-                      100% Free Mocks Open
+                  {/* Feature Capsules (like Testbook) */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-200">
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+                      <span>🎥</span> Live Tests
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+                      <span>📚</span> Chapter Tests
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+                      <span>📝</span> Full Mocks
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
+                      <span>📑</span> Solved PYQs
                     </span>
                   </div>
 
-                  <div className="space-y-2 text-left text-xs text-slate-300">
-                    <div className="flex justify-between py-1 border-b border-slate-800">
-                      <span className="text-slate-400">Total Available Tests:</span>
-                      <strong className="text-white font-semibold">520+ Tests</strong>
-                    </div>
-                    <div className="flex justify-between py-1 border-b border-slate-800">
-                      <span className="text-slate-400">Languages:</span>
-                      <strong className="text-white font-semibold">Bilingual (Hindi / English)</strong>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-slate-400">Analysis:</span>
-                      <strong className="text-cyan-300 font-semibold">AI Rank & Sectional Score</strong>
-                    </div>
-                  </div>
+                  {/* CTA Button Row */}
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <a
+                      href="/pricing"
+                      className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-full font-extrabold text-xs sm:text-sm text-white bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 shadow-[0_4px_18px_rgba(225,29,72,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                    >
+                      <span>Start Trial @ ₹1</span>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </a>
 
-                  <a
-                    href="/test-series/dsssb-tgt-computer-science"
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#ff4d00] to-[#ff6a26] hover:from-[#e04400] hover:to-[#ff5500] shadow-[0_4px_18px_rgba(255,77,0,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <span>Start Free DSSSB Mock</span>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </a>
+                    <span className="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                      <span>🔄</span> Unlimited CBT mock hall access
+                    </span>
+                  </div>
                 </div>
+
+                <div className="hidden md:block md:col-span-4" />
               </div>
             </div>
           </div>
 
           {/* ──────────────────────────────────────────────────────────
-              SLIDE 3: UPCOMING 2026 CBT SERIES (SSC & RAILWAYS)
+              SLIDE 3: DSSSB TGT COMPUTER SCIENCE (Live CBT Exam)
               ────────────────────────────────────────────────────────── */}
           <div
-            className="w-full shrink-0 relative overflow-hidden bg-gradient-to-br from-[#0a1e1b] via-[#10352e] to-[#184e44] text-white p-5 sm:p-8 md:p-10 min-h-[340px] sm:min-h-[380px] flex items-center"
+            className={`w-[88%] shrink-0 px-1 sm:px-2 transition-all duration-500 ${
+              currentSlide === 2 ? 'opacity-100 scale-100' : 'opacity-50 scale-[0.97]'
+            }`}
             role="group"
             aria-roledescription="slide"
-            aria-label="3 of 3: Upcoming 2026 CBT Series"
+            aria-label="3 of 3: DSSSB Computer Science CBT"
           >
-            {/* Ambient Emerald & Gold Glows */}
-            <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-amber-500/20 blur-3xl pointer-events-none" />
+            <div
+              className="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl min-h-[300px] xs:min-h-[330px] sm:min-h-[360px] md:min-h-[390px] flex items-center border border-cyan-400/40"
+              style={{
+                backgroundImage: "url('/images/banners/dsssb-cs-banner.webp')",
+                backgroundPosition: 'right center',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+              }}
+            >
+              {/* Dark Overlay for clear text reading */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#061424]/95 via-[#0b2440]/85 sm:via-[#0b2440]/75 to-transparent pointer-events-none" />
 
-            <div className="relative z-10 w-full max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-              {/* Left Column: Upcoming Series Info */}
-              <div className="md:col-span-7 space-y-3 sm:space-y-4 text-center md:text-left">
-                {/* Coming Soon Pill */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/15 border border-amber-300/40 text-amber-200">
-                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                  <span>LAUNCHING SOON · 2026 EDITIONS</span>
-                </div>
-
-                <div className="space-y-1">
-                  <h2 className="font-['EB_Garamond'] text-2xl xs:text-3xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-white leading-tight">
-                    SSC CGL & RRB NTPC <br className="hidden sm:inline" />
-                    <span className="font-bold text-amber-300">Mega CBT 2026</span> Series
-                  </h2>
-
-                  <p className="font-['Geist'] text-xs sm:text-sm text-emerald-100/90 font-medium">
-                    Comprehensive Question Banks Designed with Exam Mentors & Toppers
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-1.5 text-[11.5px] sm:text-xs text-emerald-100">
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-amber-300 font-bold">✓</span> 20,000+ TCS Pattern Questions
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-amber-300 font-bold">✓</span> AI Weakness & Speed Analytics
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-amber-300 font-bold">✓</span> Chapter-wise & Full Tests
-                  </span>
-                </div>
-              </div>
-
-              {/* Right Column: Pre-Register Card & Scroll Action */}
-              <div className="md:col-span-5 flex flex-col items-center md:items-end justify-center">
-                <div className="w-full max-w-sm p-4 sm:p-5 rounded-2xl bg-emerald-950/60 border border-amber-400/30 backdrop-blur-md shadow-2xl text-center space-y-3">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-400 text-emerald-950">
-                    COMING SOON IN PREVIEW
-                  </span>
-
-                  <p className="text-xs text-emerald-100 font-medium">
-                    Curated for Staff Selection Commission & Railway Recruitment Board Aspirants.
-                  </p>
-
-                  <div className="py-1 text-xs text-amber-200/90 font-semibold">
-                    ⭐ SSC CGL · RRB NTPC · CTET Teaching
+              <div className="relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+                {/* Left Column: DSSSB Overview */}
+                <div className="md:col-span-7 space-y-2.5 sm:space-y-3.5 text-left">
+                  {/* Live Pill Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-emerald-500/20 border border-emerald-400/50 text-emerald-300">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span>LIVE CBT MOCKS · 2026 PATTERN</span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={scrollToExplorer}
-                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-[0_4px_18px_rgba(245,158,11,0.4)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
-                  >
-                    <span>Explore Upcoming Series</span>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <div className="space-y-1">
+                    <h2
+                      style={{ color: '#ffffff' }}
+                      className="font-['EB_Garamond'] text-2xl xs:text-3xl sm:text-4xl lg:text-[42px] font-bold tracking-tight text-white leading-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.85)]"
+                    >
+                      DSSSB TGT & PGT <br className="hidden sm:inline" />
+                      <span className="text-cyan-300 font-extrabold">Computer Science</span> Suite
+                    </h2>
+
+                    <p
+                      style={{ color: '#cbd5e1' }}
+                      className="font-['Geist'] text-xs sm:text-[13.5px] text-slate-300 font-medium drop-shadow"
+                    >
+                      Delhi Subordinate Services Selection Board (DSSSB) Comprehensive CBT Practice
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] sm:text-xs text-slate-200">
+                    <span className="flex items-center gap-1.5 drop-shadow">
+                      <span className="text-cyan-400 font-bold">✓</span> Section A (GK, Math, Reasoning, English, Hindi)
+                    </span>
+                    <span className="flex items-center gap-1.5 drop-shadow">
+                      <span className="text-cyan-400 font-bold">✓</span> Section B (CS, Python, DBMS, OS, Networks)
+                    </span>
+                    <span className="flex items-center gap-1.5 drop-shadow">
+                      <span className="text-cyan-400 font-bold">✓</span> Authentic 0.25 Negative Marking Simulation
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right Column: CBT Stats Card & Action */}
+                <div className="md:col-span-5 flex flex-col items-start md:items-end justify-center">
+                  <div className="w-full max-w-sm p-4 sm:p-5 rounded-2xl bg-slate-900/85 border border-cyan-400/40 backdrop-blur-md shadow-2xl space-y-3">
+                    <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-700">
+                      <span style={{ color: '#cbd5e1' }} className="font-semibold text-slate-300">CBT Hall Simulation</span>
+                      <span className="text-emerald-400 font-mono font-bold flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+                        100% Free Mocks Open
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-left text-xs">
+                      <div className="flex justify-between py-1 border-b border-slate-800">
+                        <span style={{ color: '#94a3b8' }} className="text-slate-400">Total Available Tests:</span>
+                        <strong style={{ color: '#ffffff' }} className="text-white font-semibold">520+ Tests</strong>
+                      </div>
+                      <div className="flex justify-between py-1 border-b border-slate-800">
+                        <span style={{ color: '#94a3b8' }} className="text-slate-400">Languages:</span>
+                        <strong style={{ color: '#ffffff' }} className="text-white font-semibold">Bilingual (Hindi / English)</strong>
+                      </div>
+                      <div className="flex justify-between py-1">
+                        <span style={{ color: '#94a3b8' }} className="text-slate-400">Analysis:</span>
+                        <strong className="text-cyan-300 font-semibold">AI Rank & Sectional Score</strong>
+                      </div>
+                    </div>
+
+                    <a
+                      href="/test-series/dsssb-tgt-computer-science"
+                      className="w-full inline-flex items-center justify-center gap-2 py-2.5 sm:py-3 px-6 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-[#ff4d00] to-[#ff6a26] hover:from-[#e04400] hover:to-[#ff5500] shadow-[0_4px_20px_rgba(255,77,0,0.5)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer"
+                    >
+                      <span>Start Free DSSSB Mock</span>
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -411,15 +383,15 @@ export function TestSeriesBannerCarousel() {
         </div>
 
         {/* ──────────────────────────────────────────────────────────
-            CAROUSEL CONTROLS: Left & Right Navigation Arrows
+            FLOATING NAVIGATION BUTTONS (Circular buttons on left/right seam)
             ────────────────────────────────────────────────────────── */}
         <button
           type="button"
           onClick={prevSlide}
           aria-label="Previous Slide"
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-md opacity-80 group-hover:opacity-100 hover:scale-105"
+          className="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 dark:bg-slate-900/90 dark:hover:bg-slate-900 dark:text-white backdrop-blur-md border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-80 group-hover:opacity-100 hover:scale-105 z-20"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
@@ -428,20 +400,20 @@ export function TestSeriesBannerCarousel() {
           type="button"
           onClick={nextSlide}
           aria-label="Next Slide"
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-black/40 hover:bg-black/75 text-white/90 hover:text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-md opacity-80 group-hover:opacity-100 hover:scale-105"
+          className="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 hover:bg-white text-slate-800 dark:bg-slate-900/90 dark:hover:bg-slate-900 dark:text-white backdrop-blur-md border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-lg opacity-80 group-hover:opacity-100 hover:scale-105 z-20"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </button>
 
         {/* ──────────────────────────────────────────────────────────
-            CAROUSEL INDICATOR DOTS
+            INDICATOR DOTS
             ────────────────────────────────────────────────────────── */}
         <div
-          className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20"
+          className="flex items-center justify-center gap-2 pt-2.5"
           role="tablist"
-          aria-label="Slides"
+          aria-label="Banner Navigation Dots"
         >
           {SLIDES.map((slide, idx) => {
             const isActive = idx === currentSlide;
@@ -455,8 +427,8 @@ export function TestSeriesBannerCarousel() {
                 role="tab"
                 className={`transition-all duration-300 rounded-full cursor-pointer ${
                   isActive
-                    ? 'w-7 sm:w-8 h-2 bg-amber-400 shadow-[0_0_10px_rgba(251,191,36,0.8)]'
-                    : 'w-2 h-2 bg-white/40 hover:bg-white/80'
+                    ? 'w-7 sm:w-8 h-2 bg-editorial-accent shadow-[0_0_8px_rgba(255,77,0,0.6)]'
+                    : 'w-2 h-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
                 }`}
               />
             );
@@ -467,7 +439,7 @@ export function TestSeriesBannerCarousel() {
       {/* ══════════════════════════════════════════════════════════════
           2. TESTBOOK-STYLE QUICK ACCESS FEATURE STRIP
           ══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5 pt-1">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-2.5 pt-0.5">
         {/* Item 1: Live Tests */}
         <div className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl bg-editorial-surface border border-editorial-border hover:border-editorial-accent/40 transition-colors shadow-2xs">
           <div className="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0 font-bold text-xs border border-rose-500/20">
