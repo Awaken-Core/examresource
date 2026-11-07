@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 
 interface SlideConfig {
   id: string;
-  type: 'diwali' | 'pass-rupee' | 'dsssb';
+  type: 'diwali' | 'free-mocks' | 'dsssb';
   bgImage: string;
   bgPosition: string;
 }
@@ -15,8 +15,8 @@ const SLIDES: SlideConfig[] = [
     bgPosition: 'center',
   },
   {
-    id: 'pass-rupee',
-    type: 'pass-rupee',
+    id: 'free-mocks',
+    type: 'free-mocks',
     bgImage: '/images/banners/pass-rupee-banner.webp',
     bgPosition: 'right center',
   },
@@ -28,7 +28,7 @@ const SLIDES: SlideConfig[] = [
   },
 ];
 
-const AUTO_SCROLL_INTERVAL = 5500; // 5.5s
+const AUTO_SCROLL_INTERVAL = 4200; // 4.2s for snappy, engaging auto-animation
 
 export function TestSeriesBannerCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -86,7 +86,31 @@ export function TestSeriesBannerCarousel() {
   const nextIndex = (currentSlide + 1) % totalSlides;
 
   return (
-    <div className="w-full space-y-5 sm:space-y-6 font-['Geist']">
+    <div className="w-full space-y-4 sm:space-y-5 font-['Geist']">
+      {/* Inline styles for auto-animation & progress bar */}
+      <style>{`
+        @keyframes bannerProgress {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+        @keyframes bannerFadeInUp {
+          0% {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .banner-content-animate {
+          animation: bannerFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .banner-progress-bar {
+          animation: bannerProgress ${AUTO_SCROLL_INTERVAL}ms linear forwards;
+        }
+      `}</style>
+
       {/* ══════════════════════════════════════════════════════════════
           1. TESTBOOK-STYLE PEEK CAROUSEL (Fade Transition in Center)
           ══════════════════════════════════════════════════════════════ */}
@@ -139,7 +163,12 @@ export function TestSeriesBannerCarousel() {
             {/* Dark Gradient Overlay for high-contrast legible text */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#17052e]/95 via-[#230742]/85 sm:via-[#230742]/75 to-transparent pointer-events-none" />
 
-            <div className="relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+            <div
+              key={`slide-0-${currentSlide}`}
+              className={`relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center ${
+                currentSlide === 0 ? 'banner-content-animate' : ''
+              }`}
+            >
               {/* Left Column: Festive Branding & Titles */}
               <div className="md:col-span-7 space-y-2.5 sm:space-y-3.5 text-left">
                 {/* Top Badge: SALE IS LIVE */}
@@ -228,7 +257,7 @@ export function TestSeriesBannerCarousel() {
             </div>
           </div>
 
-          {/* SLIDE 1: ONE SUBSCRIPTION / SUPER PASS (@ ₹1 Trial) */}
+          {/* SLIDE 1: ATTEMPT THE FREE 2 MOCK TESTS (User requested update) */}
           <div
             className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out flex items-center ${
               currentSlide === 1 ? 'opacity-100 z-10 pointer-events-auto' : 'opacity-0 z-0 pointer-events-none'
@@ -241,64 +270,68 @@ export function TestSeriesBannerCarousel() {
             }}
             role="group"
             aria-roledescription="slide"
-            aria-label="2 of 3: Super Pass Trial"
+            aria-label="2 of 3: Attempt the Free 2 Mock Tests"
           >
             {/* Gradient Overlay for high-contrast legible text */}
             <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 sm:via-white/90 to-transparent/10 dark:from-[#091322] dark:via-[#091322]/95 sm:dark:via-[#091322]/90 dark:to-transparent/20 pointer-events-none" />
 
-            <div className="relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+            <div
+              key={`slide-1-${currentSlide}`}
+              className={`relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center ${
+                currentSlide === 1 ? 'banner-content-animate' : ''
+              }`}
+            >
               {/* Left Content */}
               <div className="md:col-span-8 space-y-2.5 sm:space-y-3.5 text-left">
-                {/* Brand Pill */}
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-extrabold tracking-wider uppercase bg-rose-50 text-rose-600 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-900 shadow-2xs">
-                  <span className="text-[#ff4d00] font-black">GovtPariksha</span>
-                  <span className="bg-rose-600 text-white px-1.5 py-0.5 rounded text-[9.5px]">SUPER</span>
-                  <span className="text-blue-900 dark:text-blue-200 font-black">PASS</span>
+                {/* Free Badge */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[11px] font-extrabold tracking-wider uppercase bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800 shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>100% FREE CBT PRACTICE · NO CARD REQUIRED</span>
                 </div>
 
                 <div className="space-y-1">
                   <h2 className="font-['Geist'] text-2xl xs:text-3xl sm:text-4xl lg:text-[40px] font-extrabold text-slate-900 dark:text-white leading-tight tracking-tight">
-                    One Subscription for{' '}
-                    <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-[#ff4d00] bg-clip-text text-transparent">
-                      375+ Govt. Exams
+                    Attempt the Free{' '}
+                    <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-400 dark:to-cyan-400 bg-clip-text text-transparent">
+                      2 Mock Tests
                     </span>
                   </h2>
 
                   <p className="font-['Geist'] text-xs sm:text-[13.5px] text-slate-600 dark:text-slate-300 font-medium">
-                    All-access pass for DSSSB, SSC CGL, RRB Railways, and Teaching Examination CBT Mocks.
+                    Experience actual exam interface, sectional negative marking, and instant AI Rank Predictor with 2 Full-Length Free Mock Tests.
                   </p>
                 </div>
 
-                {/* Feature Capsules (like Testbook) */}
+                {/* Feature Capsules */}
                 <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-200">
                   <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-                    <span>🎥</span> Live Tests
+                    <span>📝</span> 2 Full Mocks Free
                   </span>
                   <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-                    <span>📚</span> Chapter Tests
+                    <span>⏱️</span> Real CBT Hall Timer
                   </span>
                   <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-                    <span>📝</span> Full Mocks
+                    <span>📊</span> Instant All-India Rank
                   </span>
                   <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
-                    <span>📑</span> Solved PYQs
+                    <span>💡</span> Bilingual Solutions
                   </span>
                 </div>
 
                 {/* CTA Button Row */}
                 <div className="flex flex-wrap items-center gap-3 pt-2">
                   <a
-                    href="/pricing"
-                    className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-full font-extrabold text-xs sm:text-sm text-white bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 shadow-[0_4px_18px_rgba(225,29,72,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                    href="/test-series/dsssb-tgt-computer-science"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 sm:py-3 rounded-full font-extrabold text-xs sm:text-sm text-white bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-[0_4px_18px_rgba(16,185,129,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                   >
-                    <span>Start Trial @ ₹1</span>
+                    <span>Attempt Free 2 Mock Tests</span>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                   </a>
 
                   <span className="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-                    <span>🔄</span> Unlimited CBT mock hall access
+                    <span>⭐</span> Instant Access · No Payment or Credit Card Needed
                   </span>
                 </div>
               </div>
@@ -325,7 +358,12 @@ export function TestSeriesBannerCarousel() {
             {/* Dark Overlay for clear text reading */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#061424]/95 via-[#0b2440]/85 sm:via-[#0b2440]/75 to-transparent pointer-events-none" />
 
-            <div className="relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center">
+            <div
+              key={`slide-2-${currentSlide}`}
+              className={`relative z-10 w-full p-5 sm:p-8 md:p-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-center ${
+                currentSlide === 2 ? 'banner-content-animate' : ''
+              }`}
+            >
               {/* Left Column: DSSSB Overview */}
               <div className="md:col-span-7 space-y-2.5 sm:space-y-3.5 text-left">
                 {/* Live Pill Badge */}
@@ -460,7 +498,7 @@ export function TestSeriesBannerCarousel() {
       </div>
 
       {/* ──────────────────────────────────────────────────────────
-          INDICATOR DOTS (with clean spacing)
+          INDICATOR PROGRESS DOTS (Auto-animating progress bar)
           ────────────────────────────────────────────────────────── */}
       <div
         className="flex items-center justify-center gap-2 pt-1 pb-1"
@@ -477,12 +515,26 @@ export function TestSeriesBannerCarousel() {
               aria-label={`Go to slide ${idx + 1}`}
               aria-selected={isActive}
               role="tab"
-              className={`transition-all duration-300 rounded-full cursor-pointer ${
-                isActive
-                  ? 'w-7 sm:w-8 h-2 bg-editorial-accent shadow-[0_0_8px_rgba(255,77,0,0.6)]'
-                  : 'w-2 h-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
-              }`}
-            />
+              className="p-1 cursor-pointer focus:outline-hidden"
+            >
+              <div
+                className={`rounded-full overflow-hidden transition-all duration-300 ${
+                  isActive
+                    ? 'w-10 sm:w-12 h-2 bg-slate-200 dark:bg-slate-700'
+                    : 'w-2 h-2 bg-slate-300 dark:bg-slate-700 hover:bg-slate-400'
+                }`}
+              >
+                {isActive && (
+                  <div
+                    key={`progress-${currentSlide}-${isPaused}`}
+                    className="h-full bg-editorial-accent rounded-full banner-progress-bar"
+                    style={{
+                      animationPlayState: isPaused ? 'paused' : 'running',
+                    }}
+                  />
+                )}
+              </div>
+            </button>
           );
         })}
       </div>
