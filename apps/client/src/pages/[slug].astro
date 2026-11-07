@@ -63,8 +63,11 @@ try {
     if (contentType.includes('application/json')) {
       livePost = await primaryRes.json();
       const alt = livePost?.alternateArticle;
-      if (alt?.language && alt.language !== livePost?.language && alt.htmlContent != null) {
+      // Metadata-only alternate is enough for the language switcher; body loads on demand.
+      if (alt?.language && alt.language !== livePost?.language) {
         alternatePost = alt;
+      } else if (livePost?.hasAlternateLanguage && !alt) {
+        alternatePost = { language: requestedLanguage === 'ENGLISH' ? 'HINGLISH' : 'ENGLISH' };
       }
       saveArticleToCache(slugKey, requestedLanguage, livePost, alternatePost);
     } else {
@@ -421,7 +424,7 @@ if (isProfile) {
 ) : isProfile ? (
   <Layout title={`My Preparation | ${siteName}`} noindex isEditorialTheme={true}>
     <main class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <ProfileHub client:load />
+      <ProfileHub client:idle />
     </main>
   </Layout>
 ) : (

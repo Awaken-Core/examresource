@@ -25,17 +25,10 @@ Third-party scripts (Google Tag Manager, Google Analytics, AdSense) are notoriou
 - **AdSense Containment**: AdSense slots remain unmounted or strictly contained inside fixed-dimension wrapper boxes to prevent layout shifts.
 
 ### 2. Font Loading Strategy
-```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  rel="preload"
-  as="style"
-  href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap"
-/>
-```
-- Preconnect handshakes establish DNS and TLS connections to Google Fonts ahead of time.
-- `font-display: swap` ensures immediate text rendering using system fallback fonts without invisible text flash (FOIT).
+Self-hosted variable woff2 files under `/fonts/` (Inter, Geist, EB Garamond):
+- Preload **Inter** on every page (`fetchpriority="high"`).
+- Preload **EB Garamond** only on editorial-themed layouts (hero/serif surfaces).
+- Geist loads via `@font-face` + `font-display: swap` without a global preload, avoiding LCP bandwidth contention.
 
 ### 3. Critical CSS & Design Tokens
 - Built with **Tailwind CSS v4** via `@tailwindcss/vite`, ensuring dead-code CSS elimination during build time.
@@ -50,13 +43,26 @@ Third-party scripts (Google Tag Manager, Google Analytics, AdSense) are notoriou
 3. **CLS Prevention**:
    - Every `<img>` tag and SVG must have explicit `width` and `height` attributes (e.g. `width="40" height="40"`) or an inline `aspect-ratio` style.
 
-### 5. Instant Bilingual Language Swapping (Zero Latency)
-Instead of forcing a full page reload or secondary API request when a user toggles between English and Hinglish:
-1. Astro SSR fetches both language documents from the API in a single query (`getPublished`).
-2. Both language views are rendered into the initial HTML document.
-3. The client-side switcher (`article-lang-swap.ts`) toggles their visibility instantaneously via CSS classes (`hidden` / `block`).
-4. The URL slug is updated using `window.history.pushState({}, '', newSlug)`.
-5. Result: **0 milliseconds network latency, 0 layout shifts, 0 server calls**.
+### 5. Instant Bilingual Language Swapping (Lean First Paint)
+Instead of forcing a full page reload when a user toggles between English and Hinglish:
+1. Astro SSR fetches the **requested** language as the primary article body.
+2. Alternate language ships as **metadata only** (title/slug/cover) — no duplicate `htmlContent`.
+3. The client switcher (`article-lang-swap.ts`) fetches the alternate body on demand, caches it in memory, and swaps the DOM.
+4. The URL is updated with `history.pushState` without a full navigation.
+5. Result: **~200–300KB smaller first HTML/JSON**, instant subsequent toggles from memory cache.
+
+### 6. External CSS (not inlined)
+`astro.config.mjs` uses `inlineStylesheets: 'auto'` so Tailwind ships as hashed `/_astro/*.css` with immutable CDN caching instead of embedding ~150–244KB into every HTML response.
+
+### 7. Field RUM (web-vitals)
+`report-web-vitals.ts` records LCP/INP/CLS/FCP/TTFB after idle and forwards events to GA4/`dataLayer` (skipped for Lighthouse/PageSpeed user-agents).
+
+### 8. Progressive data & search
+- Test-series detail SSR loads the **first page** of tests (`limit=20`) with client **Load more**.
+- `/blogs` and `/latest-updates` use smaller first pages; latest-updates supports load-more.
+- Ctrl+K spotlight merges static portals with **debounced live** blog + test-series API hits (`spotlight-search.ts`).
+- Article language controls **prefetch** the inactive body on hover/idle.
+- Ops: apply [Cloudflare cache rules](./performance/cloudflare-cache-rules.md). CI: `bun run lhci` (requires local preview).
 
 ---
 
@@ -107,4 +113,5 @@ When writing new features or UI components, follow these rules:
 - [ ] **No Unbounded Client Bundles**: Avoid importing large npm packages in client components. Prefer native browser APIs.
 - [ ] **Strict Image Dimensions**: Ensure every new image element has explicit `width` and `height`.
 - [ ] **Astro Prefetch Strategy**: Ensure internal navigation links benefit from Astro's hover-based prefetching.
-- [ ] **Validate Core Web Vitals**: Run Lighthouse or PageSpeed Insights before merging any UI changes to `main`.
+- [ ] **Prefer `client:idle` / `client:visible`**: Reserve `client:load` for pages whose primary job is the React island (CBT, profile).
+- [ ] **Validate Core Web Vitals**: Run Lighthouse or PageSpeed Insights before merging any UI changes to `main`. Check GA4 Web Vitals events after deploy.

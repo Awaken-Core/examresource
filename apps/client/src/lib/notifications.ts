@@ -22,7 +22,7 @@ let currentToken: string | null = null;
 let lastNotifFetchTime = 0;
 let lastFetchLang = '';
 let lastFetchToken: string | null = null;
-const NOTIF_FETCH_MIN_INTERVAL = 20_000;
+const NOTIF_FETCH_MIN_INTERVAL = 60_000;
 let inFlightPromise: Promise<void> | null = null;
 
 export function relativeTime(iso: string) {

@@ -3,6 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import { siteName, siteUrl } from '../data/site';
 import { RankPredictorIsland } from '../components/rank-predictor/RankPredictorIsland';
 
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
+
 const pageTitle = `Exam Rank Predictor & Cut-Off Calculator 2026 | ${siteName}`;
 const pageDescription = `Free All-India Rank Predictor & Cut-Off Calculator for SSC CGL, RRB NTPC, IBPS PO, and UPSC. Enter your raw/mock marks to predict your AIR, percentile, and qualifying chances instantly.`;
 const canonicalUrl = `${siteUrl}/rank-predictor`;
@@ -48,7 +51,7 @@ const jsonLd = {
 
       <!-- Interactive Predictor Island -->
       <main>
-        <RankPredictorIsland client:load />
+        <RankPredictorIsland client:idle />
       </main>
 
       <!-- FAQ & Methodology Section -->

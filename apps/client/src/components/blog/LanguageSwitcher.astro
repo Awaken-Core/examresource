@@ -64,7 +64,12 @@ const isHinglish = currentLanguage === 'HINGLISH';
 </div>
 
 <script>
-  import { canSwapArticleLanguage, swapArticleLanguage } from '../../lib/article-lang-swap';
+  import {
+    canSwapArticleLanguage,
+    prefetchAlternateArticleBody,
+    prefetchInactiveArticleLanguage,
+    swapArticleLanguage,
+  } from '../../lib/article-lang-swap';
 
   function persistLang(lang: string) {
     try {
@@ -78,6 +83,16 @@ const isHinglish = currentLanguage === 'HINGLISH';
     switchers.forEach((el) => {
       if ((el as any).__langSwapBound) return;
       (el as any).__langSwapBound = true;
+
+      el.addEventListener('pointerenter', () => {
+        const lang = el.dataset.lang;
+        if (lang) prefetchAlternateArticleBody(lang);
+      }, { passive: true });
+
+      el.addEventListener('focus', () => {
+        const lang = el.dataset.lang;
+        if (lang) prefetchAlternateArticleBody(lang);
+      });
 
       el.addEventListener('click', (e) => {
         const lang = el.dataset.lang;
@@ -97,6 +112,20 @@ const isHinglish = currentLanguage === 'HINGLISH';
         window.dispatchEvent(new CustomEvent('exam:language-change', { detail: { lang } }));
       });
     });
+
+    // Idle-prefetch inactive language once per article view
+    const articleKey =
+      document.querySelector<HTMLElement>('[data-article-slug]')?.dataset.articleSlug ||
+      window.location.pathname;
+    if (switchers.length > 0 && (document as any).__altLangIdlePrefetchKey !== articleKey) {
+      (document as any).__altLangIdlePrefetchKey = articleKey;
+      const run = () => prefetchInactiveArticleLanguage();
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(run, { timeout: 3500 });
+      } else {
+        setTimeout(run, 1800);
+      }
+    }
   }
 
   function softNavigate(lang: string) {

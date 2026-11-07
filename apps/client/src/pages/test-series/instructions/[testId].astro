@@ -145,7 +145,7 @@ const jsonLd = {
 
   <div class="fixed inset-0 z-50 flex flex-col bg-canvas overflow-hidden">
     {/* Dynamic Test Instructions Island */}
-    <TestInstructions client:load testId={testId} initialData={testSeo as any} siteName={siteName} />
+    <TestInstructions client:idle testId={testId} initialData={testSeo as any} siteName={siteName} />
 
     {/* Accessible hidden text for search engines & assistive tech */}
     <div class="sr-only" aria-hidden="true">

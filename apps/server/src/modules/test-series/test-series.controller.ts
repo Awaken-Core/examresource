@@ -52,10 +52,11 @@ export class TestSeriesController {
     @Query('category') category?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('search') search?: string,
   ) {
     const pageNum = page ? Number.parseInt(page, 10) : undefined;
     const limitNum = limit ? Number.parseInt(limit, 10) : undefined;
-    return this.service.listPublished(category, pageNum, limitNum);
+    return this.service.listPublished(category, pageNum, limitNum, search);
   }
 
   @Get('test-series/:idOrSlug')

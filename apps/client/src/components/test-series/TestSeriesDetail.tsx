@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { API_URL, isClientAuthenticated } from '../../lib/api';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { API_URL, isClientAuthenticated, getCachedCurrentUser } from '../../lib/api';
 import { formatRupees, getClientPlanDefaults } from '../../lib/passOffer';
 import { getCachedSeriesAccess, setCachedSeriesAccess, clearCachedPassAccess } from '../../lib/passAccess';
+import { normalizeTestsPayload, TESTS_API_PAGE_SIZE } from '../../lib/testList';
 import { TestSeriesPassCard } from './TestSeriesPassCard';
 import { openTestSeriesCheckout } from './openTestSeriesCheckout';
 
@@ -142,6 +143,8 @@ interface Props {
   initialFullTests?: PublishedTestItem[] | null;
   initialPyqTests?: PublishedTestItem[] | null;
   initialAllTests?: PublishedTestItem[] | null;
+  initialFullTestsTotal?: number;
+  initialPyqTestsTotal?: number;
 }
 
 type TabType = 'full' | 'pyq' | 'subject' | 'chapter';
@@ -191,7 +194,15 @@ function handleTestNavigate(e: React.MouseEvent<HTMLAnchorElement>, targetPath: 
   }
 }
 
-export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests, initialPyqTests, initialAllTests }: Readonly<Props>) {
+export function TestSeriesDetail({
+  seriesIdOrSlug,
+  initialData,
+  initialFullTests,
+  initialPyqTests,
+  initialAllTests,
+  initialFullTestsTotal,
+  initialPyqTestsTotal,
+}: Readonly<Props>) {
   const [series, setSeries] = useState<TestSeriesDetailData | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
@@ -259,11 +270,21 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
 
   // Full tests state (strictly mock tests, excluding PYQs)
   const [fullTests, setFullTests] = useState<PublishedTestItem[]>(partitionedInitial.full);
+  const [fullTestsTotal, setFullTestsTotal] = useState(
+    initialFullTestsTotal ?? partitionedInitial.full.length,
+  );
+  const [fullTestsPageLoaded, setFullTestsPageLoaded] = useState(1);
   const [loadingFullTests, setLoadingFullTests] = useState(!partitionedInitial.hasAll && partitionedInitial.full.length === 0);
+  const [loadingMoreFullTests, setLoadingMoreFullTests] = useState(false);
 
   // PYQ tests state (dedicated official papers section)
   const [pyqTests, setPyqTests] = useState<PublishedTestItem[]>(partitionedInitial.pyq);
+  const [pyqTestsTotal, setPyqTestsTotal] = useState(
+    initialPyqTestsTotal ?? partitionedInitial.pyq.length,
+  );
+  const [pyqTestsPageLoaded, setPyqTestsPageLoaded] = useState(1);
   const [loadingPyqTests, setLoadingPyqTests] = useState(!partitionedInitial.hasAll && activeTab === 'pyq');
+  const [loadingMorePyqTests, setLoadingMorePyqTests] = useState(false);
   const [pyqYearFilter, setPyqYearFilter] = useState<string>('ALL');
   const [pyqExamFilter, setPyqExamFilter] = useState<string>('ALL');
 
@@ -411,7 +432,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
           };
           setSeriesAccess(accessData);
           setCachedSeriesAccess(resolvedSeriesId, accessData);
-          if (series.slug) setCachedSeriesAccess(series.slug, accessData);
+          if (series?.slug) setCachedSeriesAccess(series.slug, accessData);
           if (seriesIdOrSlug) setCachedSeriesAccess(seriesIdOrSlug, accessData);
         }
       } catch {
@@ -452,7 +473,7 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
             };
             setSeriesAccess(accessData);
             setCachedSeriesAccess(resolvedSeriesId, accessData);
-            if (series.slug) setCachedSeriesAccess(series.slug, accessData);
+            if (series?.slug) setCachedSeriesAccess(series.slug, accessData);
             if (seriesIdOrSlug) setCachedSeriesAccess(seriesIdOrSlug, accessData);
           } else {
             setSeriesAccess(null);
@@ -572,13 +593,16 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     void fetchChapTests();
   }, [series, activeTab]);
 
-  // Load Full tests from real database API
+  // Load first page of Full tests (paginated) from API
   useEffect(() => {
     if (!series) return;
-    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=full`;
+    const seriesKey = series.id || series._id;
+    const url = `${API_URL}/test-series/${seriesKey}/tests?testMode=full&limit=${TESTS_API_PAGE_SIZE}&page=1`;
     if (initialFullTests && initialFullTests.length > 0 && !testsCacheRef.current.has(url)) {
       testsCacheRef.current.set(url, initialFullTests);
       setFullTests(initialFullTests);
+      if (typeof initialFullTestsTotal === 'number') setFullTestsTotal(initialFullTestsTotal);
+      setFullTestsPageLoaded(1);
       setLoadingFullTests(false);
       return;
     }
@@ -592,25 +616,30 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
       try {
         const res = await fetch(url);
         if (res.ok) {
-          const tests = await res.json();
-          testsCacheRef.current.set(url, tests || []);
-          setFullTests(tests || []);
+          const parsed = normalizeTestsPayload(await res.json());
+          testsCacheRef.current.set(url, parsed.items);
+          setFullTests(parsed.items);
+          setFullTestsTotal(parsed.total);
+          setFullTestsPageLoaded(1);
         } else {
           setFullTests([]);
+          setFullTestsTotal(0);
         }
       } catch {
         setFullTests([]);
+        setFullTestsTotal(0);
       } finally {
         setLoadingFullTests(false);
       }
     }
     void fetchFullTests();
-  }, [series, initialFullTests]);
+  }, [series, initialFullTests, initialFullTestsTotal]);
 
-  // Load PYQ tests from real database API
+  // Load first page of PYQ tests (paginated) from API
   useEffect(() => {
     if (!series) return;
-    const url = `${API_URL}/test-series/${series.id || series._id}/tests?testMode=pyq`;
+    const seriesKey = series.id || series._id;
+    const url = `${API_URL}/test-series/${seriesKey}/tests?testMode=pyq&limit=${TESTS_API_PAGE_SIZE}&page=1`;
     if (testsCacheRef.current.has(url)) {
       setPyqTests(testsCacheRef.current.get(url)!);
       setLoadingPyqTests(false);
@@ -619,19 +648,22 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     async function fetchPyqTests() {
       if (initialPyqTests && initialPyqTests.length > 0 && pyqTests.length === 0) {
         setPyqTests(initialPyqTests);
+        if (typeof initialPyqTestsTotal === 'number') setPyqTestsTotal(initialPyqTestsTotal);
       }
       setLoadingPyqTests(true);
       try {
         const res = await fetch(url);
         if (res.ok) {
-          const tests = (await res.json()) || [];
+          const parsed = normalizeTestsPayload(await res.json());
           const merged = Array.from(
             new Map(
-              [...(initialPyqTests || []), ...tests].map((t: any) => [t.id || t._id, t]),
+              [...(initialPyqTests || []), ...parsed.items].map((t: any) => [t.id || t._id, t]),
             ).values(),
           );
           testsCacheRef.current.set(url, merged);
           setPyqTests(merged);
+          setPyqTestsTotal(Math.max(parsed.total, merged.length));
+          setPyqTestsPageLoaded(1);
         } else {
           setPyqTests(initialPyqTests || []);
         }
@@ -642,7 +674,59 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
       }
     }
     void fetchPyqTests();
-  }, [series, initialPyqTests]);
+  }, [series, initialPyqTests, initialPyqTestsTotal]);
+
+  const loadMoreFullTests = useCallback(async () => {
+    if (!series || loadingMoreFullTests) return;
+    if (fullTests.length >= fullTestsTotal) return;
+    const nextPage = fullTestsPageLoaded + 1;
+    const seriesKey = series.id || series._id;
+    const url = `${API_URL}/test-series/${seriesKey}/tests?testMode=full&limit=${TESTS_API_PAGE_SIZE}&page=${nextPage}`;
+    setLoadingMoreFullTests(true);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const parsed = normalizeTestsPayload(await res.json());
+      setFullTests((prev) => {
+        const merged = Array.from(
+          new Map([...prev, ...parsed.items].map((t: any) => [t.id || t._id, t])).values(),
+        );
+        return merged;
+      });
+      setFullTestsTotal(parsed.total);
+      setFullTestsPageLoaded(nextPage);
+    } catch {
+      // keep existing list
+    } finally {
+      setLoadingMoreFullTests(false);
+    }
+  }, [series, loadingMoreFullTests, fullTests.length, fullTestsTotal, fullTestsPageLoaded]);
+
+  const loadMorePyqTests = useCallback(async () => {
+    if (!series || loadingMorePyqTests) return;
+    if (pyqTests.length >= pyqTestsTotal) return;
+    const nextPage = pyqTestsPageLoaded + 1;
+    const seriesKey = series.id || series._id;
+    const url = `${API_URL}/test-series/${seriesKey}/tests?testMode=pyq&limit=${TESTS_API_PAGE_SIZE}&page=${nextPage}`;
+    setLoadingMorePyqTests(true);
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const parsed = normalizeTestsPayload(await res.json());
+      setPyqTests((prev) => {
+        const merged = Array.from(
+          new Map([...prev, ...parsed.items].map((t: any) => [t.id || t._id, t])).values(),
+        );
+        return merged;
+      });
+      setPyqTestsTotal(parsed.total);
+      setPyqTestsPageLoaded(nextPage);
+    } catch {
+      // keep existing list
+    } finally {
+      setLoadingMorePyqTests(false);
+    }
+  }, [series, loadingMorePyqTests, pyqTests.length, pyqTestsTotal, pyqTestsPageLoaded]);
 
   // Create fast map of latest attempt by test ID
   const testAttemptMap = useMemo(() => {
@@ -838,7 +922,9 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
     );
   }, [upcomingMockTests, testSearchQuery]);
 
-  const totalFullMockCount = fullTests.length + upcomingMockTests.length;
+  const totalFullMockCount = Math.max(fullTestsTotal, fullTests.length) + upcomingMockTests.length;
+  const canLoadMoreFullTests = fullTests.length < fullTestsTotal;
+  const canLoadMorePyqTests = pyqTests.length < pyqTestsTotal;
   const totalQuestionBankCount = useMemo(() => {
     return assignedSubjects.reduce((acc, s) => acc + (s.questionsCount || 0), 0);
   }, [assignedSubjects]);
@@ -1237,6 +1323,18 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     }}
                     itemName="mock tests"
                   />
+                  {canLoadMoreFullTests && (
+                    <div className="flex justify-center pt-1">
+                      <button
+                        type="button"
+                        onClick={() => void loadMoreFullTests()}
+                        disabled={loadingMoreFullTests}
+                        className="min-h-11 rounded-full border border-border bg-surface px-5 text-sm font-semibold text-heading hover:bg-surface-raised disabled:opacity-60 cursor-pointer"
+                      >
+                        {loadingMoreFullTests ? 'Loading…' : `Load more tests (${fullTests.length}/${fullTestsTotal})`}
+                      </button>
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -1404,6 +1502,18 @@ export function TestSeriesDetail({ seriesIdOrSlug, initialData, initialFullTests
                     }}
                     itemName="official papers"
                   />
+                  {canLoadMorePyqTests && (
+                    <div className="flex justify-center pt-1">
+                      <button
+                        type="button"
+                        onClick={() => void loadMorePyqTests()}
+                        disabled={loadingMorePyqTests}
+                        className="min-h-11 rounded-full border border-border bg-surface px-5 text-sm font-semibold text-heading hover:bg-surface-raised disabled:opacity-60 cursor-pointer"
+                      >
+                        {loadingMorePyqTests ? 'Loading…' : `Load more papers (${pyqTests.length}/${pyqTestsTotal})`}
+                      </button>
+                    </div>
+                  )}
                 </>
               )}
             </div>

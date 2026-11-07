@@ -104,14 +104,14 @@ const jsonLd = {
           2. FEATURED BANNER SLIDER / CAROUSEL (Desktop only)
           ══════════════════════════════════════════════════════════ */}
       <section class="hidden lg:block" aria-label="Promotional and Featured Banners" transition:persist="banner-carousel">
-        <TestSeriesBannerCarousel client:load />
+        <TestSeriesBannerCarousel client:visible />
       </section>
 
       {/* ══════════════════════════════════════════════════════════
           3. CURATED TEST SERIES EXPLORER (React Island)
           ══════════════════════════════════════════════════════════ */}
       <section aria-label="Curated Test Series Explorer" class="pt-2 lg:pt-8 lg:border-t lg:border-editorial-border/60" transition:persist="test-explorer">
-        <TestSeriesExplorer client:load initialList={initialSeries} />
+        <TestSeriesExplorer client:idle initialList={initialSeries} />
       </section>
 
       {/* ══════════════════════════════════════════════════════════

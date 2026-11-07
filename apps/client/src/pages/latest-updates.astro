@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { fetchPublicJson } from '../lib/publicFetch';
+import { API_URL } from '../lib/api';
 import { siteDomain, siteName, siteUrl, whatsappChannel, telegramChannel } from '../data/site';
 import {
   appLangToBlogLanguage,
@@ -15,7 +16,9 @@ const listLanguage = appLangToBlogLanguage(preferredAppLang);
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
 Astro.response.headers.set('Vary', 'Accept-Encoding');
 
-const livePosts = (await fetchPublicJson<any[]>(`/blogs?limit=100&language=${listLanguage}&includeImages=false`, 60_000)) || [];
+const UPDATES_PAGE_SIZE = 30;
+const livePosts = (await fetchPublicJson<any[]>(`/blogs?limit=${UPDATES_PAGE_SIZE}&offset=0&language=${listLanguage}&includeImages=false`, 60_000)) || [];
+const updatesHasMore = livePosts.length >= UPDATES_PAGE_SIZE;
 
 // Compute NEW badge (within last 3 days) and format chronological list
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
@@ -269,6 +272,21 @@ const jsonLd = {
             Clear Filters
           </button>
         </div>
+
+        {updatesHasMore && (
+          <div class="pt-4 flex justify-center">
+            <button
+              id="updates-load-more"
+              type="button"
+              class="min-h-11 px-5 rounded-full border border-editorial-border bg-editorial-surface text-sm font-semibold text-editorial-heading hover:border-editorial-accent transition cursor-pointer"
+              data-offset={UPDATES_PAGE_SIZE}
+              data-language={listLanguage}
+              data-page-size={UPDATES_PAGE_SIZE}
+            >
+              Load more updates
+            </button>
+          </div>
+        )}
       </main>
 
     </div>
@@ -354,5 +372,68 @@ const jsonLd = {
     document.addEventListener('astro:page-load', initUpdatesFilter);
     initUpdatesFilter();
   })();
+</script>
+
+<script define:vars={{ apiUrl: API_URL, preferredAppLang }}>
+  function bindLoadMore() {
+    const btn = document.getElementById('updates-load-more');
+    const container = document.getElementById('updates-list-container');
+    if (!btn || !container || !apiUrl) return;
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+
+    btn.addEventListener('click', async () => {
+      const offset = Number(btn.getAttribute('data-offset') || '0');
+      const pageSize = Number(btn.getAttribute('data-page-size') || '30');
+      const language = btn.getAttribute('data-language') || 'HINGLISH';
+      btn.setAttribute('disabled', 'true');
+      btn.textContent = 'Loading…';
+      try {
+        const res = await fetch(
+          `${apiUrl}/blogs?limit=${pageSize}&offset=${offset}&language=${encodeURIComponent(language)}&includeImages=false`,
+          { headers: { accept: 'application/json' }, signal: AbortSignal.timeout(6000) },
+        );
+        if (!res.ok) throw new Error('Failed');
+        const posts = await res.json();
+        const list = Array.isArray(posts) ? posts : [];
+        const lang = preferredAppLang === 'en' ? 'en' : 'hinglish';
+        for (const p of list) {
+          const slug = p.slug || '';
+          const href = lang === 'en' ? `/${slug}?lang=en` : `/${slug}`;
+          const title = p.title || 'Untitled Notification';
+          const categoryName = p.category?.name || p.categories?.[0]?.name || 'Central Government';
+          const categorySlug = p.category?.slug || p.categories?.[0]?.slug || 'central-government';
+          const summary = p.description || p.metaDescription || '';
+          const a = document.createElement('a');
+          a.href = href;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className =
+            'update-row-card group bg-editorial-surface hover:bg-editorial-surface-raised border border-editorial-border hover:border-editorial-accent/35 rounded-2xl p-4 sm:p-5 transition-all duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-[\'Geist\'] block sm:flex text-inherit no-underline cursor-pointer';
+          a.setAttribute('data-category', categorySlug);
+          a.setAttribute('data-title', title.toLowerCase());
+          a.setAttribute('data-summary', String(summary).toLowerCase());
+          a.innerHTML = `<div class="flex-1 min-w-0 space-y-1.5"><div class="flex items-center flex-wrap gap-2 text-[11px]"><span class="px-2.5 py-0.5 rounded-md bg-editorial-surface-raised border border-editorial-border font-semibold text-editorial-subheading">${categoryName}</span></div><h2 class="text-[16px] sm:text-[18px] font-semibold text-editorial-heading group-hover:text-editorial-accent transition-colors leading-snug">${title}</h2></div>`;
+          const noFilter = document.getElementById('no-filter-results');
+          if (noFilter) container.insertBefore(a, noFilter);
+          else container.appendChild(a);
+        }
+        const nextOffset = offset + list.length;
+        btn.setAttribute('data-offset', String(nextOffset));
+        if (list.length < pageSize) {
+          btn.remove();
+        } else {
+          btn.removeAttribute('disabled');
+          btn.textContent = 'Load more updates';
+        }
+      } catch {
+        btn.removeAttribute('disabled');
+        btn.textContent = 'Retry load more';
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', bindLoadMore);
+  bindLoadMore();
 </script>
 

@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import ActivityTabs from '../components/ActivityTabs.astro';
 import { siteName, siteUrl } from '../data/site';
 
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
 const pageTitle = `Saved Favorites | ${siteName}`;
 const pageDescription = `Quickly access all your favorite exam notifications, syllabus breakdowns, and admit card links on ${siteName}.`;
 const canonicalUrl = `${siteUrl}/favorites`;

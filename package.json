@@ -15,7 +15,8 @@
     "lint": "bun run --cwd apps/server lint",
     "lint:sonar": "eslint \"apps/**/*.ts\" \"apps/**/*.tsx\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lhci": "bunx --package=@lhci/cli lhci autorun --config=apps/client/lighthouserc.json"
   },
   "devDependencies": {
     "@dietrichgebert/ponytail": "5.3.3",

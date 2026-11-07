@@ -26,6 +26,7 @@ import {
   type TestAttemptDocument,
 } from '../../core/schema/index.js';
 import type { CurrentUser } from '../auth/auth.service.js';
+import { escapeRegex } from '../../core/utils/regex.util.js';
 import type {
   AssignSubjectInput,
   CreateChapterInput,
@@ -113,15 +114,31 @@ export class TestSeriesService {
   // 1. TEST SERIES MANAGEMENT
   // =========================================================================
 
-  async listPublished(category?: string, page?: number, limit?: number) {
+  async listPublished(
+    category?: string,
+    page?: number,
+    limit?: number,
+    search?: string,
+  ) {
     const isPaginated = typeof limit === 'number' && limit > 0;
-    const cacheKey = `listPublished:${category || 'all'}:${isPaginated ? `${page || 1}:${limit}` : 'all'}`;
+    const searchKey = search?.trim().toLowerCase() || '';
+    const cacheKey = `listPublished:${category || 'all'}:${searchKey || 'nosearch'}:${isPaginated ? `${page || 1}:${limit}` : 'all'}`;
     const cached = this.cache.get<any>(cacheKey);
     if (cached) return cached;
 
     const filter: Record<string, any> = { status: 'published' };
     if (category && category !== 'all') {
       filter.category = category;
+    }
+    if (searchKey) {
+      const regex = new RegExp(escapeRegex(searchKey), 'i');
+      filter.$or = [
+        { title: regex },
+        { slug: regex },
+        { targetExam: regex },
+        { organization: regex },
+        { description: regex },
+      ];
     }
 
     if (isPaginated) {
@@ -462,14 +479,13 @@ export class TestSeriesService {
   ) {
     const series = knownSeries || (await this.findSeriesById(seriesId));
 
-    // Parallelize assignment, chapter, question count, and test count queries
+    // Parallelize assignment/chapter reads + two $facet count pipelines
+    // (was 4 separate aggregates → 2 round-trips across the Durable Object bridge).
     const [
       assignments,
       chapters,
-      qSubCounts,
-      qChapCounts,
-      tSubCounts,
-      tChapCounts,
+      questionFacets,
+      examFacets,
     ] = await Promise.all([
       this.testSeriesSubjectModel
         .find({ testSeriesId: series._id })
@@ -485,11 +501,15 @@ export class TestSeriesService {
         .lean(),
       this.questionMappingModel.aggregate([
         { $match: { testSeriesId: series._id } },
-        { $group: { _id: '$subjectId', count: { $sum: 1 } } },
-      ]),
-      this.questionMappingModel.aggregate([
-        { $match: { testSeriesId: series._id, chapterId: { $ne: null } } },
-        { $group: { _id: '$chapterId', count: { $sum: 1 } } },
+        {
+          $facet: {
+            bySubject: [{ $group: { _id: '$subjectId', count: { $sum: 1 } } }],
+            byChapter: [
+              { $match: { chapterId: { $ne: null } } },
+              { $group: { _id: '$chapterId', count: { $sum: 1 } } },
+            ],
+          },
+        },
       ]),
       this.examModel.aggregate([
         {
@@ -499,20 +519,22 @@ export class TestSeriesService {
             isCurrentVersion: true,
           },
         },
-        { $group: { _id: '$subjectId', count: { $sum: 1 } } },
-      ]),
-      this.examModel.aggregate([
         {
-          $match: {
-            testSeriesId: series._id,
-            status: 'published',
-            isCurrentVersion: true,
-            chapterId: { $ne: null },
+          $facet: {
+            bySubject: [{ $group: { _id: '$subjectId', count: { $sum: 1 } } }],
+            byChapter: [
+              { $match: { chapterId: { $ne: null } } },
+              { $group: { _id: '$chapterId', count: { $sum: 1 } } },
+            ],
           },
         },
-        { $group: { _id: '$chapterId', count: { $sum: 1 } } },
       ]),
     ]);
+
+    const qSubCounts = questionFacets?.[0]?.bySubject || [];
+    const qChapCounts = questionFacets?.[0]?.byChapter || [];
+    const tSubCounts = examFacets?.[0]?.bySubject || [];
+    const tChapCounts = examFacets?.[0]?.byChapter || [];
 
     const qSubMap = new Map<string, number>(
       qSubCounts.map((c: any) => [c._id?.toString() || '', c.count]),

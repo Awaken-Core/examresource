@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import { contactEmail, siteUrl, siteName, whatsappChannel, telegramChannel, supportPhone } from '../data/site';
 
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
+
 const pageTitle = `Contact Us | ${siteName}`;
 const pageDescription = `Get in touch with ${siteName} support team for questions, suggestions, or error reports regarding competitive exam notifications.`;
 const canonicalUrl = `${siteUrl}/contact-us`;

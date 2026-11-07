@@ -4,6 +4,9 @@ import { siteName, siteUrl } from '../../data/site';
 import { API_URL } from '../../lib/api';
 import { DailyQuizRunner, type QuizDataPayload } from '../../components/daily-quiz/DailyQuizRunner';
 
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
+
 interface RecentQuiz {
   date: string;
   title: string;
@@ -336,7 +339,7 @@ const jsonLd = {
         <!-- Primary Quiz Island -->
         <main>
           <DailyQuizRunner
-            client:load
+            client:idle
             initialQuiz={primaryQuiz}
             availableQuizzes={availableQuizzes}
             apiUrl={API_URL}

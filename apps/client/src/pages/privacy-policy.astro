@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import { contactEmail, siteUrl, siteName } from '../data/site';
 
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=1800');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
+
 const lastUpdated = "October 17, 2026";
 const pageTitle = `Privacy Policy | ${siteName}`;
 const pageDescription = `Learn how ${siteName} collects, uses, and protects your personal data. Compliant with the IT Act 2000 and DPDP Act 2023.`;

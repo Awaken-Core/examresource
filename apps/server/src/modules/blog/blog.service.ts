@@ -97,6 +97,8 @@ function escapeRegex(text: string): string {
 export class BlogService {
   private readonly logger = new Logger(BlogService.name);
   private cache = new MemoryCache();
+  /** Coalesce concurrent identical getPublished misses (stampede guard). */
+  private readonly publishedInFlight = new Map<string, Promise<any>>();
 
   constructor(
     @InjectModel(Blog.name)
@@ -413,6 +415,23 @@ export class BlogService {
     const cached = this.cache.get<any>(cacheKey);
     if (cached) return cached;
 
+    const inflight = this.publishedInFlight.get(cacheKey);
+    if (inflight) return inflight;
+
+    const loadPromise = this.loadPublishedUncached(slug, language, cacheKey);
+    this.publishedInFlight.set(cacheKey, loadPromise);
+    try {
+      return await loadPromise;
+    } finally {
+      this.publishedInFlight.delete(cacheKey);
+    }
+  }
+
+  private async loadPublishedUncached(
+    slug: string,
+    language: 'HINGLISH' | 'ENGLISH' | undefined,
+    cacheKey: string,
+  ) {
     const now = new Date();
     const requestedLang = language || 'HINGLISH';
     const cleanSlug = slug.replace(/-(english|hinglish)$/i, '');
@@ -599,39 +618,35 @@ export class BlogService {
       this.getBlogCategories(blog.id),
     ]);
 
-    let effectiveBlocks = primaryBlocks;
-    let alternateArticle: any = null;
+    // Alternate language: metadata only. Full body is fetched on language swap via
+    // GET /blogs/:slug?language=… (target language becomes the primary payload).
+    // Skipping alt getBlocks + htmlContent removes ~200–300KB from cold article TTFB.
+    const alternateArticle = altBlog
+      ? {
+          id: (altBlog as any)._id.toString(),
+          title: (altBlog as any).title,
+          slug: (altBlog as any).slug,
+          language: (altBlog as any).language,
+          description: (altBlog as any).description ?? null,
+          coverImage: (altBlog as any).coverImage ?? null,
+          imageAlt: (altBlog as any).imageAlt ?? null,
+          imageCaption: (altBlog as any).imageCaption ?? null,
+          metaTitle: (altBlog as any).metaTitle ?? null,
+          metaDescription: (altBlog as any).metaDescription ?? null,
+          publishedAt: (altBlog as any).publishedAt ?? null,
+          updatedAt: (altBlog as any).updatedAt,
+        }
+      : null;
     const hasAlternateLanguage = Boolean(altBlog);
 
-    if (altBlog) {
-      const altId = (altBlog as any)._id.toString();
-      const altBlocks = await this.getBlocks(altId);
-      effectiveBlocks = syncImageBlocks(effectiveBlocks as any, altBlocks as any) as any;
-      alternateArticle = {
-        id: altId,
-        title: (altBlog as any).title,
-        slug: (altBlog as any).slug,
-        language: (altBlog as any).language,
-        description: (altBlog as any).description ?? null,
-        coverImage: (altBlog as any).coverImage ?? null,
-        imageAlt: (altBlog as any).imageAlt ?? null,
-        imageCaption: (altBlog as any).imageCaption ?? null,
-        metaTitle: (altBlog as any).metaTitle ?? null,
-        metaDescription: (altBlog as any).metaDescription ?? null,
-        publishedAt: (altBlog as any).publishedAt ?? null,
-        updatedAt: (altBlog as any).updatedAt,
-        htmlContent: blocksToHtml(altBlocks as any),
-      };
-    }
-
     const primaryCategory = postCategories[0] || blog.category;
-    const html = blocksToHtml(effectiveBlocks as any);
+    const html = blocksToHtml(primaryBlocks as any);
 
     const result = {
       ...blog,
       category: primaryCategory,
       categories: postCategories,
-      blocks: effectiveBlocks,
+      blocks: primaryBlocks,
       tags: postTagsList,
       htmlContent: html,
       hasAlternateLanguage,

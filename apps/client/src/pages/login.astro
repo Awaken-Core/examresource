@@ -2,6 +2,8 @@
 import AuthPage from "../components/AuthPage.astro";
 import Layout from "../layouts/Layout.astro";
 import { siteDomain } from "../data/site";
+
+Astro.response.headers.set('Cache-Control', 'private, no-store');
 ---
 
 <Layout title={`Log In | ${siteDomain}`} hideHeaderFooter={true}>

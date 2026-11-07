@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import ActivityTabs from '../components/ActivityTabs.astro';
 import { siteName, siteUrl, whatsappChannel, telegramChannel } from '../data/site';
 
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+
 const pageTitle = `Notifications | ${siteName}`;
 const pageDescription = `View latest exam alerts, admit card updates, results, and system announcements on ${siteName}.`;
 const canonicalUrl = `${siteUrl}/notifications`;

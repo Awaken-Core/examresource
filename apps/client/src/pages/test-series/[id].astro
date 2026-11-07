@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { siteName, siteDomain, siteUrl } from '../../data/site';
 import { fetchPublicJson } from '../../lib/publicFetch';
 import { TestSeriesDetail } from '../../components/test-series/TestSeriesDetail';
+import { normalizeTestsPayload, TESTS_API_PAGE_SIZE } from '../../lib/testList';
 
 const { id } = Astro.params;
 
@@ -30,10 +31,15 @@ interface SeriesSeo {
   subjects?: Array<{ name?: string; customDisplayName?: string | null }>;
 }
 
-// Fetch series metadata and initial active full mock tests concurrently in a single round-trip
-const [seriesSeo, fullTestsRes] = await Promise.all([
+// Fetch series metadata + first page of full/PYQ tests (avoid serializing entire catalogs into HTML)
+const [seriesSeo, fullTestsPayload, pyqTestsPayload] = await Promise.all([
   fetchPublicJson<SeriesSeo>(`/test-series/${encodeURIComponent(id)}`),
-  fetchPublicJson<any[]>(`/test-series/${encodeURIComponent(id)}/tests?testMode=full`),
+  fetchPublicJson<unknown>(
+    `/test-series/${encodeURIComponent(id)}/tests?testMode=full&limit=${TESTS_API_PAGE_SIZE}&page=1`,
+  ),
+  fetchPublicJson<unknown>(
+    `/test-series/${encodeURIComponent(id)}/tests?testMode=pyq&limit=${TESTS_API_PAGE_SIZE}&page=1`,
+  ),
 ]);
 
 if (!seriesSeo) {
@@ -50,8 +56,15 @@ const isPyqPaper = (t: any) =>
   (t.slug && t.slug.toLowerCase().startsWith('pyq-')) ||
   (t.title && (t.title.startsWith('[PYQ]') || t.title.includes('PYQ')));
 
-const initialFullTests = (fullTestsRes || []).filter((t: any) => !isPyqPaper(t));
-const initialPyqTests = (fullTestsRes || []).filter((t: any) => isPyqPaper(t));
+const fullPage = normalizeTestsPayload(fullTestsPayload);
+const pyqPage = normalizeTestsPayload(pyqTestsPayload);
+const initialFullTests = fullPage.items.filter((t: any) => !isPyqPaper(t));
+const initialPyqTests = [
+  ...pyqPage.items,
+  ...fullPage.items.filter((t: any) => isPyqPaper(t)),
+];
+const initialFullTestsTotal = fullPage.total;
+const initialPyqTestsTotal = pyqPage.total;
 
 const seriesTitle = seriesSeo?.title?.replace(/[\u2014\u2013]/g, ' - ').replace(/\s+-\s+/g, ' - ').trim();
 const subjectNames = (seriesSeo?.subjects ?? [])
@@ -130,11 +143,13 @@ const jsonLd = seriesTitle
     </nav>
 
     <TestSeriesDetail
-      client:load
+      client:idle
       seriesIdOrSlug={id}
       initialData={seriesSeo as any}
       initialFullTests={initialFullTests}
       initialPyqTests={initialPyqTests}
+      initialFullTestsTotal={initialFullTestsTotal}
+      initialPyqTestsTotal={initialPyqTestsTotal}
     />
 
     {seriesTitle && (

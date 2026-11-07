@@ -332,3 +332,59 @@ export function canSwapArticleLanguage(lang: string): boolean {
   const bundle = parseBundle();
   return Boolean(bundle?.[langKey]);
 }
+
+const prefetchInFlight = new Set<string>();
+
+/**
+ * Warm the in-memory body cache for the alternate language before the student clicks.
+ * Safe to call on hover / idle — coalesces duplicate requests and never mutates the DOM.
+ */
+export function prefetchAlternateArticleBody(lang: string): void {
+  const normalized = lang === 'en' || lang === 'english' || lang === 'ENGLISH' ? 'en' : 'hinglish';
+  const langKey = normalized === 'en' ? 'ENGLISH' : 'HINGLISH';
+  const articleId = getArticleIdentity();
+  const cacheKey = makeCacheKey(articleId, langKey);
+
+  if (memoryBodyCache.has(cacheKey) || prefetchInFlight.has(cacheKey)) return;
+
+  const bundle = parseBundle();
+  const version = bundle?.[langKey];
+  if (!version) return;
+  if (version.htmlBody) {
+    memoryBodyCache.set(cacheKey, renderBodyHtml(version));
+    return;
+  }
+
+  const articleSlug = (version.url || (typeof window !== 'undefined' ? window.location.pathname : ''))
+    .replace(/^\//, '');
+  if (!articleSlug || !API_URL) return;
+
+  prefetchInFlight.add(cacheKey);
+  void fetch(`${API_URL}/blogs/${encodeURIComponent(articleSlug)}?language=${langKey}`, {
+    headers: { accept: 'application/json' },
+    signal: AbortSignal.timeout(8000),
+  })
+    .then(async (res) => {
+      if (!res.ok) return;
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) return;
+      const data = await res.json();
+      if (!data?.htmlContent || getArticleIdentity() !== articleId) return;
+      const processed = processArticleHtml(data.htmlContent || '', version.title);
+      version.htmlBody = processed.htmlBody;
+      const plainText = (data.htmlContent || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      const words = plainText ? plainText.split(' ').length : 0;
+      version.readMinutes = Math.max(1, Math.round(words / 200));
+      memoryBodyCache.set(cacheKey, renderBodyHtml(version));
+    })
+    .catch(() => {})
+    .finally(() => {
+      prefetchInFlight.delete(cacheKey);
+    });
+}
+
+/** Prefetch whichever language is not currently displayed (hover/idle helper). */
+export function prefetchInactiveArticleLanguage(): void {
+  const current = getDisplayedArticleLang() || 'hinglish';
+  prefetchAlternateArticleBody(current === 'en' ? 'hinglish' : 'en');
+}

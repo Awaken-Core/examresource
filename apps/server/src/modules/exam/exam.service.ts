@@ -227,7 +227,10 @@ export class ExamService {
           'This exam attempt has expired and has been submitted.',
         );
       }
-      return this.formatAttempt(activeAttempt, false);
+      return this.formatAttempt(
+        await this.ensureAnswerSnapshots(activeAttempt),
+        false,
+      );
     }
 
     if (this.seriesAccess) {
@@ -366,6 +369,9 @@ export class ExamService {
       (q: any) => new Types.ObjectId(q.id),
     );
 
+    // Do not embed full question snapshots on every answer row — that duplicated
+    // 500KB–1MB per attempt. Snapshots are resolved on read from the exam's
+    // frozen question items (see ensureAnswerSnapshots).
     const initialAnswers = hydratedQuestions.map((q: any) => ({
       _id: new Types.ObjectId(),
       questionId: new Types.ObjectId(q.id),
@@ -385,12 +391,7 @@ export class ExamService {
       visitedAt: null,
       lastViewedAt: null,
       answeredAt: null,
-      questionSnapshot: q.snapshot
-        ? {
-            ...q.snapshot,
-            questionId: q.snapshot.questionId || q.questionId || new Types.ObjectId(q.id),
-          }
-        : null,
+      questionSnapshot: null,
     }));
 
     let attempt: any;
@@ -422,13 +423,19 @@ export class ExamService {
         })
         .lean();
       if (!concurrentAttempt) throw error;
-      return this.formatAttempt(concurrentAttempt, false);
+      return this.formatAttempt(
+        await this.ensureAnswerSnapshots(concurrentAttempt),
+        false,
+      );
     }
 
     const docAttempt = (attempt as any).toObject
       ? (attempt as any).toObject()
       : attempt;
-    return this.formatAttempt(docAttempt, false);
+    return this.formatAttempt(
+      await this.ensureAnswerSnapshots(docAttempt),
+      false,
+    );
   }
 
   async listAttempts(user: CurrentUser) {
@@ -465,7 +472,10 @@ export class ExamService {
       return this.autoFinalizeAttempt(doc);
     }
 
-    return this.formatAttempt(doc, doc.status !== 'in_progress');
+    return this.formatAttempt(
+      await this.ensureAnswerSnapshots(doc),
+      doc.status !== 'in_progress',
+    );
   }
 
   async saveAnswer(
@@ -614,16 +624,20 @@ export class ExamService {
 
   async pauseAttempt(id: string, user: CurrentUser) {
     const attempt = await this.requireActiveAttempt(id, user);
-    if (attempt.pausedAt) return this.formatAttempt(attempt, false);
+    if (attempt.pausedAt) {
+      return this.formatAttempt(await this.ensureAnswerSnapshots(attempt), false);
+    }
     const updated = await this.testAttemptModel
       .findByIdAndUpdate(attempt._id, { pausedAt: new Date() }, { returnDocument: 'after' })
       .lean();
-    return this.formatAttempt(updated, false);
+    return this.formatAttempt(await this.ensureAnswerSnapshots(updated), false);
   }
 
   async resumeAttempt(id: string, user: CurrentUser) {
     const attempt = await this.requireActiveAttempt(id, user);
-    if (!attempt.pausedAt) return this.formatAttempt(attempt, false);
+    if (!attempt.pausedAt) {
+      return this.formatAttempt(await this.ensureAnswerSnapshots(attempt), false);
+    }
     const pausedMs = Math.max(0, Date.now() - new Date(attempt.pausedAt).getTime());
     const expiresAt = attempt.expiresAt
       ? new Date(new Date(attempt.expiresAt).getTime() + pausedMs)
@@ -631,7 +645,7 @@ export class ExamService {
     const updated = await this.testAttemptModel
       .findByIdAndUpdate(attempt._id, { pausedAt: null, expiresAt }, { returnDocument: 'after' })
       .lean();
-    return this.formatAttempt(updated, false);
+    return this.formatAttempt(await this.ensureAnswerSnapshots(updated), false);
   }
 
   async submit(id: string, user: CurrentUser) {
@@ -682,7 +696,9 @@ export class ExamService {
     const doc = this.testAttemptModel.findById
       ? await this.testAttemptModel.findById(attempt._id).lean()
       : await this.testAttemptModel.findOne({ _id: attempt._id }).lean();
-    return doc ? this.formatAttempt(doc, true) : null;
+    return doc
+      ? this.formatAttempt(await this.ensureAnswerSnapshots(doc), true)
+      : null;
   }
 
   private async scoreAndFinalizeAttempt(attempt: any, user: CurrentUser) {
@@ -708,8 +724,77 @@ export class ExamService {
     return this.getAttempt(attempt._id.toString(), user);
   }
 
+  /**
+   * Hydrate per-answer questionSnapshot from the exam's frozen question items
+   * when the attempt was stored without embedded snapshots (post-optimization).
+   * Legacy attempts that already embed snapshots are returned unchanged.
+   */
+  private async ensureAnswerSnapshots(doc: any): Promise<any> {
+    if (!doc?.answers?.length) return doc;
+
+    const needsHydration = doc.answers.some(
+      (ans: any) => !ans?.questionSnapshot?.content && !ans?.questionSnapshot?.type,
+    );
+    if (!needsHydration) return doc;
+
+    const testId = doc.testId?._id || doc.testId;
+    if (!testId) return doc;
+
+    const exam = await this.examModel
+      .findById(testId)
+      .select('questions sections')
+      .lean();
+    if (!exam) return doc;
+
+    const examItems: any[] = [];
+    for (const item of exam.questions || []) {
+      if (item?.questionId) examItems.push(item);
+    }
+    for (const sec of exam.sections || []) {
+      for (const item of sec.questions || []) {
+        if (item?.questionId) examItems.push(item);
+      }
+    }
+
+    const answerQids = new Set(
+      doc.answers
+        .map((ans: any) => ans.questionId?.toString())
+        .filter(Boolean),
+    );
+    const relevantItems = examItems.filter((item) =>
+      answerQids.has(item.questionId?.toString()),
+    );
+
+    const hydrated = await this.getExamQuestionsWithSnapshots(relevantItems);
+    const snapByQid = new Map(
+      hydrated.map((q: any) => [
+        q.id?.toString(),
+        q.snapshot
+          ? {
+              ...q.snapshot,
+              questionId:
+                q.snapshot.questionId || q.questionId || new Types.ObjectId(q.id),
+            }
+          : null,
+      ]),
+    );
+
+    return {
+      ...doc,
+      answers: doc.answers.map((ans: any) => {
+        if (ans?.questionSnapshot?.content || ans?.questionSnapshot?.type) {
+          return ans;
+        }
+        const qid = ans.questionId?.toString();
+        const snap = qid ? snapByQid.get(qid) : null;
+        return snap ? { ...ans, questionSnapshot: snap } : ans;
+      }),
+    };
+  }
+
   private async gradeAnswers(attempt: any) {
-    const rawAnswers = attempt.answers || [];
+    const hydratedAttempt = await this.ensureAnswerSnapshots(attempt);
+    const rawAnswers = hydratedAttempt.answers || [];
     const questionIds = rawAnswers
       .map((ans: any) => ans.questionId)
       .filter(Boolean);

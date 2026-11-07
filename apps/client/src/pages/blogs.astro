@@ -17,7 +17,9 @@ const listLanguage = appLangToBlogLanguage(preferredAppLang);
 Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=60, stale-while-revalidate=300');
 Astro.response.headers.set('Vary', 'Accept-Encoding');
 
-const livePosts = (await fetchPublicJson<any[]>(`/blogs?limit=60&language=${listLanguage}&includeImages=false`, 60_000)) || [];
+const BLOGS_PAGE_SIZE = 24;
+const livePosts = (await fetchPublicJson<any[]>(`/blogs?limit=${BLOGS_PAGE_SIZE}&offset=0&language=${listLanguage}&includeImages=false`, 60_000)) || [];
+const blogsHasMore = livePosts.length >= BLOGS_PAGE_SIZE;
 
 // Map only REAL live database articles
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
@@ -615,6 +617,18 @@ const jsonLd = {
           </div>
         </div>
       </section>
+
+      {blogsHasMore && (
+        <div class="mb-10 flex justify-center">
+          <a
+            href="/latest-updates"
+            data-astro-prefetch="hover"
+            class="inline-flex min-h-11 items-center gap-2 rounded-full border border-editorial-border bg-editorial-surface px-5 text-sm font-semibold text-editorial-heading hover:border-editorial-accent transition"
+          >
+            View full chronological feed →
+          </a>
+        </div>
+      )}
 
       {/* ══════════════════════════════════════════════════════════
           5. COMMUNITY CHANNELS

@@ -42,7 +42,9 @@ export default defineConfig({
 		'/live-test/(.*)': '/test-series',
 	},
 	build: {
-		inlineStylesheets: 'always',
+		// External hashed CSS enables CDN/browser immutable caching instead of
+		// inlining ~150–244KB Tailwind into every HTML document.
+		inlineStylesheets: 'auto',
 	},
 	adapter: cloudflare(),
 	integrations: [react()],

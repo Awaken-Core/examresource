@@ -191,10 +191,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       }
     </script>
 
-    {/* Preload Self-Hosted Geist Latin Font for zero external TLS latency, zero CLS & instant text render */}
+    {/* Preload only the above-fold body font. Geist/EB Garamond still load via
+        @font-face + font-display:swap without competing with LCP bandwidth. */}
     <link rel="preload" href="/fonts/inter-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" fetchpriority="high" />
-    <link rel="preload" href="/fonts/geist-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
-    <link rel="preload" href="/fonts/eb-garamond-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    {isEditorialTheme && (
+      <link rel="preload" href="/fonts/eb-garamond-latin-variable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    )}
 
 
     {/* DNS prefetch for the media CDN without holding an unused TLS socket */}
@@ -742,6 +744,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         markNotificationRead,
         markAllNotificationsRead,
       } from '../lib/notifications';
+      import {
+        loadStaticSearchItems,
+        filterStaticSpotlightItems,
+        scheduleLiveSpotlightSearch,
+        cancelLiveSpotlightSearch,
+      } from '../lib/spotlight-search';
 
       const siteDomain = document.documentElement.getAttribute('data-site-domain') || window.location.hostname;
       import { API_URL } from '../lib/api';
@@ -1120,18 +1128,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }
         }
 
-        // --- Global Spotlight Search Modal Items ---
-        let cachedSearchItems: typeof import('../data/site').searchItems | null = null;
-        async function loadSearchItems() {
-          if (!cachedSearchItems) {
-            const mod = await import('../data/site');
-            cachedSearchItems = mod.searchItems;
-          }
-          return cachedSearchItems;
-        }
-
+        // --- Global Spotlight Search Modal Items (static + debounced live API) ---
         let currentSearchCategory = 'all';
         let activeResultIndex = -1;
+        let latestLiveItems: Array<{ title: string; tag: string; href: string; category: string; source?: string }> = [];
 
         function openSearchModal() {
           stopLenis();
@@ -1140,7 +1140,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           const input = document.getElementById('global-search-input') as HTMLInputElement | null;
           if (!modal || !container) return;
 
-          void loadSearchItems();
+          void loadStaticSearchItems();
           closeAllDropdowns();
           modal.classList.remove('hidden');
           modal.classList.add('flex');
@@ -1160,6 +1160,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
         function closeSearchModal() {
           startLenis();
+          cancelLiveSpotlightSearch();
           const modal = document.getElementById('global-search-modal');
           const container = document.getElementById('global-search-container');
           if (!modal || !container) return;
@@ -1174,47 +1175,61 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           }, 180);
         }
 
-        async function renderSearchResults(query: string) {
+        function paintSearchResults(
+          query: string,
+          staticFiltered: Array<{ title: string; tag: string; href: string; icon?: string }>,
+          liveItems: Array<{ title: string; tag: string; href: string; source?: string }>,
+        ) {
           const emptyState = document.getElementById('search-empty-state');
           const resultsList = document.getElementById('search-results-list');
           if (!emptyState || !resultsList) return;
 
-          const trimmed = query.trim().toLowerCase();
-          if (trimmed.length < 2) {
-            emptyState.classList.remove('hidden');
-            resultsList.classList.add('hidden');
-            resultsList.innerHTML = '';
-            activeResultIndex = -1;
-            return;
+          const seen = new Set<string>();
+          const merged: Array<{ title: string; tag: string; href: string; icon: string; external: boolean }> = [];
+          for (const item of liveItems) {
+            const key = item.href;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            merged.push({
+              title: item.title,
+              tag: item.tag + (item.source === 'blog' ? ' · Article' : item.source === 'test-series' ? ' · Test Series' : ''),
+              href: item.href,
+              icon: item.source === 'test-series' ? '📝' : '📰',
+              external: item.href.startsWith('http'),
+            });
           }
-
-          const items = await loadSearchItems();
-          const filtered = items.filter((item) => {
-            const matchesCategory = currentSearchCategory === 'all' || item.category === currentSearchCategory || item.category === 'all';
-            const matchesQuery = item.title.toLowerCase().includes(trimmed) || item.tag.toLowerCase().includes(trimmed);
-            return matchesCategory && matchesQuery;
-          });
+          for (const item of staticFiltered) {
+            const key = item.href;
+            if (seen.has(key)) continue;
+            seen.add(key);
+            merged.push({
+              title: item.title,
+              tag: item.tag,
+              href: item.href,
+              icon: item.icon || '🔗',
+              external: item.href.startsWith('http'),
+            });
+          }
 
           emptyState.classList.add('hidden');
           resultsList.classList.remove('hidden');
 
-          if (filtered.length === 0) {
+          if (merged.length === 0) {
             resultsList.innerHTML = `
               <div class="py-8 text-center text-muted text-body-sm">
-                <p>No results found for "${query}"</p>
-                <p class="text-caption-xs mt-1 text-muted/70">Try searching for UPSC, SSC, RRB, or an official portal</p>
+                <p>No results found for "${query.replace(/"/g, '&quot;')}"</p>
+                <p class="text-caption-xs mt-1 text-muted/70">Try searching for UPSC, SSC, RRB, an article, or a test series</p>
               </div>
             `;
             activeResultIndex = -1;
             return;
           }
 
-          resultsList.innerHTML = filtered.map((item, idx) => `
-            <a 
-              href="${item.href}" 
-              target="_blank"
-              rel="noopener"
-              data-astro-prefetch="false"
+          resultsList.innerHTML = merged.map((item, idx) => `
+            <a
+              href="${item.href}"
+              ${item.external ? 'target="_blank" rel="noopener"' : ''}
+              data-astro-prefetch="${item.external ? 'false' : 'hover'}"
               data-result-index="${idx}"
               class="search-result-row flex items-center justify-between p-3 rounded-xl bg-surface-raised/40 hover:bg-surface-raised border border-border/40 hover:border-accent/40 transition group cursor-pointer"
             >
@@ -1233,6 +1248,53 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 
           activeResultIndex = 0;
           highlightActiveResult();
+        }
+
+        async function renderSearchResults(query: string) {
+          const emptyState = document.getElementById('search-empty-state');
+          const resultsList = document.getElementById('search-results-list');
+          if (!emptyState || !resultsList) return;
+
+          const trimmed = query.trim();
+          if (trimmed.length < 2) {
+            cancelLiveSpotlightSearch();
+            latestLiveItems = [];
+            emptyState.classList.remove('hidden');
+            resultsList.classList.add('hidden');
+            resultsList.innerHTML = '';
+            activeResultIndex = -1;
+            return;
+          }
+
+          const staticItems = await loadStaticSearchItems();
+          const staticFiltered = filterStaticSpotlightItems(
+            staticItems,
+            trimmed,
+            currentSearchCategory,
+          );
+
+          // Instant static results, then merge debounced live blog/test-series hits
+          paintSearchResults(trimmed, staticFiltered as any, latestLiveItems);
+
+          scheduleLiveSpotlightSearch(trimmed, (liveItems) => {
+            latestLiveItems =
+              currentSearchCategory === 'all' || currentSearchCategory === 'article'
+                ? liveItems.filter((item) =>
+                    currentSearchCategory === 'all'
+                      ? true
+                      : item.source === 'blog',
+                  )
+                : currentSearchCategory === 'test-series'
+                  ? liveItems.filter((item) => item.source === 'test-series')
+                  : [];
+            void loadStaticSearchItems().then((items) => {
+              paintSearchResults(
+                trimmed,
+                filterStaticSpotlightItems(items, trimmed, currentSearchCategory) as any,
+                latestLiveItems,
+              );
+            });
+          });
         }
 
         function highlightActiveResult() {
@@ -2320,6 +2382,11 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           requestAnimationFrame(reinitPageElements);
         }
       })();
+    </script>
+    <script>
+      // Idle-deferred Core Web Vitals RUM → GA4 / dataLayer (zero render-blocking)
+      import { scheduleWebVitalsReporting } from '../lib/report-web-vitals';
+      scheduleWebVitalsReporting();
     </script>
   </body>
 </html>

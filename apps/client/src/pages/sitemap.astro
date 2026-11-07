@@ -4,6 +4,9 @@ import { Image } from 'astro:assets';
 import { siteUrl, siteName } from '../data/site';
 import { API_URL } from '../lib/api';
 
+Astro.response.headers.set('Cache-Control', 'public, max-age=0, s-maxage=300, stale-while-revalidate=900');
+Astro.response.headers.set('Vary', 'Accept-Encoding');
+
 interface LivePost {
   title: string;
   slug: string;
